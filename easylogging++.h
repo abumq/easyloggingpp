@@ -40,7 +40,7 @@ const bool SHOW_STD_OUTPUT = true;
 /**
 * Flag to set whether to save log to file
 */
-const bool SAVE_TO_FILE = true;
+const bool SAVE_TO_FILE = false;
 /**
 * Flag to set whether to show date/time
 */
@@ -64,7 +64,7 @@ const std::string NOT_SUPPORTED_STRING = "-not supported-";
 /**
 * If saving to file, this defines the filename
 */
-const std::string LOG_FILENAME = "memory.log";
+const std::string LOG_FILENAME = "myeasylog.log";
 /**
 * Flag to set whether to save log file in custom location
 */
