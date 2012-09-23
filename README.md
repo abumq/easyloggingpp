@@ -26,7 +26,7 @@ When ever you are writing code you may call any of four macros for logging
     DEBUG("End of my EasyLoggin++ program");
  }
  ```
- ###### Output with no extra info
+###### Output with no extra info
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
