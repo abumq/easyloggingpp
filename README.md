@@ -32,6 +32,7 @@ When ever you are writing code you may call any of four macros for logging
 [INFO] Current value is 0
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLoggin++ program
+```
 ###### Output with SHOW_LOG_LOCATION but SHOW_DATE_TIME and SHOW_LOG_FUNCTION set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
