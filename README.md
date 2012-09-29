@@ -37,11 +37,11 @@ When ever you are writing code you may call any of four macros for logging
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
-[INFO] [/home/easyloggertest/main.cpp:4]
-Current value is 0
 [INFO] [/home/easyloggertest/main.cpp:5]
+Current value is 0
+[INFO] [/home/easyloggertest/main.cpp:6]
 Now the value has changed from 0 to 1
-[DEBUG] [/home/easyloggertest/main.cpp:6]
+[DEBUG] [/home/easyloggertest/main.cpp:7]
 End of my EasyLogging++ program
 
 ```
@@ -49,11 +49,11 @@ End of my EasyLogging++ program
 ```
 [DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
-[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:4]
-Current value is 0
 [INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:5]
+Current value is 0
+[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:6]
 Now the value has changed from 0 to 1
-[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:6]
+[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:7]
 End of my EasyLogging++ program
 
 ```
