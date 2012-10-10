@@ -27,7 +27,7 @@ When ever you are writing code you may call any of five macros for logging
     DEBUG("End of my EasyLogging++ program");
  }
  ```
-#### Output with no extra info
+###### Output with no extra info
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
@@ -78,7 +78,7 @@ int main(void) {
     std::cout << "Sum of 1 and 2 is " << sumResult;
 }
  ```
- ###### Output
+###### Output
  ```
  this is test
 [DEBUG] Took 0 seconds to execute print
