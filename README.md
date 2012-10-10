@@ -8,7 +8,7 @@ To use EasyLogging++ in your application, simple
 #include "easylogging++.h"
 ```
 
-When ever you are writing code you may call any of four macros for logging
+When ever you are writing code you may call any of five macros for logging
  * DEBUG(...)
  * INFO(...)
  * WARN(...)
@@ -27,7 +27,7 @@ When ever you are writing code you may call any of four macros for logging
     DEBUG("End of my EasyLogging++ program");
  }
  ```
-###### Output with no extra info
+#### Output with no extra info
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
