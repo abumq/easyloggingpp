@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.0                                                 *
+*   EasyLogging++ v1.1                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -124,63 +124,53 @@ inline static void write(std::stringstream* logStream){
     (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n" : "\t" ) << log;\
     write(streamForEasyLoggingPP);
 
-#if _ENABLE_DEBUG_LOGS
-#define DEBUG(logStr) LOG("DEBUG",logStr)
-#else
-#define DEBUG(x)
-#endif//_ENABLE_DEBUG_LOGS
+  #if _ENABLE_DEBUG_LOGS
+    #define DEBUG(logStr) LOG("DEBUG",logStr)
+  #else
+    #define DEBUG(x)
+  #endif//_ENABLE_DEBUG_LOGS
 
-#if _ENABLE_INFO_LOGS
-#define INFO(logStr) LOG("INFO",logStr)
-#else
-#define INFO(x)
-#endif//_ENABLE_INFO_LOGS
+  #if _ENABLE_INFO_LOGS
+    #define INFO(logStr) LOG("INFO",logStr)
+  #else
+    #define INFO(x)
+  #endif//_ENABLE_INFO_LOGS
 
-#if _ENABLE_WARNING_LOGS
-#define WARN(logStr) LOG("WARN",logStr)
-#else
-#define WARNING(x)
-#endif//_ENABLE_WARNING_LOGS
+  #if _ENABLE_WARNING_LOGS
+    #define WARN(logStr) LOG("WARN",logStr)
+  #else
+    #define WARNING(x)
+  #endif//_ENABLE_WARNING_LOGS
 
-#if _ENABLE_ERROR_LOGS
-#define ERR(logStr) LOG("ERROR",logStr)
-#else
-#define ERR(x)
-#endif//_ENABLE_ERROR_LOGS
+  #if _ENABLE_ERROR_LOGS
+    #define ERR(logStr) LOG("ERROR",logStr)
+  #else
+    #define ERR(x)
+  #endif//_ENABLE_ERROR_LOGS
 
-#if _ENABLE_PERFORMANCE_LOGS
-#include <time.h>
-#define PERF(logStr) LOG("PERFORMANCE",logStr)
+  #if _ENABLE_PERFORMANCE_LOGS
+    #include <time.h>
+    #define PERF(logStr) LOG("PERFORMANCE",logStr)
+    #define TIME_OUTPUT "Took " << difftime (end,start) << " seconds to execute " << __func__
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { time_t start,end; time(&start);
+    #define END_SUB time(&end); PERF(TIME_OUTPUT); }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { RETURNING_TYPE resultToReturn; time_t start,end; time(&start);
+    #define END_FUNC time(&end); PERF(TIME_OUTPUT); return resultToReturn; }
+    #define RETURN(expr) resultToReturn = expr;
+  #else
+    #define PERF(x)
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
+    #define END_SUB }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
+    #define END_FUNC }
+    #define RETURN(expr) return expr;
+  #endif //_ENABLE_PERFORMACE_LOGS
 #else
-#define PERF(x)
-#endif //_ENABLE_PERFORMACE_LOGS
-#else
-#define DEBUG(x)
-#define INFO(x)
-#define WARN(x)
-#define ERR(x)
-#define PERF(x)
+  #define DEBUG(x)
+  #define INFO(x)
+  #define WARN(x)
+  #define ERR(x)
+  #define PERF(x)
 #endif //_LOGGING
-
-/* This section is for tracking time in function */
-#if _ENABLE_PERFORMANCE_LOGS
-/* TIME_OUTPUT macro */
-#define TIME_OUTPUT "Took " << difftime (end,start) << " seconds to execute " << __func__
-
-/* SUB macro */
-#define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { time_t start,end; time(&start);
-
-/* END_SUB macro */
-#define END_SUB time(&end); PERF(TIME_OUTPUT); }
-
-/* FUNC macro */
-#define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { RETURNING_TYPE resultToReturn; time_t start,end; time(&start);
- 
-/* END_FUNC macro */
-#define END_FUNC time(&end); PERF(TIME_OUTPUT); return resultToReturn; }
-
-/* RETURN macro */
-#define RETURN(expr) resultToReturn = expr;
-#endif //_ENABLE_PERFORMANCE_LOGS
 
 #endif //EasyLoggingPP_LOGGING_H
