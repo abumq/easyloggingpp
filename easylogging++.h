@@ -23,13 +23,12 @@
 #define _ENABLE_INFO_LOGS 1
 #define _ENABLE_WARNING_LOGS 1
 #define _ENABLE_ERROR_LOGS 1
-
+#define _ENABLE_PERFORMANCE_LOGS 1
 
 #if _LOGGING_ENABLED
 #include <iostream>
 #include <sstream>
 #include <fstream>
-
 //////////////////////////////////////////////
 //     Configuration for logging           ///
 //////////////////////////////////////////////
@@ -103,10 +102,10 @@ inline static void write(std::stringstream* logStream){
         std::cout << logStream->str() << std::endl;
     }
     if (SAVE_TO_FILE) {
-        std::ofstream logFile((USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME,
-            std::ios::out | std::ios::app);
-        logFile << logStream->str() << std::endl;
-        logFile.close();
+//        std::ofstream logFile((USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME,
+ //           std::ios::out | std::ios::app);
+  //      logFile << logStream->str() << std::endl;
+   //     logFile.close();
     }
     delete logStream;
     logStream = 0;
@@ -149,11 +148,39 @@ inline static void write(std::stringstream* logStream){
 #define ERR(x)
 #endif//_ENABLE_ERROR_LOGS
 
+#if _ENABLE_PERFORMANCE_LOGS
+#include <time.h>
+#define PERF(logStr) LOG("PERFORMANCE",logStr)
+#else
+#define PERF(x)
+#endif //_ENABLE_PERFORMACE_LOGS
 #else
 #define DEBUG(x)
 #define INFO(x)
 #define WARN(x)
 #define ERR(x)
+#define PERF(x)
 #endif //_LOGGING
+
+/* This section is for tracking time in function */
+#if _ENABLE_PERFORMANCE_LOGS
+/* TIME_OUTPUT macro */
+#define TIME_OUTPUT "Took " << difftime (end,start) << " seconds to execute " << __func__
+
+/* SUB macro */
+#define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { time_t start,end; time(&start);
+
+/* END_SUB macro */
+#define END_SUB time(&end); PERF(TIME_OUTPUT); }
+
+/* FUNC macro */
+#define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { RETURNING_TYPE resultToReturn; time_t start,end; time(&start);
+ 
+/* END_FUNC macro */
+#define END_FUNC time(&end); PERF(TIME_OUTPUT); return resultToReturn; }
+
+/* RETURN macro */
+#define RETURN(expr) resultToReturn = expr;
+#endif //_ENABLE_PERFORMANCE_LOGS
 
 #endif //EasyLoggingPP_LOGGING_H
