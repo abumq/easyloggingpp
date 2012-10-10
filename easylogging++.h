@@ -102,10 +102,10 @@ inline static void write(std::stringstream* logStream){
         std::cout << logStream->str() << std::endl;
     }
     if (SAVE_TO_FILE) {
-//        std::ofstream logFile((USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME,
- //           std::ios::out | std::ios::app);
-  //      logFile << logStream->str() << std::endl;
-   //     logFile.close();
+        std::ofstream logFile((USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME,
+            std::ios::out | std::ios::app);
+        logFile << logStream->str() << std::endl;
+        logFile.close();
     }
     delete logStream;
     logStream = 0;
