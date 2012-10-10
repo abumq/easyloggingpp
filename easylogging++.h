@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++                                                      *
+*   EasyLogging++ v1.0                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
