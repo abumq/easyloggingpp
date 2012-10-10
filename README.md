@@ -81,8 +81,8 @@ int main(void) {
 ###### Output
  ```
  this is test
-[DEBUG] Took 0 seconds to execute print
-[DEBUG] Took 0 seconds to execute sum
+[PERFORMANCE] Took 0 seconds to execute print
+[PERFORMANCE] Took 0 seconds to execute sum
 Sum of 1 and 2 is 3
  ```
  
