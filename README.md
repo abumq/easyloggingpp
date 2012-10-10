@@ -23,31 +23,38 @@ When ever you are writing code you may call any of four macros for logging
     unsigned int i = 0;
     INFO("Current value is " << i);
     INFO("Now the value has changed from " << i++ << " to " << i);
-    DEBUG("End of my EasyLoggin++ program");
+    DEBUG("End of my EasyLogging++ program");
  }
  ```
-###### Output with SHOW_DATE_TIME set to false
+###### Output with no extra info
+```
+[DEBUG] Staring my EasyLogging++ program
+[INFO] Current value is 0
+[INFO] Now the value has changed from 0 to 1
+[DEBUG] End of my EasyLogging++ program
+```
+###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` and `SHOW_LOG_FUNCTION` set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
-[INFO] [/home/easyloggertest/main.cpp:4]
-Current value is 0
 [INFO] [/home/easyloggertest/main.cpp:5]
+Current value is 0
+[INFO] [/home/easyloggertest/main.cpp:6]
 Now the value has changed from 0 to 1
-[DEBUG] [/home/easyloggertest/main.cpp:6]
-End of my EasyLoggin++ program
+[DEBUG] [/home/easyloggertest/main.cpp:7]
+End of my EasyLogging++ program
 
 ```
-###### Output with SHOW_DATE_TIME
+###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION` but and `SHOW_LOG_FUNCTION` set to false
 ```
 [DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
-[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:4]
-Current value is 0
 [INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:5]
+Current value is 0
+[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:6]
 Now the value has changed from 0 to 1
-[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:6]
-End of my EasyLoggin++ program
+[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:7]
+End of my EasyLogging++ program
 
 ```
 Note: you have many other configurations to change your output. See following section for details
