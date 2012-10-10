@@ -13,9 +13,10 @@ When ever you are writing code you may call any of four macros for logging
  * INFO(...)
  * WARN(...)
  * ERR(...)
+ * PERF(...)
 
 ## Examples
-#### Code
+#### Basic Logging
  ```C++
  #include "easylogging++.h"
  int main(void) {
@@ -57,6 +58,34 @@ Now the value has changed from 0 to 1
 End of my EasyLogging++ program
 
 ```
+
+#### Performance Logging
+ ```C++
+ #include "easylogging++.h"
+ SUB(print,(const std::string& input))
+   /* sub-routine body */
+   std::cout << input;
+ END_SUB 
+ 
+ FUNC(int,sum,(int x,int y))
+   /* function body */
+   RETURN(x+y);
+ END_FUNC 
+ 
+int main(void) {
+    print("this is test");
+    int sumResult = sum(1,2);
+    std::cout << "Sum of 1 and 2 is " << sumResult;
+}
+ ```
+ ###### Output
+ ```
+ wow
+[DEBUG] Took 0 seconds to execute print
+[DEBUG] Took 0 seconds to execute sum
+Sum of 1 and 2 is 3
+ ```
+ 
 Note: you have many other configurations to change your output. See following section for details
 
 ## Configuration
@@ -67,6 +96,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * _ENABLE_INFO_LOGS macro enables or disables info logs. 
 * _ENABLE_WARNING_LOGS macro enables or disables warning logs. 
 * _ENABLE_ERROR_LOGS macro enables or disables error logs. 
+* _ENABLE_PERFORMANCE_LOGS macro enables or disables performance logs. 
 
 #### Other Configurations
 ```C++
@@ -113,3 +143,4 @@ const bool USE_CUSTOM_LOCATION = false;
 const std::string CUSTOM_LOG_FILE_LOCATION = "";
 
 ```
+
