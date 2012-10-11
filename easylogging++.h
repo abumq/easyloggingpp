@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.2                                                 *
+*   EasyLogging++ v1.3                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -17,7 +17,7 @@
 * 1 for enabled
 * 0 for disabled
 */
-#define _LOGGING_ENABLED 1
+#define _LOGGING_ENABLED 0
 
 #define _ENABLE_DEBUG_LOGS 1
 #define _ENABLE_INFO_LOGS 1
@@ -187,6 +187,11 @@ inline static void write(std::stringstream* logStream){
   #define WARN(x)
   #define ERR(x)
   #define PERF(x)
+  #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
+  #define END_SUB }
+  #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
+  #define END_FUNC }
+  #define RETURN(expr) return expr;
 #endif //_LOGGING
 
 #endif //EasyLoggingPP_LOGGING_H
