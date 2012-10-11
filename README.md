@@ -189,11 +189,6 @@ const std::string CUSTOM_LOG_FILE_LOCATION = "";
 const bool SHOW_START_FUNCTION_LOG = true;
 
 ```
-USEFUL LINKS
-============
-[Home](http://icplusplus.com/tools/easylogging/)
-
-[Download](http://icplusplus.com/tools/easylogging/easyloggingpp.zip)
 
 LICENSE
 =======
