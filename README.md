@@ -100,47 +100,62 @@ By Default logging is enabled and you can use it in your aplication. There are f
 
 #### Other Configurations
 ```C++
+
 /**
 * Flag for showing log in standard output using std::cout
 */
 const bool SHOW_STD_OUTPUT = true;
+
 /**
 * Flag to set whether to save log to file
 */
 const bool SAVE_TO_FILE = true;
+
 /**
 * Flag to set whether to show date/time
 */
 const bool SHOW_DATE_TIME = false;
+
 /**
 * Flag to set whether to show which function logged the output (some compiler dont support this)
 */
 const bool SHOW_LOG_FUNCTION = false;
+
 /**
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
+
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
 */
 const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
+
 /**
 * outputs if extra info is not available on machine and SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO is true
 */
 const std::string NOT_SUPPORTED_STRING = "-not supported-";
+
 /**
 * If saving to file, this defines the filename
 */
 const std::string LOG_FILENAME = "myeasylog.log";
+
 /**
 * Flag to set whether to save log file in custom location
 */
 const bool USE_CUSTOM_LOCATION = false;
+
 /**
 * If using custom location, this is where custom location is picked up from.
 * Note: This should end with last slash 
 */
 const std::string CUSTOM_LOG_FILE_LOCATION = "";
+
+/**
+ * Determines whether to show log when starting any time tracked function
+ */
+const bool SHOW_START_FUNCTION_LOG = true;
 
 ```
 

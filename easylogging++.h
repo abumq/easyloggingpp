@@ -32,48 +32,62 @@
 //////////////////////////////////////////////
 //     Configuration for logging           ///
 //////////////////////////////////////////////
+
 /**
 * Flag for showing log in standard output using std::cout
 */
 const bool SHOW_STD_OUTPUT = true;
+
 /**
 * Flag to set whether to save log to file
 */
 const bool SAVE_TO_FILE = true;
+
 /**
 * Flag to set whether to show date/time
 */
 const bool SHOW_DATE_TIME = true;
+
 /**
 * Flag to set whether to show which function logged the output (some compiler dont support this)
 */
 const bool SHOW_LOG_FUNCTION = false;
+
 /**
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
+
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
 */
 const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
+
 /**
 * outputs if extra info is not available on machine and SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO is true
 */
 const std::string NOT_SUPPORTED_STRING = "-not supported-";
+
 /**
 * If saving to file, this defines the filename
 */
 const std::string LOG_FILENAME = "myeasylog.log";
+
 /**
 * Flag to set whether to save log file in custom location
 */
 const bool USE_CUSTOM_LOCATION = false;
+
 /**
 * If using custom location, this is where custom location is picked up from.
 * Note: This should end with last slash 
 */
 const std::string CUSTOM_LOG_FILE_LOCATION = "";
 
+/**
+ * Determines whether to show log when starting any time tracked function
+ */
+const bool SHOW_START_FUNCTION_LOG = false;
 ////////////////////////////////////////////////////////////////////
 ///               END OF CONFIGURATION FOR LOGGING               ///
 ////////////////////////////////////////////////////////////////////
@@ -83,18 +97,16 @@ const bool EXTRA_INFO_ENABLED = SHOW_DATE_TIME || SHOW_LOG_FUNCTION || SHOW_LOG_
 static std::stringstream *streamForEasyLoggingPP;
 
 #ifndef __func__
-#define __func__ ((SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : "")
+ #define __func__ __PRETTY_FUNCTION__
 #endif
-
 #ifndef __TIMESTAMP__
-#define __TIMESTAMP__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+ #define __TIMESTAMP__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
 #ifndef __FILE__
-#define __FILE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+ #define __FILE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
-
 #ifndef __LINE__
-#define __LINE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+ #define __LINE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
 
 inline static void write(std::stringstream* logStream){
@@ -152,11 +164,12 @@ inline static void write(std::stringstream* logStream){
   #if _ENABLE_PERFORMANCE_LOGS
     #include <time.h>
     #define PERF(logStr) LOG("PERFORMANCE",logStr)
-    #define TIME_OUTPUT "Took " << difftime (end,start) << " seconds to execute " << __func__
-    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { time_t start,end; time(&start);
-    #define END_SUB time(&end); PERF(TIME_OUTPUT); }
-    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { RETURNING_TYPE resultToReturn; time_t start,end; time(&start);
-    #define END_FUNC time(&end); PERF(TIME_OUTPUT); return resultToReturn; }
+    #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
+    #define TIME_OUTPUT "Executed [" << __func__ << "] in [~" << difftime (functionEndTime,functionStartTime) << " seconds]"
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
+    #define END_SUB time(&functionEndTime); PERF(TIME_OUTPUT); }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } RETURNING_TYPE resultToReturn; time_t functionStartTime,functionEndTime; time(&functionStartTime);
+    #define END_FUNC time(&functionEndTime); PERF(TIME_OUTPUT); return resultToReturn; }
     #define RETURN(expr) resultToReturn = expr;
   #else
     #define PERF(x)

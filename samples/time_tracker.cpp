@@ -7,4 +7,5 @@ END_FUNC
 int main(void) {
    int result = sum(1,2);
    INFO("Result is " << result);
+   return 0;
 }
