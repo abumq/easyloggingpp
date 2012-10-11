@@ -17,7 +17,7 @@
 * 1 for enabled
 * 0 for disabled
 */
-#define _LOGGING_ENABLED 0
+#define _LOGGING_ENABLED 1
 
 #define _ENABLE_DEBUG_LOGS 1
 #define _ENABLE_INFO_LOGS 1
