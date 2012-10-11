@@ -166,11 +166,13 @@ inline static void write(std::stringstream* logStream){
     #define PERF(logStr) LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~" << difftime (functionEndTime,functionStartTime) << " seconds]"
-    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
-    #define END_SUB time(&functionEndTime); PERF(TIME_OUTPUT); }
-    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } RETURNING_TYPE resultToReturn; time_t functionStartTime,functionEndTime; time(&functionStartTime);
-    #define END_FUNC time(&functionEndTime); PERF(TIME_OUTPUT); return resultToReturn; }
-    #define RETURN(expr) resultToReturn = expr;
+    #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
+    #define FUNC_SUB_COMMON_END time(&functionEndTime); PERF(TIME_OUTPUT);
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
+    #define END_SUB FUNC_SUB_COMMON_END }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
+    #define END_FUNC FUNC_SUB_COMMON_END }
+    #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
   #else
     #define PERF(x)
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
