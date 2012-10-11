@@ -87,24 +87,26 @@ Sum of 1 and 2 is 3
  ```
 ##### Some Notes on Performance Logging
 * Make sure you have braces around `RETURN`
-```
+
+```C++
    if (condition) {
       RETURN(0);
    }
 ```
 * To exit a subroutine, do not call `return;` instead, use `RETURN()`
-```
+
+```C++
   if (condition) {
      RETURN();
   }
 ```
 * Use normal definition syntax for other types of functions
-```
+
+```C++
 inline FUNC(int,sqrt,(int numb))
    ...
 END_FUNC
-```
-```
+
 template <typename T>
 static FUNC(T,sum,(T a,T b))
    ...
