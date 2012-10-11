@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.1                                                 *
+*   EasyLogging++ v1.2                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -39,7 +39,7 @@ const bool SHOW_STD_OUTPUT = true;
 /**
 * Flag to set whether to save log to file
 */
-const bool SAVE_TO_FILE = false;
+const bool SAVE_TO_FILE = true;
 /**
 * Flag to set whether to show date/time
 */
@@ -102,7 +102,8 @@ inline static void write(std::stringstream* logStream){
         std::cout << logStream->str() << std::endl;
     }
     if (SAVE_TO_FILE) {
-        std::ofstream logFile((USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME,
+        std::string finalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
+        std::ofstream logFile(finalFilename.c_str(),
             std::ios::out | std::ios::app);
         logFile << logStream->str() << std::endl;
         logFile.close();

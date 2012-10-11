@@ -6,5 +6,5 @@ END_FUNC
 
 int main(void) {
    int result = sum(1,2);
-   INFO("result is " << result);
+   INFO("Result is " << result);
 }

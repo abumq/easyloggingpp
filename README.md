@@ -3,7 +3,7 @@ EasyLogging++
 
 Cross platform logging made easy for C++ applications.
 
-To use EasyLogging++ in your application, simple 
+To use EasyLogging++ in your application, simply:
 ```C++
 #include "easylogging++.h"
 ```
@@ -131,7 +131,7 @@ const std::string NOT_SUPPORTED_STRING = "-not supported-";
 /**
 * If saving to file, this defines the filename
 */
-const std::string LOG_FILENAME = "memory.log";
+const std::string LOG_FILENAME = "myeasylog.log";
 /**
 * Flag to set whether to save log file in custom location
 */
