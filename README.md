@@ -85,7 +85,32 @@ int main(void) {
 [PERFORMANCE] Took 0 seconds to execute sum
 Sum of 1 and 2 is 3
  ```
- 
+##### Some Notes on Performance Logging
+* Make sure you have braces around `RETURN`
+```
+   if (condition) {
+      RETURN(0);
+   }
+```
+* To exit a subroutine, do not call `return;` instead, use `RETURN()`
+```
+  if (condition) {
+     RETURN();
+  }
+```
+* Use normal definition syntax for other types of functions
+```
+inline FUNC(int,sqrt,(int numb))
+   ...
+END_FUNC
+```
+```
+template <typename T>
+static FUNC(T,sum,(T a,T b))
+   ...
+END_FUNC
+```
+
 Note: you have many other configurations to change your output. See following section for details
 
 ## Configuration
