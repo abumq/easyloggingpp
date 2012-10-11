@@ -50,11 +50,6 @@ const bool SAVE_TO_FILE = true;
 const bool SHOW_DATE_TIME = true;
 
 /**
-* Flag to set whether to show which function logged the output (some compiler dont support this)
-*/
-const bool SHOW_LOG_FUNCTION = false;
-
-/**
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
@@ -102,11 +97,8 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ///               END OF CONFIGURATION FOR LOGGING               ///
 ////////////////////////////////////////////////////////////////////
 
-const bool EXTRA_INFO_ENABLED = SHOW_DATE_TIME || SHOW_LOG_FUNCTION || SHOW_LOG_LOCATION;
+const bool EXTRA_INFO_ENABLED = SHOW_DATE_TIME || SHOW_LOG_LOCATION;
 static std::stringstream *streamForEasyLoggingPP;
-#ifndef __func__
- #define __func__ __PRETTY_FUNCTION__
-#endif
 #ifndef __TIMESTAMP__
  #define __TIMESTAMP__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
@@ -140,16 +132,14 @@ inline static void writeLogNow(void) {
     { streamForEasyLoggingPP = new std::stringstream(); } \
     (*streamForEasyLoggingPP) << "[" << type << "]";\
     if (SHOW_DATE_TIME) {\
-    (*streamForEasyLoggingPP) << " [" << __TIMESTAMP__ << "]";\
-    }\
-    if (SHOW_LOG_FUNCTION) {\
-    (*streamForEasyLoggingPP) << " [Func: "<< __func__ << "]";\
+      (*streamForEasyLoggingPP) << " [" << __TIMESTAMP__ << "]";\
     }\
     if (SHOW_LOG_LOCATION) {\
-    (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
+      (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
-    (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n" : "\t" ) << log;\
+      (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n" : "\t" ) << log;\
     writeLogNow();
+ 
   #if _ENABLE_DEBUG_LOGS
     #define DEBUG(logStr) LOG("DEBUG",logStr)
   #else
