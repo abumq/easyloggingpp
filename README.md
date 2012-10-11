@@ -37,7 +37,7 @@ EasyLogging++ comes with six levels of logging:
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` and `SHOW_LOG_FUNCTION` set to false
+###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
@@ -49,7 +49,7 @@ Now the value has changed from 0 to 1
 End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION` but and `SHOW_LOG_FUNCTION` set to false
+###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION`
 ```
 [DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
