@@ -9,11 +9,14 @@ To use EasyLogging++ in your application, simply:
 ```
 
 When ever you are writing code you may call any of five macros for logging
- * DEBUG(...)
- * INFO(...)
- * WARN(...)
- * ERR(...)
- * PERF(...)
+```
+  DEBUG(...)
+  INFO(...)
+  WARN(...)
+  ERROR(...)
+  FATAL(...)
+  PERF(...)
+```
 
 ## Examples
 #### Basic Logging
@@ -123,6 +126,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * _ENABLE_INFO_LOGS macro enables or disables info logs. 
 * _ENABLE_WARNING_LOGS macro enables or disables warning logs. 
 * _ENABLE_ERROR_LOGS macro enables or disables error logs. 
+* _ENABLE_FATAL_LOGS macro enables or disables fatal logs. 
 * _ENABLE_PERFORMANCE_LOGS macro enables or disables performance logs. 
 
 #### Other Configurations
@@ -185,4 +189,14 @@ const std::string CUSTOM_LOG_FILE_LOCATION = "";
 const bool SHOW_START_FUNCTION_LOG = true;
 
 ```
+USEFUL LINKS
+============
+[Home](http://icplusplus.com/tools/easylogging/)
+[Download](http://icplusplus.com/tools/easylogging/easyloggingpp.zip)
 
+LICENSE
+=======
+```
+This program is free software: you can redistribute it and/or modify it under the terms of the 
+GNU General Public License as published by the Free Software Foundation, version 3 of the License.
+```

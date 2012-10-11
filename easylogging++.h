@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.3                                                 *
+*   EasyLogging++ v1.5                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -23,6 +23,7 @@
 #define _ENABLE_INFO_LOGS 1
 #define _ENABLE_WARNING_LOGS 1
 #define _ENABLE_ERROR_LOGS 1
+#define _ENABLE_FATAL_LOGS 1
 #define _ENABLE_PERFORMANCE_LOGS 1
 
 #if _LOGGING_ENABLED
@@ -76,26 +77,33 @@ const std::string LOG_FILENAME = "myeasylog.log";
 /**
 * Flag to set whether to save log file in custom location
 */
-const bool USE_CUSTOM_LOCATION = false;
+const bool USE_CUSTOM_LOCATION = true;
 
 /**
 * If using custom location, this is where custom location is picked up from.
-* Note: This should end with last slash 
+* Note: This should end with last slash.
+* Example valid paths:
+*     /home/dev_linux/logs/
+*     ../../my_logs/
+*     logs/
+*     D:\\My_Dev_Windows\\Logs\\
+* Example invalid paths:
+*     ~/logs/
+*     C:\
 */
-const std::string CUSTOM_LOG_FILE_LOCATION = "";
+const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
 
 /**
  * Determines whether to show log when starting any time tracked function
  */
 const bool SHOW_START_FUNCTION_LOG = false;
+
 ////////////////////////////////////////////////////////////////////
 ///               END OF CONFIGURATION FOR LOGGING               ///
 ////////////////////////////////////////////////////////////////////
 
-
 const bool EXTRA_INFO_ENABLED = SHOW_DATE_TIME || SHOW_LOG_FUNCTION || SHOW_LOG_LOCATION;
 static std::stringstream *streamForEasyLoggingPP;
-
 #ifndef __func__
  #define __func__ __PRETTY_FUNCTION__
 #endif
@@ -108,59 +116,65 @@ static std::stringstream *streamForEasyLoggingPP;
 #ifndef __LINE__
  #define __LINE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
-
-inline static void write(std::stringstream* logStream){
+inline static void writeLogNow(void) {
     if (SHOW_STD_OUTPUT) {
-        std::cout << logStream->str() << std::endl;
+        std::cout << streamForEasyLoggingPP->str() << std::endl;
     }
     if (SAVE_TO_FILE) {
         std::string finalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
         std::ofstream logFile(finalFilename.c_str(),
             std::ios::out | std::ios::app);
-        logFile << logStream->str() << std::endl;
-        logFile.close();
+        if (logFile.is_open()) {
+            logFile << streamForEasyLoggingPP->str() << std::endl;
+            logFile.close();
+        } else {
+            /* error opening log file */
+        }
     }
-    delete logStream;
-    logStream = 0;
+    if (streamForEasyLoggingPP != 0) {
+        delete streamForEasyLoggingPP;
+        streamForEasyLoggingPP = 0;
+    }
 }
-#define LOG(type,log) streamForEasyLoggingPP = new std::stringstream();\
-    (*streamForEasyLoggingPP)<<"[" << type << "]";\
+#define LOG(type,log) if (streamForEasyLoggingPP == 0) \
+    { streamForEasyLoggingPP = new std::stringstream(); } \
+    (*streamForEasyLoggingPP) << "[" << type << "]";\
     if (SHOW_DATE_TIME) {\
-    (*streamForEasyLoggingPP) << " ["<< __TIMESTAMP__ <<"]";\
+    (*streamForEasyLoggingPP) << " [" << __TIMESTAMP__ << "]";\
     }\
     if (SHOW_LOG_FUNCTION) {\
-    (*streamForEasyLoggingPP) << " [Func: "<< __func__ <<"]";\
+    (*streamForEasyLoggingPP) << " [Func: "<< __func__ << "]";\
     }\
     if (SHOW_LOG_LOCATION) {\
-    (*streamForEasyLoggingPP) << " ["<< __FILE__ <<":"<< __LINE__ <<"]";\
+    (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
     (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n" : "\t" ) << log;\
-    write(streamForEasyLoggingPP);
-
+    writeLogNow();
   #if _ENABLE_DEBUG_LOGS
     #define DEBUG(logStr) LOG("DEBUG",logStr)
   #else
     #define DEBUG(x)
   #endif//_ENABLE_DEBUG_LOGS
-
   #if _ENABLE_INFO_LOGS
     #define INFO(logStr) LOG("INFO",logStr)
   #else
     #define INFO(x)
   #endif//_ENABLE_INFO_LOGS
-
   #if _ENABLE_WARNING_LOGS
     #define WARN(logStr) LOG("WARN",logStr)
   #else
     #define WARNING(x)
   #endif//_ENABLE_WARNING_LOGS
-
   #if _ENABLE_ERROR_LOGS
-    #define ERR(logStr) LOG("ERROR",logStr)
+    #define ERROR(logStr) LOG("ERROR",logStr)
   #else
-    #define ERR(x)
+    #define ERROR(x)
   #endif//_ENABLE_ERROR_LOGS
-
+  #if _ENABLE_FATAL_LOGS
+    #define FATAL(logStr) LOG("FATAL",logStr)
+  #else
+    #define FATAL(x)
+  #endif//_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
     #include <time.h>
     #define PERF(logStr) LOG("PERFORMANCE",logStr)
@@ -185,7 +199,8 @@ inline static void write(std::stringstream* logStream){
   #define DEBUG(x)
   #define INFO(x)
   #define WARN(x)
-  #define ERR(x)
+  #define ERROR(x)
+  #define FATAL(x)
   #define PERF(x)
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
@@ -193,5 +208,4 @@ inline static void write(std::stringstream* logStream){
   #define END_FUNC }
   #define RETURN(expr) return expr;
 #endif //_LOGGING
-
 #endif //EasyLoggingPP_LOGGING_H

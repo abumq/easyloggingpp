@@ -1,0 +1,4 @@
+[PERFORMANCE] [Thu Oct 11 19:01:11 2012] [./time_tracker.cpp:4]
+Executed [int sum(int, int)] in [~0 seconds]
+[INFO] [Thu Oct 11 19:01:11 2012] [./time_tracker.cpp:9]
+Result is 3
