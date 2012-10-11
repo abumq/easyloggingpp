@@ -148,11 +148,6 @@ const bool SAVE_TO_FILE = true;
 const bool SHOW_DATE_TIME = false;
 
 /**
-* Flag to set whether to show which function logged the output (some compiler dont support this)
-*/
-const bool SHOW_LOG_FUNCTION = false;
-
-/**
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
