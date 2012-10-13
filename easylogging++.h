@@ -55,6 +55,11 @@ const bool SHOW_DATE_TIME = true;
 const bool SHOW_LOG_LOCATION = true;
 
 /**
+* Flag to set whether to show which file logged the output and what line
+*/
+const bool SHOW_LOG_FUNCTION = true;
+
+/**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
 */
 const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
@@ -141,6 +146,9 @@ inline static void writeLogNow(void) {
     if (SHOW_DATE_TIME) {\
       (*streamForEasyLoggingPP) << " [" << __TIMESTAMP__ << "]";\
     }\
+	if (SHOW_LOG_FUNCTION) {\
+      (*streamForEasyLoggingPP) << " [Function: " << __func__ << "]";\
+    }\
     if (SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
@@ -204,5 +212,5 @@ inline static void writeLogNow(void) {
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
-#endif //_LOGGING
+#endif //_LOGGING_ENABLED
 #endif //EasyLoggingPP_LOGGING_H
