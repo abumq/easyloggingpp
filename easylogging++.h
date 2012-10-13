@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.5                                                 *
+*   EasyLogging++ v1.6                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -107,6 +107,13 @@ static std::stringstream *streamForEasyLoggingPP;
 #endif
 #ifndef __LINE__
  #define __LINE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+#endif
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+ #define __func__ __FUNCTION__
+#elif __GNUC__ >= 2
+ #define __func__ __PRETTY_FUNCTION__
+#else
+ #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
 inline static void writeLogNow(void) {
     if (SHOW_STD_OUTPUT) {
