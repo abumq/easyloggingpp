@@ -115,7 +115,7 @@ static std::stringstream *streamForEasyLoggingPP;
 #endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
  #define __func__ __FUNCTION__
-#elif __GNUC__ >= 2
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
  #define __func__ __PRETTY_FUNCTION__
 #else
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""

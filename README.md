@@ -37,7 +37,7 @@ EasyLogging++ comes with six levels of logging:
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` set to false
+###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` and `SHOW_LOG_FUNCTION` set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
@@ -49,7 +49,7 @@ Now the value has changed from 0 to 1
 End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION`
+###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION` but `SHOW_LOG_FUNCTION` set to false
 ```
 [DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:3]
 Staring my EasyLogging++ program
@@ -61,7 +61,19 @@ Now the value has changed from 0 to 1
 End of my EasyLogging++ program
 
 ```
+###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` 
+```
+[DEBUG] [Sun Sep 23 14:34:38 2012] [Function: main] [/home/easyloggertest/main.cpp:3]
+Staring my EasyLogging++ program
+[INFO] [Sun Sep 23 14:34:38 2012] [Function: main] [/home/easyloggertest/main.cpp:5]
+Current value is 0
+[INFO] [Sun Sep 23 14:34:38 2012] [Function: main] [/home/easyloggertest/main.cpp:6]
+Now the value has changed from 0 to 1
+[DEBUG] [Sun Sep 23 14:34:38 2012] [Function: main] [/home/easyloggertest/main.cpp:7]
+End of my EasyLogging++ program
 
+```
+Note: `SHOW_LOG_FUNCTION` depends on compiler and is supported by Visual C++ and GNU C >= 2 only
 #### Performance Logging
  ```C++
  #include "easylogging++.h"
