@@ -55,7 +55,7 @@ const bool SHOW_DATE_TIME = true;
 const bool SHOW_LOG_LOCATION = true;
 
 /**
-* Flag to set whether to show which file logged the output and what line
+* Flag to set whether to show which function logged the output and what line
 */
 const bool SHOW_LOG_FUNCTION = true;
 

@@ -165,6 +165,11 @@ const bool SHOW_DATE_TIME = false;
 const bool SHOW_LOG_LOCATION = true;
 
 /**
+* Flag to set whether to show which function logged the output and what line
+*/
+const bool SHOW_LOG_FUNCTION = true;
+
+/**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
 */
 const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
