@@ -100,7 +100,8 @@ int main(void) {
 [PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
 Sum of 1 and 2 is 3
  ```
-Please note, the function name varies from compiler to compiler. Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
+Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`
+Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
 
 ##### Some Notes on Performance Logging
 * Make sure you have braces around `RETURN`
