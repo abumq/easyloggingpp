@@ -133,13 +133,13 @@ Note: you have many other configurations to change your output. See following se
 ## Configuration
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure.
 
-* _LOGGING_ENABLED macro enables or disables logging. 
-* _ENABLE_DEBUG_LOGS macro enables or disables debugging logs. 
-* _ENABLE_INFO_LOGS macro enables or disables info logs. 
-* _ENABLE_WARNING_LOGS macro enables or disables warning logs. 
-* _ENABLE_ERROR_LOGS macro enables or disables error logs. 
-* _ENABLE_FATAL_LOGS macro enables or disables fatal logs. 
-* _ENABLE_PERFORMANCE_LOGS macro enables or disables performance logs. 
+* `_LOGGING_ENABLED` macro enables or disables logging. 
+* `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs. 
+* `_ENABLE_INFO_LOGS` macro enables or disables info logs. 
+* `_ENABLE_WARNING_LOGS` macro enables or disables warning logs. 
+* `_ENABLE_ERROR_LOGS` macro enables or disables error logs. 
+* `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs. 
+* `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs. 
 
 #### Other Configurations
 ```C++
