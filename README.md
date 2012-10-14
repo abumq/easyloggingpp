@@ -133,13 +133,13 @@ Note: you have many other configurations to change your output. See following se
 ## Configuration
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure.
 
-* `_LOGGING_ENABLED` macro enables or disables logging (0 for disable 1 for enable)
-* `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs (0 for disable 1 for enable)
-* `_ENABLE_INFO_LOGS` macro enables or disables info logs (0 for disable 1 for enable)
-* `_ENABLE_WARNING_LOGS` macro enables or disables warning logs (0 for disable 1 for enable)
-* `_ENABLE_ERROR_LOGS` macro enables or disables error logs (0 for disable 1 for enable)
-* `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (0 for disable 1 for enable)
-* `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (0 for disable 1 for enable)
+* `_LOGGING_ENABLED` macro enables or disables logging (`0` for disable `1` for enable)
+* `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs (`0` for disable `1` for enable)
+* `_ENABLE_INFO_LOGS` macro enables or disables info logs (`0` for disable `1` for enable)
+* `_ENABLE_WARNING_LOGS` macro enables or disables warning logs (`0` for disable `1` for enable)
+* `_ENABLE_ERROR_LOGS` macro enables or disables error logs (`0` for disable `1` for enable)
+* `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (`0` for disable `1` for enable)
+* `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
 
 #### Other Configurations
 ```C++
