@@ -96,10 +96,12 @@ int main(void) {
 ###### Output
  ```
  this is test
-[PERFORMANCE] Took 0 seconds to execute print
-[PERFORMANCE] Took 0 seconds to execute sum
+[PERFORMANCE] Executed [void print(string)] in [~0 seconds]
+[PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
 Sum of 1 and 2 is 3
  ```
+Please note, the function name varies from compiler to compiler. Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
+
 ##### Some Notes on Performance Logging
 * Make sure you have braces around `RETURN`
 
