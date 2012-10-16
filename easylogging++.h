@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.6                                                 *
+*   EasyLogging++ v1.7                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -10,8 +10,8 @@
 * it under the terms of the GNU General Public License as published by *
 * the Free Software Foundation, version 3 of the License.              *
 \***********************************************************************/
-#ifndef EasyLoggingPP_LOGGING_H
-#define EasyLoggingPP_LOGGING_H
+#ifndef EASYLOGGINGPP_H
+#define EASYLOGGINGPP_H
 
 /**
 * 1 for enabled
@@ -45,9 +45,14 @@ const bool SHOW_STD_OUTPUT = true;
 const bool SAVE_TO_FILE = true;
 
 /**
-* Flag to set whether to show date/time
+* Flag to set whether to show date
 */
-const bool SHOW_DATE_TIME = true;
+const bool SHOW_DATE = false;
+
+/**
+ * Flag to set whether to show time
+*/
+const bool SHOW_TIME = true;
 
 /**
 * Flag to set whether to show which file logged the output and what line
@@ -72,7 +77,7 @@ const std::string LOG_FILENAME = "myeasylog.log";
 /**
 * Flag to set whether to save log file in custom location
 */
-const bool USE_CUSTOM_LOCATION = true;
+const bool USE_CUSTOM_LOCATION = false;
 
 /**
 * If using custom location, this is where custom location is picked up from.
@@ -97,10 +102,13 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ///               END OF CONFIGURATION FOR LOGGING               ///
 ////////////////////////////////////////////////////////////////////
 
-const bool EXTRA_INFO_ENABLED = SHOW_DATE_TIME || SHOW_LOG_LOCATION;
+const bool EXTRA_INFO_ENABLED = SHOW_DATE || SHOW_TIME || SHOW_LOG_LOCATION || SHOW_LOG_FUNCTION;
 static std::stringstream *streamForEasyLoggingPP;
-#ifndef __TIMESTAMP__
- #define __TIMESTAMP__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+#ifndef __DATE__
+ #define __DATE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
+#endif
+#ifndef __TIME__
+ #define __TIME__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
 #ifndef __FILE__
  #define __FILE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
@@ -122,7 +130,7 @@ inline static void writeLogNow(void) {
     if (SAVE_TO_FILE) {
         std::string finalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
         std::ofstream logFile(finalFilename.c_str(),
-            std::ios::out | std::ios::app);
+            std::ofstream::out | std::ofstream::app);
         if (logFile.is_open()) {
             logFile << streamForEasyLoggingPP->str() << std::endl;
             logFile.close();
@@ -138,8 +146,18 @@ inline static void writeLogNow(void) {
 #define LOG(type,log) if (streamForEasyLoggingPP == 0) \
     { streamForEasyLoggingPP = new std::stringstream(); } \
     (*streamForEasyLoggingPP) << "[" << type << "]";\
-    if (SHOW_DATE_TIME) {\
-      (*streamForEasyLoggingPP) << " [" << __TIMESTAMP__ << "]";\
+    if (SHOW_DATE || SHOW_TIME) {\
+      (*streamForEasyLoggingPP) << " [";\
+      if (SHOW_DATE) {\
+        (*streamForEasyLoggingPP) << __DATE__;\
+      }\
+     if (SHOW_TIME) {\
+       if (SHOW_DATE) {\
+         (*streamForEasyLoggingPP) << " ";\
+       }\
+       (*streamForEasyLoggingPP) << __TIME__;\
+     }\
+     (*streamForEasyLoggingPP) << "]";\
     }\
     if (SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
@@ -173,7 +191,7 @@ inline static void writeLogNow(void) {
     #define FATAL(x)
   #endif//_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
-    #include <time.h>
+    #include <ctime>
     #define PERF(logStr) LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~" << difftime (functionEndTime,functionStartTime) << " seconds]"
@@ -204,5 +222,5 @@ inline static void writeLogNow(void) {
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
-#endif //_LOGGING
-#endif //EasyLoggingPP_LOGGING_H
+#endif //_LOGGING_ENABLED
+#endif //EASYLOGGINGPP_H
