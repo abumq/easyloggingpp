@@ -15,7 +15,7 @@ EasyLogging++ comes with six levels of logging:
   WARN(...)
   ERROR(...)
   FATAL(...)
-  PERF(...)
+  PERFORMANCE(...)
 ```
 
 ## Examples
@@ -37,31 +37,43 @@ EasyLogging++ comes with six levels of logging:
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output with `SHOW_LOG_LOCATION` but `SHOW_DATE_TIME` set to false
+###### Output with `SHOW_LOG_LOCATION` but `SHOW_TIME`, `SHOW_DATE` and `SHOW_LOG_FUNCTION` set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
-Staring my EasyLogging++ program
+    Staring my EasyLogging++ program
 [INFO] [/home/easyloggertest/main.cpp:5]
-Current value is 0
+    Current value is 0
 [INFO] [/home/easyloggertest/main.cpp:6]
-Now the value has changed from 0 to 1
+    Now the value has changed from 0 to 1
 [DEBUG] [/home/easyloggertest/main.cpp:7]
-End of my EasyLogging++ program
+    End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_DATE_TIME`, `SHOW_LOG_LOCATION`
+###### Output with `SHOW_TIME`, `SHOW_LOG_LOCATION` but `SHOW_DATE` and `SHOW_LOG_FUNCTION` set to false
 ```
-[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:3]
-Staring my EasyLogging++ program
-[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:5]
-Current value is 0
-[INFO] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:6]
-Now the value has changed from 0 to 1
-[DEBUG] [Sun Sep 23 14:34:38 2012] [/home/easyloggertest/main.cpp:7]
-End of my EasyLogging++ program
+[DEBUG] [14:34:38] [/home/easyloggertest/main.cpp:3]
+    Staring my EasyLogging++ program
+[INFO] [14:34:38] [/home/easyloggertest/main.cpp:5]
+    Current value is 0
+[INFO] [14:34:38] [/home/easyloggertest/main.cpp:6]
+    Now the value has changed from 0 to 1
+[DEBUG] [14:34:38] [/home/easyloggertest/main.cpp:7]
+    End of my EasyLogging++ program
 
 ```
+###### Output with `SHOW_DATE`, `SHOW_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` 
+```
+[DEBUG] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:3]
+    Staring my EasyLogging++ program
+[INFO] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:5]
+    Current value is 0
+[INFO] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:6]
+    Now the value has changed from 0 to 1
+[DEBUG] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:7]
+    End of my EasyLogging++ program
 
+```
+Note: `SHOW_LOG_FUNCTION` depends on compiler and is supported by Visual C++ and GNU C >= 2 only
 #### Performance Logging
  ```C++
  #include "easylogging++.h"
@@ -84,10 +96,14 @@ int main(void) {
 ###### Output
  ```
  this is test
-[PERFORMANCE] Took 0 seconds to execute print
-[PERFORMANCE] Took 0 seconds to execute sum
+[PERFORMANCE] Executed [void print(string)] in [~0 seconds]
+[PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
 Sum of 1 and 2 is 3
  ```
+Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
+
+Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
+
 ##### Some Notes on Performance Logging
 * Make sure you have braces around `RETURN`
 
@@ -121,13 +137,15 @@ Note: you have many other configurations to change your output. See following se
 ## Configuration
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure.
 
-* _LOGGING_ENABLED macro enables or disables logging. 
-* _ENABLE_DEBUG_LOGS macro enables or disables debugging logs. 
-* _ENABLE_INFO_LOGS macro enables or disables info logs. 
-* _ENABLE_WARNING_LOGS macro enables or disables warning logs. 
-* _ENABLE_ERROR_LOGS macro enables or disables error logs. 
-* _ENABLE_FATAL_LOGS macro enables or disables fatal logs. 
-* _ENABLE_PERFORMANCE_LOGS macro enables or disables performance logs. 
+* `_LOGGING_ENABLED` macro enables or disables logging (`0` for disable `1` for enable)
+* `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs (`0` for disable `1` for enable)
+* `_ENABLE_INFO_LOGS` macro enables or disables info logs (`0` for disable `1` for enable)
+* `_ENABLE_WARNING_LOGS` macro enables or disables warning logs (`0` for disable `1` for enable)
+* `_ENABLE_ERROR_LOGS` macro enables or disables error logs (`0` for disable `1` for enable)
+* `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (`0` for disable `1` for enable)
+* `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
+
+*Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
 
 #### Other Configurations
 ```C++
@@ -143,14 +161,24 @@ const bool SHOW_STD_OUTPUT = true;
 const bool SAVE_TO_FILE = true;
 
 /**
-* Flag to set whether to show date/time
+* Flag to set whether to show date
 */
-const bool SHOW_DATE_TIME = false;
+const bool SHOW_DATE = false;
+
+/**
+* Flag to set whether to show time
+*/
+const bool SHOW_TIME = true;
 
 /**
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
+
+/**
+* Flag to set whether to show which function logged the output and what line
+*/
+const bool SHOW_LOG_FUNCTION = true;
 
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine

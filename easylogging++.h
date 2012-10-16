@@ -47,7 +47,7 @@ const bool SAVE_TO_FILE = true;
 /**
 * Flag to set whether to show date
 */
-const bool SHOW_DATE = false;
+const bool SHOW_DATE = true;
 
 /**
  * Flag to set whether to show time
@@ -58,6 +58,11 @@ const bool SHOW_TIME = true;
 * Flag to set whether to show which file logged the output and what line
 */
 const bool SHOW_LOG_LOCATION = true;
+
+/**
+* Flag to set whether to show which function logged the output
+*/
+const bool SHOW_LOG_FUNCTION = true;
 
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
@@ -118,7 +123,7 @@ static std::stringstream *streamForEasyLoggingPP;
 #endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
  #define __func__ __FUNCTION__
-#elif __GNUC__ >= 2
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
  #define __func__ __PRETTY_FUNCTION__
 #else
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
@@ -159,10 +164,13 @@ inline static void writeLogNow(void) {
      }\
      (*streamForEasyLoggingPP) << "]";\
     }\
+	if (SHOW_LOG_FUNCTION) {\
+      (*streamForEasyLoggingPP) << " [Function: " << __func__ << "]";\
+    }\
     if (SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
-      (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n" : "\t" ) << log;\
+      (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n\t" : "\t" ) << log;\
     writeLogNow();
  
   #if _ENABLE_DEBUG_LOGS
@@ -192,31 +200,31 @@ inline static void writeLogNow(void) {
   #endif//_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
     #include <ctime>
-    #define PERF(logStr) LOG("PERFORMANCE",logStr)
+    #define PERFORMANCE(logStr) LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~" << difftime (functionEndTime,functionStartTime) << " seconds]"
-    #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERF(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
-    #define FUNC_SUB_COMMON_END time(&functionEndTime); PERF(TIME_OUTPUT);
+    #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
+    #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
     #define END_SUB FUNC_SUB_COMMON_END }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
     #define END_FUNC FUNC_SUB_COMMON_END }
     #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
   #else
-    #define PERF(x)
+    #define PERFORMANCE(x)
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
     #define END_SUB }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
     #define END_FUNC }
     #define RETURN(expr) return expr;
-  #endif //_ENABLE_PERFORMACE_LOGS
+  #endif //_ENABLE_PERFORMANCE_LOGS
 #else
   #define DEBUG(x)
   #define INFO(x)
   #define WARN(x)
   #define ERROR(x)
   #define FATAL(x)
-  #define PERF(x)
+  #define PERFORMANCE(x)
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
