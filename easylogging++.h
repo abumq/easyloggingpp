@@ -1,6 +1,6 @@
 /************************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v1.7                                                 *
+*   EasyLogging++ v2.0                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -20,11 +20,28 @@
 #define _LOGGING_ENABLED 1
 
 #define _ENABLE_DEBUG_LOGS 1
+#define _DEBUG_LOGS_TO_STANDARD_OUTPUT 1
+#define _DEBUG_LOGS_TO_FILE 1
+
 #define _ENABLE_INFO_LOGS 1
-#define _ENABLE_WARNING_LOGS 1
-#define _ENABLE_ERROR_LOGS 1
-#define _ENABLE_FATAL_LOGS 1
+#define _INFO_LOGS_TO_STANDARD_OUTPUT 1
+#define _INFO_LOGS_TO_FILE 1
+
+#define _ENABLE_WARNING_LOGS 1 
+#define _WARNING_LOGS_TO_STANDARD_OUTPUT 1
+#define _WARNING_LOGS_TO_FILE 1
+
+#define _ENABLE_ERROR_LOGS 1 
+#define _ERROR_LOGS_TO_STANDARD_OUTPUT 1
+#define _ERROR_LOGS_TO_FILE 1
+
+#define _ENABLE_FATAL_LOGS 1 
+#define _FATAL_LOGS_TO_STANDARD_OUTPUT 1
+#define _FATAL_LOGS_TO_FILE 1
+
 #define _ENABLE_PERFORMANCE_LOGS 1
+#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 1
+#define _PERFORMANCE_LOGS_TO_FILE 1
 
 #if _LOGGING_ENABLED
 #include <iostream>
@@ -82,7 +99,7 @@ const std::string LOG_FILENAME = "myeasylog.log";
 /**
 * Flag to set whether to save log file in custom location
 */
-const bool USE_CUSTOM_LOCATION = false;
+const bool USE_CUSTOM_LOCATION = true;
 
 /**
 * If using custom location, this is where custom location is picked up from.
@@ -109,6 +126,8 @@ const bool SHOW_START_FUNCTION_LOG = false;
 
 const bool EXTRA_INFO_ENABLED = SHOW_DATE || SHOW_TIME || SHOW_LOG_LOCATION || SHOW_LOG_FUNCTION;
 static std::stringstream *streamForEasyLoggingPP;
+static bool ELPPtoStdOut;
+static bool ELPPtoFile;
 #ifndef __DATE__
  #define __DATE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
@@ -128,11 +147,11 @@ static std::stringstream *streamForEasyLoggingPP;
 #else
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
-inline static void writeLogNow(void) {
-    if (SHOW_STD_OUTPUT) {
+inline static void writeLogNow() {
+    if (SHOW_STD_OUTPUT && ELPPtoStdOut) {
         std::cout << streamForEasyLoggingPP->str() << std::endl;
     }
-    if (SAVE_TO_FILE) {
+    if (SAVE_TO_FILE && ELPPtoFile) {
         std::string finalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
         std::ofstream logFile(finalFilename.c_str(),
             std::ofstream::out | std::ofstream::app);
@@ -171,6 +190,12 @@ inline static void writeLogNow(void) {
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
       (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n\t" : "\t" ) << log;\
+      if (type == "DEBUG") {ELPPtoStdOut = _DEBUG_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _DEBUG_LOGS_TO_FILE;}\
+      if (type == "INFO") {ELPPtoStdOut = _INFO_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _INFO_LOGS_TO_FILE;}\
+      if (type == "WARNING") {ELPPtoStdOut = _WARNING_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _WARNING_LOGS_TO_FILE;}\
+      if (type == "ERROR") {ELPPtoStdOut = _ERROR_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _ERROR_LOGS_TO_FILE;}\
+      if (type == "FATAL") {ELPPtoStdOut = _FATAL_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _FATAL_LOGS_TO_FILE;}\
+      if (type == "PERFORMANCE") {ELPPtoStdOut = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _PERFORMANCE_LOGS_TO_FILE;}\
     writeLogNow();
  
   #if _ENABLE_DEBUG_LOGS
