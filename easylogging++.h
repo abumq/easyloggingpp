@@ -184,12 +184,12 @@ inline static void writeLogNow() {
      (*streamForEasyLoggingPP) << "]";\
     }\
 	if (SHOW_LOG_FUNCTION) {\
-      (*streamForEasyLoggingPP) << " [Function: " << __func__ << "]";\
+      (*streamForEasyLoggingPP) << " [" << __func__ << "]";\
     }\
     if (SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
-      (*streamForEasyLoggingPP) << (EXTRA_INFO_ENABLED ? "\n\t" : "\t" ) << log;\
+      (*streamForEasyLoggingPP) << " " << log;\
       if (type == "DEBUG") {ELPPtoStdOut = _DEBUG_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _DEBUG_LOGS_TO_FILE;}\
       if (type == "INFO") {ELPPtoStdOut = _INFO_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _INFO_LOGS_TO_FILE;}\
       if (type == "WARNING") {ELPPtoStdOut = _WARNING_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _WARNING_LOGS_TO_FILE;}\
