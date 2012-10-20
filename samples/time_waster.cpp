@@ -1,18 +1,12 @@
 #include "../easylogging++.h"
 
-SUB(timeWaster,(int x,int y))
+SUB(timeWaster,(int x))
     for (int i = 0; i < x; i++) {
-      for (int j = 0; j < y; j++) {
-         //do nothing just waste time
-         if (i == 10000000 && j==99) {
-             INFO("i reached 10000000");
-             RETURN();
-         }
-      }
+      sleep(1);
     }
 END_SUB
 
 int main(void) {
-   timeWaster(10000000,100);
+   timeWaster(100);
    return 0;
 }

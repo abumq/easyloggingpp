@@ -1,6 +1,6 @@
-/************************************************************************\
+/***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.0                                                 *
+*   EasyLogging++ v2.1                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -47,6 +47,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <ctime>
 //////////////////////////////////////////////
 //     Configuration for logging           ///
 //////////////////////////////////////////////
@@ -128,12 +129,20 @@ const bool EXTRA_INFO_ENABLED = SHOW_DATE || SHOW_TIME || SHOW_LOG_LOCATION || S
 static std::stringstream *streamForEasyLoggingPP;
 static bool ELPPtoStdOut;
 static bool ELPPtoFile;
-#ifndef __DATE__
- #define __DATE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
-#endif
-#ifndef __TIME__
- #define __TIME__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
-#endif
+static char ELPPdateBuff[21];
+inline static std::string getELPPDateTime(void) {
+  if (!(SHOW_DATE || SHOW_TIME)) return "";
+  time_t rawtime;
+  struct tm * timeinfo;
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+  std::string format = "";
+  if (SHOW_DATE) format += "%d/%m/%Y";
+  if (SHOW_TIME) format += (std::string((SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
+  strftime (ELPPdateBuff,21,format.c_str(),timeinfo);
+  std::string buffStr(ELPPdateBuff);
+  return buffStr;
+}
 #ifndef __FILE__
  #define __FILE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
@@ -147,7 +156,7 @@ static bool ELPPtoFile;
 #else
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
-inline static void writeLogNow() {
+static void writeLogNow() {
     if (SHOW_STD_OUTPUT && ELPPtoStdOut) {
         std::cout << streamForEasyLoggingPP->str() << std::endl;
     }
@@ -171,20 +180,10 @@ inline static void writeLogNow() {
     { streamForEasyLoggingPP = new std::stringstream(); } \
     (*streamForEasyLoggingPP) << "[" << type << "]";\
     if (SHOW_DATE || SHOW_TIME) {\
-      (*streamForEasyLoggingPP) << " [";\
-      if (SHOW_DATE) {\
-        (*streamForEasyLoggingPP) << __DATE__;\
-      }\
-     if (SHOW_TIME) {\
-       if (SHOW_DATE) {\
-         (*streamForEasyLoggingPP) << " ";\
-       }\
-       (*streamForEasyLoggingPP) << __TIME__;\
-     }\
-     (*streamForEasyLoggingPP) << "]";\
+      (*streamForEasyLoggingPP) << " [" << getELPPDateTime() << "]";\
     }\
-	if (SHOW_LOG_FUNCTION) {\
-      (*streamForEasyLoggingPP) << " [Function: " << __func__ << "]";\
+    if (SHOW_LOG_FUNCTION) {\
+      (*streamForEasyLoggingPP) << " [" << __func__ << "]";\
     }\
     if (SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
@@ -224,10 +223,19 @@ inline static void writeLogNow() {
     #define FATAL(x)
   #endif//_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
-    #include <ctime>
+    inline static std::string formatELPPSeconds(double secs) {
+        double result = secs;
+        std::string unit = "seconds";
+        std::stringstream ss;
+        if (result > 60) {result /= 60; unit = "minutes";}
+        if (result > 60) {result /= 60; unit = "hours";}
+        if (result > 24) {result /= 24; unit = "days";}
+        ss << result << " " << unit;
+        return ss.str();
+    }
     #define PERFORMANCE(logStr) LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-    #define TIME_OUTPUT "Executed [" << __func__ << "] in [~" << difftime (functionEndTime,functionStartTime) << " seconds]"
+    #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << formatELPPSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
     #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
