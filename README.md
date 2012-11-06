@@ -8,7 +8,7 @@ To use EasyLogging++ in your application, simply:
 #include "easylogging++.h"
 ```
 
-EasyLogging++ comes with six levels of logging:
+EasyLogging++ comes with following levels of logging with complete control over each of the following:
 ```
   DEBUG(...)
   INFO(...)
@@ -16,6 +16,8 @@ EasyLogging++ comes with six levels of logging:
   ERROR(...)
   FATAL(...)
   PERFORMANCE(...)
+  HINT(...)
+  STATUS(...)
 ```
 
 ## Examples
@@ -149,7 +151,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 *Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
 
 #### Log Location By Log Level
-Since v2.0, EasyLogging++ has configuration for custom log locations, that means; for example you can choose to log `DEBUG`s to log file but not to standard output (e.g, terminal) while `INFO` to both standard output and log file.
+Since v2.0+, EasyLogging++ has configuration for custom log locations, that means; for example you can choose to log `DEBUG`s to log file but not to standard output (e.g, terminal) while `INFO` to both standard output and log file.
 This can be set by following configurations
 * `_DEBUG_LOGS_TO_STANDARD_OUTPUT` to enable/disable debug logs to be shown in standard output (`0` for disable `1` for enable)
 * `_DEBUG_LOGS_TO_FILE` to enable/disable saving debug logs to log file (`0` for disable `1` for enable)
