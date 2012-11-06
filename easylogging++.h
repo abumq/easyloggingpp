@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.1                                                 *
+*   EasyLogging++ v2.2                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -42,6 +42,18 @@
 #define _ENABLE_PERFORMANCE_LOGS 1
 #define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
 #define _PERFORMANCE_LOGS_TO_FILE 1
+
+#define _ENABLE_PERFORMANCE_LOGS 1
+#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
+#define _PERFORMANCE_LOGS_TO_FILE 1
+
+#define _ENABLE_HINTS 1
+#define _HINTS_TO_STANDARD_OUTPUT 0
+#define _HINTS_TO_FILE 1
+
+#define _ENABLE_STATUS 1
+#define _STATUS_TO_STANDARD_OUTPUT 0
+#define _STATUS_TO_FILE 1
 
 #if _LOGGING_ENABLED
 #include <iostream>
@@ -176,7 +188,7 @@ static void writeLogNow() {
         streamForEasyLoggingPP = 0;
     }
 }
-#define LOG(type,log) if (streamForEasyLoggingPP == 0) \
+#define WRITE_LOG(type,log) if (streamForEasyLoggingPP == 0) \
     { streamForEasyLoggingPP = new std::stringstream(); } \
     (*streamForEasyLoggingPP) << "[" << type << "]";\
     if (SHOW_DATE || SHOW_TIME) {\
@@ -195,30 +207,32 @@ static void writeLogNow() {
       if (type == "ERROR") {ELPPtoStdOut = _ERROR_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _ERROR_LOGS_TO_FILE;}\
       if (type == "FATAL") {ELPPtoStdOut = _FATAL_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _FATAL_LOGS_TO_FILE;}\
       if (type == "PERFORMANCE") {ELPPtoStdOut = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _PERFORMANCE_LOGS_TO_FILE;}\
+      if (type == "HINT") {ELPPtoStdOut = _HINTS_TO_STANDARD_OUTPUT; ELPPtoFile = _HINTS_TO_FILE;}\
+      if (type == "STATUS") {ELPPtoStdOut = _STATUS_TO_STANDARD_OUTPUT; ELPPtoFile = _STATUS_TO_FILE;}\
     writeLogNow();
  
   #if _ENABLE_DEBUG_LOGS
-    #define DEBUG(logStr) LOG("DEBUG",logStr)
+    #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
   #else
     #define DEBUG(x)
   #endif//_ENABLE_DEBUG_LOGS
   #if _ENABLE_INFO_LOGS
-    #define INFO(logStr) LOG("INFO",logStr)
+    #define INFO(logStr) WRITE_LOG("INFO",logStr)
   #else
     #define INFO(x)
   #endif//_ENABLE_INFO_LOGS
   #if _ENABLE_WARNING_LOGS
-    #define WARN(logStr) LOG("WARN",logStr)
+    #define WARN(logStr) WRITE_LOG("WARN",logStr)
   #else
     #define WARNING(x)
   #endif//_ENABLE_WARNING_LOGS
   #if _ENABLE_ERROR_LOGS
-    #define ERROR(logStr) LOG("ERROR",logStr)
+    #define ERROR(logStr) WRITE_LOG("ERROR",logStr)
   #else
     #define ERROR(x)
   #endif//_ENABLE_ERROR_LOGS
   #if _ENABLE_FATAL_LOGS
-    #define FATAL(logStr) LOG("FATAL",logStr)
+    #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
   #else
     #define FATAL(x)
   #endif//_ENABLE_FATAL_LOGS
@@ -235,7 +249,7 @@ static void writeLogNow() {
         ss << result << " " << unit;
         return ss.str();
     }
-    #define PERFORMANCE(logStr) LOG("PERFORMANCE",logStr)
+    #define PERFORMANCE(logStr) WRITE_LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << formatELPPSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
@@ -253,6 +267,16 @@ static void writeLogNow() {
     #define END_FUNC }
     #define RETURN(expr) return expr;
   #endif //_ENABLE_PERFORMANCE_LOGS
+  #if _ENABLE_HINTS
+    #define HINT(logStr) WRITE_LOG("HINT",logStr)
+  #else
+    #define HINT(x)
+  #endif
+  #if _ENABLE_STATUS
+    #define STATUS(logStr) WRITE_LOG("STATUS",logStr)
+  #else
+    #define STATUS(x)
+  #endif
 #else
   #define DEBUG(x)
   #define INFO(x)
@@ -260,6 +284,8 @@ static void writeLogNow() {
   #define ERROR(x)
   #define FATAL(x)
   #define PERFORMANCE(x)
+  #define HINT(x)
+  #define STATUS(x)
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
