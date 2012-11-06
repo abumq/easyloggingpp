@@ -147,6 +147,8 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_ERROR_LOGS` macro enables or disables error logs (`0` for disable `1` for enable)
 * `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (`0` for disable `1` for enable)
 * `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
+* `_ENABLE_HINTS` macro enables or disables hints (`0` for disable `1` for enable)
+* `_ENABLE_STATUS` macro enables or disables status logs (`0` for disable `1` for enable)
 
 *Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
 
@@ -165,6 +167,10 @@ This can be set by following configurations
 * `_FATAL_LOGS_TO_FILE` to enable/disable saving fatal logs to log file (`0` for disable `1` for enable)
 * `_PERFORMANCE_LOGS_TO_STANDARD_OUTPUT` to enable/disable performance logs to be shown in standard output (`0` for disable `1` for enable)
 * `_PERFORMANCE_LOGS_TO_FILE` to enable/disable saving performance logs to log file (`0` for disable `1` for enable)
+* `_HINTS_TO_STANDARD_OUTPUT` to enable/disable hints to be shown in standard output (`0` for disable `1` for enable)
+* `_HINTS_TO_FILE` to enable/disable saving hints to log file (`0` for disable `1` for enable)
+* `_STATUS_TO_STANDARD_OUTPUT` to enable/disable status logs to be shown in standard output (`0` for disable `1` for enable)
+* `_STATUS_TO_FILE` to enable/disable saving status logs to log file (`0` for disable `1` for enable)
 
 #### Other Configurations
 ```C++
