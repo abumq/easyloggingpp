@@ -23,9 +23,14 @@ if [ "$confirm" = "y" ];
 then
   sed -i "s/EasyLogging++ v[0-9]*.[0-9]*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
   sed -i "s/\$currentVersion = \"v[0-9]*.[0-9]*/\$currentVersion = \"v$NEW_VERSION/g" index.php
-  if [ -f "easyloggingpp_$NEW_VERSION.zip" ];
+  if [ -f "easyloggingpp_v$NEW_VERSION.zip" ];
   then
-    rm releases/easyloggingpp_$NEW_VERSION.zip
+    rm releases/easyloggingpp_v$NEW_VERSION.zip
   fi
-  zip releases/easyloggingpp_$NEW_VERSION.zip easylogging++.h
+  if [ -f "easyloggingpp.zip" ];
+  then
+    rm releases/easyloggingpp.zip
+  fi
+  zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h
+  zip easyloggingpp.zip easylogging++.h
 fi
