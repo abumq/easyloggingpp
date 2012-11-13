@@ -157,7 +157,7 @@ inline static std::string getELPPDateTime(void) {
   char* envDate = getenv("DATE");
   char* envTime = getenv("TIME");
   if ((envDate == NULL) || (envTime == NULL) || ((strcmp(envDate, "")) || (strcmp(envTime, "")))) {
-#endif
+#endif //_WIN32
     time_t rawtime;
     struct tm * timeinfo;
     time (&rawtime);
@@ -180,7 +180,7 @@ inline static std::string getELPPDateTime(void) {
       }
    }
   }
-#endif
+#endif //_WIN32
   std::string buffStr(ELPPdateBuff);
   return buffStr;
 }
@@ -207,7 +207,7 @@ static inline std::string getHostname(void) {
   char* hostname = getenv("COMPUTERNAME");
 #else
   char* hostname = getenv("HOSTNAME");
-#endif
+#endif //_WIN32
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
     return std::string("Unknown Host");
   } else {
@@ -268,27 +268,27 @@ static void writeLogNow() {
     #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
   #else
     #define DEBUG(x)
-  #endif//_ENABLE_DEBUG_LOGS
+  #endif //_ENABLE_DEBUG_LOGS
   #if _ENABLE_INFO_LOGS
     #define INFO(logStr) WRITE_LOG("INFO",logStr)
   #else
     #define INFO(x)
-  #endif//_ENABLE_INFO_LOGS
+  #endif //_ENABLE_INFO_LOGS
   #if _ENABLE_WARNING_LOGS
     #define WARN(logStr) WRITE_LOG("WARN",logStr)
   #else
     #define WARNING(x)
-  #endif//_ENABLE_WARNING_LOGS
+  #endif //_ENABLE_WARNING_LOGS
   #if _ENABLE_ERROR_LOGS
     #define ERROR(logStr) WRITE_LOG("ERROR",logStr)
   #else
     #define ERROR(x)
-  #endif//_ENABLE_ERROR_LOGS
+  #endif //_ENABLE_ERROR_LOGS
   #if _ENABLE_FATAL_LOGS
     #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
   #else
     #define FATAL(x)
-  #endif//_ENABLE_FATAL_LOGS
+  #endif //_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
     namespace easyloggingpp {
     inline static std::string formatELPPSeconds(double secs) {

@@ -39,7 +39,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output with `SHOW_LOG_LOCATION` but `SHOW_TIME`, `SHOW_DATE` and `SHOW_LOG_FUNCTION` set to false
+###### Output with `SHOW_LOG_LOCATION` but `SHOW_TIME`, `SHOW_DATE` and `SHOW_LOG_FUNCTION`, `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -51,7 +51,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
     End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_TIME`, `SHOW_LOG_LOCATION` but `SHOW_DATE` and `SHOW_LOG_FUNCTION` set to false
+###### Output with `SHOW_TIME`, `SHOW_LOG_LOCATION` but `SHOW_DATE` and `SHOW_LOG_FUNCTION`, `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
 ```
 [DEBUG] [14:34:38] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -63,7 +63,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
     End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_DATE`, `SHOW_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` 
+###### Output with `SHOW_DATE`, `SHOW_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` but `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
 ```
 [DEBUG] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -204,6 +204,16 @@ const bool SHOW_LOG_LOCATION = true;
 * Flag to set whether to show which function logged the output and what line
 */
 const bool SHOW_LOG_FUNCTION = true;
+
+/**
+* Flag to set whether to show username or not
+*/
+const bool SHOW_USERNAME = true;
+
+/**
+* Flag to set whether to show hostname or not
+*/
+const bool SHOW_HOSTNAME = true;
 
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
