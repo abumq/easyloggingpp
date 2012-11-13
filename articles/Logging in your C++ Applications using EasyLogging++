@@ -1,0 +1,128 @@
+[subtitle]What is logging[/subtitle]Logging essentially means systematic record. Keeping records of what ever you like while your application is running.[subtitle]What is EasyLogging++[/subtitle]EasyLogging++ is a lightest logging support for native C++ applications. It is platform independant. That means, whether you are writing code for operating systems like Windows, Linux, Android, Windows Phone 8, Symbian, Meego etc or using framework like Digia Qt (former Nokia Qt), Visual C++ (managed or unmanaged), Gtkmm etc or using compilers like GCC, Clang etc, you are covered anyway. EasyLogging++ will help you write logs as you go![subtitle]Why EasyLogging++[/subtitle]There are various reasons on why use EasyLogging++;
+* Native C++ support
+* No compiling needed (Based on one header that can be included)
+* Enabling/disabling logging will not cause compilation errors
+* Performance tracking
+* Multiple log levels
+* Very easy to use
+* Open source & Free![subtitle]EasyLogging++ Basics[/subtitle]To use EasyLogging++ in your application, you will first need to download the header. [link]http://tools.icplusplus.com/easylogging/[/link] to goto EasyLogging++ home page and download the latest header. Then you simply [cpp_code_no_line]#include "easylogging++.h"[/cpp_code], and you are all set to go! EasyLogging++ comes with following levels of logging with full control over each of them;
+[block] * DEBUG(...)
+ * INFO(...)
+ * WARN(...)
+ * ERROR(...)
+ * FATAL(...)
+ * PERFORMANCE(...)
+ * HINT(...)
+ * STATUS(...)[/block] 
+You can use basic streaming output using left shift operator to log any string, number or any thing that has [iblock]operator <<[/iblock] overridden.[subtitle]Examples[/subtitle]We have a very simple example program that is using this header[cpp_code_no_line] #include "easylogging++.h"
+ int main(void) {
+    DEBUG("Staring my EasyLogging++ program");
+    unsigned int i = 0;
+    INFO("Current value is " << i);
+    INFO("Now the value has changed from " << i++ << " to " << i);
+    DEBUG("End of my EasyLogging++ program");
+ }[/cpp_code]Notice the use of left shift operator inside the logging. We get different outputs depending upon your logging configuration, here are few typical output examples
+[cpp_code_no_line]:Output with no extra info;[DEBUG] Staring my EasyLogging++ program
+[INFO] Current value is 0
+[INFO] Now the value has changed from 0 to 1
+[DEBUG] End of my EasyLogging++ program[/cpp_code]
+[cpp_code_no_line]:Output with SHOW_LOG_LOCATION but SHOW_DATE, SHOW_TIME and SHOW_LOG_FUNCTION, SHOW_USERNAME, SHOW_HOSTNAME set to false;[DEBUG] [/home/easyloggertest/main.cpp:3]
+    Staring my EasyLogging++ program
+[INFO] [/home/easyloggertest/main.cpp:5]
+    Current value is 0
+[INFO] [/home/easyloggertest/main.cpp:6]
+    Now the value has changed from 0 to 1
+[DEBUG] [/home/easyloggertest/main.cpp:7]
+    End of my EasyLogging++ program[/cpp_code] [cpp_code_no_line]:Output with SHOW_TIME, SHOW_TIME, SHOW_LOG_LOCATION, SHOW_LOG_FUNCTION, SHOW_USERNAME, SHOW_HOSTNAME;[DEBUG] [Sun Sep 23 14:34:38 2012] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
+    Staring my EasyLogging++ program
+[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:5]
+    Current value is 0
+[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:6]
+    Now the value has changed from 0 to 1
+[DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:7]
+    End of my EasyLogging++ program[/cpp_code] [cpp_code_no_line]:Output with SHOW_DATE_TIME, SHOW_LOG_LOCATION but SHOW_LOG_FUNCTION, SHOW_USERNAME, SHOW_HOSTNAME set to false;[DEBUG] [Sep 23 2012 14:34:38] [/home/easyloggertest/main.cpp:3]
+    Staring my EasyLogging++ program
+[INFO] [Sep 23 2012 14:34:38] [/home/easyloggertest/main.cpp:5]
+    Current value is 0
+[INFO] [Sep 23 2012 14:34:38] [/home/easyloggertest/main.cpp:6]
+    Now the value has changed from 0 to 1
+[DEBUG] [Sep 23 2012 14:34:38] [/home/easyloggertest/main.cpp:7]
+    End of my EasyLogging++ program[/cpp_code] [subtitle]Configuration[/subtitle]By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure.
+[block]_LOGGING_ENABLED macro enables or disables logging.
+_ENABLE_DEBUG_LOGS macro enables or disables debugging logs.
+_ENABLE_INFO_LOGS macro enables or disables info logs.
+_ENABLE_WARNING_LOGS macro enables or disables warning logs.
+_ENABLE_ERROR_LOGS macro enables or disables error logs.
+_ENABLE_FATAL_LOGS macro enables or disables fatal logs.
+_ENABLE_HINTS macro enables or disables hints.
+_ENABLE_STATUS macro enables or disables status logs.
+_ENABLE_PERFORMANCE_LOGS macro enables or disables performance logs.[/block] [subtitle]Other Configurations[/subtitle] [cpp_code_no_line]/**
+* Flag for showing log in standard output using std::cout
+*/
+const bool SHOW_STD_OUTPUT = true;
+
+/**
+* Flag to set whether to save log to file
+*/
+const bool SAVE_TO_FILE = true;
+
+/**
+* Flag to set whether to show date
+*/
+const bool SHOW_DATE = false;
+
+/**
+* Flag to set whether to show time
+*/
+const bool SHOW_TIME = true;
+
+/**
+* Flag to set whether to show which file logged the output and what line
+*/
+const bool SHOW_LOG_LOCATION = true;
+
+/**
+* Flag to set whether to show which function logged the output
+*/
+const bool SHOW_LOG_FUNCTION = true;
+
+/**
+* Flag to set whether to show username or not
+*/
+const bool SHOW_USERNAME = true;
+
+/**
+* Flag to set whether to show hostname or not
+*/
+const bool SHOW_HOSTNAME = true;
+
+/**
+* Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
+*/
+const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
+
+/**
+* outputs if extra info is not available on machine and SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO is true
+*/
+const std::string NOT_SUPPORTED_STRING = "-not supported-";
+
+/**
+* If saving to file, this defines the filename
+*/
+const std::string LOG_FILENAME = "myeasylog.log";
+
+/**
+* Flag to set whether to save log file in custom location
+*/
+const bool USE_CUSTOM_LOCATION = false;
+
+/**
+* If using custom location, this is where custom location is picked up from.
+* Note: This should end with last slash. Only absolute paths are allowed 
+*/
+const std::string CUSTOM_LOG_FILE_LOCATION = "";
+
+/**
+ * Determines whether to show log when starting any time tracked function
+ */
+const bool SHOW_START_FUNCTION_LOG = true;[/cpp_code] [subtitle]License[/subtitle] This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3 of the License.     

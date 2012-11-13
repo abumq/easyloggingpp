@@ -1,3 +1,8 @@
+/*
+ * This file is part of EasyLogging++ samples
+ * Demonstration of PERFORMANCE logging and time tracking
+ * @author mkhan3189
+ */
 #include "../easylogging++.h"
 
 FUNC(int,sum,(int x,int y))

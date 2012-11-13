@@ -65,13 +65,13 @@ EasyLogging++ comes with following levels of logging with complete control over 
 ```
 ###### Output with `SHOW_DATE`, `SHOW_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` but `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
 ```
-[DEBUG] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:3]
+[DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
-[INFO] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:5]
+[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:5]
     Current value is 0
-[INFO] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:6]
+[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:6]
     Now the value has changed from 0 to 1
-[DEBUG] [Sep 23 2012 14:34:38] [Function: int main(int,char**)] [/home/easyloggertest/main.cpp:7]
+[DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:7]
     End of my EasyLogging++ program
 
 ```
@@ -248,7 +248,7 @@ const bool SHOW_START_FUNCTION_LOG = true;
 
 ```
 
-LICENSE
+LICENCE
 =======
 ```
 This program is free software: you can redistribute it and/or modify it under the terms of the 
