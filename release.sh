@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Bash script that helps with releasing new versions of EasyLogging++
+# @author mkhan3189
+
+[ -d "releases" ] || mkdir releases
+
 CURR_VERSION=$(grep 'EasyLogging++ v' easylogging++.h | grep -o '[0-9].[0-9]')
 NEW_VERSION=$1
 DO_NOT_CONFIRM=$2
@@ -21,15 +28,15 @@ fi
 
 if [ "$confirm" = "y" ];
 then
-  sed -i "s/EasyLogging++ v[0-9]*.[0-9]*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
-  sed -i "s/\$currentVersion = \"v[0-9]*.[0-9]*/\$currentVersion = \"v$NEW_VERSION/g" index.php
+  sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
+  sed -i "s/\$currentVersion = \"v$CURR_VERSION\"*/\$currentVersion = \"v$NEW_VERSION\"/g" index.php
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ];
   then
     rm releases/easyloggingpp_v$NEW_VERSION.zip
   fi
   if [ -f "easyloggingpp.zip" ];
   then
-    rm releases/easyloggingpp.zip
+    rm easyloggingpp.zip
   fi
   zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h
   zip easyloggingpp.zip easylogging++.h
