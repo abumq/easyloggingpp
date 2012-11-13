@@ -61,7 +61,7 @@
 //////////////////////////////////////////////
 //     Configuration for logging           ///
 //////////////////////////////////////////////
-
+namespace easyloggingpp {
 /**
 * Flag for showing log in standard output using std::cout
 */
@@ -140,12 +140,12 @@ const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
  * Determines whether to show log when starting any time tracked function
  */
 const bool SHOW_START_FUNCTION_LOG = false;
-
 ////////////////////////////////////////////////////////////////////
 ///               END OF CONFIGURATION FOR LOGGING               ///
 ////////////////////////////////////////////////////////////////////
 
 const bool EXTRA_INFO_ENABLED = SHOW_DATE || SHOW_TIME || SHOW_LOG_LOCATION || SHOW_LOG_FUNCTION || SHOW_USERNAME || SHOW_HOSTNAME;
+} //namespace easyloggingpp
 static std::stringstream *streamForEasyLoggingPP;
 static bool ELPPtoStdOut;
 static bool ELPPtoFile;
@@ -199,8 +199,17 @@ inline static std::string getELPPDateTime(void) {
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif
 namespace easyloggingpp {
-static inline char* getUsername(void) {
-  return getenv("USERNAME");
+static inline std::string getUsername(void) {
+#if _WIN32
+  char* username = getenv("USERNAME");
+#else
+  char* username = getenv("USER");
+#endif //_WIN32
+  if ((username == NULL) || ((strcmp(username, "") == 0))) {
+    return std::string("");
+  } else {
+    return std::string(username);
+  }
 }
 static inline std::string getHostname(void) {
 #if _WIN32
@@ -214,7 +223,7 @@ static inline std::string getHostname(void) {
     return std::string(hostname);
   }
 }
-static void writeLogNow() {
+static void writeLog() {
     if (SHOW_STD_OUTPUT && ELPPtoStdOut) {
         std::cout << streamForEasyLoggingPP->str() << std::endl;
     }
@@ -238,19 +247,19 @@ static void writeLogNow() {
 #define WRITE_LOG(type,log) if (streamForEasyLoggingPP == 0) \
     { streamForEasyLoggingPP = new std::stringstream(); } \
     (*streamForEasyLoggingPP) << "[" << type << "]";\
-    if (SHOW_DATE || SHOW_TIME) {\
+    if (::easyloggingpp::SHOW_DATE || ::easyloggingpp::SHOW_TIME) {\
       (*streamForEasyLoggingPP) << " [" << ::easyloggingpp::getELPPDateTime() << "]";\
     }\
-    if (SHOW_USERNAME) {\
-        (*streamForEasyLoggingPP) << " [" << ::easyloggingpp::getUsername() << (SHOW_HOSTNAME ? "" : "]") ;\
+    if (::easyloggingpp::SHOW_USERNAME) {\
+        (*streamForEasyLoggingPP) << " [" << ::easyloggingpp::getUsername() << (::easyloggingpp::SHOW_HOSTNAME ? "" : "]") ;\
     }\
-    if (SHOW_HOSTNAME) {\
-        (*streamForEasyLoggingPP) << (SHOW_USERNAME ? "@" : " [") << easyloggingpp::getHostname() << "]";\
+    if (::easyloggingpp::SHOW_HOSTNAME) {\
+        (*streamForEasyLoggingPP) << (::easyloggingpp::SHOW_USERNAME ? "@" : " [") << easyloggingpp::getHostname() << "]";\
     }\
-    if (SHOW_LOG_FUNCTION) {\
+    if (::easyloggingpp::SHOW_LOG_FUNCTION) {\
       (*streamForEasyLoggingPP) << " [" << __func__ << "]";\
     }\
-    if (SHOW_LOG_LOCATION) {\
+    if (::easyloggingpp::SHOW_LOG_LOCATION) {\
       (*streamForEasyLoggingPP) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
     }\
       (*streamForEasyLoggingPP) << " " << log;\
@@ -262,7 +271,7 @@ static void writeLogNow() {
       if (type == "PERFORMANCE") {ELPPtoStdOut = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ELPPtoFile = _PERFORMANCE_LOGS_TO_FILE;}\
       if (type == "HINT") {ELPPtoStdOut = _HINTS_TO_STANDARD_OUTPUT; ELPPtoFile = _HINTS_TO_FILE;}\
       if (type == "STATUS") {ELPPtoStdOut = _STATUS_TO_STANDARD_OUTPUT; ELPPtoFile = _STATUS_TO_FILE;}\
-    ::easyloggingpp::writeLogNow();
+    ::easyloggingpp::writeLog();
  
   #if _ENABLE_DEBUG_LOGS
     #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
@@ -307,7 +316,7 @@ static void writeLogNow() {
     #define PERFORMANCE(logStr) WRITE_LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::formatELPPSeconds(difftime(functionEndTime,functionStartTime)) << "]"
-    #define FUNC_SUB_COMMON_START { if (SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
+    #define FUNC_SUB_COMMON_START { if (::easyloggingpp::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime,functionEndTime; time(&functionStartTime);
     #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
     #define END_SUB FUNC_SUB_COMMON_END }
