@@ -281,7 +281,6 @@ inline void init(void) {
   } else if (!fileNotOpenedErrorDisplayed) {
     ::easyloggingpp::internalMessage("Unable to open log file [" + kFinalFilename + "]");
     fileNotOpenedErrorDisplayed = true;
-    logFile.close();
   }
   loggerInitialized = true; 
 }
@@ -298,7 +297,7 @@ void writeLog(void) {
   ::easyloggingpp::cleanStream();
 }
 
-#define WRITE_LOG(type,log)\
+#define WRITE_LOG(type, log)\
   if (!::easyloggingpp::loggerInitialized) {\
     ::easyloggingpp::init();\
   }\
