@@ -20,30 +20,30 @@
 #define _DEBUG_LOGS_TO_FILE 1
 
 #define _ENABLE_INFO_LOGS 1
-#define _INFO_LOGS_TO_STANDARD_OUTPUT 1
+#define _INFO_LOGS_TO_STANDARD_OUTPUT 0
 #define _INFO_LOGS_TO_FILE 1
 
 #define _ENABLE_WARNING_LOGS 1
-#define _WARNING_LOGS_TO_STANDARD_OUTPUT 1
+#define _WARNING_LOGS_TO_STANDARD_OUTPUT 0
 #define _WARNING_LOGS_TO_FILE 1
 
 #define _ENABLE_ERROR_LOGS 1
-#define _ERROR_LOGS_TO_STANDARD_OUTPUT 1
+#define _ERROR_LOGS_TO_STANDARD_OUTPUT 0
 #define _ERROR_LOGS_TO_FILE 1
 
-#define _ENABLE_FATAL_LOGS 1
+#define _ENABLE_FATAL_LOGS 0
 #define _FATAL_LOGS_TO_STANDARD_OUTPUT 1
 #define _FATAL_LOGS_TO_FILE 1
 
-#define _ENABLE_PERFORMANCE_LOGS 1
+#define _ENABLE_PERFORMANCE_LOGS 0
 #define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
 #define _PERFORMANCE_LOGS_TO_FILE 1
 
-#define _ENABLE_HINTS 1
+#define _ENABLE_HINTS 0
 #define _HINTS_TO_STANDARD_OUTPUT 1
 #define _HINTS_TO_FILE 0
 
-#define _ENABLE_STATUS 1
+#define _ENABLE_STATUS 0
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
 
@@ -140,18 +140,18 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ///         END OF CONFIGURATION FOR LOGGING                     ///
 ////////////////////////////////////////////////////////////////////
 const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
-std::stringstream *logStream;
-bool toStandardOutput;
-bool toFile;
-char dateBuffer[25];
-bool loggerInitialized = false;
-bool fileNotOpenedErrorDisplayed = false;
+static std::stringstream *logStream;
+static bool toStandardOutput;
+static bool toFile;
+static char dateBuffer[25];
+static bool loggerInitialized = false;
+static bool fileNotOpenedErrorDisplayed = false;
 
-inline bool internalMessage(const std::string& message) {
+static inline bool internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
 }
 
-inline bool logPathExist(void) {
+static inline bool logPathExist(void) {
 #if _WIN32 || _WIN64
   DWORD fileType = GetFileAttributesA(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
   if (fileType == INVALID_FILE_ATTRIBUTES) {
@@ -164,7 +164,7 @@ inline bool logPathExist(void) {
 #endif
 }
 
-inline void createLogPath(void) {
+static inline void createLogPath(void) {
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
 #if _WIN32 || _WIN64
@@ -178,7 +178,7 @@ inline void createLogPath(void) {
   }
 }
 
-inline std::string getDateTime(void) {
+static inline std::string getDateTime(void) {
   if (!(SHOW_DATE || SHOW_TIME)) return "";
 #if _WIN32 || _WIN64
   char* envDate = getenv("DATE");
@@ -225,7 +225,7 @@ inline std::string getDateTime(void) {
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 
-inline std::string getUsername(void) {
+static inline std::string getUsername(void) {
 #if _WIN32 || _WIN64
   char* username = getenv("USERNAME");
 #else
@@ -238,7 +238,7 @@ inline std::string getUsername(void) {
   }
 }
 
-inline std::string getHostname(void) {
+static inline std::string getHostname(void) {
 #if _WIN32 || _WIN64
   char* hostname = getenv("COMPUTERNAME");
 #else
@@ -251,11 +251,11 @@ inline std::string getHostname(void) {
   }
 }
 
-inline void cleanStream(void) {
+static inline void cleanStream(void) {
   ::easyloggingpp::logStream->str("");
 }
 
-inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
+static inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
 #if __linux__
   short code = 30;
   if (colour == "black") code = 30;
@@ -272,7 +272,7 @@ inline std::string colourful(const std::string& text, const std::string& colour,
 #endif
 }
 
-inline void init(void) {
+static inline void init(void) {
   ::easyloggingpp::logStream = new std::stringstream();\
   ::easyloggingpp::createLogPath();
   std::ofstream logFile(kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
@@ -285,7 +285,7 @@ inline void init(void) {
   loggerInitialized = true; 
 }
 
-std::string readLog(void) {
+static std::string readLog(void) {
   std::stringstream ss;
   if (::easyloggingpp::SAVE_TO_FILE) {
     std::ifstream logFile(kFinalFilename.c_str(), std::ifstream::in);
@@ -305,7 +305,7 @@ std::string readLog(void) {
   return ss.str();
 }
 
-void writeLog(void) {
+static void writeLog(void) {
   if ((::easyloggingpp::SHOW_STD_OUTPUT) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
   }
