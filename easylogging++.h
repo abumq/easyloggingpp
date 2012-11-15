@@ -48,13 +48,14 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
-#include <sys/stat.h>
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
 #if _WIN32 || _WIN64
-#include <direct.h> //digital mars compiler
-#include <windows.h>
+ #include <direct.h> //digital mars compiler
+ #include <windows.h>
+#else
+ #include <sys/stat.h>
 #endif //_WIN32 || _WIN64
 #include <iostream>
 #include <sstream>
@@ -136,17 +137,21 @@ const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
 const bool SHOW_START_FUNCTION_LOG = false;
 
 ////////////////////////////////////////////////////////////////////
-///         END OF CONFIGURATION FOR LOGGING         ///
+///         END OF CONFIGURATION FOR LOGGING                     ///
 ////////////////////////////////////////////////////////////////////
-const bool EXTRA_INFO_ENABLED = ::easyloggingpp::SHOW_DATE || ::easyloggingpp::SHOW_TIME || ::easyloggingpp::SHOW_LOG_LOCATION || ::easyloggingpp::SHOW_LOG_FUNCTION || ::easyloggingpp::SHOW_USERNAME || ::easyloggingpp::SHOW_HOSTNAME;
-static std::stringstream *logStream;
-static bool toStandardOutput;
-static bool toFile;
-static bool streamInitialized = false;
-static char dateBuffer[25];
-static bool checkLogPath = true;
+const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
+std::stringstream *logStream;
+bool toStandardOutput;
+bool toFile;
+char dateBuffer[25];
+bool loggerInitialized = false;
+bool fileNotOpenedErrorDisplayed = false;
 
-static inline bool logPathExist(void) {
+inline bool internalMessage(const std::string& message) {
+    std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
+}
+
+inline bool logPathExist(void) {
 #if _WIN32 || _WIN64
   DWORD fileType = GetFileAttributesA(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
   if (fileType == INVALID_FILE_ATTRIBUTES) {
@@ -159,7 +164,7 @@ static inline bool logPathExist(void) {
 #endif
 }
 
-static inline void createLogPath(void) {
+inline void createLogPath(void) {
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
 #if _WIN32 || _WIN64
@@ -168,13 +173,12 @@ static inline void createLogPath(void) {
     status = mkdir(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
 #endif
     if (status == -1) {
-      std::cout << std::endl << "[EasyLogging++] Unable to create path " << ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION << std::endl << std::endl;
+      ::easyloggingpp::internalMessage("Unable to create log path [" + ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION + "]");
     }
   }
-  checkLogPath = false;
 }
 
-static inline std::string getDateTime(void) {
+inline std::string getDateTime(void) {
   if (!(SHOW_DATE || SHOW_TIME)) return "";
 #if _WIN32 || _WIN64
   char* envDate = getenv("DATE");
@@ -204,8 +208,7 @@ static inline std::string getDateTime(void) {
     }
   }
 #endif //_WIN32 || _WIN64
-  std::string buffStr(::easyloggingpp::dateBuffer);
-  return buffStr;
+  return std::string(::easyloggingpp::dateBuffer);
 }
 
 #ifndef __FILE__
@@ -222,7 +225,7 @@ static inline std::string getDateTime(void) {
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 
-static inline std::string getUsername(void) {
+inline std::string getUsername(void) {
 #if _WIN32 || _WIN64
   char* username = getenv("USERNAME");
 #else
@@ -235,7 +238,7 @@ static inline std::string getUsername(void) {
   }
 }
 
-static inline std::string getHostname(void) {
+inline std::string getHostname(void) {
 #if _WIN32 || _WIN64
   char* hostname = getenv("COMPUTERNAME");
 #else
@@ -248,35 +251,56 @@ static inline std::string getHostname(void) {
   }
 }
 
-static inline void cleanStream(void) {
+inline void cleanStream(void) {
   ::easyloggingpp::logStream->str("");
 }
 
-static void writeLog() {
-  if (::easyloggingpp::checkLogPath) {
-    ::easyloggingpp::createLogPath();
+inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
+#if __linux__
+  short code = 30;
+  if (colour == "black") code = 30;
+  else if (colour == "red") code = 31;
+  else if (colour == "green") code = 32;
+  else if (colour == "yellow") code = 33;
+  else if (colour == "blue") code = 34;
+  else if (colour == "white") code = 37;
+  std::stringstream finalText;
+  finalText << "\033[" << (bold ? "1" : "0") << ";" << code << "m" << text << "\033[0m";
+  return finalText.str();
+#else
+  return text;
+#endif
+}
+
+inline void init(void) {
+  ::easyloggingpp::logStream = new std::stringstream();\
+  ::easyloggingpp::createLogPath();
+  std::ofstream logFile(kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+  if (logFile.is_open()) {
+    logFile.close();
+  } else if (!fileNotOpenedErrorDisplayed) {
+    ::easyloggingpp::internalMessage("Unable to open log file [" + kFinalFilename + "]");
+    fileNotOpenedErrorDisplayed = true;
+    logFile.close();
   }
-  if (::easyloggingpp::SHOW_STD_OUTPUT && ::easyloggingpp::toStandardOutput) {
+  loggerInitialized = true; 
+}
+
+void writeLog(void) {
+  if ((::easyloggingpp::SHOW_STD_OUTPUT) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
   }
-  if (::easyloggingpp::SAVE_TO_FILE && ::easyloggingpp::toFile) {
-    std::string finalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
-    std::ofstream logFile(finalFilename.c_str(),
-      std::ofstream::out | std::ofstream::app);
-    if (logFile.is_open()) {
-      logFile << ::easyloggingpp::logStream->str();
-      logFile.close();
-    } else {
-      /* error opening log file */
-    }
+  if ((!fileNotOpenedErrorDisplayed) && (::easyloggingpp::SAVE_TO_FILE) && (::easyloggingpp::toFile)) {
+    std::ofstream logFile(kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+    logFile << ::easyloggingpp::logStream->str();
+    logFile.close();
   }
   ::easyloggingpp::cleanStream();
 }
 
-#define WRITE_LOG(type,log) \
-  if (!::easyloggingpp::streamInitialized) {\
-    ::easyloggingpp::streamInitialized = true;\
-    ::easyloggingpp::logStream = new std::stringstream();\
+#define WRITE_LOG(type,log)\
+  if (!::easyloggingpp::loggerInitialized) {\
+    ::easyloggingpp::init();\
   }\
   (*::easyloggingpp::logStream) << "[" << type << "]";\
   if (::easyloggingpp::SHOW_DATE || ::easyloggingpp::SHOW_TIME) {\
@@ -294,16 +318,16 @@ static void writeLog() {
   if (::easyloggingpp::SHOW_LOG_LOCATION) {\
     (*easyloggingpp::logStream) << " [" << __FILE__ << ":" << __LINE__ <<"]";\
   }\
-    (*::easyloggingpp::logStream) << " " << log;\
-    (*::easyloggingpp::logStream) << std::endl;\
-    if (type == "DEBUG") { ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE; }\
-    if (type == "INFO") { ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE; }\
-    if (type == "WARNING") { ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE; }\
-    if (type == "ERROR") { ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE; }\
-    if (type == "FATAL") { ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE; }\
-    if (type == "PERFORMANCE") { ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE; }\
-    if (type == "HINT") { ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT; easyloggingpp::toFile = _HINTS_TO_FILE; }\
-    if (type == "STATUS") { ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _STATUS_TO_FILE; }\
+  (*::easyloggingpp::logStream) << " " << log;\
+  (*::easyloggingpp::logStream) << std::endl;\
+  if (type == "DEBUG") { ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE; }\
+  if (type == "INFO") { ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE; }\
+  if (type == "WARNING") { ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE; }\
+  if (type == "ERROR") { ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE; }\
+  if (type == "FATAL") { ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE; }\
+  if (type == "PERFORMANCE") { ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE; }\
+  if (type == "HINT") { ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT; easyloggingpp::toFile = _HINTS_TO_FILE; }\
+  if (type == "STATUS") { ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _STATUS_TO_FILE; }\
   ::easyloggingpp::writeLog();
  
   #if _ENABLE_DEBUG_LOGS
@@ -332,7 +356,7 @@ static void writeLog() {
     #define FATAL(x)
   #endif //_ENABLE_FATAL_LOGS
   #if _ENABLE_PERFORMANCE_LOGS
-    static inline std::string formatSeconds(double secs) {
+    inline std::string formatSeconds(double secs) {
       double result = secs;
       std::string unit = "seconds";
       std::stringstream ss;
