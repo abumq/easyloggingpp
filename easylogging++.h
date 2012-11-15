@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.5                                                 *
+*   EasyLogging++ v2.51                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -48,9 +48,14 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
+#include <sys/stat.h>
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
+#if _WIN32 || _WIN64
+#include <direct.h> //digital mars compiler
+#include <windows.h>
+#endif //_WIN32 || _WIN64
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -139,13 +144,43 @@ static bool toStandardOutput;
 static bool toFile;
 static bool streamInitialized = false;
 static char dateBuffer[25];
+static bool checkLogPath = true;
+
+static inline bool logPathExist(void) {
+#if _WIN32 || _WIN64
+  DWORD fileType = GetFileAttributesA(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
+  if (fileType == INVALID_FILE_ATTRIBUTES) {
+    return false;
+  }
+  return (fileType & FILE_ATTRIBUTE_DIRECTORY);
+#else
+  struct stat st;
+  return (stat(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), &st) == 0);
+#endif
+}
+
+static inline void createLogPath(void) {
+  if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (!::easyloggingpp::logPathExist())) {
+    int status = -1;
+#if _WIN32 || _WIN64
+    status = _mkdir(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
+#else
+    status = mkdir(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
+#endif
+    if (status == -1) {
+      std::cout << std::endl << "[EasyLogging++] Unable to create path " << ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION << std::endl << std::endl;
+    }
+  }
+  checkLogPath = false;
+}
+
 static inline std::string getDateTime(void) {
   if (!(SHOW_DATE || SHOW_TIME)) return "";
-#if _WIN32
+#if _WIN32 || _WIN64
   char* envDate = getenv("DATE");
   char* envTime = getenv("TIME");
   if ((envDate == NULL) || (envTime == NULL) || ((strcmp(envDate, "")) || (strcmp(envTime, "")))) {
-#endif //_WIN32
+#endif //_WIN32 || _WIN64
     time_t rawtime;
     struct tm * timeinfo;
     time (&rawtime);
@@ -154,7 +189,7 @@ static inline std::string getDateTime(void) {
     if (::easyloggingpp::SHOW_DATE) format += "%d/%m/%Y";
     if (::easyloggingpp::SHOW_TIME) format += (std::string((::easyloggingpp::SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
     strftime (::easyloggingpp::dateBuffer, 21, format.c_str(), timeinfo);
-#if _WIN32
+#if _WIN32 || _WIN64
   } else {
     if (::easyloggingpp::SHOW_DATE) {
       strcpy(::easyloggingpp::dateBuffer, envDate);
@@ -168,10 +203,11 @@ static inline std::string getDateTime(void) {
       }
     }
   }
-#endif //_WIN32
+#endif //_WIN32 || _WIN64
   std::string buffStr(::easyloggingpp::dateBuffer);
   return buffStr;
 }
+
 #ifndef __FILE__
  #define __FILE__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif //__FILE
@@ -185,34 +221,41 @@ static inline std::string getDateTime(void) {
 #else
  #define __func__ (SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO) ? NOT_SUPPORTED_STRING : ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
+
 static inline std::string getUsername(void) {
-#if _WIN32
+#if _WIN32 || _WIN64
   char* username = getenv("USERNAME");
 #else
   char* username = getenv("USER");
-#endif //_WIN32
+#endif //_WIN32 || _WIN64
   if ((username == NULL) || ((strcmp(username, "") == 0))) {
     return std::string("");
   } else {
     return std::string(username);
   }
 }
+
 static inline std::string getHostname(void) {
-#if _WIN32
+#if _WIN32 || _WIN64
   char* hostname = getenv("COMPUTERNAME");
 #else
   char* hostname = getenv("HOSTNAME");
-#endif //_WIN32
+#endif //_WIN32 || _WIN64
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
     return std::string("unknown-host");
   } else {
     return std::string(hostname);
   }
 }
+
 static inline void cleanStream(void) {
   ::easyloggingpp::logStream->str("");
 }
+
 static void writeLog() {
+  if (::easyloggingpp::checkLogPath) {
+    ::easyloggingpp::createLogPath();
+  }
   if (::easyloggingpp::SHOW_STD_OUTPUT && ::easyloggingpp::toStandardOutput) {
     std::cout << ::easyloggingpp::logStream->str();
   }
@@ -229,6 +272,7 @@ static void writeLog() {
   }
   ::easyloggingpp::cleanStream();
 }
+
 #define WRITE_LOG(type,log) \
   if (!::easyloggingpp::streamInitialized) {\
     ::easyloggingpp::streamInitialized = true;\
