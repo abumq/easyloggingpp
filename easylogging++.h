@@ -360,7 +360,7 @@ static void writeLog(void) {
     #define INFO(x)
   #endif //_ENABLE_INFO_LOGS
   #if _ENABLE_WARNING_LOGS
-    #define WARN(logStr) WRITE_LOG("WARN",logStr)
+    #define WARNING(logStr) WRITE_LOG("WARNING",logStr)
   #else
     #define WARNING(x)
   #endif //_ENABLE_WARNING_LOGS
@@ -419,7 +419,7 @@ static void writeLog(void) {
 #else
   #define DEBUG(x)
   #define INFO(x)
-  #define WARN(x)
+  #define WARNING(x)
   #define ERROR(x)
   #define FATAL(x)
   #define PERFORMANCE(x)
