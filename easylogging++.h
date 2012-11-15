@@ -285,6 +285,26 @@ inline void init(void) {
   loggerInitialized = true; 
 }
 
+std::string readLog(void) {
+  std::stringstream ss;
+  if (::easyloggingpp::SAVE_TO_FILE) {
+    std::ifstream logFile(kFinalFilename.c_str(), std::ifstream::in);
+    if (logFile.is_open()) {
+      std::string line;
+      while (logFile.good()) {
+        std::getline(logFile, line);
+        ss << line << std::endl;
+      }
+      logFile.close();
+    } else {
+      ss << "Error opening log file [" << kFinalFilename << "]";
+    }
+  } else {
+    ss << "Logs are not being saved to file!";
+  }
+  return ss.str();
+}
+
 void writeLog(void) {
   if ((::easyloggingpp::SHOW_STD_OUTPUT) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
