@@ -20,30 +20,30 @@
 #define _DEBUG_LOGS_TO_FILE 1
 
 #define _ENABLE_INFO_LOGS 1
-#define _INFO_LOGS_TO_STANDARD_OUTPUT 0
+#define _INFO_LOGS_TO_STANDARD_OUTPUT 1
 #define _INFO_LOGS_TO_FILE 1
 
 #define _ENABLE_WARNING_LOGS 1
-#define _WARNING_LOGS_TO_STANDARD_OUTPUT 0
+#define _WARNING_LOGS_TO_STANDARD_OUTPUT 1
 #define _WARNING_LOGS_TO_FILE 1
 
 #define _ENABLE_ERROR_LOGS 1
-#define _ERROR_LOGS_TO_STANDARD_OUTPUT 0
+#define _ERROR_LOGS_TO_STANDARD_OUTPUT 1
 #define _ERROR_LOGS_TO_FILE 1
 
-#define _ENABLE_FATAL_LOGS 0
+#define _ENABLE_FATAL_LOGS 1
 #define _FATAL_LOGS_TO_STANDARD_OUTPUT 1
 #define _FATAL_LOGS_TO_FILE 1
 
-#define _ENABLE_PERFORMANCE_LOGS 0
+#define _ENABLE_PERFORMANCE_LOGS 1
 #define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
 #define _PERFORMANCE_LOGS_TO_FILE 1
 
-#define _ENABLE_HINTS 0
+#define _ENABLE_HINTS 1
 #define _HINTS_TO_STANDARD_OUTPUT 1
 #define _HINTS_TO_FILE 0
 
-#define _ENABLE_STATUS 0
+#define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
 
@@ -147,7 +147,7 @@ static char dateBuffer[25];
 static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
 
-static inline bool internalMessage(const std::string& message) {
+static inline void internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
 }
 
