@@ -5,7 +5,7 @@
 
 [ -d "releases" ] || mkdir releases
 
-CURR_VERSION=$(grep 'EasyLogging++ v' easylogging++.h | grep -o '[0-9].[0-9]')
+CURR_VERSION=$(grep 'EasyLogging++ v' easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
 NEW_VERSION=$1
 DO_NOT_CONFIRM=$2
 if [ "$NEW_VERSION" = "" ]; then
@@ -20,7 +20,7 @@ echo 'New Version      ' $NEW_VERSION
 if [ "$DO_NOT_CONFIRM" = "y" ]; then
   confirm="y"
 else
-  echo 'Are you sure? (y/n)' 
+  echo 'Are you sure you wish to release new version? (y/n)' 
   read confirm
 fi
 
