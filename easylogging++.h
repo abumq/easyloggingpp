@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.6                                                 *
+*   EasyLogging++ v2.7                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -168,10 +168,26 @@ static inline void createLogPath(void) {
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
 #if _WIN32 || _WIN64
-    status = _mkdir(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
+    std::string pathDelimiter = "\\";
 #else
-    status = mkdir(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
+    std::string pathDelimiter = "/";
 #endif
+    std::string tempPath = CUSTOM_LOG_FILE_LOCATION;
+    std::string dir = "";
+    short foundAt = -1;
+    std::string madeSoFar = tempPath.substr(0, 1) == pathDelimiter ? pathDelimiter : "";
+    while ((foundAt = tempPath.find(pathDelimiter)) != std::string::npos) {
+      dir = tempPath.substr(0, foundAt);
+      if (dir != "") {
+        madeSoFar += dir + pathDelimiter;
+#if _WIN32 || _WIN64
+        status = _mkdir(madeSoFar.c_str());
+#else
+        status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
+#endif
+      }
+      tempPath = tempPath.erase(0, foundAt + 1);
+    }
     if (status == -1) {
       ::easyloggingpp::internalMessage("Unable to create log path [" + ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION + "]");
     }
