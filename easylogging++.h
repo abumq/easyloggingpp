@@ -165,7 +165,7 @@ static inline bool logPathExist(void) {
 }
 
 static inline void createLogPath(void) {
-  if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (!::easyloggingpp::logPathExist())) {
+  if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
 #if _WIN32 || _WIN64
     std::string pathDelimiter = "\\";
