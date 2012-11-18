@@ -1,7 +1,7 @@
 <?php
 include_once "../../format.php";
 global $webAddr;
-$currentVersion = "v2.8";
+$currentVersion = "v2.81";
 ?>
 <script language='javascript'>
 	document.title='EasyLogging++ - C++ Tools';
