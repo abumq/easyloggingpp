@@ -1,5 +1,6 @@
 #!/bin/bash
 
+## update.sh v1.0
 ## Please see 'Updating to Newer Version' section on README.md on https://github.com/mkhan3189/EasyLoggingPP/ for more information on this file
 ## @author mkhan3189
 
