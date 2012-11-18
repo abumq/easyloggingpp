@@ -46,7 +46,6 @@
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
-
 #if _LOGGING_ENABLED
 #include <ctime>
 #include <cstring>
@@ -97,12 +96,12 @@ const bool SHOW_LOG_FUNCTION = false;
 /**
 * Flag to set whether to show username or not
 */
-const bool SHOW_USERNAME = true;
+const bool SHOW_USERNAME = false;
 
 /**
 * Flag to set whether to show hostname or not
 */
-const bool SHOW_HOSTNAME = true;
+const bool SHOW_HOSTNAME = false;
 
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
@@ -117,19 +116,19 @@ const std::string NOT_SUPPORTED_STRING = "-not supported-";
 /**
 * If saving to file, this defines the filename
 */
-const std::string LOG_FILENAME = "myeasylog.log";
+const std::string LOG_FILENAME = "invisible-handcuffs.log";
 
 /**
 * Flag to set whether to save log file in custom location
 */
-const bool USE_CUSTOM_LOCATION = true;
+const bool USE_CUSTOM_LOCATION = false;
 
 /**
 * If using custom location, this is where custom location is picked up from.
 * Note: This should end with last slash and should be a fully qualified path. 
 * Relative paths are not allowed
 */
-const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
+const std::string CUSTOM_LOG_FILE_LOCATION = "";
 
 /**
  * Determines whether to show log when starting any time tracked function
@@ -140,7 +139,7 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ///         END OF CONFIGURATION FOR LOGGING                     ///
 ////////////////////////////////////////////////////////////////////
 static const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
-static const std::string user;
+static std::string user;
 static std::stringstream *logStream;
 static bool toStandardOutput;
 static bool toFile;
