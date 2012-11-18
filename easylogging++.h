@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.7                                                 *
+*   EasyLogging++ v2.8                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -139,11 +139,13 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ////////////////////////////////////////////////////////////////////
 ///         END OF CONFIGURATION FOR LOGGING                     ///
 ////////////////////////////////////////////////////////////////////
-const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
+static const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
 static std::stringstream *logStream;
 static bool toStandardOutput;
 static bool toFile;
-static char dateBuffer[25];
+static const short kDateBufferSize = 25;
+static char dateBuffer[kDateBufferSize];
+static char dateFormat[kDateBufferSize];
 static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
 
@@ -203,12 +205,9 @@ static inline std::string getDateTime(void) {
 #endif //_WIN32 || _WIN64
     time_t rawtime;
     struct tm * timeinfo;
-    time (&rawtime);
-    timeinfo = localtime (&rawtime);
-    std::string format = "";
-    if (::easyloggingpp::SHOW_DATE) format += "%d/%m/%Y";
-    if (::easyloggingpp::SHOW_TIME) format += (std::string((::easyloggingpp::SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
-    strftime (::easyloggingpp::dateBuffer, 21, format.c_str(), timeinfo);
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeinfo);
 #if _WIN32 || _WIN64
   } else {
     if (::easyloggingpp::SHOW_DATE) {
@@ -289,14 +288,29 @@ static inline std::string colourful(const std::string& text, const std::string& 
 }
 
 static inline void init(void) {
+  // Logger
   ::easyloggingpp::logStream = new std::stringstream();\
+  // Path
   ::easyloggingpp::createLogPath();
-  std::ofstream logFile(kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+  // Log file
+  std::ofstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
   if (logFile.is_open()) {
     logFile.close();
   } else if (!fileNotOpenedErrorDisplayed) {
-    ::easyloggingpp::internalMessage("Unable to open log file [" + kFinalFilename + "]");
+    ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
     fileNotOpenedErrorDisplayed = true;
+  }
+  // Date format
+  const char* dateFormatLocal = "%d/%m/%Y";
+  const char* timeFormatLocal = "%H:%M:%S";
+  if (::easyloggingpp::SHOW_DATE) strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
+  if (::easyloggingpp::SHOW_TIME) {
+      if (::easyloggingpp::SHOW_DATE) {
+          strcat(::easyloggingpp::dateFormat, " ");
+          strcat(::easyloggingpp::dateFormat, timeFormatLocal);
+      } else {
+          strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
+      }
   }
   loggerInitialized = true; 
 }
@@ -304,7 +318,7 @@ static inline void init(void) {
 static std::string readLog(void) {
   std::stringstream ss;
   if (::easyloggingpp::SAVE_TO_FILE) {
-    std::ifstream logFile(kFinalFilename.c_str(), std::ifstream::in);
+    std::ifstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ifstream::in);
     if (logFile.is_open()) {
       std::string line;
       while (logFile.good()) {
@@ -313,7 +327,7 @@ static std::string readLog(void) {
       }
       logFile.close();
     } else {
-      ss << "Error opening log file [" << kFinalFilename << "]";
+      ss << "Error opening log file [" << ::easyloggingpp::kFinalFilename << "]";
     }
   } else {
     ss << "Logs are not being saved to file!";
@@ -326,7 +340,7 @@ static void writeLog(void) {
     std::cout << ::easyloggingpp::logStream->str();
   }
   if ((!fileNotOpenedErrorDisplayed) && (::easyloggingpp::SAVE_TO_FILE) && (::easyloggingpp::toFile)) {
-    std::ofstream logFile(kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+    std::ofstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
     logFile << ::easyloggingpp::logStream->str();
     logFile.close();
   }
