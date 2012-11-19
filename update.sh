@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## update.sh v1.1
+## update.sh v1.2
 ## Please see 'Updating to Newer Version' section on README.md on https://github.com/mkhan3189/EasyLoggingPP/ for more information on this file
 ## @author mkhan3189
 ## @since 2.8
@@ -44,7 +44,7 @@ sed -n $commentsSed'p' $newVersionFile > $targetFile
 ## Get logging defines and headers off curr file
 headersStart=$(grep -n '#ifndef EASYLOGGINGPP_H' $currFile | grep -o '[0-9]*')
 headersEnd=$(grep -n '#if _LOGGING_ENABLED' $currFile | grep -o '[0-9]*')
-headersEnd=$(expr $headersEnd - 2)
+headersEnd=$(expr $headersEnd - 1)
 headersSed="$headersStart,$headersEnd"
 sed -n $headersSed'p' $currFile >> $targetFile
 ## Get includes off new version file

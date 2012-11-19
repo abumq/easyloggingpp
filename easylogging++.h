@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.82                                                 *
+*   EasyLogging++ v2.83                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -46,6 +46,7 @@
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
+
 #if _LOGGING_ENABLED
 #include <ctime>
 #include <cstring>
@@ -116,19 +117,19 @@ const std::string NOT_SUPPORTED_STRING = "-not supported-";
 /**
 * If saving to file, this defines the filename
 */
-const std::string LOG_FILENAME = "invisible-handcuffs.log";
+const std::string LOG_FILENAME = "myeasylog.log";
 
 /**
 * Flag to set whether to save log file in custom location
 */
-const bool USE_CUSTOM_LOCATION = false;
+const bool USE_CUSTOM_LOCATION = true;
 
 /**
 * If using custom location, this is where custom location is picked up from.
 * Note: This should end with last slash and should be a fully qualified path. 
 * Relative paths are not allowed
 */
-const std::string CUSTOM_LOG_FILE_LOCATION = "";
+const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
 
 /**
  * Determines whether to show log when starting any time tracked function
