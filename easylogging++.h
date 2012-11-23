@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.83                                                 *
+*   EasyLogging++ v2.841                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -48,15 +48,18 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
+#if _WIN32 || _WIN64
+ #define _WINDOWS
+#endif //_WIN32 || _WIN64
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
-#if _WIN32 || _WIN64
+#if _WINDOWS
  #include <direct.h> //digital mars compiler
  #include <windows.h>
 #else
  #include <sys/stat.h>
-#endif //_WIN32 || _WIN64
+#endif //_WINDOWS
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -155,7 +158,7 @@ static inline void internalMessage(const std::string& message) {
 }
 
 static bool logPathExist(void) {
-#if _WIN32 || _WIN64
+#if _WINDOWS
   DWORD fileType = GetFileAttributesA(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str());
   if (fileType == INVALID_FILE_ATTRIBUTES) {
     return false;
@@ -170,7 +173,7 @@ static bool logPathExist(void) {
 static void createLogPath(void) {
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
-#if _WIN32 || _WIN64
+#if _WINDOWS
     std::string pathDelimiter = "\\";
 #else
     std::string pathDelimiter = "/";
@@ -183,7 +186,7 @@ static void createLogPath(void) {
       dir = tempPath.substr(0, foundAt);
       if (dir != "") {
         madeSoFar += dir + pathDelimiter;
-#if _WIN32 || _WIN64
+#if _WINDOWS
         status = _mkdir(madeSoFar.c_str());
 #else
         status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
@@ -199,17 +202,17 @@ static void createLogPath(void) {
 
 static inline std::string getDateTime(void) {
   if (!(SHOW_DATE || SHOW_TIME)) return "";
-#if _WIN32 || _WIN64
+#if _WINDOWS
   char* envDate = getenv("DATE");
   char* envTime = getenv("TIME");
   if ((envDate == NULL) || (envTime == NULL) || ((strcmp(envDate, "")) || (strcmp(envTime, "")))) {
-#endif //_WIN32 || _WIN64
+#endif //_WINDOWS
     time_t rawtime;
     struct tm * timeinfo;
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeinfo);
-#if _WIN32 || _WIN64
+#if _WINDOWS
   } else {
     if (::easyloggingpp::SHOW_DATE) {
       strcpy(::easyloggingpp::dateBuffer, envDate);
@@ -223,7 +226,7 @@ static inline std::string getDateTime(void) {
       }
     }
   }
-#endif //_WIN32 || _WIN64
+#endif //_WINDOWS
   return std::string(::easyloggingpp::dateBuffer);
 }
 
@@ -242,11 +245,11 @@ static inline std::string getDateTime(void) {
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 
 static inline std::string getUsername(void) {
-#if _WIN32 || _WIN64
+#if _WINDOWS
   char* username = getenv("USERNAME");
 #else
   char* username = getenv("USER");
-#endif //_WIN32 || _WIN64
+#endif //_WINDOWS
   if ((username == NULL) || ((strcmp(username, "") == 0))) {
     return std::string("");
   } else {
@@ -255,11 +258,11 @@ static inline std::string getUsername(void) {
 }
 
 static inline std::string getHostname(void) {
-#if _WIN32 || _WIN64
+#if _WINDOWS
   char* hostname = getenv("COMPUTERNAME");
 #else
   char* hostname = getenv("HOSTNAME");
-#endif //_WIN32 || _WIN64
+#endif //_WINDOWS
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
     return std::string("unknown-host");
   } else {
