@@ -256,9 +256,3 @@ This script takes three parameters:
  * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
  * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
 
-LICENCE
-=======
-```
-This program is free software: you can redistribute it and/or modify it under the terms of the 
-GNU General Public License as published by the Free Software Foundation, version 3 of the License.
-```
