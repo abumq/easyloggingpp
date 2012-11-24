@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.841                                                 *
+*   EasyLogging++ v2.842                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -48,8 +48,8 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
-#if _WIN32 || _WIN64
- #define _WINDOWS
+#if defined(_WIN32) || defined(_WIN64)
+ #define _WINDOWS 1
 #endif //_WIN32 || _WIN64
 #include <ctime>
 #include <cstring>
@@ -275,7 +275,7 @@ static inline void cleanStream(void) {
 }
 
 static inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
-#if __linux__
+#ifdef  __linux__
   short code = 30;
   if (colour == "black") code = 30;
   else if (colour == "red") code = 31;
@@ -288,7 +288,7 @@ static inline std::string colourful(const std::string& text, const std::string& 
   return finalText.str();
 #else
   return text;
-#endif
+#endif //__linux__
 }
 
 static void init(void) {
