@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.842                                                 *
+*   EasyLogging++ v2.843                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -51,15 +51,20 @@
 #if defined(_WIN32) || defined(_WIN64)
  #define _WINDOWS 1
 #endif //_WIN32 || _WIN64
+#if defined(__linux__)
+ #define _LINUX 1
+#endif
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
 #if _WINDOWS
  #include <direct.h> //digital mars compiler
  #include <windows.h>
-#else
- #include <sys/stat.h>
 #endif //_WINDOWS
+#if _LINUX
+ #include <sys/stat.h>
+ #include <sys/time.h>
+#endif //_LINUX
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -203,30 +208,22 @@ static void createLogPath(void) {
 static inline std::string getDateTime(void) {
   if (!(SHOW_DATE || SHOW_TIME)) return "";
 #if _WINDOWS
-  char* envDate = getenv("DATE");
-  char* envTime = getenv("TIME");
-  if ((envDate == NULL) || (envTime == NULL) || ((strcmp(envDate, "")) || (strcmp(envTime, "")))) {
-#endif //_WINDOWS
-    time_t rawtime;
-    struct tm * timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeinfo);
+    time_t currTime;
+#elif _LINUX
+    timeval currTime;
+    gettimeofday(&currTime, NULL);
+    int milliSeconds = currTime.tv_usec / 1000;
+#endif
+    struct tm * timeInfo;
 #if _WINDOWS
-  } else {
-    if (::easyloggingpp::SHOW_DATE) {
-      strcpy(::easyloggingpp::dateBuffer, envDate);
-    }
-    if (::easyloggingpp::SHOW_TIME) {
-      if (::easyloggingpp::SHOW_DATE) {
-        strcat(::easyloggingpp::dateBuffer, " ");
-        strcat(::easyloggingpp::dateBuffer, envTime);
-      } else {
-        strcpy(::easyloggingpp::dateBuffer, envTime);
-      }
-    }
-  }
-#endif //_WINDOWS
+    timeInfo = localtime(&currTime);
+#elif _LINUX
+    timeInfo = localtime(&currTime.tv_sec);
+#endif
+    strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeInfo);
+#if _LINUX
+    sprintf(::easyloggingpp::dateBuffer, "%s.%d", ::easyloggingpp::dateBuffer, milliSeconds);
+#endif
   return std::string(::easyloggingpp::dateBuffer);
 }
 
@@ -275,7 +272,7 @@ static inline void cleanStream(void) {
 }
 
 static inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
-#ifdef  __linux__
+#if _LINUX
   short code = 30;
   if (colour == "black") code = 30;
   else if (colour == "red") code = 31;
@@ -288,7 +285,7 @@ static inline std::string colourful(const std::string& text, const std::string& 
   return finalText.str();
 #else
   return text;
-#endif //__linux__
+#endif //_LINUX
 }
 
 static void init(void) {
