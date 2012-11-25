@@ -28,4 +28,5 @@ History was not kept before version 2.1.
 #### 2.8
  * Added `update.sh` to update your old easylogging++.h without losing configuration
  * A lot of date improvements in terms of memory and performance efficiency
- * 2.843: fixes milliseconds issue for linux only.
+ * 2.843: Fixes milliseconds issue for linux only.
+ * 2.844: Do not calculate milliseconds when SHOW_TIME is set to false

@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.843                                                 *
+*   EasyLogging++ v2.844                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -212,7 +212,10 @@ static inline std::string getDateTime(void) {
 #elif _LINUX
     timeval currTime;
     gettimeofday(&currTime, NULL);
-    int milliSeconds = currTime.tv_usec / 1000;
+    int milliSeconds = 0;
+    if (::easyloggingpp::SHOW_TIME) {
+      milliSeconds = currTime.tv_usec / 1000;
+    }
 #endif
     struct tm * timeInfo;
 #if _WINDOWS
@@ -222,7 +225,9 @@ static inline std::string getDateTime(void) {
 #endif
     strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeInfo);
 #if _LINUX
-    sprintf(::easyloggingpp::dateBuffer, "%s.%d", ::easyloggingpp::dateBuffer, milliSeconds);
+    if (SHOW_TIME) {
+      sprintf(::easyloggingpp::dateBuffer, "%s.%d", ::easyloggingpp::dateBuffer, milliSeconds);
+    }
 #endif
   return std::string(::easyloggingpp::dateBuffer);
 }
