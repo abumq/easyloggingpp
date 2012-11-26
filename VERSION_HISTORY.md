@@ -34,3 +34,4 @@ History was not kept before version 2.1.
 #### 3.0
  * Major improvements
  * Added format specifiers for each logging level
+ * Issue#7 formatting logs

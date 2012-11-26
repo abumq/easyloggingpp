@@ -1,18 +1,26 @@
-/***********************************************************************\
-* easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.846                                                 *
-*   Cross platform logging made easy for C++ applications              *
-*   Author Majid Khan <mkhan3189@gmail.com>                            *
-*   http://www.icplusplus.com                                          *
-*   https://github.com/mkhan3189/EasyLoggingPP                         *
-*                                                                      *
-* This program is free software: you can redistribute it and/or modify *
-* it under the terms of the GNU General Public License as published by *
-* the Free Software Foundation, version 3 of the License.              *
-\***********************************************************************/
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// easylogging++.h - Core of EasyLogging++                               //
+//   EasyLogging++ v2.846                                                //
+//   Cross platform logging made easy for C++ applications               //
+//   Author Majid Khan <mkhan3189@gmail.com>                             //
+//   http://www.icplusplus.com                                           //
+//   https://github.com/mkhan3189/EasyLoggingPP                          //
+//                                                                       //
+// This program is free software: you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation, version 3 of the Licence.               //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                         MODIFIABLE SECTION                           //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 #define _LOGGING_ENABLED 1
 
 #define _ENABLE_DEBUG_LOGS 1
@@ -46,6 +54,15 @@
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
+
+////////////////////////////////////////////////////////////////////
+///                                                              ///
+///                 END OF MODIFIABLE SECTION                    ///
+///                                                              ///
+///      *** DO NOT MODIFY ANY LINE BELOW THIS POINT ***         ///
+///                  EXCEPT CONFIGURATION                        ///
+///                                                              ///
+////////////////////////////////////////////////////////////////////
 
 #if _LOGGING_ENABLED
 #ifdef _WIN32
@@ -81,18 +98,18 @@
 
 namespace easyloggingpp {
 
-/////////////////////////////////////////////////////
-///                                               ///
-///          CONFIGURATION FOR LOGGING            ///
-///                                               ///
-///  *** PLESE SET ACCORDING TO YOUR NEEDS ***    ///
-///                                               ///
-/////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///                                                                 ///
+///                   CONFIGURATION FOR LOGGING                     ///
+///                                                                 ///
+///                       MODIFIABLE SECTION                        ///
+///                                                                 ///
+///////////////////////////////////////////////////////////////////////
 
 /**
- * Default format for all logging. Please see readme for details
+ * Default format for all logging. Please see readme on github for details
  */
-const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] [%user@%host] %log%n";
+const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log%n";
 
 /**
  * Format for debug logs
@@ -168,9 +185,9 @@ const bool SHOW_START_FUNCTION_LOG = false;
 
 ////////////////////////////////////////////////////////////////////
 ///                                                              ///
-///             END OF CONFIGURATION FOR LOGGING                 ///
+///                    END OF CONFIGURATION                      ///
 ///                                                              ///
-///      *** DO NOT MODIFY ANY LINE BELOW THIS POINT ***         ///
+///   *** PLEASE DO NOT MODIFY ANY LINE BELOW THIS POINT ***     ///
 ///                                                              ///
 ////////////////////////////////////////////////////////////////////
 
@@ -190,7 +207,7 @@ const bool SHOW_START_FUNCTION_LOG = false;
 static const std::string kFinalFilename = (::easyloggingpp::USE_CUSTOM_LOCATION ? ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::LOG_FILENAME;
 static bool showDateTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
 static bool showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
-static bool showTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos;
+static bool showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
 static bool showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 static std::string user;
 static std::string host;
@@ -390,96 +407,60 @@ static void updateFormatValue(const std::string& replaceWhat, const std::string&
   }
 }
 
+static void determineCommonLogFormat(const std::string& format) {
+  ::easyloggingpp::logFormat = format;
+  ::easyloggingpp::showDateTime = format.find("%datetime") != std::string::npos;
+  ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (format.find("%date") != std::string::npos);
+  ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (format.find("%time") != std::string::npos);
+  ::easyloggingpp::showLocation = format.find("%loc") != std::string::npos;
+  ::easyloggingpp::updateDateFormat();
+}
 static void determineLogFormat(const std::string& type) {
   if (type == "DEBUG") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::DEBUG_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::DEBUG_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEBUG_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEBUG_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::DEBUG_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::DEBUG_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "INFO") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::INFO_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::INFO_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::INFO_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::INFO_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::INFO_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::INFO_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "WARNING") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::WARNING_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::WARNING_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::WARNING_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::WARNING_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::WARNING_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::WARNING_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "ERROR") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::ERROR_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::ERROR_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::ERROR_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::ERROR_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::ERROR_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::ERROR_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "FATAL") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::FATAL_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::FATAL_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::FATAL_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::FATAL_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::FATAL_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::FATAL_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "PERFORMANCE") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::PERFORMANCE_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::PERFORMANCE_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "HINT") {
-    ::easyloggingpp::logFormat = ::easyloggingpp::HINT_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::HINT_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::HINT_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::HINT_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::HINT_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::HINT_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _HINTS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else if (type == "STATUS") {
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::STATUS_LOG_FORMAT);
     ::easyloggingpp::logFormat = ::easyloggingpp::STATUS_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::STATUS_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::STATUS_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::STATUS_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::STATUS_LOG_FORMAT.find("%loc") != std::string::npos;
     ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT;
     ::easyloggingpp::toFile = _STATUS_TO_FILE;
-    ::easyloggingpp::updateDateFormat();
   }
   else {
-    ::easyloggingpp::logFormat = ::easyloggingpp::DEFAULT_LOG_FORMAT;
-    ::easyloggingpp::showDateTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
-    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
-    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
-    ::easyloggingpp::showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::DEFAULT_LOG_FORMAT);
     ::easyloggingpp::toStandardOutput = true;
     ::easyloggingpp::toFile = true;
-    ::easyloggingpp::updateDateFormat();
   }
 }
 
