@@ -78,15 +78,61 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+
 namespace easyloggingpp {
-//////////////////////////////////////////////
-//   Configuration for logging             ///
-//////////////////////////////////////////////
+
+/////////////////////////////////////////////////////
+///                                               ///
+///          CONFIGURATION FOR LOGGING            ///
+///                                               ///
+///  *** PLESE SET ACCORDING TO YOUR NEEDS ***    ///
+///                                               ///
+/////////////////////////////////////////////////////
 
 /**
- * This is the format for your log. Please see github readme for details
+ * Default format for all logging. Please see readme for details
  */
-const std::string LOG_FORMAT = "[%type] [%datetime] [%user@%host] [%func] [%loc] %log%n";
+const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] [%user@%host] %log%n";
+
+/**
+ * Format for debug logs
+ */
+const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log%n";
+
+/**
+ * Format for info logs
+ */
+const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for warning logs
+ */
+const std::string WARNING_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for error logs
+ */
+const std::string ERROR_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for fatal logs
+ */
+const std::string FATAL_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for performance logs
+ */
+const std::string PERFORMANCE_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for hints
+ */
+const std::string HINT_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+
+/**
+ * Format for status logs
+ */
+const std::string STATUS_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 
 /**
  * Flag for showing log in standard output using std::cout
@@ -121,12 +167,31 @@ const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
 const bool SHOW_START_FUNCTION_LOG = false;
 
 ////////////////////////////////////////////////////////////////////
-///         END OF CONFIGURATION FOR LOGGING                     ///
+///                                                              ///
+///             END OF CONFIGURATION FOR LOGGING                 ///
+///                                                              ///
+///      *** DO NOT MODIFY ANY LINE BELOW THIS POINT ***         ///
+///                                                              ///
 ////////////////////////////////////////////////////////////////////
+
+#ifndef __FILE__
+ #define __FILE__ ""
+#endif //__FILE
+#ifndef __LINE__
+ #define __LINE__ ""
+#endif //_LINE__
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+ #define __func__ __FUNCTION__
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
+ #define __func__ __PRETTY_FUNCTION__
+#else
+ #define __func__ ""
+#endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 static const std::string kFinalFilename = (::easyloggingpp::USE_CUSTOM_LOCATION ? ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::LOG_FILENAME;
-static const bool kShowDate = ::easyloggingpp::LOG_FORMAT.find("%date") != std::string::npos;
-static const bool kShowDateTime = ::easyloggingpp::LOG_FORMAT.find("%datetime") != std::string::npos;
-static const bool kShowLocation = ::easyloggingpp::LOG_FORMAT.find("%loc") != std::string::npos;
+static bool showDateTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
+static bool showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
+static bool showTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos;
+static bool showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 static std::string user;
 static std::string host;
 static std::stringstream *logStream;
@@ -139,7 +204,7 @@ static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
-static std::string tempLogFormat = "";
+static std::string logFormat = "";
 
 static inline void internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
@@ -189,14 +254,14 @@ static void createLogPath(void) {
 }
 
 static inline std::string getDateTime(void) {
-  if (!(::easyloggingpp::kShowDateTime || ::easyloggingpp::kShowDate)) return "";
+  if (!(::easyloggingpp::showDateTime || ::easyloggingpp::showDate || ::easyloggingpp::showTime)) return "";
 #if _WINDOWS
     time_t currTime;
 #elif _LINUX || _MAC
     timeval currTime;
     gettimeofday(&currTime, NULL);
     int milliSeconds = 0;
-    if (::easyloggingpp::kShowDateTime) {
+    if ((::easyloggingpp::showDateTime) || (::easyloggingpp::showTime)) {
       milliSeconds = currTime.tv_usec / 1000;
     }
 #endif //_WINDOWS
@@ -206,28 +271,14 @@ static inline std::string getDateTime(void) {
 #elif _LINUX || _MAC
     timeInfo = localtime(&currTime.tv_sec);
 #endif //_WINDOWS
-    strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeInfo);
+    strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, ::easyloggingpp::dateFormat, timeInfo);
 #if _LINUX || _MAC
-    if (::easyloggingpp::kShowDateTime) {
+    if ((::easyloggingpp::showDateTime) || (::easyloggingpp::showTime)) {
       sprintf(::easyloggingpp::dateBuffer, "%s.%d", ::easyloggingpp::dateBuffer, milliSeconds);
     }
 #endif //_LINUX || _MAC
   return std::string(::easyloggingpp::dateBuffer);
 }
-
-#ifndef __FILE__
- #define __FILE__ ""
-#endif //__FILE
-#ifndef __LINE__
- #define __LINE__ ""
-#endif //_LINE__
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
- #define __func__ __FUNCTION__
-#elif defined(__GNUC__) && (__GNUC__ >= 2)
- #define __func__ __PRETTY_FUNCTION__
-#else
- #define __func__ ""
-#endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 
 static inline std::string getUsername(void) {
 #if _WINDOWS
@@ -256,24 +307,26 @@ static inline std::string getHostname(void) {
 }
 
 static inline void cleanStream(void) {
+  ::easyloggingpp::tempStream.str("");
+  ::easyloggingpp::tempStream2.str("");
   ::easyloggingpp::logStream->str("");
 }
 
-static inline std::string colourful(const std::string& text, const std::string& colour, bool bold = false) {
-#if _LINUX
-  short code = 30;
-  if (colour == "black") code = 30;
-  else if (colour == "red") code = 31;
-  else if (colour == "green") code = 32;
-  else if (colour == "yellow") code = 33;
-  else if (colour == "blue") code = 34;
-  else if (colour == "white") code = 37;
-  std::stringstream finalText;
-  finalText << "\033[" << (bold ? "1" : "0") << ";" << code << "m" << text << "\033[0m";
-  return finalText.str();
-#else
-  return text;
-#endif //_LINUX
+static inline void updateDateFormat(void) {
+  const char* dateFormatLocal = "%d/%m/%Y";
+  const char* timeFormatLocal = "%H:%M:%S";
+  if (::easyloggingpp::showDate) {
+    strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
+  }
+  else if ((::easyloggingpp::showDateTime) || (::easyloggingpp::showTime)) {
+      if (::easyloggingpp::showDateTime) {
+          strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
+          strcat(::easyloggingpp::dateFormat, " ");
+          strcat(::easyloggingpp::dateFormat, timeFormatLocal);
+      } else if (::easyloggingpp::showTime) {
+          strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
+      }
+  }
 }
 
 static void init(void) {
@@ -290,17 +343,7 @@ static void init(void) {
     fileNotOpenedErrorDisplayed = true;
   }
   // Date format
-  const char* dateFormatLocal = "%d/%m/%Y";
-  const char* timeFormatLocal = "%H:%M:%S";
-  if (::easyloggingpp::kShowDate) strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
-  if (::easyloggingpp::kShowDateTime) {
-      if (::easyloggingpp::kShowDate) {
-          strcat(::easyloggingpp::dateFormat, " ");
-          strcat(::easyloggingpp::dateFormat, timeFormatLocal);
-      } else {
-          strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
-      }
-  }
+  ::easyloggingpp::updateDateFormat();
   // Username and host
   ::easyloggingpp::user = ::easyloggingpp::getUsername();
   ::easyloggingpp::host = ::easyloggingpp::getHostname();
@@ -339,49 +382,132 @@ static void writeLog(void) {
   ::easyloggingpp::cleanStream();
 }
 
-static void replaceFirst(const std::string& replaceWhat, const std::string& replaceWith, std::string& str) {
+static void updateFormatValue(const std::string& replaceWhat, const std::string& replaceWith, std::string& str) {
   size_t foundAt = -1;
   while ((foundAt = str.find(replaceWhat)) != std::string::npos) {
     str = str.replace(foundAt, replaceWhat.size(), replaceWith);
     break;
   }
 }
+
+static void determineLogFormat(const std::string& type) {
+  if (type == "DEBUG") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::DEBUG_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::DEBUG_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEBUG_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEBUG_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::DEBUG_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "INFO") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::INFO_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::INFO_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::INFO_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::INFO_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::INFO_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "WARNING") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::WARNING_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::WARNING_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::WARNING_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::WARNING_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::WARNING_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "ERROR") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::ERROR_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::ERROR_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::ERROR_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::ERROR_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::ERROR_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "FATAL") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::FATAL_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::FATAL_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::FATAL_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::FATAL_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::FATAL_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "PERFORMANCE") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::PERFORMANCE_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::PERFORMANCE_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "HINT") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::HINT_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::HINT_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::HINT_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::HINT_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::HINT_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _HINTS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else if (type == "STATUS") {
+    ::easyloggingpp::logFormat = ::easyloggingpp::STATUS_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::STATUS_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::STATUS_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::STATUS_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::STATUS_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT;
+    ::easyloggingpp::toFile = _STATUS_TO_FILE;
+    ::easyloggingpp::updateDateFormat();
+  }
+  else {
+    ::easyloggingpp::logFormat = ::easyloggingpp::DEFAULT_LOG_FORMAT;
+    ::easyloggingpp::showDateTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
+    ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
+    ::easyloggingpp::showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
+    ::easyloggingpp::toStandardOutput = true;
+    ::easyloggingpp::toFile = true;
+    ::easyloggingpp::updateDateFormat();
+  }
+}
+
 static void buildFormat(const char* func, const char* file, const double line, const std::string& type) {
   if (!::easyloggingpp::loggerInitialized) {
     ::easyloggingpp::init();
-    ::easyloggingpp::tempStream.str("");  
-    ::easyloggingpp::tempStream2.str("");  
   }
-  tempLogFormat = ::easyloggingpp::LOG_FORMAT;
- 
-  replaceFirst("%type", type, ::easyloggingpp::tempLogFormat);
-  if (::easyloggingpp::kShowDateTime) {
-    replaceFirst("%datetime", ::easyloggingpp::getDateTime(), ::easyloggingpp::tempLogFormat);
-  } else if (::easyloggingpp::kShowDate) {
-    replaceFirst("%date", ::easyloggingpp::getDateTime(), ::easyloggingpp::tempLogFormat);
+  ::easyloggingpp::determineLogFormat(type);
+  ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
+  if (::easyloggingpp::showDateTime) {
+    ::easyloggingpp::updateFormatValue("%datetime", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
+  } else if (::easyloggingpp::showDate) {
+    ::easyloggingpp::updateFormatValue("%date", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
+  } else if (::easyloggingpp::showTime) {
+    ::easyloggingpp::updateFormatValue("%time", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
   }
-  replaceFirst("%func", std::string(func), ::easyloggingpp::tempLogFormat);
-  if (::easyloggingpp::kShowLocation) {
-    ::easyloggingpp::tempStream.str("");
+  updateFormatValue("%func", std::string(func), ::easyloggingpp::logFormat);
+  if (::easyloggingpp::showLocation) {
     ::easyloggingpp::tempStream << file << ":" << line; 
-    replaceFirst("%loc", ::easyloggingpp::tempStream.str(), ::easyloggingpp::tempLogFormat);
-    ::easyloggingpp::tempStream.str("");
+    ::easyloggingpp::updateFormatValue("%loc", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
   }
-  replaceFirst("%user", ::easyloggingpp::user, ::easyloggingpp::tempLogFormat);
-  replaceFirst("%host", ::easyloggingpp::host, ::easyloggingpp::tempLogFormat);
-  replaceFirst("%log", ::easyloggingpp::tempStream2.str(), ::easyloggingpp::tempLogFormat);
-  replaceFirst("%n", "\n", ::easyloggingpp::tempLogFormat);
-  if      (type == "DEBUG") { ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE; }
-  else if (type == "INFO") { ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE; }
-  else if (type == "WARNING") { ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE; }
-  else if (type == "ERROR") { ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE; }
-  else if (type == "FATAL") { ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE; }
-  else if (type == "PERFORMANCE") { ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE; }
-  else if (type == "HINT") { ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT; easyloggingpp::toFile = _HINTS_TO_FILE; }
-  else if (type == "STATUS") { ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT; ::easyloggingpp::toFile = _STATUS_TO_FILE; }
-  (*::easyloggingpp::logStream) << tempLogFormat;
-  ::easyloggingpp::tempStream2.str("");  
+  ::easyloggingpp::updateFormatValue("%user", ::easyloggingpp::user, ::easyloggingpp::logFormat);
+  ::easyloggingpp::updateFormatValue("%host", ::easyloggingpp::host, ::easyloggingpp::logFormat);
+  ::easyloggingpp::updateFormatValue("%log", ::easyloggingpp::tempStream2.str(), ::easyloggingpp::logFormat);
+  ::easyloggingpp::updateFormatValue("%n", "\n", ::easyloggingpp::logFormat);
+  (*::easyloggingpp::logStream) << logFormat;
 }
+
 #define WRITE_LOG(type, log)\
   ::easyloggingpp::tempStream2 << log;\
   ::easyloggingpp::buildFormat(__func__, __FILE__, __LINE__, std::string(type));\

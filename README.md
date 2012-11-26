@@ -32,14 +32,16 @@ EasyLogging++ comes with following levels of logging with complete control over 
     DEBUG("End of my EasyLogging++ program");
  }
  ```
-###### Output with no extra info
+Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
+
+###### Output (Format: `[%level] %log`)
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output with `SHOW_LOG_LOCATION` but `SHOW_TIME`, `SHOW_DATE` and `SHOW_LOG_FUNCTION`, `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
+###### Output (Format: `[%level] [%loc] %n %log`)
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -51,7 +53,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
     End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_TIME`, `SHOW_LOG_LOCATION` but `SHOW_DATE` and `SHOW_LOG_FUNCTION`, `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
+###### Output (Format: `[%level] [%time] [%loc] %n %log`)
 ```
 [DEBUG] [14:34:38] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -63,7 +65,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
     End of my EasyLogging++ program
 
 ```
-###### Output with `SHOW_DATE`, `SHOW_TIME`, `SHOW_LOG_LOCATION` and `SHOW_LOG_FUNCTION` but `SHOW_USERNAME` and `SHOW_HOSTNAME` set to false
+###### Output (Format: `[%level] [%datetime] [%func] [%loc] %n %log`)
 ```
 [DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -75,7 +77,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
     End of my EasyLogging++ program
 
 ```
-Note: `SHOW_LOG_FUNCTION` depends on compiler and is supported by Visual C++ and GNU C >= 2 only
+Note: `%func` format depends on compiler and is supported by Visual C++ and GNU C >= 2 only
 #### Performance Logging
  ```C++
  #include "easylogging++.h"
@@ -95,7 +97,7 @@ int main(void) {
     std::cout << "Sum of 1 and 2 is " << sumResult;
 }
  ```
-###### Output
+###### Output (Format: `[%level] %log`)
  ```
  this is test
 [PERFORMANCE] Executed [void print(string)] in [~0 seconds]
@@ -172,81 +174,41 @@ This can be set by following configurations
 * `_STATUS_TO_STANDARD_OUTPUT` to enable/disable status logs to be shown in standard output (`0` for disable `1` for enable)
 * `_STATUS_TO_FILE` to enable/disable saving status logs to log file (`0` for disable `1` for enable)
 
+#### Log Format
+You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
+* `%level` Level of logging
+* Date/Time
+ - `%date` Date only
+ - `%time` Time only
+ - `%datetime` Date and Time
+ Remember to use either one of above. Having `%date %time` for example, will result in failure.
+* `%user` Username currently running application
+* `%host` Computer name / host name
+* `%func` Function where log was written from
+* `%loc` Location with filename and line number where log was written from
+* `%log` Actual log
+* `%n` New line
+*Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
+
+#### Log Format By Log Level
+Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++.h` configuration section;
+* `DEFAULT_LOG_FORMAT` Sets format used for default logs
+* `DEBUG_LOG_FORMAT` Sets format used for `DEBUG` logs
+* `INFO_LOG_FORMAT` Sets format used for `INFO` logs
+* `WARNING_LOG_FORMAT` Sets format used for `WARNING` logs
+* `ERROR_LOG_FORMAT` Sets format used for `ERROR` logs
+* `FATAL_LOG_FORMAT` Sets format used for `FATAL` logs
+* `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORNANCE` logs
+* `HINT_LOG_FORMAT` Sets format used for `HINT`s
+* `STATUS_LOG_FORMAT` Sets format used for `STATUS` logs
+
 #### Other Configurations
-```C++
-
-/**
-* Flag for showing log in standard output using std::cout
-*/
-const bool SHOW_STD_OUTPUT = true;
-
-/**
-* Flag to set whether to save log to file
-*/
-const bool SAVE_TO_FILE = true;
-
-/**
-* Flag to set whether to show date
-*/
-const bool SHOW_DATE = false;
-
-/**
-* Flag to set whether to show time
-*/
-const bool SHOW_TIME = true;
-
-/**
-* Flag to set whether to show which file logged the output and what line
-*/
-const bool SHOW_LOG_LOCATION = true;
-
-/**
-* Flag to set whether to show which function logged the output and what line
-*/
-const bool SHOW_LOG_FUNCTION = true;
-
-/**
-* Flag to set whether to show username or not
-*/
-const bool SHOW_USERNAME = true;
-
-/**
-* Flag to set whether to show hostname or not
-*/
-const bool SHOW_HOSTNAME = true;
-
-/**
-* Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
-*/
-const bool SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO = false;
-
-/**
-* outputs if extra info is not available on machine and SHOW_NOT_SUPPORTED_ON_NO_EXTRA_INFO is true
-*/
-const std::string NOT_SUPPORTED_STRING = "-not supported-";
-
-/**
-* If saving to file, this defines the filename
-*/
-const std::string LOG_FILENAME = "myeasylog.log";
-
-/**
-* Flag to set whether to save log file in custom location
-*/
-const bool USE_CUSTOM_LOCATION = false;
-
-/**
-* If using custom location, this is where custom location is picked up from.
-* Note: This should end with last slash 
-*/
-const std::string CUSTOM_LOG_FILE_LOCATION = "";
-
-/**
- * Determines whether to show log when starting any time tracked function
- */
-const bool SHOW_START_FUNCTION_LOG = true;
-
-```
+* `SHOW_STD_OUTPUT` Flag for showing log in standard output (terminal or command prompt for example) 
+* `SAVE_TO_FILE` Flag to set whether to save logs to file or not
+* `LOG_FILENAME` If saving to file, this sets the filename
+* `USE_CUSTOM_LOCATION` Flag to set whether log file is saved to custom location defined in `CUSTOM_LOG_FILE_LOCATION`
+* `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
+* `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
 
 UPDATING TO NEWER VERSION
 =========================
