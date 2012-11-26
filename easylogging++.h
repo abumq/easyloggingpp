@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.0                                                  //
+//   EasyLogging++ v3.01                                                  //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -245,7 +245,7 @@ static void createLogPath(void) {
     int status = -1;
 #if _WINDOWS
     std::string pathDelimiter = "\\";
-#elif _LINUX
+#elif _LINUX || _MAC
     std::string pathDelimiter = "/";
 #endif //_WINDOWS
     std::string tempPath = CUSTOM_LOG_FILE_LOCATION;
