@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.845                                                 *
+*   EasyLogging++ v2.846                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -48,12 +48,22 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
-#if defined(_WIN32) || defined(_WIN64)
+#ifdef _WIN32
  #define _WINDOWS 1
-#endif //_WIN32 || _WIN64
-#if defined(__linux__)
+ #define _WINDOWS_32 1
+#endif //_WIN32
+#ifdef _WIN64
+ #define _WINDOWS 1
+ #define _WINDOWS_64 1
+#endif //_WIN64
+#ifdef __linux
  #define _LINUX 1
-#endif //__linux__
+#endif //__linux
+#ifdef __APPLE__
+ #if TARGET_OS_MAC
+  #define _MAC 1
+ #endif //TARGET_OS_MAC
+#endif //__APPLE__
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -61,10 +71,10 @@
  #include <direct.h> //digital mars compiler
  #include <windows.h>
 #endif //_WINDOWS
-#if _LINUX
+#if _LINUX || _MAC
  #include <sys/stat.h>
  #include <sys/time.h>
-#endif //_LINUX
+#endif //_LINUX || _MAC
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -85,7 +95,7 @@ const bool SAVE_TO_FILE = true;
 /**
 * Flag to set whether to show date
 */
-const bool SHOW_DATE = true;
+const bool SHOW_DATE = true; 
 
 /**
  * Flag to set whether to show time
@@ -147,7 +157,7 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ////////////////////////////////////////////////////////////////////
 ///         END OF CONFIGURATION FOR LOGGING                     ///
 ////////////////////////////////////////////////////////////////////
-static const std::string kFinalFilename = (USE_CUSTOM_LOCATION ? CUSTOM_LOG_FILE_LOCATION : "") + LOG_FILENAME;
+static const std::string kFinalFilename = (::easyloggingpp::USE_CUSTOM_LOCATION ? ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::LOG_FILENAME;
 static std::string user;
 static std::stringstream *logStream;
 static bool toStandardOutput;
@@ -169,10 +179,10 @@ static bool logPathExist(void) {
     return false;
   }
   return (fileType & FILE_ATTRIBUTE_DIRECTORY);
-#elif _LINUX
+#elif _LINUX || _MAC
   struct stat st;
   return (stat(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), &st) == 0);
-#endif
+#endif //_WINDOWS
 }
 
 static void createLogPath(void) {
@@ -182,7 +192,7 @@ static void createLogPath(void) {
     std::string pathDelimiter = "\\";
 #elif _LINUX
     std::string pathDelimiter = "/";
-#endif
+#endif //_WINDOWS
     std::string tempPath = CUSTOM_LOG_FILE_LOCATION;
     std::string dir = "";
     short foundAt = -1;
@@ -193,9 +203,9 @@ static void createLogPath(void) {
         madeSoFar += dir + pathDelimiter;
 #if _WINDOWS
         status = _mkdir(madeSoFar.c_str());
-#elif _LINUX
+#elif _LINUX || _MAC
         status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
-#endif
+#endif //_WINDOWS
       }
       tempPath = tempPath.erase(0, foundAt + 1);
     }
@@ -206,29 +216,29 @@ static void createLogPath(void) {
 }
 
 static inline std::string getDateTime(void) {
-  if (!(SHOW_DATE || SHOW_TIME)) return "";
+  if (!(::easyloggingpp::SHOW_DATE || ::easyloggingpp::SHOW_TIME)) return "";
 #if _WINDOWS
     time_t currTime;
-#elif _LINUX
+#elif _LINUX || _MAC
     timeval currTime;
     gettimeofday(&currTime, NULL);
     int milliSeconds = 0;
     if (::easyloggingpp::SHOW_TIME) {
       milliSeconds = currTime.tv_usec / 1000;
     }
-#endif
+#endif //_WINDOWS
     struct tm * timeInfo;
 #if _WINDOWS
     timeInfo = localtime(&currTime);
-#elif _LINUX
+#elif _LINUX || _MAC
     timeInfo = localtime(&currTime.tv_sec);
-#endif
+#endif //_WINDOWS
     strftime(::easyloggingpp::dateBuffer, ::easyloggingpp::kDateBufferSize, dateFormat, timeInfo);
-#if _LINUX
-    if (SHOW_TIME) {
+#if _LINUX || _MAC
+    if (::easyloggingpp::SHOW_TIME) {
       sprintf(::easyloggingpp::dateBuffer, "%s.%d", ::easyloggingpp::dateBuffer, milliSeconds);
     }
-#endif
+#endif //_LINUX || _MAC
   return std::string(::easyloggingpp::dateBuffer);
 }
 
@@ -249,7 +259,7 @@ static inline std::string getDateTime(void) {
 static inline std::string getUsername(void) {
 #if _WINDOWS
   char* username = getenv("USERNAME");
-#elif _LINUX
+#elif _LINUX || _MAC
   char* username = getenv("USER");
 #endif //_WINDOWS
   if ((username == NULL) || ((strcmp(username, "") == 0))) {
@@ -262,7 +272,7 @@ static inline std::string getUsername(void) {
 static inline std::string getHostname(void) {
 #if _WINDOWS
   char* hostname = getenv("COMPUTERNAME");
-#elif _LINUX
+#elif _LINUX || _MAC
   char* hostname = getenv("HOSTNAME");
 #endif //_WINDOWS
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
