@@ -31,7 +31,7 @@ History was not kept before version 2.1.
  * 2.843: Fixes milliseconds issue for linux only.
  * 2.844: Do not calculate milliseconds when SHOW_TIME is set to false
  * 2.845: Strict support for any other OS than linux or windows
- * 
+
 #### 3.0
  * Major improvements
  * Added format specifiers for each logging level
