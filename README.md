@@ -219,3 +219,4 @@ This script takes three parameters:
  * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
  * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
 
+*Note* This will only work with EasyLogging++ 3.0+
