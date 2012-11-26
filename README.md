@@ -177,17 +177,17 @@ This can be set by following configurations
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
 * `%level` Level of logging
-* Date/Time
+* Date/Time [Remember to use either one of above. Having `%date %time` for example, will result in failure.]
  - `%date` Date only
  - `%time` Time only
  - `%datetime` Date and Time
- Remember to use either one of above. Having `%date %time` for example, will result in failure.
 * `%user` Username currently running application
 * `%host` Computer name / host name
 * `%func` Function where log was written from
 * `%loc` Location with filename and line number where log was written from
 * `%log` Actual log
 * `%n` New line
+
 *Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
 
 #### Log Format By Log Level
