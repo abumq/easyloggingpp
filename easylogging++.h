@@ -1,6 +1,6 @@
 /***********************************************************************\
 * easylogging++.h - Core of EasyLogging++                              *
-*   EasyLogging++ v2.844                                                 *
+*   EasyLogging++ v2.845                                                 *
 *   Cross platform logging made easy for C++ applications              *
 *   Author Majid Khan <mkhan3189@gmail.com>                            *
 *   http://www.icplusplus.com                                          *
@@ -53,7 +53,7 @@
 #endif //_WIN32 || _WIN64
 #if defined(__linux__)
  #define _LINUX 1
-#endif
+#endif //__linux__
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -169,7 +169,7 @@ static bool logPathExist(void) {
     return false;
   }
   return (fileType & FILE_ATTRIBUTE_DIRECTORY);
-#else
+#elif _LINUX
   struct stat st;
   return (stat(::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.c_str(), &st) == 0);
 #endif
@@ -180,7 +180,7 @@ static void createLogPath(void) {
     int status = -1;
 #if _WINDOWS
     std::string pathDelimiter = "\\";
-#else
+#elif _LINUX
     std::string pathDelimiter = "/";
 #endif
     std::string tempPath = CUSTOM_LOG_FILE_LOCATION;
@@ -193,7 +193,7 @@ static void createLogPath(void) {
         madeSoFar += dir + pathDelimiter;
 #if _WINDOWS
         status = _mkdir(madeSoFar.c_str());
-#else
+#elif _LINUX
         status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
 #endif
       }
@@ -249,7 +249,7 @@ static inline std::string getDateTime(void) {
 static inline std::string getUsername(void) {
 #if _WINDOWS
   char* username = getenv("USERNAME");
-#else
+#elif _LINUX
   char* username = getenv("USER");
 #endif //_WINDOWS
   if ((username == NULL) || ((strcmp(username, "") == 0))) {
@@ -262,7 +262,7 @@ static inline std::string getUsername(void) {
 static inline std::string getHostname(void) {
 #if _WINDOWS
   char* hostname = getenv("COMPUTERNAME");
-#else
+#elif _LINUX
   char* hostname = getenv("HOSTNAME");
 #endif //_WINDOWS
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
@@ -318,6 +318,7 @@ static void init(void) {
           strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
       }
   }
+  // Username and host
   ::easyloggingpp::user = "";
   if (::easyloggingpp::SHOW_USERNAME)
     ::easyloggingpp::user = " [" + ::easyloggingpp::getUsername() + (::easyloggingpp::SHOW_HOSTNAME ? "" : "]");
