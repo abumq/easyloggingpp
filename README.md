@@ -212,7 +212,7 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 
 #### Modifiable Sections
 `easylogging++.h` contains modifiable sections that you can modify. This includes configuration and enabling/disabling certain logs as mentioned above. Please do not modify any code other than the ones in modifiable sections, unless you really know what you are doing. This may cause `update.sh` to stop working.
-## UPDATING EasyLogging++
+## Updating EasyLogging++
 If you are already using older version of EasyLogging++ and would like to update to newer version without losing your previous configurations like your log storage, log format or what you log etc, you can use script called `update.sh`. This script retains configuration from older files and creates new `easylogging++.h` file that you can re-import to your project without losing your configuration and without having any compile errors.
 This script takes three parameters:
  * Current File : The current file that is being used in your project and you would like to change. e.g, `/dev/myproject/using/easylogging/src/easylogging++.h`
