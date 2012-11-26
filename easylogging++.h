@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.0                                                //
+//   EasyLogging++ v3.0                                                  //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -477,7 +477,7 @@ static void buildFormat(const char* func, const char* file, const double line, c
   } else if (::easyloggingpp::showTime) {
     ::easyloggingpp::updateFormatValue("%time", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
   }
-  updateFormatValue("%func", std::string(func), ::easyloggingpp::logFormat);
+  ::easyloggingpp::updateFormatValue("%func", std::string(func), ::easyloggingpp::logFormat);
   if (::easyloggingpp::showLocation) {
     ::easyloggingpp::tempStream << file << ":" << line; 
     ::easyloggingpp::updateFormatValue("%loc", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
