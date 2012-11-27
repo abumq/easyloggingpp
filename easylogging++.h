@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.01                                                  //
+//   EasyLogging++ v3.02                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -401,9 +401,14 @@ static void writeLog(void) {
 
 static void updateFormatValue(const std::string& replaceWhat, const std::string& replaceWith, std::string& str) {
   size_t foundAt = -1;
-  while ((foundAt = str.find(replaceWhat)) != std::string::npos) {
-    str = str.replace(foundAt, replaceWhat.size(), replaceWith);
-    break;
+  while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos){
+    if (str.substr(foundAt - 1, 1) == "\\") {
+      str = str.erase(foundAt - 2, 1);
+      foundAt++;
+    } else {
+      str = str.replace(foundAt, replaceWhat.size(), replaceWith);
+      break;
+    }
   }
 }
 
