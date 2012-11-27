@@ -52,7 +52,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
  ```
 Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
 
-###### Output (Format: `[%level] %log`)
+###### Output (Format: `[%level] %log %n`)
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
