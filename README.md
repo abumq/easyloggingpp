@@ -19,6 +19,26 @@ EasyLogging++ comes with following levels of logging with complete control over 
   HINT(...)
   STATUS(...)
 ```
+## Why EasyLogging++
+Answering this question can be sometimes hard but here are few reasons why you would want to use EasyLogging++ as logger for your C++ applications;
+ * Native C++ support
+  - EasyLogging++ comes with native C++ support. It does not depend on any external library.
+ * Portablility
+  - EasyLogging++ is based on one header file that is enough for writing logs for you. All you need to do is include that header to your source and you will be good to go!
+  - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it.
+  - It supports multiple OS
+ * Easy Enable / Disable
+  - EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage to compilation.
+ * Extremely Easy to Use
+  - EasyLogging++ is extremely easy to use. Just two steps and you will already be writing logs;
+    -- Include `easylogging++.h`
+    -- Use one of levels, e.g, `INFO("My log line ");`
+  - Be sure to have logs enabled (if they are disabled)
+ * Open Source
+  - EasyLogging++ is open source. So you can contribute to the project and make it better with great ideas.
+  - It is free to use. So you pay nothing!
+ * Performance Tracking
+  - `PERFORMANCE` logs can track time taken by certain function if you allow it to
 
 ## Examples
 #### Basic Logging
