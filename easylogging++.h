@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.02                                                 //
+//   EasyLogging++ v3.03                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -241,6 +241,7 @@ static bool logPathExist(void) {
 }
 
 static void createLogPath(void) {
+#if _WINDOWS || _LINUX || _MAC
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
 #if _WINDOWS
@@ -268,6 +269,9 @@ static void createLogPath(void) {
       ::easyloggingpp::internalMessage("Unable to create log path [" + ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION + "]");
     }
   }
+#else
+  ::easyloggingpp::internalMessage("Unable to create log path [" + ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION + "]");
+#endif //_WINDOWS || _LINUX || _MAC
 }
 
 static inline std::string getDateTime(void) {
@@ -415,8 +419,10 @@ static void updateFormatValue(const std::string& replaceWhat, const std::string&
 static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::logFormat = format;
   ::easyloggingpp::showDateTime = format.find("%datetime") != std::string::npos;
-  ::easyloggingpp::showDate = (!::easyloggingpp::showDateTime) && (format.find("%date") != std::string::npos);
-  ::easyloggingpp::showTime = (!::easyloggingpp::showDateTime) && (format.find("%time") != std::string::npos);
+  if (!::easyloggingpp::showDateTime) {
+    ::easyloggingpp::showDate = (format.find("%date") != std::string::npos);
+    ::easyloggingpp::showTime = (format.find("%time") != std::string::npos);
+  }
   ::easyloggingpp::showLocation = format.find("%loc") != std::string::npos;
   ::easyloggingpp::updateDateFormat();
 }
