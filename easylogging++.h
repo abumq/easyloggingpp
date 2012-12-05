@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.05                                                 //
+//   EasyLogging++ v3.06                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -119,7 +119,7 @@ const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func]
 /**
  * Format for info logs
  */
-const std::string INFO_LOG_FORMAT = "%level %datetime %log\n";
+const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 
 /**
  * Format for warning logs
