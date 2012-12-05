@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.03                                                 //
+//   EasyLogging++ v3.04                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -109,12 +109,12 @@ namespace easyloggingpp {
 /**
  * Default format for all logging. Please see readme on github for details
  */
-const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log%n";
+const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log\n";
 
 /**
  * Format for debug logs
  */
-const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log%n";
+const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 
 /**
  * Format for info logs
@@ -426,6 +426,7 @@ static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::showLocation = format.find("%loc") != std::string::npos;
   ::easyloggingpp::updateDateFormat();
 }
+
 static void determineLogFormat(const std::string& type) {
   if (type == "DEBUG") {
     ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::DEBUG_LOG_FORMAT);
@@ -475,7 +476,7 @@ static void determineLogFormat(const std::string& type) {
   }
 }
 
-static void buildFormat(const char* func, const char* file, const double line, const std::string& type) {
+static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
   if (!::easyloggingpp::loggerInitialized) {
     ::easyloggingpp::init();
   }
@@ -496,7 +497,6 @@ static void buildFormat(const char* func, const char* file, const double line, c
   ::easyloggingpp::updateFormatValue("%user", ::easyloggingpp::user, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%host", ::easyloggingpp::host, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%log", ::easyloggingpp::tempStream2.str(), ::easyloggingpp::logFormat);
-  ::easyloggingpp::updateFormatValue("%n", "\n", ::easyloggingpp::logFormat);
   (*::easyloggingpp::logStream) << logFormat;
 }
 

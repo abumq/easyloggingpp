@@ -39,3 +39,4 @@ History was not kept before version 2.1.
  * 3.01: Fix up path creation on mac
  * 3.02: Added slash as escape character in format
  * 3.03: Fixed bug for other OS than mac, linux or windows
+ * 3.04: Got rid of new line character `%n` instead `\n` can be used

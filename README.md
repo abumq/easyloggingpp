@@ -204,7 +204,8 @@ You can customize format of logging. Following format specifiers are currently s
 * `%func` Function where log was written from
 * `%loc` Location with filename and line number where log was written from
 * `%log` Actual log
-* `%n` New line
+* `\n` New line
+* `\t` Tab
 
 *Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
 
