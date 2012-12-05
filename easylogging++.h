@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.04                                                 //
+//   EasyLogging++ v3.05                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -119,7 +119,7 @@ const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func]
 /**
  * Format for info logs
  */
-const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+const std::string INFO_LOG_FORMAT = "%level %datetime %log\n";
 
 /**
  * Format for warning logs
@@ -406,7 +406,7 @@ static void writeLog(void) {
 static void updateFormatValue(const std::string& replaceWhat, const std::string& replaceWith, std::string& str) {
   size_t foundAt = -1;
   while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos){
-    if (str.substr(foundAt - 1, 1) == "\\") {
+    if (str.substr(foundAt, 1) == "\\") {
       str = str.erase(foundAt - 2, 1);
       foundAt++;
     } else {
