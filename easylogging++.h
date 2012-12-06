@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.06                                                 //
+//   EasyLogging++ v3.07                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -64,7 +64,7 @@
 ///                                                              ///
 ////////////////////////////////////////////////////////////////////
 
-#if _LOGGING_ENABLED
+#if _LOGGING_ENABLED && !defined(_DISABLE_EASYLOGGINGPP)
 #ifdef _WIN32
  #define _WINDOWS 1
  #define _WINDOWS_32 1

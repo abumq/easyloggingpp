@@ -40,3 +40,5 @@ History was not kept before version 2.1.
  * 3.02: Added slash as escape character in format
  * 3.03: Fixed bug for other OS than mac, linux or windows
  * 3.04: Got rid of new line character `%n` instead `\n` can be used
+ * 3.05 and 3.06: Fixes for \n from 3.04
+ * 3.07: Adds _DISABLE_EASYLOGGINGPP, macro defined disable
