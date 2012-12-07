@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.10                                                 //
+//   EasyLogging++ v3.11                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -454,27 +454,27 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::writeLog();
  
   #if _ENABLE_DEBUG_LOGS
-    #define DEBUG(logStr) WRITE_LOG(std::string("DEBUG"),logStr)
+    #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
   #else
     #define DEBUG(x)
   #endif //_ENABLE_DEBUG_LOGS
   #if _ENABLE_INFO_LOGS
-    #define INFO(logStr) WRITE_LOG(std::string("INFO"),logStr)
+    #define INFO(logStr) WRITE_LOG("INFO",logStr)
   #else
     #define INFO(x)
   #endif //_ENABLE_INFO_LOGS
   #if _ENABLE_WARNING_LOGS
-    #define WARNING(logStr) WRITE_LOG(std::string("WARNING"),logStr)
+    #define WARNING(logStr) WRITE_LOG("WARNING",logStr)
   #else
     #define WARNING(x)
   #endif //_ENABLE_WARNING_LOGS
   #if _ENABLE_ERROR_LOGS
-    #define ERROR(logStr) WRITE_LOG(std::string("ERROR"),logStr)
+    #define ERROR(logStr) WRITE_LOG("ERROR",logStr)
   #else
     #define ERROR(x)
   #endif //_ENABLE_ERROR_LOGS
   #if _ENABLE_FATAL_LOGS
-    #define FATAL(logStr) WRITE_LOG(std::string("FATAL"),logStr)
+    #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
   #else
     #define FATAL(x)
   #endif //_ENABLE_FATAL_LOGS
@@ -491,7 +491,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
       ss << result << " " << unit;
       return ss.str();
     }
-    #define PERFORMANCE(logStr) WRITE_LOG(std::string("PERFORMANCE"),logStr)
+    #define PERFORMANCE(logStr) WRITE_LOG("PERFORMANCE",logStr)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::formatSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (::easyloggingpp::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime, functionEndTime; time(&functionStartTime);
@@ -510,12 +510,12 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define RETURN(expr) return expr;
   #endif //_ENABLE_PERFORMANCE_LOGS
   #if _ENABLE_HINTS
-    #define HINT(logStr) WRITE_LOG(std::string("HINT"),logStr)
+    #define HINT(logStr) WRITE_LOG("HINT",logStr)
   #else
     #define HINT(x)
   #endif //_ENABLE_HINTS
   #if _ENABLE_STATUS
-    #define STATUS(logStr) WRITE_LOG(std::string("STATUS"),logStr)
+    #define STATUS(logStr) WRITE_LOG("STATUS",logStr)
   #else
     #define STATUS(x)
   #endif //_ENABLE_STATUS
