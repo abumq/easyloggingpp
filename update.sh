@@ -59,7 +59,7 @@ includesEnd=$(grep -n 'CONFIGURATION FOR LOGGING' $newVersionFile | grep -o '[0-
 includesEnd=$(expr $includesEnd + 5)
 includesSed="$includesStart,$includesEnd"
 echo "Updating includes ($includesStart - $includesEnd)..."
-sed -n $includesSed'p' $currFile >> $targetFile
+sed -n $includesSed'p' $newVersionFile >> $targetFile
 ## Get configurations off currfile
 confStart=$(expr $includesEnd + 1)
 confEnd=$(grep -n 'END OF CONFIGURATION' $currFile | grep -o '[0-9]*')
@@ -71,7 +71,7 @@ sed -n $confSed'p' $currFile >> $targetFile
 srcStart=$(expr $confEnd + 1)
 srcEnd=$(wc -l $newVersionFile | grep -o '[0-9]*')
 srcSed="$srcStart,$srcEnd"
-echo "Updating source code... ($srcStart - srcEnd)"
+echo "Updating source code... ($srcStart - $srcEnd)"
 sed -n $srcSed'p' $newVersionFile >> $targetFile
 
 echo 'DONE!'
