@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.09                                                 //
+//   EasyLogging++ v3.10                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -107,81 +107,25 @@ namespace easyloggingpp {
 ///                                                                 ///
 ///////////////////////////////////////////////////////////////////////
 
-/**
- * Default format for all logging. Please see readme on github for details
- */
+
+// FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE SEE README AT:
+// https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md
+
 const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log\n";
-
-/**
- * Format for debug logs
- */
 const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
-
-/**
- * Format for info logs
- */
 const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for warning logs
- */
 const std::string WARNING_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for error logs
- */
 const std::string ERROR_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for fatal logs
- */
 const std::string FATAL_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for performance logs
- */
 const std::string PERFORMANCE_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for hints
- */
 const std::string HINT_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-
-/**
- * Format for status logs
- */
 const std::string STATUS_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 
-/**
- * Flag for showing log in standard output using std::cout
- */
 const bool SHOW_STD_OUTPUT = true;
-
-/**
- * Flag to set whether to save log to file
- */
 const bool SAVE_TO_FILE = true;
-
-/*
- * If saving to file, this defines the filename
- */
 const std::string LOG_FILENAME = "myeasylog.log";
-
-/**
- * Flag to set whether to save log file in custom location
- */
 const bool USE_CUSTOM_LOCATION = true;
-
-/**
- * If using custom location, this is where custom location is picked up from.
- * Note: This should end with last slash and should be a fully qualified path. 
- * Relative paths are not allowed
- */
 const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
-
-/**
- * Determines whether to show log when starting any time tracked function
- */
 const bool SHOW_START_FUNCTION_LOG = false;
 
 ////////////////////////////////////////////////////////////////////
