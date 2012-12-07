@@ -20,7 +20,7 @@ else
     macro="__linux"
   fi
 fi
-if [[ "$1" = "disable" ]] || [[ "$2" = "disable" ]]; then
+if [ "$1" = "disable" ] || [ "$2" = "disable" ]; then
   macro=$macro' -D _DISABLE_EASYLOGGINGPP'
 fi
 find -type f -name '*.cpp' -exec g++ {} -o bin/{}.bin -D $macro \;

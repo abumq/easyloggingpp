@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.08                                                 //
+//   EasyLogging++ v3.09                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -37,6 +37,7 @@
 
 #define _ENABLE_ERROR_LOGS 1
 #define _ERROR_LOGS_TO_STANDARD_OUTPUT 1
+
 #define _ERROR_LOGS_TO_FILE 1
 
 #define _ENABLE_FATAL_LOGS 1
@@ -211,7 +212,8 @@ static bool showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEF
 static bool showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 static std::string user;
 static std::string host;
-static std::stringstream *logStream;
+static std::stringstream *logStream = NULL;
+static std::ofstream *logFile = NULL;
 static std::stringstream tempStream;
 static std::stringstream tempStream2;
 static bool toStandardOutput;
@@ -351,37 +353,41 @@ static inline void updateDateFormat(void) {
 }
 
 static void init(void) {
-  // Logger
-  ::easyloggingpp::logStream = new std::stringstream();\
-  // Path
-  ::easyloggingpp::createLogPath();
-  // Log file
-  std::ofstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
-  if (logFile.is_open()) {
-    logFile.close();
-  } else if (!fileNotOpenedErrorDisplayed) {
-    ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
-    fileNotOpenedErrorDisplayed = true;
-  }
-  // Date format
-  ::easyloggingpp::updateDateFormat();
-  // Username and host
-  ::easyloggingpp::user = ::easyloggingpp::getUsername();
-  ::easyloggingpp::host = ::easyloggingpp::getHostname();
-  loggerInitialized = true; 
+  if (!::easyloggingpp::loggerInitialized) {
+    // Logger
+    if (::easyloggingpp::SHOW_STD_OUTPUT) {
+      ::easyloggingpp::logStream = new std::stringstream();
+    }
+    // Path
+    ::easyloggingpp::createLogPath();
+    // Log file
+    if (::easyloggingpp::SAVE_TO_FILE) {
+      ::easyloggingpp::logFile = new std::ofstream(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+      if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (!::easyloggingpp::logFile->is_open())) {
+        ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
+        ::easyloggingpp::fileNotOpenedErrorDisplayed = true;
+      }
+    }
+    // Date format
+    ::easyloggingpp::updateDateFormat();
+    // Username and host
+    ::easyloggingpp::user = ::easyloggingpp::getUsername();
+    ::easyloggingpp::host = ::easyloggingpp::getHostname();
+    ::easyloggingpp::loggerInitialized = true;
+  } 
 }
 
 static std::string readLog(void) {
   std::stringstream ss;
   if (::easyloggingpp::SAVE_TO_FILE) {
-    std::ifstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ifstream::in);
-    if (logFile.is_open()) {
+    std::ifstream logFileReader(::easyloggingpp::kFinalFilename.c_str(), std::ifstream::in);
+    if (logFileReader.is_open()) {
       std::string line;
-      while (logFile.good()) {
-        std::getline(logFile, line);
+      while (logFileReader.good()) {
+        std::getline(logFileReader, line);
         ss << line << std::endl;
       }
-      logFile.close();
+      logFileReader.close();
     } else {
       ss << "Error opening log file [" << ::easyloggingpp::kFinalFilename << "]";
     }
@@ -392,13 +398,13 @@ static std::string readLog(void) {
 }
 
 static void writeLog(void) {
-  if ((::easyloggingpp::SHOW_STD_OUTPUT) && (::easyloggingpp::toStandardOutput)) {
+  if ((::easyloggingpp::logStream) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
   }
-  if ((!fileNotOpenedErrorDisplayed) && (::easyloggingpp::SAVE_TO_FILE) && (::easyloggingpp::toFile)) {
-    std::ofstream logFile(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
-    logFile << ::easyloggingpp::logStream->str();
-    logFile.close();
+  if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (::easyloggingpp::logFile) && (::easyloggingpp::toFile)) {
+    ::easyloggingpp::logFile->open(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+    (*::easyloggingpp::logFile) << ::easyloggingpp::logStream->str();
+    ::easyloggingpp::logFile->close();
   }
   ::easyloggingpp::cleanStream();
 }
@@ -477,9 +483,7 @@ static void determineLogFormat(const std::string& type) {
 }
 
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
-  if (!::easyloggingpp::loggerInitialized) {
-    ::easyloggingpp::init();
-  }
+  ::easyloggingpp::init();
   ::easyloggingpp::determineLogFormat(type);
   ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
   if (::easyloggingpp::showDateTime) {

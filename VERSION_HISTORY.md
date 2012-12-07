@@ -43,3 +43,4 @@ History was not kept before version 2.1.
  * 3.05 and 3.06: Fixes for \n from 3.04
  * 3.07: Adds _DISABLE_EASYLOGGINGPP, macro to disable EasyLogging++ while compiling
  * 3.08: Fix for update.sh includes
+ * 3.09 improvements around log file performance
