@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.11                                                 //
+//   EasyLogging++ v3.12                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -138,10 +138,10 @@ const bool SHOW_START_FUNCTION_LOG = false;
 
 #ifndef __FILE__
  #define __FILE__ ""
-#endif //__FILE
+#endif //__FILE__
 #ifndef __LINE__
  #define __LINE__ ""
-#endif //_LINE__
+#endif //__LINE__
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
  #define __func__ __FUNCTION__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
@@ -534,5 +534,5 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
-#endif //_LOGGING_ENABLED
+#endif //_LOGGING_ENABLED && !defined(_DISABLE_EASYLOGGINGPP)
 #endif //EASYLOGGINGPP_H

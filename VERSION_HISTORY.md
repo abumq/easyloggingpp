@@ -48,3 +48,4 @@ History was not kept before version 2.1.
 #### 3.1
  * 3.10: Removed comments around configuration to point to README
  * 3.11: Type / level constructor called within WRITE_LOG macro only 
+ * 3.12: minor fixes around comments
