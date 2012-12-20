@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## update.sh v1.5
+## update.sh v1.6
 ## Please see 'Update EasyLogging++' section on README.md on
 ## https://github.com/mkhan3189/EasyLoggingPP/ for more information on this file
 ## @author mkhan3189
@@ -46,7 +46,7 @@ commentsEnd=$(expr $commentsEnd + 3)
 commentsSed="$commentsStart,$commentsEnd"
 echo "Updating comments ($commentsStart - $commentsEnd)..."
 sed -n $commentsSed'p' $newVersionFile >> $targetFile
-## Get logging defines and headers off curr file
+## Get logging defines and headers off current file
 headersStart=$(grep -n '#ifndef EASYLOGGINGPP_H' $currFile | grep -o '[0-9]*')
 headersEnd=$(grep -n 'EXCEPT CONFIGURATION' $currFile | grep -o '[0-9]*')
 headersEnd=$(expr $headersEnd + 3) 
@@ -60,7 +60,7 @@ includesEnd=$(expr $includesEnd + 5)
 includesSed="$includesStart,$includesEnd"
 echo "Updating includes ($includesStart - $includesEnd)..."
 sed -n $includesSed'p' $newVersionFile >> $targetFile
-## Get configurations off currfile
+## Get configurations off current file
 confStart=$(expr $includesEnd + 1)
 confEnd=$(grep -n 'END OF CONFIGURATION' $currFile | grep -o '[0-9]*')
 confEnd=$(expr $confEnd + 5)

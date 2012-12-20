@@ -238,4 +238,6 @@ This script takes three parameters:
  * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
  * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
 
-*Note* This will only work with EasyLogging++ 3.0+
+*Note* This will only work with EasyLogging++ 3.12+.
+
+`update.sh` was introduced in version 3.0 but because of some changes in 3.12, update.sh will work quite well with v3.12+. For older changes you can still use it but you will need to review the source code (`easylogging++.h`) and see if configuration section is alright. The only thing that causes issue is configuration section's comment.
