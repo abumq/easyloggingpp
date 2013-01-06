@@ -184,13 +184,13 @@ To disable level specific log while compiling here are macros to define;
 * `_DISABLE_WARNING_LOGS`
 * `_DISABLE_ERROR_LOGS`
 * `_DISABLE_FATAL_LOGS`
-* `_DISABLE_STATUS_LOGS`
-* `_DISABLE_HINT_LOGS`
+* `_DISABLE_STATUS`
+* `_DISABLE_HINTS`
 * `_DISABLE_PERFORMANCE_LOGS`
 
 As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++.h`, you may compile with following line;
 ```
-g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS_LOGS
+g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS
 ```
 This will disable debug logs and status updates in main-exec binary.
 

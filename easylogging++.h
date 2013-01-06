@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.15                                                 //
+//   EasyLogging++ v3.16                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -168,8 +168,8 @@ const bool SHOW_START_FUNCTION_LOG = false;
 #define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS))
 #define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS))
 #define _PERFORMANCE_LOG ((_ENABLE_PERFORMANCE_LOGS) && !defined(_DISABLE_PERFORMANCE_LOGS))
-#define _STATUS_LOG      ((_ENABLE_STATUS) && !defined(_DISABLE_STATUS_LOGS))
-#define _HINT_LOG        ((_ENABLE_HINTS) && !defined(_DISABLE_HINT_LOGS))
+#define _STATUS_LOG      ((_ENABLE_STATUS) && !defined(_DISABLE_STATUS))
+#define _HINT_LOG        ((_ENABLE_HINTS) && !defined(_DISABLE_HINTS))
 #define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS))
 
 //
@@ -506,7 +506,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #else
     #define ERROR(x)
   #endif //_ERROR_LOG
-  #if _ENABLE_FATAL_LOGS
+  #if _FATAL_LOG
     #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
   #else
     #define FATAL(x)
