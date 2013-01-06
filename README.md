@@ -52,14 +52,14 @@ Answering this question can be sometimes hard but here are few reasons why you w
  ```
 Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
 
-###### Output (Format: `[%level] %log %n`)
+###### Output (Format: `[%level] %log`)
 ```
 [DEBUG] Staring my EasyLogging++ program
 [INFO] Current value is 0
 [INFO] Now the value has changed from 0 to 1
 [DEBUG] End of my EasyLogging++ program
 ```
-###### Output (Format: `[%level] [%loc] %n %log`)
+###### Output (Format: `[%level] [%loc] \n %log`)
 ```
 [DEBUG] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -71,7 +71,7 @@ Output for above logging varies depending on format you set in configuration sec
     End of my EasyLogging++ program
 
 ```
-###### Output (Format: `[%level] [%time] [%loc] %n %log`)
+###### Output (Format: `[%level] [%time] [%loc] \n %log`)
 ```
 [DEBUG] [14:34:38] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
@@ -83,7 +83,7 @@ Output for above logging varies depending on format you set in configuration sec
     End of my EasyLogging++ program
 
 ```
-###### Output (Format: `[%level] [%datetime] [%func] [%loc] %n %log`)
+###### Output (Format: `[%level] [%datetime] [%func] [%loc] \n %log`)
 ```
 [DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
