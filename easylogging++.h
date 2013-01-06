@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.14                                                 //
+//   EasyLogging++ v3.15                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -37,7 +37,6 @@
 
 #define _ENABLE_ERROR_LOGS 1
 #define _ERROR_LOGS_TO_STANDARD_OUTPUT 1
-
 #define _ERROR_LOGS_TO_FILE 1
 
 #define _ENABLE_FATAL_LOGS 1
@@ -65,7 +64,8 @@
 ///                                                              ///
 ////////////////////////////////////////////////////////////////////
 
-#if ((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
+#if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
+
 //
 // OS evaluation
 //
@@ -85,6 +85,7 @@
   #define _MAC 1
  #endif //TARGET_OS_MAC
 #endif //defined(__APPLE__)
+
 //
 // Includes
 //
@@ -158,6 +159,18 @@ const bool SHOW_START_FUNCTION_LOG = false;
 #else
  #define __func__ ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
+
+//
+// Log levels
+//
+#define _DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS))
+#define _INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS))
+#define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS))
+#define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS))
+#define _PERFORMANCE_LOG ((_ENABLE_PERFORMANCE_LOGS) && !defined(_DISABLE_PERFORMANCE_LOGS))
+#define _STATUS_LOG      ((_ENABLE_STATUS) && !defined(_DISABLE_STATUS_LOGS))
+#define _HINT_LOG        ((_ENABLE_HINTS) && !defined(_DISABLE_HINT_LOGS))
+#define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS))
 
 //
 // Static fields
@@ -473,32 +486,32 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::buildFormat(__func__, __FILE__, __LINE__, std::string(type));\
   ::easyloggingpp::writeLog();
  
-  #if _ENABLE_DEBUG_LOGS
+  #if _DEBUG_LOG
     #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
   #else
     #define DEBUG(x)
-  #endif //_ENABLE_DEBUG_LOGS
-  #if _ENABLE_INFO_LOGS
+  #endif //_DEBUG_LOG
+  #if _INFO_LOG
     #define INFO(logStr) WRITE_LOG("INFO",logStr)
   #else
     #define INFO(x)
-  #endif //_ENABLE_INFO_LOGS
-  #if _ENABLE_WARNING_LOGS
+  #endif //_INFO_LOG
+  #if _WARNING_LOG
     #define WARNING(logStr) WRITE_LOG("WARNING",logStr)
   #else
     #define WARNING(x)
-  #endif //_ENABLE_WARNING_LOGS
-  #if _ENABLE_ERROR_LOGS
+  #endif //_WARNING_LOG
+  #if _ERROR_LOG
     #define ERROR(logStr) WRITE_LOG("ERROR",logStr)
   #else
     #define ERROR(x)
-  #endif //_ENABLE_ERROR_LOGS
+  #endif //_ERROR_LOG
   #if _ENABLE_FATAL_LOGS
     #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
   #else
     #define FATAL(x)
-  #endif //_ENABLE_FATAL_LOGS
-  #if _ENABLE_PERFORMANCE_LOGS
+  #endif //_FATAL_LOG
+  #if _PERFORMANCE_LOG
     inline std::string formatSeconds(double secs) {
       double result = secs;
       std::string unit = "seconds";
@@ -528,17 +541,17 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
     #define END_FUNC }
     #define RETURN(expr) return expr;
-  #endif //_ENABLE_PERFORMANCE_LOGS
-  #if _ENABLE_HINTS
+  #endif //_PERFORMANCE_LOG
+  #if _HINT_LOG
     #define HINT(logStr) WRITE_LOG("HINT",logStr)
   #else
     #define HINT(x)
-  #endif //_ENABLE_HINTS
-  #if _ENABLE_STATUS
+  #endif //_HINT_LOG
+  #if _STATUS_LOG
     #define STATUS(logStr) WRITE_LOG("STATUS",logStr)
   #else
     #define STATUS(x)
-  #endif //_ENABLE_STATUS
+  #endif //_STATUS_LOG
 } //namespace easyloggingpp
 #else
   #define DEBUG(x)

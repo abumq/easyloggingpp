@@ -172,12 +172,27 @@ By Default logging is enabled and you can use it in your aplication. There are f
 
 *Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
 
-There is another way you can disable logging, while compiling, define macro `_DISABLE_EASYLOGGINGPP` and EasyLogging++ will be disabled for executable from current compilation.
+There is another way you can disable logging, while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled for executable from current compilation.
 As an example, if you are using g++
 ```
-g++ main.cpp -o main-exec -D _DISABLE_EASYLOGGINGPP
+g++ main.cpp -o main-exec -D _DISABLE_LOGS
 ```
 
+To disable level specific log while compiling here are macros to define;
+
+* `_DISABLE_DEBUG_LOGS`
+* `_DISABLE_INFO_LOGS`
+* `_DISABLE_WARNING_LOGS`
+* `_DISABLE_ERROR_LOGS`
+* `_DISABLE_FATAL_LOGS`
+* `_DISABLE_STATUS_LOGS`
+* `_DISABLE_HINT_LOGS`
+* `_DISABLE_PERFORMANCE_LOGS`
+
+As an example if you wish to disable just debug an status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_INFO_LOGS` is set to 1, you may compile with following line;
+```
+g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS_LOGS
+```
 #### Log Location By Log Level
 Since v2.0+, EasyLogging++ has configuration for custom log locations, that means; for example you can choose to log `DEBUG`s to log file but not to standard output (e.g, terminal) while `INFO` to both standard output and log file.
 This can be set by following configurations
