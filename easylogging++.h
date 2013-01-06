@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.13                                                 //
+//   EasyLogging++ v3.14                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -65,23 +65,29 @@
 ///                                                              ///
 ////////////////////////////////////////////////////////////////////
 
-#if _LOGGING_ENABLED && !defined(_DISABLE_EASYLOGGINGPP)
-#ifdef _WIN32
+#if ((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
+//
+// OS evaluation
+//
+#if defined(_WIN32)
  #define _WINDOWS 1
  #define _WINDOWS_32 1
-#endif //_WIN32
-#ifdef _WIN64
+#endif //defined(_WIN32)
+#if defined(_WIN64)
  #define _WINDOWS 1
  #define _WINDOWS_64 1
-#endif //_WIN64
-#ifdef __linux
+#endif //defined(_WIN64)
+#if (defined(__linux) || defined(__linux__))
  #define _LINUX 1
-#endif //__linux
-#ifdef __APPLE__
+#endif //(defined(__linux) || defined(__linux__))
+#if defined(__APPLE__)
  #if TARGET_OS_MAC
   #define _MAC 1
  #endif //TARGET_OS_MAC
-#endif //__APPLE__
+#endif //defined(__APPLE__)
+//
+// Includes
+//
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -136,12 +142,15 @@ const bool SHOW_START_FUNCTION_LOG = false;
 ///                                                              ///
 ////////////////////////////////////////////////////////////////////
 
-#ifndef __FILE__
+//
+// Source code location macros
+//
+#if !defined(__FILE__)
  #define __FILE__ ""
-#endif //__FILE__
-#ifndef __LINE__
+#endif //!defined(__FILE__)
+#if !defined(__LINE__)
  #define __LINE__ ""
-#endif //__LINE__
+#endif //!defined(__LINE__)
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
  #define __func__ __FUNCTION__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
@@ -149,6 +158,10 @@ const bool SHOW_START_FUNCTION_LOG = false;
 #else
  #define __func__ ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
+
+//
+// Static fields
+//
 static const std::string kFinalFilename = (::easyloggingpp::USE_CUSTOM_LOCATION ? ::easyloggingpp::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::LOG_FILENAME;
 static bool showDateTime = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
 static bool showDate = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
@@ -169,6 +182,9 @@ static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
 static std::string logFormat = "";
 
+//
+// Internal functions
+//
 static inline void internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
 }
@@ -224,6 +240,7 @@ static inline std::string getDateTime(void) {
   if (!(::easyloggingpp::showDateTime || ::easyloggingpp::showDate || ::easyloggingpp::showTime)) return "";
 #if _WINDOWS
     time_t currTime;
+    time(&currTime);
 #elif _LINUX || _MAC
     timeval currTime;
     gettimeofday(&currTime, NULL);
@@ -448,6 +465,9 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   (*::easyloggingpp::logStream) << logFormat;
 }
 
+//
+// Logging macros
+//
 #define WRITE_LOG(type, log)\
   ::easyloggingpp::tempStream2 << log;\
   ::easyloggingpp::buildFormat(__func__, __FILE__, __LINE__, std::string(type));\
@@ -534,5 +554,5 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
-#endif //_LOGGING_ENABLED && !defined(_DISABLE_EASYLOGGINGPP)
+#endif //((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
 #endif //EASYLOGGINGPP_H
