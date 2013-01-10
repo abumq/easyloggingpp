@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.16                                                 //
+//   EasyLogging++ v3.17                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -314,15 +314,12 @@ static inline void updateDateFormat(void) {
   const char* timeFormatLocal = "%H:%M:%S";
   if (::easyloggingpp::showDate) {
     strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
-  }
-  else if ((::easyloggingpp::showDateTime) || (::easyloggingpp::showTime)) {
-      if (::easyloggingpp::showDateTime) {
-          strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
-          strcat(::easyloggingpp::dateFormat, " ");
-          strcat(::easyloggingpp::dateFormat, timeFormatLocal);
-      } else if (::easyloggingpp::showTime) {
-          strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
-      }
+  } else if (::easyloggingpp::showTime) {
+    strcpy(::easyloggingpp::dateFormat, timeFormatLocal);
+  } else if (::easyloggingpp::showDateTime) {
+    strcpy(::easyloggingpp::dateFormat, dateFormatLocal);
+    strcat(::easyloggingpp::dateFormat, " ");
+    strcat(::easyloggingpp::dateFormat, timeFormatLocal);
   }
 }
 
@@ -383,14 +380,14 @@ static void writeLog(void) {
   ::easyloggingpp::cleanStream();
 }
 
-static void updateFormatValue(const std::string& replaceWhat, const std::string& replaceWith, std::string& str) {
+static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
   size_t foundAt = -1;
-  while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos){
-    if (str.substr(foundAt, 1) == "\\") {
-      str = str.erase(foundAt - 2, 1);
+  while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
+    if (currentFormat.substr(foundAt, 1) == "\\") {
+      currentFormat = currentFormat.erase(foundAt - 2, 1);
       foundAt++;
     } else {
-      str = str.replace(foundAt, replaceWhat.size(), replaceWith);
+      currentFormat = currentFormat.replace(foundAt, formatSpecifier.size(), value);
       break;
     }
   }
