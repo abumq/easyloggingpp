@@ -85,17 +85,26 @@ Output for above logging varies depending on format you set in configuration sec
 ```
 ###### Output (Format: `[%level] [%datetime] [%func] [%loc] \n %log`)
 ```
-[DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
+[DEBUG] [13/01/2013 17:23:06.371] [int main(int,char**)] [/home/easyloggertest/main.cpp:3]
     Staring my EasyLogging++ program
-[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:5]
+[INFO] [13/01/2013 17:23:06.371] [int main(int,char**)] [/home/easyloggertest/main.cpp:5]
     Current value is 0
-[INFO] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:6]
+[INFO] [13/01/2013 17:23:06.371] [int main(int,char**)] [/home/easyloggertest/main.cpp:6]
     Now the value has changed from 0 to 1
-[DEBUG] [Sep 23 2012 14:34:38] [int main(int,char**)] [/home/easyloggertest/main.cpp:7]
+[DEBUG] [13/01/2013 17:23:06.371] [int main(int,char**)] [/home/easyloggertest/main.cpp:7]
     End of my EasyLogging++ program
 
 ```
 Note: `%func` format depends on compiler and is supported by Visual C++ and GNU C >= 2 only
+
+###### Escaping Log Format
+Escape character used in EasyLogging++ is `E`. For example, to write following log
+```
+%level [DEBUG] [13/01/2013 17:21:09.571] Log message
+```
+Log format should look like:
+`E%level [%level] [%datetime] %log`
+
 #### Performance Logging
  ```C++
  #include "easylogging++.h"

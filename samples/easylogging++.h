@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.19                                                 //
+//   EasyLogging++ v3.18                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -118,7 +118,7 @@ namespace easyloggingpp {
 // FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE SEE README AT:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md
 
-const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log\n";
+const std::string DEFAULT_LOG_FORMAT = "[\%level] %level [%datetime] %log\n";
 const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 const std::string WARNING_LOG_FORMAT = DEFAULT_LOG_FORMAT;
@@ -388,12 +388,12 @@ static void writeLog(void) {
 static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
   size_t foundAt = -1;
   while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
-    if (currentFormat.substr(foundAt > 0 ? foundAt - 1 : 0, 1) == "E") {
-      currentFormat = currentFormat.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+    if (currentFormat.substr(foundAt, 1) == "\\") {
+      currentFormat = currentFormat.erase(foundAt - 2, 1);
       foundAt++;
     } else {
       currentFormat = currentFormat.replace(foundAt, formatSpecifier.size(), value);
-      continue; 
+      continue;//break;
     }
   }
 }
