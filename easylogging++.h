@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.17                                                 //
+//   EasyLogging++ v3.18                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -219,11 +219,11 @@ static void createLogPath(void) {
 #if _WINDOWS || _LINUX || _MAC
   if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0) && (!::easyloggingpp::logPathExist())) {
     int status = -1;
-#if _WINDOWS
+ #if _WINDOWS
     std::string pathDelimiter = "\\";
-#elif _LINUX || _MAC
+ #elif _LINUX || _MAC
     std::string pathDelimiter = "/";
-#endif //_WINDOWS
+ #endif //_WINDOWS
     std::string tempPath = CUSTOM_LOG_FILE_LOCATION;
     std::string dir = "";
     short foundAt = -1;
@@ -232,11 +232,11 @@ static void createLogPath(void) {
       dir = tempPath.substr(0, foundAt);
       if (dir != "") {
         madeSoFar += dir + pathDelimiter;
-#if _WINDOWS
+ #if _WINDOWS
         status = _mkdir(madeSoFar.c_str());
-#elif _LINUX || _MAC
+ #elif _LINUX || _MAC
         status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
-#endif //_WINDOWS
+ #endif //_WINDOWS
       }
       tempPath = tempPath.erase(0, foundAt + 1);
     }
@@ -333,7 +333,12 @@ static void init(void) {
     ::easyloggingpp::createLogPath();
     // Log file
     if (::easyloggingpp::SAVE_TO_FILE) {
-      ::easyloggingpp::logFile = new std::ofstream(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+#if defined(_ALWAYS_CLEAN_LOGS)
+        std::ios_base::openmode mode = std::ofstream::out;
+#else
+        std::ios_base::openmode mode = std::ofstream::out | std::ofstream::app;
+#endif
+      ::easyloggingpp::logFile = new std::ofstream(::easyloggingpp::kFinalFilename.c_str(), mode);
       if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (!::easyloggingpp::logFile->is_open())) {
         ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
         ::easyloggingpp::fileNotOpenedErrorDisplayed = true;
