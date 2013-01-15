@@ -1,4 +1,5 @@
 easyloggingpp.zip
 releases/*
 samples/logs/*
+samples/bin/*
 *.bin
