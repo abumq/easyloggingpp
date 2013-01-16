@@ -183,7 +183,6 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   INFO_IF(1 == 1, "1 is equal to 1");
   // Or
   DEBUG_IF(1 == 2, "1 is equal to 2");
-
 ```
 
 ## Configuration
