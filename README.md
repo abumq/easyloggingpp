@@ -185,6 +185,14 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
 ```
 
+#### Cleaning Logs On Each Run
+If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
+
+As an example, you may compile your application as following if you wish to clean logs every time you execute application;
+```
+g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
+```
+
 #### Verbose Logging
 Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `main(.., ..)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
 ```C++
@@ -266,14 +274,6 @@ This will disable debug logs and status updates in main-exec binary.
 
 *Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
 
-#### Cleaning Logs On Each Run
-If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
-
-As an example, you may compile your application as following if you wish to clean logs every time you execute application;
-```
-g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
-```
-
 #### Log Location By Log Level
 Since v2.0+, EasyLogging++ has configuration for custom log locations, that means; for example you can choose to log `DEBUG`s to log file but not to standard output (e.g, terminal) while `INFO` to both standard output and log file.
 This can be set by following configurations
@@ -297,6 +297,7 @@ This can be set by following configurations
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
 * `%level` Level of logging
+* `%vlevel` Verbose level [integer] only applicable for verbose logs
 * Date/Time [Remember to use either one of above. Having `%date %time` for example, will result in failure.]
  - `%date` Date only
  - `%time` Time only
