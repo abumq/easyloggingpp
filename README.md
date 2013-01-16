@@ -223,6 +223,7 @@ You can disable verbose logs by many ways,
  * Do not run application using `--v` argument
  * Define `_DISABLE_VERBOSE_LOGS` e.g, `g++ main.cpp -o main-exec -D _DISABLE_VERBOSE_LOGS`
  * Make `_ENABLE_VERBOSE_LOGS` `0`
+
 Just like other logs, you may choose the final location of verbose logs, i.e, file or standard output.
 
 ## Configuration
