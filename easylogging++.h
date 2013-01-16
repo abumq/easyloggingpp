@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.20                                                 //
+//   EasyLogging++ v3.21                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -69,6 +69,7 @@
 //
 // OS evaluation
 //
+// Windows
 #if defined(_WIN32)
  #define _WINDOWS 1
  #define _WINDOWS_32 1
@@ -77,9 +78,11 @@
  #define _WINDOWS 1
  #define _WINDOWS_64 1
 #endif //defined(_WIN64)
+// Linux
 #if (defined(__linux) || defined(__linux__))
  #define _LINUX 1
 #endif //(defined(__linux) || defined(__linux__))
+// Mac
 #if defined(__APPLE__)
  #if TARGET_OS_MAC
   #define _MAC 1
@@ -409,53 +412,23 @@ static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::updateDateFormat();
 }
 
+#define LOG_FORMATTER(typeLHS, typeRHS, format, logToStandardOutput, logToFile)\
+  if (typeLHS == typeRHS) {\
+    ::easyloggingpp::determineCommonLogFormat(format);\
+    ::easyloggingpp::toStandardOutput = logToStandardOutput;\
+    ::easyloggingpp::toFile = logToFile;\
+    return;\
+  }
+
 static void determineLogFormat(const std::string& type) {
-  if (type == "DEBUG") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::DEBUG_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _DEBUG_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _DEBUG_LOGS_TO_FILE;
-  }
-  else if (type == "INFO") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::INFO_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _INFO_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _INFO_LOGS_TO_FILE;
-  }
-  else if (type == "WARNING") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::WARNING_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _WARNING_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _WARNING_LOGS_TO_FILE;
-  }
-  else if (type == "ERROR") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::ERROR_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _ERROR_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _ERROR_LOGS_TO_FILE;
-  }
-  else if (type == "FATAL") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::FATAL_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _FATAL_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _FATAL_LOGS_TO_FILE;
-  }
-  else if (type == "PERFORMANCE") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::PERFORMANCE_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _PERFORMANCE_LOGS_TO_FILE;
-  }
-  else if (type == "HINT") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::HINT_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = _HINTS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _HINTS_TO_FILE;
-  }
-  else if (type == "STATUS") {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::STATUS_LOG_FORMAT);
-    ::easyloggingpp::logFormat = ::easyloggingpp::STATUS_LOG_FORMAT;
-    ::easyloggingpp::toStandardOutput = _STATUS_TO_STANDARD_OUTPUT;
-    ::easyloggingpp::toFile = _STATUS_TO_FILE;
-  }
-  else {
-    ::easyloggingpp::determineCommonLogFormat(::easyloggingpp::DEFAULT_LOG_FORMAT);
-    ::easyloggingpp::toStandardOutput = true;
-    ::easyloggingpp::toFile = true;
-  }
+  LOG_FORMATTER(type, "DEBUG", ::easyloggingpp::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "INFO", ::easyloggingpp::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "WARNING", ::easyloggingpp::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "ERROR", ::easyloggingpp::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "FATAL", ::easyloggingpp::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "PERFORMANCE", ::easyloggingpp::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE)
+  LOG_FORMATTER(type, "HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINTS_TO_STANDARD_OUTPUT, _HINTS_TO_FILE)
+  LOG_FORMATTER(type, "STATUS", ::easyloggingpp::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE)
 }
 
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
