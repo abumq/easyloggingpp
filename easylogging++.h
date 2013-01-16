@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.25                                                 //
+//   EasyLogging++ v3.26                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -209,7 +209,6 @@ static bool fileNotOpenedErrorDisplayed = false;
 static std::string logFormat = "";
 #if _VERBOSE_LOG
 static int verboseLevel = -1;
-static int currentVerboseLevel = -1;
 #endif //_VERBOSE_LOG
 class LogType {
 public:
@@ -652,6 +651,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define PERFORMANCE(x)
   #define HINT(x)
   #define STATUS(x)
+  #define VERBOSE(x, y)
   // Performance specific
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
@@ -667,9 +667,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define PERFORMANCE_IF(x, y)
   #define HINT_IF(x, y)
   #define STATUS_IF(x, y)
-  // Verbose
-  #define VERBOSE(x, y)
   #define VERBOSE_IF(x, y, z)
-#endif //((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
+#endif //((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
 #endif //EASYLOGGINGPP_H
 
