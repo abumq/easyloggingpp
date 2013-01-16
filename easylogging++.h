@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.21                                                 //
+//   EasyLogging++ v3.22                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -44,7 +44,7 @@
 #define _FATAL_LOGS_TO_FILE 1
 
 #define _ENABLE_PERFORMANCE_LOGS 1
-#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0 
+#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
 #define _PERFORMANCE_LOGS_TO_FILE 1
 
 #define _ENABLE_HINT 1
@@ -55,9 +55,9 @@
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
 
-#define _ENABLE_VERBOSE_LOGS 1
+#define _ENABLE_VERBOSE_LOGS 1 
 #define _VERBOSE_TO_STANDARD_OUTPUT 1
-#define _VERBOSE_TO_FILE 0
+#define _VERBOSE_TO_FILE 1
 
 ////////////////////////////////////////////////////////////////////
 ///                                                              ///
@@ -125,23 +125,23 @@ namespace easyloggingpp {
 // FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE SEE README AT:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md
 
-const std::string DEFAULT_LOG_FORMAT = "[%level] [%datetime] %log\n";
-const std::string DEBUG_LOG_FORMAT = "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
-const std::string INFO_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string WARNING_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string ERROR_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string FATAL_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string PERFORMANCE_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string HINT_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string STATUS_LOG_FORMAT = DEFAULT_LOG_FORMAT;
-const std::string VERBOSE_LOG_FORMAT = "[%level-%vlevel] [%datetime] [%user@%host] [%func] [%loc] %log\n";
+const std::string    DEFAULT_LOG_FORMAT       =    "[%level] [%datetime] %log\n";
+const std::string    DEBUG_LOG_FORMAT         =    "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
+const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
+const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
+const std::string    ERROR_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
+const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
+const std::string    PERFORMANCE_LOG_FORMAT   =    DEFAULT_LOG_FORMAT;
+const std::string    HINT_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
+const std::string    STATUS_LOG_FORMAT        =    DEFAULT_LOG_FORMAT;
+const std::string    VERBOSE_LOG_FORMAT       =    "[%level-%vlevel] [%datetime] %log\n";
 
-const bool SHOW_STD_OUTPUT = true;
-const bool SAVE_TO_FILE = true;
-const std::string LOG_FILENAME = "myeasylog.log";
-const bool USE_CUSTOM_LOCATION = true;
-const std::string CUSTOM_LOG_FILE_LOCATION = "logs/";
-const bool SHOW_START_FUNCTION_LOG = false;
+const bool           SHOW_STD_OUTPUT          =    true;
+const bool           SAVE_TO_FILE             =    true;
+const std::string    LOG_FILENAME             =    "myeasylog.log";
+const bool           USE_CUSTOM_LOCATION      =    true;
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+const bool           SHOW_START_FUNCTION_LOG  =    false;
 
 ////////////////////////////////////////////////////////////////////
 ///                                                              ///
@@ -182,13 +182,7 @@ const bool SHOW_START_FUNCTION_LOG = false;
 #define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
 
 // Application arguments based logs
-#define _START_EASYLOGGINGPP(argc, argv) ARGUMENTS_BASED_LOGS(argc, argv)
-#define ARGUMENTS_BASED_LOGS(argc, argv) \
- if (argc > 0) { \
-   ::easyloggingpp::appArguments = argv; \
-   ::easyloggingpp::appArgumentsCount = argc; \
-   ::easyloggingpp::init();\
- }
+#define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::setAppArgs(argc, argv)
 
 //
 // Static fields
@@ -200,7 +194,7 @@ static bool showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEF
 static bool showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 static std::string user;
 static std::string host;
-static std::stringstream *logMessageeam = NULL;
+static std::stringstream *logStream = NULL;
 static std::ofstream *logFile = NULL;
 static std::stringstream tempStream;
 static std::stringstream tempStream2;
@@ -212,8 +206,6 @@ static char dateFormat[kDateBufferSize];
 static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
 static std::string logFormat = "";
-static char** appArguments = NULL;
-static int appArgumentsCount = 0;
 #if _VERBOSE_LOG
 static int verboseLevel = -1;
 static int currentVerboseLevel = -1;
@@ -224,6 +216,20 @@ static int currentVerboseLevel = -1;
 //
 static inline void internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
+}
+
+static inline void setAppArgs(int argc, char** argv) {
+  while (argc-- > 0) {
+#if _VERBOSE_LOG
+    if ((strlen(argv[argc]) >= 5) 
+     && (argv[argc][0] == '-')
+     && (argv[argc][1] == '-')
+     && (argv[argc][2] == 'v')
+     && (argv[argc][3] == '=')) {
+       ::easyloggingpp::verboseLevel = atoi(argv[argc] + 4);
+    }
+#endif //_VERBOSE_LOG
+  }
 }
 
 static bool logPathExist(void) {
@@ -241,7 +247,9 @@ static bool logPathExist(void) {
 
 static void createLogPath(void) {
 #if _WINDOWS || _LINUX || _MAC
-  if ((::easyloggingpp::USE_CUSTOM_LOCATION) && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0) && (!::easyloggingpp::logPathExist())) {
+  if ((::easyloggingpp::USE_CUSTOM_LOCATION)
+   && (::easyloggingpp::CUSTOM_LOG_FILE_LOCATION.size() > 0)
+   && (!::easyloggingpp::logPathExist())) {
     int status = -1;
  #if _WINDOWS
     std::string pathDelimiter = "\\";
@@ -330,7 +338,7 @@ static inline std::string getHostname(void) {
 static inline void cleanStream(void) {
   ::easyloggingpp::tempStream.str("");
   ::easyloggingpp::tempStream2.str("");
-  ::easyloggingpp::logMessageeam->str("");
+  ::easyloggingpp::logStream->str("");
 }
 
 static inline void updateDateFormat(void) {
@@ -351,7 +359,7 @@ static void init(void) {
   if (!::easyloggingpp::loggerInitialized) {
     // Logger
     if (::easyloggingpp::SHOW_STD_OUTPUT) {
-      ::easyloggingpp::logMessageeam = new std::stringstream();
+      ::easyloggingpp::logStream = new std::stringstream();
     }
     // Path
     ::easyloggingpp::createLogPath();
@@ -374,16 +382,7 @@ static void init(void) {
     ::easyloggingpp::user = ::easyloggingpp::getUsername();
     ::easyloggingpp::host = ::easyloggingpp::getHostname();
     ::easyloggingpp::loggerInitialized = true;
-    // Arguments based logging
-    while (::easyloggingpp::appArgumentsCount > 0) {
-#if _VERBOSE_LOG
-      //FIXME: determine correct verbose level here
-      //from appArguments
-      ::easyloggingpp::verboseLevel = 1;
-#endif //_VERBOSE_LOG
-      ::easyloggingpp::appArgumentsCount--;
-    }
-  } 
+  }
 }
 
 static std::string readLog(void) {
@@ -407,12 +406,12 @@ static std::string readLog(void) {
 }
 
 static void writeLog(void) {
-  if ((::easyloggingpp::logMessageeam) && (::easyloggingpp::toStandardOutput)) {
-    std::cout << ::easyloggingpp::logMessageeam->str();
+  if ((::easyloggingpp::logStream) && (::easyloggingpp::toStandardOutput)) {
+    std::cout << ::easyloggingpp::logStream->str();
   }
   if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (::easyloggingpp::logFile) && (::easyloggingpp::toFile)) {
     ::easyloggingpp::logFile->open(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
-    (*::easyloggingpp::logFile) << ::easyloggingpp::logMessageeam->str();
+    (*::easyloggingpp::logFile) << ::easyloggingpp::logStream->str();
     ::easyloggingpp::logFile->close();
   }
   ::easyloggingpp::cleanStream();
@@ -426,7 +425,7 @@ static void updateFormatValue(const std::string& formatSpecifier, const std::str
       foundAt++;
     } else {
       currentFormat = currentFormat.replace(foundAt, formatSpecifier.size(), value);
-      continue; 
+      continue;
     }
   }
 }
@@ -451,26 +450,44 @@ static void determineCommonLogFormat(const std::string& format) {
   }
 
 static void determineLogFormat(const std::string& type) {
+#if _DEBUG_LOG
   LOG_FORMATTER(type, "DEBUG", ::easyloggingpp::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE)
+#endif //_DEBUG_LOG
+#if _INFO_LOG
   LOG_FORMATTER(type, "INFO", ::easyloggingpp::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE)
+#endif //_INFO_LOG
+#if _WARNING_LOG
   LOG_FORMATTER(type, "WARNING", ::easyloggingpp::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE)
+#endif //_WARNING_LOG
+#if _ERROR_LOG
   LOG_FORMATTER(type, "ERROR", ::easyloggingpp::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE)
+#endif //_ERROR_LOG
+#if _FATAL_LOG
   LOG_FORMATTER(type, "FATAL", ::easyloggingpp::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE)
+#endif //_FATAL_LOG
+#if _PERFORMANCE_LOG
   LOG_FORMATTER(type, "PERFORMANCE", ::easyloggingpp::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE)
+#endif //_PERFORMANCE_LOG
+#if _HINT_LOG
   LOG_FORMATTER(type, "HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINT_TO_STANDARD_OUTPUT, _HINT_TO_FILE)
+#endif //_HINT_LOG
+#if _STATUS_LOG
   LOG_FORMATTER(type, "STATUS", ::easyloggingpp::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE)
+#endif //_STATUS_LOG
+#if _VERBOSE_LOG
   LOG_FORMATTER(type, "VERBOSE", ::easyloggingpp::VERBOSE_LOG_FORMAT, _VERBOSE_TO_STANDARD_OUTPUT, _VERBOSE_TO_FILE)
+#endif //_VERBOSE_LOG
 }
 
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
   ::easyloggingpp::init();
   ::easyloggingpp::determineLogFormat(type);
   ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
-  #if _VERBOSE_LOG
-    ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
-    ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
-    ::easyloggingpp::tempStream.str("");
-  #endif //_VERBOSE_LOG
+#if _VERBOSE_LOG
+  ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
+  ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
+  ::easyloggingpp::tempStream.str("");
+#endif //_VERBOSE_LOG
   if (::easyloggingpp::showDateTime) {
     ::easyloggingpp::updateFormatValue("%datetime", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
   } else if (::easyloggingpp::showDate) {
@@ -480,13 +497,13 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   }
   ::easyloggingpp::updateFormatValue("%func", std::string(func), ::easyloggingpp::logFormat);
   if (::easyloggingpp::showLocation) {
-    ::easyloggingpp::tempStream << file << ":" << line; 
+    ::easyloggingpp::tempStream << file << ":" << line;
     ::easyloggingpp::updateFormatValue("%loc", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
   }
   ::easyloggingpp::updateFormatValue("%user", ::easyloggingpp::user, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%host", ::easyloggingpp::host, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%log", ::easyloggingpp::tempStream2.str(), ::easyloggingpp::logFormat);
-  (*::easyloggingpp::logMessageeam) << logFormat;
+  (*::easyloggingpp::logStream) << logFormat;
 }
 
 //
@@ -502,7 +519,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
      ::easyloggingpp::currentVerboseLevel = level;\
      WRITE_LOG("VERBOSE", log);\
   }
- 
+
   #if _DEBUG_LOG
     #define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage)
     #define DEBUG_IF(condition, logMessage) if (condition) { DEBUG(logMessage); }
@@ -516,7 +533,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define INFO_IF(condition, logMessage) if (condition) { INFO(logMessage); }
   #else
     #define INFO(x)
-    #define INFO_IF(x, y) 
+    #define INFO_IF(x, y)
   #endif //_INFO_LOG
 
   #if _WARNING_LOG
@@ -562,9 +579,9 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::formatSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (::easyloggingpp::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime, functionEndTime; time(&functionStartTime);
     #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
-    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_SUB FUNC_SUB_COMMON_END }
-    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START 
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_FUNC FUNC_SUB_COMMON_END }
     #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
   #else
@@ -599,7 +616,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #else
     #define VERBOSE(x, y)
     #define VERBOSE_IF(x, y, z)
-  #endif //_VERBOSE_LOG 
+  #endif //_VERBOSE_LOG
 
 } //namespace easyloggingpp
 #else
@@ -632,3 +649,4 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define VERBOSE_IF(x, y, z)
 #endif //((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
 #endif //EASYLOGGINGPP_H
+

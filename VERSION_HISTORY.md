@@ -6,7 +6,7 @@ History was not kept before version 2.1.
 #### 3.2
  * 3.20: Added conditional logging using INFO_IF, DEBUG_IF, etc.
  * 3.21: Code readibility improvements
-
+ * 3.22: Introduced VERBOSE logging
 #### 3.1
  * 3.10: Removed comments around configuration to point to README
  * 3.11: Type / level constructor called within WRITE_LOG macro only 

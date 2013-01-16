@@ -185,6 +185,46 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
 ```
 
+#### Verbose Logging
+Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `main(.., ..)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
+```C++
+int main(int argc, char** argv) {
+  _START_EASYLOGGINGPP(argc, argv);
+  ...
+}
+```
+
+And when using verbose logging you will need to run your C++ application with argument `--v=` followed by verbose level.
+When you want to write verbose log, you will use, `VERBOSE(level, log)`
+
+As an example
+```C++
+#include "easylogging++.h"
+int main(int argc, char** argv) {
+  _START_EASYLOGGINGPP(argc, argv);
+  bool condition = true;
+  VERBOSE(1, "I will be printed when this application is run using --v=1 or higher than 1 arguments");
+  VERBOSE(2, "I will be printed when this application is run using --v=2 arguments");
+  VERBOSE_IF(condition, 1, "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments");
+```
+Now compile your application normally:
+`g++ main.cpp -o main-exec`
+now run your application:
+`./main-exec --v=1` 
+This will print:
+```
+I will be printed when this application is run using --v=1 or higher than 1 arguments
+I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments
+```
+and if you run application using following parameter;
+`./main-exec --v=2`, all of the verbose logs will be printed.
+
+You can disable verbose logs by many ways,
+ * Do not run application using `--v` argument
+ * Define `_DISABLE_VERBOSE_LOGS` e.g, `g++ main.cpp -o main-exec -D _DISABLE_VERBOSE_LOGS`
+ * Make `_ENABLE_VERBOSE_LOGS` `0`
+Just like other logs, you may choose the final location of verbose logs, i.e, file or standard output.
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
