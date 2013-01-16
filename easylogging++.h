@@ -47,13 +47,17 @@
 #define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0 
 #define _PERFORMANCE_LOGS_TO_FILE 1
 
-#define _ENABLE_HINTS 1
-#define _HINTS_TO_STANDARD_OUTPUT 1
-#define _HINTS_TO_FILE 0
+#define _ENABLE_HINT 1
+#define _HINT_TO_STANDARD_OUTPUT 1
+#define _HINT_TO_FILE 0
 
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 0
+
+#define _ENABLE_VERBOSE_LOGS 1
+#define _VERBOSE_TO_STANDARD_OUTPUT 1
+#define _VERBOSE_TO_FILE 0
 
 ////////////////////////////////////////////////////////////////////
 ///                                                              ///
@@ -130,6 +134,7 @@ const std::string FATAL_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 const std::string PERFORMANCE_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 const std::string HINT_LOG_FORMAT = DEFAULT_LOG_FORMAT;
 const std::string STATUS_LOG_FORMAT = DEFAULT_LOG_FORMAT;
+const std::string VERBOSE_LOG_FORMAT = "[%level-%vlevel] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 
 const bool SHOW_STD_OUTPUT = true;
 const bool SAVE_TO_FILE = true;
@@ -172,8 +177,18 @@ const bool SHOW_START_FUNCTION_LOG = false;
 #define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS))
 #define _PERFORMANCE_LOG ((_ENABLE_PERFORMANCE_LOGS) && !defined(_DISABLE_PERFORMANCE_LOGS))
 #define _STATUS_LOG      ((_ENABLE_STATUS) && !defined(_DISABLE_STATUS))
-#define _HINT_LOG        ((_ENABLE_HINTS) && !defined(_DISABLE_HINTS))
+#define _HINT_LOG        ((_ENABLE_HINT) && !defined(_DISABLE_HINT))
 #define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS))
+#define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
+
+// Application arguments based logs
+#define _START_EASYLOGGINGPP(argc, argv) ARGUMENTS_BASED_LOGS(argc, argv)
+#define ARGUMENTS_BASED_LOGS(argc, argv) \
+ if (argc > 0) { \
+   ::easyloggingpp::appArguments = argv; \
+   ::easyloggingpp::appArgumentsCount = argc; \
+   ::easyloggingpp::init();\
+ }
 
 //
 // Static fields
@@ -197,6 +212,12 @@ static char dateFormat[kDateBufferSize];
 static bool loggerInitialized = false;
 static bool fileNotOpenedErrorDisplayed = false;
 static std::string logFormat = "";
+static char** appArguments = NULL;
+static int appArgumentsCount = 0;
+#if _VERBOSE_LOG
+static int verboseLevel = -1;
+static int currentVerboseLevel = -1;
+#endif //_VERBOSE_LOG
 
 //
 // Internal functions
@@ -340,7 +361,7 @@ static void init(void) {
         std::ios_base::openmode mode = std::ofstream::out;
 #else
         std::ios_base::openmode mode = std::ofstream::out | std::ofstream::app;
-#endif
+#endif //defined(_ALWAYS_CLEAN_LOGS)
       ::easyloggingpp::logFile = new std::ofstream(::easyloggingpp::kFinalFilename.c_str(), mode);
       if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (!::easyloggingpp::logFile->is_open())) {
         ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
@@ -353,6 +374,15 @@ static void init(void) {
     ::easyloggingpp::user = ::easyloggingpp::getUsername();
     ::easyloggingpp::host = ::easyloggingpp::getHostname();
     ::easyloggingpp::loggerInitialized = true;
+    // Arguments based logging
+    while (::easyloggingpp::appArgumentsCount > 0) {
+#if _VERBOSE_LOG
+      //FIXME: determine correct verbose level here
+      //from appArguments
+      ::easyloggingpp::verboseLevel = 1;
+#endif //_VERBOSE_LOG
+      ::easyloggingpp::appArgumentsCount--;
+    }
   } 
 }
 
@@ -427,14 +457,20 @@ static void determineLogFormat(const std::string& type) {
   LOG_FORMATTER(type, "ERROR", ::easyloggingpp::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE)
   LOG_FORMATTER(type, "FATAL", ::easyloggingpp::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE)
   LOG_FORMATTER(type, "PERFORMANCE", ::easyloggingpp::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE)
-  LOG_FORMATTER(type, "HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINTS_TO_STANDARD_OUTPUT, _HINTS_TO_FILE)
+  LOG_FORMATTER(type, "HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINT_TO_STANDARD_OUTPUT, _HINT_TO_FILE)
   LOG_FORMATTER(type, "STATUS", ::easyloggingpp::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE)
+  LOG_FORMATTER(type, "VERBOSE", ::easyloggingpp::VERBOSE_LOG_FORMAT, _VERBOSE_TO_STANDARD_OUTPUT, _VERBOSE_TO_FILE)
 }
 
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
   ::easyloggingpp::init();
   ::easyloggingpp::determineLogFormat(type);
   ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
+  #if _VERBOSE_LOG
+    ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
+    ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
+    ::easyloggingpp::tempStream.str("");
+  #endif //_VERBOSE_LOG
   if (::easyloggingpp::showDateTime) {
     ::easyloggingpp::updateFormatValue("%datetime", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
   } else if (::easyloggingpp::showDate) {
@@ -460,6 +496,12 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::tempStream2 << log;\
   ::easyloggingpp::buildFormat(__func__, __FILE__, __LINE__, std::string(type));\
   ::easyloggingpp::writeLog();
+
+#define WRITE_VLOG(level, log)\
+  if (::easyloggingpp::verboseLevel >= level) {\
+     ::easyloggingpp::currentVerboseLevel = level;\
+     WRITE_LOG("VERBOSE", log);\
+  }
  
   #if _DEBUG_LOG
     #define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage)
@@ -551,6 +593,14 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define STATUS_IF(x, y)
   #endif //_STATUS_LOG
 
+  #if _VERBOSE_LOG
+    #define VERBOSE(level, logMessage) WRITE_VLOG(level, logMessage)
+    #define VERBOSE_IF(condition, level, logMessage) if (condition) { VERBOSE(logMessage); }
+  #else
+    #define VERBOSE(x, y)
+    #define VERBOSE_IF(x, y, z)
+  #endif //_VERBOSE_LOG 
+
 } //namespace easyloggingpp
 #else
   // Essentials
@@ -577,5 +627,8 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define PERFORMANCE_IF(x, y)
   #define HINT_IF(x, y)
   #define STATUS_IF(x, y)
+  // Verbose
+  #define VERBOSE(x, y)
+  #define VERBOSE_IF(x, y, z)
 #endif //((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
 #endif //EASYLOGGINGPP_H
