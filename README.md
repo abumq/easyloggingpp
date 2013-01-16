@@ -297,6 +297,7 @@ This can be set by following configurations
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
 * `%level` Level of logging
+* `%vlevel` Verbose level [integer] only applicable for verbose logs
 * Date/Time [Remember to use either one of above. Having `%date %time` for example, will result in failure.]
  - `%date` Date only
  - `%time` Time only
