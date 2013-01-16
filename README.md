@@ -181,8 +181,8 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
 ```C++
 
   INFO_IF(1 == 1, "1 is equal to 1");
-  // Or
-  DEBUG_IF(1 == 2, "1 is equal to 2");
+  // Or some complex condition
+  DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
 ```
 
 ## Configuration
