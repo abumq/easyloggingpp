@@ -176,6 +176,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * `PERFORMANCE_IF(condition, log)`
 * `HINT_IF(condition, log)`
 * `STATUS_IF(condition, log)`
+* `VERBOSE_IF(condition, level, log)`
 
 A typical example is as follow (taken from samples/conditional_log.cpp)
 ```C++
@@ -183,6 +184,8 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   INFO_IF(1 == 1, "1 is equal to 1");
   // Or some complex condition
   DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
+  // verbose log
+  VERBOSE_IF(true, 1, "Printing verbose level-1");
 ```
 
 #### Cleaning Logs On Each Run
