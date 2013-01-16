@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.22                                                 //
+//   EasyLogging++ v3.23                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -107,6 +107,7 @@
  #include <sys/stat.h>
  #include <sys/time.h>
 #endif //_LINUX || _MAC
+#include <list>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -210,6 +211,22 @@ static std::string logFormat = "";
 static int verboseLevel = -1;
 static int currentVerboseLevel = -1;
 #endif //_VERBOSE_LOG
+class LogType {
+public:
+  LogType(const std::string& name_,
+          const std::string& format_,
+          bool toStandardOutput_,
+          bool toFile_) :
+            name(name_),
+            format(format_),
+            toStandardOutput(toStandardOutput_),
+            toFile(toFile_) {}
+  std::string name;
+  std::string format;
+  bool toStandardOutput;
+  bool toFile;
+};
+static std::list< ::easyloggingpp::LogType > logTypes;
 
 //
 // Internal functions
@@ -381,8 +398,36 @@ static void init(void) {
     // Username and host
     ::easyloggingpp::user = ::easyloggingpp::getUsername();
     ::easyloggingpp::host = ::easyloggingpp::getHostname();
-    ::easyloggingpp::loggerInitialized = true;
-  }
+    // Different log levels
+#if _DEBUG_LOG
+     logTypes.push_back(LogType("DEBUG", ::easyloggingpp::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+#endif //_DEBUG_LOG
+#if _INFO_LOG
+     logTypes.push_back(LogType("INFO", ::easyloggingpp::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+#endif //_INFO_LOG
+#if _WARNING_LOG
+     logTypes.push_back(LogType("WARNING", ::easyloggingpp::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+#endif //_WARNING_LOG
+#if _ERROR_LOG
+     logTypes.push_back(LogType("ERROR", ::easyloggingpp::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+#endif //_ERROR_LOG
+#if _FATAL_LOG
+     logTypes.push_back(LogType("FATAL", ::easyloggingpp::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+#endif //_FATAL_LOG
+#if _PERFORMANCE_LOG
+     logTypes.push_back(LogType("PERFORMANCE", ::easyloggingpp::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE));
+#endif //_PERFORMANCE_LOG
+#if _HINT_LOG
+     logTypes.push_back(LogType("HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINT_TO_STANDARD_OUTPUT, _HINT_TO_FILE));
+#endif //_HINT_LOG
+#if _STATUS_LOG
+     logTypes.push_back(LogType("STATUS", ::easyloggingpp::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE));
+#endif //_STATUS_LOG
+#if _VERBOSE_LOG
+     logTypes.push_back(LogType("VERBOSE", ::easyloggingpp::VERBOSE_LOG_FORMAT, _VERBOSE_TO_STANDARD_OUTPUT, _VERBOSE_TO_FILE));
+#endif //_VERBOSE_LOG
+     ::easyloggingpp::loggerInitialized = true;
+   }
 }
 
 static std::string readLog(void) {
@@ -441,42 +486,16 @@ static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::updateDateFormat();
 }
 
-#define LOG_FORMATTER(typeLHS, typeRHS, format, logToStandardOutput, logToFile)\
-  if (typeLHS == typeRHS) {\
-    ::easyloggingpp::determineCommonLogFormat(format);\
-    ::easyloggingpp::toStandardOutput = logToStandardOutput;\
-    ::easyloggingpp::toFile = logToFile;\
-    return;\
-  }
-
 static void determineLogFormat(const std::string& type) {
-#if _DEBUG_LOG
-  LOG_FORMATTER(type, "DEBUG", ::easyloggingpp::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE)
-#endif //_DEBUG_LOG
-#if _INFO_LOG
-  LOG_FORMATTER(type, "INFO", ::easyloggingpp::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE)
-#endif //_INFO_LOG
-#if _WARNING_LOG
-  LOG_FORMATTER(type, "WARNING", ::easyloggingpp::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE)
-#endif //_WARNING_LOG
-#if _ERROR_LOG
-  LOG_FORMATTER(type, "ERROR", ::easyloggingpp::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE)
-#endif //_ERROR_LOG
-#if _FATAL_LOG
-  LOG_FORMATTER(type, "FATAL", ::easyloggingpp::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE)
-#endif //_FATAL_LOG
-#if _PERFORMANCE_LOG
-  LOG_FORMATTER(type, "PERFORMANCE", ::easyloggingpp::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE)
-#endif //_PERFORMANCE_LOG
-#if _HINT_LOG
-  LOG_FORMATTER(type, "HINT", ::easyloggingpp::HINT_LOG_FORMAT, _HINT_TO_STANDARD_OUTPUT, _HINT_TO_FILE)
-#endif //_HINT_LOG
-#if _STATUS_LOG
-  LOG_FORMATTER(type, "STATUS", ::easyloggingpp::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE)
-#endif //_STATUS_LOG
-#if _VERBOSE_LOG
-  LOG_FORMATTER(type, "VERBOSE", ::easyloggingpp::VERBOSE_LOG_FORMAT, _VERBOSE_TO_STANDARD_OUTPUT, _VERBOSE_TO_FILE)
-#endif //_VERBOSE_LOG
+  for (std::list< ::easyloggingpp::LogType >::iterator it = logTypes.begin();
+       it != logTypes.end();
+       ++it) {
+    if (type == it->name) {
+      ::easyloggingpp::determineCommonLogFormat(it->format);
+      ::easyloggingpp::toStandardOutput = it->toStandardOutput;
+      ::easyloggingpp::toFile = it->toFile;
+    }
+  }
 }
 
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
