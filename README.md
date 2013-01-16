@@ -197,7 +197,7 @@ g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 ```
 
 #### Verbose Logging
-Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `main(.., ..)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
+Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
 ```C++
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
