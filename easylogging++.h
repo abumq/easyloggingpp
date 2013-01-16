@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.23                                                 //
+//   EasyLogging++ v3.24                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -503,9 +503,11 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::determineLogFormat(type);
   ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
 #if _VERBOSE_LOG
-  ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
-  ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
-  ::easyloggingpp::tempStream.str("");
+  if (type == "VERBOSE") {
+    ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
+    ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
+    ::easyloggingpp::tempStream.str("");
+  }
 #endif //_VERBOSE_LOG
   if (::easyloggingpp::showDateTime) {
     ::easyloggingpp::updateFormatValue("%datetime", ::easyloggingpp::getDateTime(), ::easyloggingpp::logFormat);
