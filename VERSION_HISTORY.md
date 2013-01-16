@@ -1,36 +1,23 @@
-VERSION HISTORY
-===============
+VERSION HISTORY - EasyLogging++
+===============================
 
 History was not kept before version 2.1.
 
-#### 2.1
- * Fixed time issues
+#### 3.2
+ * 3.20: Added conditional logging using INFO_IF, DEBUG_IF, etc.
 
-#### 2.2
- * Added PERFORMANCE, STATUS and HINTS logging levels
-
-#### 2.3
- * Added host and username to be included in logs
- * Added `release.sh` for easy releaases
-
-#### 2.5
- * Added _WIN64 macro checks for 64-bit windows machines
- * Issue#3 Force log file creation
- * Memory efficient approaches for writing logs
-
-#### 2.6
- * Added helper function `string readLog(void)`
- * Changed `WARN` to `WARNING` for warning logs
-
-#### 2.7
- * Fixed up log path creation issue to create whole path
-
-#### 2.8
- * Added `update.sh` to update your old easylogging++.h without losing configuration
- * A lot of date improvements in terms of memory and performance efficiency
- * 2.843: Fixes milliseconds issue for linux only.
- * 2.844: Do not calculate milliseconds when SHOW_TIME is set to false
- * 2.845: Strict support for any other OS than linux or windows
+#### 3.1
+ * 3.10: Removed comments around configuration to point to README
+ * 3.11: Type / level constructor called within WRITE_LOG macro only 
+ * 3.12: minor fixes around comments
+ * 3.13: fixes for update.sh
+ * 3.14: fix for windows compile failure, thanks to `codyzu`
+ * 3.15: Added more control over disabling logs
+         Changed from `_DISABLE_EASYLOGGINGPP` to `_DISABLE_LOGS`
+ * 3.16: Minor improvement
+ * 3.17: Minor logic improvement
+ * 3.18: Added support for regression testing to clean log every time you run application.
+ * 3.19: Added escape character for log format
 
 #### 3.0
  * Major improvements
@@ -45,14 +32,31 @@ History was not kept before version 2.1.
  * 3.08: Fix for update.sh includes
  * 3.09 improvements around log file performance
 
-#### 3.1
- * 3.10: Removed comments around configuration to point to README
- * 3.11: Type / level constructor called within WRITE_LOG macro only 
- * 3.12: minor fixes around comments
- * 3.13: fixes for update.sh
- * 3.14: fix for windows compile failure, thanks to `codyzu`
- * 3.15: Added more control over disabling logs
-         Changed from `_DISABLE_EASYLOGGINGPP` to `_DISABLE_LOGS`
- * 3.16: Minor improvement
- * 3.17: Minor logic improvement
- * 3.18: Added support for regression testing to clean log every time you run application.
+#### 2.8
+ * Added `update.sh` to update your old easylogging++.h without losing configuration
+ * A lot of date improvements in terms of memory and performance efficiency
+ * 2.843: Fixes milliseconds issue for linux only.
+ * 2.844: Do not calculate milliseconds when SHOW_TIME is set to false
+ * 2.845: Strict support for any other OS than linux or windows
+
+#### 2.7
+ * Fixed up log path creation issue to create whole path
+
+#### 2.6
+ * Added helper function `string readLog(void)`
+ * Changed `WARN` to `WARNING` for warning logs
+
+#### 2.5
+ * Added _WIN64 macro checks for 64-bit windows machines
+ * Issue#3 Force log file creation
+ * Memory efficient approaches for writing logs
+
+#### 2.3
+ * Added host and username to be included in logs
+ * Added `release.sh` for easy releaases
+
+#### 2.2
+ * Added PERFORMANCE, STATUS and HINTS logging levels
+
+#### 2.1
+ * Fixed time issues
