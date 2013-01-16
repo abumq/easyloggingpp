@@ -250,6 +250,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
 * `_ENABLE_HINT` macro enables or disables hints (`0` for disable `1` for enable)
 * `_ENABLE_STATUS` macro enables or disables status logs (`0` for disable `1` for enable)
+* `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
 
 There is another way to disable logging that doesn't require modifying `easylogging++.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
 
@@ -268,6 +269,7 @@ To disable level specific log while compiling here are macros to define;
 * `_DISABLE_STATUS`
 * `_DISABLE_HINT`
 * `_DISABLE_PERFORMANCE_LOGS`
+* `_DISABLE_VERBOSE_LOGS`
 
 As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++.h`, you may compile with following line;
 ```
@@ -296,6 +298,8 @@ This can be set by following configurations
 * `_HINT_TO_FILE` to enable/disable saving hints to log file (`0` for disable `1` for enable)
 * `_STATUS_TO_STANDARD_OUTPUT` to enable/disable status logs to be shown in standard output (`0` for disable `1` for enable)
 * `_STATUS_TO_FILE` to enable/disable saving status logs to log file (`0` for disable `1` for enable)
+* `_VERBOSE_LOGS_TO_STANDARD_OUTPUT` to enable/disable verbose logs to be shown in standard output (`0` for disable `1` for enable)
+* `_VERBOSE_LOGS_TO_FILE` to enable/disable saving verbose logs to log file (`0` for disable `1` for enable)
 
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
@@ -326,6 +330,7 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORNANCE` logs
 * `HINT_LOG_FORMAT` Sets format used for `HINT`s
 * `STATUS_LOG_FORMAT` Sets format used for `STATUS` logs
+* `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
 
 #### Other Configurations
 * `SHOW_STD_OUTPUT` Flag for showing log in standard output (terminal or command prompt for example) 
