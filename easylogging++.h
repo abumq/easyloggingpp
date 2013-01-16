@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.19                                                 //
+//   EasyLogging++ v3.20                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -44,7 +44,7 @@
 #define _FATAL_LOGS_TO_FILE 1
 
 #define _ENABLE_PERFORMANCE_LOGS 1
-#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0
+#define _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT 0 
 #define _PERFORMANCE_LOGS_TO_FILE 1
 
 #define _ENABLE_HINTS 1
@@ -182,7 +182,7 @@ static bool showTime = (!::easyloggingpp::showDateTime) && (::easyloggingpp::DEF
 static bool showLocation = ::easyloggingpp::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 static std::string user;
 static std::string host;
-static std::stringstream *logStream = NULL;
+static std::stringstream *logMessageeam = NULL;
 static std::ofstream *logFile = NULL;
 static std::stringstream tempStream;
 static std::stringstream tempStream2;
@@ -306,7 +306,7 @@ static inline std::string getHostname(void) {
 static inline void cleanStream(void) {
   ::easyloggingpp::tempStream.str("");
   ::easyloggingpp::tempStream2.str("");
-  ::easyloggingpp::logStream->str("");
+  ::easyloggingpp::logMessageeam->str("");
 }
 
 static inline void updateDateFormat(void) {
@@ -327,7 +327,7 @@ static void init(void) {
   if (!::easyloggingpp::loggerInitialized) {
     // Logger
     if (::easyloggingpp::SHOW_STD_OUTPUT) {
-      ::easyloggingpp::logStream = new std::stringstream();
+      ::easyloggingpp::logMessageeam = new std::stringstream();
     }
     // Path
     ::easyloggingpp::createLogPath();
@@ -374,12 +374,12 @@ static std::string readLog(void) {
 }
 
 static void writeLog(void) {
-  if ((::easyloggingpp::logStream) && (::easyloggingpp::toStandardOutput)) {
-    std::cout << ::easyloggingpp::logStream->str();
+  if ((::easyloggingpp::logMessageeam) && (::easyloggingpp::toStandardOutput)) {
+    std::cout << ::easyloggingpp::logMessageeam->str();
   }
   if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (::easyloggingpp::logFile) && (::easyloggingpp::toFile)) {
     ::easyloggingpp::logFile->open(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
-    (*::easyloggingpp::logFile) << ::easyloggingpp::logStream->str();
+    (*::easyloggingpp::logFile) << ::easyloggingpp::logMessageeam->str();
     ::easyloggingpp::logFile->close();
   }
   ::easyloggingpp::cleanStream();
@@ -477,7 +477,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::updateFormatValue("%user", ::easyloggingpp::user, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%host", ::easyloggingpp::host, ::easyloggingpp::logFormat);
   ::easyloggingpp::updateFormatValue("%log", ::easyloggingpp::tempStream2.str(), ::easyloggingpp::logFormat);
-  (*::easyloggingpp::logStream) << logFormat;
+  (*::easyloggingpp::logMessageeam) << logFormat;
 }
 
 //
@@ -489,30 +489,45 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::writeLog();
  
   #if _DEBUG_LOG
-    #define DEBUG(logStr) WRITE_LOG("DEBUG",logStr)
+    #define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage)
+    #define DEBUG_IF(condition, logMessage) if (condition) { DEBUG(logMessage); }
   #else
     #define DEBUG(x)
+    #define DEBUG_IF(x, y)
   #endif //_DEBUG_LOG
+
   #if _INFO_LOG
-    #define INFO(logStr) WRITE_LOG("INFO",logStr)
+    #define INFO(logMessage) WRITE_LOG("INFO",logMessage)
+    #define INFO_IF(condition, logMessage) if (condition) { INFO(logMessage); }
   #else
     #define INFO(x)
+    #define INFO_IF(x, y) 
   #endif //_INFO_LOG
+
   #if _WARNING_LOG
-    #define WARNING(logStr) WRITE_LOG("WARNING",logStr)
+    #define WARNING(logMessage) WRITE_LOG("WARNING",logMessage)
+    #define WARNING_IF(condition, logMessage) if (condition) { WARNING(logMessage); }
   #else
     #define WARNING(x)
+    #define WARNING_IF(x, y)
   #endif //_WARNING_LOG
+
   #if _ERROR_LOG
-    #define ERROR(logStr) WRITE_LOG("ERROR",logStr)
+    #define ERROR(logMessage) WRITE_LOG("ERROR",logMessage)
+    #define ERROR_IF(condition, logMessage) if (condition) { ERROR(logMessage); }
   #else
     #define ERROR(x)
+    #define ERROR_IF(x, y)
   #endif //_ERROR_LOG
+
   #if _FATAL_LOG
-    #define FATAL(logStr) WRITE_LOG("FATAL",logStr)
+    #define FATAL(logMessage) WRITE_LOG("FATAL",logMessage)
+    #define FATAL_IF(condition, logMessage) if (condition) { FATAL(logMessage); }
   #else
     #define FATAL(x)
+    #define FATAL_IF(x, y)
   #endif //_FATAL_LOG
+
   #if _PERFORMANCE_LOG
     inline std::string formatSeconds(double secs) {
       double result = secs;
@@ -526,7 +541,8 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
       ss << result << " " << unit;
       return ss.str();
     }
-    #define PERFORMANCE(logStr) WRITE_LOG("PERFORMANCE",logStr)
+    #define PERFORMANCE(logMessage) WRITE_LOG("PERFORMANCE",logMessage)
+    #define PERFORMANCE_IF(condition, logMessage) if (condition) { PERFORMANCE(logMessage); }
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::formatSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (::easyloggingpp::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime, functionEndTime; time(&functionStartTime);
@@ -538,24 +554,33 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
   #else
     #define PERFORMANCE(x)
+    #define PERFORMANCE_IF(x, y)
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
     #define END_SUB }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
     #define END_FUNC }
     #define RETURN(expr) return expr;
   #endif //_PERFORMANCE_LOG
+
   #if _HINT_LOG
-    #define HINT(logStr) WRITE_LOG("HINT",logStr)
+    #define HINT(logMessage) WRITE_LOG("HINT",logMessage)
+    #define HINT_IF(condition, logMessage) if (condition) { HINT(logMessage); }
   #else
     #define HINT(x)
+    #define HINT_IF(x, y)
   #endif //_HINT_LOG
+
   #if _STATUS_LOG
-    #define STATUS(logStr) WRITE_LOG("STATUS",logStr)
+    #define STATUS(logMessage) WRITE_LOG("STATUS",logMessage)
+    #define STATUS_IF(condition, logMessage) if (condition) { STATUS(logMessage); }
   #else
     #define STATUS(x)
+    #define STATUS_IF(x, y)
   #endif //_STATUS_LOG
+
 } //namespace easyloggingpp
 #else
+  // Essentials
   #define DEBUG(x)
   #define INFO(x)
   #define WARNING(x)
@@ -564,10 +589,20 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define PERFORMANCE(x)
   #define HINT(x)
   #define STATUS(x)
+  // Performance specific
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
+  // Conditional
+  #define DEBUG_IF(x, y)
+  #define INFO_IF(x, y)
+  #define WARNING_IF(x, y)
+  #define ERROR_IF(x, y)
+  #define FATAL_IF(x, y)
+  #define PERFORMANCE_IF(x, y)
+  #define HINT_IF(x, y)
+  #define STATUS_IF(x, y)
 #endif //((_LOGGING_ENABLED) && !defined(_DISABLE_EASYLOGGINGPP))
 #endif //EASYLOGGINGPP_H

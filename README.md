@@ -165,6 +165,27 @@ END_FUNC
 
 Note: you have many other configurations to change your output. See following section for details
 
+## Additional Features
+#### Conditional Logging
+You can use conditional logging for logs that can have simple / complex conditions. These logs are disabled / enabled with their respective logging level.
+* `DEBUG_IF(condition, log)`
+* `INFO_IF(condition, log)`
+* `WARNING_IF(condition, log)`
+* `ERROR_IF(condition, log)`
+* `FATAL_IF(condition, log)`
+* `PERFORMANCE_IF(condition, log)`
+* `HINT_IF(condition, log)`
+* `STATUS_IF(condition, log)`
+
+A typical example is as follow (taken from samples/conditional_log.cpp)
+```C++
+
+  INFO_IF(1 == 1, "1 is equal to 1");
+  // Or
+  DEBUG_IF(1 == 2, "1 is equal to 2");
+
+```
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
