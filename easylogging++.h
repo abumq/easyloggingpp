@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.24                                                 //
+//   EasyLogging++ v3.25                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -494,17 +494,18 @@ static void determineLogFormat(const std::string& type) {
       ::easyloggingpp::determineCommonLogFormat(it->format);
       ::easyloggingpp::toStandardOutput = it->toStandardOutput;
       ::easyloggingpp::toFile = it->toFile;
+      return;
     }
   }
 }
 
-static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type) {
+static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type, int verboseLevel = -1) {
   ::easyloggingpp::init();
   ::easyloggingpp::determineLogFormat(type);
   ::easyloggingpp::updateFormatValue("%level", type, ::easyloggingpp::logFormat);
 #if _VERBOSE_LOG
-  if (type == "VERBOSE") {
-    ::easyloggingpp::tempStream << ::easyloggingpp::currentVerboseLevel;
+  if (verboseLevel != -1) {
+    ::easyloggingpp::tempStream << verboseLevel;
     ::easyloggingpp::updateFormatValue("%vlevel", ::easyloggingpp::tempStream.str(), ::easyloggingpp::logFormat);
     ::easyloggingpp::tempStream.str("");
   }
@@ -537,8 +538,9 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
 
 #define WRITE_VLOG(level, log)\
   if (::easyloggingpp::verboseLevel >= level) {\
-     ::easyloggingpp::currentVerboseLevel = level;\
-     WRITE_LOG("VERBOSE", log);\
+    ::easyloggingpp::tempStream2 << log;\
+    ::easyloggingpp::buildFormat(__func__, __FILE__, __LINE__, std::string("VERBOSE"), level);\
+    ::easyloggingpp::writeLog();\
   }
 
   #if _DEBUG_LOG
