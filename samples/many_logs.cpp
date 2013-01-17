@@ -7,12 +7,12 @@
 int main(void) {
   STATUS("PROGRAM STARTED");
   DEBUG("This is start of logging!");
-  for (int i = 1; i <= 100; i++) {
+  for (int i = 1; i <= 10; i++) {
     INFO("This is a test number " << i);
   }
   STATUS("Completed!");
   INFO("Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default");
-  for (int i = 1; i <= 100; i++) {
+  for (int i = 1; i <= 10; i++) {
     DEBUG("Some more logs [" << i << "]");
   }
   DEBUG("This is end of logging!");

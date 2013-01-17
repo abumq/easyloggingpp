@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.26                                                 //
+//   EasyLogging++ v3.27                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -53,7 +53,7 @@
 
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
-#define _STATUS_TO_FILE 0
+#define _STATUS_TO_FILE 1
 
 #define _ENABLE_VERBOSE_LOGS 1 
 #define _VERBOSE_TO_STANDARD_OUTPUT 1
@@ -183,7 +183,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
 
 // Application arguments based logs
-#define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::setAppArgs(argc, argv)
+#define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::setAppArgs(argc, argv);
 
 //
 // Static fields
@@ -390,6 +390,8 @@ static void init(void) {
       if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (!::easyloggingpp::logFile->is_open())) {
         ::easyloggingpp::internalMessage("Unable to open log file [" + ::easyloggingpp::kFinalFilename + "]");
         ::easyloggingpp::fileNotOpenedErrorDisplayed = true;
+      } else {
+        ::easyloggingpp::logFile->close();
       }
     }
     // Date format
@@ -453,7 +455,10 @@ static void writeLog(void) {
   if ((::easyloggingpp::logStream) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
   }
-  if ((!::easyloggingpp::fileNotOpenedErrorDisplayed) && (::easyloggingpp::logFile) && (::easyloggingpp::toFile)) {
+  if ((!::easyloggingpp::fileNotOpenedErrorDisplayed)
+   && (::easyloggingpp::logStream)
+   && (::easyloggingpp::logFile)
+   && (::easyloggingpp::toFile)) {
     ::easyloggingpp::logFile->open(::easyloggingpp::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
     (*::easyloggingpp::logFile) << ::easyloggingpp::logStream->str();
     ::easyloggingpp::logFile->close();
