@@ -4,7 +4,7 @@ VERSION HISTORY - EasyLogging++
 History was not kept before version 2.1.
 
 #### 3.2
- * 3.20: Added conditional logging using INFO_IF, DEBUG_IF, etc.
+ * 3.20: Added conditional logging using `INFO_IF`, `DEBUG_IF`, etc.
  * 3.21: Code readibility improvements
  * 3.22: Introduced VERBOSE logging
  * 3.23: Simplified for new logs by creating LogType class
@@ -13,6 +13,7 @@ History was not kept before version 2.1.
  * 3.26: Minor improvements
  * 3.27: Fixed issue #15
  * 3.28: Fix for VERBOSE_IF
+ * 3.29: Introduced `_END_EASYLOGGINGPP` to make valgrind happy
  
 #### 3.1
  * 3.10: Removed comments around configuration to point to README

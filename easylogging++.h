@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.28                                                 //
+//   EasyLogging++ v3.29                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -184,6 +184,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 
 // Application arguments based logs
 #define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::setAppArgs(argc, argv);
+#define _END_EASYLOGGINGPP ::easyloggingpp::releaseMemory();
 
 //
 // Static fields
@@ -357,6 +358,13 @@ static inline void cleanStream(void) {
   ::easyloggingpp::logStream->str("");
 }
 
+static inline void releaseMemory(void) {
+  ::easyloggingpp::cleanStream();
+  delete ::easyloggingpp::logFile;
+  delete ::easyloggingpp::logStream;
+  ::easyloggingpp::loggerInitialized = false;
+}
+
 static inline void updateDateFormat(void) {
   const char* dateFormatLocal = "%d/%m/%Y";
   const char* timeFormatLocal = "%H:%M:%S";
@@ -451,7 +459,7 @@ static std::string readLog(void) {
   return ss.str();
 }
 
-static void writeLog(void) {
+static inline void writeLog(void) {
   if ((::easyloggingpp::logStream) && (::easyloggingpp::toStandardOutput)) {
     std::cout << ::easyloggingpp::logStream->str();
   }
@@ -644,7 +652,6 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define VERBOSE(x, y)
     #define VERBOSE_IF(x, y, z)
   #endif //_VERBOSE_LOG
-
 } //namespace easyloggingpp
 #else
   // Essentials
@@ -673,6 +680,6 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #define HINT_IF(x, y)
   #define STATUS_IF(x, y)
   #define VERBOSE_IF(x, y, z)
-#endif //((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
+#endif //(defined(_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
 #endif //EASYLOGGINGPP_H
 

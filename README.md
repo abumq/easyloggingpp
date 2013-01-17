@@ -237,6 +237,15 @@ You can disable verbose logs by many ways,
 
 Just like other logs, you may choose the final location of verbose logs, i.e, file or standard output.
 
+#### Releasing Memory
+Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated. Also, be sure EasyLogging++ is extensively tested for any memory leaks, but to make valgrind happy for your C++ application, make sure to have `_END_EASYLOGGINGPP` at end of application (probably main function).
+```C++
+int main(int argc, char** argv) {
+  INFO("This is memory release test");
+  _END_EASYLOGGINGPP //Memory released! Valgrind will be happy
+}
+```
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
