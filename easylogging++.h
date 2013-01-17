@@ -639,7 +639,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
 
   #if _VERBOSE_LOG
     #define VERBOSE(level, logMessage) WRITE_VLOG(level, logMessage)
-    #define VERBOSE_IF(condition, level, logMessage) if (condition) { VERBOSE(logMessage); }
+    #define VERBOSE_IF(condition, level, logMessage) if (condition) { VERBOSE(level, logMessage); }
   #else
     #define VERBOSE(x, y)
     #define VERBOSE_IF(x, y, z)
