@@ -12,6 +12,7 @@ History was not kept before version 2.1.
  * 3.25: Minor improvements
  * 3.26: Minor improvements
  * 3.27: Fixed issue #15
+ * 3.28: Fix for VERBOSE_IF
  
 #### 3.1
  * 3.10: Removed comments around configuration to point to README
