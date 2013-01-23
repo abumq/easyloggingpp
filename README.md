@@ -232,10 +232,12 @@ and if you run application using following parameter;
 
 You can disable verbose logs by many ways,
  * Do not run application using `--v` argument
- * Define `_DISABLE_VERBOSE_LOGS` e.g, `g++ main.cpp -o main-exec -D _DISABLE_VERBOSE_LOGS`
+ * Define `_DISABLE_VERBOSE_LOGS` i.e, `g++ main.cpp -o main-exec -D _DISABLE_VERBOSE_LOGS`
  * Make `_ENABLE_VERBOSE_LOGS` `0`
 
 Just like other logs, you may choose the final location of verbose logs, i.e, file or standard output.
+
+Also, log format for verbose logs have special format specifier, `%vlevel` that is placeholder for verbose logging level.
 
 #### Releasing Memory
 Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated. Also, be sure EasyLogging++ is extensively tested for any memory leaks, but to make valgrind happy for your C++ application, make sure to have `_END_EASYLOGGINGPP` at end of application (probably main function).
@@ -358,6 +360,7 @@ This script takes three parameters:
  * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
  * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
 
-*Note* This will only work with EasyLogging++ 3.12+.
-
-`update.sh` was introduced in version 3.0 but because of some changes in 3.12, update.sh will work quite well with v3.12+. For older changes you can still use it but you will need to review the source code (`easylogging++.h`) and see if configuration section is alright. The only thing that causes issue is configuration section's comment.
+*Notes:* 
+ * This will only work with EasyLogging++ 3.12+.
+ * Script is unstable and is being re-written in 'update_script_rewrite' branch. Feel free to contribute by pull, comment and check-in.
+ * `update.sh` was introduced in version 3.0 but because of some changes in 3.12, update.sh will work quite well with v3.12+. For older changes you can still use it but you will need to review the source code (`easylogging++.h`) and see if configuration section is alright. The only thing that causes issue is configuration section's comment.
