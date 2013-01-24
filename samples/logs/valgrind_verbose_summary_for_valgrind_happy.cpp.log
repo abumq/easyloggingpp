@@ -1,0 +1,126 @@
+==10202== Memcheck, a memory error detector
+==10202== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==10202== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==10202== Command: ./bin/valgrind_happy.cpp.bin
+==10202== 
+--10202-- Valgrind options:
+--10202--    --suppressions=/usr/lib/valgrind/debian-libc6-dbg.supp
+--10202--    -v
+--10202-- Contents of /proc/version:
+--10202--   Linux version 3.5.0-17-generic (buildd@allspice) (gcc version 4.7.2 (Ubuntu/Linaro 4.7.2-2ubuntu1) ) #28-Ubuntu SMP Tue Oct 9 19:31:23 UTC 2012
+--10202-- Arch and hwcaps: AMD64, amd64-sse3-cx16
+--10202-- Page sizes: currently 4096, max supported 4096
+--10202-- Valgrind library directory: /usr/lib/valgrind
+--10202-- Reading syms from /home/mkhan/Projects/EasyLoggingPP/samples/bin/valgrind_happy.cpp.bin (0x400000)
+--10202-- Reading syms from /lib/x86_64-linux-gnu/ld-2.15.so (0x4000000)
+--10202--   Considering /lib/x86_64-linux-gnu/ld-2.15.so ..
+--10202--   .. CRC mismatch (computed 1f42586b wanted 1d4394cf)
+--10202--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.15.so ..
+--10202--   .. CRC is valid
+--10202-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux (0x38000000)
+--10202--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--10202--   .. CRC mismatch (computed 055ede9a wanted 763f0405)
+--10202--    object doesn't have a symbol table
+--10202--    object doesn't have a dynamic symbol table
+--10202-- Reading suppressions file: /usr/lib/valgrind/debian-libc6-dbg.supp
+--10202-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==10202== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-10202-by-mkhan-on-???
+==10202== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-10202-by-mkhan-on-???
+==10202== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-10202-by-mkhan-on-???
+==10202== 
+==10202== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==10202== don't want to do, unless you know exactly what you're doing,
+==10202== or are doing some strange experiment):
+==10202==   /usr/lib/valgrind/../../bin/vgdb --pid=10202 ...command...
+==10202== 
+==10202== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==10202==   /path/to/gdb ./bin/valgrind_happy.cpp.bin
+==10202== and then give GDB the following command
+==10202==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=10202
+==10202== --pid is optional if only one valgrind process is running
+==10202== 
+--10202-- REDIR: 0x40189f0 (strlen) redirected to 0x38061e47 (???)
+--10202-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so (0x4a25000)
+--10202--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--10202--   .. CRC mismatch (computed c9cf2ff8 wanted 4212d7a4)
+--10202--    object doesn't have a symbol table
+--10202-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so (0x4c27000)
+--10202--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--10202--   .. CRC mismatch (computed 70153ef6 wanted 49c35013)
+--10202--    object doesn't have a symbol table
+--10202-- REDIR: 0x4018860 (index) redirected to 0x4c2b970 (index)
+--10202-- REDIR: 0x40188e0 (strcmp) redirected to 0x4c2c8d0 (strcmp)
+--10202-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.17 (0x4e32000)
+--10202--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.17 ..
+--10202--   .. CRC mismatch (computed 46b694a4 wanted 3f2be0c6)
+--10202--    object doesn't have a symbol table
+--10202-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x5135000)
+--10202--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
+--10202--   .. CRC mismatch (computed ab1a33f9 wanted c47c7ad4)
+--10202--    object doesn't have a symbol table
+--10202-- Reading syms from /lib/x86_64-linux-gnu/libc-2.15.so (0x534b000)
+--10202--   Considering /lib/x86_64-linux-gnu/libc-2.15.so ..
+--10202--   .. CRC mismatch (computed ab9a61c3 wanted 2bf3b3a5)
+--10202--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.15.so ..
+--10202--   .. CRC is valid
+--10202-- Reading syms from /lib/x86_64-linux-gnu/libm-2.15.so (0x570a000)
+--10202--   Considering /lib/x86_64-linux-gnu/libm-2.15.so ..
+--10202--   .. CRC mismatch (computed dbc67c00 wanted dcaf3a72)
+--10202--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.15.so ..
+--10202--   .. CRC is valid
+--10202-- REDIR: 0x53d7e30 (strcasecmp) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x53d41d0 (strnlen) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x53da100 (strncasecmp) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x53d5bc0 (__GI_strrchr) redirected to 0x4c2b730 (__GI_strrchr)
+--10202-- REDIR: 0x53d40f0 (__GI_strlen) redirected to 0x4c2bd00 (__GI_strlen)
+--10202-- REDIR: 0x53d25b0 (strcmp) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x547ce30 (__strcmp_sse42) redirected to 0x4c2c830 (strcmp)
+--10202-- REDIR: 0x53d40a0 (strlen) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x54adbf0 (__strlen_sse2_pminub) redirected to 0x4c2bce0 (strlen)
+--10202-- REDIR: 0x4e915f0 (operator new(unsigned long)) redirected to 0x4c2af0c (operator new(unsigned long))
+--10202-- REDIR: 0x53dc7e0 (memcpy@@GLIBC_2.14) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x5492fb0 (__memcpy_ssse3_back) redirected to 0x4c2cbc0 (memcpy@@GLIBC_2.14)
+--10202-- REDIR: 0x53d65f0 (bcmp) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x54a8520 (__memcmp_sse4_1) redirected to 0x4c2d8e0 (bcmp)
+--10202-- REDIR: 0x53cdf40 (malloc) redirected to 0x4c2b376 (malloc)
+--10202-- REDIR: 0x4e91700 (operator new[](unsigned long)) redirected to 0x4c2aa22 (operator new[](unsigned long))
+--10202-- REDIR: 0x4e8f930 (operator delete[](void*)) redirected to 0x4c2a040 (operator delete[](void*))
+--10202-- REDIR: 0x53ce580 (free) redirected to 0x4c2a6b2 (free)
+--10202-- REDIR: 0x53d3a40 (strcpy) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x53e1b60 (__strcpy_sse2_unaligned) redirected to 0x4c2bd20 (strcpy)
+--10202-- REDIR: 0x53d22f0 (strcat) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x53e4980 (__strcat_sse2_unaligned) redirected to 0x4c2b9c0 (strcat)
+--10202-- REDIR: 0x53d42f0 (__GI_strncmp) redirected to 0x4c2c1d0 (__GI_strncmp)
+--10202-- REDIR: 0x53d62a0 (memchr) redirected to 0x4c2c970 (memchr)
+--10202-- REDIR: 0x4e8f900 (operator delete(void*)) redirected to 0x4c2a3c4 (operator delete(void*))
+--10202-- REDIR: 0xffffffffff600000 (???) redirected to 0x38061e33 (???)
+--10202-- REDIR: 0x53d3a80 (__GI_strcpy) redirected to 0x4c2bdf0 (__GI_strcpy)
+--10202-- REDIR: 0x53d25f0 (__GI_strcmp) redirected to 0x4c2c880 (__GI_strcmp)
+--10202-- REDIR: 0x53ddd00 (strchrnul) redirected to 0x4c2e000 (strchrnul)
+[STATUS] [25/01/2013 08:20:35.473] PROGRAM STARTED
+--10202-- REDIR: 0x53d6bc0 (memcpy@GLIBC_2.2.5) redirected to 0x4a256fe (_vgnU_ifunc_wrapper)
+--10202-- REDIR: 0x5498550 (__memmove_ssse3_back) redirected to 0x4c2c9b0 (memcpy@GLIBC_2.2.5)
+[INFO] [25/01/2013 08:20:35.566] This is a test number 1
+[INFO] [25/01/2013 08:20:35.570] This is a test number 2
+[INFO] [25/01/2013 08:20:35.570] This is a test number 3
+[INFO] [25/01/2013 08:20:35.570] This is a test number 4
+[INFO] [25/01/2013 08:20:35.571] This is a test number 5
+[INFO] [25/01/2013 08:20:35.571] This is a test number 6
+[INFO] [25/01/2013 08:20:35.571] This is a test number 7
+[INFO] [25/01/2013 08:20:35.572] This is a test number 8
+[INFO] [25/01/2013 08:20:35.572] This is a test number 9
+[INFO] [25/01/2013 08:20:35.572] This is a test number 10
+[STATUS] [25/01/2013 08:20:35.573] Completed!
+[STATUS] [25/01/2013 08:20:35.575] PROGRAM ENDED
+==10202== 
+==10202== HEAP SUMMARY:
+==10202==     in use at exit: 0 bytes in 0 blocks
+==10202==   total heap usage: 336 allocs, 336 frees, 148,998 bytes allocated
+==10202== 
+==10202== All heap blocks were freed -- no leaks are possible
+==10202== 
+==10202== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
+--10202-- 
+--10202-- used_suppression:      2 dl-hack3-cond-1
+==10202== 
+==10202== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
