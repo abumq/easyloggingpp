@@ -219,9 +219,13 @@ int main(int argc, char** argv) {
   VERBOSE_IF(condition, 1, "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments");
 ```
 Now compile your application normally:
+
 `g++ main.cpp -o main-exec`
+
 now run your application:
-`./main-exec --v=1` 
+
+`./main-exec --v=1`
+
 This will print:
 ```
 I will be printed when this application is run using --v=1 or higher than 1 arguments
@@ -248,6 +252,22 @@ int main(int argc, char** argv) {
 }
 ```
 
+#### Quality Assurance Logs
+Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for tested purposes. These logs give extra information when in QA and you can disable these logs in production without having to change the source code.
+
+By default QA logs will not take affect and will only be logged in `_QUALITY_ASSURANCE` is defined, as an example, following program:
+```C++
+#include "easylogging++.h"
+int main(void) {
+  STATUS("Starting program...");
+  QA("I am log only for QA environment");
+  return 0;
+}
+```
+will log QA only when is compiled using following line at minimum:
+
+`g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
@@ -262,6 +282,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_HINT` macro enables or disables hints (`0` for disable `1` for enable)
 * `_ENABLE_STATUS` macro enables or disables status logs (`0` for disable `1` for enable)
 * `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
+* `_ENABLE_QA_LOGS` macro enables or disables QA logs (`0` for disable `1` for enable)
 
 There is another way to disable logging that doesn't require modifying `easylogging++.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
 
@@ -311,6 +332,8 @@ This can be set by following configurations
 * `_STATUS_TO_FILE` to enable/disable saving status logs to log file (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_STANDARD_OUTPUT` to enable/disable verbose logs to be shown in standard output (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_FILE` to enable/disable saving verbose logs to log file (`0` for disable `1` for enable)
+* `_QA_LOGS_TO_STANDARD_OUTPUT` to enable/disable QA logs to be shown in standard output (`0` for disable `1` for enable)
+* `_QA_LOGS_TO_FILE` to enable/disable saving QA logs to log file (`0` for disable `1` for enable)
 
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++

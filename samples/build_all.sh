@@ -21,6 +21,11 @@ else
   fi
 fi
 if [ "$1" = "disable" ] || [ "$2" = "disable" ]; then
-  macro=$macro' -D _DISABLE_EASYLOGGINGPP'
+  macro=$macro' -D _DISABLE_LOGS'
 fi
+
+## Extra macros
+macro="$macro -D _QUALITY_ASSURANCE"
+macro="$macro -D _ALWAYS_CLEAN_LOGS"
+
 find -type f -name '*.cpp' -exec g++ {} -o bin/{}.bin -D $macro \;

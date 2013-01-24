@@ -3,6 +3,12 @@ VERSION HISTORY - EasyLogging++
 
 History was not kept before version 2.1.
 
+#### 3.3
+ * 3.30:
+    - Added new `QA(..)` logs (issue #17)
+    - Splits functions into namespaces (issue #18)
+    - Fixed issue with helper functions when logs disabled
+
 #### 3.2
  * 3.20: Added conditional logging using `INFO_IF`, `DEBUG_IF`, etc.
  * 3.21: Code readibility improvements
