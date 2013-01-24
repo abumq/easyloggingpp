@@ -25,20 +25,21 @@ EasyLogging++ comes with following levels of logging with complete control over 
 Answering this question can be sometimes hard but here are few reasons why you would want to use EasyLogging++ as logger for your C++ applications;
  * Native C++ support
  * Portablility
-  - EasyLogging++ is based on one header file that is enough for writing logs for you. All you need to do is include that header to your source and you will be good to go!
+  - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header to your source and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it.
-  - It supports multiple OS
- * Easy Enable / Disable
+  - It supports linux, windows and mac
+ * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP#enabledisable-logging)
 
     EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage to compilation.
- * Extremely Easy to Use
-
+ * [Extremely Easy to Use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
+ 
     EasyLogging++ is extremely easy to use. Just two steps and you will already be writing logs;
     - Include `easylogging++.h`
     - Use one of levels, e.g, `INFO("My log line ");`
     Be sure to have logs enabled (if they are disabled)
  * Open Source
- * Performance Tracking
+ * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
+ * [Additional features](https://github.com/mkhan3189/EasyLoggingPP#additional-features)
 
 ## Examples
 #### Basic Logging
@@ -99,74 +100,6 @@ Output for above logging varies depending on format you set in configuration sec
 ```
 Note: `%func` format depends on compiler and is supported by Visual C++ and GNU C >= 2 only
 
-###### Escaping Log Format
-Escape character used in EasyLogging++ is `E`. For example, to write following log
-```
-%level [DEBUG] [13/01/2013 17:21:09.571] Log message
-```
-Log format should look like:
-`E%level [%level] [%datetime] %log`
-
-#### Performance Logging
- ```C++
- #include "easylogging++.h"
- SUB(print,(const std::string& input))
-   /* sub-routine body */
-   std::cout << input;
- END_SUB 
- 
- FUNC(int,sum,(int x,int y))
-   /* function body */
-   RETURN(x+y);
- END_FUNC 
- 
-int main(void) {
-    print("this is test");
-    int sumResult = sum(1,2);
-    std::cout << "Sum of 1 and 2 is " << sumResult;
-}
- ```
-###### Output (Format: `[%level] %log`)
- ```
- this is test
-[PERFORMANCE] Executed [void print(string)] in [~0 seconds]
-[PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
-Sum of 1 and 2 is 3
- ```
-Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
-
-Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
-
-##### Some Notes on Performance Logging
-* Make sure you have braces around `RETURN`
-
-```C++
-   if (condition) {
-      RETURN(0);
-   }
-```
-* To exit a subroutine, do not call `return;` instead, use `RETURN()`
-
-```C++
-  if (condition) {
-     RETURN();
-  }
-```
-* Use normal definition syntax for other types of functions
-
-```C++
-inline FUNC(int,sqrt,(int numb))
-   ...
-END_FUNC
-
-template <typename T>
-static FUNC(T,sum,(T a,T b))
-   ...
-END_FUNC
-```
-
-Note: you have many other configurations to change your output. See following section for details
-
 ## Additional Features
 #### Conditional Logging
 You can use conditional logging for logs that can have simple / complex conditions. These logs are disabled / enabled with their respective logging level.
@@ -198,6 +131,66 @@ As an example, you may compile your application as following if you wish to clea
 ```
 g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 ```
+
+#### Performance Logging
+ ```C++
+ #include "easylogging++.h"
+ SUB(print,(const std::string& input))
+   /* sub-routine body */
+   std::cout << input;
+ END_SUB 
+ 
+ FUNC(int,sum,(int x,int y))
+   /* function body */
+   RETURN(x+y);
+ END_FUNC 
+ 
+int main(void) {
+    print("this is test");
+    int sumResult = sum(1,2);
+    std::cout << "Sum of 1 and 2 is " << sumResult;
+}
+ ```
+###### Output (Format: `[%level] %log`)
+ ```
+ this is test
+[PERFORMANCE] Executed [void print(string)] in [~0 seconds]
+[PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
+Sum of 1 and 2 is 3
+ ```
+Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
+
+Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. Visual C++ will output just the function name i.e, `print` and `sum` in this case.
+
+###### Some Notes on Performance Logging
+* Make sure you have braces around `RETURN`
+
+```C++
+   if (condition) {
+      RETURN(0);
+   }
+```
+* To exit a subroutine, do not call `return;` instead, use `RETURN()`
+
+```C++
+  if (condition) {
+     RETURN();
+  }
+```
+* Use normal definition syntax for other types of functions
+
+```C++
+inline FUNC(int,sqrt,(int numb))
+   ...
+END_FUNC
+
+template <typename T>
+static FUNC(T,sum,(T a,T b))
+   ...
+END_FUNC
+```
+
+Note: you have many other configurations to change your output. See following section for details
 
 #### Verbose Logging
 Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
@@ -270,6 +263,14 @@ int main(void) {
 will log QA only when is compiled using following line at minimum:
 
 `g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
+
+#### Escaping Log Format
+Escape character used in EasyLogging++ is `E`. For example, to write following log
+```
+%level [DEBUG] [13/01/2013 17:21:09.571] Log message
+```
+Debug log format should look like:
+`E%level [%level] [%datetime] %log`
 
 ## Configuration
 #### Enable/Disable Logging
