@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.xx                                                 //
+//   EasyLogging++ v3.30                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -92,9 +92,7 @@
 #endif //(defined(__linux) || defined(__linux__))
 // Mac
 #if defined(__APPLE__)
- #if TARGET_OS_MAC
-  #define _MAC 1
- #endif //TARGET_OS_MAC
+ #define _MAC 1
 #endif //defined(__APPLE__)
 
 //

@@ -8,6 +8,7 @@ History was not kept before version 2.1.
     - Added new `QA(..)` logs (issue #17)
     - Splits functions into namespaces (issue #18)
     - Fixed issue with helper functions when logs disabled
+    - Fixed issue with compiling using LLVM on mac (issue #16)
 
 #### 3.2
  * 3.20: Added conditional logging using `INFO_IF`, `DEBUG_IF`, etc.
