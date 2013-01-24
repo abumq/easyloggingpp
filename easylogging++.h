@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.30                                                 //
+//   EasyLogging++ v3.31                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -253,6 +253,11 @@ static inline void setAppArgs(int argc, char** argv) {
     }
 #endif //_VERBOSE_LOG
   }
+}
+
+static inline void setAppArgs(int argc, const char** argv) {
+  char** args = const_cast<char**>(argv);
+  setAppArgs(argc, args);
 }
 
 static bool logPathExist(void) {
