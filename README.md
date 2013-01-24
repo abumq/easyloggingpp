@@ -123,7 +123,8 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   // verbose log
   VERBOSE_IF(true, 1, "Printing verbose level-1");
 ```
-
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/conditional_logs.cpp)
+ 
 #### Cleaning Logs On Each Run
 If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
 
@@ -192,6 +193,9 @@ END_FUNC
 
 Note: you have many other configurations to change your output. See following section for details
 
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_waster.cpp)
+ 
 #### Verbose Logging
 Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
 ```C++
@@ -239,6 +243,8 @@ Just like other logs, you may choose the final location of verbose logs, i.e, fi
 
 Also, log format for verbose logs have special format specifier, `%vlevel` that is placeholder for verbose logging level.
 
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/verbose_logs.cpp)
+ 
 #### Releasing Memory
 Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated. Also, be sure EasyLogging++ is extensively tested for any memory leaks, but to make valgrind happy for your C++ application, make sure to have `_END_EASYLOGGINGPP` at end of application (probably main function).
 ```C++
@@ -248,6 +254,8 @@ int main(int argc, char** argv) {
 }
 ```
 
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/valgrind_happy.cpp)
+ 
 #### Quality Assurance Logs
 Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for tested purposes. These logs give extra information when in QA and you can disable these logs in production without having to change the source code.
 
@@ -263,6 +271,8 @@ int main(void) {
 will log QA only when is compiled using following line at minimum:
 
 `g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
+
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qa_logs.cpp)
 
 #### Escaping Log Format
 Escape character used in EasyLogging++ is `E`. For example, to write following log
