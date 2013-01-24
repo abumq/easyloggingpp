@@ -18,6 +18,8 @@ EasyLogging++ comes with following levels of logging with complete control over 
   PERFORMANCE(...)
   HINT(...)
   STATUS(...)
+  VERBOSE(#, ...)
+  QA(...)
 ```
 ## Why EasyLogging++
 Answering this question can be sometimes hard but here are few reasons why you would want to use EasyLogging++ as logger for your C++ applications;
@@ -177,6 +179,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * `HINT_IF(condition, log)`
 * `STATUS_IF(condition, log)`
 * `VERBOSE_IF(condition, level, log)`
+* `QA_IF(condition, log)`
 
 A typical example is as follow (taken from samples/conditional_log.cpp)
 ```C++
