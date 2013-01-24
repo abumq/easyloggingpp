@@ -28,7 +28,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
   - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header to your source and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it.
   - It supports linux, windows and mac
- * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP#enabledisable-logging)
+ * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
 
     EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage to compilation.
  * [Extremely Easy to Use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
@@ -39,7 +39,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
     Be sure to have logs enabled (if they are disabled)
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
- * [Additional features](https://github.com/mkhan3189/EasyLoggingPP#additional-features)
+ * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
 
 ## Examples
 #### Basic Logging
