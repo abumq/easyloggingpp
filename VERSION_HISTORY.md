@@ -21,8 +21,9 @@ History was not kept before version 2.1.
  * 3.12: minor fixes around comments
  * 3.13: fixes for update.sh
  * 3.14: fix for windows compile failure, thanks to `codyzu`
- * 3.15: Added more control over disabling logs
-         Changed from `_DISABLE_EASYLOGGINGPP` to `_DISABLE_LOGS`
+ * 3.15: 
+    - Added more control over disabling logs
+    - Changed from `_DISABLE_EASYLOGGINGPP` to `_DISABLE_LOGS`
  * 3.16: Minor improvement
  * 3.17: Minor logic improvement
  * 3.18: Added support for regression testing to clean log every time you run application.
