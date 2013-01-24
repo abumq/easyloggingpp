@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.32                                                 //
+//   EasyLogging++ v3.33                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -386,10 +386,12 @@ static inline void cleanStream(void) {
 }
 
 static inline void releaseMemory(void) {
-  ::easyloggingpp::internal::cleanStream();
-  delete ::easyloggingpp::internal::logFile;
-  delete ::easyloggingpp::internal::logStream;
-  ::easyloggingpp::internal::loggerInitialized = false;
+  if (::easyloggingpp::internal::loggerInitialized) {
+    ::easyloggingpp::internal::cleanStream();
+    delete ::easyloggingpp::internal::logFile;
+    delete ::easyloggingpp::internal::logStream;
+    ::easyloggingpp::internal::loggerInitialized = false;
+  }
 }
 
 static inline void updateDateFormat(void) {
