@@ -10,6 +10,7 @@ History was not kept before version 2.1.
     - Fixed issue with helper functions when logs disabled
     - Fixed issue with compiling using LLVM on mac (issue #16)
  * 3.31: Fixes issue with `const char**` vs `char**` argv (issue #19)
+ * 3.32: Tries harder (using `hostname`) to retrieve host name on ubuntu based linux.
 
 #### 3.2
  * 3.20: Added conditional logging using `INFO_IF`, `DEBUG_IF`, etc.

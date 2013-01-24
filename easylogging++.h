@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.31                                                 //
+//   EasyLogging++ v3.32                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -357,6 +357,22 @@ static inline std::string getHostname(void) {
   char* hostname = getenv("HOSTNAME");
 #endif //_WINDOWS
   if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+#if _LINUX || _MAC
+  FILE* hostnameProc = popen("hostname", "r");
+  if (hostnameProc != NULL) {
+    const short hBuffMaxSize = 20;
+    char hBuff[hBuffMaxSize];
+    fgets(hBuff, hBuffMaxSize, hostnameProc);
+    pclose(hostnameProc);
+    short actualHBuffSize = strlen(hBuff);
+    if (actualHBuffSize > 0) {
+      if (hBuff[actualHBuffSize - 1] == '\n') {
+        hBuff[actualHBuffSize - 1] = '\0';
+      }
+      return std::string(hBuff);
+    }
+  }
+#endif
     return std::string("unknown-host");
   } else {
     return std::string(hostname);
