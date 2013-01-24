@@ -361,13 +361,13 @@ You can customize format of logging. Following format specifiers are currently s
 
 #### Log Format By Log Level
 Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++.h` configuration section;
-* `DEFAULT_LOG_FORMAT` Sets format used for default logs
+* `DEFAULT_LOG_FORMAT` Sets default format and is used by other levels unless explicitely set
 * `DEBUG_LOG_FORMAT` Sets format used for `DEBUG` logs
 * `INFO_LOG_FORMAT` Sets format used for `INFO` logs
 * `WARNING_LOG_FORMAT` Sets format used for `WARNING` logs
 * `ERROR_LOG_FORMAT` Sets format used for `ERROR` logs
 * `FATAL_LOG_FORMAT` Sets format used for `FATAL` logs
-* `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORNANCE` logs
+* `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORMANCE` logs
 * `HINT_LOG_FORMAT` Sets format used for `HINT`s
 * `STATUS_LOG_FORMAT` Sets format used for `STATUS` logs
 * `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
