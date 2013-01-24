@@ -312,8 +312,10 @@ g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS
 ```
 This will disable debug logs and status updates in main-exec binary.
 
-*Note*, when the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
-
+*Notes*
+ - When the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
+ - QA logs will only be enabled when `_QUALITY_ASSURANCE` is defined. See [Quality Assurance](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#quality-assurance-logs) section for details.
+ 
 #### Log Location By Log Level
 Since v2.0+, EasyLogging++ has configuration for custom log locations, that means; for example you can choose to log `DEBUG`s to log file but not to standard output (e.g, terminal) while `INFO` to both standard output and log file.
 This can be set by following configurations
