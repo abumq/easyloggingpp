@@ -1,14 +1,14 @@
-[STATUS] [25/01/2013 08:20:35.473] PROGRAM STARTED
-[DEBUG] [25/01/2013 08:20:35.552] [mkhan@devil-inside] [int main()] [./valgrind_happy.cpp:10] This is start of logging!
-[INFO] [25/01/2013 08:20:35.566] This is a test number 1
-[INFO] [25/01/2013 08:20:35.570] This is a test number 2
-[INFO] [25/01/2013 08:20:35.570] This is a test number 3
-[INFO] [25/01/2013 08:20:35.570] This is a test number 4
-[INFO] [25/01/2013 08:20:35.571] This is a test number 5
-[INFO] [25/01/2013 08:20:35.571] This is a test number 6
-[INFO] [25/01/2013 08:20:35.571] This is a test number 7
-[INFO] [25/01/2013 08:20:35.572] This is a test number 8
-[INFO] [25/01/2013 08:20:35.572] This is a test number 9
-[INFO] [25/01/2013 08:20:35.572] This is a test number 10
-[STATUS] [25/01/2013 08:20:35.573] Completed!
-[STATUS] [25/01/2013 08:20:35.575] PROGRAM ENDED
+[STATUS] [25/01/2013 08:26:54.676] PROGRAM STARTED
+[DEBUG] [25/01/2013 08:26:54.676] [mkhan@devil-inside] [int main()] [./valgrind_happy.cpp:10] This is start of logging!
+[INFO] [25/01/2013 08:26:54.676] This is a test number 1
+[INFO] [25/01/2013 08:26:54.676] This is a test number 2
+[INFO] [25/01/2013 08:26:54.676] This is a test number 3
+[INFO] [25/01/2013 08:26:54.676] This is a test number 4
+[INFO] [25/01/2013 08:26:54.676] This is a test number 5
+[INFO] [25/01/2013 08:26:54.676] This is a test number 6
+[INFO] [25/01/2013 08:26:54.676] This is a test number 7
+[INFO] [25/01/2013 08:26:54.676] This is a test number 8
+[INFO] [25/01/2013 08:26:54.676] This is a test number 9
+[INFO] [25/01/2013 08:26:54.676] This is a test number 10
+[STATUS] [25/01/2013 08:26:54.676] Completed!
+[STATUS] [25/01/2013 08:26:54.676] PROGRAM ENDED
