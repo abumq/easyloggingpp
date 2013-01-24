@@ -371,6 +371,7 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `HINT_LOG_FORMAT` Sets format used for `HINT`s
 * `STATUS_LOG_FORMAT` Sets format used for `STATUS` logs
 * `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
+* `QA_LOG_FORMAT` Sets format used for `QA` logs
 
 #### Other Configurations
 * `SHOW_STD_OUTPUT` Flag for showing log in standard output (terminal or command prompt for example) 
