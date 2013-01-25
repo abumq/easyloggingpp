@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.33                                                 //
+//   EasyLogging++ v3.34                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -49,7 +49,7 @@
 
 #define _ENABLE_HINT 1
 #define _HINT_TO_STANDARD_OUTPUT 1
-#define _HINT_TO_FILE 0
+#define _HINT_TO_FILE 1
 
 #define _ENABLE_STATUS 1
 #define _STATUS_TO_STANDARD_OUTPUT 1
@@ -101,6 +101,7 @@
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
+#include <cctype>
 #if _WINDOWS
  #include <direct.h> //digital mars compiler
  #include <windows.h>
@@ -125,8 +126,8 @@ namespace easyloggingpp {
 ///////////////////////////////////////////////////////////////////////
 namespace configuration {
 
-// FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE SEE README AT:
-// https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md
+// FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE FOLLOW THE LINK:
+// https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
 
 const std::string    DEFAULT_LOG_FORMAT       =    "[%level] [%datetime] %log\n";
 const std::string    DEBUG_LOG_FORMAT         =    "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
@@ -248,7 +249,8 @@ static inline void setAppArgs(int argc, char** argv) {
      && (argv[argc][0] == '-')
      && (argv[argc][1] == '-')
      && (argv[argc][2] == 'v')
-     && (argv[argc][3] == '=')) {
+     && (argv[argc][3] == '=')
+     && (isdigit(argv[argc][4]))) {
        ::easyloggingpp::internal::verboseLevel = atoi(argv[argc] + 4);
     }
 #endif //_VERBOSE_LOG
