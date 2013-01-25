@@ -1,5 +1,11 @@
 easyloggingpp.zip
+
 releases/*
+
 samples/logs/myeasylog.log
+
+test/tests.bin
+
 samples/bin/*
+
 *.bin
