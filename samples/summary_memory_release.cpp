@@ -1,5 +1,6 @@
 // This sample demonstrate the summary usage of _END_EASYLOGGINGPP
 // on when is best to use this macro
+// see https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#summary-on-when-to-release-memory
 // @author mkhan3189
 
 #include "../easylogging++.h"
