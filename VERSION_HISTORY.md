@@ -12,6 +12,7 @@ History was not kept before version 2.1.
    - Fix issue with `TO_STANDARD_OUTPUT` segmentation fault
    - Added support for `--verbose` for level 9
  * 4.02: Minor naming fixes (refactoring)
+ * 4.03: Added extra namespace to suppress `unused` warnings
 
 #### 3.3
  * 3.30:

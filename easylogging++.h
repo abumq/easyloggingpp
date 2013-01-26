@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.02                                                 //
+//   EasyLogging++ v4.03                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -43,7 +43,7 @@
 // file. It is recommended to be always 1 i.e, enabled. If you wish some logs
 // not be recorded to log file then you proabably want to disable those logs
 
-#define _ENABLE_DEBUG_LOGS 1 
+#define _ENABLE_DEBUG_LOGS 1
 #define _DEBUG_LOGS_TO_STANDARD_OUTPUT 0
 #define _DEBUG_LOGS_TO_FILE 1
 
@@ -75,7 +75,7 @@
 #define _STATUS_TO_STANDARD_OUTPUT 1
 #define _STATUS_TO_FILE 1
 
-#define _ENABLE_VERBOSE_LOGS 1 
+#define _ENABLE_VERBOSE_LOGS 1
 #define _VERBOSE_LOGS_TO_STANDARD_OUTPUT 1
 #define _VERBOSE_LOGS_TO_FILE 1
 
@@ -295,9 +295,9 @@ namespace internal {
 //
 // Static symbols
 //
-static const std::string kFinalFilename = (::easyloggingpp::configuration::USE_CUSTOM_LOCATION ? 
-                                           ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION : 
-                                           "") + 
+static const std::string kFinalFilename = (::easyloggingpp::configuration::USE_CUSTOM_LOCATION ?
+                                           ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION :
+                                           "") +
                                            ::easyloggingpp::configuration::LOG_FILENAME;
 static bool showDateTime = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
 static bool showDate = (!::easyloggingpp::internal::showDateTime) &&
@@ -424,7 +424,7 @@ static void createLogPath(void) {
  #endif //_WINDOWS
     std::string tempPath = ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION;
     std::string dir = "";
-    short foundAt = -1;
+    size_t foundAt = -1;
     std::string madeSoFar = tempPath.substr(0, 1) == pathDelimiter ? pathDelimiter : "";
     while ((foundAt = tempPath.find(pathDelimiter)) != std::string::npos) {
       dir = tempPath.substr(0, foundAt);
@@ -729,9 +729,9 @@ static void writeLog(void) {
     std::cout << ::easyloggingpp::internal::logStream->str();
   }
   if ((::easyloggingpp::configuration::SAVE_TO_FILE) &&
-      (!::easyloggingpp::internal::fileNotOpenedErrorDisplayed) && 
-      (::easyloggingpp::internal::logStream) && 
-      (::easyloggingpp::internal::logFile) && 
+      (!::easyloggingpp::internal::fileNotOpenedErrorDisplayed) &&
+      (::easyloggingpp::internal::logStream) &&
+      (::easyloggingpp::internal::logFile) &&
       (::easyloggingpp::internal::toFile)) {
     ::easyloggingpp::internal::logFile->open(::easyloggingpp::internal::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
     (*::easyloggingpp::internal::logFile) << ::easyloggingpp::internal::logStream->str();
@@ -962,6 +962,21 @@ namespace helper {
   return ss.str();
   }
 } // namespace helper
+
+// Following namespace is useless and is ONLY there to supress
+// warnings of unused symbols. These symbols include conditional
+// and helper functions. Please do not use these functions.
+namespace unusedwarningsuppresser {
+class UnusedWarningSupresser {
+private:
+  void suppressAll(void) {
+     std::string readLogWarningSupress = ::easyloggingpp::helper::readLog();
+     const char* argv[1];
+     argv[1] = "easylogging++ warning suppresser";
+     ::easyloggingpp::internal::setAppArgs(0, argv);
+  }
+};
+} // warningsuppresser
 } // namespace easyloggingpp
 #else
   // Essentials
