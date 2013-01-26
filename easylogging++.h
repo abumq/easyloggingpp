@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.01                                                 //
+//   EasyLogging++ v4.02                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -20,7 +20,6 @@
 // If this is set to 0, nothing will be logged. On the contrary, 1 means
 // logs are enabled.
 #define _LOGGING_ENABLED 1
-
 
 // Following configurations are for each logging level, each with three
 // parts; note: *** refers to log level in each of the following description.
@@ -268,19 +267,19 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 // once and only once in main.cpp file after all the includes in order to initialize
 // extern symbols.
 // Candidates for extern symbols are carefully chosen, the rest are static symbols.
-#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {\
-                                    namespace internal {\
-                                      bool loggerInitialized = false;\
-                                      std::stringstream *logStream = NULL;\
-                                      std::ofstream *logFile = NULL;\
-                                      std::stringstream tempStream;\
-                                      std::stringstream tempStream2;\
-                                      std::list< ::easyloggingpp::internal::LogType > logTypes;\
-                                      bool fileNotOpenedErrorDisplayed = false;\
-                                      std::string user = "";\
-                                      std::string host = "";\
-                                      int verboseLevel = -1;\
-                                    }\
+#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {                                     \
+                                    namespace internal {                                        \
+                                      bool loggerInitialized = false;                           \
+                                      std::stringstream *logStream = NULL;                      \
+                                      std::ofstream *logFile = NULL;                            \
+                                      std::stringstream tempStream;                             \
+                                      std::stringstream tempStream2;                            \
+                                      std::list< ::easyloggingpp::internal::LogType > logTypes; \
+                                      bool fileNotOpenedErrorDisplayed = false;                 \
+                                      std::string user = "";                                    \
+                                      std::string host = "";                                    \
+                                      int verboseLevel = -1;                                    \
+                                    }                                                           \
                                   }
 
 // When using log levels that require program arguments, for example VERBOSE logs require
@@ -296,16 +295,15 @@ namespace internal {
 //
 // Static symbols
 //
-static const std::string kFinalFilename = (::easyloggingpp::configuration::USE_CUSTOM_LOCATION ? ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::configuration::LOG_FILENAME;
-
+static const std::string kFinalFilename = (::easyloggingpp::configuration::USE_CUSTOM_LOCATION ? 
+                                           ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION : 
+                                           "") + 
+                                           ::easyloggingpp::configuration::LOG_FILENAME;
 static bool showDateTime = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
-
 static bool showDate = (!::easyloggingpp::internal::showDateTime) &&
                        (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
-
 static bool showTime = (!::easyloggingpp::internal::showDateTime) &&
                        (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
-
 static bool showLocation = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
 
 static bool toStandardOutput;
@@ -392,13 +390,13 @@ static void setAppArgs(int argc, char** argv) {
   }
 }
 
-static inline void setAppArgs(int argc, const char** argv) {
+static void setAppArgs(int argc, const char** argv) {
   char** args = const_cast<char**>(argv);
   ::easyloggingpp::internal::setAppArgs(argc, args);
 }
 
 // Determines if log path exists or not.
-static inline bool logPathExist(void) {
+static bool logPathExist(void) {
 #if _WINDOWS
   DWORD fileType = GetFileAttributesA(::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
   if (fileType == INVALID_FILE_ATTRIBUTES) {
@@ -485,14 +483,14 @@ static std::string getDateTime(void) {
 
 // Runs command on terminal and returns the output.
 // This is applicable only on linux and mac, for all other OS, an empty string is returned.
-static inline std::string getBashOutput(const char* command) {
+static std::string getBashOutput(const char* command) {
 #if _LINUX || _MAC
-  FILE* hostnameProc = popen(command, "r");
-  if (hostnameProc != NULL) {
+  FILE* proc = popen(command, "r");
+  if (proc != NULL) {
     const short hBuffMaxSize = 20;
     char hBuff[hBuffMaxSize];
-    fgets(hBuff, hBuffMaxSize, hostnameProc);
-    pclose(hostnameProc);
+    fgets(hBuff, hBuffMaxSize, proc);
+    pclose(proc);
     short actualHBuffSize = strlen(hBuff);
     if (actualHBuffSize > 0) {
       if (hBuff[actualHBuffSize - 1] == '\n') {
@@ -517,7 +515,7 @@ static std::string getUsername(void) {
   if ((username == NULL) || ((strcmp(username, "") == 0))) {
     // No username found by environment variable
     // Try harder by using bash command 'whoami' if on linux or mac
-    return std::string(::easyloggingpp::internal::getBashOutput("whoami"));
+    return ::easyloggingpp::internal::getBashOutput("whoami");
   } else {
     return std::string(username);
   }
@@ -538,14 +536,14 @@ static std::string getHostname(void) {
       // Still nothing found, return 'unknown-host'
       return std::string("unknown-host");
     } else {
-      return std::string(strHostname);
+      return strHostname;
     }
   } else {
     return std::string(hostname);
   }
 }
 
-// Clean all the streams
+// Clean all the streams.
 static inline void cleanStream(void) {
   ::easyloggingpp::internal::tempStream.str("");
   ::easyloggingpp::internal::tempStream2.str("");
@@ -571,7 +569,7 @@ static inline void releaseMemory(void) {
 }
 
 // Determine what is being shown for date/time and update dateFormat symbol accordingly.
-static inline void updateDateFormat(void) {
+static void updateDateFormat(void) {
   const char* dateFormatLocal = "%d/%m/%Y";
   const char* timeFormatLocal = "%H:%M:%S";
   if (::easyloggingpp::internal::showDate) {
@@ -722,7 +720,7 @@ static void init(void) {
 }
 
 // Writes log safely after checking symbols availablility.
-static inline void writeLog(void) {
+static void writeLog(void) {
   if ((::easyloggingpp::configuration::SHOW_STD_OUTPUT) &&
       (::easyloggingpp::internal::logStream) &&
       (::easyloggingpp::internal::toStandardOutput)) {
@@ -755,6 +753,7 @@ static void updateFormatValue(const std::string& formatSpecifier, const std::str
   }
 }
 
+// Determines format for format specifiers common across all the log formats.
 static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::internal::logFormat = format;
   ::easyloggingpp::internal::showDateTime = format.find("%datetime") != std::string::npos;

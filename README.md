@@ -199,7 +199,7 @@ END_FUNC
 
 Note: you have many other configurations to change your output. See following section for details
 
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
  
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_waster.cpp)
  

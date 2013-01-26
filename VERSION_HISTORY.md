@@ -11,6 +11,7 @@ History was not kept before version 2.1.
    - Added inline doc
    - Fix issue with `TO_STANDARD_OUTPUT` segmentation fault
    - Added support for `--verbose` for level 9
+ * 4.02: Minor naming fixes (refactoring)
 
 #### 3.3
  * 3.30:
