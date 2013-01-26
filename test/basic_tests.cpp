@@ -1,10 +1,17 @@
 #include "basic_tests.h"
+#include <cstring>
 #include "../easylogging++.h"
 #include "tests_core.h"
-
-void basicTests(void) {
+void basicTests(int argc, char** argv) {
   ANLI
+  assert(::easyloggingpp::internal::user == "");
+  assert(::easyloggingpp::internal::host == "");
   INFO("Starting test...");
+
+  // FIXME: for some weird reason, comparing like so causes valgrind to be sad  
+  assert(strcmp(::easyloggingpp::internal::user.c_str(), argv[1]) == 0);
+  assert(strcmp(::easyloggingpp::internal::host.c_str(), argv[2]) == 0);
+
   ALI
   // Number of logs enabled
   assert(::easyloggingpp::internal::logTypes.size() == 10);
@@ -27,9 +34,6 @@ void basicTests(void) {
   ALI
   assert(::easyloggingpp::internal::logPathExist() == true);
   system(std::string("mv ./" + ::easyloggingpp::configuration::LOG_FILENAME + " " + ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION).c_str());
-
   INFO("All tests were passed!");
   ALI
-  _END_EASYLOGGINGPP // Release memory used by EasyLogging++
-  ANLI
 }

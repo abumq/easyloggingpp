@@ -5,6 +5,6 @@
 #ifndef _EASYLOGGINGPP_BASIC_TESTS_H
 #define _EASYLOGGINGPP_BASIC_TESTS_H
 
-extern void basicTests(void);
+extern void basicTests(int argc, char** argv);
 
 #endif

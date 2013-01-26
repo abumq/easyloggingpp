@@ -750,6 +750,7 @@ namespace helper {
   #define VERBOSE_IF(x, y, z)
   #define QA_IF(x, y)
   // Miscellaneous
+  #define _INITIALIZE_EASYLOGGINGPP
   #define _START_EASYLOGGINGPP(x, y)
   #define _END_EASYLOGGINGPP
   // Helper functions

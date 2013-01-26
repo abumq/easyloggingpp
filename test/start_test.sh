@@ -10,8 +10,10 @@ if [ -f "tests.bin" ];then
   rm tests.bin
 fi
 
-g++ basic_tests.cpp tests.cpp -o tests.bin $macro -Wno-write-strings
+g++ basic_tests.cpp main.cpp -o tests.bin $macro -Wno-write-strings
 
 echo 'Running tests...'
 
-./tests.bin
+user=$(whoami)
+host=$(hostname)
+./tests.bin $user $host 
