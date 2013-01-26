@@ -39,7 +39,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
 ## Getting Started
 In order to start logging follow these three steps:
  * Include `easylogging++.h` header
- * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to write this line is right after includes
+ * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to write this line is right after includes in file where main function is defined.
  * Start logging!
 
 See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
