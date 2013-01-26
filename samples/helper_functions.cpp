@@ -7,6 +7,8 @@
 #include <string>
 #include <iostream>
 
+_INITIALIZE_EASYLOGGINGPP
+
 int main(void) {
   INFO("Logging first line if _CLEAN_LOGS is defined");
   std::string allLogs = ::easyloggingpp::helper::readLog();

@@ -4,6 +4,8 @@
 
 #include "../easylogging++.h"
 
+_INITIALIZE_EASYLOGGINGPP
+
 MAIN(int argc, char** argv)
 
   INFO("This is start of logging...");

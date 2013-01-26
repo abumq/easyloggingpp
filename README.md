@@ -31,20 +31,24 @@ Answering this question can be sometimes hard but here are few reasons why you w
  * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
 
     EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage to compilation.
- * [Extremely Easy to Use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
- 
-    EasyLogging++ is extremely easy to use. Just two steps and you will already be writing logs;
-    - Include `easylogging++.h`
-    - Use one of levels, e.g, `INFO("My log line ");`
-    Be sure to have logs enabled (if they are disabled)
+ * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
+
+## Getting Started
+In order to start logging follow these three steps:
+ * Include `easylogging++.h` header
+ * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to write this line is right after includes
+ * Start logging!
+
+See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
 
 ## Examples
 #### Basic Logging
  ```C++
  #include "easylogging++.h"
+ _INITIALIZE_EASYLOGGINGPP
  int main(void) {
     DEBUG("Staring my EasyLogging++ program");
     unsigned int i = 0;
@@ -136,6 +140,7 @@ g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 #### Performance Logging
  ```C++
  #include "easylogging++.h"
+ _INITIALIZE_EASYLOGGINGPP
  SUB(print,(const std::string& input))
    /* sub-routine body */
    std::cout << input;

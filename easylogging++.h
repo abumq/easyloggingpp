@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.36                                                 //
+//   EasyLogging++ v4.00                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -188,7 +188,21 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
 #define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE))
 
-// Application arguments based logs
+// EasyLogging++ essentials
+#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {\
+                                    namespace internal {\
+                                      bool loggerInitialized = false;\
+                                      std::stringstream *logStream = NULL;\
+                                      std::ofstream *logFile = NULL;\
+                                      std::stringstream tempStream;\
+                                      std::stringstream tempStream2;\
+                                      std::list< ::easyloggingpp::internal::LogType > logTypes;\
+                                      bool fileNotOpenedErrorDisplayed = false;\
+                                      std::string user = "";\
+                                      std::string host = "";\
+                                      int verboseLevel = -1;\
+                                    }\
+                                  }
 #define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::internal::setAppArgs(argc, argv);
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
@@ -201,22 +215,22 @@ static bool showDateTime = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.fi
 static bool showDate = (!::easyloggingpp::internal::showDateTime) && (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
 static bool showTime = (!::easyloggingpp::internal::showDateTime) && (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
 static bool showLocation = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
-static std::string user;
-static std::string host;
-static std::stringstream *logStream = NULL;
-static std::ofstream *logFile = NULL;
-static std::stringstream tempStream;
-static std::stringstream tempStream2;
 static bool toStandardOutput;
 static bool toFile;
 static const short kDateBufferSize = 25;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
-static bool loggerInitialized = false;
-static bool fileNotOpenedErrorDisplayed = false;
 static std::string logFormat = "";
+extern std::string user;
+extern std::string host;
+extern std::stringstream *logStream;
+extern std::ofstream *logFile;
+extern std::stringstream tempStream;
+extern std::stringstream tempStream2;
+extern bool loggerInitialized;
+extern bool fileNotOpenedErrorDisplayed;
 #if _VERBOSE_LOG
-static int verboseLevel = -1;
+extern int verboseLevel;
 #endif //_VERBOSE_LOG
 class LogType {
 public:
@@ -233,7 +247,7 @@ public:
   bool toStandardOutput;
   bool toFile;
 };
-static std::list< ::easyloggingpp::internal::LogType > logTypes;
+extern std::list< ::easyloggingpp::internal::LogType > logTypes;
 
 //
 // Internal functions

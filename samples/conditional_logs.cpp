@@ -4,6 +4,9 @@
  * @author mkhan3189
  */
 #include "../easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+
 int main(void) {
 
   INFO_IF(1 == 1, "1 is equal to 1");

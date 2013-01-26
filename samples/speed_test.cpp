@@ -4,6 +4,9 @@
  * @author mkhan3189
  */
 #include "../easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+
 FUNC(int, main, (void))
   STATUS("PROGRAM STARTED");
   for (long i = 1; i <= 10000000; i++) {

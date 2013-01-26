@@ -1,13 +1,15 @@
 *.swp
 
+test/tests.bin
+
 easyloggingpp.zip
 
 releases/*
 
 samples/logs/myeasylog.log
 
-test/tests.bin
+samples/multiple-files-project/logs/myeasylog.log
+
+samples/multiple-files-project/bin/*
 
 samples/bin/*
-
-*.bin

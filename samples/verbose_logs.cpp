@@ -4,6 +4,9 @@
  * @author mkhan3189
  */
 #include "../easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
   INFO("This is demo for verbose logs");

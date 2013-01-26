@@ -5,6 +5,9 @@
  */
 #include "../easylogging++.h"
 #include <unistd.h>
+
+_INITIALIZE_EASYLOGGINGPP
+
 SUB(timeWaster,(int x))
     for (int i = 0; i < x; i++) {
       sleep(1);

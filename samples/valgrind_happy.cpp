@@ -5,6 +5,9 @@
  * @author mkhan3189
  */
 #include "../easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+
 int main(void) {
   STATUS("PROGRAM STARTED");
   DEBUG("This is start of logging!");

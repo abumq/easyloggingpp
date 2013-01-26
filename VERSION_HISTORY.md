@@ -3,6 +3,11 @@ VERSION HISTORY - EasyLogging++
 
 History was not kept before version 2.1.
 
+#### 4.0
+ * 4.00
+   - Major improvement for multiple files project
+   - Introduced `INITIALIZE_EASYLOGGINGPP`
+
 #### 3.3
  * 3.30:
     - Added new `QA(..)` logs (issue #17)

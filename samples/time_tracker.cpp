@@ -5,6 +5,8 @@
  */
 #include "../easylogging++.h"
 
+_INITIALIZE_EASYLOGGINGPP
+
 FUNC(int,sum,(int x,int y))
     RETURN(x+y)
 END_FUNC
