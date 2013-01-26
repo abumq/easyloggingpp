@@ -255,7 +255,16 @@ int main(int argc, char** argv) {
 }
 ```
 
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/valgrind_happy.cpp)
+###### Summary On When To Release Memory
+There are only few points that will help you remember when to release memory using `_END_EASYLOGGINGPP` and when not.
+
+ * Always release memory when you are done with your logging i.e, end of `main(..)` function before every return. Alternatively, you may use `RETURN_MAIN(exit_status)` to automatically release memory.
+ * If you want to track performance on `main(..)` function, try using `MAIN(int argc, char** argv)` and `RETURN_MAIN(..)` (see sample 2 below)
+ * Try to minimize using `_END_EASYLOGGINGPP` to minimize delete calls, use it in the end of main.
+ * Last but not least, if you are not tracking `main(..)` function's performance, just use `_END_EASYLOGGINPP` once like all other [samples](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/).
+
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/valgrind_happy.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/summary_memory_release.cpp)
  
 #### Quality Assurance Logs
 Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for tested purposes. These logs give extra information when in QA and you can disable these logs in production without having to change the source code.

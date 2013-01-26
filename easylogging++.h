@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v3.35                                                 //
+//   EasyLogging++ v3.36                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -627,12 +627,15 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::internal::formatSeconds(difftime(functionEndTime,functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START { if (::easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime, functionEndTime; time(&functionStartTime);
-    #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT); _END_EASYLOGGINGPP;
+    #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_SUB FUNC_SUB_COMMON_END }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_FUNC FUNC_SUB_COMMON_END }
     #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
+    #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
+    #define END_MAIN _END_EASYLOGGINGPP END_FUNC
+    #define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
   #else
     #define PERFORMANCE(x)
     #define PERFORMANCE_IF(x, y)
@@ -641,6 +644,9 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
     #define END_FUNC }
     #define RETURN(expr) return expr;
+    #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
+    #define END_MAIN _END_EASYLOGGINGPP END_FUNC
+    #define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
   #endif //_PERFORMANCE_LOG
 
   #if _HINT_LOG
@@ -715,6 +721,9 @@ namespace helper {
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
   #define END_FUNC }
   #define RETURN(expr) return expr;
+  #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
+  #define END_MAIN END_FUNC
+  #define RETURN_MAIN(exit_status) return exit_status;
   // Conditional
   #define DEBUG_IF(x, y)
   #define INFO_IF(x, y)

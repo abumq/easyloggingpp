@@ -13,6 +13,8 @@ History was not kept before version 2.1.
  * 3.32: Tries harder (using `hostname`) to retrieve host name on ubuntu based linux.
  * 3.33: Fixed releaseMemory
  * 3.34: Type check for verbose log argument
+ * 3.35: Memory leak issue when tracking performance (issue #20)
+ * 3.36: Introduced MAIN, END_MAIN and RETURN_MAIN for memory release safety
 
 #### 3.2
  * 3.20: Added conditional logging using `INFO_IF`, `DEBUG_IF`, etc.
