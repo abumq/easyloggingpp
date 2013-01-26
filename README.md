@@ -3,9 +3,10 @@ EasyLogging++
 
 Cross platform logging made easy for C++ applications.
 
-To use EasyLogging++ in your application, simply:
+To use EasyLogging++ in your application, simply and initialize:
 ```C++
 #include "easylogging++.h"
+_INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
 ```
 
 EasyLogging++ comes with following levels of logging with complete control over each of the following:
@@ -249,6 +250,8 @@ Just like other logs, you may choose the final location of verbose logs, i.e, fi
 
 Also, log format for verbose logs have special format specifier, `%vlevel` that is placeholder for verbose logging level.
 
+You may also run using `--verbose` to display maximum verbose logs (max level: 9)
+
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/verbose_logs.cpp)
  
 #### Releasing Memory
@@ -407,8 +410,6 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
 
-#### Modifiable Sections
-`easylogging++.h` contains modifiable sections that you can modify. This includes configuration and enabling/disabling certain logs as mentioned above. Please do not modify any code other than the ones in modifiable sections, unless you really know what you are doing. This may cause `update.sh` to stop working.
 ## Updating EasyLogging++
 If you are already using older version of EasyLogging++ and would like to update to [latest version](http://icplusplus.com/tools/easylogging/easyloggingpp.zip) without losing your previous configurations like your log storage, log format or what you log etc, you can use script called `update.sh`. This script retains configuration from older files and creates new `easylogging++.h` file that you can re-import to your project without losing your configuration and without having any compile errors.
 This script takes three parameters:

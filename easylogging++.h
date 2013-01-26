@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.00                                                 //
+//   EasyLogging++ v4.01                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -16,14 +16,35 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 
-//////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//                         MODIFIABLE SECTION                           //
-//                                                                      //
-//////////////////////////////////////////////////////////////////////////
+// _LOGGING_ENABLED specifies whether or not writing logs are enabled.
+// If this is set to 0, nothing will be logged. On the contrary, 1 means
+// logs are enabled.
 #define _LOGGING_ENABLED 1
 
-#define _ENABLE_DEBUG_LOGS 1
+
+// Following configurations are for each logging level, each with three
+// parts; note: *** refers to log level in each of the following description.
+//
+// PART 1
+// ======
+// _ENABLE_***_LOGS specifies whether or not *** logs are enabled.
+// This is similar to _LOGGING_ENABLED except the level effected is
+// specific to config name only. 1 = enabled; 0 = disabled
+//
+// PART 2
+// ======
+// _***_LOGS_TO_STANDARD_OUTPUT specifies whether or not *** logs are enabled
+// to be written to standard output. Standard output varies from OS to OS,
+// typically it is terminal for linux and command prompt for windows.
+// This will only effect corresponding log level.
+//
+// PART 3
+// ======
+// _***_LOGS_TO_FILE specifies whether or not *** logs are to be written to
+// file. It is recommended to be always 1 i.e, enabled. If you wish some logs
+// not be recorded to log file then you proabably want to disable those logs
+
+#define _ENABLE_DEBUG_LOGS 1 
 #define _DEBUG_LOGS_TO_STANDARD_OUTPUT 0
 #define _DEBUG_LOGS_TO_FILE 1
 
@@ -63,15 +84,11 @@
 #define _QA_LOGS_TO_STANDARD_OUTPUT 1
 #define _QA_LOGS_TO_FILE 1
 
-////////////////////////////////////////////////////////////////////
-///                                                              ///
-///                 END OF MODIFIABLE SECTION                    ///
-///                                                              ///
-///      *** DO NOT MODIFY ANY LINE BELOW THIS POINT ***         ///
-///                  EXCEPT CONFIGURATION                        ///
-///                                                              ///
-////////////////////////////////////////////////////////////////////
-
+// Determine whether or not logging is enabled
+// Use power of preprocessor directives to determine what to compile
+// and what to ignore.
+// If you are using g++ and wish to find out how does your program look like
+// under the hood, use -E flag of g++ compiler that will expand all the macros
 #if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
 
 //
@@ -117,16 +134,33 @@
 #include <fstream>
 
 namespace easyloggingpp {
-///////////////////////////////////////////////////////////////////////
-///                                                                 ///
-///                   CONFIGURATION FOR LOGGING                     ///
-///                                                                 ///
-///                       MODIFIABLE SECTION                        ///
-///                                                                 ///
-///////////////////////////////////////////////////////////////////////
 namespace configuration {
 
-// FOR DETAILS ON FOLLOWING CONFIGURATION PLEASE FOLLOW THE LINK:
+// This section contains configurations that are to set by developer.
+// These sections can be splitted into two parts;
+//
+//   * Log formats
+//   * Miscellaneous configurations
+//
+// First part contains all the formatting configuration for each log
+// level. Developers are expected to only change the values and not
+// data type or constant name.
+// Format specifiers used are as following:
+//
+//  SPECIFIER     |                  DESCRIPTION
+// ===============|==================================================
+//   %level       |   Log level, e.g, INFO, DEBUG, ERROR etc
+//   %datetime    |   Both date and time of log
+//   %date        |   Only date
+//   %time        |   Only time
+//   %user        |   User running the application
+//   %host        |   Host/computer name the application is running on
+//   %func        |   Function of logging
+//   %loc         |   Filename and line number of logging
+//   %log         |   The actual log message
+//   %vlevel      |   Verbose level (only application for VERBOSE logs)
+//
+// Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
 
 const std::string    DEFAULT_LOG_FORMAT       =    "[%level] [%datetime] %log\n";
@@ -141,21 +175,58 @@ const std::string    STATUS_LOG_FORMAT        =    DEFAULT_LOG_FORMAT;
 const std::string    VERBOSE_LOG_FORMAT       =    "[%level-%vlevel] [%datetime] %log\n";
 const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
 
+// Part 2 is miscellaneous configurations
+
+// SHOW_STD_OUTPUT
+//   High level configuration to determine whether or not to show log to standard
+//   output i.e, terminal or command prompt. If this is set to false, logs will not
+//   be shown to standard output regardless of log level setting _***_LOGS_TO_STANDARD_OUTPUT
+//   Recommendation: true
 const bool           SHOW_STD_OUTPUT          =    true;
+
+
+// SAVE_TO_FILE
+//   Same as SHOW_STD_OUTPUT but for saving to file. If this is false, logs will not
+//   be written to file regardless of log level setting _***_LOGS_TO_FILE.
+//   Be careful when you set this option to false
+//   Recommendation: true
 const bool           SAVE_TO_FILE             =    true;
+
+
+// LOG_FILENAME
+//   Filename of log file. This should only be filename and not the whole path.
+//   Path is set in different configuration below.
 const std::string    LOG_FILENAME             =    "myeasylog.log";
-const bool           USE_CUSTOM_LOCATION      =    true;
+
+
+// CUSTOM_LOG_FILE_LOCATION
+//   Path where log file should be saved. Configuration below (USE_CUSTOM_LOCATION)
+//   must be set to true in order for this to take affect.
+//   NOTES
+//    * This location path should end with slash ( '/' for linux and '\' for windows)
+//    * This has to be absolute path. Relative paths will not work
+//   Recommendation: Set value
 const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+
+
+// USE_CUSTOM_LOCATION
+//   If this is true, logs will be saved to location set in configuration above
+//   (CUSTOM_LOG_FILE_LOCATION). Default log location is application run path.
+//   Recommendation: true
+const bool           USE_CUSTOM_LOCATION      =    true;
+
+// SHOW_START_FUNCTION_LOG
+//   When using performance logging, this determines whether or not to show
+//   when a certain function has started executing.
+//   Recommendation: false
 const bool           SHOW_START_FUNCTION_LOG  =    false;
 
 } // namespace configuration
-////////////////////////////////////////////////////////////////////
-///                                                              ///
-///                    END OF CONFIGURATION                      ///
-///                                                              ///
-///   *** PLEASE DO NOT MODIFY ANY LINE BELOW THIS POINT ***     ///
-///                                                              ///
-////////////////////////////////////////////////////////////////////
+
+
+//          ***********************************************
+//     **   PLEASE DO NOT MODIFY ANY LINE BEYOND THIS POINT   **
+//          ***********************************************
 
 //
 // Source code location macros
@@ -166,6 +237,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #if !defined(__LINE__)
  #define __LINE__ ""
 #endif //!defined(__LINE__)
+// Determine appropriate function macro according to current compiler
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
  #define __func__ __FUNCTION__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
@@ -174,9 +246,10 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
  #define __func__ ""
 #endif //defined(_MSC_VER) && (_MSC_VER >= 1020)
 
-//
-// Log levels
-//
+// Finally determine which log levels are enabled and which are disabled.
+// This is determined by _ENABLE_***_LOGS and _DISABLE_***_LOGS macros.
+// These macros defined in following section is then used throughout the process
+// of logging.
 #define _DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS))
 #define _INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS))
 #define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS))
@@ -188,7 +261,13 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
 #define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE))
 
-// EasyLogging++ essentials
+// EasyLogging++ uses a lot of extern symbols in order to keep using same values
+// to prevent potential memory leaks and to improve performance by not initializing
+// variables repeatedly. This include variables like username, hostname, streams
+// and list of log types. In order to achieve this, following macro should be used
+// once and only once in main.cpp file after all the includes in order to initialize
+// extern symbols.
+// Candidates for extern symbols are carefully chosen, the rest are static symbols.
 #define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {\
                                     namespace internal {\
                                       bool loggerInitialized = false;\
@@ -203,24 +282,41 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
                                       int verboseLevel = -1;\
                                     }\
                                   }
+
+// When using log levels that require program arguments, for example VERBOSE logs require
+// to see what VERBOSE levels to log by looking at --v=X argument or --verbose (for level 9)
+// argument, following macro should be used.
 #define _START_EASYLOGGINGPP(argc, argv) ::easyloggingpp::internal::setAppArgs(argc, argv);
+
+// When program is exiting, following macro should be used in order to release all the memory
+// used by internal symbols.
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace internal {
 //
-// Static fields
+// Static symbols
 //
 static const std::string kFinalFilename = (::easyloggingpp::configuration::USE_CUSTOM_LOCATION ? ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION : "") + ::easyloggingpp::configuration::LOG_FILENAME;
+
 static bool showDateTime = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
-static bool showDate = (!::easyloggingpp::internal::showDateTime) && (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
-static bool showTime = (!::easyloggingpp::internal::showDateTime) && (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
+
+static bool showDate = (!::easyloggingpp::internal::showDateTime) &&
+                       (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
+
+static bool showTime = (!::easyloggingpp::internal::showDateTime) &&
+                       (::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
+
 static bool showLocation = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
+
 static bool toStandardOutput;
 static bool toFile;
 static const short kDateBufferSize = 25;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static std::string logFormat = "";
+//
+// Extern symbols
+//
 extern std::string user;
 extern std::string host;
 extern std::stringstream *logStream;
@@ -232,6 +328,8 @@ extern bool fileNotOpenedErrorDisplayed;
 #if _VERBOSE_LOG
 extern int verboseLevel;
 #endif //_VERBOSE_LOG
+
+// Represents log type and configuration such as format and target
 class LogType {
 public:
   LogType(const std::string& name_,
@@ -247,25 +345,48 @@ public:
   bool toStandardOutput;
   bool toFile;
 };
+
+// Represents all the log types in current context
 extern std::list< ::easyloggingpp::internal::LogType > logTypes;
 
-//
-// Internal functions
-//
+// Internal message from EasyLogging++. This is used as less number of times
+// as possible to minimize annoying outputs.
 static inline void internalMessage(const std::string& message) {
     std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
 }
 
-static inline void setAppArgs(int argc, char** argv) {
+// Determines the arguments used by EasyLogging++ and store them into static and extern
+// symbols where applicable.
+// Specifically, looks for '--v=X' or '--verbose' arguments, where X is a digit between
+// 0 and 9 and store the digit value into verboseLevel. The max verbose level is 9
+// and this set when '--verbose' argument is provided. Priority is given to '--v=X' arguments
+static void setAppArgs(int argc, char** argv) {
   while (argc-- > 0) {
 #if _VERBOSE_LOG
-    if ((strlen(argv[argc]) >= 5) 
-     && (argv[argc][0] == '-')
-     && (argv[argc][1] == '-')
-     && (argv[argc][2] == 'v')
-     && (argv[argc][3] == '=')
-     && (isdigit(argv[argc][4]))) {
-       ::easyloggingpp::internal::verboseLevel = atoi(argv[argc] + 4);
+    const int kMaxVerboseLevel = 9;
+    // Look for --v=X argument
+    if ((strlen(argv[argc]) >= 5) &&
+        (argv[argc][0] == '-') &&
+        (argv[argc][1] == '-') &&
+        (argv[argc][2] == 'v') &&
+        (argv[argc][3] == '=') &&
+        (isdigit(argv[argc][4]))) {
+      // Current argument is --v=X
+      // where X is a digit between 0-9
+      ::easyloggingpp::internal::verboseLevel = atoi(argv[argc] + 4);
+    }
+    // Look for --verbose argument
+    else if ((strlen(argv[argc]) == 9) &&
+             (argv[argc][0] == '-') &&
+             (argv[argc][1] == '-') &&
+             (argv[argc][2] == 'v') &&
+             (argv[argc][3] == 'e') &&
+             (argv[argc][4] == 'r') &&
+             (argv[argc][5] == 'b') &&
+             (argv[argc][6] == 'o') &&
+             (argv[argc][7] == 's') &&
+             (argv[argc][8] == 'e')) {
+      ::easyloggingpp::internal::verboseLevel = kMaxVerboseLevel;
     }
 #endif //_VERBOSE_LOG
   }
@@ -273,10 +394,11 @@ static inline void setAppArgs(int argc, char** argv) {
 
 static inline void setAppArgs(int argc, const char** argv) {
   char** args = const_cast<char**>(argv);
-  setAppArgs(argc, args);
+  ::easyloggingpp::internal::setAppArgs(argc, args);
 }
 
-static bool logPathExist(void) {
+// Determines if log path exists or not.
+static inline bool logPathExist(void) {
 #if _WINDOWS
   DWORD fileType = GetFileAttributesA(::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
   if (fileType == INVALID_FILE_ATTRIBUTES) {
@@ -289,11 +411,13 @@ static bool logPathExist(void) {
 #endif //_WINDOWS
 }
 
+// Creates log path with read, write and execute permissions for
+// all users.
 static void createLogPath(void) {
 #if _WINDOWS || _LINUX || _MAC
-  if ((::easyloggingpp::configuration::USE_CUSTOM_LOCATION)
-   && (::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.size() > 0)
-   && (!::easyloggingpp::internal::logPathExist())) {
+  if ((::easyloggingpp::configuration::USE_CUSTOM_LOCATION) &&
+      (::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.size() > 0) &&
+      (!::easyloggingpp::internal::logPathExist())) {
     int status = -1;
  #if _WINDOWS
     std::string pathDelimiter = "\\";
@@ -325,56 +449,45 @@ static void createLogPath(void) {
 #endif //_WINDOWS || _LINUX || _MAC
 }
 
-static inline std::string getDateTime(void) {
-  if (!(::easyloggingpp::internal::showDateTime || ::easyloggingpp::internal::showDate || ::easyloggingpp::internal::showTime)) return "";
+// Gets current date and time with milliseconds.
+static std::string getDateTime(void) {
+  if (!(::easyloggingpp::internal::showDateTime ||
+        ::easyloggingpp::internal::showDate ||
+        ::easyloggingpp::internal::showTime))
+    return "";
 #if _WINDOWS
-    time_t currTime;
-    time(&currTime);
+  time_t currTime;
+  time(&currTime);
 #elif _LINUX || _MAC
-    timeval currTime;
-    gettimeofday(&currTime, NULL);
-    int milliSeconds = 0;
-    if ((::easyloggingpp::internal::showDateTime) || (::easyloggingpp::internal::showTime)) {
-      milliSeconds = currTime.tv_usec / 1000;
-    }
+  timeval currTime;
+  gettimeofday(&currTime, NULL);
+  int milliSeconds = 0;
+  if ((::easyloggingpp::internal::showDateTime) ||
+      (::easyloggingpp::internal::showTime)) {
+    milliSeconds = currTime.tv_usec / 1000;
+  }
 #endif //_WINDOWS
-    struct tm * timeInfo;
+  struct tm * timeInfo;
 #if _WINDOWS
-    timeInfo = localtime(&currTime);
+  timeInfo = localtime(&currTime);
 #elif _LINUX || _MAC
-    timeInfo = localtime(&currTime.tv_sec);
+  timeInfo = localtime(&currTime.tv_sec);
 #endif //_WINDOWS
-    strftime(::easyloggingpp::internal::dateBuffer, ::easyloggingpp::internal::kDateBufferSize, ::easyloggingpp::internal::dateFormat, timeInfo);
+  strftime(::easyloggingpp::internal::dateBuffer, ::easyloggingpp::internal::kDateBufferSize, ::easyloggingpp::internal::dateFormat, timeInfo);
 #if _LINUX || _MAC
-    if ((::easyloggingpp::internal::showDateTime) || (::easyloggingpp::internal::showTime)) {
-      sprintf(::easyloggingpp::internal::dateBuffer, "%s.%d", ::easyloggingpp::internal::dateBuffer, milliSeconds);
-    }
+  if ((::easyloggingpp::internal::showDateTime) ||
+      (::easyloggingpp::internal::showTime)) {
+    sprintf(::easyloggingpp::internal::dateBuffer, "%s.%d", ::easyloggingpp::internal::dateBuffer, milliSeconds);
+  }
 #endif //_LINUX || _MAC
   return std::string(::easyloggingpp::internal::dateBuffer);
 }
 
-static inline std::string getUsername(void) {
-#if _WINDOWS
-  char* username = getenv("USERNAME");
-#elif _LINUX || _MAC
-  char* username = getenv("USER");
-#endif //_WINDOWS
-  if ((username == NULL) || ((strcmp(username, "") == 0))) {
-    return std::string("");
-  } else {
-    return std::string(username);
-  }
-}
-
-static inline std::string getHostname(void) {
-#if _WINDOWS
-  char* hostname = getenv("COMPUTERNAME");
-#elif _LINUX || _MAC
-  char* hostname = getenv("HOSTNAME");
-#endif //_WINDOWS
-  if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+// Runs command on terminal and returns the output.
+// This is applicable only on linux and mac, for all other OS, an empty string is returned.
+static inline std::string getBashOutput(const char* command) {
 #if _LINUX || _MAC
-  FILE* hostnameProc = popen("hostname", "r");
+  FILE* hostnameProc = popen(command, "r");
   if (hostnameProc != NULL) {
     const short hBuffMaxSize = 20;
     char hBuff[hBuffMaxSize];
@@ -387,29 +500,77 @@ static inline std::string getHostname(void) {
       }
       return std::string(hBuff);
     }
+    return "";
   }
+#else
+    return "";
 #endif
-    return std::string("unknown-host");
+}
+
+// Gets current username.
+static std::string getUsername(void) {
+#if _WINDOWS
+  char* username = getenv("USERNAME");
+#elif _LINUX || _MAC
+  char* username = getenv("USER");
+#endif //_WINDOWS
+  if ((username == NULL) || ((strcmp(username, "") == 0))) {
+    // No username found by environment variable
+    // Try harder by using bash command 'whoami' if on linux or mac
+    return std::string(::easyloggingpp::internal::getBashOutput("whoami"));
+  } else {
+    return std::string(username);
+  }
+}
+
+// Gets current host name or computer name.
+static std::string getHostname(void) {
+#if _WINDOWS
+  char* hostname = getenv("COMPUTERNAME");
+#elif _LINUX || _MAC
+  char* hostname = getenv("HOSTNAME");
+#endif //_WINDOWS
+  if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+    // No host name found by environment variable
+    // Try harder by using bash command 'hostname' if on linux or mac
+    std::string strHostname = easyloggingpp::internal::getBashOutput("hostname");
+    if (strHostname == "") {
+      // Still nothing found, return 'unknown-host'
+      return std::string("unknown-host");
+    } else {
+      return std::string(strHostname);
+    }
   } else {
     return std::string(hostname);
   }
 }
 
+// Clean all the streams
 static inline void cleanStream(void) {
   ::easyloggingpp::internal::tempStream.str("");
   ::easyloggingpp::internal::tempStream2.str("");
-  ::easyloggingpp::internal::logStream->str("");
+  if (::easyloggingpp::internal::logStream) {
+    ::easyloggingpp::internal::logStream->str("");
+  }
 }
 
+// Release all the memory used by EasyLogging++.
 static inline void releaseMemory(void) {
   if (::easyloggingpp::internal::loggerInitialized) {
     ::easyloggingpp::internal::cleanStream();
-    delete ::easyloggingpp::internal::logFile;
-    delete ::easyloggingpp::internal::logStream;
+    if (::easyloggingpp::internal::logFile) {
+      delete ::easyloggingpp::internal::logFile;
+      ::easyloggingpp::internal::logFile = NULL;
+    }
+    if (::easyloggingpp::internal::logStream) {
+      delete ::easyloggingpp::internal::logStream;
+      ::easyloggingpp::internal::logStream = NULL;
+    }
     ::easyloggingpp::internal::loggerInitialized = false;
   }
 }
 
+// Determine what is being shown for date/time and update dateFormat symbol accordingly.
 static inline void updateDateFormat(void) {
   const char* dateFormatLocal = "%d/%m/%Y";
   const char* timeFormatLocal = "%H:%M:%S";
@@ -424,23 +585,26 @@ static inline void updateDateFormat(void) {
   }
 }
 
+// Initialize logger, this is where all the memories are allocated and uses loggerInitialized
+// symbol to determine whether or not to allocate memory. This function also looks at high
+// level configurations like SHOW_STD_OUTPUT and SAVE_TO_FILE and allocate memory to whats
+// needed.
 static void init(void) {
   if (!::easyloggingpp::internal::loggerInitialized) {
     // Logger
-    if (::easyloggingpp::configuration::SHOW_STD_OUTPUT) {
-      ::easyloggingpp::internal::logStream = new std::stringstream();
-    }
+    ::easyloggingpp::internal::logStream = new std::stringstream();
     // Path
     ::easyloggingpp::internal::createLogPath();
     // Log file
     if (::easyloggingpp::configuration::SAVE_TO_FILE) {
 #if defined(_ALWAYS_CLEAN_LOGS)
-        std::ios_base::openmode mode = std::ofstream::out;
+      std::ios_base::openmode mode = std::ofstream::out;
 #else
-        std::ios_base::openmode mode = std::ofstream::out | std::ofstream::app;
+      std::ios_base::openmode mode = std::ofstream::out | std::ofstream::app;
 #endif //defined(_ALWAYS_CLEAN_LOGS)
       ::easyloggingpp::internal::logFile = new std::ofstream(::easyloggingpp::internal::kFinalFilename.c_str(), mode);
-      if ((!::easyloggingpp::internal::fileNotOpenedErrorDisplayed) && (!::easyloggingpp::internal::logFile->is_open())) {
+      if ((!::easyloggingpp::internal::fileNotOpenedErrorDisplayed) &&
+          (!::easyloggingpp::internal::logFile->is_open())) {
         ::easyloggingpp::internal::internalMessage("Unable to open log file [" + ::easyloggingpp::internal::kFinalFilename + "]");
         ::easyloggingpp::internal::fileNotOpenedErrorDisplayed = true;
       } else {
@@ -454,47 +618,121 @@ static void init(void) {
     ::easyloggingpp::internal::host = ::easyloggingpp::internal::getHostname();
     // Different log levels
 #if _DEBUG_LOG
-     logTypes.push_back(LogType("DEBUG", ::easyloggingpp::configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "DEBUG",
+        ::easyloggingpp::configuration::DEBUG_LOG_FORMAT,
+        _DEBUG_LOGS_TO_STANDARD_OUTPUT,
+        _DEBUG_LOGS_TO_FILE
+      )
+    );
 #endif //_DEBUG_LOG
 #if _INFO_LOG
-     logTypes.push_back(LogType("INFO", ::easyloggingpp::configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "INFO",
+        ::easyloggingpp::configuration::INFO_LOG_FORMAT,
+        _INFO_LOGS_TO_STANDARD_OUTPUT,
+        _INFO_LOGS_TO_FILE
+      )
+    );
 #endif //_INFO_LOG
 #if _WARNING_LOG
-     logTypes.push_back(LogType("WARNING", ::easyloggingpp::configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "WARNING",
+        ::easyloggingpp::configuration::WARNING_LOG_FORMAT,
+        _WARNING_LOGS_TO_STANDARD_OUTPUT,
+        _WARNING_LOGS_TO_FILE
+      )
+    );
 #endif //_WARNING_LOG
 #if _ERROR_LOG
-     logTypes.push_back(LogType("ERROR", ::easyloggingpp::configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "ERROR",
+        ::easyloggingpp::configuration::ERROR_LOG_FORMAT,
+        _ERROR_LOGS_TO_STANDARD_OUTPUT,
+        _ERROR_LOGS_TO_FILE
+      )
+    );
 #endif //_ERROR_LOG
 #if _FATAL_LOG
-     logTypes.push_back(LogType("FATAL", ::easyloggingpp::configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "FATAL",
+        ::easyloggingpp::configuration::FATAL_LOG_FORMAT,
+        _FATAL_LOGS_TO_STANDARD_OUTPUT,
+        _FATAL_LOGS_TO_FILE
+      )
+    );
 #endif //_FATAL_LOG
 #if _PERFORMANCE_LOG
-     logTypes.push_back(LogType("PERFORMANCE", ::easyloggingpp::configuration::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "PERFORMANCE",
+        ::easyloggingpp::configuration::PERFORMANCE_LOG_FORMAT,
+        _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT,
+        _PERFORMANCE_LOGS_TO_FILE
+      )
+    );
 #endif //_PERFORMANCE_LOG
 #if _HINT_LOG
-     logTypes.push_back(LogType("HINT", ::easyloggingpp::configuration::HINT_LOG_FORMAT, _HINT_TO_STANDARD_OUTPUT, _HINT_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "HINT",
+        ::easyloggingpp::configuration::HINT_LOG_FORMAT,
+        _HINT_TO_STANDARD_OUTPUT,
+        _HINT_TO_FILE
+      )
+    );
 #endif //_HINT_LOG
 #if _STATUS_LOG
-     logTypes.push_back(LogType("STATUS", ::easyloggingpp::configuration::STATUS_LOG_FORMAT, _STATUS_TO_STANDARD_OUTPUT, _STATUS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "STATUS",
+        ::easyloggingpp::configuration::STATUS_LOG_FORMAT,
+        _STATUS_TO_STANDARD_OUTPUT,
+        _STATUS_TO_FILE
+      )
+    );
 #endif //_STATUS_LOG
 #if _VERBOSE_LOG
-     logTypes.push_back(LogType("VERBOSE", ::easyloggingpp::configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "VERBOSE",
+        ::easyloggingpp::configuration::VERBOSE_LOG_FORMAT,
+        _VERBOSE_LOGS_TO_STANDARD_OUTPUT,
+        _VERBOSE_LOGS_TO_FILE
+      )
+    );
 #endif //_VERBOSE_LOG
 #if _QA_LOG
-     logTypes.push_back(LogType("QA", ::easyloggingpp::configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+    ::easyloggingpp::internal::logTypes.push_back(
+      ::easyloggingpp::internal::LogType(
+        "QA",
+        ::easyloggingpp::configuration::QA_LOG_FORMAT,
+        _QA_LOGS_TO_STANDARD_OUTPUT,
+        _QA_LOGS_TO_FILE
+      )
+    );
 #endif //_QA_LOG
      ::easyloggingpp::internal::loggerInitialized = true;
    }
 }
 
+// Writes log safely after checking symbols availablility.
 static inline void writeLog(void) {
-  if ((::easyloggingpp::internal::logStream) && (::easyloggingpp::internal::toStandardOutput)) {
+  if ((::easyloggingpp::configuration::SHOW_STD_OUTPUT) &&
+      (::easyloggingpp::internal::logStream) &&
+      (::easyloggingpp::internal::toStandardOutput)) {
     std::cout << ::easyloggingpp::internal::logStream->str();
   }
-  if ((!::easyloggingpp::internal::fileNotOpenedErrorDisplayed)
-   && (::easyloggingpp::internal::logStream)
-   && (::easyloggingpp::internal::logFile)
-   && (::easyloggingpp::internal::toFile)) {
+  if ((::easyloggingpp::configuration::SAVE_TO_FILE) &&
+      (!::easyloggingpp::internal::fileNotOpenedErrorDisplayed) && 
+      (::easyloggingpp::internal::logStream) && 
+      (::easyloggingpp::internal::logFile) && 
+      (::easyloggingpp::internal::toFile)) {
     ::easyloggingpp::internal::logFile->open(::easyloggingpp::internal::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
     (*::easyloggingpp::internal::logFile) << ::easyloggingpp::internal::logStream->str();
     ::easyloggingpp::internal::logFile->close();
@@ -502,6 +740,8 @@ static inline void writeLog(void) {
   ::easyloggingpp::internal::cleanStream();
 }
 
+// Updates the format specifier to value in log format
+// This is used to build log for writing to standard output or to file.
 static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
   size_t foundAt = -1;
   while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
@@ -526,9 +766,10 @@ static void determineCommonLogFormat(const std::string& format) {
   ::easyloggingpp::internal::updateDateFormat();
 }
 
+// Iterates through log types andd find the one matching with current type
 static void determineLogFormat(const std::string& type) {
-  for (std::list< ::easyloggingpp::internal::LogType >::iterator it = logTypes.begin();
-       it != logTypes.end();
+  for (std::list< ::easyloggingpp::internal::LogType >::iterator it = ::easyloggingpp::internal::logTypes.begin();
+       it != ::easyloggingpp::internal::logTypes.end();
        ++it) {
     if (type == it->name) {
       ::easyloggingpp::internal::determineCommonLogFormat(it->format);
@@ -539,6 +780,7 @@ static void determineLogFormat(const std::string& type) {
   }
 }
 
+// Builds log format. This function is entry point of writing log.
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type, int verboseLevel = -1) {
   ::easyloggingpp::internal::init();
   ::easyloggingpp::internal::determineLogFormat(type);
@@ -565,7 +807,9 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   ::easyloggingpp::internal::updateFormatValue("%user", ::easyloggingpp::internal::user, ::easyloggingpp::internal::logFormat);
   ::easyloggingpp::internal::updateFormatValue("%host", ::easyloggingpp::internal::host, ::easyloggingpp::internal::logFormat);
   ::easyloggingpp::internal::updateFormatValue("%log", ::easyloggingpp::internal::tempStream2.str(), ::easyloggingpp::internal::logFormat);
-  (*::easyloggingpp::internal::logStream) << logFormat;
+  if (::easyloggingpp::internal::logStream) {
+    (*::easyloggingpp::internal::logStream) << logFormat;
+  }
 }
 
 //
@@ -696,6 +940,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #endif //_QA_LOG
 } // namespace internal
 namespace helper {
+  // Reads log from current log file an returns standard string
   static std::string readLog(void) {
    std::stringstream ss;
    if (::easyloggingpp::configuration::SAVE_TO_FILE) {

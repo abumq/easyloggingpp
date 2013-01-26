@@ -7,6 +7,10 @@ History was not kept before version 2.1.
  * 4.00
    - Major improvement for multiple files project
    - Introduced `INITIALIZE_EASYLOGGINGPP`
+ * 4.01
+   - Added inline doc
+   - Fix issue with `TO_STANDARD_OUTPUT` segmentation fault
+   - Added support for `--verbose` for level 9
 
 #### 3.3
  * 3.30:
