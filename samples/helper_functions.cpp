@@ -14,5 +14,6 @@ int main(void) {
   std::cout << "Following lines are fetched by ::easyloggingpp::helper::readLog()\n";
   std::cout << "-----------------------------------------------------------------\n";
   std::cout << allLogs;
+  _END_EASYLOGGINGPP
   return 0;
 }

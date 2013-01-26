@@ -12,5 +12,6 @@ END_FUNC
 int main(void) {
    int result = sum(1,2);
    INFO("Result is " << result);
+   _END_EASYLOGGINGPP // Release memory from INFO(..)
    return 0;
 }

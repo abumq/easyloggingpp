@@ -36,6 +36,14 @@ fi
 echo "Current File : $currFile"
 echo "targetFile : $targetFile"
 echo "newVersionFile : $newVersionFile"
+echo
+echo "** NOTE: THIS IS UNSTABLE VERSION OF update.sh, PLEASE REFER TO ISSUE #12 ON GITHUB AT github.com/mkhan3189/EasyLoggingPP/issues/12 FOR DETAILS **"
+echo
+echo "Continue? (y/n)"
+read cont
+if [ "$cont" = "n" ];then
+  exit
+fi
 
 [ -f "$targetFile" ] || rm $targetFile
 

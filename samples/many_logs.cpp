@@ -17,4 +17,5 @@ int main(void) {
   }
   DEBUG("This is end of logging!");
   STATUS("PROGRAM ENDED");
+  _END_EASYLOGGINGPP
 }

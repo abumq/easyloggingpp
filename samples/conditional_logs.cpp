@@ -14,5 +14,6 @@ int main(void) {
 
   PERFORMANCE_IF((1 == 2) && (3 == 4), "Wow, 1 == 2 and 3 == 4");
   PERFORMANCE_IF((1 == 1) && (3 < 4), "Wow, 1 == 1 and 3 < 4");
+  _END_EASYLOGGINGPP
   return 0;
 }
