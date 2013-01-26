@@ -499,6 +499,8 @@ static std::string getBashOutput(const char* command) {
       return std::string(hBuff);
     }
     return "";
+  } else {
+    return "";
   }
 #else
     return "";
