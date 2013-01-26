@@ -264,6 +264,7 @@ There are only few points that will help you remember when to release memory usi
  * Last but not least, if you are not tracking `main(..)` function's performance, just use `_END_EASYLOGGINPP` once like all other [samples](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/).
 
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/valgrind_happy.cpp)
+ 
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/summary_memory_release.cpp)
  
 #### Quality Assurance Logs
