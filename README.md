@@ -3,7 +3,7 @@ EasyLogging++
 
 Cross platform logging made easy for C++ applications.
 
-To use EasyLogging++ in your application, simply and initialize:
+To use EasyLogging++ in your application, simply include and initialize:
 ```C++
 #include "easylogging++.h"
 _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
