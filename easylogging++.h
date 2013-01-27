@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.05                                                 //
+//   EasyLogging++ v4.06                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -790,7 +790,7 @@ static void determineCommonLogFormat(const std::string& format) {
 // Iterates through log types andd find the one matching with current type
 static void determineLogFormat(const std::string& type) {
   std::list< ::easyloggingpp::internal::LogType >::const_iterator it(
-    find(::easyloggingpp::internal::logTypes.begin(),
+    std::find(::easyloggingpp::internal::logTypes.begin(),
          ::easyloggingpp::internal::logTypes.end(),
          type)
   );
