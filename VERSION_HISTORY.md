@@ -16,6 +16,8 @@ History was not kept before version 2.1.
  * 4.04:
     - Performance improvement when determining log format
     - Performance improvement for escape character in log format
+ * 4.05:
+    - Performance improvement while building path
 
 #### 3.3
  * 3.30:

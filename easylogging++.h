@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.04                                                 //
+//   EasyLogging++ v4.05                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -430,31 +430,30 @@ static void createLogPath(void) {
       (!::easyloggingpp::internal::logPathExist())) {
     int status = -1;
  #if _WINDOWS
-    std::string pathDelimiter = "\\";
+    const char* pathDelimiter = "\\";
  #elif _LINUX || _MAC
-    std::string pathDelimiter = "/";
+    const char* pathDelimiter = "/";
  #endif //_WINDOWS
-    std::string tempPath = ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION;
-    std::string dir = "";
     size_t foundAt = -1;
-    std::string madeSoFar = tempPath.substr(0, 1) == pathDelimiter ? pathDelimiter : "";
-    while ((foundAt = tempPath.find(pathDelimiter, foundAt + 1)) != std::string::npos) {
-      dir = tempPath.substr(0, foundAt);
-      if (dir != "") {
-        madeSoFar += dir + pathDelimiter;
+    std::string fullPathToBuild = "";
+    char* currentPath = const_cast<char*>(::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
+    currentPath = strtok(currentPath,
+                         pathDelimiter);
+    while (currentPath != NULL) {
+      fullPathToBuild = fullPathToBuild + pathDelimiter + currentPath;
+      std::cout << "Building path: " << fullPathToBuild << "\n";
  #if _WINDOWS
-        status = _mkdir(madeSoFar.c_str());
+      status = _mkdir(fullPathToBuild.c_str());
  #elif _LINUX || _MAC
-        status = mkdir(madeSoFar.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
+      status = mkdir(fullPathToBuild.c_str(),
+                     S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
  #endif //_WINDOWS
-      }
-      tempPath = tempPath.erase(0, foundAt + 1);
+      currentPath = strtok(NULL, pathDelimiter);
     }
     if (status == -1) {
       ::easyloggingpp::internal::internalMessage("Unable to create log path [" + ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION + "]");
     }
-  }
-#else
+  } else
   ::easyloggingpp::internal::internalMessage("Unable to create log path [" + ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION + "]");
 #endif //_WINDOWS || _LINUX || _MAC
 }
@@ -762,9 +761,12 @@ static void writeLog(void) {
 // This is used to build log for writing to standard output or to file.
 static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
   size_t foundAt = -1;
-  while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
+  while ((foundAt = currentFormat.find(
+            formatSpecifier,
+            foundAt + 1)
+         ) != std::string::npos){
     if (currentFormat[foundAt > 0 ? foundAt - 1 : 0] == 'E') {
-      currentFormat = currentFormat.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+      currentFormat.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
       foundAt++;
     } else {
       currentFormat = currentFormat.replace(foundAt, formatSpecifier.size(), value);
