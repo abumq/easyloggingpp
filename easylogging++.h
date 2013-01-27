@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.03                                                 //
+//   EasyLogging++ v4.04                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -131,6 +131,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 namespace easyloggingpp {
 namespace configuration {
@@ -330,7 +331,7 @@ extern int verboseLevel;
 // Represents log type and configuration such as format and target
 class LogType {
 public:
-  LogType(const std::string& name_,
+  explicit LogType(const std::string& name_,
           const std::string& format_,
           bool toStandardOutput_,
           bool toFile_) :
@@ -342,8 +343,19 @@ public:
   std::string format;
   bool toStandardOutput;
   bool toFile;
+  bool operator==(const std::string& name) const {
+    return this->name == name;
+  }
+  bool operator!=(const std::string& name) const {
+    return this->name != name;
+  }
+  bool operator==(const ::easyloggingpp::internal::LogType& other) const {
+    return this->name == other.name;
+  }
+  bool operator!=(const ::easyloggingpp::internal::LogType& other) const {
+    return this->name != other.name;
+  }
 };
-
 // Represents all the log types in current context
 extern std::list< ::easyloggingpp::internal::LogType > logTypes;
 
@@ -410,7 +422,7 @@ static bool logPathExist(void) {
 }
 
 // Creates log path with read, write and execute permissions for
-// all users.
+// all users except for 'no-read' for 'others'.
 static void createLogPath(void) {
 #if _WINDOWS || _LINUX || _MAC
   if ((::easyloggingpp::configuration::USE_CUSTOM_LOCATION) &&
@@ -426,7 +438,7 @@ static void createLogPath(void) {
     std::string dir = "";
     size_t foundAt = -1;
     std::string madeSoFar = tempPath.substr(0, 1) == pathDelimiter ? pathDelimiter : "";
-    while ((foundAt = tempPath.find(pathDelimiter)) != std::string::npos) {
+    while ((foundAt = tempPath.find(pathDelimiter, foundAt + 1)) != std::string::npos) {
       dir = tempPath.substr(0, foundAt);
       if (dir != "") {
         madeSoFar += dir + pathDelimiter;
@@ -471,11 +483,16 @@ static std::string getDateTime(void) {
 #elif _LINUX || _MAC
   timeInfo = localtime(&currTime.tv_sec);
 #endif //_WINDOWS
-  strftime(::easyloggingpp::internal::dateBuffer, ::easyloggingpp::internal::kDateBufferSize, ::easyloggingpp::internal::dateFormat, timeInfo);
+  strftime(::easyloggingpp::internal::dateBuffer,
+           ::easyloggingpp::internal::kDateBufferSize,
+           ::easyloggingpp::internal::dateFormat, timeInfo);
 #if _LINUX || _MAC
   if ((::easyloggingpp::internal::showDateTime) ||
       (::easyloggingpp::internal::showTime)) {
-    sprintf(::easyloggingpp::internal::dateBuffer, "%s.%d", ::easyloggingpp::internal::dateBuffer, milliSeconds);
+    sprintf(::easyloggingpp::internal::dateBuffer,
+            "%s.%d",
+            ::easyloggingpp::internal::dateBuffer,
+            milliSeconds);
   }
 #endif //_LINUX || _MAC
   return std::string(::easyloggingpp::internal::dateBuffer);
@@ -733,7 +750,8 @@ static void writeLog(void) {
       (::easyloggingpp::internal::logStream) &&
       (::easyloggingpp::internal::logFile) &&
       (::easyloggingpp::internal::toFile)) {
-    ::easyloggingpp::internal::logFile->open(::easyloggingpp::internal::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
+    ::easyloggingpp::internal::logFile->open(::easyloggingpp::internal::kFinalFilename.c_str(),
+                                             std::ofstream::out | std::ofstream::app);
     (*::easyloggingpp::internal::logFile) << ::easyloggingpp::internal::logStream->str();
     ::easyloggingpp::internal::logFile->close();
   }
@@ -745,7 +763,7 @@ static void writeLog(void) {
 static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
   size_t foundAt = -1;
   while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
-    if (currentFormat.substr(foundAt > 0 ? foundAt - 1 : 0, 1) == "E") {
+    if (currentFormat[foundAt > 0 ? foundAt - 1 : 0] == 'E') {
       currentFormat = currentFormat.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
       foundAt++;
     } else {
@@ -769,15 +787,16 @@ static void determineCommonLogFormat(const std::string& format) {
 
 // Iterates through log types andd find the one matching with current type
 static void determineLogFormat(const std::string& type) {
-  for (std::list< ::easyloggingpp::internal::LogType >::iterator it = ::easyloggingpp::internal::logTypes.begin();
-       it != ::easyloggingpp::internal::logTypes.end();
-       ++it) {
-    if (type == it->name) {
-      ::easyloggingpp::internal::determineCommonLogFormat(it->format);
-      ::easyloggingpp::internal::toStandardOutput = it->toStandardOutput;
-      ::easyloggingpp::internal::toFile = it->toFile;
-      return;
-    }
+  std::list< ::easyloggingpp::internal::LogType >::const_iterator it(
+    find(::easyloggingpp::internal::logTypes.begin(),
+         ::easyloggingpp::internal::logTypes.end(),
+         type)
+  );
+  if (it != ::easyloggingpp::internal::logTypes.end()) {
+    ::easyloggingpp::internal::determineCommonLogFormat(it->format);
+    ::easyloggingpp::internal::toStandardOutput = it->toStandardOutput;
+    ::easyloggingpp::internal::toFile = it->toFile;
+    return;
   }
 }
 
@@ -785,29 +804,49 @@ static void determineLogFormat(const std::string& type) {
 static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type, int verboseLevel = -1) {
   ::easyloggingpp::internal::init();
   ::easyloggingpp::internal::determineLogFormat(type);
-  ::easyloggingpp::internal::updateFormatValue("%level", type, ::easyloggingpp::internal::logFormat);
+  ::easyloggingpp::internal::updateFormatValue("%level",
+                                               type,
+                                               ::easyloggingpp::internal::logFormat);
 #if _VERBOSE_LOG
   if (verboseLevel != -1) {
     ::easyloggingpp::internal::tempStream << verboseLevel;
-    ::easyloggingpp::internal::updateFormatValue("%vlevel", ::easyloggingpp::internal::tempStream.str(), ::easyloggingpp::internal::logFormat);
+    ::easyloggingpp::internal::updateFormatValue("%vlevel",
+                                                 ::easyloggingpp::internal::tempStream.str(),
+                                                 ::easyloggingpp::internal::logFormat);
     ::easyloggingpp::internal::tempStream.str("");
   }
 #endif //_VERBOSE_LOG
   if (::easyloggingpp::internal::showDateTime) {
-    ::easyloggingpp::internal::updateFormatValue("%datetime", ::easyloggingpp::internal::getDateTime(), ::easyloggingpp::internal::logFormat);
+    ::easyloggingpp::internal::updateFormatValue("%datetime",
+                                                 ::easyloggingpp::internal::getDateTime(),
+                                                 ::easyloggingpp::internal::logFormat);
   } else if (::easyloggingpp::internal::showDate) {
-    ::easyloggingpp::internal::updateFormatValue("%date", ::easyloggingpp::internal::getDateTime(), ::easyloggingpp::internal::logFormat);
+    ::easyloggingpp::internal::updateFormatValue("%date",
+                                                 ::easyloggingpp::internal::getDateTime(),
+                                                 ::easyloggingpp::internal::logFormat);
   } else if (::easyloggingpp::internal::showTime) {
-    ::easyloggingpp::internal::updateFormatValue("%time", ::easyloggingpp::internal::getDateTime(), ::easyloggingpp::internal::logFormat);
+    ::easyloggingpp::internal::updateFormatValue("%time",
+                                                 ::easyloggingpp::internal::getDateTime(),
+                                                 ::easyloggingpp::internal::logFormat);
   }
-  ::easyloggingpp::internal::updateFormatValue("%func", std::string(func), ::easyloggingpp::internal::logFormat);
+  ::easyloggingpp::internal::updateFormatValue("%func",
+                                               std::string(func),
+                                               ::easyloggingpp::internal::logFormat);
   if (::easyloggingpp::internal::showLocation) {
     ::easyloggingpp::internal::tempStream << file << ":" << line;
-    ::easyloggingpp::internal::updateFormatValue("%loc", ::easyloggingpp::internal::tempStream.str(), ::easyloggingpp::internal::logFormat);
+    ::easyloggingpp::internal::updateFormatValue("%loc",
+                                                 ::easyloggingpp::internal::tempStream.str(),
+                                                 ::easyloggingpp::internal::logFormat);
   }
-  ::easyloggingpp::internal::updateFormatValue("%user", ::easyloggingpp::internal::user, ::easyloggingpp::internal::logFormat);
-  ::easyloggingpp::internal::updateFormatValue("%host", ::easyloggingpp::internal::host, ::easyloggingpp::internal::logFormat);
-  ::easyloggingpp::internal::updateFormatValue("%log", ::easyloggingpp::internal::tempStream2.str(), ::easyloggingpp::internal::logFormat);
+  ::easyloggingpp::internal::updateFormatValue("%user",
+                                               ::easyloggingpp::internal::user,
+                                               ::easyloggingpp::internal::logFormat);
+  ::easyloggingpp::internal::updateFormatValue("%host",
+                                               ::easyloggingpp::internal::host,
+                                               ::easyloggingpp::internal::logFormat);
+  ::easyloggingpp::internal::updateFormatValue("%log",
+                                               ::easyloggingpp::internal::tempStream2.str(),
+                                               ::easyloggingpp::internal::logFormat);
   if (::easyloggingpp::internal::logStream) {
     (*::easyloggingpp::internal::logStream) << logFormat;
   }
@@ -816,16 +855,23 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
 //
 // Logging macros
 //
-#define WRITE_LOG(type, log)\
-  ::easyloggingpp::internal::tempStream2 << log;\
-  ::easyloggingpp::internal::buildFormat(__func__, __FILE__, __LINE__, std::string(type));\
+#define WRITE_LOG(type, log)                                        \
+  ::easyloggingpp::internal::tempStream2 << log;                    \
+  ::easyloggingpp::internal::buildFormat(__func__,                  \
+                                         __FILE__,                  \
+                                         __LINE__,                  \
+                                         std::string(type));        \
   ::easyloggingpp::internal::writeLog();
 
-#define WRITE_VLOG(level, log)\
-  if (::easyloggingpp::internal::verboseLevel >= level) {\
-    ::easyloggingpp::internal::tempStream2 << log;\
-    ::easyloggingpp::internal::buildFormat(__func__, __FILE__, __LINE__, std::string("VERBOSE"), level);\
-    ::easyloggingpp::internal::writeLog();\
+#define WRITE_VLOG(level, log)                                      \
+  if (::easyloggingpp::internal::verboseLevel >= level) {           \
+    ::easyloggingpp::internal::tempStream2 << log;                  \
+    ::easyloggingpp::internal::buildFormat(__func__,                \
+                                           __FILE__,                \
+                                           __LINE__,                \
+                                           std::string("VERBOSE"),  \
+                                           level);                  \
+    ::easyloggingpp::internal::writeLog();                          \
   }
 
   #if _DEBUG_LOG
@@ -884,8 +930,16 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     #define PERFORMANCE(logMessage) WRITE_LOG("PERFORMANCE",logMessage)
     #define PERFORMANCE_IF(condition, logMessage) if (condition) { PERFORMANCE(logMessage); }
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-    #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << ::easyloggingpp::internal::formatSeconds(difftime(functionEndTime,functionStartTime)) << "]"
-    #define FUNC_SUB_COMMON_START { if (::easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) { PERFORMANCE(START_FUNCTION_LOG) } time_t functionStartTime, functionEndTime; time(&functionStartTime);
+    #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << \
+                        ::easyloggingpp::internal::formatSeconds( \
+                          difftime(functionEndTime,               \
+                                   functionStartTime)             \
+                        ) << "]"
+    #define FUNC_SUB_COMMON_START { if (::easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) {\
+                                      PERFORMANCE(START_FUNCTION_LOG)                             \
+                                    }                                                             \
+                                    time_t functionStartTime, functionEndTime;                    \
+                                    time(&functionStartTime);
     #define FUNC_SUB_COMMON_END time(&functionEndTime); PERFORMANCE(TIME_OUTPUT);
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_SUB FUNC_SUB_COMMON_END }
