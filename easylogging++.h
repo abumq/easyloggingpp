@@ -434,7 +434,6 @@ static void createLogPath(void) {
  #elif _LINUX || _MAC
     const char* pathDelimiter = "/";
  #endif //_WINDOWS
-    size_t foundAt = -1;
     std::string fullPathToBuild = "";
     char* currentPath = const_cast<char*>(::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
     currentPath = strtok(currentPath,
@@ -1030,6 +1029,11 @@ private:
      const char* argv[1];
      argv[1] = "easylogging++ warning suppresser";
      ::easyloggingpp::internal::setAppArgs(0, argv);
+     ::easyloggingpp::internal::buildFormat("suppress",
+                                            "suppress",
+                                            1,
+                                            "suppress");
+     ::easyloggingpp::internal::writeLog();
   }
 };
 } // warningsuppresser
