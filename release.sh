@@ -33,6 +33,6 @@ if [ "$confirm" = "y" ]; then
   if [ -f "easyloggingpp.zip" ]; then
     rm easyloggingpp.zip
   fi
-  zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h update.sh
-  zip easyloggingpp.zip easylogging++.h update.sh
+  zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h
+  zip easyloggingpp.zip easylogging++.h
 fi
