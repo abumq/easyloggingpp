@@ -434,13 +434,15 @@ static void createLogPath(void) {
  #elif _LINUX || _MAC
     const char* pathDelimiter = "/";
  #endif //_WINDOWS
-    std::string fullPathToBuild = "";
+    std::string fullPathToBuild = 
+          ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION[0] == '/' ?
+            pathDelimiter :
+            "";
     char* currentPath = const_cast<char*>(::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
     currentPath = strtok(currentPath,
                          pathDelimiter);
     while (currentPath != NULL) {
-      fullPathToBuild = fullPathToBuild + pathDelimiter + currentPath;
-      std::cout << "Building path: " << fullPathToBuild << "\n";
+      fullPathToBuild = fullPathToBuild + currentPath + pathDelimiter;
  #if _WINDOWS
       status = _mkdir(fullPathToBuild.c_str());
  #elif _LINUX || _MAC
