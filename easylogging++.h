@@ -454,8 +454,7 @@ static void createLogPath(void) {
     if (status == -1) {
       ::easyloggingpp::internal::internalMessage("Unable to create log path [" + ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION + "]");
     }
-  } else
-  ::easyloggingpp::internal::internalMessage("Unable to create log path [" + ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION + "]");
+  }
 #endif //_WINDOWS || _LINUX || _MAC
 }
 
