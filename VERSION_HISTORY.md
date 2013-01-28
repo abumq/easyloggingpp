@@ -25,6 +25,7 @@ History was not kept before version 2.1.
  * 4.09: Minor issue fix regarding multiple-definition error
  * 4.10: gcc warnings
  * 4.11: Registered counters lookup improvement
+ * 4.12: Fully qualified names used
 
 #### 3.3
  * 3.30:

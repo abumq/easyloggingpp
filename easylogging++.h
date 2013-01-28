@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.11                                                 //
+//   EasyLogging++ v4.12                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -295,7 +295,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.11";
+  static const char* versionNumber = "4.12";
 }
 
 namespace internal {
@@ -919,9 +919,10 @@ static void resetCounter(::easyloggingpp::internal::CounterIter& counter, int n)
 static bool validateCounter(const char* filename, unsigned long int lineNumber, int n) {
   ::easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
   bool result = false;
-  CounterIter counter(std::find(::easyloggingpp::internal::registeredCounters.begin(),
-                                ::easyloggingpp::internal::registeredCounters.end(),
-                                ::easyloggingpp::internal::tempCounter));
+  ::easyloggingpp::internal::CounterIter counter(
+     std::find(::easyloggingpp::internal::registeredCounters.begin(),
+               ::easyloggingpp::internal::registeredCounters.end(),
+               ::easyloggingpp::internal::tempCounter));
   if (counter == ::easyloggingpp::internal::registeredCounters.end()) {
     ::easyloggingpp::internal::registerCounter(::easyloggingpp::internal::tempCounter);
     counter = std::find(::easyloggingpp::internal::registeredCounters.begin(),
