@@ -1,8 +1,11 @@
-/*
+/**
  * This file is part of EasyLogging++ samples
  * Demonstration of PERFORMANCE logging
+ *
+ * Revision 1.0
  * @author mkhan3189
  */
+
 #include "../easylogging++.h"
 #include <unistd.h>
 

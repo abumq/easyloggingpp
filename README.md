@@ -129,7 +129,31 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   VERBOSE_IF(true, 1, "Printing verbose level-1");
 ```
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/conditional_logs.cpp)
- 
+
+#### Log Every N
+You can log something every N times using `***_EVERY_N` where `***` represent different log levels. Following are the usable macros:
+* `DEBUG_EVERY_N(n, log)`
+* `INFO_EVERY_N(n, log)`
+* `WARNING_EVERY_N(n, log)`
+* `ERROR_EVERY_N(n, log)`
+* `FATAL_EVERY_N(n, log)`
+* `PERFORMANCE_EVERY_N(n, log)`
+* `HINT_EVERY_N(n, log)`
+* `STATUS_EVERY_N(n, log)`
+* `VERBOSE_EVERY_N(n, level, log)`
+* `QA_EVERY_N(n, log)`
+
+A typical example:
+```C++
+for (int i = 0; i <= 100; i++) {
+  INFO_EVERY_N(5, "This will be logged every 5th iteration");
+}
+```
+
+Version: 4.07+
+
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
+
 #### Cleaning Logs On Each Run
 If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
 

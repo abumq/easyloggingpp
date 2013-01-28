@@ -2,8 +2,11 @@
  * This file is part of EasyLogging++ samples
  * Demonstration of happy valgrind
  * To see demo, run 'valgrind ./bin/valgrind_happy.cpp.bin' 
+ *
+ * Revision 1.0
  * @author mkhan3189
  */
+
 #include "../easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

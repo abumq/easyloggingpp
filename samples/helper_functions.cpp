@@ -1,5 +1,7 @@
 /**
  * Demonstrate helper function(s) in EasyLogging++
+ *
+ * Revision 1.0
  * @author mkhan3189
  */
 

@@ -1,5 +1,9 @@
-// This is very basic demonstration
-// @author mkhan3189
+/*
+ * A very basic usage of EasyLogging++
+ *
+ * Revision 1.0
+ * @author mkhan3189
+ */
 
 #include "../easylogging++.h" // Include header
 

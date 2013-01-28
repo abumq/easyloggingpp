@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.06                                                 //
+//   EasyLogging++ v4.07                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -313,6 +313,10 @@ static const short kDateBufferSize = 25;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static std::string logFormat = "";
+static unsigned int counter = 0;
+static const int counterLimit = 5000;
+static unsigned long int lastCounterResetLine = 0;
+
 //
 // Extern symbols
 //
@@ -854,6 +858,20 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   }
 }
 
+void incrementCounter(int n) {
+  if (::easyloggingpp::internal::counter >= ::easyloggingpp::internal::counterLimit) {
+    ::easyloggingpp::internal::counter = ::easyloggingpp::internal::counterLimit % n;
+  }
+  ++::easyloggingpp::internal::counter; 
+}
+
+void doResetCounter(unsigned long int line, int n) {
+  if (line != ::easyloggingpp::internal::lastCounterResetLine) {
+    ::easyloggingpp::internal::counter = 0;
+    ::easyloggingpp::internal::lastCounterResetLine = line;
+  }
+}
+
 //
 // Logging macros
 //
@@ -876,44 +894,68 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     ::easyloggingpp::internal::writeLog();                          \
   }
 
+#define WRITE_LOG_EVERY_N(type, n, log)                             \
+  ::easyloggingpp::internal::doResetCounter(__LINE__, n);           \
+  if (::easyloggingpp::internal::counter % n == 0) {                \
+    WRITE_LOG(type, log)                                            \
+  }                                                                 \
+  ::easyloggingpp::internal::incrementCounter(n);
+
+#define WRITE_VLOG_EVERY_N_LOG(n, level, log)                       \
+  ::easyloggingpp::internal::doResetCounter(__LINE__, n);           \
+  if (::easyloggingpp::internal::counter % n == 0) {                \
+    WRITE_VLOG(level, log)                                          \
+  }                                                                 \
+  ::easyloggingpp::internal::incrementCounter(n);
+
   #if _DEBUG_LOG
     #define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage)
     #define DEBUG_IF(condition, logMessage) if (condition) { DEBUG(logMessage); }
+    #define DEBUG_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("DEBUG", n, logMessage)
   #else
     #define DEBUG(x)
     #define DEBUG_IF(x, y)
+    #define DEBUG_EVERY_N(x, y)
   #endif //_DEBUG_LOG
 
   #if _INFO_LOG
     #define INFO(logMessage) WRITE_LOG("INFO",logMessage)
     #define INFO_IF(condition, logMessage) if (condition) { INFO(logMessage); }
+    #define INFO_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("INFO", n, logMessage)
   #else
     #define INFO(x)
     #define INFO_IF(x, y)
+    #define INFO_EVERY_N(x, y)
   #endif //_INFO_LOG
 
   #if _WARNING_LOG
     #define WARNING(logMessage) WRITE_LOG("WARNING",logMessage)
     #define WARNING_IF(condition, logMessage) if (condition) { WARNING(logMessage); }
+    #define WARNING_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("WARNING", n, logMessage)
   #else
     #define WARNING(x)
     #define WARNING_IF(x, y)
+    #define WARNING_EVERY_N(x, y)
   #endif //_WARNING_LOG
 
   #if _ERROR_LOG
     #define ERROR(logMessage) WRITE_LOG("ERROR",logMessage)
     #define ERROR_IF(condition, logMessage) if (condition) { ERROR(logMessage); }
+    #define ERROR_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("ERROR", n, logMessage)
   #else
     #define ERROR(x)
     #define ERROR_IF(x, y)
+    #define ERROR_EVERY_N(x, y)
   #endif //_ERROR_LOG
 
   #if _FATAL_LOG
     #define FATAL(logMessage) WRITE_LOG("FATAL",logMessage)
     #define FATAL_IF(condition, logMessage) if (condition) { FATAL(logMessage); }
+    #define FATAL_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("FATAL", n, logMessage)
   #else
     #define FATAL(x)
     #define FATAL_IF(x, y)
+    #define FATAL_EVERY_N(x, y)
   #endif //_FATAL_LOG
 
   #if _PERFORMANCE_LOG
@@ -931,6 +973,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
     }
     #define PERFORMANCE(logMessage) WRITE_LOG("PERFORMANCE",logMessage)
     #define PERFORMANCE_IF(condition, logMessage) if (condition) { PERFORMANCE(logMessage); }
+    #define PERFORMANCE_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("PERFORMANCE", n, logMessage)
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
     #define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " << \
                         ::easyloggingpp::internal::formatSeconds( \
@@ -954,6 +997,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #else
     #define PERFORMANCE(x)
     #define PERFORMANCE_IF(x, y)
+    #define PERFORMANCE_EVERY_N(x, y)
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
     #define END_SUB }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
@@ -967,33 +1011,41 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   #if _HINT_LOG
     #define HINT(logMessage) WRITE_LOG("HINT",logMessage)
     #define HINT_IF(condition, logMessage) if (condition) { HINT(logMessage); }
+    #define HINT_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("HINT", n, logMessage)
   #else
     #define HINT(x)
     #define HINT_IF(x, y)
+    #define HINT_EVERY_N(x, y)
   #endif //_HINT_LOG
 
   #if _STATUS_LOG
     #define STATUS(logMessage) WRITE_LOG("STATUS",logMessage)
     #define STATUS_IF(condition, logMessage) if (condition) { STATUS(logMessage); }
+    #define STATUS_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("STATUS", n, logMessage)
   #else
     #define STATUS(x)
     #define STATUS_IF(x, y)
+    #define STATUS_EVERY_N(x, y)
   #endif //_STATUS_LOG
 
   #if _VERBOSE_LOG
     #define VERBOSE(level, logMessage) WRITE_VLOG(level, logMessage)
     #define VERBOSE_IF(condition, level, logMessage) if (condition) { VERBOSE(level, logMessage); }
+    #define VERBOSE_EVERY_N(n, level, logMessage) WRITE_VLOG_EVERY_N(n, level, logMessage)
   #else
     #define VERBOSE(x, y)
     #define VERBOSE_IF(x, y, z)
+    #define VERBOSE_EVERY_N(x, y, z)
   #endif //_VERBOSE_LOG
 
   #if _QA_LOG
     #define QA(logMessage) WRITE_LOG("QA",logMessage)
     #define QA_IF(condition, logMessage) if (condition) { QA(logMessage); }
+    #define QA_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("QA", n, logMessage)
   #else
     #define QA(x)
     #define QA_IF(x, y)
+    #define QA_EVERY_N(x, y)
   #endif //_QA_LOG
 } // namespace internal
 namespace helper {
@@ -1071,6 +1123,17 @@ private:
   #define STATUS_IF(x, y)
   #define VERBOSE_IF(x, y, z)
   #define QA_IF(x, y)
+  // Every N
+  #define DEBUG_EVERY_N(x, y)
+  #define INFO_EVERY_N(x, y)
+  #define WARNING_EVERY_N(x, y)
+  #define ERROR_EVERY_N(x, y)
+  #define FATAL_EVERY_N(x, y)
+  #define PERFORMANCE_EVERY_N(x, y)
+  #define HINT_EVERY_N(x, y)
+  #define STATUS_EVERY_N(x, y)
+  #define VERBOSE_EVERY_N(x, y, z)
+  #define QA_EVERY_N(x, y)
   // Miscellaneous
   #define _INITIALIZE_EASYLOGGINGPP
   #define _START_EASYLOGGINGPP(x, y)

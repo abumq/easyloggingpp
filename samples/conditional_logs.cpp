@@ -1,8 +1,11 @@
-/*
+/**
  * This file is part of EasyLogging++ samples
  * Demonstration of conditional logging
+ *
+ * Revision 1.0
  * @author mkhan3189
  */
+
 #include "../easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
