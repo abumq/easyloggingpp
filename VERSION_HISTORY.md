@@ -23,6 +23,8 @@ History was not kept before version 2.1.
     - Interval logging works well even in the same iteration
     - Introduced `::easyloggingpp::version` namespace for version info of current version
  * 4.09: Minor issue fix regarding multiple-definition error
+ * 4.10: gcc warnings
+ * 4.11: Registered counters lookup improvement
 
 #### 3.3
  * 3.30:

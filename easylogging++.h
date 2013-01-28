@@ -196,7 +196,7 @@ const bool           SAVE_TO_FILE             =    true;
 // LOG_FILENAME
 //   Filename of log file. This should only be filename and not the whole path.
 //   Path is set in different configuration below.
-const std::string    LOG_FILENAME             =    "invisible-handcuffs.log";
+const std::string    LOG_FILENAME             =    "myeasylog.log";
 
 
 // CUSTOM_LOG_FILE_LOCATION
@@ -206,7 +206,7 @@ const std::string    LOG_FILENAME             =    "invisible-handcuffs.log";
 //    * This location path should end with slash ( '/' for linux and '\' for windows)
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value
-const std::string    CUSTOM_LOG_FILE_LOCATION =    "/home/mkhan/Logs/";
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
 
 
 // USE_CUSTOM_LOCATION
