@@ -130,7 +130,7 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
 ```
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/conditional_logs.cpp)
 
-#### Log Every N
+#### Interval Logging 
 You can log something every N times using `***_EVERY_N` where `***` represent different log levels. Following are the usable macros:
 * `DEBUG_EVERY_N(n, log)`
 * `INFO_EVERY_N(n, log)`
@@ -150,9 +150,15 @@ for (int i = 0; i <= 100; i++) {
 }
 ```
 
+*Notes:* 
+ * The performance is yet to be improved for interval logging.
+ * These logs work well even in the same iteration; there is a seperate counter registered for each log per line per file.
+ * If you happen to find any issue regarding this, please feel free to raise it on github
+
 Version: 4.07+
 
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log_2.cpp)
 
 #### Cleaning Logs On Each Run
 If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.

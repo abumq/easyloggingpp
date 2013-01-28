@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.07                                                 //
+//   EasyLogging++ v4.08                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -47,7 +47,7 @@
 #define _DEBUG_LOGS_TO_STANDARD_OUTPUT 0
 #define _DEBUG_LOGS_TO_FILE 1
 
-#define _ENABLE_INFO_LOGS 1
+#define _ENABLE_INFO_LOGS 1 
 #define _INFO_LOGS_TO_STANDARD_OUTPUT 1
 #define _INFO_LOGS_TO_FILE 1
 
@@ -127,7 +127,7 @@
  #include <sys/time.h>
 #endif //_LINUX || _MAC
 #include <string>
-#include <list>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -268,19 +268,21 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 // once and only once in main.cpp file after all the includes in order to initialize
 // extern symbols.
 // Candidates for extern symbols are carefully chosen, the rest are static symbols.
-#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {                                     \
-                                    namespace internal {                                        \
-                                      bool loggerInitialized = false;                           \
-                                      std::stringstream *logStream = NULL;                      \
-                                      std::ofstream *logFile = NULL;                            \
-                                      std::stringstream tempStream;                             \
-                                      std::stringstream tempStream2;                            \
-                                      std::list< ::easyloggingpp::internal::LogType > logTypes; \
-                                      bool fileNotOpenedErrorDisplayed = false;                 \
-                                      std::string user = "";                                    \
-                                      std::string host = "";                                    \
-                                      int verboseLevel = -1;                                    \
-                                    }                                                           \
+#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {                                                 \
+                                    namespace internal {                                                    \
+                                      bool loggerInitialized = false;                                       \
+                                      std::stringstream *logStream = NULL;                                  \
+                                      std::ofstream *logFile = NULL;                                        \
+                                      std::stringstream tempStream;                                         \
+                                      std::stringstream tempStream2;                                        \
+                                      std::vector< ::easyloggingpp::internal::LogType > registeredLogTypes; \
+                                      ::easyloggingpp::internal::Counter tempCounter;                       \
+                                      std::vector< ::easyloggingpp::internal::Counter > registeredCounters; \
+                                      bool fileNotOpenedErrorDisplayed = false;                             \
+                                      std::string user = "";                                                \
+                                      std::string host = "";                                                \
+                                      int verboseLevel = -1;                                                \
+                                    }                                                                       \
                                   }
 
 // When using log levels that require program arguments, for example VERBOSE logs require
@@ -291,6 +293,10 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 // When program is exiting, following macro should be used in order to release all the memory
 // used by internal symbols.
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
+
+namespace version {
+  static const char* versionNumber = "4.08";
+}
 
 namespace internal {
 //
@@ -313,10 +319,6 @@ static const short kDateBufferSize = 25;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static std::string logFormat = "";
-static unsigned int counter = 0;
-static const int counterLimit = 5000;
-static unsigned long int lastCounterResetLine = 0;
-
 //
 // Extern symbols
 //
@@ -360,8 +362,43 @@ public:
     return this->name != other.name;
   }
 };
+
 // Represents all the log types in current context
-extern std::list< ::easyloggingpp::internal::LogType > logTypes;
+extern std::vector< ::easyloggingpp::internal::LogType > registeredLogTypes;
+
+// Represent a counter
+class Counter {
+public:
+  explicit Counter(void) :
+    filename(""),
+    lineNumber(0),
+    position(0) {}
+  explicit Counter(const char* filename_,
+                   unsigned long int lineNumber_) :
+                     filename(filename_),
+                     lineNumber(lineNumber_),
+                     position(0) {}
+  bool operator==(const Counter& other) {
+    return ((this->filename == other.filename) &&
+            (this->lineNumber == other.lineNumber));
+  }
+  void resetLocation(const char* filename_,
+                     unsigned long int lineNumber_) {
+    this->filename = filename_;
+    this->lineNumber = lineNumber_;
+  }
+  unsigned int position;
+  const char* filename;
+  unsigned long int lineNumber;
+};
+
+// Represets a temporary counter used to do lookups. This is defined so that
+// temporary variables are not defined in every iteration. We just reset the
+// location of this temporary counter and look it up.
+extern ::easyloggingpp::internal::Counter tempCounter;
+
+// Represents list of all registered counters
+extern std::vector < ::easyloggingpp::internal::Counter > registeredCounters;
 
 // Internal message from EasyLogging++. This is used as less number of times
 // as possible to minimize annoying outputs.
@@ -638,7 +675,7 @@ static void init(void) {
     ::easyloggingpp::internal::host = ::easyloggingpp::internal::getHostname();
     // Different log levels
 #if _DEBUG_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "DEBUG",
         ::easyloggingpp::configuration::DEBUG_LOG_FORMAT,
@@ -648,7 +685,7 @@ static void init(void) {
     );
 #endif //_DEBUG_LOG
 #if _INFO_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "INFO",
         ::easyloggingpp::configuration::INFO_LOG_FORMAT,
@@ -658,7 +695,7 @@ static void init(void) {
     );
 #endif //_INFO_LOG
 #if _WARNING_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "WARNING",
         ::easyloggingpp::configuration::WARNING_LOG_FORMAT,
@@ -668,7 +705,7 @@ static void init(void) {
     );
 #endif //_WARNING_LOG
 #if _ERROR_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "ERROR",
         ::easyloggingpp::configuration::ERROR_LOG_FORMAT,
@@ -678,7 +715,7 @@ static void init(void) {
     );
 #endif //_ERROR_LOG
 #if _FATAL_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "FATAL",
         ::easyloggingpp::configuration::FATAL_LOG_FORMAT,
@@ -688,7 +725,7 @@ static void init(void) {
     );
 #endif //_FATAL_LOG
 #if _PERFORMANCE_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "PERFORMANCE",
         ::easyloggingpp::configuration::PERFORMANCE_LOG_FORMAT,
@@ -698,7 +735,7 @@ static void init(void) {
     );
 #endif //_PERFORMANCE_LOG
 #if _HINT_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "HINT",
         ::easyloggingpp::configuration::HINT_LOG_FORMAT,
@@ -708,7 +745,7 @@ static void init(void) {
     );
 #endif //_HINT_LOG
 #if _STATUS_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "STATUS",
         ::easyloggingpp::configuration::STATUS_LOG_FORMAT,
@@ -718,7 +755,7 @@ static void init(void) {
     );
 #endif //_STATUS_LOG
 #if _VERBOSE_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "VERBOSE",
         ::easyloggingpp::configuration::VERBOSE_LOG_FORMAT,
@@ -728,7 +765,7 @@ static void init(void) {
     );
 #endif //_VERBOSE_LOG
 #if _QA_LOG
-    ::easyloggingpp::internal::logTypes.push_back(
+    ::easyloggingpp::internal::registeredLogTypes.push_back(
       ::easyloggingpp::internal::LogType(
         "QA",
         ::easyloggingpp::configuration::QA_LOG_FORMAT,
@@ -793,12 +830,12 @@ static void determineCommonLogFormat(const std::string& format) {
 
 // Iterates through log types andd find the one matching with current type
 static void determineLogFormat(const std::string& type) {
-  std::list< ::easyloggingpp::internal::LogType >::const_iterator it(
-    std::find(::easyloggingpp::internal::logTypes.begin(),
-         ::easyloggingpp::internal::logTypes.end(),
+  std::vector< ::easyloggingpp::internal::LogType >::const_iterator it(
+    std::find(::easyloggingpp::internal::registeredLogTypes.begin(),
+         ::easyloggingpp::internal::registeredLogTypes.end(),
          type)
   );
-  if (it != ::easyloggingpp::internal::logTypes.end()) {
+  if (it != ::easyloggingpp::internal::registeredLogTypes.end()) {
     ::easyloggingpp::internal::determineCommonLogFormat(it->format);
     ::easyloggingpp::internal::toStandardOutput = it->toStandardOutput;
     ::easyloggingpp::internal::toFile = it->toFile;
@@ -858,55 +895,84 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   }
 }
 
-void incrementCounter(int n) {
-  if (::easyloggingpp::internal::counter >= ::easyloggingpp::internal::counterLimit) {
-    ::easyloggingpp::internal::counter = ::easyloggingpp::internal::counterLimit % n;
+// Registers the counter for current line and file
+// Note: This can be made better in terms of performance. At the moment this is called
+// with every counter log which is not good because this means it looks for counter 
+// with every iteration. Additionally, this is bad in a way because this creates 
+void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
+  std::vector< ::easyloggingpp::internal::Counter >::const_iterator it(
+      std::find(::easyloggingpp::internal::registeredCounters.begin(),
+                ::easyloggingpp::internal::registeredCounters.end(),
+                counter));
+  if (it == ::easyloggingpp::internal::registeredCounters.end()) {
+    ::easyloggingpp::internal::registeredCounters.push_back(counter);
   }
-  ++::easyloggingpp::internal::counter; 
 }
 
-void doResetCounter(unsigned long int line, int n) {
-  if (line != ::easyloggingpp::internal::lastCounterResetLine) {
-    ::easyloggingpp::internal::counter = 0;
-    ::easyloggingpp::internal::lastCounterResetLine = line;
+// Resets the counter when it reaches its limit to prevent any failure
+// since internal counter (position) uses int for data type.
+void resetCounter(std::vector< ::easyloggingpp::internal::Counter >::iterator& it, int n) {
+  if (it->position >= 5000) {
+    it->position = (n >= 1 ? 5000 % n : 0);
   }
+}
+
+// Validates the counter to see if it is valid to write the log for current iteration (n)
+// This also registers and resets the counter position accordingly.
+// This has a lot of space of improvement. It looks up for the counter with every iteration
+bool validateCounter(const char* filename, unsigned long int lineNumber, int n) {
+  ::easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
+  ::easyloggingpp::internal::registerCounter(::easyloggingpp::internal::tempCounter);
+  bool result = false;
+  std::vector< ::easyloggingpp::internal::Counter >::iterator it(
+    std::find(::easyloggingpp::internal::registeredCounters.begin(),
+              ::easyloggingpp::internal::registeredCounters.end(),
+              ::easyloggingpp::internal::tempCounter));
+  if (it != ::easyloggingpp::internal::registeredCounters.end()) {
+    if (n >= 1 && it->position != 0 && it->position % n == 0) {
+      result = true;
+    }
+    ::easyloggingpp::internal::resetCounter(it, n);
+    ++it->position;
+  }
+  return result;
 }
 
 //
 // Logging macros
 //
-#define WRITE_LOG(type, log)                                        \
-  ::easyloggingpp::internal::tempStream2 << log;                    \
-  ::easyloggingpp::internal::buildFormat(__func__,                  \
-                                         __FILE__,                  \
-                                         __LINE__,                  \
-                                         std::string(type));        \
+#define WRITE_LOG(type, log)                                                        \
+  ::easyloggingpp::internal::tempStream2 << log;                                    \
+  ::easyloggingpp::internal::buildFormat(__func__,                                  \
+                                         __FILE__,                                  \
+                                         __LINE__,                                  \
+                                         std::string(type));                        \
   ::easyloggingpp::internal::writeLog();
 
-#define WRITE_VLOG(level, log)                                      \
-  if (::easyloggingpp::internal::verboseLevel >= level) {           \
-    ::easyloggingpp::internal::tempStream2 << log;                  \
-    ::easyloggingpp::internal::buildFormat(__func__,                \
-                                           __FILE__,                \
-                                           __LINE__,                \
-                                           std::string("VERBOSE"),  \
-                                           level);                  \
-    ::easyloggingpp::internal::writeLog();                          \
+#define WRITE_VLOG(level, log)                                                      \
+  if (::easyloggingpp::internal::verboseLevel >= level) {                           \
+    ::easyloggingpp::internal::tempStream2 << log;                                  \
+    ::easyloggingpp::internal::buildFormat(__func__,                                \
+                                           __FILE__,                                \
+                                           __LINE__,                                \
+                                           std::string("VERBOSE"),                  \
+                                           level);                                  \
+    ::easyloggingpp::internal::writeLog();                                          \
   }
 
-#define WRITE_LOG_EVERY_N(type, n, log)                             \
-  ::easyloggingpp::internal::doResetCounter(__LINE__, n);           \
-  if (::easyloggingpp::internal::counter % n == 0) {                \
-    WRITE_LOG(type, log)                                            \
-  }                                                                 \
-  ::easyloggingpp::internal::incrementCounter(n);
+#define WRITE_LOG_EVERY_N(type, n, log)                                             \
+  if (::easyloggingpp::internal::validateCounter(__FILE__,                          \
+                                                 __LINE__,                          \
+                                                 n)) {                              \
+    WRITE_LOG(type, log)                                                            \
+  }
 
-#define WRITE_VLOG_EVERY_N_LOG(n, level, log)                       \
-  ::easyloggingpp::internal::doResetCounter(__LINE__, n);           \
-  if (::easyloggingpp::internal::counter % n == 0) {                \
-    WRITE_VLOG(level, log)                                          \
-  }                                                                 \
-  ::easyloggingpp::internal::incrementCounter(n);
+#define WRITE_VLOG_EVERY_N(n, level, log)                                           \
+  if (::easyloggingpp::internal::validateCounter(__FILE__,                          \
+                                                 __LINE__,                          \
+                                                 n)) {                              \
+    WRITE_VLOG(level, log)                                                          \
+  }
 
   #if _DEBUG_LOG
     #define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage)

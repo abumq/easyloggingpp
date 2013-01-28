@@ -26,6 +26,7 @@ fi
 
 if [ "$confirm" = "y" ]; then
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
+  sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++.h
   sed -i "s/\$currentVersion = \"v$CURR_VERSION\"*/\$currentVersion = \"v$NEW_VERSION\"/g" index.php
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm releases/easyloggingpp_v$NEW_VERSION.zip

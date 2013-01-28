@@ -18,7 +18,10 @@ History was not kept before version 2.1.
     - Performance improvement for escape character in log format
  * 4.05: Performance improvement while building path
  * 4.06: Minor namespace fix
- * 4.07: Introduced `LOG_EVERY_N` for all log levels
+ * 4.07: Introduced `LOG_EVERY_N` (interval logging) for all log levels
+ * 4.08:
+    - Interval logging works well even in the same iteration
+    - Introduced `::easyloggingpp::version` namespace for version info of current version
 
 #### 3.3
  * 3.30:

@@ -28,4 +28,5 @@ fi
 macro="$macro -D _QUALITY_ASSURANCE"
 macro="$macro -D _ALWAYS_CLEAN_LOGS"
 
-find -maxdepth 1 -type f -name '*.cpp' -exec g++ {} -o bin/{}.bin -D $macro \;
+find -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $macro \;
+echo "Completed!"
