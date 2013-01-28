@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.09                                                 //
+//   EasyLogging++ v4.10                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -47,7 +47,7 @@
 #define _DEBUG_LOGS_TO_STANDARD_OUTPUT 0
 #define _DEBUG_LOGS_TO_FILE 1
 
-#define _ENABLE_INFO_LOGS 1 
+#define _ENABLE_INFO_LOGS 1
 #define _INFO_LOGS_TO_STANDARD_OUTPUT 1
 #define _INFO_LOGS_TO_FILE 1
 
@@ -196,7 +196,7 @@ const bool           SAVE_TO_FILE             =    true;
 // LOG_FILENAME
 //   Filename of log file. This should only be filename and not the whole path.
 //   Path is set in different configuration below.
-const std::string    LOG_FILENAME             =    "myeasylog.log";
+const std::string    LOG_FILENAME             =    "invisible-handcuffs.log";
 
 
 // CUSTOM_LOG_FILE_LOCATION
@@ -206,7 +206,7 @@ const std::string    LOG_FILENAME             =    "myeasylog.log";
 //    * This location path should end with slash ( '/' for linux and '\' for windows)
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value
-const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "/home/mkhan/Logs/";
 
 
 // USE_CUSTOM_LOCATION
@@ -295,7 +295,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.09";
+  static const char* versionNumber = "4.10";
 }
 
 namespace internal {
@@ -345,22 +345,16 @@ public:
             format(format_),
             toStandardOutput(toStandardOutput_),
             toFile(toFile_) {}
-  std::string name;
-  std::string format;
-  bool toStandardOutput;
-  bool toFile;
   bool operator==(const std::string& name) const {
     return this->name == name;
   }
   bool operator!=(const std::string& name) const {
     return this->name != name;
   }
-  bool operator==(const ::easyloggingpp::internal::LogType& other) const {
-    return this->name == other.name;
-  }
-  bool operator!=(const ::easyloggingpp::internal::LogType& other) const {
-    return this->name != other.name;
-  }
+  std::string name;
+  std::string format;
+  bool toStandardOutput;
+  bool toFile;
 };
 
 // Represents all the log types in current context
@@ -387,9 +381,9 @@ public:
     this->filename = filename_;
     this->lineNumber = lineNumber_;
   }
-  unsigned int position;
   const char* filename;
   unsigned long int lineNumber;
+  unsigned int position;
 };
 
 // Represets a temporary counter used to do lookups. This is defined so that
@@ -475,7 +469,7 @@ static void createLogPath(void) {
  #elif _LINUX || _MAC
     const char* pathDelimiter = "/";
  #endif //_WINDOWS
-    std::string fullPathToBuild = 
+    std::string fullPathToBuild =
           ::easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION[0] == '/' ?
             pathDelimiter :
             "";
@@ -897,8 +891,8 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
 
 // Registers the counter for current line and file
 // Note: This can be made better in terms of performance. At the moment this is called
-// with every counter log which is not good because this means it looks for counter 
-// with every iteration. Additionally, this is bad in a way because this creates 
+// with every counter log which is not good because this means it looks for counter
+// with every iteration. Additionally, this is bad in a way because this creates
 static void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
   std::vector< ::easyloggingpp::internal::Counter >::const_iterator it(
       std::find(::easyloggingpp::internal::registeredCounters.begin(),
@@ -1153,6 +1147,8 @@ private:
                                             1,
                                             "suppress");
      ::easyloggingpp::internal::writeLog();
+     std::cout << ::easyloggingpp::version::versionNumber;
+     ::easyloggingpp::internal::validateCounter("", 0, 0);
   }
 };
 } // warningsuppresser
