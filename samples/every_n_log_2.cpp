@@ -26,6 +26,6 @@ int main(int argc, char** argv) {
       VERBOSE_EVERY_N(n2, 1, "This is verbose level 1 log for iteration " << i);
    }
  
-   _END_EASYLOGGINGPP
+   _END_EASYLOGGINGPP // Release all memory
    return 0;
 }

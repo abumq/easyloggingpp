@@ -40,7 +40,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
 ## Getting Started
 In order to start logging follow these three steps:
  * Include `easylogging++.h` header
- * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to write this line is right after includes in file where main function is defined.
+ * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to put this line is in the main file where main function is defined (usually called main.cpp). Remember, this should be placed only once in your application.
  * Start logging!
 
 See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
@@ -158,6 +158,7 @@ for (int i = 0; i <= 100; i++) {
 Version: 4.07+
 
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
+
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log_2.cpp)
 
 #### Cleaning Logs On Each Run
@@ -306,7 +307,7 @@ There are only few points that will help you remember when to release memory usi
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/summary_memory_release.cpp)
  
 #### Quality Assurance Logs
-Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for tested purposes. These logs give extra information when in QA and you can disable these logs in production without having to change the source code.
+Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for testing purposes. These logs can provide extra information when working in QA and can be disabled in production without having to change the source code.
 
 By default QA logs will not take affect and will only be logged in `_QUALITY_ASSURANCE` is defined, as an example, following program:
 ```C++
@@ -317,7 +318,7 @@ int main(void) {
   return 0;
 }
 ```
-will log QA only when is compiled using following line at minimum:
+will log `QA` if program is compiled using following line at minimum (notice the `_QUALITY_ASSURANCE` macro):
 
 `g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
 

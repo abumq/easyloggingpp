@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.08                                                 //
+//   EasyLogging++ v4.09                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -295,7 +295,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.08";
+  static const char* versionNumber = "4.09";
 }
 
 namespace internal {
@@ -899,7 +899,7 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
 // Note: This can be made better in terms of performance. At the moment this is called
 // with every counter log which is not good because this means it looks for counter 
 // with every iteration. Additionally, this is bad in a way because this creates 
-void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
+static void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
   std::vector< ::easyloggingpp::internal::Counter >::const_iterator it(
       std::find(::easyloggingpp::internal::registeredCounters.begin(),
                 ::easyloggingpp::internal::registeredCounters.end(),
@@ -911,7 +911,7 @@ void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
 
 // Resets the counter when it reaches its limit to prevent any failure
 // since internal counter (position) uses int for data type.
-void resetCounter(std::vector< ::easyloggingpp::internal::Counter >::iterator& it, int n) {
+static void resetCounter(std::vector< ::easyloggingpp::internal::Counter >::iterator& it, int n) {
   if (it->position >= 5000) {
     it->position = (n >= 1 ? 5000 % n : 0);
   }
@@ -920,7 +920,7 @@ void resetCounter(std::vector< ::easyloggingpp::internal::Counter >::iterator& i
 // Validates the counter to see if it is valid to write the log for current iteration (n)
 // This also registers and resets the counter position accordingly.
 // This has a lot of space of improvement. It looks up for the counter with every iteration
-bool validateCounter(const char* filename, unsigned long int lineNumber, int n) {
+static bool validateCounter(const char* filename, unsigned long int lineNumber, int n) {
   ::easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
   ::easyloggingpp::internal::registerCounter(::easyloggingpp::internal::tempCounter);
   bool result = false;

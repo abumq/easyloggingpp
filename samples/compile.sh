@@ -11,7 +11,7 @@ fi
 echo "Compiling... [$FILE]"
 
 if [ "$MACROS" = "" ];then
-  g++ $FILE -o FILE.bin
+  g++ $FILE -o $FILE.bin
 else
   g++ $FILE -o bin/$FILE.bin -D $MACROS
 fi

@@ -1,6 +1,9 @@
-// Contain unit tests for EasyLogging++
-// Revision: 1.0
-// @author mkhan3189
+/*
+ * Contain unit tests for EasyLogging++
+ *
+ * Revision: 1.1
+ * @author mkhan3189
+ */
 
 #include "../easylogging++.h"
 #include "tests_core.h"
@@ -9,8 +12,11 @@
 _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
+  ANLI
+  INFO("Starting tests...");
   basicTests(argc, argv);
 
+  INFO("All tests were passed!");
   _END_EASYLOGGINGPP
   ANLI
 }

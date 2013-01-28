@@ -22,6 +22,7 @@ History was not kept before version 2.1.
  * 4.08:
     - Interval logging works well even in the same iteration
     - Introduced `::easyloggingpp::version` namespace for version info of current version
+ * 4.09: Minor issue fix regarding multiple-definition error
 
 #### 3.3
  * 3.30:
