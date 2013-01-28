@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.10                                                 //
+//   EasyLogging++ v4.11                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -295,7 +295,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.10";
+  static const char* versionNumber = "4.11";
 }
 
 namespace internal {
@@ -357,6 +357,9 @@ public:
   bool toFile;
 };
 
+// Constant iterator for log type
+typedef std::vector< ::easyloggingpp::internal::LogType >::const_iterator LogTypeConstIter;
+
 // Represents all the log types in current context
 extern std::vector< ::easyloggingpp::internal::LogType > registeredLogTypes;
 
@@ -376,6 +379,10 @@ public:
     return ((this->filename == other.filename) &&
             (this->lineNumber == other.lineNumber));
   }
+  bool operator!=(const Counter& other) {
+    return ((this->filename != other.filename) &&
+            (this->lineNumber != other.lineNumber));
+  }
   void resetLocation(const char* filename_,
                      unsigned long int lineNumber_) {
     this->filename = filename_;
@@ -386,13 +393,16 @@ public:
   unsigned int position;
 };
 
+// Iterator for counter
+typedef std::vector< ::easyloggingpp::internal::Counter >::iterator CounterIter;
+
+// Represents list of all registered counters
+extern std::vector < ::easyloggingpp::internal::Counter > registeredCounters;
+
 // Represets a temporary counter used to do lookups. This is defined so that
 // temporary variables are not defined in every iteration. We just reset the
 // location of this temporary counter and look it up.
 extern ::easyloggingpp::internal::Counter tempCounter;
-
-// Represents list of all registered counters
-extern std::vector < ::easyloggingpp::internal::Counter > registeredCounters;
 
 // Internal message from EasyLogging++. This is used as less number of times
 // as possible to minimize annoying outputs.
@@ -824,15 +834,15 @@ static void determineCommonLogFormat(const std::string& format) {
 
 // Iterates through log types andd find the one matching with current type
 static void determineLogFormat(const std::string& type) {
-  std::vector< ::easyloggingpp::internal::LogType >::const_iterator it(
-    std::find(::easyloggingpp::internal::registeredLogTypes.begin(),
-         ::easyloggingpp::internal::registeredLogTypes.end(),
-         type)
+    ::easyloggingpp::internal::LogTypeConstIter logType(
+      std::find(::easyloggingpp::internal::registeredLogTypes.begin(),
+                ::easyloggingpp::internal::registeredLogTypes.end(),
+                type)
   );
-  if (it != ::easyloggingpp::internal::registeredLogTypes.end()) {
-    ::easyloggingpp::internal::determineCommonLogFormat(it->format);
-    ::easyloggingpp::internal::toStandardOutput = it->toStandardOutput;
-    ::easyloggingpp::internal::toFile = it->toFile;
+  if (logType != ::easyloggingpp::internal::registeredLogTypes.end()) {
+    ::easyloggingpp::internal::determineCommonLogFormat(logType->format);
+    ::easyloggingpp::internal::toStandardOutput = logType->toStandardOutput;
+    ::easyloggingpp::internal::toFile = logType->toFile;
     return;
   }
 }
@@ -889,46 +899,40 @@ static void buildFormat(const char* func, const char* file, const unsigned long 
   }
 }
 
-// Registers the counter for current line and file
-// Note: This can be made better in terms of performance. At the moment this is called
-// with every counter log which is not good because this means it looks for counter
-// with every iteration. Additionally, this is bad in a way because this creates
+// Registers the counter. This should not be called by itself since
+// one counter can be registered only once and this is checked 
+// below in validateCounter(..)
 static void registerCounter(const ::easyloggingpp::internal::Counter& counter) {
-  std::vector< ::easyloggingpp::internal::Counter >::const_iterator it(
-      std::find(::easyloggingpp::internal::registeredCounters.begin(),
-                ::easyloggingpp::internal::registeredCounters.end(),
-                counter));
-  if (it == ::easyloggingpp::internal::registeredCounters.end()) {
-    ::easyloggingpp::internal::registeredCounters.push_back(counter);
-  }
+  ::easyloggingpp::internal::registeredCounters.push_back(counter);
 }
 
 // Resets the counter when it reaches its limit to prevent any failure
 // since internal counter (position) uses int for data type.
-static void resetCounter(std::vector< ::easyloggingpp::internal::Counter >::iterator& it, int n) {
-  if (it->position >= 5000) {
-    it->position = (n >= 1 ? 5000 % n : 0);
+static void resetCounter(::easyloggingpp::internal::CounterIter& counter, int n) {
+  if (counter->position >= 5000) {
+    counter->position = (n >= 1 ? 5000 % n : 0);
   }
 }
 
 // Validates the counter to see if it is valid to write the log for current iteration (n)
-// This also registers and resets the counter position accordingly.
-// This has a lot of space of improvement. It looks up for the counter with every iteration
+// This also registers and resets the counter position if neccessary. 
 static bool validateCounter(const char* filename, unsigned long int lineNumber, int n) {
   ::easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
-  ::easyloggingpp::internal::registerCounter(::easyloggingpp::internal::tempCounter);
   bool result = false;
-  std::vector< ::easyloggingpp::internal::Counter >::iterator it(
-    std::find(::easyloggingpp::internal::registeredCounters.begin(),
-              ::easyloggingpp::internal::registeredCounters.end(),
-              ::easyloggingpp::internal::tempCounter));
-  if (it != ::easyloggingpp::internal::registeredCounters.end()) {
-    if (n >= 1 && it->position != 0 && it->position % n == 0) {
-      result = true;
-    }
-    ::easyloggingpp::internal::resetCounter(it, n);
-    ++it->position;
+  CounterIter counter(std::find(::easyloggingpp::internal::registeredCounters.begin(),
+                                ::easyloggingpp::internal::registeredCounters.end(),
+                                ::easyloggingpp::internal::tempCounter));
+  if (counter == ::easyloggingpp::internal::registeredCounters.end()) {
+    ::easyloggingpp::internal::registerCounter(::easyloggingpp::internal::tempCounter);
+    counter = std::find(::easyloggingpp::internal::registeredCounters.begin(),
+                        ::easyloggingpp::internal::registeredCounters.end(),
+                        ::easyloggingpp::internal::tempCounter);
   }
+  if (n >= 1 && counter->position != 0 && counter->position % n == 0) {
+    result = true;
+  }
+  ::easyloggingpp::internal::resetCounter(counter, n);
+  ++counter->position;
   return result;
 }
 
