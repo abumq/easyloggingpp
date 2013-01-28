@@ -1204,7 +1204,7 @@ private:
   #include <string>
   namespace easyloggingpp {
     namespace helper {
-      std::string readLog() {
+      static std::string readLog() {
         return "";
       }
     } // namespace helper
