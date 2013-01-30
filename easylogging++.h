@@ -124,7 +124,7 @@
 #if defined(_MSC_VER)
   #if (_MSC_VER == 1600)
     #define CXX0X 1
-  #elif (_MSC_VER == 1600)
+  #elif (_MSC_VER == 1700)
     #define CXX11 1
   #endif
 #endif
