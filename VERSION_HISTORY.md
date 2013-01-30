@@ -26,6 +26,7 @@ History was not kept before version 2.1.
  * 4.10: gcc warnings
  * 4.11: Registered counters lookup improvement
  * 4.12: Fully qualified names used
+ * 4.13: Added partial compiler evaluation macros
 
 #### 3.3
  * 3.30:

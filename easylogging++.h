@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.12                                                 //
+//   EasyLogging++ v4.13                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -110,6 +110,24 @@
 #if defined(__APPLE__)
  #define _MAC 1
 #endif //defined(__APPLE__)
+
+//
+// Compiler evaluation
+//
+// GNU
+#if defined(__GNUC__)
+  #if defined(__GXX_EXPERIMENTAL_CXX0X__)
+    #define CXX0X 1
+  #endif
+#endif
+// VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
+#if defined(_MSC_VER)
+  #if (_MSC_VER == 1600)
+    #define CXX0X 1
+  #elif (_MSC_VER == 1600)
+    #define CXX11 1
+  #endif
+#endif
 
 //
 // Includes
@@ -295,7 +313,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.12";
+  static const char* versionNumber = "4.13";
 }
 
 namespace internal {
@@ -1170,7 +1188,7 @@ private:
   #define STATUS(x)
   #define VERBOSE(x, y)
   #define QA(x)
-  // Performance specific
+  // Performance logs
   #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
   #define END_SUB }
   #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
@@ -1179,7 +1197,7 @@ private:
   #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
   #define END_MAIN END_FUNC
   #define RETURN_MAIN(exit_status) return exit_status;
-  // Conditional
+  // Conditional logs
   #define DEBUG_IF(x, y)
   #define INFO_IF(x, y)
   #define WARNING_IF(x, y)
@@ -1190,7 +1208,7 @@ private:
   #define STATUS_IF(x, y)
   #define VERBOSE_IF(x, y, z)
   #define QA_IF(x, y)
-  // Every N
+  // Interval logs
   #define DEBUG_EVERY_N(x, y)
   #define INFO_EVERY_N(x, y)
   #define WARNING_EVERY_N(x, y)
