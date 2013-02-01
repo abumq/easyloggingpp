@@ -24,4 +24,4 @@ MAIN(int argc, char** argv)
   }
   //If you log anything here afterwards,memory will be re allocated and will be deleted by END_MAIN
   // provided the above condition was not reached
-END_MAIN
+END_MAIN(0)

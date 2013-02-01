@@ -16,5 +16,5 @@ FUNC(int, main, (void))
     INFO("This is a info test");
   }
   STATUS("PROGRAM ENDED");
-END_FUNC
-
+  _END_EASYLOGGINGPP
+END_FUNC(0)

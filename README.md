@@ -181,7 +181,7 @@ g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
  FUNC(int,sum,(int x,int y))
    /* function body */
    RETURN(x+y);
- END_FUNC 
+ END_FUNC(0)
  
 int main(void) {
     print("this is test");
@@ -220,12 +220,12 @@ Above output is from compiler that supports `PRETTY_FUNCTION` like GNU C >= 2. V
 ```C++
 inline FUNC(int,sqrt,(int numb))
    ...
-END_FUNC
+END_FUNC(return_value)
 
 template <typename T>
 static FUNC(T,sum,(T a,T b))
    ...
-END_FUNC
+END_FUNC(return_value)
 ```
 
 Note: you have many other configurations to change your output. See following section for details

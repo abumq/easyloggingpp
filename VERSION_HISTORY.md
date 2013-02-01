@@ -27,6 +27,8 @@ History was not kept before version 2.1.
  * 4.11: Registered counters lookup improvement
  * 4.12: Fully qualified names used
  * 4.13: Added partial compiler evaluation macros
+ * 4.14: Return on first error while creating log path
+ * 4.15: END_FUNC with return value now
 
 #### 3.3
  * 3.30:

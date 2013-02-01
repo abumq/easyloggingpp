@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.13                                                 //
+//   EasyLogging++ v4.15                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -313,7 +313,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.13";
+  static const char* versionNumber = "4.15";
 }
 
 namespace internal {
@@ -512,6 +512,10 @@ static void createLogPath(void) {
       status = mkdir(fullPathToBuild.c_str(),
                      S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
  #endif //_WINDOWS
+      if (status == -1) {
+        ::easyloggingpp::internal::internalMessage("Unable to create log path [" + fullPathToBuild + "]");
+        return;
+      }
       currentPath = strtok(NULL, pathDelimiter);
     }
     if (status == -1) {
@@ -1072,10 +1076,10 @@ static bool validateCounter(const char* filename, unsigned long int lineNumber, 
     #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
     #define END_SUB FUNC_SUB_COMMON_END }
     #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
-    #define END_FUNC FUNC_SUB_COMMON_END }
-    #define RETURN(expr) FUNC_SUB_COMMON_END return expr;
+    #define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
+    #define END_FUNC(return_value) RETURN(return_value) }
     #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-    #define END_MAIN _END_EASYLOGGINGPP END_FUNC
+    #define END_MAIN(return_value) _END_EASYLOGGINGPP END_FUNC(return_value)
     #define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
   #else
     #define PERFORMANCE(x)

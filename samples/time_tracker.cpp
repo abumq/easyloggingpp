@@ -12,7 +12,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 FUNC(int,sum,(int x,int y))
     RETURN(x+y)
-END_FUNC
+END_FUNC(0)
 
 int main(void) {
    int result = sum(1,2);
