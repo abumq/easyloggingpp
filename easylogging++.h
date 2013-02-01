@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v4.13                                                 //
+//   EasyLogging++ v4.14                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -224,7 +224,7 @@ const std::string    LOG_FILENAME             =    "myeasylog.log";
 //    * This location path should end with slash ( '/' for linux and '\' for windows)
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value
-const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "/fake/address/logs/";
 
 
 // USE_CUSTOM_LOCATION
@@ -313,7 +313,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "4.13";
+  static const char* versionNumber = "4.14";
 }
 
 namespace internal {
@@ -512,6 +512,10 @@ static void createLogPath(void) {
       status = mkdir(fullPathToBuild.c_str(),
                      S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); /* rwx,rwx,wx */
  #endif //_WINDOWS
+      if (status == -1) {
+        ::easyloggingpp::internal::internalMessage("Unable to create log path [" + fullPathToBuild + "]");
+        return;
+      }
       currentPath = strtok(NULL, pathDelimiter);
     }
     if (status == -1) {

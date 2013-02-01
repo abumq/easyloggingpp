@@ -27,6 +27,7 @@ History was not kept before version 2.1.
  * 4.11: Registered counters lookup improvement
  * 4.12: Fully qualified names used
  * 4.13: Added partial compiler evaluation macros
+ * 4.14: Error displayed on first error when creating log path
 
 #### 3.3
  * 3.30:
