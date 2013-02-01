@@ -440,15 +440,3 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `USE_CUSTOM_LOCATION` Flag to set whether log file is saved to custom location defined in `CUSTOM_LOG_FILE_LOCATION`
 * `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
-
-## Updating EasyLogging++
-If you are already using older version of EasyLogging++ and would like to update to [latest version](http://icplusplus.com/tools/easylogging/easyloggingpp.zip) without losing your previous configurations like your log storage, log format or what you log etc, you can use script called `update.sh`. This script retains configuration from older files and creates new `easylogging++.h` file that you can re-import to your project without losing your configuration and without having any compile errors.
-This script takes three parameters:
- * Current File : The current file that is being used in your project and you would like to change. e.g, `/dev/myproject/using/easylogging/src/easylogging++.h`
- * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
- * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
-
-*Notes:* 
- * This will only work with EasyLogging++ 3.12+.
- * Script is unstable and is being re-written in 'update_script_rewrite' branch. Feel free to contribute by pull, comment and check-in.
- * `update.sh` was introduced in version 3.0 but because of some changes in 3.12, update.sh will work quite well with v3.12+. For older changes you can still use it but you will need to review the source code (`easylogging++.h`) and see if configuration section is alright. The only thing that causes issue is configuration section's comment.
