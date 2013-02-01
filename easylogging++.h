@@ -224,7 +224,7 @@ const std::string    LOG_FILENAME             =    "myeasylog.log";
 //    * This location path should end with slash ( '/' for linux and '\' for windows)
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value
-const std::string    CUSTOM_LOG_FILE_LOCATION =    "/fake/address/logs/";
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
 
 
 // USE_CUSTOM_LOCATION
