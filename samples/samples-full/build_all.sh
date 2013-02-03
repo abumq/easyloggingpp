@@ -11,22 +11,6 @@
 
 [ -d "bin" ] || mkdir "bin"
 rm -rf bin/*
-if [ "$1" = "WINDOWS" ];then
-  macro="_WIN32"
-else
-  if [ "$1" = "MAC" ];then
-    macro="__APPLE__"
-  else
-    macro="__linux"
-  fi
-fi
-if [ "$1" = "disable" ] || [ "$2" = "disable" ]; then
-  macro=$macro' -D _DISABLE_LOGS'
-fi
 
-## Extra macros
-macro="$macro -D _QUALITY_ASSURANCE"
-macro="$macro -D _ALWAYS_CLEAN_LOGS"
-
-find -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $macro \;
+find -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $1 $2 \;
 echo "Completed!"

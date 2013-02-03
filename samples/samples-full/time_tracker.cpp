@@ -6,7 +6,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++.h"
+#include "../../easylogging++-full.h"
 
 _INITIALIZE_EASYLOGGINGPP
 

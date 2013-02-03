@@ -1,6 +1,6 @@
 #include "vehicle.h"
 
-#include "../../easylogging++.h"
+#include "../../easylogging++-full.h"
 
 Vehicle::Vehicle(const std::string& manufacturer,
                  const std::string& model,

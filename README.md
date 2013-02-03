@@ -5,7 +5,7 @@ Cross platform logging made easy for C++ applications.
 
 To use EasyLogging++ in your application, simply include and initialize:
 ```C++
-#include "easylogging++.h"
+#include "easylogging++-full.h"
 _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
 ```
 
@@ -31,7 +31,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
   - It supports linux, windows and mac
  * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
 
-    EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage to compilation.
+    EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++-full.h` level will not cause any damage to compilation.
  * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
@@ -39,7 +39,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
 
 ## Getting Started
 In order to start logging follow these three steps:
- * Include `easylogging++.h` header
+ * Include `easylogging++-full.h` header
  * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to put this line is in the main file where main function is defined (usually called main.cpp). Remember, this should be placed only once in your application.
  * Start logging!
 
@@ -48,7 +48,7 @@ See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/sam
 ## Examples
 #### Basic Logging
  ```C++
- #include "easylogging++.h"
+ #include "easylogging++-full.h"
  _INITIALIZE_EASYLOGGINGPP
  int main(void) {
     DEBUG("Staring my EasyLogging++ program");
@@ -58,7 +58,7 @@ See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/sam
     DEBUG("End of my EasyLogging++ program");
  }
  ```
-Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
+Output for above logging varies depending on format you set in configuration section of `easylogging++-full.h`. Here are some sample outputs;
 
 ###### Output (Format: `[%level] %log`)
 ```
@@ -121,7 +121,6 @@ You can use conditional logging for logs that can have simple / complex conditio
 
 A typical example is as follow (taken from samples/conditional_log.cpp)
 ```C++
-
   INFO_IF(1 == 1, "1 is equal to 1");
   // Or some complex condition
   DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
@@ -171,7 +170,7 @@ g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 
 #### Performance Logging
  ```C++
- #include "easylogging++.h"
+ #include "easylogging++-full.h"
  _INITIALIZE_EASYLOGGINGPP
  SUB(print,(const std::string& input))
    /* sub-routine body */
@@ -248,7 +247,7 @@ When you want to write verbose log, you will use, `VERBOSE(level, log)`
 
 As an example
 ```C++
-#include "easylogging++.h"
+#include "easylogging++-full.h"
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
   bool condition = true;
@@ -311,7 +310,7 @@ Quality assurance (QA) logs are supported by EasyLogging++ for application that 
 
 By default QA logs will not take affect and will only be logged in `_QUALITY_ASSURANCE` is defined, as an example, following program:
 ```C++
-#include "easylogging++.h"
+#include "easylogging++-full.h"
 int main(void) {
   STATUS("Starting program...");
   QA("I am log only for QA environment");
@@ -332,9 +331,33 @@ Escape character used in EasyLogging++ is `E`. For example, to write following l
 Debug log format should look like:
 `E%level [%level] [%datetime] %log`
 
+#### Support For Multi-threaded Applications
+EasyLogging++ supports multi-threaded applications and uses power of `std::mutex` from C++0X / C++11 to do so. It locks any shared memory for writing logs and unlocks it once written. Everything is done under the hood and you don't need to worry about anything. You just lean back and keep writing logs without any worries.
+
+Make sure you compile your program (that uses threads) using `-std=c++0x -pthread` (or c++11). Additionally, you may use `_CXX0X` and `_CXX11` macros from `easylogging++-full.h`, that are defined when compiling with C++0X or C++11 respectively, as used in corresponding sample.
+
+Following are list of thread-safe functionalities:
+ * Normal logging using `INFO(...)`, `WARNING(...)` etc
+ * Conditional logging using `INFO_IF(..., ...)`, `WARNING_IF(..., ...)` etc
+ * Interval logging using `INFO_EVERY_N(..., ...)`, `WARNING_EVERY_N(..., ...)` etc
+ * Verbose logging using `VERBOSE(#, ...)` (incl. conditional and interval verbose logging)
+ * Helper functions
+ * Releasing memory
+
+Sample has very well explained comment on each of above way of loggings.
+
+*If you have issues in compiling the application, make notes of following*
+ * EasyLogging++ multi-threading support is for g++ (with C++0X+) only.
+ * If you wish to force to disable multi-threading please define macro `_DISABLE_MUTEX`
+ * Please feel free to contribute, EasyLogging++ currently uses `std::mutex` but is happy to expand to make it more portable across other compilers and libraries.
+
+Version: 5.0+
+
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/multithread_test.cpp)
+
 ## Configuration
 #### Enable/Disable Logging
-By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
+By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++-full.h` header.
 
 * `_LOGGING_ENABLED` macro enables or disables logging (`0` for disable `1` for enable)
 * `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs (`0` for disable `1` for enable)
@@ -348,7 +371,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
 * `_ENABLE_QA_LOGS` macro enables or disables QA logs (`0` for disable `1` for enable)
 
-There is another way to disable logging that doesn't require modifying `easylogging++.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
+There is another way to disable logging that doesn't require modifying `easylogging++-full.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
 
 As an example, if you are using g++
 ```
@@ -367,7 +390,7 @@ To disable level specific log while compiling here are macros to define;
 * `_DISABLE_PERFORMANCE_LOGS`
 * `_DISABLE_VERBOSE_LOGS`
 
-As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++.h`, you may compile with following line;
+As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++-full.h`, you may compile with following line;
 ```
 g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS
 ```
@@ -420,7 +443,7 @@ You can customize format of logging. Following format specifiers are currently s
 *Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
 
 #### Log Format By Log Level
-Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++.h` configuration section;
+Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++-full.h` configuration section;
 * `DEFAULT_LOG_FORMAT` Sets default format and is used by other levels unless explicitely set
 * `DEBUG_LOG_FORMAT` Sets format used for `DEBUG` logs
 * `INFO_LOG_FORMAT` Sets format used for `INFO` logs
@@ -441,14 +464,30 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
 
-## Updating EasyLogging++
-If you are already using older version of EasyLogging++ and would like to update to [latest version](http://icplusplus.com/tools/easylogging/easyloggingpp.zip) without losing your previous configurations like your log storage, log format or what you log etc, you can use script called `update.sh`. This script retains configuration from older files and creates new `easylogging++.h` file that you can re-import to your project without losing your configuration and without having any compile errors.
-This script takes three parameters:
- * Current File : The current file that is being used in your project and you would like to change. e.g, `/dev/myproject/using/easylogging/src/easylogging++.h`
- * Target File : The new filename that you would like for your new file. e.g, `/dev/myproject/using/easylogging/src/new_easylogging++.h`
- * New Version File : This is the file that you would like to use source from. Mostly, this is the newer version. e.g, `/home/me/Downloads/easylogging++.h` if you dowloaded new file to Downloads. If you download from icplusplus.com, you might want to unzip before you run the script.
+#### Whats The Difference Between `easylogging++.h` and `easylogging++-full.h`
+In simple words, `easylogging++.h` is a header that needs to be linked to `easylogging++.cc` in order to compile where as `easylogging++-full.h` is a complete EasyLogging++ with everything in one header.
 
-*Notes:* 
- * This will only work with EasyLogging++ 3.12+.
- * Script is unstable and is being re-written in 'update_script_rewrite' branch. Feel free to contribute by pull, comment and check-in.
- * `update.sh` was introduced in version 3.0 but because of some changes in 3.12, update.sh will work quite well with v3.12+. For older changes you can still use it but you will need to review the source code (`easylogging++.h`) and see if configuration section is alright. The only thing that causes issue is configuration section's comment.
+Historically, we only supported single header in order to make logs easy but since more features are being added as time goes by, we have provided support for both linked headers and full headers. It's upto developer to choose which ever they prefer.
+
+###### What Is Recommended
+If you are developing a small application and want a quick logging support with minimum number of extra files, you can use `easylogging++-full.h` where as if your application is on relatively larger scale, we would recommend you use `easylogging++.h` and link the source file to it.
+
+###### Examples
+We have added samples for both [linked](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-linked) and [full](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full) compile using g++ compiler. Both files are exactly the same except for `compile.sh` (line 33 and 35) where one is linked source file and other one is not.
+
+A typical compilation using g++ and linked-type would look something like:
+
+`g++ my_prog.cpp easylogging++.cc -o my_prog_exe`
+
+assuming `my_prog.cpp` has included and initialized `easylogging++.h`
+
+where as compilation using g++ and full-type would look somehting like:
+
+`g++ my_prog.cpp -o my_prog_exec`
+
+###### Would Full Version Be Supported In Future?
+Short answer: Yes;
+
+Long answer: Although it is a little bit of more effort to support full as well as linked versions but it gives developers a wider choice and decide whats best for them. Both types will always be syncronized in terms of features but obviously you cannot use both at the same time (since both share same namespaces)
+
+Version: 5.0+

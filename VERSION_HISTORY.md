@@ -3,6 +3,13 @@ VERSION HISTORY - EasyLogging++
 
 History was not kept before version 2.1.
 
+#### 5.0
+ * 5.00:
+    - Support for multithreaded applications for C++0X / C++11 (issue #21)
+    - Fixed up issue with `_ALWAYS_CLEAN_LOGS` (issue #22)
+    - Fixed up bug with interval log where it was off by 1
+    - Extended for linked and full type (see README at github for details)
+
 #### 4.0
  * 4.00:
     - Major improvement for multiple files project

@@ -5,7 +5,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++.h" // Include header
+#include "../../easylogging++.h" // Include header
 
 _INITIALIZE_EASYLOGGINGPP     // Initialize
 

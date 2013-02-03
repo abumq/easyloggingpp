@@ -6,10 +6,14 @@ easyloggingpp.zip
 
 releases/*
 
-samples/logs/myeasylog.log
+samples/samples-linked/logs/myeasylog.log
+
+samples/samples-full/logs/myeasylog.log
 
 samples/multiple-files-project/logs/myeasylog.log
 
 samples/multiple-files-project/bin/*
 
-samples/bin/*
+samples/samples-linked/bin/*
+
+samples/samples-full/bin/*

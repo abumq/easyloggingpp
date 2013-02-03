@@ -6,7 +6,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++.h"
+#include "../../easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
@@ -17,10 +17,10 @@ int main(int argc, char** argv) {
   int n2 = 10;
   float n2f = (float)n2;
   
-  for (int i =0; i < 5099; i++) {
+  for (int i = 1; i < 5099; i++) {
       INFO_EVERY_N(n, "i = " << i <<  "  AND  i / " << n << " = " << ((float)i / nf));
    }
-   for (int i =0;i < 5099; i++) {
+   for (int i = 1;i < 5099; i++) {
       INFO_EVERY_N(n2, "i = " << i <<  "  AND  i / " << n2 << " = " << ((float)i / n2f));
    } 
    _END_EASYLOGGINGPP

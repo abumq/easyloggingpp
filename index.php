@@ -24,19 +24,25 @@ print '
 
 <br/>
 <img src="'. $webAddr .'/images/documentation.jpg" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">Quick Help</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">Help / Notes</a> 
 
+<hr>
 <br/>
-<img src="'. $webAddr .'/images/read.png" width=25px height=25px/>
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://www.icplusplus.com/articles/read.php?uid=9961861bd75a67ed1d152fd83e2962249495dce5">Article on EasyLogging++ Logging</a> 
-
-<br/>
-<img src="'. $webAddr .'/images/read.png" width=25px height=25px />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://www.icplusplus.com/articles/read.php?uid=401c16bd01d12e1b18524dd051e2dd07833d3f80">Article on EasyLogging++ Time Tracking</a> 
+<img src="'. $webAddr .'/images/accordion/download.png" />
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '.zip">Download Latest Version (Both Full and Linked)</a> 
 
 <br/>
 <img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '.zip">Download Latest Version</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '-full.zip">Download Latest Version (Full Only)</a> 
+
+<br/>
+<img src="'. $webAddr .'/images/accordion/download.png" />
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '-linked.zip">Download Latest Version (Linked Only)</a> 
+<br/>
+<hr>
+<br/>
+<img src="'. $webAddr .'/images/documentation.png" />
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#">Help Me Decide</a> 
 ';
 include_once "../../foot.php";
 ?>

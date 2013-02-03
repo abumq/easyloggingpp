@@ -26,7 +26,9 @@ fi
 
 if [ "$confirm" = "y" ]; then
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
+  sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++-full.h
   sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++.h
+  sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++-full.h
   sed -i "s/\$currentVersion = \"v$CURR_VERSION\"*/\$currentVersion = \"v$NEW_VERSION\"/g" index.php
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm releases/easyloggingpp_v$NEW_VERSION.zip
@@ -34,6 +36,10 @@ if [ "$confirm" = "y" ]; then
   if [ -f "easyloggingpp.zip" ]; then
     rm easyloggingpp.zip
   fi
-  zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h
-  zip easyloggingpp.zip easylogging++.h
+  zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h easylogging++.cc easylogging++-full.h
+  zip easyloggingpp.zip easylogging++.h easylogging++.cc easylogging++-full.h
+  zip releases/easyloggingpp_v$NEW_VERSION-linked.zip easylogging++.h easylogging++.cc
+  zip easyloggingpp-linked.zip easylogging++.h easylogging++.cc
+  zip releases/easyloggingpp_v$NEW_VERSION-full.zip easylogging++-full.h
+  zip easyloggingpp-full.zip easylogging++-full.h
 fi

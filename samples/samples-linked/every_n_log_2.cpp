@@ -6,7 +6,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++.h"
+#include "../../easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 
   int n2 = 2;
   
-  for (int i = 0; i <= 100; i++) {
+  for (int i = 1; i <= 100; i++) {
       INFO_EVERY_N(n, "This will be printed every " << n << " iteration multiple, this is iteration " << i);
 
       INFO_EVERY_N(n2, "iter = " << i);

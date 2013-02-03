@@ -1,6 +1,6 @@
 #include "vehicle.h"
 
-#include "../../easylogging++.h"
+#include "../../easylogging++-full.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
