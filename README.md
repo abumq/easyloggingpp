@@ -8,7 +8,7 @@ To use EasyLogging++ in your application, simply include and initialize:
 #include "easylogging++-full.h"
 _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
 ```
-*Alternatively include `easylogging++.h` and link it to `easylogging++.cc` at link time. This comment applies throughout this README and we will be using `easylogging++-full.h` in this read me but you may use `easylogging++.h` instead provided you compile the source file with it, (click here)[https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#examples-1] for further information on compiling the program with easylogging++ header and source both
+*Alternatively include `easylogging++.h` and link it to `easylogging++.cc` at link time. This comment applies throughout this README and we will be using `easylogging++-full.h` in this read me but you may use `easylogging++.h` instead provided you compile the source file with it, (click here)[https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#examples-1] for further information on compiling the program with easylogging++ header and source both*
 
 EasyLogging++ comes with following levels of logging with complete control over each of the following:
 ```
