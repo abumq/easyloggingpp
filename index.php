@@ -1,7 +1,7 @@
 <?php
 include_once "../../format.php";
 global $webAddr;
-$currentVersion = "v4.15";
+$currentVersion = "v5.00";
 ?>
 <script language='javascript'>
 	document.title='EasyLogging++ - C++ Tools';
@@ -42,7 +42,7 @@ print '
 <hr>
 <br/>
 <img src="'. $webAddr .'/images/documentation.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#">Help Me Decide</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#whats-the-difference-between-easyloggingh-and-easylogging-fullh">Help Me Decide</a> 
 ';
 include_once "../../foot.php";
 ?>
