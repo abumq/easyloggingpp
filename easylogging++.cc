@@ -1,8 +1,9 @@
 #include "easylogging++.h"
 
+#if (_LOGGING_ENABLED)
+
 namespace easyloggingpp {
 namespace internal {
-
 
 // Internal message from EasyLogging++. This is used as less number of times
 // as possible to minimize annoying outputs.
@@ -600,3 +601,4 @@ private:
 };
 } // warningsuppresser
 } // namespace easyloggingpp
+#endif
