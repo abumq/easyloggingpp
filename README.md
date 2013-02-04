@@ -36,6 +36,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
+ * [Multi-threaded application support](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#support-for-multi-threaded-applications)
 
 ## Getting Started
 In order to start logging follow these three steps:

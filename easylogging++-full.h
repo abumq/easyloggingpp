@@ -1,7 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
-// easylogging++.h - Core of EasyLogging++                               //
-//   EasyLogging++ v5.01                                                 //
+// easylogging++-full.h - Core of EasyLogging++                          //
+//                                                                       //
+//   EasyLogging++ v5.02                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -354,7 +355,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.01";
+  static const char* versionNumber = "5.02";
 }
 
 namespace internal {
@@ -1288,7 +1289,7 @@ private:
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.01";
+      static const char* versionNumber = "5.02";
     }
     namespace helper {
       static std::string readLog() {

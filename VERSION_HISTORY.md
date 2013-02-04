@@ -11,6 +11,8 @@ History was not kept before version 2.1.
     - Extended for linked and full type (see README at github for details)
  * 5.01:
     - Fixed up compile failure if logs disabled for both linked and full
+ * 5.02:
+    - Minor comment fixes for readibility
 
 #### 4.0
  * 4.00:

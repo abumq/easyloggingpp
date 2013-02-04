@@ -26,6 +26,7 @@ fi
 
 if [ "$confirm" = "y" ]; then
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
+  sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.cc
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++-full.h
   sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++.h
   sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++-full.h

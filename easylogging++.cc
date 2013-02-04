@@ -1,6 +1,22 @@
+///////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// easylogging++.cc - Core of EasyLogging++                              //
+//                                                                       //
+//   EasyLogging++ v5.02                                                 //
+//   Cross platform logging made easy for C++ applications               //
+//   Author Majid Khan <mkhan3189@gmail.com>                             //
+//   http://www.icplusplus.com                                           //
+//   https://github.com/mkhan3189/EasyLoggingPP                          //
+//                                                                       //
+// This program is free software: you can redistribute it and/or modify  //
+// it under the terms of the GNU General Public License as published by  //
+// the Free Software Foundation, version 3 of the Licence.               //
+//                                                                       //
+///////////////////////////////////////////////////////////////////////////
+
 #include "easylogging++.h"
 
-#if (_LOGGING_ENABLED)
+#if _LOGGING_ENABLED
 
 namespace easyloggingpp {
 namespace internal {
@@ -601,4 +617,4 @@ private:
 };
 } // warningsuppresser
 } // namespace easyloggingpp
-#endif
+#endif // _LOGGING_ENABLED
