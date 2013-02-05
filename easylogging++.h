@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++ (requires easylogging++.cc)   //
 //                                                                       //
-//   EasyLogging++ v5.02                                                 //
+//   EasyLogging++ v5.03                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -133,7 +133,7 @@
 //
 // Mutex header evaluation
 //
-#if (_CXX0X || _CXX11)
+#if (_CXX0X || _CXX11) && !(defined(_DISABLE_MUTEX))
  // We need to be careful here and add few extra checks to make sure we have mutex header available.
  // I think we should do a comparison of C++ standards and make a list of supported pre-processors (macros)
  // for mutex headers for different compilers.
@@ -142,13 +142,13 @@
  #define _CXX11_SPECIFIC_INITIALIZATIONS MUTEX_TYPE mutex;
  #define _LOCK_MUTEX ::easyloggingpp::internal::mutex.lock();
  #define _UNLOCK_MUTEX ::easyloggingpp::internal::mutex.unlock();
- #define _USING_MUTEX !(defined(_DISABLE_MUTEX))
+ #define _USING_MUTEX 1
 #else
   #define _USING_MUTEX 0
   #define _CXX11_SPECIFIC_INITIALIZATIONS
   #define _LOCK_MUTEX
   #define _UNLOCK_MUTEX
-#endif // (_CXX0X || _CXX11)
+#endif // (_CXX0X || _CXX11)  && !(defined(_DISABLE_MUTEX))
 
 //
 // Includes
@@ -355,7 +355,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.02";
+  static const char* versionNumber = "5.03";
 }
 
 namespace internal {
@@ -718,7 +718,7 @@ namespace helper {
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.02";
+      static const char* versionNumber = "5.03";
     }
     namespace helper {
       static std::string readLog() {

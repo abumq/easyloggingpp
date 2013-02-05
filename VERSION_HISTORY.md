@@ -9,10 +9,9 @@ History was not kept before version 2.1.
     - Fixed up issue with `_ALWAYS_CLEAN_LOGS` (issue #22)
     - Fixed up bug with interval log where it was off by 1
     - Extended for linked and full type (see README at github for details)
- * 5.01:
-    - Fixed up compile failure if logs disabled for both linked and full
- * 5.02:
-    - Minor comment fixes for readibility
+ * 5.01: Fixed up compile failure if logs disabled for both linked and full
+ * 5.02: Minor comment fixes for readibility
+ * 5.03: Fixed bug with `_DISABLE_MUTEX`
 
 #### 4.0
  * 4.00:
