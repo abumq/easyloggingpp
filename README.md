@@ -477,7 +477,7 @@ Historically, we only supported single header in order to make logs easy but sin
 If you are developing a small application and want a quick logging support with minimum number of extra files, you can use `easylogging++-full.h` where as if your application is on relatively larger scale, we would recommend you use `easylogging++.h` and link the source file to it.
 
 ###### Examples
-We have added samples for both [linked](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-linked) and [full](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-full) compile using g++ compiler. Both files are exactly the same except for `compile.sh` (line 33 and 35) where one is linked source file and other one is not.
+We have added samples for both [linked](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-linked) and [full](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-full) compile using g++ compiler. Both files are exactly the same except for `compile.sh` (line 33 and 35) where one is linked to source file and other one is not.
 
 A typical compilation using g++ and linked-type would look something like:
 
