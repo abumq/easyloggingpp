@@ -287,7 +287,7 @@ You may also run using `--verbose` to display maximum verbose logs (max level: 9
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/verbose_logs.cpp)
  
 #### Releasing Memory
-Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated (so the best place to put `_END_EASYLOGGINGPP` is right before main returns as done in all the samples). Rest assured, EasyLogging++ is extensively tested for any memory leaks, but to make valgrind happy for your C++ application, make sure to have `_END_EASYLOGGINGPP` at end of application (probably main function).
+Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated (so the best place to put `_END_EASYLOGGINGPP` is right before main returns as done in all the samples). Rest assured, EasyLogging++ has been extensively tested for memory leaks, but to make valgrind (or other memory profiling tools) happy for your C++ application, be sure to have `_END_EASYLOGGINGPP` at the end of your application.
 ```C++
 int main(int argc, char** argv) {
   INFO("This is memory release test");
