@@ -35,7 +35,7 @@ void writeLogFromThread(int threadId){
   INFO_IF(threadId == 2, "This log is only for thread 2 and is ran by thread #" << threadId);
 }
 
-int main(int argc, char** argv) {
+FUNC(int, main, (int argc, char** argv))
  _START_EASYLOGGINGPP(argc, argv)
  #if _CXX0X || _CXX11
    // Create three thread and call writeLogFromThread()
@@ -47,5 +47,5 @@ int main(int argc, char** argv) {
    t3.join();
  #endif // _CXX0X || _CXX11
    _END_EASYLOGGINGPP
-   return 0;
-}
+   RETURN(0);
+END_FUNC(0)
