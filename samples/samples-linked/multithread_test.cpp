@@ -17,7 +17,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-void write(int threadId){
+void writeLogFromThread(int threadId){
   // Following line will be logged with every thread
   INFO("This standard log is written by thread #" << threadId);
 
@@ -38,10 +38,10 @@ void write(int threadId){
 FUNC(int,main,(int argc, char** argv))
  _START_EASYLOGGINGPP(argc, argv)
  #if _CXX0X || _CXX11
-   // Create three thread and call write()
-   std::thread t1(write, 1);
-   std::thread t2(write, 2);
-   std::thread t3(write, 3);
+   // Create three thread and call writeLogFromThread()
+   std::thread t1(writeLogFromThread, 1);
+   std::thread t2(writeLogFromThread, 2);
+   std::thread t3(writeLogFromThread, 3);
    t1.join();
    t2.join();
    t3.join();
