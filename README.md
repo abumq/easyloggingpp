@@ -173,6 +173,8 @@ As an example, you may compile your application as following if you wish to clea
 g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 ```
 
+ Version: 3.18+
+
 #### Performance Logging
  ```C++
  #include "easylogging++-full.h"
