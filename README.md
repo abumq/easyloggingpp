@@ -58,6 +58,7 @@ See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/sam
     INFO("Current value is " << i);
     INFO("Now the value has changed from " << i++ << " to " << i);
     DEBUG("End of my EasyLogging++ program");
+    _END_EASYLOGGINGPP    // Needed once to release all memory to make valgrind (or similar tools) happy - REQUIRED ONLY ONCE
  }
  ```
 Output for above logging varies depending on format you set in configuration section of `easylogging++-full.h`. Here are some sample outputs;
