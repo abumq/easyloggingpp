@@ -108,6 +108,8 @@ Output for above logging varies depending on format you set in configuration sec
 ```
 Note: `%func` format depends on compiler and is supported by Visual C++ and GNU C >= 2 only
 
+See [Log Format](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format) section for more details on different format specifiers
+
 ## Additional Features
 #### Conditional Logging
 You can use conditional logging for logs that can have simple / complex conditions. These logs are disabled / enabled with their respective logging level.
