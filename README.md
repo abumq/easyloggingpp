@@ -239,7 +239,7 @@ Note: you have many other configurations to change your output. See following se
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/time_waster.cpp)
  
 #### Verbose Logging
-Verbose logging is supported in EasyLogging++ v3.22+. To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
+To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
 ```C++
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
@@ -287,6 +287,8 @@ Also, log format for verbose logs have special format specifier, `%vlevel` that 
 
 You may also run using `--verbose` to display maximum verbose logs (max level: 9)
 
+ Version: 3.22+
+ 
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/verbose_logs.cpp)
  
 #### Releasing Memory
@@ -306,6 +308,8 @@ There are only few points that will help you remember when to release memory usi
  * Try to minimize using `_END_EASYLOGGINGPP` to minimize delete calls, use it in the end of main.
  * Last but not least, if you are not tracking `main(..)` function's performance, just use `_END_EASYLOGGINPP` once like all other [samples](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/).
 
+ Version: 3.29+
+ 
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/valgrind_happy.cpp)
  
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/summary_memory_release.cpp)
@@ -326,6 +330,8 @@ will log `QA` if program is compiled using following line at minimum (notice the
 
 `g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
 
+ Version: 3.30+
+ 
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/qa_logs.cpp)
 
 #### Escaping Log Format
