@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++ (requires easylogging++.cc)   //
 //                                                                       //
-//   EasyLogging++ v5.03                                                 //
+//   EasyLogging++ v5.04                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -355,7 +355,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.03";
+  static const char* versionNumber = "5.04";
 }
 
 namespace internal {
@@ -375,7 +375,7 @@ static bool showLocation = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.fi
 
 static bool toStandardOutput;
 static bool toFile;
-static const short kDateBufferSize = 25;
+static const short kDateBufferSize = 30;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static std::string logFormat = "";
@@ -718,7 +718,7 @@ namespace helper {
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.03";
+      static const char* versionNumber = "5.04";
     }
     namespace helper {
       static std::string readLog() {

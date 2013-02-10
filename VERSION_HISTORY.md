@@ -12,6 +12,7 @@ History was not kept before version 2.1.
  * 5.01: Fixed up compile failure if logs disabled for both linked and full
  * 5.02: Minor comment fixes for readibility
  * 5.03: Fixed bug with `_DISABLE_MUTEX`
+ * 5.04: Date/time fix for windows (issue #4)
 
 #### 4.0
  * 4.00:

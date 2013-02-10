@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++-full.h - Core of EasyLogging++                          //
 //                                                                       //
-//   EasyLogging++ v5.03                                                 //
+//   EasyLogging++ v5.04                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -355,7 +355,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.03";
+  static const char* versionNumber = "5.04";
 }
 
 namespace internal {
@@ -375,7 +375,7 @@ static bool showLocation = ::easyloggingpp::configuration::DEFAULT_LOG_FORMAT.fi
 
 static bool toStandardOutput;
 static bool toFile;
-static const short kDateBufferSize = 25;
+static const short kDateBufferSize = 30;
 static char dateBuffer[kDateBufferSize];
 static char dateFormat[kDateBufferSize];
 static std::string logFormat = "";
@@ -579,36 +579,44 @@ static std::string getDateTime(void) {
         ::easyloggingpp::internal::showDate ||
         ::easyloggingpp::internal::showTime))
     return "";
-#if _WINDOWS
-  time_t currTime;
-  time(&currTime);
-#elif _LINUX || _MAC
+  long milliSeconds = 0;
+#if _LINUX || _MAC
   timeval currTime;
   gettimeofday(&currTime, NULL);
-  int milliSeconds = 0;
   if ((::easyloggingpp::internal::showDateTime) ||
       (::easyloggingpp::internal::showTime)) {
     milliSeconds = currTime.tv_usec / 1000;
   }
-#endif // _WINDOWS
-  struct tm * timeInfo;
-#if _WINDOWS
-  timeInfo = localtime(&currTime);
-#elif _LINUX || _MAC
-  timeInfo = localtime(&currTime.tv_sec);
-#endif // _WINDOWS
+  struct tm * timeInfo = localtime(&currTime.tv_sec);
   strftime(::easyloggingpp::internal::dateBuffer,
            ::easyloggingpp::internal::kDateBufferSize,
            ::easyloggingpp::internal::dateFormat, timeInfo);
-#if _LINUX || _MAC
   if ((::easyloggingpp::internal::showDateTime) ||
       (::easyloggingpp::internal::showTime)) {
     sprintf(::easyloggingpp::internal::dateBuffer,
-            "%s.%d",
+            "%s.%03ld",
             ::easyloggingpp::internal::dateBuffer,
             milliSeconds);
   }
-#endif // _LINUX || _MAC
+#elif _WINDOWS
+  if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, 
+                     "HH':'mm':'ss",
+                     ::easyloggingpp::internal::dateBuffer,
+                     ::easyloggingpp::internal::kDateBufferSize) != 0) {
+    static DWORD oldTick = GetTickCount();
+    if ((::easyloggingpp::internal::showDateTime) ||
+        (::easyloggingpp::internal::showTime)) {
+      milliSeconds = (long)(GetTickCount() - oldTick) % 1000;
+    }
+    if ((::easyloggingpp::internal::showDateTime) ||
+        (::easyloggingpp::internal::showTime)) {
+      sprintf(::easyloggingpp::internal::dateBuffer,
+              "%s.%03ld",
+              ::easyloggingpp::internal::dateBuffer,
+              milliSeconds);
+    }
+  }
+#endif
   return std::string(::easyloggingpp::internal::dateBuffer);
 }
 
@@ -1289,7 +1297,7 @@ private:
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.03";
+      static const char* versionNumber = "5.04";
     }
     namespace helper {
       static std::string readLog() {
