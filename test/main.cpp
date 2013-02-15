@@ -5,7 +5,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++.h"
+#include "../easylogging++-full.h"
 #include "tests_core.h"
 #include "basic_tests.h"
 

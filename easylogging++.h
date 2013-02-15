@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++ (requires easylogging++.cc)   //
 //                                                                       //
-//   EasyLogging++ v5.04                                                 //
+//   EasyLogging++ v5.05                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -130,25 +130,39 @@
   #endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
 
+#define __ENABLE_MACRO_EVALUATION (((_CXX0X || _CXX11)       || \
+                                   (defined(QT_CORE_LIB)))   && \
+                                   (!(defined(_DISABLE_MUTEX))))
 //
 // Mutex header evaluation
 //
-#if (_CXX0X || _CXX11) && !(defined(_DISABLE_MUTEX))
- // We need to be careful here and add few extra checks to make sure we have mutex header available.
- // I think we should do a comparison of C++ standards and make a list of supported pre-processors (macros)
- // for mutex headers for different compilers.
- #define MUTEX_HEADER <mutex>
- #define MUTEX_TYPE std::mutex
- #define _CXX11_SPECIFIC_INITIALIZATIONS MUTEX_TYPE mutex;
- #define _LOCK_MUTEX ::easyloggingpp::internal::mutex.lock();
- #define _UNLOCK_MUTEX ::easyloggingpp::internal::mutex.unlock();
- #define _USING_MUTEX 1
+#if (__ENABLE_MACRO_EVALUATION)
+  #if (defined(QT_CORE_LIB))
+    // Use Qt library QMutex to handle multi-threading application
+    #define MUTEX_HEADER <QMutex>
+    #define MUTEX_TYPE QMutex
+    #define _MUTEX_SPECIFIC_INIT MUTEX_TYPE mutex;
+    #define _LOCK_MUTEX ::easyloggingpp::internal::mutex.lock();
+    #define _UNLOCK_MUTEX ::easyloggingpp::internal::mutex.unlock();
+    #define _USING_MUTEX 1
+  #else
+    // Use std::mutex
+    // We need to be careful here and add few extra checks to make sure we have mutex header available.
+    // I think we should do a comparison of C++ standards and make a list of supported pre-processors (macros)
+    // for mutex headers for different compilers.
+    #define MUTEX_HEADER <mutex>
+    #define MUTEX_TYPE std::mutex
+    #define _MUTEX_SPECIFIC_INIT MUTEX_TYPE mutex;
+    #define _LOCK_MUTEX ::easyloggingpp::internal::mutex.lock();
+    #define _UNLOCK_MUTEX ::easyloggingpp::internal::mutex.unlock();
+    #define _USING_MUTEX 1
+  #endif // (defined(QT_CORE_LIB)
 #else
-  #define _USING_MUTEX 0
-  #define _CXX11_SPECIFIC_INITIALIZATIONS
+  #define _MUTEX_SPECIFIC_INIT
   #define _LOCK_MUTEX
   #define _UNLOCK_MUTEX
-#endif // (_CXX0X || _CXX11)  && !(defined(_DISABLE_MUTEX))
+  #define _USING_MUTEX 0
+#endif // (__ENABLE_MACRO_EVALUATION)
 
 //
 // Includes
@@ -341,7 +355,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
                                       std::string host = "";                                                \
                                       _VERBOSE_SPECIFIC_INITIALIZATIONS                                     \
                                       _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS                           \
-                                      _CXX11_SPECIFIC_INITIALIZATIONS                                       \
+                                      _MUTEX_SPECIFIC_INIT                                                  \
                                     }                                                                       \
                                   }
 
@@ -355,7 +369,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.04";
+  static const char* versionNumber = "5.05";
 }
 
 namespace internal {
@@ -718,7 +732,7 @@ namespace helper {
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.04";
+      static const char* versionNumber = "5.05";
     }
     namespace helper {
       static std::string readLog() {

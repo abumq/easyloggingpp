@@ -345,7 +345,7 @@ Debug log format should look like:
 `E%level [%level] [%datetime] %log`
 
 #### Support For Multi-threaded Applications
-EasyLogging++ supports multi-threaded applications and uses power of `std::mutex` from C++0X / C++11 to do so. It locks any shared memory for writing logs and unlocks it once written. Everything is done under the hood and you don't need to worry about anything. You just lean back and keep writing logs without any worries.
+EasyLogging++ supports multi-threaded applications and uses power of `mutex` from to do so. It locks any shared memory for writing logs and unlocks it once written. Everything is done under the hood and you don't need to worry about anything. You just lean back and keep writing logs without any worries.
 
 Make sure you compile your program (that uses threads) using `-std=c++0x -pthread` (or c++11). Additionally, you may use `_CXX0X` and `_CXX11` macros from `easylogging++-full.h`, that are defined when compiling with C++0X or C++11 respectively, as used in corresponding sample.
 
@@ -360,9 +360,11 @@ Following are list of thread-safe functionalities:
 Sample has very well explained comment on each of above way of loggings.
 
 *If you have issues in compiling the application, make notes of following*
- * EasyLogging++ multi-threading support is for g++ (with C++0X+) only.
  * If you wish to force to disable multi-threading please define macro `_DISABLE_MUTEX`
  * Please feel free to contribute, EasyLogging++ currently uses `std::mutex` but is happy to expand to make it more portable across other compilers and libraries.
+ * Precedence order of mutex libraries is:
+  - QMutex (From Qt)
+  - std::mutex (From C++0x / C++11)
 
 Version: 5.0+
 

@@ -1,6 +1,6 @@
 #include "basic_tests.h"
 #include <cstring>
-#include "../easylogging++.h"
+#include "../easylogging++-full.h"
 #include "tests_core.h"
 void basicTests(int argc, char** argv) {
   ALI

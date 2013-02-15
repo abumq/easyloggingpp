@@ -19,3 +19,13 @@ samples/multiple-files-project/bin/*
 samples/samples-linked/bin/*
 
 samples/samples-full/bin/*
+
+samples/samples-full/qt-sample/*.bin
+samples/samples-full/qt-sample/logs/*
+samples/samples-full/qt-sample/*.o
+samples/samples-full/qt-sample/moc_*
+
+samples/samples-linked/qt-sample/*.bin
+samples/samples-linked/qt-sample/logs/*
+samples/samples-linked/qt-sample/*.o
+samples/samples-linked/qt-sample/moc_*
