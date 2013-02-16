@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.cc - Core of EasyLogging++                              //
 //                                                                       //
-//   EasyLogging++ v5.05                                                 //
+//   EasyLogging++ v5.06                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //

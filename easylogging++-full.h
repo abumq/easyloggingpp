@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++-full.h - Core of EasyLogging++                          //
 //                                                                       //
-//   EasyLogging++ v5.05                                                 //
+//   EasyLogging++ v5.06                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -130,13 +130,13 @@
   #endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
 
-#define __ENABLE_MACRO_EVALUATION (((_CXX0X || _CXX11)       || \
+#define __ENABLE_MUTEX_EVALUATION (((_CXX0X || _CXX11)       || \
                                    (defined(QT_CORE_LIB)))   && \
                                    (!(defined(_DISABLE_MUTEX))))
 //
 // Mutex header evaluation
 //
-#if (__ENABLE_MACRO_EVALUATION)
+#if (__ENABLE_MUTEX_EVALUATION)
   #if (defined(QT_CORE_LIB))
     // Use Qt library QMutex to handle multi-threading application
     #define MUTEX_HEADER <QMutex>
@@ -162,7 +162,7 @@
   #define _LOCK_MUTEX
   #define _UNLOCK_MUTEX
   #define _USING_MUTEX 0
-#endif // (__ENABLE_MACRO_EVALUATION)
+#endif // (__ENABLE_MUTEX_EVALUATION)
 
 //
 // Includes
@@ -369,7 +369,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP ::easyloggingpp::internal::releaseMemory();
 
 namespace version {
-  static const char* versionNumber = "5.05";
+  static const char* versionNumber = "5.06";
 }
 
 namespace internal {
@@ -1314,7 +1314,7 @@ private:
   #include <string>
   namespace easyloggingpp {
     namespace version {
-      static const char* versionNumber = "5.05";
+      static const char* versionNumber = "5.06";
     }
     namespace helper {
       static std::string readLog() {

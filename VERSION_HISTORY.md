@@ -14,6 +14,7 @@ History was not kept before version 2.1.
  * 5.03: Fixed bug with `_DISABLE_MUTEX`
  * 5.04: Date/time fix for windows (issue #4)
  * 5.05: Use QMutex when available
+ * 5.06: Macro rename for mutex evaluation
 
 #### 4.0
  * 4.00:
