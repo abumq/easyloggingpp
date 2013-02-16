@@ -363,7 +363,7 @@ Sample has very well explained comment on each of above way of loggings.
  * If you wish to force to disable multi-threading please define macro `_DISABLE_MUTEX`
  * Please feel free to contribute, EasyLogging++ currently uses `std::mutex` but is happy to expand to make it more portable across other compilers and libraries.
  * Precedence order of mutex libraries is:
-  - QMutex (From Qt)
+  - QMutex (From Qt)  (v5.05+)
   - std::mutex (From C++0x / C++11)
 
 Version: 5.0+

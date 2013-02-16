@@ -24,8 +24,10 @@ samples/samples-full/qt-sample/*.bin
 samples/samples-full/qt-sample/logs/*
 samples/samples-full/qt-sample/*.o
 samples/samples-full/qt-sample/moc_*
+samples/samples-full/qt-sample/Makefile
 
 samples/samples-linked/qt-sample/*.bin
 samples/samples-linked/qt-sample/logs/*
 samples/samples-linked/qt-sample/*.o
 samples/samples-linked/qt-sample/moc_*
+samples/samples-linked/qt-sample/Makefile
