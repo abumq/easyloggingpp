@@ -1500,7 +1500,7 @@ public:
                 INTERNAL_VERBOSE_LOG(verboseLevel, logStream.str(), func, file, line);
             }
             else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_VERBOSE_LOG(verboseLevel, condition, logStream.str(), func, file, line);
+                INTERNAL_CONDITIONAL_VERBOSE_LOG(condition, verboseLevel, logStream.str(), func, file, line);
             }
             else if (logAspect == kInterval) {
                 INTERNAL_INTERVAL_VERBOSE_LOG(verboseLevel, counter, logStream.str(), func, file, line);

@@ -1,32 +1,22 @@
-[INFO] [03/03/2013 20:43:07.919] info
-[DEBUG] [03/03/2013 20:43:07.919] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:16] debug
-[ERROR] [03/03/2013 20:43:07.919] error
-[WARNING] [03/03/2013 20:43:07.919] warning
-[FATAL] [03/03/2013 20:43:07.919] fatal
-[QA] [03/03/2013 20:43:07.919] qa
-[PERFORMANCE] [03/03/2013 20:43:07.919] performance
-[VERBOSE-1] [03/03/2013 20:43:07.919] verbose 1
-[VERBOSE-2] [03/03/2013 20:43:07.919] verbose 2
-[VERBOSE-3] [03/03/2013 20:43:07.919] verbose 3
-[VERBOSE-4] [03/03/2013 20:43:07.919] verbose 4
-[VERBOSE-5] [03/03/2013 20:43:07.919] verbose 5
-[VERBOSE-6] [03/03/2013 20:43:07.919] verbose 6
-[VERBOSE-7] [03/03/2013 20:43:07.919] verbose 7
-[VERBOSE-8] [03/03/2013 20:43:07.919] verbose 8
-[VERBOSE-9] [03/03/2013 20:43:07.919] verbose 9
-[INFO] [03/03/2013 20:43:07.920] info
-[DEBUG] [03/03/2013 20:43:07.920] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:34] debug
-[ERROR] [03/03/2013 20:43:07.920] error
-[WARNING] [03/03/2013 20:43:07.920] warning
-[FATAL] [03/03/2013 20:43:07.920] fatal
-[QA] [03/03/2013 20:43:07.920] qa
-[PERFORMANCE] [03/03/2013 20:43:07.920] performance
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 1
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 2
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 3
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 4
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 5
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 6
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 7
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 8
-[VERBOSE-1] [03/03/2013 20:43:07.920] verbose 9
+[INFO] [03/03/2013 20:48:01.397] info
+[DEBUG] [03/03/2013 20:48:01.397] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:16] debug
+[ERROR] [03/03/2013 20:48:01.397] error
+[WARNING] [03/03/2013 20:48:01.397] warning
+[FATAL] [03/03/2013 20:48:01.397] fatal
+[QA] [03/03/2013 20:48:01.397] qa
+[PERFORMANCE] [03/03/2013 20:48:01.397] performance
+[VERBOSE-1] [03/03/2013 20:48:01.397] verbose 1
+[VERBOSE-2] [03/03/2013 20:48:01.397] verbose 2
+[VERBOSE-3] [03/03/2013 20:48:01.397] verbose 3
+[VERBOSE-4] [03/03/2013 20:48:01.397] verbose 4
+[INFO] [03/03/2013 20:48:01.397] info
+[DEBUG] [03/03/2013 20:48:01.397] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:34] debug
+[ERROR] [03/03/2013 20:48:01.398] error
+[WARNING] [03/03/2013 20:48:01.398] warning
+[FATAL] [03/03/2013 20:48:01.398] fatal
+[QA] [03/03/2013 20:48:01.398] qa
+[PERFORMANCE] [03/03/2013 20:48:01.398] performance
+[VERBOSE-1] [03/03/2013 20:48:01.398] verbose 1
+[VERBOSE-2] [03/03/2013 20:48:01.398] verbose 2
+[VERBOSE-3] [03/03/2013 20:48:01.398] verbose 3
+[VERBOSE-4] [03/03/2013 20:48:01.398] verbose 4
