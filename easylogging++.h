@@ -1509,10 +1509,21 @@ public:
         }
     }
 
-    inline std::ostream& operator<<(const std::string& str) {
-        logStream << str;
-        return logStream;
-    }
+    inline std::ostream& operator<<(const std::string& log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(char log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(bool log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(signed short log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(unsigned short log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(signed int log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(unsigned int log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(signed long log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(unsigned long log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(float log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(double log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(const char* log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(const void* log_) { logStream << log_; return logStream; }
+    inline std::ostream& operator<<(long double log_) { logStream << log_; return logStream; }
+
 private:
     unsigned int logAspect;
     unsigned int logLevel;
