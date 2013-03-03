@@ -1,1 +1,9 @@
-[INFO] [03/03/2013 18:44:08.667] 11
+[INFO] [03/03/2013 20:29:19.328] info
+[DEBUG] [03/03/2013 20:29:19.329] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:16] debug
+[ERROR] [03/03/2013 20:29:19.329] error
+[WARNING] [03/03/2013 20:29:19.329] warning
+[FATAL] [03/03/2013 20:29:19.329] fatal
+[QA] [03/03/2013 20:29:19.329] qa
+[PERFORMANCE] [03/03/2013 20:29:19.329] performance
+[VERBOSE-1] [03/03/2013 20:29:19.329] verbose 1
+[VERBOSE-2] [03/03/2013 20:29:19.329] verbose 2

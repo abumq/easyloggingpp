@@ -16,7 +16,7 @@ class MyThread : public QThread {
 
       LVERBOSE(2) << "This is verbose level 2 logging from thread #" << threadId;
 
-      // Following line will be logged only once from second running thread (which every runs second into 
+      // Following line will be logged only once from second running thread (which every runs second into
       // this line because of interval 2)
       LWARNING_EVERY_N(2) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
 

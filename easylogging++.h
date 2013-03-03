@@ -1553,7 +1553,7 @@ private:
 #define LQA easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,             \
     easyloggingpp::internal::LogWrapper::kQa, __func__, __FILE__, __LINE__)
 #define LVERBOSE(level) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal, \
-    easyloggingpp::internal::LogWrapper::kVerbose, __func__, __FILE__, __LINE__, 0, true, level)
+    easyloggingpp::internal::LogWrapper::kVerbose, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
 #define LINFO_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,           \
     easyloggingpp::internal::LogWrapper::kInfo, __func__, __FILE__, __LINE__, condition)
