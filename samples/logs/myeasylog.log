@@ -1,22 +1,120 @@
-[INFO] [03/03/2013 20:48:01.397] info
-[DEBUG] [03/03/2013 20:48:01.397] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:16] debug
-[ERROR] [03/03/2013 20:48:01.397] error
-[WARNING] [03/03/2013 20:48:01.397] warning
-[FATAL] [03/03/2013 20:48:01.397] fatal
-[QA] [03/03/2013 20:48:01.397] qa
-[PERFORMANCE] [03/03/2013 20:48:01.397] performance
-[VERBOSE-1] [03/03/2013 20:48:01.397] verbose 1
-[VERBOSE-2] [03/03/2013 20:48:01.397] verbose 2
-[VERBOSE-3] [03/03/2013 20:48:01.397] verbose 3
-[VERBOSE-4] [03/03/2013 20:48:01.397] verbose 4
-[INFO] [03/03/2013 20:48:01.397] info
-[DEBUG] [03/03/2013 20:48:01.397] [majid@devil-inside-pc] [int main(int, char**)] [./all-logs.cpp:34] debug
-[ERROR] [03/03/2013 20:48:01.398] error
-[WARNING] [03/03/2013 20:48:01.398] warning
-[FATAL] [03/03/2013 20:48:01.398] fatal
-[QA] [03/03/2013 20:48:01.398] qa
-[PERFORMANCE] [03/03/2013 20:48:01.398] performance
-[VERBOSE-1] [03/03/2013 20:48:01.398] verbose 1
-[VERBOSE-2] [03/03/2013 20:48:01.398] verbose 2
-[VERBOSE-3] [03/03/2013 20:48:01.398] verbose 3
-[VERBOSE-4] [03/03/2013 20:48:01.398] verbose 4
+[INFO] [03/03/2013 20:54:53.698] iter = 2
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 2
+[INFO] [03/03/2013 20:54:53.698] iter = 4
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 4
+[INFO] [03/03/2013 20:54:53.698] This will be printed every 5 iteration multiple, this is iteration 5
+[INFO] [03/03/2013 20:54:53.698] iter = 6
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 6
+[INFO] [03/03/2013 20:54:53.698] iter = 8
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 8
+[INFO] [03/03/2013 20:54:53.698] This will be printed every 5 iteration multiple, this is iteration 10
+[INFO] [03/03/2013 20:54:53.698] iter = 10
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 10
+[INFO] [03/03/2013 20:54:53.698] iter = 12
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 12
+[INFO] [03/03/2013 20:54:53.698] iter = 14
+[VERBOSE-2] [03/03/2013 20:54:53.698] This is verbose level 2 log for iteration 14
+[INFO] [03/03/2013 20:54:53.698] This will be printed every 5 iteration multiple, this is iteration 15
+[INFO] [03/03/2013 20:54:53.699] iter = 16
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 16
+[INFO] [03/03/2013 20:54:53.699] iter = 18
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 18
+[INFO] [03/03/2013 20:54:53.699] This will be printed every 5 iteration multiple, this is iteration 20
+[INFO] [03/03/2013 20:54:53.699] iter = 20
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 20
+[INFO] [03/03/2013 20:54:53.699] iter = 22
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 22
+[INFO] [03/03/2013 20:54:53.699] iter = 24
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 24
+[INFO] [03/03/2013 20:54:53.699] This will be printed every 5 iteration multiple, this is iteration 25
+[INFO] [03/03/2013 20:54:53.699] iter = 26
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 26
+[INFO] [03/03/2013 20:54:53.699] iter = 28
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 28
+[INFO] [03/03/2013 20:54:53.699] This will be printed every 5 iteration multiple, this is iteration 30
+[INFO] [03/03/2013 20:54:53.699] iter = 30
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 30
+[INFO] [03/03/2013 20:54:53.699] iter = 32
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 32
+[INFO] [03/03/2013 20:54:53.699] iter = 34
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 34
+[INFO] [03/03/2013 20:54:53.699] This will be printed every 5 iteration multiple, this is iteration 35
+[INFO] [03/03/2013 20:54:53.699] iter = 36
+[VERBOSE-2] [03/03/2013 20:54:53.699] This is verbose level 2 log for iteration 36
+[INFO] [03/03/2013 20:54:53.699] iter = 38
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 38
+[INFO] [03/03/2013 20:54:53.700] This will be printed every 5 iteration multiple, this is iteration 40
+[INFO] [03/03/2013 20:54:53.700] iter = 40
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 40
+[INFO] [03/03/2013 20:54:53.700] iter = 42
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 42
+[INFO] [03/03/2013 20:54:53.700] iter = 44
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 44
+[INFO] [03/03/2013 20:54:53.700] This will be printed every 5 iteration multiple, this is iteration 45
+[INFO] [03/03/2013 20:54:53.700] iter = 46
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 46
+[INFO] [03/03/2013 20:54:53.700] iter = 48
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 48
+[INFO] [03/03/2013 20:54:53.700] This will be printed every 5 iteration multiple, this is iteration 50
+[INFO] [03/03/2013 20:54:53.700] iter = 50
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 50
+[INFO] [03/03/2013 20:54:53.700] iter = 52
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 52
+[INFO] [03/03/2013 20:54:53.700] iter = 54
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 54
+[INFO] [03/03/2013 20:54:53.700] This will be printed every 5 iteration multiple, this is iteration 55
+[INFO] [03/03/2013 20:54:53.700] iter = 56
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 56
+[INFO] [03/03/2013 20:54:53.700] iter = 58
+[VERBOSE-2] [03/03/2013 20:54:53.700] This is verbose level 2 log for iteration 58
+[INFO] [03/03/2013 20:54:53.700] This will be printed every 5 iteration multiple, this is iteration 60
+[INFO] [03/03/2013 20:54:53.700] iter = 60
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 60
+[INFO] [03/03/2013 20:54:53.701] iter = 62
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 62
+[INFO] [03/03/2013 20:54:53.701] iter = 64
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 64
+[INFO] [03/03/2013 20:54:53.701] This will be printed every 5 iteration multiple, this is iteration 65
+[INFO] [03/03/2013 20:54:53.701] iter = 66
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 66
+[INFO] [03/03/2013 20:54:53.701] iter = 68
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 68
+[INFO] [03/03/2013 20:54:53.701] This will be printed every 5 iteration multiple, this is iteration 70
+[INFO] [03/03/2013 20:54:53.701] iter = 70
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 70
+[INFO] [03/03/2013 20:54:53.701] iter = 72
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 72
+[INFO] [03/03/2013 20:54:53.701] iter = 74
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 74
+[INFO] [03/03/2013 20:54:53.701] This will be printed every 5 iteration multiple, this is iteration 75
+[INFO] [03/03/2013 20:54:53.701] iter = 76
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 76
+[INFO] [03/03/2013 20:54:53.701] iter = 78
+[VERBOSE-2] [03/03/2013 20:54:53.701] This is verbose level 2 log for iteration 78
+[INFO] [03/03/2013 20:54:53.701] This will be printed every 5 iteration multiple, this is iteration 80
+[INFO] [03/03/2013 20:54:53.701] iter = 80
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 80
+[INFO] [03/03/2013 20:54:53.702] iter = 82
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 82
+[INFO] [03/03/2013 20:54:53.702] iter = 84
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 84
+[INFO] [03/03/2013 20:54:53.702] This will be printed every 5 iteration multiple, this is iteration 85
+[INFO] [03/03/2013 20:54:53.702] iter = 86
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 86
+[INFO] [03/03/2013 20:54:53.702] iter = 88
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 88
+[INFO] [03/03/2013 20:54:53.702] This will be printed every 5 iteration multiple, this is iteration 90
+[INFO] [03/03/2013 20:54:53.702] iter = 90
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 90
+[INFO] [03/03/2013 20:54:53.702] iter = 92
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 92
+[INFO] [03/03/2013 20:54:53.702] iter = 94
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 94
+[INFO] [03/03/2013 20:54:53.702] This will be printed every 5 iteration multiple, this is iteration 95
+[INFO] [03/03/2013 20:54:53.702] iter = 96
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 96
+[INFO] [03/03/2013 20:54:53.702] iter = 98
+[VERBOSE-2] [03/03/2013 20:54:53.702] This is verbose level 2 log for iteration 98
+[INFO] [03/03/2013 20:54:53.703] This will be printed every 5 iteration multiple, this is iteration 100
+[INFO] [03/03/2013 20:54:53.703] iter = 100
+[VERBOSE-2] [03/03/2013 20:54:53.703] This is verbose level 2 log for iteration 100

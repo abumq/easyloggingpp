@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
       LINFO_EVERY_N(n2) << "iter = " << i;
 
-      LVERBOSE_EVERY_N(n2, 1) << "This is verbose level 1 log for iteration " << i;
+      LVERBOSE_EVERY_N(n2, 2) << "This is verbose level 2 log for iteration " << i;
    }
  
    _END_EASYLOGGINGPP // Release all memory
