@@ -1109,7 +1109,7 @@ static bool validateCounter(const char* func, const char* filename, unsigned lon
 #define INTERNAL_CONDITIONAL_ERROR_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_ERROR_LOG(logMessage, func, file, line); }
 #define INTERNAL_INTERVAL_ERROR_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("ERROR", n, logMessage, func, file, line)
 #   ifdef _SUPPORT_LEGACY_LOG_NAMES
-#       define ERROR(logMessage) WRITE_LOG("ERROR",logMessage_SUPPORT_LEGACY_LOG_NAMES)
+#       define ERROR(logMessage) WRITE_LOG("ERROR",logMessage, __func__, __FILE__, __LINE__)
 #       define ERROR_IF(condition, logMessage) if (condition) { ERROR(logMessage); }
 #       define ERROR_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("ERROR", n, logMessage)
 #   endif // _SUPPORT_LEGACY_LOG_NAMES
