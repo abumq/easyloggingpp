@@ -378,8 +378,6 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_ERROR_LOGS` macro enables or disables error logs (`0` for disable `1` for enable)
 * `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (`0` for disable `1` for enable)
 * `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
-* `_ENABLE_HINT` macro enables or disables hints (`0` for disable `1` for enable)
-* `_ENABLE_STATUS` macro enables or disables status logs (`0` for disable `1` for enable)
 * `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
 * `_ENABLE_QA_LOGS` macro enables or disables QA logs (`0` for disable `1` for enable)
 
@@ -397,16 +395,14 @@ To disable level specific log while compiling here are macros to define;
 * `_DISABLE_WARNING_LOGS`
 * `_DISABLE_ERROR_LOGS`
 * `_DISABLE_FATAL_LOGS`
-* `_DISABLE_STATUS`
-* `_DISABLE_HINT`
 * `_DISABLE_PERFORMANCE_LOGS`
 * `_DISABLE_VERBOSE_LOGS`
 
 As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++.h`, you may compile with following line;
 ```
-g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS
+g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_INFO_LOGS
 ```
-This will disable debug logs and status updates in main-exec binary.
+This will disable debug logs and info logs in main-exec binary.
 
 *Notes*
  - When the logging is turned off, it will not affect any code, it will not result in any compilation error, in fact, compiler will ignore those lines. Even the functions defined using `SUB` and `FUNC` will behave normally as they would do otherwise when EasyLogging++ is not being used at all.
@@ -427,10 +423,6 @@ This can be set by following configurations
 * `_FATAL_LOGS_TO_FILE` to enable/disable saving fatal logs to log file (`0` for disable `1` for enable)
 * `_PERFORMANCE_LOGS_TO_STANDARD_OUTPUT` to enable/disable performance logs to be shown in standard output (`0` for disable `1` for enable)
 * `_PERFORMANCE_LOGS_TO_FILE` to enable/disable saving performance logs to log file (`0` for disable `1` for enable)
-* `_HINT_TO_STANDARD_OUTPUT` to enable/disable hints to be shown in standard output (`0` for disable `1` for enable)
-* `_HINT_TO_FILE` to enable/disable saving hints to log file (`0` for disable `1` for enable)
-* `_STATUS_TO_STANDARD_OUTPUT` to enable/disable status logs to be shown in standard output (`0` for disable `1` for enable)
-* `_STATUS_TO_FILE` to enable/disable saving status logs to log file (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_STANDARD_OUTPUT` to enable/disable verbose logs to be shown in standard output (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_FILE` to enable/disable saving verbose logs to log file (`0` for disable `1` for enable)
 * `_QA_LOGS_TO_STANDARD_OUTPUT` to enable/disable QA logs to be shown in standard output (`0` for disable `1` for enable)
@@ -463,8 +455,6 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `ERROR_LOG_FORMAT` Sets format used for `ERROR` logs
 * `FATAL_LOG_FORMAT` Sets format used for `FATAL` logs
 * `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORMANCE` logs
-* `HINT_LOG_FORMAT` Sets format used for `HINT`s
-* `STATUS_LOG_FORMAT` Sets format used for `STATUS` logs
 * `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
 * `QA_LOG_FORMAT` Sets format used for `QA` logs
 
