@@ -5,63 +5,63 @@ Cross platform logging made easy for C++ applications.
 
 To use EasyLogging++ in your application, simply include and initialize:
 ```C++
-#include "easylogging++-full.h"
+#include "easylogging++.h"
 _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
 ```
-*Alternatively include `easylogging++.h` and link it to `easylogging++.cc` at link time. This comment applies throughout this README and we will be using `easylogging++-full.h` in this read me but you may use `easylogging++.h` instead provided you compile the source file with it, [click here](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#examples-1) for further information on compiling the program with easylogging++ header and source both*
-
 EasyLogging++ comes with following levels of logging with complete control over each of the following:
 ```
-  DEBUG(...)
-  INFO(...)
-  WARN(...)
-  ERROR(...)
-  FATAL(...)
-  PERFORMANCE(...)
-  HINT(...)
-  STATUS(...)
-  VERBOSE(#, ...)
-  QA(...)
+  LDEBUG << ...;
+  LINFO << ...;
+  LWARN << ...;
+  LERROR << ...;
+  LFATAL << ...;
+  LPERFORMANCE << ...;
+  LVERBOSE(verbose-level) << ...;
+  LQA << ...;
 ```
+
+*NOTE: To support old way of logging, i.e, `INFO(..)` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
+
 ## Why EasyLogging++
-Answering this question can be sometimes hard but here are few reasons why you would want to use EasyLogging++ as logger for your C++ applications;
+Answering this question can be sometimes hard but here are few reasons why you would want to use EasyLogging++ as a logger for your C++ applications;
  * Native C++ support
  * Portablility
-  - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header to your source and you will be good to go!
+  - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header in your source code and initialize it with one line and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it.
   - It supports linux, windows and mac
  * [Easy Enable / Disable](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
 
-    EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++-full.h` level will not cause any damage to compilation.
+    EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log at `easylogging++.h` level will not cause any damage or performance issue
  * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
  * [Multi-threaded application support](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#support-for-multi-threaded-applications)
+ * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/easylogging%2B%2B.h#L47), which means that you can turn different parts of logging on or off depending on the requirements
 
 ## Getting Started
 In order to start logging follow these three steps:
- * Include `easylogging++-full.h` header
- * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to put this line is in the main file where main function is defined (usually called main.cpp). Remember, this should be placed only once in your application.
+ * Include `easylogging++.h` header
+ * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to put this line is after includes in the main file (where main function is defined). Remember, this should be placed only once in your application.
  * Start logging!
 
-See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/samples-full/very_basic.cpp)
+See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
 
 ## Examples
 #### Basic Logging
  ```C++
- #include "easylogging++-full.h"
+ #include "easylogging++.h"
  _INITIALIZE_EASYLOGGINGPP
  int main(void) {
-    DEBUG("Staring my EasyLogging++ program");
+    LDEBUG << "Staring my EasyLogging++ program";
     unsigned int i = 0;
-    INFO("Current value is " << i);
-    INFO("Now the value has changed from " << i++ << " to " << i);
-    DEBUG("End of my EasyLogging++ program");
+    LINFO << "Current value is " << i;
+    LINFO << "Now the value has changed from " << i++ << " to " << i;
+    LDEBUG << "End of my EasyLogging++ program";
     _END_EASYLOGGINGPP    // Needed once to release all memory to make valgrind (or similar tools) happy - REQUIRED ONLY ONCE
  }
  ```
-Output for above logging varies depending on format you set in configuration section of `easylogging++-full.h`. Here are some sample outputs;
+Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
 
 ###### Output (Format: `[%level] %log`)
 ```
@@ -113,44 +113,40 @@ See [Log Format](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.m
 ## Additional Features
 #### Conditional Logging
 You can use conditional logging for logs that can have simple / complex conditions. These logs are disabled / enabled with their respective logging level.
-* `DEBUG_IF(condition, log)`
-* `INFO_IF(condition, log)`
-* `WARNING_IF(condition, log)`
-* `ERROR_IF(condition, log)`
-* `FATAL_IF(condition, log)`
-* `PERFORMANCE_IF(condition, log)`
-* `HINT_IF(condition, log)`
-* `STATUS_IF(condition, log)`
-* `VERBOSE_IF(condition, level, log)`
-* `QA_IF(condition, log)`
+* `LDEBUG_IF(condition) << log`
+* `LINFO_IF(condition) << log`
+* `LWARNING_IF(condition) << log`
+* `LERROR_IF(condition) << log`
+* `LFATAL_IF(condition) << log`
+* `LPERFORMANCE_IF(condition) << log`
+* `LVERBOSE_IF(condition, level) << log`
+* `LQA_IF(condition) log`
 
-A typical example is as follow (taken from samples/samples-full/conditional_log.cpp)
+A typical example is as follow (taken from samples/conditional_log.cpp)
 ```C++
-  INFO_IF(1 == 1, "1 is equal to 1");
+  LINFO_IF(1 == 1) << "1 is equal to 1";
   // Or some complex condition
-  DEBUG_IF((1 == 2) || (5 == 5)) , "Something is right so I will print!");
+  LDEBUG_IF((1 == 2) || (5 == 5)) << "Something is right so I will print!";
   // verbose log
-  VERBOSE_IF(true, 1, "Printing verbose level-1");
+  LVERBOSE_IF(true, 1) <<  "Printing verbose level-1";
 ```
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/conditional_logs.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/conditional_logs.cpp)
 
 #### Interval Logging 
 You can log something every N times using `***_EVERY_N` where `***` represent different log levels. Following are the usable macros:
-* `DEBUG_EVERY_N(n, log)`
-* `INFO_EVERY_N(n, log)`
-* `WARNING_EVERY_N(n, log)`
-* `ERROR_EVERY_N(n, log)`
-* `FATAL_EVERY_N(n, log)`
-* `PERFORMANCE_EVERY_N(n, log)`
-* `HINT_EVERY_N(n, log)`
-* `STATUS_EVERY_N(n, log)`
-* `VERBOSE_EVERY_N(n, level, log)`
-* `QA_EVERY_N(n, log)`
+* `LDEBUG_EVERY_N(n) << log`
+* `LINFO_EVERY_N(n) << log`
+* `LWARNING_EVERY_N(n) << log`
+* `LERROR_EVERY_N(n) << log`
+* `LFATAL_EVERY_N(n) << log`
+* `LPERFORMANCE_EVERY_N(n) << log`
+* `LVERBOSE_EVERY_N(n, level) << log`
+* `LQA_EVERY_N(n) << log`
 
 A typical example:
 ```C++
-for (int i = 1; i <= 100; i++) {
-  INFO_EVERY_N(5, "This will be logged every 5th iteration");
+for (int i = 1; i <= 100; ++i) {
+  LINFO_EVERY_N(5) << "This will be logged every 5th iteration");
 }
 ```
 
@@ -161,23 +157,23 @@ for (int i = 1; i <= 100; i++) {
 
 Version: 4.07+
 
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/every_n_log.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
 
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/every_n_log_2.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log_2.cpp)
 
 #### Cleaning Logs On Each Run
 If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
 
 As an example, you may compile your application as following if you wish to clean logs every time you execute application;
 ```
-g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
+g++ main.cpp -o main-exec -D_ALWAYS_CLEAN_LOGS
 ```
 
  Version: 3.18+
 
 #### Performance Logging
  ```C++
- #include "easylogging++-full.h"
+ #include "easylogging++.h"
  _INITIALIZE_EASYLOGGINGPP
  SUB(print,(const std::string& input))
    /* sub-routine body */
@@ -192,7 +188,7 @@ g++ main.cpp -o main-exec -D _ALWAYS_CLEAN_LOGS
 int main(void) {
     print("this is test");
     int sumResult = sum(1,2);
-    std::cout << "Sum of 1 and 2 is " << sumResult;
+    LINFO << "Sum of 1 and 2 is " << sumResult;
 }
  ```
 ###### Output (Format: `[%level] %log`)
@@ -236,9 +232,9 @@ END_FUNC(return_value)
 
 Note: you have many other configurations to change your output. See following section for details
 
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/time_tracker.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
  
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/time_waster.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_waster.cpp)
  
 #### Verbose Logging
 To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
@@ -250,17 +246,17 @@ int main(int argc, char** argv) {
 ```
 
 And when using verbose logging you will need to run your C++ application with argument `--v=` followed by verbose level.
-When you want to write verbose log, you will use, `VERBOSE(level, log)`
+When you want to write verbose log, you will use, `LVERBOSE(level) << log`
 
 As an example
 ```C++
-#include "easylogging++-full.h"
+#include "easylogging++.h"
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
   bool condition = true;
-  VERBOSE(1, "I will be printed when this application is run using --v=1 or higher than 1 arguments");
-  VERBOSE(2, "I will be printed when this application is run using --v=2 arguments");
-  VERBOSE_IF(condition, 1, "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments");
+  LVERBOSE(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
+  LVERBOSE(2) << "I will be printed when this application is run using --v=2 arguments";
+  LVERBOSE_I(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
 ```
 Now compile your application normally:
 
@@ -291,13 +287,13 @@ You may also run using `--verbose` to display maximum verbose logs (max level: 9
 
  Version: 3.22+
  
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/verbose_logs.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/verbose_logs.cpp)
  
 #### Releasing Memory
 Although this part is not necessary for your C++ application because EasyLogging++ works in `singleton pattern way` but still for peace of mind of developers, you may release memory used by EasyLogging++ using `_END_EASYLOGGINGPP`. Keep in your mind, if you re-log using EasyLogging++ using one of `INFO(..)`, `DEBUG(..)` etc, memory will be re-allocated (so the best place to put `_END_EASYLOGGINGPP` is right before main returns as done in all the samples). Rest assured, EasyLogging++ has been extensively tested for memory leaks, but to make valgrind (or other memory profiling tools) happy for your C++ application, be sure to have `_END_EASYLOGGINGPP` at the end of your application.
 ```C++
 int main(int argc, char** argv) {
-  INFO("This is memory release test");
+  LINFO << "This is memory release example";
   _END_EASYLOGGINGPP //Memory released! Valgrind will be happy
 }
 ```
@@ -308,33 +304,32 @@ There are only few points that will help you remember when to release memory usi
  * Always release memory when you are done with your logging i.e, end of `main(..)` function before every return. Alternatively, you may use `RETURN_MAIN(exit_status)` to automatically release memory.
  * If you want to track performance on `main(..)` function, try using `MAIN(int argc, char** argv)` and `RETURN_MAIN(..)` (see sample 2 below)
  * Try to minimize using `_END_EASYLOGGINGPP` to minimize delete calls, use it in the end of main.
- * Last but not least, if you are not tracking `main(..)` function's performance, just use `_END_EASYLOGGINPP` once like all other [samples](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/).
+ * Last but not least, if you are not tracking `main(..)` function's performance, just use `_END_EASYLOGGINPP` once like all other [samples](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/).
 
  Version: 3.29+
  
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/valgrind_happy.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/valgrind_happy.cpp)
  
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/summary_memory_release.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/summary_memory_release.cpp)
  
 #### Quality Assurance Logs
 Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for testing purposes. These logs can provide extra information when working in QA and can be disabled in production without having to change the source code.
 
 By default QA logs will not take affect and will only be logged in `_QUALITY_ASSURANCE` is defined, as an example, following program:
 ```C++
-#include "easylogging++-full.h"
+#include "easylogging++.h"
 int main(void) {
-  STATUS("Starting program...");
-  QA("I am log only for QA environment");
+  LQA << "I am log only for QA environment";
   return 0;
 }
 ```
 will log `QA` if program is compiled using following line at minimum (notice the `_QUALITY_ASSURANCE` macro):
 
-`g++ main.cpp -o main-exec -D _QUALITY_ASSURANCE`
+`g++ main.cpp -o main-exec -D_QUALITY_ASSURANCE`
 
  Version: 3.30+
  
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/qa_logs.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qa_logs.cpp)
 
 #### Escaping Log Format
 Escape character used in EasyLogging++ is `E`. For example, to write following log
@@ -347,13 +342,13 @@ Debug log format should look like:
 #### Support For Multi-threaded Applications
 EasyLogging++ supports multi-threaded applications and uses power of `mutex` from to do so. It locks any shared memory for writing logs and unlocks it once written. Everything is done under the hood and you don't need to worry about anything. You just lean back and keep writing logs without any worries.
 
-Make sure you compile your program (that uses threads) using `-std=c++0x -pthread` (or c++11). Additionally, you may use `_CXX0X` and `_CXX11` macros from `easylogging++-full.h`, that are defined when compiling with C++0X or C++11 respectively, as used in corresponding sample.
+Make sure you compile your program (that uses threads) using `-std=c++0x -pthread` (or c++11). Additionally, you may use `_CXX0X` and `_CXX11` macros from `easylogging++.h`, that are defined when compiling with C++0X or C++11 respectively, as used in corresponding sample.
 
 Following are list of thread-safe functionalities:
- * Normal logging using `INFO(...)`, `WARNING(...)` etc
- * Conditional logging using `INFO_IF(..., ...)`, `WARNING_IF(..., ...)` etc
- * Interval logging using `INFO_EVERY_N(..., ...)`, `WARNING_EVERY_N(..., ...)` etc
- * Verbose logging using `VERBOSE(#, ...)` (incl. conditional and interval verbose logging)
+ * Normal logging using `LINFO << ...`, `LWARNING << ...` etc
+ * Conditional logging using `LINFO_IF(cond) << ...`, `LWARNING_IF(cond) << ...` etc
+ * Interval logging using `LINFO_EVERY_N(cond) << ...`, `LWARNING_EVERY_N(cond) << ...` etc
+ * Verbose logging using `LVERBOSE(verbose-level) << ...` (incl. conditional and interval verbose logging)
  * Helper functions
  * Releasing memory
 
@@ -368,13 +363,13 @@ Sample has very well explained comment on each of above way of loggings.
 
 Version: 5.0+
 
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/multithread_test.cpp)
+ [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/multithread_test.cpp)
 
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/pthread_example.cpp)
+ [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/pthread_example.cpp)
 
 ## Configuration
 #### Enable/Disable Logging
-By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++-full.h` header.
+By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
 
 * `_LOGGING_ENABLED` macro enables or disables logging (`0` for disable `1` for enable)
 * `_ENABLE_DEBUG_LOGS` macro enables or disables debugging logs (`0` for disable `1` for enable)
@@ -388,7 +383,7 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
 * `_ENABLE_QA_LOGS` macro enables or disables QA logs (`0` for disable `1` for enable)
 
-There is another way to disable logging that doesn't require modifying `easylogging++-full.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
+There is another way to disable logging that doesn't require modifying `easylogging++.h file`. This is done while compiling, define macro `_DISABLE_LOGS` and EasyLogging++ will be disabled.
 
 As an example, if you are using g++
 ```
@@ -407,7 +402,7 @@ To disable level specific log while compiling here are macros to define;
 * `_DISABLE_PERFORMANCE_LOGS`
 * `_DISABLE_VERBOSE_LOGS`
 
-As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++-full.h`, you may compile with following line;
+As an example if you wish to disable just debug and status logs while `_ENABLE_DEBUG_LOGS` and `_ENABLE_STATUS` is set to 1 in `easylogging++.h`, you may compile with following line;
 ```
 g++ main.cpp -o main-exec -D _DISABLE_DEBUG_LOGS -D _DISABLE_STATUS
 ```
@@ -460,7 +455,7 @@ You can customize format of logging. Following format specifiers are currently s
 *Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
 
 #### Log Format By Log Level
-Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++-full.h` configuration section;
+Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++.h` configuration section;
 * `DEFAULT_LOG_FORMAT` Sets default format and is used by other levels unless explicitely set
 * `DEBUG_LOG_FORMAT` Sets format used for `DEBUG` logs
 * `INFO_LOG_FORMAT` Sets format used for `INFO` logs
@@ -480,31 +475,5 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `USE_CUSTOM_LOCATION` Flag to set whether log file is saved to custom location defined in `CUSTOM_LOG_FILE_LOCATION`
 * `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
-
-#### Whats The Difference Between `easylogging++.h` and `easylogging++-full.h`
-In simple words, `easylogging++.h` is a header that needs to be linked to `easylogging++.cc` in order to compile where as `easylogging++-full.h` is a complete EasyLogging++ with everything in one header.
-
-Historically, we only supported single header in order to make logs easy but since more features are being added as time goes by, we have provided support for both linked headers and full headers. It's upto developer to choose which ever they prefer.
-
-###### What Is Recommended
-If you are developing a small application and want a quick logging support with minimum number of extra files, you can use `easylogging++-full.h` where as if your application is on relatively larger scale, we would recommend you use `easylogging++.h` and link the source file to it.
-
-###### Examples
-We have added samples for both [linked](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-linked) and [full](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/samples-full/samples-full) compile using g++ compiler. Both files are exactly the same except for `compile.sh` (line 33 and 35) where one is linked to source file and other one is not.
-
-A typical compilation using g++ and linked-type would look something like:
-
-`g++ my_prog.cpp easylogging++.cc -o my_prog_exe`
-
-assuming `my_prog.cpp` has included and initialized `easylogging++.h`
-
-where as compilation using g++ and full-type would look somehting like:
-
-`g++ my_prog.cpp -o my_prog_exec`
-
-###### Would Full Version Be Supported In Future?
-Short answer: Yes;
-
-Long answer: Although it is a little bit of more effort to support full as well as linked versions but it gives developers a wider choice and decide whats best for them. Both types will always be syncronized in terms of features but obviously you cannot use both at the same time (since both share same namespaces)
 
 Version: 5.0+

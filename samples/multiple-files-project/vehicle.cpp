@@ -1,6 +1,6 @@
 #include "vehicle.h"
 
-#include "../../easylogging++-full.h"
+#include "../easylogging++.h"
 
 Vehicle::Vehicle(const std::string& manufacturer,
                  const std::string& model,
@@ -9,6 +9,6 @@ Vehicle::Vehicle(const std::string& manufacturer,
                     model(model),
                     year(year) {
    std::cout << "VEHICLE: ----> Initialized? " << ::easyloggingpp::internal::loggerInitialized << "\n";
-   INFO("Logged from vehicle");
+   LINFO << "Logged from vehicle";
    std::cout << "VEHICLE: ----> Initialized? " << ::easyloggingpp::internal::loggerInitialized << "\n";
 }

@@ -3,31 +3,22 @@
 test/tests.bin
 
 easyloggingpp.zip
-easyloggingpp-full.zip
-easyloggingpp-linked.zip
 
 releases/*
 
-samples/samples-linked/logs/myeasylog.log
-
-samples/samples-full/logs/myeasylog.log
+samples/logs/myeasylog.log
 
 samples/multiple-files-project/logs/myeasylog.log
 
 samples/multiple-files-project/bin/*
 
-samples/samples-linked/bin/*
+samples/bin/*
 
-samples/samples-full/bin/*
+samples/qt-sample/*.bin
+samples/qt-sample/logs/*
+samples/qt-sample/*.o
+samples/qt-sample/moc_*
+samples/qt-sample/Makefile
 
-samples/samples-full/qt-sample/*.bin
-samples/samples-full/qt-sample/logs/*
-samples/samples-full/qt-sample/*.o
-samples/samples-full/qt-sample/moc_*
-samples/samples-full/qt-sample/Makefile
-
-samples/samples-linked/qt-sample/*.bin
-samples/samples-linked/qt-sample/logs/*
-samples/samples-linked/qt-sample/*.o
-samples/samples-linked/qt-sample/moc_*
-samples/samples-linked/qt-sample/Makefile
+samples/qt-sample-build-Desktop-Debug/*
+samples/qt-sample/qt-sample.pro.user

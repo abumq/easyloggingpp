@@ -1,7 +1,7 @@
 <?php
 include_once "../../format.php";
 global $webAddr;
-$currentVersion = "v5.06";
+$currentVersion = "v6.00";
 ?>
 <script language='javascript'>
 	document.title='EasyLogging++ - C++ Tools';
@@ -29,20 +29,8 @@ print '
 <hr>
 <br/>
 <img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '.zip">Download Latest Version (Both Full and Linked)</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '.zip">Download Latest Version</a> 
 
-<br/>
-<img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '-full.zip">Download Latest Version (Full Only)</a> 
-
-<br/>
-<img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp_' . $currentVersion . '-linked.zip">Download Latest Version (Linked Only)</a> 
-<br/>
-<hr>
-<br/>
-<img src="'. $webAddr .'/images/documentation.jpg" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#whats-the-difference-between-easyloggingh-and-easylogging-fullh">Help Me Decide</a> 
 ';
 include_once "../../foot.php";
 ?>
