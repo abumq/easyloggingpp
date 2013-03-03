@@ -1,11 +1,11 @@
 #include "basic_tests.h"
 #include <cstring>
-#include "../easylogging++-full.h"
+#include "../easylogging++.h"
 #include "tests_core.h"
 void basicTests(int argc, char** argv) {
   ALI
   
-  INFO("Running basic tests...");
+  LINFO << "Running basic tests...";
 
   // FIXME: for some weird reason, comparing like so causes valgrind to be sad  
   assert(strcmp(::easyloggingpp::internal::user.c_str(), argv[1]) == 0);
@@ -13,7 +13,7 @@ void basicTests(int argc, char** argv) {
 
   ALI
   // Number of logs enabled
-  assert(::easyloggingpp::internal::registeredLogTypes.size() == 10);
+  assert(::easyloggingpp::internal::registeredLogTypes.size() == 8);
   ALI
   // Application arguments for verbose logs
   char* args[2];

@@ -5,7 +5,7 @@
  * @author mkhan3189
  */
 
-#include "../easylogging++-full.h"
+#include "../easylogging++.h"
 #include "tests_core.h"
 #include "basic_tests.h"
 
@@ -13,10 +13,10 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
   ANLI
-  INFO("Starting tests...");
+  LINFO << "Starting tests...";
   basicTests(argc, argv);
 
-  INFO("All tests were passed!");
+  LINFO << "All tests were passed!";
   _END_EASYLOGGINGPP
   ANLI
 }
