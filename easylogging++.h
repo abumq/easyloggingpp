@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
-// easylogging++-full.h - Core of EasyLogging++                          //
+// easylogging++.h - Core of EasyLogging++                               //
 //                                                                       //
 //   EasyLogging++ v6.00                                                 //
 //   Cross platform logging made easy for C++ applications               //
