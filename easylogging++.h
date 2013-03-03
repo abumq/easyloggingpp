@@ -166,7 +166,7 @@
 #if _WINDOWS
 #   include <direct.h> // digital mars compiler
 #   include <windows.h>
-#   endif // _WINDOWS
+#endif // _WINDOWS
 #if _LINUX || _MAC
 #   include <sys/stat.h>
 #   include <sys/time.h>
