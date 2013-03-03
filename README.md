@@ -10,14 +10,14 @@ _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after
 ```
 EasyLogging++ comes with following levels of logging with complete control over each of the following:
 ```
-  LDEBUG << ...;
-  LINFO << ...;
-  LWARN << ...;
-  LERROR << ...;
-  LFATAL << ...;
-  LPERFORMANCE << ...;
-  LVERBOSE(verbose-level) << ...;
-  LQA << ...;
+  LDEBUG << "...";
+  LINFO << "...";
+  LWARN << "...";
+  LERROR << "...";
+  LFATAL << "...";
+  LPERFORMANCE << "...";
+  LVERBOSE(verbose-level) << "...";
+  LQA << "...";
 ```
 
 *NOTE: To support old way of logging, i.e, `INFO(..)` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
@@ -37,7 +37,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
  * [Multi-threaded application support](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#support-for-multi-threaded-applications)
- * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/easylogging%2B%2B.h#L47), which means that you can turn different parts of logging on or off depending on the requirements
+ * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging), which means that you can turn different parts of logging on or off depending on the requirements
 
 ## Getting Started
 In order to start logging follow these three steps:
