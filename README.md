@@ -347,7 +347,7 @@ Make sure you compile your program (that uses threads) using `-std=c++0x -pthrea
 Following are list of thread-safe functionalities:
  * Normal logging using `LINFO << ...`, `LWARNING << ...` etc
  * Conditional logging using `LINFO_IF(cond) << ...`, `LWARNING_IF(cond) << ...` etc
- * Interval logging using `LINFO_EVERY_N(cond) << ...`, `LWARNING_EVERY_N(cond) << ...` etc
+ * Interval logging using `LINFO_EVERY_N(n) << ...`, `LWARNING_EVERY_N(n) << ...` etc
  * Verbose logging using `LVERBOSE(verbose-level) << ...` (incl. conditional and interval verbose logging)
  * Helper functions
  * Releasing memory
