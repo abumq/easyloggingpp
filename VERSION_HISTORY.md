@@ -6,7 +6,7 @@ History was not kept before version 2.1.
 #### 6.0
  * 6.00:
     - Changed the way of logging i.e, no parentheses required anymore (issue #26)
-    - Naming conflicts for debug logs (issue #
+    - Naming conflicts for debug logs (issue #25)
     - Old names still supported with `_SUPPORT)_LEGACY_LOG_NAMES` macro (issue #25)
     - Removed STATUS and HINT log levels (issue #23)
     - Now supports full version only - linked version is ditched away (issue #24)
