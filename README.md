@@ -37,7 +37,7 @@ Answering this question can be sometimes hard but here are few reasons why you w
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
  * [Multi-threaded application support](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#support-for-multi-threaded-applications)
- * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP#enabledisable-logging), which means that you can turn different parts of logging on or off depending on the requirements
+ * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging), which means that you can turn different parts of logging on or off depending on the requirements
 
 ## Getting Started
 In order to start logging follow these three steps:
