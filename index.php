@@ -28,7 +28,7 @@ print '
 
 <br/>
 <img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/releases/easyloggingpp.zip">Download Latest Version</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">Download Latest Version</a> 
 
 ';
 include_once "../../foot.php";
