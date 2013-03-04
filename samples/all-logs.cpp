@@ -47,5 +47,7 @@ int main(int argc, char** argv) {
   LVERBOSE_IF(true, 8) << "verbose 8"; 
   LVERBOSE_IF(true, 9) << "verbose 9";
 
+  LVERBOSE_EVERY_N(1, 2) << "verbose-2 every 1";
+
   _END_EASYLOGGINGPP          // Release all memory - Needed only once in your application
 }

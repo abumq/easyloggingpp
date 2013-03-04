@@ -10,6 +10,8 @@ History was not kept before version 2.1.
     - Old names still supported with `_SUPPORT)_LEGACY_LOG_NAMES` macro (issue #25)
     - Removed STATUS and HINT log levels (issue #23)
     - Now supports full version only - linked version is ditched away (issue #24)
+ * 6.01: Fixes from 6.00 changes
+ * 6.02: Format update to simplify readibility
 
 #### 5.0
  * 5.00:
