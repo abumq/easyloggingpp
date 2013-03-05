@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
 //                                                                       //
-//   EasyLogging++ v6.04                                                 //
+//   EasyLogging++ v6.10                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -328,23 +328,24 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 // once and only once in main.cpp file after all the includes in order to initialize
 // extern symbols.
 // Candidates for extern symbols are carefully chosen, the rest are static symbols.
-#define _INITIALIZE_EASYLOGGINGPP namespace easyloggingpp {               \
-    namespace internal {                                                  \
-    bool loggerInitialized = false;                                       \
-    std::stringstream *logStream = NULL;                                  \
-    std::ofstream *logFile = NULL;                                        \
-    std::stringstream tempStream;                                         \
-    std::stringstream tempStream2;                                        \
-    std::vector< easyloggingpp::internal::LogType > registeredLogTypes;   \
-    easyloggingpp::internal::Counter tempCounter;                         \
-    std::vector< easyloggingpp::internal::Counter > registeredCounters;   \
-    bool fileNotOpenedErrorDisplayed = false;                             \
-    std::string user = "";                                                \
-    std::string host = "";                                                \
-    _VERBOSE_SPECIFIC_INITIALIZATIONS                                     \
-    _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS                           \
-    _MUTEX_SPECIFIC_INIT                                                  \
-}                                                                         \
+#define _INITIALIZE_EASYLOGGINGPP                                             \
+namespace easyloggingpp {                                                     \
+    namespace internal {                                                      \
+        bool loggerInitialized = false;                                       \
+        std::stringstream *logStream = NULL;                                  \
+        std::ofstream *logFile = NULL;                                        \
+        std::stringstream tempStream;                                         \
+        std::stringstream tempStream2;                                        \
+        std::vector< easyloggingpp::internal::LogType > registeredLogTypes;   \
+        easyloggingpp::internal::Counter tempCounter;                         \
+        std::vector< easyloggingpp::internal::Counter > registeredCounters;   \
+        bool fileNotOpenedErrorDisplayed = false;                             \
+        std::string user = "";                                                \
+        std::string host = "";                                                \
+        _VERBOSE_SPECIFIC_INITIALIZATIONS                                     \
+        _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS                           \
+       _MUTEX_SPECIFIC_INIT                                                   \
+    }                                                                         \
 }
 
 // When using log levels that require program arguments, for example VERBOSE logs require
@@ -357,7 +358,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP easyloggingpp::internal::releaseMemory();
 
 namespace version {
-static const char* versionNumber = "6.04";
+static const char* versionNumber = "6.10";
 }
 
 namespace internal {
@@ -685,6 +686,8 @@ static inline void releaseMemory(void) {
             delete easyloggingpp::internal::logStream;
             easyloggingpp::internal::logStream = NULL;
         }
+        easyloggingpp::internal::registeredLogTypes.clear();
+        easyloggingpp::internal::registeredCounters.clear();
         easyloggingpp::internal::loggerInitialized = false;
     }
     _UNLOCK_MUTEX
@@ -881,8 +884,9 @@ static bool validateCounter(const char* func, const char* filename, unsigned lon
     (void)func;
     easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
     bool result = false;
-    easyloggingpp::internal::CounterIter counter(std::find(easyloggingpp::internal::registeredCounters.begin(), easyloggingpp::internal::registeredCounters.end(),
-                          easyloggingpp::internal::tempCounter));
+    easyloggingpp::internal::CounterIter counter(
+        std::find(easyloggingpp::internal::registeredCounters.begin(),
+            easyloggingpp::internal::registeredCounters.end(), easyloggingpp::internal::tempCounter));
     if (counter == easyloggingpp::internal::registeredCounters.end()) {
         easyloggingpp::internal::registerCounter(easyloggingpp::internal::tempCounter);
         counter = easyloggingpp::internal::registeredCounters.end() - 1;
@@ -1240,10 +1244,11 @@ private:
 #define _START_EASYLOGGINGPP(x, y)
 #define _END_EASYLOGGINGPP
 // Helper functions
-#include <string>
+#include <string>  // For readLog()
+#include <sstream> // For LogWrapper
 namespace easyloggingpp {
 namespace version {
-static const char* versionNumber = "6.04";
+static const char* versionNumber = "6.10";
 }
 namespace helper {
 static std::string readLog() {

@@ -1,9 +1,9 @@
-VERSION HISTORY - EasyLogging++
-===============================
+CHANGE LOG - EasyLogging++
+==========================
 
-History was not kept before version 2.1.
+Change was not kept before version 2.1.
 
-#### 6.0
+#### 6.xx
  * 6.00:
     - Changed the way of logging i.e, no parentheses required anymore (issue #26)
     - Naming conflicts for debug logs (issue #25)
@@ -14,6 +14,9 @@ History was not kept before version 2.1.
  * 6.02: Format update to simplify readibility
  * 6.03: Fixed memory leak from END_MAIN(..) while using performance tracker
  * 6.04: Failure fix when performance log is disabled
+ * 6.10:
+    - Revision 1.2 for unit tests
+    - Fix some issues found by rev1.2 tests
 
 #### 5.0
  * 5.00:
@@ -28,7 +31,7 @@ History was not kept before version 2.1.
  * 5.05: Use QMutex when available
  * 5.06: Macro rename for mutex evaluation
 
-#### 4.0
+#### 4.xx
  * 4.00:
     - Major improvement for multiple files project
     - Introduced `INITIALIZE_EASYLOGGINGPP`
