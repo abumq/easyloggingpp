@@ -10,9 +10,8 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-FUNC(int, main, (void))
-  for (long i = 1; i <= 10000000; i++) {
+MAIN(int argc, char** argv)
+  for (int i = 1; i <= 10000; ++i) {
     LINFO << "This is a info test";
   }
-  _END_EASYLOGGINGPP
-END_FUNC(0)
+END_MAIN(0)

@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
 //                                                                       //
-//   EasyLogging++ v6.02                                                 //
+//   EasyLogging++ v6.03                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -357,7 +357,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP easyloggingpp::internal::releaseMemory();
 
 namespace version {
-static const char* versionNumber = "6.02";
+static const char* versionNumber = "6.03";
 }
 
 namespace internal {
@@ -1061,7 +1061,7 @@ static std::string formatSeconds(double secs) {
 #    define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
 #    define END_FUNC(return_value) RETURN(return_value) }
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(return_value) _END_EASYLOGGINGPP END_FUNC(return_value)
+#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; _END_EASYLOGGINGPP; return_value; }
 #    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
 #else
 #    define INTERNAL_PERFORMANCE_LOG(x, y, z, a)
@@ -1243,7 +1243,7 @@ private:
 #include <string>
 namespace easyloggingpp {
 namespace version {
-static const char* versionNumber = "6.02";
+static const char* versionNumber = "6.03";
 }
 namespace helper {
 static std::string readLog() {
