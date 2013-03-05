@@ -1061,7 +1061,7 @@ static std::string formatSeconds(double secs) {
 #    define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
 #    define END_FUNC(return_value) RETURN(return_value) }
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; _END_EASYLOGGINGPP; return_value; }
+#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; _END_EASYLOGGINGPP; return return_value; }
 #    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
 #else
 #    define INTERNAL_PERFORMANCE_LOG(x, y, z, a)
