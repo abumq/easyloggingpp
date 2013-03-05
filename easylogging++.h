@@ -2,7 +2,7 @@
 //                                                                       //
 // easylogging++.h - Core of EasyLogging++                               //
 //                                                                       //
-//   EasyLogging++ v6.03                                                 //
+//   EasyLogging++ v6.04                                                 //
 //   Cross platform logging made easy for C++ applications               //
 //   Author Majid Khan <mkhan3189@gmail.com>                             //
 //   http://www.icplusplus.com                                           //
@@ -357,7 +357,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _END_EASYLOGGINGPP easyloggingpp::internal::releaseMemory();
 
 namespace version {
-static const char* versionNumber = "6.03";
+static const char* versionNumber = "6.04";
 }
 
 namespace internal {
@@ -1066,7 +1066,7 @@ static std::string formatSeconds(double secs) {
 #else
 #    define INTERNAL_PERFORMANCE_LOG(x, y, z, a)
 #    define INTERNAL_CONDITIONAL_PERFORMANCE_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_PERFORMANCE_LOG(x, y, z, a)
+#    define INTERNAL_INTERVAL_PERFORMANCE_LOG(x, y, z, a, b)
 #       ifdef _SUPPORT_LEGACY_LOG_NAMES
 #           define PERFORMANCE(x)
 #           define PERFORMANCE_IF(x, y)
@@ -1075,10 +1075,10 @@ static std::string formatSeconds(double secs) {
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
 #    define END_SUB }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
-#    define END_FUNC }
+#    define END_FUNC(x) return x; }
 #    define RETURN(expr) return expr;
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN _END_EASYLOGGINGPP END_FUNC
+#    define END_MAIN(x) _END_EASYLOGGINGPP return x; }
 #    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
 #endif // _PERFORMANCE_LOG
 
@@ -1243,7 +1243,7 @@ private:
 #include <string>
 namespace easyloggingpp {
 namespace version {
-static const char* versionNumber = "6.03";
+static const char* versionNumber = "6.04";
 }
 namespace helper {
 static std::string readLog() {

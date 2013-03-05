@@ -13,6 +13,7 @@ History was not kept before version 2.1.
  * 6.01: Fixes from 6.00 changes
  * 6.02: Format update to simplify readibility
  * 6.03: Fixed memory leak from END_MAIN(..) while using performance tracker
+ * 6.04: Failure fix when performance log is disabled
 
 #### 5.0
  * 5.00:
