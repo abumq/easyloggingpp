@@ -26,6 +26,9 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
   t.wait();
  }
 
- _END_EASYLOGGINGPP
+SDEBUG << "This is security logger for debug";
+
+BINFO << "This is a business logger";
+
  RETURN(0);
 END_FUNC(0)

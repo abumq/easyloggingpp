@@ -408,14 +408,14 @@ namespace configurations {
 //
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
-const std::string    DEFAULT_LOG_FORMAT       =    "[%level] [%datetime] %log\n";
-const std::string    DEBUG_LOG_FORMAT         =    "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
+const std::string    DEFAULT_LOG_FORMAT       =    "%type [%level] [%datetime] %log\n";
+const std::string    DEBUG_LOG_FORMAT         =    "%type [%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
 const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
 const std::string    ERROR_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
 const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
 const std::string    PERFORMANCE_LOG_FORMAT   =    DEFAULT_LOG_FORMAT;
-const std::string    VERBOSE_LOG_FORMAT       =    "[%level-%vlevel] [%datetime] %log\n";
+const std::string    VERBOSE_LOG_FORMAT       =    "%type [%level-%vlevel] [%datetime] %log\n";
 const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
 
 // Part 2 is miscellaneous configurations
@@ -773,6 +773,59 @@ protected:
     std::vector<Class*> list_;
 }; // class Register
 
+class LogType {
+public:
+    typedef std::vector<LogType*>::const_iterator Iterator;
+
+    explicit LogType(const std::string& name_) :
+        name_(name_),
+        logName_(logName_)
+    {
+    }
+
+    explicit LogType(const std::string& name_,
+                      const std::string& logName_) :
+        name_(name_),
+        logName_(logName_)
+    {
+    }
+
+    inline std::string name(void) const {
+        return name_;
+    }
+
+    inline std::string logName(void) const {
+        return logName_;
+    }
+
+    class Predicate {
+    public:
+        explicit Predicate(const std::string& name_) :
+            name_(name_)
+        {
+        }
+        bool operator()(const LogType* logType_) {
+            return ((logType_ != NULL) &&
+                    (logType_->name_ == name_));
+        }
+    private:
+        std::string name_;
+    };
+private:
+    std::string name_;
+    std::string logName_;
+}; // class LogType
+
+class RegisteredLogTypes : public Register<LogType, LogType::Iterator, LogType::Predicate> {
+public:
+    explicit RegisteredLogTypes(void)
+    {
+        registerNew(new LogType("TrivialLogger", "LOG"));
+        registerNew(new LogType("BusinessLogger", "BUSINESS"));
+        registerNew(new LogType("SecurityLogger", "SECURITY"));
+    }
+}; // class RegisteredLogTypes
+
 class SeverityLevel {
 public:
     typedef std::vector< SeverityLevel* >::const_iterator Iterator;
@@ -812,7 +865,9 @@ public:
     class Predicate {
     public:
         explicit Predicate(const std::string& name_) :
-            name_(name_) {}
+            name_(name_)
+        {
+        }
         inline bool operator()(const SeverityLevel* level_) {
             return *level_ == name_;
         }
@@ -830,7 +885,8 @@ private:
 
 class RegisteredSeverityLevels : public Register<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
 public:
-    explicit RegisteredSeverityLevels(void) {
+    explicit RegisteredSeverityLevels(void)
+    {
         registerNew(
                     new SeverityLevel("DEBUG", DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
@@ -858,7 +914,10 @@ public:
     explicit LogCounter(void) :
         file_(""),
         line_(0),
-        position_(1) {}
+        position_(1)
+    {
+
+    }
 
     explicit LogCounter(const char* file_,
                         unsigned long int line_) :
@@ -895,7 +954,8 @@ public:
     public:
         explicit Predicate(const char* file_, unsigned long int line_)
             : file_(file_),
-              line_(line_) {
+              line_(line_)
+        {
         }
         inline bool operator()(const LogCounter* counter_) {
             return ((counter_ != NULL) &&
@@ -949,9 +1009,10 @@ public:
         kHost_(OSUtilities::currentHost()),
         initialized_(true),
         stream_(new std::stringstream()),
+        logFile_(NULL),
+        registeredLogTypes_(new RegisteredLogTypes()),
         registeredSeverityLevels_(new RegisteredSeverityLevels()),
-        registeredLogCounters_(new RegisteredCounters()),
-        logFile_(NULL)
+        registeredLogCounters_(new RegisteredCounters())
     {
         if (SAVE_TO_FILE) {
             fileGood_ = USE_CUSTOM_LOCATION ?
@@ -987,6 +1048,10 @@ public:
         if (logFile_) {
             delete logFile_;
             logFile_ = NULL;
+        }
+        if (registeredLogTypes_) {
+            delete registeredLogTypes_;
+            registeredLogTypes_ = NULL;
         }
         if (registeredSeverityLevels_) {
             delete registeredSeverityLevels_;
@@ -1044,21 +1109,22 @@ public:
         setArgs(argc, args);
     }
 
-    inline void buildLine(const std::string& severityLevel_, const char* func_,
+    inline void buildLine(const std::string& logType_, const std::string& severityLevel_, const char* func_,
                           const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
+        LogType* type_ = registeredLogTypes_->get(logType_);
         SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
         currLogLine_ = level_->format();
         std::string formatSpecifier_ = "";
         std::string value_ = "";
         // DateTime
         unsigned int dateTimeFormat_ = 0;
-        if (level_->format().find_first_of("%datetime") != std::string::npos) {
+        if (level_->format().find("%datetime") != std::string::npos) {
             dateTimeFormat_ = DateUtilities::kDateTime;
             formatSpecifier_ = "%datetime";
-        } else if (level_->format().find_first_of("%date") != std::string::npos) {
+        } else if (level_->format().find("%date") != std::string::npos) {
             dateTimeFormat_ = DateUtilities::kDateOnly;
             formatSpecifier_ = "%date";
-        } else if (level_->format().find_first_of("%time") != std::string::npos) {
+        } else if (level_->format().find("%time") != std::string::npos) {
             dateTimeFormat_ = DateUtilities::kTimeOnly;
             formatSpecifier_ = "%time";
         } else {
@@ -1068,26 +1134,31 @@ public:
             value_ = DateUtilities::getDateTime (dateTimeFormat_);
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
-        if (level_->format().find_first_of("%loc") != std::string::npos) {
+        if (type_ && level_->format().find("%type") != std::string::npos) {
+            value_ = type_->logName();
+            formatSpecifier_ = "%type";
+            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+        }
+        if (level_->format().find("%loc") != std::string::npos) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
             formatSpecifier_ = "%loc";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
-        if (level_->format().find_first_of("%func") != std::string::npos) {
+        if (level_->format().find("%func") != std::string::npos) {
             value_ = std::string(func_);
             formatSpecifier_ = "%func";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
-        if (level_->format().find_first_of("%user") != std::string::npos) {
+        if (level_->format().find("%user") != std::string::npos) {
             formatSpecifier_ = "%user";
             LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
-        if (level_->format().find_first_of("%host") != std::string::npos) {
+        if (level_->format().find("%host") != std::string::npos) {
             formatSpecifier_ = "%host";
             LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
-        if (level_->format().find_first_of("%log") != std::string::npos) {
+        if (level_->format().find("%log") != std::string::npos) {
             formatSpecifier_ = "%log";
             LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
         }
@@ -1154,6 +1225,7 @@ private:
     std::stringstream tempStream_;
     std::stringstream* stream_;
     std::ofstream* logFile_;
+    RegisteredLogTypes* registeredLogTypes_;
     RegisteredSeverityLevels* registeredSeverityLevels_;
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
@@ -1166,14 +1238,14 @@ private:
 #define _QUALIFIED_LOGGER ::easyloggingpp::internal::_LOGGER
 #define _STREAM_PTR _LOGGER.stream()
 #define _STREAM *_STREAM_PTR
-#define _WRITE_LOG(level_, func_, file_, line_)                                     \
+#define _WRITE_LOG(type_, level_, func_, file_, line_)                                     \
     if (logAspect_ == kNormal) {                                                    \
-    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
 } else if (logAspect_ == kConditional && condition_) {                              \
-    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
 } else if (logAspect_ == kInterval) {                                               \
     if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {           \
-    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
 }                                                                                   \
 }
 
@@ -1183,21 +1255,14 @@ extern easyloggingpp::internal::Logger _LOGGER;
 
 class LogWriter {
 public:
-    enum kSeverityLevel { kInfo,
-                          kWarning,
-                          kError,
-                          kDebug,
-                          kFatal,
-                          kPerformance,
-                          kQa,
-                          kVerbose };
-
     enum kLogAspect { kNormal,
                       kConditional,
-                      kInterval };
+                      kInterval
+                    };
 
     explicit LogWriter(kLogAspect logAspect_,
-                       kSeverityLevel severityLevel_,
+                       const std::string& logType_,
+                       const std::string& severityLevel_,
                        const char* func_,
                        const char* file_,
                        const unsigned long int line_,
@@ -1205,6 +1270,7 @@ public:
                        unsigned int verboseLevel_ = 0,
                        int counter_ = 0) :
         logAspect_(logAspect_),
+        logType_(logType_),
         severityLevel_(severityLevel_),
         func_(func_),
         file_(file_),
@@ -1235,68 +1301,59 @@ public:
     inline std::ostream& operator<<(const void* log_) { _LOG_TO_STREAM }
     inline std::ostream& operator<<(long double log_) { _LOG_TO_STREAM }
 private:
+    inline void writeLog(void) const {
+        if (severityLevel_ == "DEBUG") {
+#if (_DEBUG_LOG)
+            _WRITE_LOG(logType_, "DEBUG", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "WARNING") {
+#if (_WARNING_LOG)
+            _WRITE_LOG(logType_, "WARNING", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "ERROR") {
+#if (_ERROR_LOG)
+            _WRITE_LOG(logType_, "ERROR", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "INFO") {
+#if (_INFO_LOG)
+            _WRITE_LOG(logType_, "INFO", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "FATAL") {
+#if (_FATAL_LOG)
+            _WRITE_LOG(logType_, "FATAL", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "PERFORMANCE") {
+#if (_PERFORMANCE_LOG)
+            _WRITE_LOG(logType_, "PERFORMANCE", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "QA") {
+#if (_QA_LOG)
+            _WRITE_LOG(logType_, "QA", func_, file_, line_);
+#endif
+        } else if (severityLevel_ == "VERBOSE") {
+#if (_VERBOSE_LOG)
+            if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
+                _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kConditional && condition_ && _LOGGER.appVerbose() >= verboseLevel_) {
+                _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kInterval && _LOGGER.appVerbose() >= verboseLevel_) {
+                if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
+                    _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+                }
+            }
+#endif
+        }
+        _LOGGER.clear();
+    }
     unsigned int logAspect_;
-    unsigned int severityLevel_;
+    std::string logType_;
+    std::string severityLevel_;
     const char* func_;
     const char* file_;
     const unsigned long int line_;
     bool condition_;
     unsigned int verboseLevel_;
     int counter_;
-
-    inline void writeLog(void) {
-        switch (severityLevel_) {
-        case kDebug:
-#if (_DEBUG_LOG)
-            _WRITE_LOG("DEBUG", func_, file_, line_);
-#endif
-            break;
-        case kWarning:
-#if (_WARNING_LOG)
-            _WRITE_LOG("WARNING", func_, file_, line_);
-#endif
-            break;
-        case kError:
-#if (_ERROR_LOG)
-            _WRITE_LOG("ERROR", func_, file_, line_);
-#endif
-            break;
-        case kInfo:
-#if (_INFO_LOG)
-            _WRITE_LOG("INFO", func_, file_, line_);
-#endif
-            break;
-        case kFatal:
-#if (_FATAL_LOG)
-            _WRITE_LOG("FATAL", func_, file_, line_);
-#endif
-            break;
-        case kPerformance:
-#if (_PERFORMANCE_LOG)
-            _WRITE_LOG("PERFORMANCE", func_, file_, line_);
-#endif
-            break;
-        case kQa:
-#if (_QA_LOG)
-            _WRITE_LOG("QA", func_, file_, line_);
-#endif
-            break;
-        case kVerbose:
-#if (_VERBOSE_LOG)
-            if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
-            } else if (logAspect_ == kConditional && condition_ && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
-            } else if (logAspect_ == kInterval && _LOGGER.appVerbose() >= verboseLevel_) {
-                if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
-                    _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
-                }
-            }
-#endif
-            break;
-        }
-        _LOGGER.clear();
-    }
 }; // class LogWriter
 
 } // namespace internal
@@ -1371,55 +1428,159 @@ class MyEasyLog {
 //
 // Normal logs
 #define LINFO LogWriter(LogWriter::kNormal,           \
-    LogWriter::kInfo, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "INFO", __func__, __FILE__, __LINE__)
 #define LWARNING LogWriter(LogWriter::kNormal,        \
-    LogWriter::kWarning, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "WARNING", __func__, __FILE__, __LINE__)
 #define LDEBUG LogWriter(LogWriter::kNormal,          \
-    LogWriter::kDebug, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "DEBUG", __func__, __FILE__, __LINE__)
 #define LERROR LogWriter(LogWriter::kNormal,          \
-    LogWriter::kError, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "ERROR", __func__, __FILE__, __LINE__)
 #define LFATAL LogWriter(LogWriter::kNormal,          \
-    LogWriter::kFatal, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "FATAL", __func__, __FILE__, __LINE__)
 #define LPERFORMANCE LogWriter(LogWriter::kNormal,    \
-    LogWriter::kPerformance, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "PERFORMANCE", __func__, __FILE__, __LINE__)
 #define LQA LogWriter(LogWriter::kNormal,             \
-    LogWriter::kQa, __func__, __FILE__, __LINE__)
+    "TrivialLogger", "QA", __func__, __FILE__, __LINE__)
 #define LVERBOSE(level) LogWriter(LogWriter::kNormal, \
-    LogWriter::kVerbose, __func__, __FILE__, __LINE__, true, level)
+    "TrivialLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
 #define LINFO_IF(condition) LogWriter(LogWriter::kConditional,           \
-    LogWriter::kInfo, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "INFO", __func__, __FILE__, __LINE__, condition)
 #define LWARNING_IF(condition) LogWriter(LogWriter::kConditional,        \
-    LogWriter::kWarning, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "WARNING", __func__, __FILE__, __LINE__, condition)
 #define LDEBUG_IF(condition) LogWriter(LogWriter::kConditional,          \
-    LogWriter::kDebug, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "DEBUG", __func__, __FILE__, __LINE__, condition)
 #define LERROR_IF(condition) LogWriter(LogWriter::kConditional,          \
-    LogWriter::kError, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "ERROR", __func__, __FILE__, __LINE__, condition)
 #define LFATAL_IF(condition) LogWriter(LogWriter::kConditional,          \
-    LogWriter::kFatal, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "FATAL", __func__, __FILE__, __LINE__, condition)
 #define LPERFORMANCE_IF(condition) LogWriter(LogWriter::kConditional,    \
-    LogWriter::kPerformance, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, condition)
 #define LQA_IF(condition) LogWriter(LogWriter::kConditional,             \
-    LogWriter::kQa, __func__, __FILE__, __LINE__, condition)
+    "TrivialLogger", "QA", __func__, __FILE__, __LINE__, condition)
 #define LVERBOSE_IF(condition, level) LogWriter(LogWriter::kConditional, \
-    LogWriter::kVerbose, __func__, __FILE__, __LINE__, condition, level)
+    "TrivialLogger", "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
 // Interval logs
 #define LINFO_EVERY_N(n) LogWriter(LogWriter::kInterval,                  \
-    LogWriter::kInfo, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "INFO", __func__, __FILE__, __LINE__, true, 0, n)
 #define LWARNING_EVERY_N(n) LogWriter(LogWriter::kInterval,               \
-    LogWriter::kWarning, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "WARNING", __func__, __FILE__, __LINE__, true, 0, n)
 #define LDEBUG_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
-    LogWriter::kDebug, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "DEBUG", __func__, __FILE__, __LINE__, true, 0, n)
 #define LERROR_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
-    LogWriter::kError, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "ERROR", __func__, __FILE__, __LINE__, true, 0, n)
 #define LFATAL_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
-    LogWriter::kFatal, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "FATAL", __func__, __FILE__, __LINE__, true, 0, n)
 #define LPERFORMANCE_EVERY_N(n) LogWriter(LogWriter::kInterval,           \
-    LogWriter::kPerformance, __func__, __FILE__, __LINE__, true, 0, n)
+    "TrivialLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, true, 0, n)
 #define LQA_EVERY_N(n) LogWriter(LogWriter::kInterval,                    \
-    LogWriter::kQa, __func__, __FILE__, __LINE__, condition, 0, n)
+    "TrivialLogger", "QA", __func__, __FILE__, __LINE__, condition, 0, n)
 #define LVERBOSE_EVERY_N(n, level) LogWriter(LogWriter::kInterval,        \
-    LogWriter::kVerbose, __func__, __FILE__, __LINE__, true, level, n)
+    "TrivialLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
+
+// Normal logs (Business)
+#define BINFO LogWriter(LogWriter::kNormal,           \
+    "BusinessLogger", "INFO", __func__, __FILE__, __LINE__)
+#define BWARNING LogWriter(LogWriter::kNormal,        \
+    "BusinessLogger", "WARNING", __func__, __FILE__, __LINE__)
+#define BDEBUG LogWriter(LogWriter::kNormal,          \
+    "BusinessLogger", "DEBUG", __func__, __FILE__, __LINE__)
+#define BERROR LogWriter(LogWriter::kNormal,          \
+    "BusinessLogger", "ERROR", __func__, __FILE__, __LINE__)
+#define BFATAL LogWriter(LogWriter::kNormal,          \
+    "BusinessLogger", "FATAL", __func__, __FILE__, __LINE__)
+#define BPERFORMANCE LogWriter(LogWriter::kNormal,    \
+    "BusinessLogger", "PERFORMANCE", __func__, __FILE__, __LINE__)
+#define BQA LogWriter(LogWriter::kNormal,             \
+    "BusinessLogger", "QA", __func__, __FILE__, __LINE__)
+#define BVERBOSE(level) LogWriter(LogWriter::kNormal, \
+    "BusinessLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level)
+// Conditional logs (Business)
+#define BINFO_IF(condition) LogWriter(LogWriter::kConditional,           \
+    "BusinessLogger", "INFO", __func__, __FILE__, __LINE__, condition)
+#define BWARNING_IF(condition) LogWriter(LogWriter::kConditional,        \
+    "BusinessLogger", "WARNING", __func__, __FILE__, __LINE__, condition)
+#define BDEBUG_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "BusinessLogger", "DEBUG", __func__, __FILE__, __LINE__, condition)
+#define BERROR_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "BusinessLogger", "ERROR", __func__, __FILE__, __LINE__, condition)
+#define BFATAL_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "BusinessLogger", "FATAL", __func__, __FILE__, __LINE__, condition)
+#define BPERFORMANCE_IF(condition) LogWriter(LogWriter::kConditional,    \
+    "BusinessLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, condition)
+#define BQA_IF(condition) LogWriter(LogWriter::kConditional,             \
+    "BusinessLogger", "QA", __func__, __FILE__, __LINE__, condition)
+#define BVERBOSE_IF(condition, level) LogWriter(LogWriter::kConditional, \
+    "BusinessLogger", "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
+// Interval logs (Business)
+#define BINFO_EVERY_N(n) LogWriter(LogWriter::kInterval,                  \
+    "BusinessLogger", "INFO", __func__, __FILE__, __LINE__, true, 0, n)
+#define BWARNING_EVERY_N(n) LogWriter(LogWriter::kInterval,               \
+    "BusinessLogger", "WARNING", __func__, __FILE__, __LINE__, true, 0, n)
+#define BDEBUG_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "BusinessLogger", "DEBUG", __func__, __FILE__, __LINE__, true, 0, n)
+#define BERROR_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "BusinessLogger", "ERROR", __func__, __FILE__, __LINE__, true, 0, n)
+#define BFATAL_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "BusinessLogger", "FATAL", __func__, __FILE__, __LINE__, true, 0, n)
+#define BPERFORMANCE_EVERY_N(n) LogWriter(LogWriter::kInterval,           \
+    "BusinessLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, true, 0, n)
+#define BQA_EVERY_N(n) LogWriter(LogWriter::kInterval,                    \
+    "BusinessLogger", "QA", __func__, __FILE__, __LINE__, condition, 0, n)
+#define BVERBOSE_EVERY_N(n, level) LogWriter(LogWriter::kInterval,        \
+    "BusinessLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
+
+// Normal logs (Security)
+#define SINFO LogWriter(LogWriter::kNormal,           \
+    "SecurityLogger", "INFO", __func__, __FILE__, __LINE__)
+#define SWARNING LogWriter(LogWriter::kNormal,        \
+    "SecurityLogger", "WARNING", __func__, __FILE__, __LINE__)
+#define SDEBUG LogWriter(LogWriter::kNormal,          \
+    "SecurityLogger", "DEBUG", __func__, __FILE__, __LINE__)
+#define SERROR LogWriter(LogWriter::kNormal,          \
+    "SecurityLogger", "ERROR", __func__, __FILE__, __LINE__)
+#define SFATAL LogWriter(LogWriter::kNormal,          \
+    "SecurityLogger","FATAL", __func__, __FILE__, __LINE__)
+#define SPERFORMANCE LogWriter(LogWriter::kNormal,    \
+    "SecurityLogger", "PERFORMANCE", __func__, __FILE__, __LINE__)
+#define SQA LogWriter(LogWriter::kNormal,             \
+    "SecurityLogger", "QA", __func__, __FILE__, __LINE__)
+#define SVERBOSE(level) LogWriter(LogWriter::kNormal, \
+    "SecurityLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level)
+// Conditional logs (Security)
+#define SINFO_IF(condition) LogWriter(LogWriter::kConditional,           \
+    "SecurityLogger", "INFO", __func__, __FILE__, __LINE__, condition)
+#define SWARNING_IF(condition) LogWriter(LogWriter::kConditional,        \
+    "SecurityLogger", "WARNING", __func__, __FILE__, __LINE__, condition)
+#define SDEBUG_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "SecurityLogger", "DEBUG", __func__, __FILE__, __LINE__, condition)
+#define SERROR_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "SecurityLogger", "ERROR", __func__, __FILE__, __LINE__, condition)
+#define SFATAL_IF(condition) LogWriter(LogWriter::kConditional,          \
+    "SecurityLogger", "FATAL", __func__, __FILE__, __LINE__, condition)
+#define SPERFORMANCE_IF(condition) LogWriter(LogWriter::kConditional,    \
+    "SecurityLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, condition)
+#define SQA_IF(condition) LogWriter(LogWriter::kConditional,             \
+    "SecurityLogger", "QA", __func__, __FILE__, __LINE__, condition)
+#define SVERBOSE_IF(condition, level) LogWriter(LogWriter::kConditional, \
+    "SecurityLogger", "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
+// Interval logs (Security)
+#define SINFO_EVERY_N(n) LogWriter(LogWriter::kInterval,                  \
+    "SecurityLogger", "INFO", __func__, __FILE__, __LINE__, true, 0, n)
+#define SWARNING_EVERY_N(n) LogWriter(LogWriter::kInterval,               \
+    "SecurityLogger", "WARNING", __func__, __FILE__, __LINE__, true, 0, n)
+#define SDEBUG_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "SecurityLogger", "DEBUG", __func__, __FILE__, __LINE__, true, 0, n)
+#define SERROR_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "SecurityLogger", "ERROR", __func__, __FILE__, __LINE__, true, 0, n)
+#define SFATAL_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    "SecurityLogger", "FATAL", __func__, __FILE__, __LINE__, true, 0, n)
+#define SPERFORMANCE_EVERY_N(n) LogWriter(LogWriter::kInterval,           \
+    "SecurityLogger", "PERFORMANCE", __func__, __FILE__, __LINE__, true, 0, n)
+#define SQA_EVERY_N(n) LogWriter(LogWriter::kInterval,                    \
+    "SecurityLogger", "QA", __func__, __FILE__, __LINE__, condition, 0, n)
+#define SVERBOSE_EVERY_N(n, level) LogWriter(LogWriter::kInterval,        \
+    "SecurityLogger", "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
 //
 // Legacy log macros
 //
