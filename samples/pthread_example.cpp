@@ -29,6 +29,11 @@ void *write(void* thrId){
   // this line because of interval 2)
   LWARNING_EVERY_N(2) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
 
+  for (int i = 1; i <= 10; ++i) {
+//    LVERBOSE_EVERY_N(2, 3) << "Verbose level 3 log every two times. This is at " << i << " from thread #" << threadId;
+     LINFO_EVERY_N(2) << "INFO Every 2nd Iteration, this is " << i << " from thread #" << threadId;
+  }
+
   // Following line will be logged once with every thread because of interval 1 
   LINFO_EVERY_N(1) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
 

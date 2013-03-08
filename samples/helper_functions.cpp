@@ -16,11 +16,10 @@ int main(void) {
   LINFO << "Logs should have already been cleaned up if _ALWAYS_CLEAN_LOGS was defined while compiling";
   LINFO << "If you see just four lines, please open compile.sh and comment out the line with '-D _ALWAYS_CLEAN_LOGS'";
   LINFO << "This will keep appending logs to log file and you can re-use 'helper_functions.cpp.bin' to read all the logs";
-  std::string allLogs = ::easyloggingpp::helper::readLog();
+  std::string allLogs = ::easyloggingpp::helper::MyEasyLog::readLog();
   std::cout << "\n\n";
   std::cout << "Following lines are fetched by ::easyloggingpp::helper::readLog()\n";
   std::cout << "-----------------------------------------------------------------\n";
   std::cout << allLogs;
-  _END_EASYLOGGINGPP
   return 0;
 }

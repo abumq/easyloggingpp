@@ -1,9 +1,1 @@
-[INFO] [05/03/2013 21:27:23.954] This standard log is written by thread #3
-[INFO] [05/03/2013 21:27:23.954] This interval log will be logged with every thread, this one is from thread #3
-[INFO] [05/03/2013 21:27:23.954] This standard log is written by thread #1
-[WARNING] [05/03/2013 21:27:23.954] This will be logged only once from thread who every reaches this line first. Currently running from thread #1
-[INFO] [05/03/2013 21:27:23.955] This interval log will be logged with every thread, this one is from thread #1
-[INFO] [05/03/2013 21:27:23.955] This standard log is written by thread #2
-[INFO] [05/03/2013 21:27:23.955] This interval log will be logged with every thread, this one is from thread #2
-[INFO] [05/03/2013 21:27:23.955] This log is only for thread 2 and is ran by thread #2
-[PERFORMANCE] [05/03/2013 21:27:23.957] Executed [int main(int, char**)] in [~ 0 seconds]
+[INFO] [08/03/2013 23:14:55.232] This is first log!

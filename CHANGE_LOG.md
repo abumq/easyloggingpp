@@ -3,6 +3,46 @@ CHANGE LOG - EasyLogging++
 
 Change was not kept before version 2.1.
 
+#### 7.xx
+ * 7.00:
+    - Completely re-written with focus on performance improvement (issue #27)
+    - Code:
+       - C++98 to support old applications as well
+       - Now make full use of STL for performance improvement
+       - New namespace easyloggingpp::internal::helper for internal use instead of C-like functions
+       - Uses custom embedded mutex so does not have to worry about libraries availability (issue #28)
+       - New reuseable classes:
+          - internal::helper::OSUtilities
+          - internal::helper::LogManipulator
+          - internal::helper::DateUtilities
+          - internal::Register <class, class, class>
+          - internal::SeverityLevel (+ Predicate)
+          - internal::RegisteredSeverityLevels : Register
+          - internal::LogCounter (+ Predicate)
+          - internal::RegisteredCounters : Register
+          - internal::Logger
+          - internal::LogWriter
+          - helper::MyEasyLog
+       - New reuseable macros 
+    - New features:
+       - New log types
+          - `BINFO`, `BWARNING` ... etc, business loggers
+          - `SINFO`, `SWARNING` ... etc, security loggers
+       - Inject new log types as per your requirements 
+    - Improvements:
+       - Now you dont need `_END_EASYLOGGINGPP` and dont need to worry about memory leaks, everything is done internally
+       - Improved web page (icplusplus.com/tools/easylogging/)
+       - Updated icplusplus articles
+          - http://icplusplus.com/articles/read.php?uid=401c16bd01d12e1b18524dd051e2dd07833d3f80
+          - http://icplusplus.com/articles/read.php?uid=9961861bd75a67ed1d152fd83e2962249495dce5
+    - Github issues closed:
+       - Issue #27 Re-write whole code to improve performance
+       - Issue #14 Make debug logs really when debugging
+       - Issue #5 Test in win machine
+       - Issue #28 Embed custom mutex class
+       - Issue #29 Ability to inject new logger types
+    - Licence: Changed to open source licence with full details within header
+
 #### 6.xx
  * 6.00:
     - Changed the way of logging i.e, no parentheses required anymore (issue #26)

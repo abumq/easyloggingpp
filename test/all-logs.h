@@ -39,6 +39,6 @@ void writeLogs(void) {
   LVERBOSE_IF(true, 8) << "verbose 8"; 
   LVERBOSE_IF(true, 9) << "verbose 9";
 
-  LVERBOSE_EVERY_N(1, 2) << "verbose-2 every 1";
+  LWARNING_EVERY_N(1) << "Warning every 1";
   // Skipping other interval logs...
 }

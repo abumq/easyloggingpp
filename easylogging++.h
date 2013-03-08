@@ -1,18 +1,37 @@
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// easylogging++.h - Core of EasyLogging++                               //
-//                                                                       //
-//   EasyLogging++ v6.10                                                 //
-//   Cross platform logging made easy for C++ applications               //
-//   Author Majid Khan <mkhan3189@gmail.com>                             //
-//   http://www.icplusplus.com                                           //
-//   https://github.com/mkhan3189/EasyLoggingPP                          //
-//                                                                       //
-// This program is free software: you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation, version 3 of the Licence.               //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+//                                                                               //
+//   easylogging++.h - Core of EasyLogging++                                     //
+//                                                                               //
+//   EasyLogging++ v6.10                                                         //
+//   Cross platform logging made easy for C++ applications                       //
+//   Author Majid Khan <mkhan3189@gmail.com>                                     //
+//   http://www.icplusplus.com                                                   //
+//   https://github.com/mkhan3189/EasyLoggingPP                                  //
+//                                                                               //
+//   Copyright (c) 2012-2013 Majid Khan                                          //
+//                                                                               //
+//   This software is provided 'as-is', without any express or implied           //
+//   warranty. In no event will the authors be held liable for any damages       //
+//   arising from the use of this software.                                      //
+//                                                                               //
+//   Permission is granted to anyone to use this software for any purpose,       //
+//   including commercial applications, and to alter it and redistribute         //
+//   it freely, subject to the following restrictions:                           //
+//                                                                               //
+//   1. The origin of this software must not be misrepresented; you must         //
+//      not claim that you wrote the original software. If you use this          //
+//      software in a product, an acknowledgment in the product documentation    //
+//      would be appreciated but is not required.                                //
+//                                                                               //
+//   2. Altered source versions must be plainly marked as such, and must         //
+//      not be misrepresented as being the original software.                    //
+//                                                                               //
+//   3. This notice may not be removed or altered from any source                //
+//      distribution                                                             //
+//                                                                               //
+//   Part of this software uses/include code from TinyThread++                   //
+//                                                                               //
+///////////////////////////////////////////////////////////////////////////////////
 
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
@@ -76,86 +95,263 @@
 #define _QA_LOGS_TO_STANDARD_OUTPUT 1
 #define _QA_LOGS_TO_FILE 1
 
-// Determine whether or not logging is enabled
-// Use power of preprocessor directives to determine what to compile
-// and what to ignore.
-// If you are using g++ and wish to find out how does your program look like
-// under the hood, use -E flag of g++ compiler that will expand all the macros
+//
+// High-level log evaluation
+//
 #if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
+#    define _ENABLE_EASYLOGGING 1
+#endif // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
 
 //
 // OS evaluation
 //
 // Windows
 #if defined(_WIN32)
-#   define _WINDOWS 1
-#   define _WINDOWS_32 1
+#    define _WINDOWS 1
+#    define _WINDOWS_32 1
 #endif // defined(_WIN32)
 #if defined(_WIN64)
-#   define _WINDOWS 1
-#   define _WINDOWS_64 1
+#    define _WINDOWS 1
+#    define _WINDOWS_64 1
 #endif // defined(_WIN64)
 // Linux
 #if (defined(__linux) || defined(__linux__))
-#   define _LINUX 1
+#    define _LINUX 1
 #endif // (defined(__linux) || defined(__linux__))
 // Mac
 #if defined(__APPLE__)
-#   define _MAC 1
+#    define _MAC 1
 #endif // defined(__APPLE__)
+
+#define _UNIX ((_LINUX || _MAC) && (!_WINDOWS))
+
+//
+// Log location macros
+//
+#if !defined(__FILE__)
+#    define __FILE__ ""
+#endif // !defined(__FILE__)
+#if !defined(__LINE__)
+#    define __LINE__ ""
+#endif // !defined(__LINE__)
+// Determine appropriate function macro according to current compiler
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#    define __func__ __FUNCTION__
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
+#   define __func__ __PRETTY_FUNCTION__
+#else
+#    define __func__ ""
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 
 //
 // Compiler evaluation
 //
 // GNU
 #if defined(__GNUC__)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#       define _CXX0X 1
-#   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#        define _CXX0X 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif // defined(__GNUC__)
 // VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
 #if defined(_MSC_VER)
-#   if (_MSC_VER == 1600)
-#       define _CXX0X 1
-#   elif (_MSC_VER == 1700)
-#       define _CXX11 1
-#   endif // (_MSC_VER == 1600)
+#    if (_MSC_VER == 1600)
+#        define _CXX0X 1
+#    elif (_MSC_VER == 1700)
+#        define _CXX11 1
+#    endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
 
-#define __ENABLE_MUTEX_EVALUATION (((_CXX0X || _CXX11)       ||     \
-                                    (defined(QT_CORE_LIB)))   &&    \
-                                    (!(defined(_DISABLE_MUTEX))))
-//
-// Mutex header evaluation
-//
-#if (__ENABLE_MUTEX_EVALUATION)
-#   if (defined(QT_CORE_LIB))
-        // Use Qt library QMutex to handle multi-threading application
-#       define MUTEX_HEADER <QMutex>
-#       define MUTEX_TYPE QMutex
-#       define _MUTEX_SPECIFIC_INIT MUTEX_TYPE mutex;
-#       define _LOCK_MUTEX easyloggingpp::internal::mutex.lock();
-#       define _UNLOCK_MUTEX easyloggingpp::internal::mutex.unlock();
-#       define _USING_MUTEX 1
-#   else
-        // Use std::mutex
-        // We need to be careful here and add few extra checks to make sure we have mutex header available.
-        // I think we should do a comparison of C++ standards and make a list of supported pre-processors (macros)
-        // for mutex headers for different compilers.
-#       define MUTEX_HEADER <mutex>
-#       define MUTEX_TYPE std::mutex
-#       define _MUTEX_SPECIFIC_INIT MUTEX_TYPE mutex;
-#       define _LOCK_MUTEX easyloggingpp::internal::mutex.lock();
-#       define _UNLOCK_MUTEX easyloggingpp::internal::mutex.unlock();
-#       define _USING_MUTEX 1
-#   endif // (defined(QT_CORE_LIB)
+#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+// Embedded fast_mutex (part of TinyThread++)
+#ifndef _FAST_MUTEX_H_
+#define _FAST_MUTEX_H_
+#if !defined(_TTHREAD_PLATFORM_DEFINED_)
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+#define _TTHREAD_WIN32_
 #else
-#   define _MUTEX_SPECIFIC_INIT
-#   define _LOCK_MUTEX
-#   define _UNLOCK_MUTEX
-#   define _USING_MUTEX 0
-#endif // (__ENABLE_MUTEX_EVALUATION)
+#define _TTHREAD_POSIX_
+#endif
+#define _TTHREAD_PLATFORM_DEFINED_
+#endif
+#if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
+    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) || \
+    (defined(__GNUC__) && (defined(__ppc__)))
+#define _FAST_MUTEX_ASM_
+#else
+#define _FAST_MUTEX_SYS_
+#endif
 
+#if defined(_TTHREAD_WIN32_)
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#define __UNDEF_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#define _WINDOWS_HEADER_INCLUDED_FROM_FAST_MUTEX_H // Not part of fastmutex
+#ifdef __UNDEF_LEAN_AND_MEAN
+#undef WIN32_LEAN_AND_MEAN
+#undef __UNDEF_LEAN_AND_MEAN
+#endif
+#else
+#ifdef _FAST_MUTEX_ASM_
+#include <sched.h>
+#else
+#include <pthread.h>
+#endif
+#endif
+namespace tthread {
+class fast_mutex {
+public:
+    /// Constructor.
+#if defined(_FAST_MUTEX_ASM_)
+    fast_mutex() : mLock(0) {}
+#else
+    fast_mutex()
+    {
+#if defined(_TTHREAD_WIN32_)
+        InitializeCriticalSection(&mHandle);
+#elif defined(_TTHREAD_POSIX_)
+        pthread_mutex_init(&mHandle, NULL);
+#endif
+    }
+#endif
+#if !defined(_FAST_MUTEX_ASM_)
+    ~fast_mutex()
+    {
+#if defined(_TTHREAD_WIN32_)
+        DeleteCriticalSection(&mHandle);
+#elif defined(_TTHREAD_POSIX_)
+        pthread_mutex_destroy(&mHandle);
+#endif
+    }
+#endif
+    inline void lock()
+    {
+#if defined(_FAST_MUTEX_ASM_)
+        bool gotLock;
+        do {
+            gotLock = try_lock();
+            if(!gotLock)
+            {
+#if defined(_TTHREAD_WIN32_)
+                Sleep(0);
+#elif defined(_TTHREAD_POSIX_)
+                sched_yield();
+#endif
+            }
+        } while(!gotLock);
+#else
+#if defined(_TTHREAD_WIN32_)
+        EnterCriticalSection(&mHandle);
+#elif defined(_TTHREAD_POSIX_)
+        pthread_mutex_lock(&mHandle);
+#endif
+#endif
+    }
+    inline bool try_lock()
+    {
+#if defined(_FAST_MUTEX_ASM_)
+        int oldLock;
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+        asm volatile (
+                    "movl $1,%%eax\n\t"
+                    "xchg %%eax,%0\n\t"
+                    "movl %%eax,%1\n\t"
+                    : "=m" (mLock), "=m" (oldLock)
+                    :
+                    : "%eax", "memory"
+                    );
+#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,1
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+                    mov oldLock,eax
+        }
+#elif defined(__GNUC__) && (defined(__ppc__))
+        int newLock = 1;
+        asm volatile (
+                    "\n1:\n\t"
+                    "lwarx  %0,0,%1\n\t"
+                    "cmpwi  0,%0,0\n\t"
+                    "bne-   2f\n\t"
+                    "stwcx. %2,0,%1\n\t"
+                    "bne-   1b\n\t"
+                    "isync\n"
+                    "2:\n\t"
+                    : "=&r" (oldLock)
+                    : "r" (&mLock), "r" (newLock)
+                    : "cr0", "memory"
+                    );
+#endif
+        return (oldLock == 0);
+#else
+#if defined(_TTHREAD_WIN32_)
+        return TryEnterCriticalSection(&mHandle) ? true : false;
+#elif defined(_TTHREAD_POSIX_)
+        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
+#endif
+#endif
+    }
+    inline void unlock()
+    {
+#if defined(_FAST_MUTEX_ASM_)
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+        asm volatile (
+                    "movl $0,%%eax\n\t"
+                    "xchg %%eax,%0\n\t"
+                    : "=m" (mLock)
+                    :
+                    : "%eax", "memory"
+                    );
+#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,0
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+        }
+#elif defined(__GNUC__) && (defined(__ppc__))
+        asm volatile (
+                    "sync\n\t"
+                    : : : "memory"
+                    );
+        mLock = 0;
+#endif
+#else
+#if defined(_TTHREAD_WIN32_)
+        LeaveCriticalSection(&mHandle);
+#elif defined(_TTHREAD_POSIX_)
+        pthread_mutex_unlock(&mHandle);
+#endif
+#endif
+    }
+private:
+#if defined(_FAST_MUTEX_ASM_)
+    int mLock;
+#else
+#if defined(_TTHREAD_WIN32_)
+    CRITICAL_SECTION mHandle;
+#elif defined(_TTHREAD_POSIX_)
+    pthread_mutex_t mHandle;
+#endif
+#endif
+};
+}
+#endif // _FAST_MUTEX_H_
+//
+// Mutex specific initialization
+//
+#    define MUTEX_TYPE tthread::fast_mutex
+#    define _MUTEX_SPECIFIC_INIT static MUTEX_TYPE mutex_;
+#    define _LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
+#    define _UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
+#else
+#    define _MUTEX_SPECIFIC_INIT
+#    define _LOCK_MUTEX
+#    define _UNLOCK_MUTEX
+#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 //
 // Includes
 //
@@ -164,25 +360,25 @@
 #include <cstdlib>
 #include <cctype>
 #if _WINDOWS
-#   include <direct.h> // digital mars compiler
-#   include <windows.h>
+#    include <direct.h>
+#    ifndef (_WINDOWS_HEADER_INCLUDED_FROM_FAST_MUTEX_H)
+#        include <windows.h>
+#    endif
 #endif // _WINDOWS
-#if _LINUX || _MAC
-#   include <sys/stat.h>
-#   include <sys/time.h>
-#endif // _LINUX || _MAC
+#if _UNIX
+#    include <sys/stat.h>
+#    include <sys/time.h>
+#endif // _UNIX
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#if (_USING_MUTEX)
-#   include MUTEX_HEADER
-#endif // (_USING_MUTEX)
 
 namespace easyloggingpp {
-namespace configuration {
+
+namespace configurations {
 
 // This section contains configurations that are to set by developer.
 // These sections can be splitted into two parts;
@@ -212,7 +408,6 @@ namespace configuration {
 //
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
-
 const std::string    DEFAULT_LOG_FORMAT       =    "[%level] [%datetime] %log\n";
 const std::string    DEBUG_LOG_FORMAT         =    "[%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
@@ -271,794 +466,858 @@ const bool           USE_CUSTOM_LOCATION      =    true;
 //   Recommendation: false
 const bool           SHOW_START_FUNCTION_LOG  =    false;
 
-} // namespace configuration
-
-
-//          ***********************************************
-//     **   PLEASE DO NOT MODIFY ANY LINE BEYOND THIS POINT   **
-//          ***********************************************
+} // namespace configurations
+} // namespace easyloggingpp
 
 //
-// Source code location macros
+// Low-level log evaluation
 //
-#if !defined(__FILE__)
-#   define __FILE__ ""
-#endif // !defined(__FILE__)
-#if !defined(__LINE__)
-#   define __LINE__ ""
-#endif // !defined(__LINE__)
-// Determine appropriate function macro according to current compiler
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#   define __func__ __FUNCTION__
-#elif defined(__GNUC__) && (__GNUC__ >= 2)
-#   define __func__ __PRETTY_FUNCTION__
-#else
-#   define __func__ ""
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
+#define _DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING))
+#define _INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS) && (_ENABLE_EASYLOGGING))
+#define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS) && (_ENABLE_EASYLOGGING))
+#define _PERFORMANCE_LOG ((_ENABLE_PERFORMANCE_LOGS) && !defined(_DISABLE_PERFORMANCE_LOGS) && (_ENABLE_EASYLOGGING))
+#define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS) && (_ENABLE_EASYLOGGING))
+#define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
+#define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
 
-// Finally determine which log levels are enabled and which are disabled.
-// This is determined by _ENABLE_***_LOGS and _DISABLE_***_LOGS macros.
-// These macros defined in following section is then used throughout the process
-// of logging.
-#define _DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS))
-#define _INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS))
-#define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS))
-#define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS))
-#define _PERFORMANCE_LOG ((_ENABLE_PERFORMANCE_LOGS) && !defined(_DISABLE_PERFORMANCE_LOGS))
-#define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS))
-#define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS))
-#define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE))
+#if _UNIX
+// Permissions for unix-based systems
+#define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
+#endif // _UNIX
 
-#if _VERBOSE_LOG
-#   define _VERBOSE_SPECIFIC_INITIALIZATIONS int verboseLevel = -1;
-#else
-#   define _VERBOSE_SPECIFIC_INITIALIZATIONS
-#endif // _VERBOSE_LOG
+#define _SUPPRESS_UNUSED_WARN(x) (void)x
 
-#if defined(_ALWAYS_CLEAN_LOGS)
-#   define _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS bool alreadyCleanedLogFile = false;
-#else
-#   define _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS
-#endif // defined(_ALWAYS_CLEAN_LOGS)
-
-// EasyLogging++ uses a lot of extern symbols in order to keep using same values
-// to prevent potential memory leaks and to improve performance by not initializing
-// variables repeatedly. This include variables like username, hostname, streams
-// and list of log types. In order to achieve this, following macro should be used
-// once and only once in main.cpp file after all the includes in order to initialize
-// extern symbols.
-// Candidates for extern symbols are carefully chosen, the rest are static symbols.
-#define _INITIALIZE_EASYLOGGINGPP                                             \
-namespace easyloggingpp {                                                     \
-    namespace internal {                                                      \
-        bool loggerInitialized = false;                                       \
-        std::stringstream *logStream = NULL;                                  \
-        std::ofstream *logFile = NULL;                                        \
-        std::stringstream tempStream;                                         \
-        std::stringstream tempStream2;                                        \
-        std::vector< easyloggingpp::internal::LogType > registeredLogTypes;   \
-        easyloggingpp::internal::Counter tempCounter;                         \
-        std::vector< easyloggingpp::internal::Counter > registeredCounters;   \
-        bool fileNotOpenedErrorDisplayed = false;                             \
-        std::string user = "";                                                \
-        std::string host = "";                                                \
-        _VERBOSE_SPECIFIC_INITIALIZATIONS                                     \
-        _ALWAYS_CLEAN_LOGS_SPECIFIC_INITIALIZATIONS                           \
-       _MUTEX_SPECIFIC_INIT                                                   \
-    }                                                                         \
-}
-
-// When using log levels that require program arguments, for example VERBOSE logs require
-// to see what VERBOSE levels to log by looking at --v=X argument or --verbose (for level 9)
-// argument, following macro should be used.
-#define _START_EASYLOGGINGPP(argc, argv) easyloggingpp::internal::setAppArgs(argc, argv);
-
-// When program is exiting, following macro should be used in order to release all the memory
-// used by internal symbols.
-#define _END_EASYLOGGINGPP easyloggingpp::internal::releaseMemory();
+namespace easyloggingpp {
 
 namespace version {
 static const char* versionNumber = "6.10";
-}
+} // namespace version
 
 namespace internal {
-//
-// Static symbols
-//
-static const std::string kFinalFilename = (easyloggingpp::configuration::USE_CUSTOM_LOCATION ?
-                                               easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION :
-                                               "") +
-                                           easyloggingpp::configuration::LOG_FILENAME;
-static bool showDateTime = easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%datetime") != std::string::npos;
-static bool showDate = (!easyloggingpp::internal::showDateTime) && (easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%date") != std::string::npos);
-static bool showTime = (!easyloggingpp::internal::showDateTime) && (easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%time") != std::string::npos);
-static bool showLocation = easyloggingpp::configuration::DEFAULT_LOG_FORMAT.find("%loc") != std::string::npos;
-
-static bool toStandardOutput;
-static bool toFile;
-static const short kDateBufferSize = 30;
-static char dateBuffer[kDateBufferSize];
-static char dateFormat[kDateBufferSize];
-static std::string logFormat = "";
-//
-// Extern symbols
-//
-extern std::string user;
-extern std::string host;
-extern std::stringstream *logStream;
-extern std::ofstream *logFile;
-extern std::stringstream tempStream;
-extern std::stringstream tempStream2;
-extern bool loggerInitialized;
-extern bool fileNotOpenedErrorDisplayed;
-#if defined(_ALWAYS_CLEAN_LOGS)
-extern bool alreadyCleanedLogFile;
-#endif // defined(_ALWAYS_CLEAN_LOGS)
-#if _VERBOSE_LOG
-extern int verboseLevel;
-#endif // _VERBOSE_LOG
-#if _USING_MUTEX
-extern MUTEX_TYPE mutex;
-#endif // _USING_MUTEX
-
-// Represents log type and configuration such as format and target
-class LogType {
-public:
-    explicit LogType(const std::string& name_,
-                     const std::string& format_,
-                     bool toStandardOutput_,
-                     bool toFile_) :
-        name(name_),
-        format(format_),
-        toStandardOutput(toStandardOutput_),
-        toFile(toFile_) {}
-    bool operator==(const std::string& name) const {
-        return this->name == name;
-    }
-    std::string name;
-    std::string format;
-    bool toStandardOutput;
-    bool toFile;
-};
-
-// Constant iterator for log type
-typedef std::vector< easyloggingpp::internal::LogType >::const_iterator LogTypeConstIter;
-
-// Represents all the log types in current context
-extern std::vector< easyloggingpp::internal::LogType > registeredLogTypes;
-
-// Represent a counter
-class Counter {
-public:
-    explicit Counter(void) :
-        filename(""),
-        lineNumber(0),
-        position(1) {}
-    explicit Counter(const char* filename_,
-                     unsigned long int lineNumber_) :
-        filename(filename_),
-        lineNumber(lineNumber_),
-        position(1) {}
-    bool operator==(const Counter& other) {
-        return ((this->filename == other.filename) &&
-                (this->lineNumber == other.lineNumber));
-    }
-    void resetLocation(const char* filename_,
-                       unsigned long int lineNumber_) {
-        this->filename = filename_;
-        this->lineNumber = lineNumber_;
-    }
-    const char* filename;
-    unsigned long int lineNumber;
-    unsigned int position;
-};
-
-// Iterator for counter
-typedef std::vector< easyloggingpp::internal::Counter >::iterator CounterIter;
-
-// Represents list of all registered counters
-extern std::vector < easyloggingpp::internal::Counter > registeredCounters;
-
-// Represents a temporary counter used to do fast lookups. This is defined so that
-// temporary variables are not defined in every iteration. We just reset the
-// location of this temporary counter and look it up.
-extern easyloggingpp::internal::Counter tempCounter;
-
-// Internal message from EasyLogging++. This is used as less number of times
-// as possible to minimize annoying outputs.
-static inline void internalMessage(const std::string& message) {
-    std::cout << std::endl << "[EasyLogging++] " << message << std::endl << std::endl;
-}
-
-// Determines the arguments used by EasyLogging++ and store them into static and extern
-// symbols where applicable.
-// Specifically, looks for '--v=X' or '--verbose' arguments, where X is a digit between
-// 0 and 9 and store the digit value into verboseLevel. The max verbose level is 9
-// and this set when '--verbose' argument is provided. Priority is given to '--v=X' arguments
-static void setAppArgs(int argc, char** argv) {
-    while (argc-- > 0) {
-#if _VERBOSE_LOG
-        const int kMaxVerboseLevel = 9;
-        // Look for --v=X argument
-        if ((strlen(argv[argc]) >= 5) &&
-                (argv[argc][0] == '-') &&
-                (argv[argc][1] == '-') &&
-                (argv[argc][2] == 'v') &&
-                (argv[argc][3] == '=') &&
-                (isdigit(argv[argc][4]))) {
-            // Current argument is --v=X
-            // where X is a digit between 0-9
-            easyloggingpp::internal::verboseLevel = atoi(argv[argc] + 4);
-        }
-        // Look for --verbose argument
-        else if ((strlen(argv[argc]) == 9) &&
-                 (argv[argc][0] == '-') &&
-                 (argv[argc][1] == '-') &&
-                 (argv[argc][2] == 'v') &&
-                 (argv[argc][3] == 'e') &&
-                 (argv[argc][4] == 'r') &&
-                 (argv[argc][5] == 'b') &&
-                 (argv[argc][6] == 'o') &&
-                 (argv[argc][7] == 's') &&
-                 (argv[argc][8] == 'e')) {
-            easyloggingpp::internal::verboseLevel = kMaxVerboseLevel;
-        }
-        // Look for -v argument
-        else if ((strlen(argv[argc]) == 2) &&
-                 (argv[argc][0] == '-') &&
-                 (argv[argc][1] == 'v')) {
-            easyloggingpp::internal::verboseLevel = kMaxVerboseLevel;
-        }
-#endif // _VERBOSE_LOG
-    }
-}
-
-static void setAppArgs(int argc, const char** argv) {
-    char** args = const_cast<char**>(argv);
-    easyloggingpp::internal::setAppArgs(argc, args);
-}
-
-// Determines if log path exists or not.
-static bool logPathExist(void) {
-#if _WINDOWS
-    DWORD fileType = GetFileAttributesA(easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
-    if (fileType == INVALID_FILE_ATTRIBUTES) {
-        return false;
-    }
-    return (fileType & FILE_ATTRIBUTE_DIRECTORY);
-#elif _LINUX || _MAC
-    struct stat st;
-    return (stat(easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str(), &st) == 0);
-#endif // _WINDOWS
-}
-
-// Creates log path with read, write and execute permissions for
-// all users except for 'no-read' for 'others'.
-static void createLogPath(void) {
-#if _WINDOWS || _LINUX || _MAC
-    if ((easyloggingpp::configuration::USE_CUSTOM_LOCATION) &&
-            (easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.size() > 0) &&
-            (!easyloggingpp::internal::logPathExist())) {
-        int status = -1;
-#   if _WINDOWS
-        const char* pathDelimiter = "\\";
-#   elif _LINUX || _MAC
-        const char* pathDelimiter = "/";
-#   endif // _WINDOWS
-        std::string fullPathToBuild =
-                easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION[0] == '/' ? pathDelimiter : "";
-        char* currentPath = const_cast<char*>(easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION.c_str());
-        currentPath = strtok(currentPath, pathDelimiter);
-        while (currentPath != NULL) {
-            fullPathToBuild = fullPathToBuild + currentPath + pathDelimiter;
-#   if _WINDOWS
-            status = _mkdir(fullPathToBuild.c_str());
-#   elif _LINUX || _MAC
-            status = mkdir(fullPathToBuild.c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH); // rwx,rwx,wx
-#   endif // _WINDOWS
-            if (status == -1) {
-                easyloggingpp::internal::internalMessage("Unable to create log path [" + fullPathToBuild + "]");
-                return;
-            }
-            currentPath = strtok(NULL, pathDelimiter);
-        }
-        if (status == -1) {
-            easyloggingpp::internal::internalMessage("Unable to create log path [" + easyloggingpp::configuration::CUSTOM_LOG_FILE_LOCATION + "]");
-        }
-    }
-#endif // _WINDOWS || _LINUX || _MAC
-}
-
-// Gets current date and time with milliseconds.
-static std::string getDateTime(void) {
-    if (!(easyloggingpp::internal::showDateTime || easyloggingpp::internal::showDate || easyloggingpp::internal::showTime)) {
-        return "";
-    }
-    long milliSeconds = 0;
-#if _LINUX || _MAC
-    timeval currTime;
-    gettimeofday(&currTime, NULL);
-    if ((easyloggingpp::internal::showDateTime) || (easyloggingpp::internal::showTime)) {
-        milliSeconds = currTime.tv_usec / 1000;
-    }
-    struct tm * timeInfo = localtime(&currTime.tv_sec);
-    strftime(easyloggingpp::internal::dateBuffer, easyloggingpp::internal::kDateBufferSize, easyloggingpp::internal::dateFormat, timeInfo);
-    if ((easyloggingpp::internal::showDateTime) || (easyloggingpp::internal::showTime)) {
-        sprintf(easyloggingpp::internal::dateBuffer, "%s.%03ld", easyloggingpp::internal::dateBuffer, milliSeconds);
-    }
-#elif _WINDOWS
-    if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", easyloggingpp::internal::dateBuffer, easyloggingpp::internal::kDateBufferSize) != 0) {
-        static DWORD oldTick = GetTickCount();
-        if ((easyloggingpp::internal::showDateTime) || (easyloggingpp::internal::showTime)) {
-            milliSeconds = (long)(GetTickCount() - oldTick) % 1000;
-        }
-        if ((easyloggingpp::internal::showDateTime) || (easyloggingpp::internal::showTime)) {
-            sprintf(easyloggingpp::internal::dateBuffer, "%s.%03ld", easyloggingpp::internal::dateBuffer, milliSeconds);
-        }
-    }
-#endif
-    return std::string(easyloggingpp::internal::dateBuffer);
-}
-
-// Runs command on terminal and returns the output.
-// This is applicable only on linux and mac, for all other OS, an empty string is returned.
-static std::string getBashOutput(const char* command) {
-#if _LINUX || _MAC
-    FILE* proc = popen(command, "r");
-    if (proc != NULL) {
-        const short hBuffMaxSize = 20;
-        char hBuff[hBuffMaxSize];
-        fgets(hBuff, hBuffMaxSize, proc);
-        pclose(proc);
-        short actualHBuffSize = strlen(hBuff);
-        if (actualHBuffSize > 0) {
-            if (hBuff[actualHBuffSize - 1] == '\n') {
-                hBuff[actualHBuffSize - 1] = '\0';
-            }
-            return std::string(hBuff);
-        }
-        return "";
-    } else {
-        return "";
-    }
-#else
-    return "";
-#endif // _LINUX || _MAC
-}
-
-// Gets current username.
-static std::string getUsername(void) {
-#if _WINDOWS
-    char* username = getenv("USERNAME");
-#elif _LINUX || _MAC
-    char* username = getenv("USER");
-#endif // _WINDOWS
-    if ((username == NULL) || ((strcmp(username, "") == 0))) {
-        // No username found by environment variable
-        // Try harder by using bash command 'whoami' if on linux or mac
-        return easyloggingpp::internal::getBashOutput("whoami");
-    } else {
-        return std::string(username);
-    }
-}
-
-// Gets current host name or computer name.
-static std::string getHostname(void) {
-#if _WINDOWS
-    char* hostname = getenv("COMPUTERNAME");
-#elif _LINUX || _MAC
-    char* hostname = getenv("HOSTNAME");
-#endif // _WINDOWS
-    if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
-        // No host name found by environment variable
-        // Try harder by using bash command 'hostname' if on linux or mac
-        std::string strHostname = easyloggingpp::internal::getBashOutput("hostname");
-        if (strHostname == "") {
-            // Still nothing found, return 'unknown-host'
-            return std::string("unknown-host");
-        } else {
-            return strHostname;
-        }
-    } else {
-        return std::string(hostname);
-    }
-}
-
-// Clean all the streams.
-static inline void cleanStream(void) {
-    easyloggingpp::internal::tempStream.str("");
-    easyloggingpp::internal::tempStream2.str("");
-    if (easyloggingpp::internal::logStream) {
-        easyloggingpp::internal::logStream->str("");
-    }
-}
-
-// Release all the memory used by EasyLogging++.
-static inline void releaseMemory(void) {
-    _LOCK_MUTEX
-    if (easyloggingpp::internal::loggerInitialized) {
-        easyloggingpp::internal::cleanStream();
-        if (easyloggingpp::internal::logFile) {
-            delete easyloggingpp::internal::logFile;
-            easyloggingpp::internal::logFile = NULL;
-        }
-        if (easyloggingpp::internal::logStream) {
-            delete easyloggingpp::internal::logStream;
-            easyloggingpp::internal::logStream = NULL;
-        }
-        easyloggingpp::internal::registeredLogTypes.clear();
-        easyloggingpp::internal::registeredCounters.clear();
-        easyloggingpp::internal::loggerInitialized = false;
-    }
-    _UNLOCK_MUTEX
-}
-
-// Determine what is being shown for date/time and update dateFormat symbol accordingly.
-static void updateDateFormat(void) {
-    const char* dateFormatLocal = "%d/%m/%Y";
-    const char* timeFormatLocal = "%H:%M:%S";
-    if (easyloggingpp::internal::showDate) {
-        strcpy(easyloggingpp::internal::dateFormat, dateFormatLocal);
-    } else if (easyloggingpp::internal::showTime) {
-        strcpy(easyloggingpp::internal::dateFormat, timeFormatLocal);
-    } else if (easyloggingpp::internal::showDateTime) {
-        strcpy(easyloggingpp::internal::dateFormat, dateFormatLocal);
-        strcat(easyloggingpp::internal::dateFormat, " ");
-        strcat(easyloggingpp::internal::dateFormat, timeFormatLocal);
-    }
-}
-
-// Initialize logger, this is where all the memories are allocated and uses loggerInitialized
-// symbol to determine whether or not to allocate memory. This function also looks at high
-// level configurations like SHOW_STD_OUTPUT and SAVE_TO_FILE and allocate memory to whats
-// needed.
-static void init(void) {
-    if (!easyloggingpp::internal::loggerInitialized) {
-        // Logger
-        easyloggingpp::internal::logStream = new std::stringstream();
-        // Path
-        easyloggingpp::internal::createLogPath();
-        // Log file
-        if (easyloggingpp::configuration::SAVE_TO_FILE) {
-            std::ios_base::openmode mode = std::ofstream::out | std::ofstream::app;
-#if defined(_ALWAYS_CLEAN_LOGS)
-            if (!easyloggingpp::internal::alreadyCleanedLogFile) {
-                mode = std::ofstream::out;
-                easyloggingpp::internal::alreadyCleanedLogFile = true;
-            }
-#endif //defined(_ALWAYS_CLEAN_LOGS)
-            easyloggingpp::internal::logFile = new std::ofstream(easyloggingpp::internal::kFinalFilename.c_str(), mode);
-            if ((!easyloggingpp::internal::fileNotOpenedErrorDisplayed) && (!easyloggingpp::internal::logFile->is_open())) {
-                easyloggingpp::internal::internalMessage("Unable to open log file [" + easyloggingpp::internal::kFinalFilename + "]");
-                easyloggingpp::internal::fileNotOpenedErrorDisplayed = true;
+_MUTEX_SPECIFIC_INIT
+namespace helper {
+    // OSUtilities class specifically written for EasyLogging++
+    // This class contains functionalities related to operating system
+    class OSUtilities {
+    public:
+        // Runs command on terminal and returns the output.
+        // This is applicable only on linux and mac, for all other OS, an empty string is returned.
+        static std::string getBashOutput(const char* command) {
+#if _UNIX
+            FILE* proc = popen(command, "r");
+            if (proc != NULL) {
+                const short hBuffMaxSize = 20;
+                char hBuff[hBuffMaxSize];
+                fgets(hBuff, hBuffMaxSize, proc);
+                pclose(proc);
+                short actualHBuffSize = strlen(hBuff);
+                if (actualHBuffSize > 0) {
+                    if (hBuff[actualHBuffSize - 1] == '\n') {
+                        hBuff[actualHBuffSize - 1] = '\0';
+                    }
+                    return std::string(hBuff);
+                }
+                return std::string();
             } else {
-                easyloggingpp::internal::logFile->close();
+                return std::string();
+            }
+#else
+            return "";
+#endif // _UNIX
+        }
+
+        // Gets current username.
+        static const char* currentUser(void) {
+#if _WINDOWS
+            const char* username = getenv("USERNAME");
+#elif _UNIX
+            const char* username = getenv("USER");
+#endif // _WINDOWS
+            if ((username == NULL) || (!strcmp(username, ""))) {
+                // Try harder on unix-based systems
+                return OSUtilities::getBashOutput("whoami").c_str();
+            } else {
+                return username;
             }
         }
-        // Date format
-        easyloggingpp::internal::updateDateFormat();
-        // Username and host
-        easyloggingpp::internal::user = easyloggingpp::internal::getUsername();
-        easyloggingpp::internal::host = easyloggingpp::internal::getHostname();
-        // Different log levels
-#if _DEBUG_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("DEBUG", easyloggingpp::configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
-#endif // _DEBUG_LOG
-#if _INFO_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("INFO", easyloggingpp::configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
-#endif // _INFO_LOG
-#if _WARNING_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("WARNING", easyloggingpp::configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
-#endif // _WARNING_LOG
-#if _ERROR_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("ERROR", easyloggingpp::configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
-#endif // _ERROR_LOG
-#if _FATAL_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("FATAL", easyloggingpp::configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
-#endif //_FATAL_LOG
-#if _PERFORMANCE_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("PERFORMANCE", easyloggingpp::configuration::PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE));
-#endif // _PERFORMANCE_LOG
+
+        // Gets current host name or computer name.
+        static const char* currentHost(void) {
+#if _WINDOWS
+            const char* hostname = getenv("COMPUTERNAME");
+#elif _UNIX
+            const char* hostname = getenv("HOSTNAME");
+#endif // _WINDOWS
+            if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+                // Try harder on unix-based systems
+                hostname = OSUtilities::getBashOutput("hostname").c_str();
+                if (!strcmp(hostname, "")) {
+                    return "unknown-host";
+                } else {
+                    return hostname;
+                }
+            } else {
+                return hostname;
+            }
+        }
+
+        // Determines whether or not provided path_ exist in current file system
+        static inline bool pathExists(const char* path_) {
+            if (path_ == NULL) {
+                return false;
+            }
+#if _WINDOWS
+            DWORD fileType = GetFileAttributesA(path_);
+            if (fileType == INVALID_FILE_ATTRIBUTES) {
+                return false;
+            }
+            return (fileType & FILE_ATTRIBUTE_DIRECTORY);
+#elif _UNIX
+            struct stat st;
+            return (stat(path_, &st) == 0);
+#endif // _WINDOWS
+        }
+
+        // Creates path as specified
+        static bool createPath(const std::string& path_) {
+            if (path_.empty()) {
+                return false;
+            }
+            if (OSUtilities::pathExists(path_.c_str())) {
+                return true;
+            }
+#   if _WINDOWS
+            const char* pathDelim_ = "\\";
+#   elif _UNIX
+            const char* pathDelim_ = "/";
+#   endif // _WINDOWS
+            int status = -1;
+            char* currPath_ = const_cast<char*>(path_.c_str());
+            std::string buildingPath_;
+            if (path_[0] == '/') {
+                buildingPath_ = "/";
+            }
+            currPath_ = strtok(currPath_, pathDelim_);
+            while (currPath_ != NULL) {
+                buildingPath_.append(currPath_);
+                buildingPath_.append(pathDelim_);
+#   if _WINDOWS
+                status = _mkdir(buildingPath_.c_str());
+#   elif _UNIX
+                status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
+#   endif // _WINDOWS
+                currPath_ = strtok(NULL, pathDelim_);
+            }
+            if (status == -1) {
+                return false;
+            }
+            return true;
+        }
+
+    private:
+        // Disable initilization
+        OSUtilities(void);
+        OSUtilities(const OSUtilities&);
+        OSUtilities& operator=(const OSUtilities&);
+    }; // class OSUtilities
+
+    class LogManipulator {
+    public:
+        static void updateFormatValue(const std::string& formatSpecifier_,
+                                      const std::string& value_,
+                                      std::string& currentFormat_) {
+            size_t foundAt = -1;
+            while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
+                if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == 'E') {
+                    currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+                    ++foundAt;
+                } else {
+                    currentFormat_ = currentFormat_.replace(foundAt, formatSpecifier_.size(), value_);
+                    continue;
+                }
+            }
+        }
+    private:
+        // Disable initilization
+        LogManipulator(void);
+        LogManipulator(const LogManipulator&);
+        LogManipulator& operator=(const LogManipulator&);
+    }; // class LogManipulator
+
+    class DateUtilities {
+    public:
+        enum kDateTimeFormat { kDateOnly, kTimeOnly, kDateTime };
+
+        // Gets current date and time with milliseconds.
+        static std::string getDateTime(unsigned int format_) {
+            long milliSeconds = 0;
+            const int kDateBuffSize_ = 30;
+            const char* kDateFormatLocal_ = "%d/%m/%Y";
+            const char* kTimeFormatLocal_ = "%H:%M:%S";
+            char dateBuffer_[kDateBuffSize_] = "";
+            char dateFormat_[kDateBuffSize_];
+            if (format_ == kDateOnly) {
+                strcpy(dateFormat_, kDateFormatLocal_);
+            } else if (format_ == kTimeOnly) {
+                strcpy(dateFormat_, kTimeFormatLocal_);
+            } else {
+                strcpy(dateFormat_, kDateFormatLocal_);
+                strcat(dateFormat_, " ");
+                strcat(dateFormat_, kTimeFormatLocal_);
+            }
+#if _UNIX
+            timeval currTime;
+            gettimeofday(&currTime, NULL);
+            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+                milliSeconds = currTime.tv_usec / 1000;
+            }
+            struct tm * timeInfo = localtime(&currTime.tv_sec);
+
+            strftime(dateBuffer_, kDateBuffSize_, dateFormat_, timeInfo);
+            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+                sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
+            }
+#elif _WINDOWS
+            if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", dateBuffer_, kDateBufferSize_) != 0) {
+                static DWORD oldTick = GetTickCount();
+                if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+                    milliSeconds = (long)(GetTickCount() - oldTick) % 1000;
+                    sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
+                }
+            }
+#endif // _UNIX
+            return std::string(dateBuffer_);
+        }
+
+        static std::string formatSeconds(double seconds_) {
+            double result = seconds_;
+            std::string unit = "seconds";
+            std::stringstream stream_;
+            if (result > 60.0f) {
+                result /= 60; unit = "minutes";
+                if (result > 60.0f) {
+                    result /= 60; unit = "hours";
+                    if (result > 24.0f) {
+                        result /= 24; unit = "days";
+                    }
+                }
+            }
+            stream_ << result << " " << unit;
+            return stream_.str();
+        }
+    private:
+        // Disable initilization
+        DateUtilities(void);
+        DateUtilities(const DateUtilities&);
+        DateUtilities& operator=(const DateUtilities&);
+    }; // class DateUtilities
+} // namespace helper
+
+using namespace easyloggingpp::configurations;
+using namespace easyloggingpp::internal::helper;
+
+template<class Class, class Iterator, class Predicate>
+class Register {
+public:
+    explicit Register(void) {
+    }
+
+    explicit Register(const Register& register_) :
+        list_(register_.list_) {
+    }
+
+    Register& operator=(const Register& register_) {
+        list_ = register_.list_;
+    }
+
+    virtual ~Register(void) {
+        unregisterAll();
+    }
+
+    template<typename T2>
+    Class* get(const T2& t2_) {
+        Iterator iter = std::find_if(list_.begin(), list_.end(), Predicate(t2_));
+        if (iter != list_.end() && *iter != NULL) {
+            return *iter;
+        }
+        return NULL;
+    }
+
+    inline size_t count(void) const {
+        return list_.size();
+    }
+
+    inline bool empty(void) const {
+        return list_.empty();
+    }
+protected:
+    inline void registerNew(Class* t_) {
+        list_.push_back(t_);
+    }
+
+    inline void unregisterAll(void) {
+        if (!empty()) {
+            std::for_each(list_.begin(), list_.end(), std::bind1st(std::mem_fun(&Register::unregister), this));
+            list_.clear();
+        }
+    }
+
+    inline void unregister(Class* t_) {
+        if (t_) {
+            delete t_;
+            t_ = NULL;
+        }
+    }
+
+    std::vector<Class*> list_;
+}; // class Register
+
+class SeverityLevel {
+public:
+    typedef std::vector< SeverityLevel* >::const_iterator Iterator;
+
+    explicit SeverityLevel(const std::string& name_,
+                           const std::string& format_,
+                           bool toStandardOutput_,
+                           bool toFile_) :
+        name_(name_),
+        format_(format_),
+        toStandardOutput_(toStandardOutput_),
+        toFile_(toFile_)
+    {
+        LogManipulator::updateFormatValue("%level", name_, this->format_);
+    }
+
+    inline bool operator==(const std::string& name_) const {
+        return this->name_ == name_;
+    }
+
+    inline std::string name(void) const {
+        return name_;
+    }
+
+    inline std::string format(void) const {
+        return format_;
+    }
+
+    inline bool toStandardOutput(void) const {
+        return toStandardOutput_;
+    }
+
+    inline bool toFile(void) const {
+        return toFile_;
+    }
+
+    class Predicate {
+    public:
+        explicit Predicate(const std::string& name_) :
+            name_(name_) {}
+        inline bool operator()(const SeverityLevel* level_) {
+            return *level_ == name_;
+        }
+
+    private:
+        std::string name_;
+    };
+
+private:
+    std::string name_;
+    std::string format_;
+    bool toStandardOutput_;
+    bool toFile_;
+}; // class SeverityLevel
+
+class RegisteredSeverityLevels : public Register<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
+public:
+    explicit RegisteredSeverityLevels(void) {
+        registerNew(
+                    new SeverityLevel("DEBUG", DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("INFO", INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("WARNING", WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("ERROR", ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("FATAL", FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("PERFORMANCE", PERFORMANCE_LOG_FORMAT, _PERFORMANCE_LOGS_TO_STANDARD_OUTPUT, _PERFORMANCE_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("VERBOSE", VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("QA", QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+    }
+}; // class RegisteredSeverityLevels
+
+class LogCounter {
+public:
+    typedef std::vector< LogCounter* >::iterator Iterator;
+    const static unsigned int kMax = 5000;
+
+    explicit LogCounter(void) :
+        file_(""),
+        line_(0),
+        position_(1) {}
+
+    explicit LogCounter(const char* file_,
+                        unsigned long int line_) :
+        file_(file_),
+        line_(line_),
+        position_(1) {}
+
+    inline void resetLocation(const char* file_,
+                              unsigned long int line_) {
+        this->file_ = file_;
+        this->line_ = line_;
+    }
+
+    inline void reset(unsigned int n_) {
+        if (position_ >= LogCounter::kMax) {
+            position_ = (n_ >= 1 ? 5000 % n_ : 0);
+        }
+        ++position_;
+    }
+
+    inline const char* file(void) const {
+        return file_;
+    }
+
+    inline unsigned long int line(void) const {
+        return line_;
+    }
+
+    inline unsigned int position(void) const {
+        return position_;
+    }
+
+    class Predicate {
+    public:
+        explicit Predicate(const char* file_, unsigned long int line_)
+            : file_(file_),
+              line_(line_) {
+        }
+        inline bool operator()(const LogCounter* counter_) {
+            return ((counter_ != NULL) &&
+                    (counter_->file_ == file_) &&
+                    (counter_->line_ == line_));
+        }
+
+    private:
+        const char* file_;
+        unsigned long int line_;
+    };
+
+private:
+    const char* file_;
+    unsigned long int line_;
+    unsigned int position_;
+}; // class LogCounter
+
+class RegisteredCounters : public Register<LogCounter, LogCounter::Iterator, LogCounter::Predicate>  {
+public:
+    bool valid(const char* file_, unsigned long int line_, unsigned int n_) {
+        bool result_ = false;
+        LogCounter* counter_ = get(file_, line_);
+        if (counter_ == NULL) {
+            registerNew(counter_ = new LogCounter(file_, line_));
+        }
+        if (n_ >= 1 && counter_->position() != 0 && counter_->position() % n_ == 0) {
+            result_ = true;
+        }
+        counter_->reset(n_);
+        return result_;
+    }
+
+private:
+    LogCounter* get(const char* file_, unsigned long int line_) {
+        LogCounter::Iterator iter = std::find_if(list_.begin(), list_.end(), LogCounter::Predicate(file_, line_));
+        if (iter != list_.end() && *iter != NULL) {
+            return *iter;
+        }
+        return NULL;
+    }
+}; // class RegisteredCounters
+
+class Logger {
+public:
+    explicit Logger(void) :
+        kFinalFilename_(USE_CUSTOM_LOCATION ?
+                            CUSTOM_LOG_FILE_LOCATION + LOG_FILENAME:
+                            LOG_FILENAME),
+        kUser_(OSUtilities::currentUser()),
+        kHost_(OSUtilities::currentHost()),
+        initialized_(true),
+        stream_(new std::stringstream()),
+        registeredSeverityLevels_(new RegisteredSeverityLevels()),
+        registeredLogCounters_(new RegisteredCounters()),
+        logFile_(NULL)
+    {
+        if (SAVE_TO_FILE) {
+            fileGood_ = USE_CUSTOM_LOCATION ?
+                        !LOG_FILENAME.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
+                        !LOG_FILENAME.empty();
+            if (fileGood_) {
+#if (_ALWAYS_CLEAN_LOGS)
+                logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out);
+#else
+                logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
+#endif
+
+                if (logFile_->is_open()) {
+                    logFile_->close();
+                } else {
+                    if (logFile_) {
+                        delete logFile_;
+                        logFile_ = NULL;
+                    }
+                    fileGood_ = false;
+                }
+            } else {
+                std::cout << "\nBad file for writing logs to [" << kFinalFilename_ << "] Please check the configurations\n";
+            }
+        }
+    }
+
+    virtual ~Logger(void) {
+        if (stream_) {
+            delete stream_;
+            stream_ = NULL;
+        }
+        if (logFile_) {
+            delete logFile_;
+            logFile_ = NULL;
+        }
+        if (registeredSeverityLevels_) {
+            delete registeredSeverityLevels_;
+            registeredSeverityLevels_ = NULL;
+        }
+        if (registeredLogCounters_) {
+            delete registeredLogCounters_;
+            registeredLogCounters_ = NULL;
+        }
+    }
+
+    void setArgs(int argc, char** argv) {
+        while (argc-- > 0) {
 #if _VERBOSE_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("VERBOSE", easyloggingpp::configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+            const unsigned short kMaxVerboseLevel = 9;
+            // Look for --v=X argument
+            if ((strlen(argv[argc]) >= 5) &&
+                    (argv[argc][0] == '-') &&
+                    (argv[argc][1] == '-') &&
+                    (argv[argc][2] == 'v') &&
+                    (argv[argc][3] == '=') &&
+                    (isdigit(argv[argc][4]))) {
+                // Current argument is --v=X
+                // where X is a digit between 0-9
+                appVerbose_ = static_cast<short>(atoi(argv[argc] + 4));
+            }
+            // Look for --verbose argument
+            else if ((strlen(argv[argc]) == 9) &&
+                     (argv[argc][0] == '-') &&
+                     (argv[argc][1] == '-') &&
+                     (argv[argc][2] == 'v') &&
+                     (argv[argc][3] == 'e') &&
+                     (argv[argc][4] == 'r') &&
+                     (argv[argc][5] == 'b') &&
+                     (argv[argc][6] == 'o') &&
+                     (argv[argc][7] == 's') &&
+                     (argv[argc][8] == 'e')) {
+                appVerbose_ = kMaxVerboseLevel;
+            }
+            // Look for -v argument
+            else if ((strlen(argv[argc]) == 2) &&
+                     (argv[argc][0] == '-') &&
+                     (argv[argc][1] == 'v')) {
+                appVerbose_ = kMaxVerboseLevel;
+            }
+#else
+            _SUPPRESS_UNUSED_WARN(argv);
+            appVerbose_ = 0;
 #endif // _VERBOSE_LOG
-#if _QA_LOG
-        easyloggingpp::internal::registeredLogTypes.push_back(
-            easyloggingpp::internal::LogType("QA", easyloggingpp::configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
-#endif // _QA_LOG
-        easyloggingpp::internal::loggerInitialized = true;
+        }
     }
-}
 
-// Writes log safely after checking symbols availablility.
-static void writeLog(void) {
-    if ((easyloggingpp::configuration::SHOW_STD_OUTPUT) && (easyloggingpp::internal::logStream) && (easyloggingpp::internal::toStandardOutput)) {
-        std::cout << easyloggingpp::internal::logStream->str();
+    inline void setArgs(int argc, const char** argv) {
+        char** args = const_cast<char**>(argv);
+        setArgs(argc, args);
     }
-    if ((easyloggingpp::configuration::SAVE_TO_FILE) && (!easyloggingpp::internal::fileNotOpenedErrorDisplayed) && (easyloggingpp::internal::logStream) &&
-            (easyloggingpp::internal::logFile) && (easyloggingpp::internal::toFile)) {
-        easyloggingpp::internal::logFile->open(easyloggingpp::internal::kFinalFilename.c_str(), std::ofstream::out | std::ofstream::app);
-        (*easyloggingpp::internal::logFile) << easyloggingpp::internal::logStream->str();
-        easyloggingpp::internal::logFile->close();
-    }
-    easyloggingpp::internal::cleanStream();
-}
 
-// Updates the format specifier to value in log format
-// This is used to build log for writing to standard output or to file.
-static void updateFormatValue(const std::string& formatSpecifier, const std::string& value, std::string& currentFormat) {
-    size_t foundAt = -1;
-    while ((foundAt = currentFormat.find(formatSpecifier, foundAt + 1)) != std::string::npos){
-        if (currentFormat[foundAt > 0 ? foundAt - 1 : 0] == 'E') {
-            currentFormat.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
-            foundAt++;
+    inline void buildLine(const std::string& severityLevel_, const char* func_,
+                          const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
+        SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
+        currLogLine_ = level_->format();
+        std::string formatSpecifier_ = "";
+        std::string value_ = "";
+        // DateTime
+        unsigned int dateTimeFormat_ = 0;
+        if (level_->format().find_first_of("%datetime") != std::string::npos) {
+            dateTimeFormat_ = DateUtilities::kDateTime;
+            formatSpecifier_ = "%datetime";
+        } else if (level_->format().find_first_of("%date") != std::string::npos) {
+            dateTimeFormat_ = DateUtilities::kDateOnly;
+            formatSpecifier_ = "%date";
+        } else if (level_->format().find_first_of("%time") != std::string::npos) {
+            dateTimeFormat_ = DateUtilities::kTimeOnly;
+            formatSpecifier_ = "%time";
         } else {
-            currentFormat = currentFormat.replace(foundAt, formatSpecifier.size(), value);
-            continue;
+            dateTimeFormat_ = 0;
         }
+        if (dateTimeFormat_ != 0) {
+            value_ = DateUtilities::getDateTime (dateTimeFormat_);
+            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+        }
+        if (level_->format().find_first_of("%loc") != std::string::npos) {
+            tempStream_ << file_ << ":" << line_;
+            value_ = tempStream_.str();
+            formatSpecifier_ = "%loc";
+            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+        }
+        if (level_->format().find_first_of("%func") != std::string::npos) {
+            value_ = std::string(func_);
+            formatSpecifier_ = "%func";
+            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+        }
+        if (level_->format().find_first_of("%user") != std::string::npos) {
+            formatSpecifier_ = "%user";
+            LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
+        }
+        if (level_->format().find_first_of("%host") != std::string::npos) {
+            formatSpecifier_ = "%host";
+            LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
+        }
+        if (level_->format().find_first_of("%log") != std::string::npos) {
+            formatSpecifier_ = "%log";
+            LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
+        }
+        // Verbose specific log
+        if (verboseLevel_ > 0) {
+            // Verbose level
+            tempStream_.str("");
+            tempStream_ << verboseLevel_;
+            value_ = tempStream_.str();
+            formatSpecifier_ = "%vlevel";
+            LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
+        }
+        write(level_);
     }
-}
 
-// Determines format for format specifiers common across all the log formats.
-static void determineCommonLogFormat(const std::string& format) {
-    easyloggingpp::internal::logFormat = format;
-    easyloggingpp::internal::showDateTime = format.find("%datetime") != std::string::npos;
-    if (!easyloggingpp::internal::showDateTime) {
-        easyloggingpp::internal::showDate = (format.find("%date") != std::string::npos);
-        easyloggingpp::internal::showTime = (format.find("%time") != std::string::npos);
+    inline void write(SeverityLevel* level_) {
+        if (SHOW_STD_OUTPUT && level_->toStandardOutput()) {
+            std::cout << currLogLine_;
+        }
+        if (SAVE_TO_FILE && fileGood() && level_->toFile()) {
+            logFile_->open(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
+            (*logFile_) << currLogLine_;
+            logFile_->close();
+        }
+        clear();
     }
-    easyloggingpp::internal::showLocation = format.find("%loc") != std::string::npos;
-    easyloggingpp::internal::updateDateFormat();
-}
 
-// Iterates through log types andd find the one matching with current type
-static void determineLogFormat(const std::string& type) {
-    easyloggingpp::internal::LogTypeConstIter logType(std::find(easyloggingpp::internal::registeredLogTypes.begin(), easyloggingpp::internal::registeredLogTypes.end(), type));
-    if (logType != easyloggingpp::internal::registeredLogTypes.end()) {
-        easyloggingpp::internal::determineCommonLogFormat(logType->format);
-        easyloggingpp::internal::toStandardOutput = logType->toStandardOutput;
-        easyloggingpp::internal::toFile = logType->toFile;
-        return;
+    inline void clear(void) {
+        stream_->str("");
+        tempStream_.str("");
     }
-}
 
-// Builds log format. This function is entry point of writing log.
-static void buildFormat(const char* func, const char* file, const unsigned long int line, const std::string& type, int verboseLevel = -1) {
-    easyloggingpp::internal::init();
-    easyloggingpp::internal::determineLogFormat(type);
-    easyloggingpp::internal::updateFormatValue("%level", type, easyloggingpp::internal::logFormat);
-#if _VERBOSE_LOG
-    if (verboseLevel != -1) {
-        easyloggingpp::internal::tempStream << verboseLevel;
-        easyloggingpp::internal::updateFormatValue("%vlevel", easyloggingpp::internal::tempStream.str(),  easyloggingpp::internal::logFormat);
-        easyloggingpp::internal::tempStream.str("");
+    inline std::stringstream* stream(void) {
+        return stream_;
     }
-#endif // _VERBOSE_LOG
-    if (easyloggingpp::internal::showDateTime) {
-        easyloggingpp::internal::updateFormatValue("%datetime", easyloggingpp::internal::getDateTime(), easyloggingpp::internal::logFormat);
-    } else if (easyloggingpp::internal::showDate) {
-        easyloggingpp::internal::updateFormatValue("%date", easyloggingpp::internal::getDateTime(), easyloggingpp::internal::logFormat);
-    } else if (easyloggingpp::internal::showTime) {
-        easyloggingpp::internal::updateFormatValue("%time", easyloggingpp::internal::getDateTime(), easyloggingpp::internal::logFormat);
-    }
-    easyloggingpp::internal::updateFormatValue("%func", std::string(func), easyloggingpp::internal::logFormat);
-    if (easyloggingpp::internal::showLocation) {
-        easyloggingpp::internal::tempStream << file << ":" << line;
-        easyloggingpp::internal::updateFormatValue("%loc", easyloggingpp::internal::tempStream.str(), easyloggingpp::internal::logFormat);
-    }
-    easyloggingpp::internal::updateFormatValue("%user", easyloggingpp::internal::user, easyloggingpp::internal::logFormat);
-    easyloggingpp::internal::updateFormatValue("%host", easyloggingpp::internal::host, easyloggingpp::internal::logFormat);
-    easyloggingpp::internal::updateFormatValue("%log", easyloggingpp::internal::tempStream2.str(), easyloggingpp::internal::logFormat);
-    if (easyloggingpp::internal::logStream) {
-        (*easyloggingpp::internal::logStream) << logFormat;
-    }
-}
 
-// Registers the counter. This should not be called by itself since
-// one counter can be registered only once and this is checked
-// below in validateCounter(..)
-static void registerCounter(const easyloggingpp::internal::Counter& counter) {
-    easyloggingpp::internal::registeredCounters.push_back(counter);
-}
+    inline RegisteredSeverityLevels* registeredSeverityLevels(void) const {
+        return registeredSeverityLevels_;
+    }
 
-// Resets the counter when it reaches its limit to prevent any failure
-// since internal counter (position) uses int for data type.
-static void resetCounter(easyloggingpp::internal::CounterIter& counter, int n) {
-    if (counter->position >= 5000) {
-        counter->position = (n >= 1 ? 5000 % n : 0);
+    inline RegisteredCounters* registeredLogCounters(void) {
+        return registeredLogCounters_;
     }
-}
 
-// Validates the counter to see if it is valid to write the log for current iteration (n)
-// This also registers and resets the counter position if neccessary.
-static bool validateCounter(const char* func, const char* filename, unsigned long int lineNumber, int n) {
-    _LOCK_MUTEX;
-    // Supress unused warning
-    (void)func;
-    easyloggingpp::internal::tempCounter.resetLocation(filename, lineNumber);
-    bool result = false;
-    easyloggingpp::internal::CounterIter counter(
-        std::find(easyloggingpp::internal::registeredCounters.begin(),
-            easyloggingpp::internal::registeredCounters.end(), easyloggingpp::internal::tempCounter));
-    if (counter == easyloggingpp::internal::registeredCounters.end()) {
-        easyloggingpp::internal::registerCounter(easyloggingpp::internal::tempCounter);
-        counter = easyloggingpp::internal::registeredCounters.end() - 1;
+    inline bool fileGood(void) const {
+        return fileGood_;
     }
-    if ((n >= 1) && (counter->position != 0) && (counter->position % n == 0)) {
-        result = true;
+
+    inline unsigned short appVerbose(void) const {
+        return appVerbose_;
     }
-    easyloggingpp::internal::resetCounter(counter, n);
-    ++counter->position;
-    _UNLOCK_MUTEX
-    return result;
-}
+
+    inline bool initialized(void) const {
+        return initialized_;
+    }
+
+    const std::string kFinalFilename_;
+    const std::string kUser_;
+    const std::string kHost_;
+private:
+    bool initialized_;
+    bool fileGood_;
+    std::string currLogLine_;
+    std::stringstream tempStream_;
+    std::stringstream* stream_;
+    std::ofstream* logFile_;
+    RegisteredSeverityLevels* registeredSeverityLevels_;
+    RegisteredCounters* registeredLogCounters_;
+    unsigned short appVerbose_;
+}; // class Logger
 
 //
-// Logging macros
+// Helper macros
 //
-#define WRITE_LOG(type, log, func, file, line)                                                        \
-    _LOCK_MUTEX                                                                                       \
-    easyloggingpp::internal::tempStream2 << log;                                                      \
-    easyloggingpp::internal::buildFormat(func, file, line, std::string(type));                        \
-    easyloggingpp::internal::writeLog();                                                              \
-    _UNLOCK_MUTEX
+#define _LOGGER easyloggingppLogger_
+#define _QUALIFIED_LOGGER ::easyloggingpp::internal::_LOGGER
+#define _STREAM_PTR _LOGGER.stream()
+#define _STREAM *_STREAM_PTR
+#define _WRITE_LOG(level_, func_, file_, line_)                                     \
+    if (logAspect_ == kNormal) {                                                    \
+    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+} else if (logAspect_ == kConditional && condition_) {                              \
+    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+} else if (logAspect_ == kInterval) {                                               \
+    if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {           \
+    _LOGGER.buildLine(level_, func_, file_, line_);                                 \
+}                                                                                   \
+}
 
-#define WRITE_VLOG(level, log, func, file, line)                                                      \
-    _LOCK_MUTEX                                                                                       \
-    if (easyloggingpp::internal::verboseLevel >= level) {                                             \
-        easyloggingpp::internal::tempStream2 << log;                                                  \
-        easyloggingpp::internal::buildFormat(func, file, line, std::string("VERBOSE"), level);        \
-        easyloggingpp::internal::writeLog();                                                          \
-    }                                                                                                 \
-    _UNLOCK_MUTEX
+#define _LOG_TO_STREAM _STREAM << log_; return _STREAM;
 
-#define WRITE_LOG_EVERY_N(type, n, log, func, file, line)                                             \
-    if (easyloggingpp::internal::validateCounter(func, file, line, n)) {                              \
-        WRITE_LOG(type, log, func, file, line)                                                        \
+extern easyloggingpp::internal::Logger _LOGGER;
+
+class LogWriter {
+public:
+    enum kSeverityLevel { kInfo,
+                          kWarning,
+                          kError,
+                          kDebug,
+                          kFatal,
+                          kPerformance,
+                          kQa,
+                          kVerbose };
+
+    enum kLogAspect { kNormal,
+                      kConditional,
+                      kInterval };
+
+    explicit LogWriter(kLogAspect logAspect_,
+                       kSeverityLevel severityLevel_,
+                       const char* func_,
+                       const char* file_,
+                       const unsigned long int line_,
+                       bool condition_ = true,
+                       unsigned int verboseLevel_ = 0,
+                       int counter_ = 0) :
+        logAspect_(logAspect_),
+        severityLevel_(severityLevel_),
+        func_(func_),
+        file_(file_),
+        line_(line_),
+        condition_(condition_),
+        verboseLevel_(verboseLevel_),
+        counter_(counter_){
+        _LOCK_MUTEX;
     }
 
-#define WRITE_VLOG_EVERY_N(n, level, log, func, file, line)                                           \
-    if (easyloggingpp::internal::validateCounter(func, file, line, n)) {                              \
-        WRITE_VLOG(level, log, func, file, line)                                                      \
+    ~LogWriter(void) {
+        writeLog();
+        _UNLOCK_MUTEX;
     }
 
-#if _DEBUG_LOG
-#    define INTERNAL_DEBUG_LOG(logMessage, func, file, line) WRITE_LOG("DEBUG",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_DEBUG_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_DEBUG_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_DEBUG_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("DEBUG", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define DEBUG(logMessage) WRITE_LOG("DEBUG",logMessage, __func__, __FILE__, __LINE__)
-#           define DEBUG_IF(condition, logMessage) if (condition) { DEBUG(logMessage); }
-#           define DEBUG_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("DEBUG", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_DEBUG_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_DEBUG_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_DEBUG_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define DEBUG(x)
-#           define DEBUG_IF(x, y)
-#           define DEBUG_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _DEBUG_LOG
+    inline std::ostream& operator<<(const std::string& log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(char log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(bool log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed short log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned short log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed int log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned int log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed long log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned long log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(float log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(double log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(const char* log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(const void* log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(long double log_) { _LOG_TO_STREAM }
+private:
+    unsigned int logAspect_;
+    unsigned int severityLevel_;
+    const char* func_;
+    const char* file_;
+    const unsigned long int line_;
+    bool condition_;
+    unsigned int verboseLevel_;
+    int counter_;
 
-#if _INFO_LOG
-#    define INTERNAL_INFO_LOG(logMessage, func, file, line) WRITE_LOG("INFO",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_INFO_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_INFO_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_INFO_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("INFO", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define INFO(logMessage) WRITE_LOG("INFO",logMessage, __func__, __FILE__, __LINE__)
-#           define INFO_IF(condition, logMessage) if (condition) { INFO(logMessage); }
-#           define INFO_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("INFO", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#       define INTERNAL_INFO_LOG(x, y, z, a)
-#       define INTERNAL_CONDITIONAL_INFO_LOG(x, y, z, a, b)
-#       define INTERNAL_INTERVAL_INFO_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define INFO(x)
-#           define INFO_IF(x, y)
-#           define INFO_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _INFO_LOG
+    inline void writeLog(void) {
+        switch (severityLevel_) {
+        case kDebug:
+#if (_DEBUG_LOG)
+            _WRITE_LOG("DEBUG", func_, file_, line_);
+#endif
+            break;
+        case kWarning:
+#if (_WARNING_LOG)
+            _WRITE_LOG("WARNING", func_, file_, line_);
+#endif
+            break;
+        case kError:
+#if (_ERROR_LOG)
+            _WRITE_LOG("ERROR", func_, file_, line_);
+#endif
+            break;
+        case kInfo:
+#if (_INFO_LOG)
+            _WRITE_LOG("INFO", func_, file_, line_);
+#endif
+            break;
+        case kFatal:
+#if (_FATAL_LOG)
+            _WRITE_LOG("FATAL", func_, file_, line_);
+#endif
+            break;
+        case kPerformance:
+#if (_PERFORMANCE_LOG)
+            _WRITE_LOG("PERFORMANCE", func_, file_, line_);
+#endif
+            break;
+        case kQa:
+#if (_QA_LOG)
+            _WRITE_LOG("QA", func_, file_, line_);
+#endif
+            break;
+        case kVerbose:
+#if (_VERBOSE_LOG)
+            if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
+                _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kConditional && condition_ && _LOGGER.appVerbose() >= verboseLevel_) {
+                _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kInterval && _LOGGER.appVerbose() >= verboseLevel_) {
+                if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
+                    _LOGGER.buildLine("VERBOSE", func_, file_, line_, verboseLevel_);
+                }
+            }
+#endif
+            break;
+        }
+        _LOGGER.clear();
+    }
+}; // class LogWriter
 
-#if _WARNING_LOG
-#    define INTERNAL_WARNING_LOG(logMessage, func, file, line) WRITE_LOG("WARNING",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_WARNING_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_WARNING_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_WARNING_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("WARNING", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define WARNING(logMessage) WRITE_LOG("WARNING",logMessage, __func__, __FILE__, __LINE__)
-#           define WARNING_IF(condition, logMessage) if (condition) { WARNING(logMessage); }
-#           define WARNING_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("WARNING", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_WARNING_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_WARNING_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_WARNING_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define WARNING(x)
-#           define WARNING_IF(x, y)
-#           define WARNING_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _WARNING_LOG
+} // namespace internal
 
-#if _ERROR_LOG
-#    define INTERNAL_ERROR_LOG(logMessage, func, file, line) WRITE_LOG("ERROR",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_ERROR_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_ERROR_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_ERROR_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("ERROR", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define ERROR(logMessage) WRITE_LOG("ERROR",logMessage, __func__, __FILE__, __LINE__)
-#           define ERROR_IF(condition, logMessage) if (condition) { ERROR(logMessage); }
-#           define ERROR_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("ERROR", n, logMessage)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_ERROR_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_ERROR_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_ERROR_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define ERROR(x)
-#           define ERROR_IF(x, y)
-#           define ERROR_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _ERROR_LOG
-#if _FATAL_LOG
-#    define INTERNAL_FATAL_LOG(logMessage, func, file, line) WRITE_LOG("FATAL",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_FATAL_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_FATAL_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_FATAL_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("FATAL", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define FATAL(logMessage) WRITE_LOG("FATAL",logMessage, __func__, __FILE__, __LINE__)
-#           define FATAL_IF(condition, logMessage) if (condition) { FATAL(logMessage); }
-#           define FATAL_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("FATAL", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_FATAL_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_FATAL_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_FATAL_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define FATAL(x)
-#           define FATAL_IF(x, y)
-#           define FATAL_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _FATAL_LOG
+} // namespace easyloggingpp
 
+//
+// Performance tracking macros
+//
 #if _PERFORMANCE_LOG
-static std::string formatSeconds(double secs) {
-    double result = secs;
-    std::string unit = "seconds";
-    std::stringstream ss;
-    if (result > 60.0f) {result /= 60; unit = "minutes";
-        if (result > 60.0f) {result /= 60; unit = "hours";
-            if (result > 24.0f) {result /= 24; unit = "days";}
-        }
-    }
-    ss << result << " " << unit;
-    return ss.str();
-}
-#    define INTERNAL_PERFORMANCE_LOG(logMessage, func, file, line) WRITE_LOG("PERFORMANCE",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_PERFORMANCE_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_PERFORMANCE_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_PERFORMANCE_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("PERFORMANCE", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define PERFORMANCE(logMessage) WRITE_LOG("PERFORMANCE",logMessage, __func__, __FILE__, __LINE__)
-#           define PERFORMANCE_IF(condition, logMessage) if (condition) { PERFORMANCE(logMessage); }
-#           define PERFORMANCE_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("PERFORMANCE", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-#    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                       \
-        easyloggingpp::internal::formatSeconds(difftime(functionEndTime, functionStartTime)) << "]"
-#    define FUNC_SUB_COMMON_START {                                                                     \
-        if (easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) {                                    \
-            INTERNAL_PERFORMANCE_LOG(START_FUNCTION_LOG, __func__, __FILE__, __LINE__)                  \
-        }                                                                                               \
-        time_t functionStartTime, functionEndTime;                                                      \
+#    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                  \
+         easyloggingpp::internal::DateUtilities::formatSeconds(                                    \
+         difftime(functionEndTime, functionStartTime)) << "]"
+#   define FUNC_SUB_COMMON_START {                                                                 \
+        if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                              \
+            LPERFORMANCE << START_FUNCTION_LOG;                                                    \
+        }                                                                                          \
+        time_t functionStartTime, functionEndTime;                                                 \
         time(&functionStartTime);
-#    define FUNC_SUB_COMMON_END time(&functionEndTime); INTERNAL_PERFORMANCE_LOG(TIME_OUTPUT, __func__, __FILE__, __LINE__);
+#    define FUNC_SUB_COMMON_END time(&functionEndTime); LPERFORMANCE << TIME_OUTPUT;
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
 #    define END_SUB FUNC_SUB_COMMON_END }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
@@ -1068,14 +1327,6 @@ static std::string formatSeconds(double secs) {
 #    define END_MAIN(return_value) FUNC_SUB_COMMON_END; _END_EASYLOGGINGPP; return return_value; }
 #    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
 #else
-#    define INTERNAL_PERFORMANCE_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_PERFORMANCE_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_PERFORMANCE_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define PERFORMANCE(x)
-#           define PERFORMANCE_IF(x, y)
-#           define PERFORMANCE_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
 #    define END_SUB }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
@@ -1086,384 +1337,137 @@ static std::string formatSeconds(double secs) {
 #    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
 #endif // _PERFORMANCE_LOG
 
-#if _VERBOSE_LOG
-#    define INTERNAL_VERBOSE_LOG(level, logMessage, func, file, line) WRITE_VLOG(level, logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_VERBOSE_LOG(condition, level, logMessage, func, file, line) if (condition) { INTERNAL_VERBOSE_LOG(level, logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_VERBOSE_LOG(n, level, logMessage, func, file, line) WRITE_VLOG_EVERY_N(n, level, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define VERBOSE(level, logMessage) WRITE_VLOG(level, logMessage, __func__, __FILE__, __LINE__)
-#           define VERBOSE_IF(condition, level, logMessage) if (condition) { VERBOSE(level, logMessage); }
-#           define VERBOSE_EVERY_N(n, level, logMessage) WRITE_VLOG_EVERY_N(n, level, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_VERBOSE_LOG(x, y, z, a, b)
-#    define INTERNAL_CONDITIONAL_VERBOSE_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_VERBOSE_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define VERBOSE(x, y)
-#           define VERBOSE_IF(x, y, z)
-#           define VERBOSE_EVERY_N(x, y, z)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _VERBOSE_LOG
-
-#if _QA_LOG
-#    define INTERNAL_QA_LOG(logMessage, func, file, line) WRITE_LOG("QA",logMessage, func, file, line)
-#    define INTERNAL_CONDITIONAL_QA_LOG(condition, logMessage, func, file, line) if (condition) { INTERNAL_QA_LOG(logMessage, func, file, line); }
-#    define INTERNAL_INTERVAL_QA_LOG(n, logMessage, func, file, line) WRITE_LOG_EVERY_N("QA", n, logMessage, func, file, line)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define QA(logMessage) WRITE_LOG("QA",logMessage, __func__, __FILE__, __LINE__)
-#           define QA_IF(condition, logMessage) if (condition) { QA(logMessage); }
-#           define QA_EVERY_N(n, logMessage) WRITE_LOG_EVERY_N("QA", n, logMessage, __func__, __FILE__, __LINE__)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#else
-#    define INTERNAL_QA_LOG(x, y, z, a)
-#    define INTERNAL_CONDITIONAL_QA_LOG(x, y, z, a, b)
-#    define INTERNAL_INTERVAL_QA_LOG(x, y, z, a, b)
-#       ifdef _SUPPORT_LEGACY_LOG_NAMES
-#           define QA(x)
-#           define QA_IF(x, y)
-#           define QA_EVERY_N(x, y)
-#       endif // _SUPPORT_LEGACY_LOG_NAMES
-#endif // _QA_LOG
-} // namespace internal
+namespace easyloggingpp {
 namespace helper {
-// Reads log from current log file an returns standard string
-static std::string readLog(void) {
-    _LOCK_MUTEX
-    std::stringstream ss;
-    if (easyloggingpp::configuration::SAVE_TO_FILE) {
-        std::ifstream logFileReader(easyloggingpp::internal::kFinalFilename.c_str(), std::ifstream::in);
-        if (logFileReader.is_open()) {
-            std::string line;
-            while (logFileReader.good()) {
-                std::getline(logFileReader, line);
-                ss << line << std::endl;
+
+class MyEasyLog {
+    // Reads log from current log file an returns standard string
+    static std::string readLog(void) {
+        _LOCK_MUTEX;
+        std::stringstream ss;
+        if (::easyloggingpp::configurations::SAVE_TO_FILE) {
+            std::ifstream logFileReader(_QUALIFIED_LOGGER.kFinalFilename_.c_str(), std::ifstream::in);
+            if (logFileReader.is_open()) {
+                std::string line;
+                while (logFileReader.good()) {
+                    std::getline(logFileReader, line);
+                    ss << line << std::endl;
+                }
+                logFileReader.close();
+            } else {
+                ss << "Error opening log file [" << _QUALIFIED_LOGGER.kFinalFilename_ << "]";
             }
-            logFileReader.close();
         } else {
-            ss << "Error opening log file [" << easyloggingpp::internal::kFinalFilename << "]";
+            ss << "Logs are not being saved to file!";
         }
-    } else {
-        ss << "Logs are not being saved to file!";
+        _UNLOCK_MUTEX;
+        return ss.str();
     }
-    _UNLOCK_MUTEX
-    return ss.str();
-}
-} // namespace helper
-
-// Following namespace is useless and is ONLY there to supress
-// warnings of unused symbols. These symbols include conditional
-// and helper functions. Please do not use these functions.
-namespace unusedwarningsuppresser {
-class UnusedWarningSupresser {
-private:
-    void suppressAll(void) {
-        std::string readLogWarningSupress = easyloggingpp::helper::readLog();
-        const char* argv[1];
-        argv[1] = "easylogging++ warning suppressor";
-        easyloggingpp::internal::setAppArgs(0, argv);
-        easyloggingpp::internal::buildFormat("suppress", "suppress", 1, "suppress");
-        easyloggingpp::internal::writeLog();
-        std::cout << easyloggingpp::version::versionNumber;
-        easyloggingpp::internal::validateCounter("", "", 0, 0);
-#if _PERFORMANCE_LOG
-        easyloggingpp::internal::formatSeconds(1);
-#endif
-    }
-};
-} // warningsuppresser
-} // namespace easyloggingpp
-#else // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
-// Essentials
-#define INTERNAL_DEBUG_LOG(x, y, z, a)
-#define INTERNAL_INFO_LOG(x, y, z, a)
-#define INTERNAL_WARNING_LOG(x, y, z, a)
-#define INTERNAL_ERROR_LOG(x, y, z, a)
-#define INTERNAL_FATAL_LOG(x, y, z, a)
-#define INTERNAL_PERFORMANCE_LOG(x, y, z, a)
-#define INTERNAL_VERBOSE_LOG(x, y, z, a, b)
-#define INTERNAL_QA_LOG(x, y, z, a)
-#ifdef _SUPPORT_LEGACY_LOG_NAMES
-#   define DEBUG(x)
-#   define INFO(x)
-#   define WARNING(x)
-#   define ERROR(x)
-#   define FATAL(x)
-#   define PERFORMANCE(x)
-#   define VERBOSE(x, y)
-#   define QA(x)
-#endif // _SUPPORT_LEGACY_LOG_NAMES
-// Performance logs
-#define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
-#define END_SUB }
-#define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
-#define END_FUNC(x) }
-#define RETURN(expr) return expr;
-#define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#define END_MAIN(x) END_FUNC(x)
-#define RETURN_MAIN(exit_status) return exit_status;
-// Conditional logs
-#define INTERNAL_CONDITIONAL_DEBUG_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_INFO_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_WARNING_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_ERROR_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_FATAL_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_PERFORMANCE_LOG(x, y, z, a, b)
-#define INTERNAL_CONDITIONAL_VERBOSE_LOG(x, y, z, a, b, c)
-#define INTERNAL_CONDITIONAL_QA_LOG(x, y, z, a, b)
-#ifdef _SUPPORT_LEGACY_LOG_NAMES
-#   define INFO_IF(x, y)
-#   define WARNING_IF(x, y)
-#   define ERROR_IF(x, y)
-#   define FATAL_IF(x, y)
-#   define PERFORMANCE_IF(x, y)
-#   define VERBOSE_IF(x, y, z)
-#   define QA_IF(x, y)
-#endif // _SUPPORT_LEGACY_LOG_NAMES
-// Interval logs
-#define INTERNAL_INTERVAL_DEBUG_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_INFO_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_WARNING_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_ERROR_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_FATAL_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_PERFORMANCE_LOG(x, y, z, a, b)
-#define INTERNAL_INTERVAL_VERBOSE_LOG(x, y, z, a, b, c)
-#define INTERNAL_INTERVAL_QA_LOG(x, y, z, a, b)
-#ifdef _SUPPORT_LEGACY_LOG_NAMES
-#   define DEBUG_EVERY_N(x, y)
-#   define INFO_EVERY_N(x, y)
-#   define WARNING_EVERY_N(x, y)
-#   define ERROR_EVERY_N(x, y)
-#   define FATAL_EVERY_N(x, y)
-#   define PERFORMANCE_EVERY_N(x, y)
-#   define VERBOSE_EVERY_N(x, y, z)
-#   define QA_EVERY_N(x, y)
-#endif // _SUPPORT_LEGACY_LOG_NAMES
-// Miscellaneous
-#define _INITIALIZE_EASYLOGGINGPP
-#define _START_EASYLOGGINGPP(x, y)
-#define _END_EASYLOGGINGPP
-// Helper functions
-#include <string>  // For readLog()
-#include <sstream> // For LogWrapper
-namespace easyloggingpp {
-namespace version {
-static const char* versionNumber = "6.10";
-}
-namespace helper {
-static std::string readLog() {
-    return "";
-}
+}; // class MyEasyLog
 } // namespace helper
 } // namespace easyloggingpp
-#endif // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
-
-namespace easyloggingpp {
-namespace internal {
-// A log wrapper to provide class based logging, yet using power of preprocessor directives
-// to minimize instructions certain (or all) logging is disabled
-class LogWrapper {
-public:
-    enum kLogLevel { kInfo,
-                     kWarning,
-                     kError,
-                     kDebug,
-                     kFatal,
-                     kPerformance,
-                     kQa,
-                     kVerbose };
-
-    enum kLogAspect { kNormal,
-                      kConditional,
-                      kInterval };
-
-    explicit LogWrapper(kLogAspect logAspect_,
-               kLogLevel logLevel_,
-               const char* func_,
-               const char* file_,
-               const unsigned long int line_,
-               bool condition_ = true,
-               int verboseLevel_ = 0,
-               int counter_ = 0) :
-        logAspect(logAspect_),
-        logLevel(logLevel_),
-        func(func_),
-        file(file_),
-        line(line_),
-        condition(condition_),
-        verboseLevel(verboseLevel_),
-        counter(counter_){}
-
-    ~LogWrapper(void) {
-        switch (logLevel) {
-        case kInfo:
-            if (logAspect == kNormal) {
-                INTERNAL_INFO_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_INFO_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_INFO_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kWarning:
-            if (logAspect == kNormal) {
-                INTERNAL_WARNING_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_WARNING_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_WARNING_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kError:
-            if (logAspect == kNormal) {
-                INTERNAL_ERROR_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_ERROR_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_ERROR_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kDebug:
-            if (logAspect == kNormal) {
-                INTERNAL_DEBUG_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_DEBUG_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_DEBUG_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kFatal:
-            if (logAspect == kNormal) {
-                INTERNAL_FATAL_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_FATAL_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_FATAL_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kPerformance:
-            if (logAspect == kNormal) {
-                INTERNAL_PERFORMANCE_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_PERFORMANCE_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_PERFORMANCE_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kQa:
-            if (logAspect == kNormal) {
-                INTERNAL_QA_LOG(logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_QA_LOG(condition, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_QA_LOG(counter, logStream.str(), func, file, line);
-            }
-            break;
-        case kVerbose:
-            if (logAspect == kNormal) {
-                INTERNAL_VERBOSE_LOG(verboseLevel, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kConditional) {
-                INTERNAL_CONDITIONAL_VERBOSE_LOG(condition, verboseLevel, logStream.str(), func, file, line);
-            }
-            else if (logAspect == kInterval) {
-                INTERNAL_INTERVAL_VERBOSE_LOG(counter, verboseLevel, logStream.str(), func, file, line);
-            }
-            break;
-        }
-    }
-
-    inline std::ostream& operator<<(const std::string& log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(char log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(bool log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(signed short log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(unsigned short log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(signed int log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(unsigned int log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(signed long log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(unsigned long log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(float log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(double log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(const char* log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(const void* log_) { logStream << log_; return logStream; }
-    inline std::ostream& operator<<(long double log_) { logStream << log_; return logStream; }
-
-private:
-    unsigned int logAspect;
-    unsigned int logLevel;
-    const char* func;
-    const char* file;
-    const unsigned long int line;
-    bool condition;
-    int verboseLevel;
-    int counter;
-    std::stringstream logStream;
-};
-} // internal
-} // easyloggingpp
+//
+// Log writing macros
+//
 // Normal logs
-#define LINFO easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,           \
-    easyloggingpp::internal::LogWrapper::kInfo, __func__, __FILE__, __LINE__)
-#define LWARNING easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,        \
-    easyloggingpp::internal::LogWrapper::kWarning, __func__, __FILE__, __LINE__)
-#define LDEBUG easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,          \
-    easyloggingpp::internal::LogWrapper::kDebug, __func__, __FILE__, __LINE__)
-#define LERROR easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,          \
-    easyloggingpp::internal::LogWrapper::kError, __func__, __FILE__, __LINE__)
-#define LFATAL easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,          \
-    easyloggingpp::internal::LogWrapper::kFatal, __func__, __FILE__, __LINE__)
-#define LPERFORMANCE easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,    \
-    easyloggingpp::internal::LogWrapper::kPerformance, __func__, __FILE__, __LINE__)
-#define LQA easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal,             \
-    easyloggingpp::internal::LogWrapper::kQa, __func__, __FILE__, __LINE__)
-#define LVERBOSE(level) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kNormal, \
-    easyloggingpp::internal::LogWrapper::kVerbose, __func__, __FILE__, __LINE__, true, level)
+#define LINFO LogWriter(LogWriter::kNormal,           \
+    LogWriter::kInfo, __func__, __FILE__, __LINE__)
+#define LWARNING LogWriter(LogWriter::kNormal,        \
+    LogWriter::kWarning, __func__, __FILE__, __LINE__)
+#define LDEBUG LogWriter(LogWriter::kNormal,          \
+    LogWriter::kDebug, __func__, __FILE__, __LINE__)
+#define LERROR LogWriter(LogWriter::kNormal,          \
+    LogWriter::kError, __func__, __FILE__, __LINE__)
+#define LFATAL LogWriter(LogWriter::kNormal,          \
+    LogWriter::kFatal, __func__, __FILE__, __LINE__)
+#define LPERFORMANCE LogWriter(LogWriter::kNormal,    \
+    LogWriter::kPerformance, __func__, __FILE__, __LINE__)
+#define LQA LogWriter(LogWriter::kNormal,             \
+    LogWriter::kQa, __func__, __FILE__, __LINE__)
+#define LVERBOSE(level) LogWriter(LogWriter::kNormal, \
+    LogWriter::kVerbose, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define LINFO_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,           \
-    easyloggingpp::internal::LogWrapper::kInfo, __func__, __FILE__, __LINE__, condition)
-#define LWARNING_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,        \
-    easyloggingpp::internal::LogWrapper::kWarning, __func__, __FILE__, __LINE__, condition)
-#define LDEBUG_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,          \
-    easyloggingpp::internal::LogWrapper::kDebug, __func__, __FILE__, __LINE__, condition)
-#define LERROR_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,          \
-    easyloggingpp::internal::LogWrapper::kError, __func__, __FILE__, __LINE__, condition)
-#define LFATAL_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,          \
-    easyloggingpp::internal::LogWrapper::kFatal, __func__, __FILE__, __LINE__, condition)
-#define LPERFORMANCE_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,    \
-    easyloggingpp::internal::LogWrapper::kPerformance, __func__, __FILE__, __LINE__, condition)
-#define LQA_IF(condition) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional,             \
-    easyloggingpp::internal::LogWrapper::kQa, __func__, __FILE__, __LINE__, condition)
-#define LVERBOSE_IF(condition, level) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kConditional, \
-    easyloggingpp::internal::LogWrapper::kVerbose, __func__, __FILE__, __LINE__, condition, level)
+#define LINFO_IF(condition) LogWriter(LogWriter::kConditional,           \
+    LogWriter::kInfo, __func__, __FILE__, __LINE__, condition)
+#define LWARNING_IF(condition) LogWriter(LogWriter::kConditional,        \
+    LogWriter::kWarning, __func__, __FILE__, __LINE__, condition)
+#define LDEBUG_IF(condition) LogWriter(LogWriter::kConditional,          \
+    LogWriter::kDebug, __func__, __FILE__, __LINE__, condition)
+#define LERROR_IF(condition) LogWriter(LogWriter::kConditional,          \
+    LogWriter::kError, __func__, __FILE__, __LINE__, condition)
+#define LFATAL_IF(condition) LogWriter(LogWriter::kConditional,          \
+    LogWriter::kFatal, __func__, __FILE__, __LINE__, condition)
+#define LPERFORMANCE_IF(condition) LogWriter(LogWriter::kConditional,    \
+    LogWriter::kPerformance, __func__, __FILE__, __LINE__, condition)
+#define LQA_IF(condition) LogWriter(LogWriter::kConditional,             \
+    LogWriter::kQa, __func__, __FILE__, __LINE__, condition)
+#define LVERBOSE_IF(condition, level) LogWriter(LogWriter::kConditional, \
+    LogWriter::kVerbose, __func__, __FILE__, __LINE__, condition, level)
 // Interval logs
-#define LINFO_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,           \
-    easyloggingpp::internal::LogWrapper::kInfo, __func__, __FILE__, __LINE__, true, 0, n)
-#define LWARNING_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,        \
-    easyloggingpp::internal::LogWrapper::kWarning, __func__, __FILE__, __LINE__, true, 0, n)
-#define LDEBUG_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,          \
-    easyloggingpp::internal::LogWrapper::kDebug, __func__, __FILE__, __LINE__, true, 0, n)
-#define LERROR_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,          \
-    easyloggingpp::internal::LogWrapper::kError, __func__, __FILE__, __LINE__, true, 0, n)
-#define LFATAL_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,          \
-    easyloggingpp::internal::LogWrapper::kFatal, __func__, __FILE__, __LINE__, true, 0, n)
-#define LPERFORMANCE_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,    \
-    easyloggingpp::internal::LogWrapper::kPerformance, __func__, __FILE__, __LINE__, true, 0, n)
-#define LQA_EVERY_N(n) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval,             \
-    easyloggingpp::internal::LogWrapper::kQa, __func__, __FILE__, __LINE__, condition, 0, n)
-#define LVERBOSE_EVERY_N(n, level) easyloggingpp::internal::LogWrapper(easyloggingpp::internal::LogWrapper::kInterval, \
-    easyloggingpp::internal::LogWrapper::kVerbose, __func__, __FILE__, __LINE__, true, level, n)
+#define LINFO_EVERY_N(n) LogWriter(LogWriter::kInterval,                  \
+    LogWriter::kInfo, __func__, __FILE__, __LINE__, true, 0, n)
+#define LWARNING_EVERY_N(n) LogWriter(LogWriter::kInterval,               \
+    LogWriter::kWarning, __func__, __FILE__, __LINE__, true, 0, n)
+#define LDEBUG_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    LogWriter::kDebug, __func__, __FILE__, __LINE__, true, 0, n)
+#define LERROR_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    LogWriter::kError, __func__, __FILE__, __LINE__, true, 0, n)
+#define LFATAL_EVERY_N(n) LogWriter(LogWriter::kInterval,                 \
+    LogWriter::kFatal, __func__, __FILE__, __LINE__, true, 0, n)
+#define LPERFORMANCE_EVERY_N(n) LogWriter(LogWriter::kInterval,           \
+    LogWriter::kPerformance, __func__, __FILE__, __LINE__, true, 0, n)
+#define LQA_EVERY_N(n) LogWriter(LogWriter::kInterval,                    \
+    LogWriter::kQa, __func__, __FILE__, __LINE__, condition, 0, n)
+#define LVERBOSE_EVERY_N(n, level) LogWriter(LogWriter::kInterval,        \
+    LogWriter::kVerbose, __func__, __FILE__, __LINE__, true, level, n)
+//
+// Legacy log macros
+//
+#ifdef _SUPPORT_LEGACY_LOG_NAMES
+// Normal logs
+#    define DEBUG(log_) LDEBUG << log_;
+#    define INFO(log_) LINFO << log_;
+#    define WARNING(log_) LWARNING << log_;
+#    define ERROR(log_) LERROR << log_;
+#    define FATAL(log_) LFATAL << log_;
+#    define PERFORMANCE(log_) LPERFORMANCE << log_;
+#    define VERBOSE(vlevel_, log_) LVERBOSE(vlevel_) << log_;
+#    define QA(log_) LQA << log_;
+// Conditional logs
+#    define DEBUG_IF(cond_, log_) LDEBUG_IF(cond_) << log_;
+#    define INFO_IF(cond_, log_) LINFO_IF(cond_) << log_;
+#    define WARNING_IF(cond_, log_) LWARNING_IF(cond_) << log_;
+#    define ERROR_IF(cond_, log_) LERROR_IF(cond_) << log_;
+#    define FATAL_IF(cond_, log_) LFATAL_IF(cond_) << log_;
+#    define PERFORMANCE_IF(cond_, log_) LPERFORMANCE_IF(cond_) << log_;
+#    define VERBOSE_IF(cond_, vlevel_, log_) LVERBOSE_IF(cond_, vlevel_) << log_;
+#    define QA_IF(cond_, log_) LQA << log_;
+// Interval logs
+#    define DEBUG_EVERY_N(n_, log_) LDEBUG_EVERY_N(n_) << log_;
+#    define INFO_EVERY_N(n_, log_) LINFO_EVERY_N(n_) << log_;
+#    define WARNING_EVERY_N(n_, log_) LWARNING_EVERY_N(n_) << log_;
+#    define ERROR_EVERY_N(n_, log_) LERROR_EVERY_N(n_) << log_;
+#    define FATAL_EVERY_N(n_, log_) LFATAL_EVERY_N(n_) << log_;
+#    define PERFORMANCE_EVERY_N(n_, log_) LPERFORMANCE_EVERY_N(n_) << log_;
+#    define VERBOSE_EVERY_N(n_, vlevel_, log_) LVERBOSE_EVERY_N(n_, vlevel_) << log_;
+#    define QA_EVERY_N(n_, log_) LQA_EVERY_N(n_) << log_;
+#endif // _SUPPORT_LEGACY_LOG_NAMES
+
+// When using log levels that require program arguments, for example VERBOSE logs require
+// to see what VERBOSE levels to log by looking at --v=X argument or --verbose (for level 9)
+// argument, following macro should be used.
+#define _START_EASYLOGGINGPP(argc, argv) \
+    _LOGGER.setArgs(argc, argv);
+
+#define _INITIALIZE_EASYLOGGINGPP   \
+    namespace easyloggingpp {       \
+        namespace internal {        \
+            Logger _LOGGER;         \
+        }                           \
+    }
+
+#define _END_EASYLOGGINGPP
+
+using namespace easyloggingpp::internal;
+
 #endif //EASYLOGGINGPP_H

@@ -13,12 +13,14 @@
 
 #include "mythread.h"
 
+
 _INITIALIZE_EASYLOGGINGPP
 
-FUNC(int, main, (int argc, char** argv))   // Using FUNC for performance tracking
+FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracking
  _START_EASYLOGGINGPP(argc, argv)
 
- for (int i = 0; i < 10; ++i) { 
+
+ for (int i = 0; i < 3; ++i) {
   MyThread t(i);
   t.start();
   t.wait();

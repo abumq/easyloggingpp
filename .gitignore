@@ -1,27 +1,22 @@
 *.swp
 
-test/tests.bin
+/test/tests.bin
 
-easyloggingpp.zip
+/easyloggingpp.zip
+/releases/*
 
-releases/*
+/logs/*
+/samples/logs/*.log
+/samples/multiple-files-project/logs/*.log
 
-samples/logs/myeasylog.log
+/samples/multiple-files-project/bin/*
+/samples/bin/*
 
-samples/multiple-files-project/logs/myeasylog.log
+/samples/qt-sample/*.bin
+/samples/qt-sample/logs/*
+/samples/qt-sample/*.o
+/samples/qt-sample/moc_*
+/samples/qt-sample/Makefile
 
-samples/multiple-files-project/bin/*
-
-samples/bin/*
-
-samples/qt-sample/*.bin
-samples/qt-sample/logs/*
-samples/qt-sample/*.o
-samples/qt-sample/moc_*
-samples/qt-sample/Makefile
-
-samples/qt-sample-build-Desktop-Debug/*
-samples/qt-sample/qt-sample.pro.user
-
-logs/*
-logs/myeasylog.log
+/samples/qt-sample-build-Desktop-Debug/*
+/samples/qt-sample/qt-sample.pro.user

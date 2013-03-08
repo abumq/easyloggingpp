@@ -19,6 +19,7 @@ fi
 ## Extra macros
 macro="$macro -D_QUALITY_ASSURANCE"
 macro="$macro -D_ALWAYS_CLEAN_LOGS"
+macro="$macro -D_QT_CORE_LIB"
 
 CXX_STD='-std=c++0x -pthread'
 

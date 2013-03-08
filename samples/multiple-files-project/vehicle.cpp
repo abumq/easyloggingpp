@@ -8,7 +8,5 @@ Vehicle::Vehicle(const std::string& manufacturer,
                     manufacturer(manufacturer),
                     model(model),
                     year(year) {
-   std::cout << "VEHICLE: ----> Initialized? " << ::easyloggingpp::internal::loggerInitialized << "\n";
    LINFO << "Logged from vehicle";
-   std::cout << "VEHICLE: ----> Initialized? " << ::easyloggingpp::internal::loggerInitialized << "\n";
 }

@@ -32,6 +32,10 @@ void writeLogFromThread(int threadId){
   // Following line will be logged once with every thread because of interval 1 
   LINFO_EVERY_N(1) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
 
+  for (int i = 1; i <= 10; ++i) {
+    LVERBOSE_EVERY_N(2, 3) << "Verbose level 3 log every two times. This is at " << i << " from thread #" << threadId;
+  }
+
   LINFO_IF(threadId == 2) << "This log is only for thread 2 and is ran by thread #" << threadId;
 }
 
