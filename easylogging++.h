@@ -178,7 +178,7 @@
 #define _TTHREAD_PLATFORM_DEFINED_
 #endif
 #if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
-    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) || \
+    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) || 	 \
     (defined(__GNUC__) && (defined(__ppc__)))
 #define _FAST_MUTEX_ASM_
 #else
@@ -397,6 +397,7 @@ namespace configurations {
 //
 //  SPECIFIER     |                  DESCRIPTION
 // ===============|==================================================
+//   %type        |   Log type, e.g, BusinessLogger, SecurityLogger etc
 //   %level       |   Log level, e.g, INFO, DEBUG, ERROR etc
 //   %datetime    |   Current date and time (while writing log)
 //   %date        |   Current date only
