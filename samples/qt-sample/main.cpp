@@ -1,10 +1,10 @@
 /**
  * This file is part of EasyLogging++ samples
  * Demonstration of multithreaded application in C++ (Qt)
- * 
+ *
  * Compile this program using Qt
  *    qmake qt-sample.pro && make
- * 
+ *
  * Revision: 1.0
  * @author mkhan3189
  */
@@ -17,18 +17,24 @@
 _INITIALIZE_EASYLOGGINGPP
 
 FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracking
- _START_EASYLOGGINGPP(argc, argv)
+_START_EASYLOGGINGPP(argc, argv)
 
+bool runThreads = false;
 
- for (int i = 0; i < 3; ++i) {
-  MyThread t(i);
-  t.start();
-  t.wait();
- }
+_QUALIFIED_LOGGER.injectNewLogType("PerformanceLogger", "PERFORMANCE");
+CINFO("PerformanceLogger") << "test";
+
+if (runThreads) {
+    for (int i = 0; i < 3; ++i) {
+        MyThread t(i);
+        t.start();
+        t.wait();
+    }
+}
 
 SDEBUG << "This is security logger for debug";
 
 BINFO << "This is a business logger";
 
- RETURN(0);
+RETURN(0);
 END_FUNC(0)

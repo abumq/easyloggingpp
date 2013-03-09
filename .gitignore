@@ -6,8 +6,9 @@
 /releases/*
 
 /logs/*
-/samples/logs/*.log
-/samples/multiple-files-project/logs/*.log
+/samples/logs/*
+/samples/multiple-files-project/logs/*
+/test/logs/*
 
 /samples/multiple-files-project/bin/*
 /samples/bin/*
