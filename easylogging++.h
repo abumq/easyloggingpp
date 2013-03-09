@@ -95,6 +95,10 @@
 #define _QA_LOGS_TO_STANDARD_OUTPUT 1
 #define _QA_LOGS_TO_FILE 1
 
+#define _ENABLE_TRACE_LOGS 1
+#define _TRACE_LOGS_TO_STANDARD_OUTPUT 1
+#define _TRACE_LOGS_TO_FILE 1
+
 //
 // High-level log evaluation
 //
@@ -417,6 +421,7 @@ const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
 const std::string    PERFORMANCE_LOG_FORMAT   =    DEFAULT_LOG_FORMAT;
 const std::string    VERBOSE_LOG_FORMAT       =    "%type [%level-%vlevel] [%datetime] %log\n";
 const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
+const std::string    TRACE_LOG_FORMAT         =    "%type [%level] [%datetime] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
 
@@ -480,6 +485,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS) && (_ENABLE_EASYLOGGING))
 #define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
 #define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
+#define _TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 
 #if _UNIX
 // Permissions for unix-based systems
@@ -920,6 +926,8 @@ public:
                     new SeverityLevel("VERBOSE", VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
                     new SeverityLevel("QA", QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel("TRACE", TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1152,11 +1160,24 @@ public:
         }
         if (level_->format().find("%type") != std::string::npos) {
             LogType* type_ = registeredLogTypes_->get(logType_);
-            if (type_) {
-                value_ = type_->logName();
-            } else {
-                value_ = logType_;
+#ifdef _NO_TRIVIAL_TYPE_DISPLAY
+            bool displayType_ = true;
+            if (type_ && type_->name() == "TrivialLogger") {
+                displayType_ = false;
             }
+
+            if (displayType_) {
+#endif // _NO_TRIVIAL_TYPE_DISPLAY
+                if (type_) {
+                    value_ = type_->logName();
+                } else {
+                    value_ = logType_;
+                }
+#ifdef _NO_TRIVIAL_TYPE_DISPLAY
+            } else {
+                value_ = "";
+            }
+#endif // _NO_TRIVIAL_TYPE_DISPLAY
             formatSpecifier_ = "%type";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
@@ -1369,6 +1390,10 @@ private:
 #if (_QA_LOG)
             _WRITE_LOG(logType_, "QA", func_, file_, line_);
 #endif
+        } else if (severityLevel_ == "TRACE") {
+#if (_TRACE_LOG)
+            _WRITE_LOG(logType_, "TRACE", func_, file_, line_);
+#endif
         } else if (severityLevel_ == "VERBOSE") {
 #if (_VERBOSE_LOG)
             if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
@@ -1475,6 +1500,7 @@ public:
 #define CFATAL(type_) _LOG_WRITER(type_, "FATAL")
 #define CPERFORMANCE(type_) _LOG_WRITER(type_, "PERFORMANCE")
 #define CQA(type_) _LOG_WRITER(type_, "QA")
+#define CTRACE(type_) _LOG_WRITER(type_, "TRACE")
 #define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal, \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
@@ -1485,6 +1511,7 @@ public:
 #define CFATAL_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "FATAL")
 #define CPERFORMANCE_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "PERFORMANCE")
 #define CQA_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "QA")
+#define CTRACE_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "TRACE")
 #define CVERBOSE_IF(condition, level, type_) LogWriter(LogWriter::kConditional, \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
 // Interval logs
@@ -1495,6 +1522,7 @@ public:
 #define CFATAL_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "FATAL")
 #define CPERFORMANCE_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "PERFORMANCE")
 #define CQA_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "QA")
+#define CTRACE_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "TRACE")
 #define CVERBOSE_EVERY_N(n, level, type_) LogWriter(LogWriter::kInterval,        \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
 //
@@ -1508,6 +1536,7 @@ public:
 #define LFATAL CFATAL("TrivialLogger")
 #define LPERFORMANCE CPERFORMANCE("TrivialLogger")
 #define LQA CQA("TrivialLogger")
+#define LTRACE CTRACE("TrivialLogger")
 #define LVERBOSE(level) CVERBOSE(level, "TrivialLogger")
 // Conditional logs
 #define LINFO_IF(condition) CINFO_IF(condition, "TrivialLogger")
@@ -1517,6 +1546,7 @@ public:
 #define LFATAL_IF(condition) CFATAL_IF(condition, "TrivialLogger")
 #define LPERFORMANCE_IF(condition) CPERFORMANCE_IF(condition, "TrivialLogger")
 #define LQA_IF(condition) CQA_IF(condition, "TrivialLogger")
+#define LTRACE_IF(condition) CTRACE_IF(condition, "TrivialLogger")
 #define LVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "TrivialLogger")
 // Interval logs
 #define LINFO_EVERY_N(n) CINFO_EVERY_N(n, "TrivialLogger")
@@ -1524,8 +1554,9 @@ public:
 #define LDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "TrivialLogger")
 #define LERROR_EVERY_N(n) CERROR_EVERY_N(n, "TrivialLogger")
 #define LFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "TrivialLogger")
-#define LPERFORMANCE_EVERY_N(n) CPERFORMANCE(n, "TrivialLogger")
+#define LPERFORMANCE_EVERY_N(n) CPERFORMANCE_EVERY_N(n, "TrivialLogger")
 #define LQA_EVERY_N(n) CQA_EVERY_N(n, "TrivialLogger")
+#define LTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "TrivialLogger")
 #define LVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "TrivialLogger")
 //
 // Business Loggers
@@ -1538,7 +1569,8 @@ public:
 #define BFATAL CFATAL("BusinessLogger")
 #define BPERFORMANCE CPERFORMANCE("BusinessLogger")
 #define BQA CQA("BusinessLogger")
-#define BVERBOSE(level) CVERBOSE("BusinessLogger")
+#define BTRACE CTRACE("BusinessLogger")
+#define BVERBOSE(level) CVERBOSE(level, "BusinessLogger")
 // Conditional logs
 #define BINFO_IF(condition) CINFO_IF(condition, "BusinessLogger")
 #define BWARNING_IF(condition) CWARNING_IF(condition, "BusinessLogger")
@@ -1547,6 +1579,7 @@ public:
 #define BFATAL_IF(condition) CFATAL_IF(condition, "BusinessLogger")
 #define BPERFORMANCE_IF(condition) CPERFORMANCE_IF(condition, "BusinessLogger")
 #define BQA_IF(condition) CQA_IF(condition, "BusinessLogger")
+#define BTRACE_IF(condition) CTRACE_IF(condition, "BusinessLogger")
 #define BVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "BusinessLogger")
 // Interval logs
 #define BINFO_EVERY_N(n) CINFO_EVERY_N(n, "BusinessLogger")
@@ -1554,8 +1587,9 @@ public:
 #define BDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "BusinessLogger")
 #define BERROR_EVERY_N(n) CERROR_EVERY_N(n, "BusinessLogger")
 #define BFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "BusinessLogger")
-#define BPERFORMANCE_EVERY_N(n) CPERFORMANCE(n, "BusinessLogger")
+#define BPERFORMANCE_EVERY_N(n) CPERFORMANCE_EVERY_N(n, "BusinessLogger")
 #define BQA_EVERY_N(n) CQA_EVERY_N(n, "BusinessLogger")
+#define BTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "BusinessLogger")
 #define BVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "BusinessLogger")
 //
 // Security Loggers
@@ -1568,7 +1602,8 @@ public:
 #define SFATAL CFATAL("SecurityLogger")
 #define SPERFORMANCE CPERFORMANCE("SecurityLogger")
 #define SQA CQA("SecurityLogger")
-#define SVERBOSE(level) CVERBOSE("SecurityLogger")
+#define STRACE CTRACE("SecurityLogger")
+#define SVERBOSE(level) CVERBOSE(level, "SecurityLogger")
 // Conditional logs
 #define SINFO_IF(condition) CINFO_IF(condition, "SecurityLogger")
 #define SWARNING_IF(condition) CWARNING_IF(condition, "SecurityLogger")
@@ -1577,6 +1612,7 @@ public:
 #define SFATAL_IF(condition) CFATAL_IF(condition, "SecurityLogger")
 #define SPERFORMANCE_IF(condition) CPERFORMANCE_IF(condition, "SecurityLogger")
 #define SQA_IF(condition) CQA_IF(condition, "SecurityLogger")
+#define STRACE_IF(condition) CQA_IF(condition, "SecurityLogger")
 #define SVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "SecurityLogger")
 // Interval logs
 #define SINFO_EVERY_N(n) CINFO_EVERY_N(n, "SecurityLogger")
@@ -1584,8 +1620,9 @@ public:
 #define SDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "SecurityLogger")
 #define SERROR_EVERY_N(n) CERROR_EVERY_N(n, "SecurityLogger")
 #define SFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "SecurityLogger")
-#define SPERFORMANCE_EVERY_N(n) CPERFORMANCE(n, "SecurityLogger")
+#define SPERFORMANCE_EVERY_N(n) CPERFORMANCE_EVERY_N(n, "SecurityLogger")
 #define SQA_EVERY_N(n) CQA_EVERY_N(n, "SecurityLogger")
+#define STRACE_EVERY_N(n) CTRACE_EVERY_N(n, "SecurityLogger")
 #define SVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "SecurityLogger")
 //
 // Legacy log macros

@@ -7,8 +7,7 @@ function test {
   g++ utils/* unit_tests.cpp -o tests.bin $1 -Wno-write-strings
   user=`whoami`
   host=`hostname`
-  active_levels=$2
-  TEST_RESULT=`./tests.bin $user $host $active_levels`
+  TEST_RESULT=`./tests.bin $user $host -v`
   FAILED=`echo "$TEST_RESULT" | grep -o 'TEST FAILED' | wc -l`
   if [ "$FAILED" -ne 0 ];then
     echo "$TEST_RESULT"
@@ -21,20 +20,10 @@ function test {
 
 commonMacros="-D_ALWAYS_CLEAN_LOGS -D_SUPPORT_LEGACY_LOG_NAMES"
 macro="-D_QUALITY_ASSURANCE $commonMacros"
-test "$macro" 8 ## debug, error, warning, verbose, fatal, qa, info, performance
-
-macro="-D_QUALITY_ASSURANCE -D_DISABLE_PERFORMANCE_LOGS $commonMacros"
-test "$macro" 7 ## debug, error, warning, verbose, fatal, qa, info
-
-
-macro="-D_QUALITY_ASSURANCE -D_DISABLE_PERFORMANCE_LOGS $commonMacros"
-test "$macro" 7 ## debug, error, warning, verbose, fatal, qa, info
-
-macro="-D_DISABLE_PERFORMANCE_LOGS -D_DISABLE_INFO_LOGS $commonMacros"
-test "$macro" 5 ## debug, error, warning, verbose, fatal
+test "$macro"
 
 macro="-D_DISABLE_LOGS $commonMacros"
-test "$macro" 0
+test "$macro"
 
 echo
 echo 'ALL TESTS WERE PASSED'

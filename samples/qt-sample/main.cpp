@@ -24,6 +24,10 @@ bool runThreads = false;
 _QUALIFIED_LOGGER.injectNewLogType("PerformanceLogger", "PERFORMANCE");
 CINFO("PerformanceLogger") << "test";
 
+for (int i = 0; i < 9; ++i) {
+    LTRACE_EVERY_N(2) << "This is a trace " << i;
+}
+
 if (runThreads) {
     for (int i = 0; i < 3; ++i) {
         MyThread t(i);

@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   
   #ifndef _DISABLE_INFO_LOGS
     // Make sure we have written correct log
-    localAssert(utils::ilike(easyloggingpp::helper::readLog(), "%Write unique log...%") == true);
+    localAssert(utils::ilike(easyloggingpp::helper::MyEasyLog::readLog(), "%Write unique log...%") == true);
     // Make sure username and hostname is fetch correctly. The correct username
     // and host name is passed into test via bash script
     localAssert(strcmp(_QUALIFIED_LOGGER.kUser_.c_str(), argv[1]) == 0);
@@ -68,12 +68,24 @@ int main(int argc, char** argv) {
   // writeLogs() register 1 counter
   localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
 
-  writeLogs();
-  
+  writeTrivialLogs();
 #ifndef _DISABLE_LOGS  
-  // Ensure we have correct amount of counters registered
-  val(_QUALIFIED_LOGGER.registeredLogCounters()->count());
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 1);
+  val(_QUALIFIED_LOGGER.registeredLogCounters()->count())
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 8);
+#else
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
+#endif
+
+  writeBusinessLogs();
+#ifndef _DISABLE_LOGS  
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 2));
+#else
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
+#endif
+
+  writeSecurityLogs();
+#ifndef _DISABLE_LOGS  
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 3));
 #else
   localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
 #endif
@@ -85,7 +97,7 @@ int main(int argc, char** argv) {
   }
 
 #ifndef _DISABLE_LOGS  
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 2);
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 3) + 1);
 #endif
 
   return 0;

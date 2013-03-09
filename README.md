@@ -8,7 +8,7 @@ To use EasyLogging++ in your application, simply include and initialize:
 #include "easylogging++.h"
 _INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
 ```
-EasyLogging++ comes with following levels of logging with complete control over each of the following:
+EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
 ```
   LDEBUG << "...";
   LINFO << "...";
@@ -16,7 +16,7 @@ EasyLogging++ comes with following levels of logging with complete control over 
   LERROR << "...";
   LFATAL << "...";
   LPERFORMANCE << "...";
-  LVERBOSE(verbose-level) << "...";
+  LVERBOSE(vlevel) << "...";
   LQA << "...";
 ```
 
