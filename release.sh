@@ -6,6 +6,8 @@
 [ -d "releases" ] || mkdir releases
 
 CURR_VERSION=$(grep 'EasyLogging++ v' easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
+CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]' easylogging++.h)
+NEW_RELEASE_DATE=$(date +"%d-%m-%Y %T")
 NEW_VERSION=$1
 DO_NOT_CONFIRM=$2
 if [ "$NEW_VERSION" = "" ]; then
@@ -14,9 +16,8 @@ if [ "$NEW_VERSION" = "" ]; then
   exit
 fi
 
-echo 'Current Version  ' $CURR_VERSION
-echo 'New Version      ' $NEW_VERSION
-
+echo 'Current Version  ' $CURR_VERSION ' (' $CURR_RELEASE_DATE ')'
+echo 'New Version      ' $NEW_VERSION  ' (' $NEW_RELEASE_DATE ')'
 if [ "$DO_NOT_CONFIRM" = "y" ]; then
   confirm="y"
 else
@@ -25,9 +26,11 @@ else
 fi
 
 if [ "$confirm" = "y" ]; then
+  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" easylogging++.h
+  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" index.php 
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
   sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++.h
-  sed -i "s/\$currentVersion = \"v$CURR_VERSION\"*/\$currentVersion = \"v$NEW_VERSION\"/g" index.php
+  sed -i "s/\$currentVersion = \"v $CURR_VERSION\"*/\$currentVersion = \"v $NEW_VERSION\"/g" index.php
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm releases/easyloggingpp_v$NEW_VERSION.zip
   fi

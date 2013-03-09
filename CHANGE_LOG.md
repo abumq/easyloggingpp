@@ -1,7 +1,7 @@
 CHANGE LOG - EasyLogging++
-==========================
+--------------------------
 
-Change was not kept before version 2.1.
+Change log was not kept before version 2.1.
 
 #### 7.xx
  * 7.00:
@@ -11,18 +11,6 @@ Change was not kept before version 2.1.
        - Now make full use of STL for performance improvement
        - New namespace easyloggingpp::internal::helper for internal use instead of C-like functions
        - Uses custom embedded mutex so does not have to worry about libraries availability (issue #28)
-       - New reuseable classes:
-          - internal::helper::OSUtilities
-          - internal::helper::LogManipulator
-          - internal::helper::DateUtilities
-          - internal::Register <class, class, class>
-          - internal::SeverityLevel (+ Predicate)
-          - internal::RegisteredSeverityLevels : Register
-          - internal::LogCounter (+ Predicate)
-          - internal::RegisteredCounters : Register
-          - internal::Logger
-          - internal::LogWriter
-          - helper::MyEasyLog
        - New reuseable macros 
     - New features:
        - New log types
@@ -30,6 +18,7 @@ Change was not kept before version 2.1.
           - `SINFO`, `SWARNING` ... etc, security loggers
           - `PINFO`, `PWARNING` ... etc, performance loggers
        - Inject new log types as per your requirements 
+       - Added `easyloggingpp::version::releaseDate`
     - Removed:
        - PERFORMANCE as severity level instead added it as log type with `PINFO << log;` or `PDEBUG << log` etc
        - Performance tracking disables with debug logs

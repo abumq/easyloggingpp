@@ -492,6 +492,7 @@ namespace easyloggingpp {
 
 namespace version {
 static const char* versionNumber = "7.00";
+static const char* releaseDate = "10-03-2013 01:43:49";
 } // namespace version
 
 namespace internal {

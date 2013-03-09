@@ -1,5 +1,5 @@
 EasyLogging++
-===========
+-------------
 
 Cross platform logging made easy for C++ applications.
 
@@ -362,6 +362,9 @@ Version: 7.0+
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/multithread_test.cpp)
 
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/pthread_example.cpp)
+
+#### Read Log File
+If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
 
 ## Configuration
 #### Enable/Disable Logging

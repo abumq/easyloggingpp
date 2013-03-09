@@ -1,7 +1,8 @@
 <?php
     include_once "../../format.php";
     global $webAddr;
-    $currentVersion = "v7.00";
+    $currentVersion = "v 7.00";
+    $releaseDate = "10-03-2013 01:43:49";
 ?>
 
 <script language='javascript'>
@@ -18,10 +19,12 @@ print '
 
 <table width="100%">
     <tr><td>
-        <h1><font color=green>EasyLogging++</font></h1>
-        <font color=green><b>Cross platform logging made easy for C++ applications.
+        <h1><font color=green>EasyLogging++ <sup><font size=3>'. $currentVersion. '</font></sup></font></h1>
+        <font color=green>
+            <b>Cross platform logging made easy for C++ applications.</b>
             <br/>
-            Current version <u>'.$currentVersion.'</u></b>
+            <br/>
+            Current version <u>'.$currentVersion.'</u> (' . $releaseDate . ')
         </font>
         </td>
         <td valign="top" align="right">
@@ -38,6 +41,11 @@ print '
 
 <img src="'. $webAddr .'/images/documentation.jpg" />
 <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">Help / Notes</a> 
+
+<br/>
+
+<img src="'. $webAddr .'/images/documentation.jpg" />
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/CHANGE_LOG.md">Change Log / Version History</a>
 
 <br/>
 
