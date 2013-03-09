@@ -1,34 +1,78 @@
 <?php
-include_once "../../format.php";
-global $webAddr;
-$currentVersion = "v7.00";
+    include_once "../../format.php";
+    global $webAddr;
+    $currentVersion = "v7.00";
 ?>
+
 <script language='javascript'>
 	document.title='EasyLogging++ - C++ Tools';
 </script>
+
 <meta name='title' content='EasyLogging++ - C++ Tools' />
 <meta name='description' content='Cross platform logging made easy for C/C++ applications.' />
+
 <?php
+
 print '
 <link rel="image_src" type="image/jpeg" href="'.$webAddr.'/images/tools.png" />
-<table width="100%"><tr><td>
-<h1><font color=green>EasyLogging++</font></h1><br/>
-<font color=green><b>Cross platform logging made easy for C++ applications.
-<br/>Current version '.$currentVersion.'</b></font>
-</td><td valign="top" align="right"><a href="https://github.com/mkhan3189/EasyLoggingPP/"> <img style="border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a></td></tr>
+
+<table width="100%">
+    <tr><td>
+        <h1><font color=green>EasyLogging++</font></h1>
+        <font color=green><b>Cross platform logging made easy for C++ applications.
+            <br/>
+            Current version <u>'.$currentVersion.'</u></b>
+        </font>
+        </td>
+        <td valign="top" align="right">
+            <a href="https://github.com/mkhan3189/EasyLoggingPP/"> <img style="border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+        </td>
+    </tr>
 </table>
-<div id="license"  width="50%"><b>License</b><br/><pre>This program is free software: you can redistribute it and/or modify it under terms of the GNU
- General Public License as published by the Free Software Foundation, version 3 of the License.</pre></div><br/>
+
+
 <img src="'. $webAddr .'/images/github.jpg" />
 <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/">Github</a> 
 
 <br/>
+
 <img src="'. $webAddr .'/images/documentation.jpg" />
 <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">Help / Notes</a> 
 
 <br/>
+
 <img src="'. $webAddr .'/images/accordion/download.png" />
-<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">Download Latest Version</a> 
+<a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">Download Latest Version</a>
+
+<br/>
+<br/>
+<br/>
+<div id="licence"  width="50%">
+    <b>Licence</b>
+    <br/>
+    <pre>
+    Copyright (c) 2012-2013 Majid Khan                                       
+                                                                         
+This software is provided \'as-is\', without any express or implied        
+warranty. In no event will the authors be held liable for any damages    
+arising from the use of this software.                                   
+                                                                         
+Permission is granted to anyone to use this software for any purpose,    
+including commercial applications, and to alter it and redistribute      
+it freely, subject to the following restrictions:                        
+                                                                         
+1. The origin of this software must not be misrepresented; you must      
+   not claim that you wrote the original software. If you use this       
+   software in a product, an acknowledgment in the product documentation 
+   would be appreciated but is not required.                             
+                                                                         
+2. Altered source versions must be plainly marked as such, and must      
+   not be misrepresented as being the original software.                 
+                                                                         
+3. This notice may not be removed or altered from any source             
+   distribution                                                          
+    </pre>
+</div><br/>
 
 ';
 include_once "../../foot.php";
