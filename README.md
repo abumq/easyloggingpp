@@ -15,7 +15,6 @@ EasyLogging++ comes with following severity levels of logging with complete cont
   * WARNING
   * ERROR
   * FATAL
-  * PERFORMANCE
   * QA
   * TRACE
   * VERBOSE(level)
@@ -56,21 +55,21 @@ See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/sam
  #include "easylogging++.h"
  _INITIALIZE_EASYLOGGINGPP
  int main(void) {
-    LDEBUG << "Staring my EasyLogging++ program";
+    BDEBUG << "Staring my EasyLogging++ program";
     unsigned int i = 0;
-    LINFO << "Current value is " << i;
-    LINFO << "Now the value has changed from " << i++ << " to " << i;
-    LDEBUG << "End of my EasyLogging++ program";
+    BINFO << "Current value is " << i;
+    BINFO << "Now the value has changed from " << i++ << " to " << i;
+   BDEBUG << "End of my EasyLogging++ program";
  }
  ```
 Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
 
-###### Output (Format: `[%level] %log\n`)
+###### Output (Format: `%type [%level] %log\n`)
 ```
-[DEBUG] Staring my EasyLogging++ program
-[INFO] Current value is 0
-[INFO] Now the value has changed from 0 to 1
-[DEBUG] End of my EasyLogging++ program
+BUSINESS [DEBUG] Staring my EasyLogging++ program
+BUSINESS [INFO] Current value is 0
+BUSINESS [INFO] Now the value has changed from 0 to 1
+BUSINESS [DEBUG] End of my EasyLogging++ program
 ```
 ###### Output (Format: `[%level] [%loc] \n %log`)
 ```
@@ -102,16 +101,25 @@ EasyLogging++ support different log types, by default three log types are inject
  * Trivial Logger: Trivial logging unrelated to business logics or security issues / logics (`LOG`)
  * Business Logger: Logs related to business logics (`BUSINESS`)
  * Security Logger: Logs related to security logics (`SECURITY`)
+ * Performance Logger: Logs related to performance (`PERFORMANCE`)
 
 You can specify log type in log output using format specifier `%type`
 
 In addition to these log types, you may inject custom log types;
- `_QUALIFIED_LOGGER.injectNewLogType("NAME", "CUSTOM-LOGTYPE");`
+ ```C++
+ _QUALIFIED_LOGGER.injectNewLogType("NAME", "CUSTOM-LOGTYPE");
+ ```
 
-And when using this custom logger use `CINFO("NAME") << "info log"` `CWARNING("NAME") << "warning log"` ... etc
+And when using this custom logger use 
+ ```C++
+  CINFO("NAME") << "info log";
+  CWARNING("NAME") << "warning log";
+ ```
 
 Log output will be something like:
- `[CUSTOM-LOGTYPE] [INFO] [13/01/2013 17:21:09.571] info log`
+ ```
+  [CUSTOM-LOGTYPE] [INFO] [13/01/2013 17:21:09.571] info log
+ ```
 
 if info format is
  `[%type] [%level] [%datetime] %log\n`
@@ -119,13 +127,13 @@ if info format is
 Note, for trivial log, log type output is `LOG`, you can turn this off by defining `_NO_TRIVIAL_TYPE_DISPLAY` and `%type` will be a placeholder for nothing.
 
 ######Trivial Logger
-`LINFO`, `LDEBUG`, `LWARNING`, `LERROR`, `LFATAL`, `LPERFORMANCE`, `LQA`, `LTRACE`, `LVERBOSE`
-
+`LINFO`, `LDEBUG`, `LWARNING`, `LERROR`, `LFATAL`, `LQA`, `LTRACE`, `LVERBOSE`
 ######Business Logger
-`BINFO`, `BDEBUG`, `BWARNING`, `BERROR`, `BFATAL`, `BPERFORMANCE`, `BQA`, `BTRACE`, `BVERBOSE`
-
+`BINFO`, `BDEBUG`, `BWARNING`, `BERROR`, `BFATAL`, `BQA`, `BTRACE`, `BVERBOSE`
 ######Security Logger
-`SINFO`, `SDEBUG`, `SWARNING`, `SERROR`, `SFATAL`, `SPERFORMANCE`, `SQA`, `STRACE`, `SVERBOSE`
+`SINFO`, `SDEBUG`, `SWARNING`, `SERROR`, `SFATAL`, `SQA`, `STRACE`, `SVERBOSE`
+######Performance Logger
+`PINFO`, `PDEBUG`, `PWARNING`, `PERROR`, `PFATAL`, `PQA`, `PTRACE`, `PVERBOSE`
 
 *All loggers (including custom loggers) support all the aspect levels, e.g, `SINFO_IF(condition) << "log if condition is true"` or `BWARNING_EVERY_N(2) << "Warning every 2nd time this line is hit"` or `CINFO_IF(condition, "NAME") << "Log custom logger if condition is true"` etc.*
 
@@ -138,7 +146,6 @@ You can use conditional logging for logs that can have simple / complex conditio
 * `LWARNING_IF(condition) << log`
 * `LERROR_IF(condition) << log`
 * `LFATAL_IF(condition) << log`
-* `LPERFORMANCE_IF(condition) << log`
 * `LQA_IF(condition) log`
 * `LTRACE_IF(condition) log`
 * `LVERBOSE_IF(condition, level) << log`
@@ -160,7 +167,6 @@ You can log something every N times using `***_EVERY_N` where `***` represent di
 * `LWARNING_EVERY_N(n) << log`
 * `LERROR_EVERY_N(n) << log`
 * `LFATAL_EVERY_N(n) << log`
-* `LPERFORMANCE_EVERY_N(n) << log`
 * `LVERBOSE_EVERY_N(n, level) << log`
 * `LQA_EVERY_N(n) << log`
 
@@ -207,11 +213,11 @@ int main(void) {
     LINFO << "Sum of 1 and 2 is " << sumResult;
 }
  ```
-###### Output (Format: `[%level] %log`)
+###### Output (Format: `%type [%level] [%func] %log`)
  ```
  this is test
-[PERFORMANCE] Executed [void print(string)] in [~0 seconds]
-[PERFORMANCE] Executed [int sum(int, int)] in [~0 seconds]
+PERFORMANCE [DEBUG] Executed [void print(string)] in [~0 seconds]
+PERFORMANCE [DEBUG] Executed [int sum(int, int)] in [~0 seconds]
 Sum of 1 and 2 is 3
  ```
 Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
@@ -339,7 +345,7 @@ Debug log format should look like:
 Since v7.0, EasyLogging++ has embedded mutex that is used to support multithreaded applications. Make sure you compile application right and use '-pthread` where needed.
 
 Following are list of thread-safe functionalities:
- * Normal logging using `LINFO << ...`, `LWARNING << ...` etc
+ * Normal logging (all trivial, business, security, performance) using `LINFO << ...`, `LWARNING << ...`, `PINFO << ...` etc.
  * Conditional logging using `LINFO_IF(cond) << ...`, `LWARNING_IF(cond) << ...` etc
  * Interval logging using `LINFO_EVERY_N(n) << ...`, `LWARNING_EVERY_N(n) << ...` etc
  * Verbose logging using `LVERBOSE(verbose-level) << ...` (incl. conditional and interval verbose logging)
@@ -367,7 +373,6 @@ By Default logging is enabled and you can use it in your aplication. There are f
 * `_ENABLE_WARNING_LOGS` macro enables or disables warning logs (`0` for disable `1` for enable)
 * `_ENABLE_ERROR_LOGS` macro enables or disables error logs (`0` for disable `1` for enable)
 * `_ENABLE_FATAL_LOGS` macro enables or disables fatal logs (`0` for disable `1` for enable)
-* `_ENABLE_PERFORMANCE_LOGS` macro enables or disables performance logs (`0` for disable `1` for enable)
 * `_ENABLE_VERBOSE_LOGS` macro enables or disables verbose logs (`0` for disable `1` for enable)
 * `_ENABLE_QA_LOGS` macro enables or disables QA logs (`0` for disable `1` for enable)
 * `_ENABLE_TRACE_LOGS` macro enables or disables TRACE logs (`0` for disable `1` for enable)
@@ -381,12 +386,11 @@ g++ main.cpp -o main-exec -D_DISABLE_LOGS
 
 To disable level specific log while compiling here are macros to define;
 
-* `_DISABLE_DEBUG_LOGS`
+* `_DISABLE_DEBUG_LOGS` (also disables performance tracking)
 * `_DISABLE_INFO_LOGS`
 * `_DISABLE_WARNING_LOGS`
 * `_DISABLE_ERROR_LOGS`
 * `_DISABLE_FATAL_LOGS`
-* `_DISABLE_PERFORMANCE_LOGS`
 * `_DISABLE_TRACE_LOGS`
 * `_DISABLE_VERBOSE_LOGS`
 
@@ -413,8 +417,6 @@ This can be set by following configurations
 * `_ERROR_LOGS_TO_FILE` to enable/disable saving error logs to log file (`0` for disable `1` for enable)
 * `_FATAL_LOGS_TO_STANDARD_OUTPUT` to enable/disable fatal logs to be shown in standard output (`0` for disable `1` for enable)
 * `_FATAL_LOGS_TO_FILE` to enable/disable saving fatal logs to log file (`0` for disable `1` for enable)
-* `_PERFORMANCE_LOGS_TO_STANDARD_OUTPUT` to enable/disable performance logs to be shown in standard output (`0` for disable `1` for enable)
-* `_PERFORMANCE_LOGS_TO_FILE` to enable/disable saving performance logs to log file (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_STANDARD_OUTPUT` to enable/disable verbose logs to be shown in standard output (`0` for disable `1` for enable)
 * `_VERBOSE_LOGS_TO_FILE` to enable/disable saving verbose logs to log file (`0` for disable `1` for enable)
 * `_QA_LOGS_TO_STANDARD_OUTPUT` to enable/disable QA logs to be shown in standard output (`0` for disable `1` for enable)
@@ -449,7 +451,6 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `WARNING_LOG_FORMAT` Sets format used for `WARNING` logs
 * `ERROR_LOG_FORMAT` Sets format used for `ERROR` logs
 * `FATAL_LOG_FORMAT` Sets format used for `FATAL` logs
-* `PERFORMANCE_LOG_FORMAT` Sets format used for `PERFORMANCE` logs
 * `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
 * `QA_LOG_FORMAT` Sets format used for `QA` logs
 * `TRACE_LOG_FORMAT` Sets format used for `TRACE` logs

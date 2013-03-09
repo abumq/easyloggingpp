@@ -28,7 +28,12 @@ Change was not kept before version 2.1.
        - New log types
           - `BINFO`, `BWARNING` ... etc, business loggers
           - `SINFO`, `SWARNING` ... etc, security loggers
+          - `PINFO`, `PWARNING` ... etc, performance loggers
        - Inject new log types as per your requirements 
+    - Removed:
+       - PERFORMANCE as severity level instead added it as log type with `PINFO << log;` or `PDEBUG << log` etc
+       - Performance tracking disables with debug logs
+       - _END_EASYLOGGINGPP is not needed anymore, everything is handled internally 
     - Improvements:
        - Now you dont need `_END_EASYLOGGINGPP` and dont need to worry about memory leaks, everything is done internally
        - Improved web page (icplusplus.com/tools/easylogging/)
@@ -41,6 +46,8 @@ Change was not kept before version 2.1.
        - Issue #5 Test in win machine
        - Issue #28 Embed custom mutex class
        - Issue #29 Ability to inject new logger types
+       - Issue #30 Introduce log types for type of logger 
+       - Issue #31 Ditch PERFORMANCE as severity level, add it as log type
     - Licence: Changed to open source licence with full details within header
 
 #### 6.xx

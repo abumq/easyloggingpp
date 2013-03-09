@@ -10,7 +10,8 @@ void writeTrivialLogs(void) {
   LWARNING << "warning"; 
   LFATAL << "fatal"; 
   LQA << "qa"; 
-  LTRACE << "trace";
+  LTRACE << "trace"; 
+  LPERFORMANCE << "performance"; 
   LVERBOSE(1) << "verbose 1"; 
   LVERBOSE(2) << "verbose 2"; 
   LVERBOSE(3) << "verbose 3"; 
@@ -28,6 +29,7 @@ void writeTrivialLogs(void) {
   LFATAL_IF(true) << "conditional fatal";
   LQA_IF(true) << "conditiona qa";
   LTRACE_IF(true) << "conditional trace";
+  LPERFORMANCE_IF(true) << "conditional performance";
   LVERBOSE_IF(true, 1) << "conditional verbose 1";
   LVERBOSE_IF(true, 2) << "conditional verbose 2";
   LVERBOSE_IF(true, 3) << "conditional verbose 3";
@@ -43,6 +45,7 @@ void writeTrivialLogs(void) {
   LDEBUG_EVERY_N(1) << "Debug every 1";
   LFATAL_EVERY_N(1) << "Fatal every 1";
   LQA_EVERY_N(1) << "QA every 1";
+  LPERFORMANCE_EVERY_N(1) << "Performance every 1";
   LTRACE_EVERY_N(1) << "Trace every 1";
   LVERBOSE_EVERY_N(2, 1) << "Verbose every 1 level 2";
 
@@ -56,6 +59,7 @@ void writeBusinessLogs(void) {
   BFATAL << "fatal"; 
   BQA << "qa"; 
   BTRACE << "trace"; 
+  BPERFORMANCE << "performance"; 
   BVERBOSE(1) << "verbose 1"; 
   BVERBOSE(2) << "verbose 2"; 
   BVERBOSE(3) << "verbose 3"; 
@@ -73,6 +77,7 @@ void writeBusinessLogs(void) {
   BFATAL_IF(true) << "conditional fatal";
   BQA_IF(true) << "conditiona qa";
   BTRACE_IF(true) << "conditional trace";
+  BPERFORMANCE_IF(true) << "conditional performance";
   BVERBOSE_IF(true, 1) << "conditional verbose 1";
   BVERBOSE_IF(true, 2) << "conditional verbose 2";
   BVERBOSE_IF(true, 3) << "conditional verbose 3";
@@ -88,6 +93,7 @@ void writeBusinessLogs(void) {
   BDEBUG_EVERY_N(1) << "Debug every 1";
   BFATAL_EVERY_N(1) << "Fatal every 1";
   BQA_EVERY_N(1) << "QA every 1";
+  BPERFORMANCE_EVERY_N(1) << "Performance every 1";
   BTRACE_EVERY_N(1) << "Trace every 1";
   BVERBOSE_EVERY_N(2, 1) << "Verbose every 1 level 2";
 }
@@ -100,6 +106,7 @@ void writeSecurityLogs(void) {
   SFATAL << "fatal"; 
   SQA << "qa"; 
   STRACE << "trace"; 
+  SPERFORMANCE << "performance"; 
   SVERBOSE(1) << "verbose 1"; 
   SVERBOSE(2) << "verbose 2"; 
   SVERBOSE(3) << "verbose 3"; 
@@ -117,6 +124,7 @@ void writeSecurityLogs(void) {
   SFATAL_IF(true) << "conditional fatal";
   SQA_IF(true) << "conditiona qa";
   STRACE_IF(true) << "conditional trace";
+  SPERFORMANCE_IF(true) << "conditional performance";
   SVERBOSE_IF(true, 1) << "conditional verbose 1";
   SVERBOSE_IF(true, 2) << "conditional verbose 2";
   SVERBOSE_IF(true, 3) << "conditional verbose 3";
@@ -132,50 +140,7 @@ void writeSecurityLogs(void) {
   SDEBUG_EVERY_N(1) << "Debug every 1";
   SFATAL_EVERY_N(1) << "Fatal every 1";
   SQA_EVERY_N(1) << "QA every 1";
+  SPERFORMANCE_EVERY_N(1) << "Performance every 1";
   STRACE_EVERY_N(1) << "Trace every 1";
   SVERBOSE_EVERY_N(2, 1) << "Verbose every 1 level 2";
-}
-
-void writePerformanceLogs(void) {
-  PINFO << "info"; 
-  PDEBUG << "debug"; 
-  PERROR << "error"; 
-  PWARNING << "warning"; 
-  PFATAL << "fatal"; 
-  PQA << "qa"; 
-  PTRACE << "trace"; 
-  PVERBOSE(1) << "verbose 1"; 
-  PVERBOSE(2) << "verbose 2"; 
-  PVERBOSE(3) << "verbose 3"; 
-  PVERBOSE(4) << "verbose 4"; 
-  PVERBOSE(5) << "verbose 5"; 
-  PVERBOSE(6) << "verbose 6"; 
-  PVERBOSE(7) << "verbose 7"; 
-  PVERBOSE(8) << "verbose 8"; 
-  PVERBOSE(9) << "verbose 9"; 
-
-  PINFO_IF(true) << "conditional info";
-  PDEBUG_IF(true) << "conditional debug";
-  PERROR_IF(true) << "conditional error";
-  PWARNING_IF(true) << "conditional warning";
-  PFATAL_IF(true) << "conditional fatal";
-  PQA_IF(true) << "conditiona qa";
-  PTRACE_IF(true) << "conditional trace";
-  PVERBOSE_IF(true, 1) << "conditional verbose 1";
-  PVERBOSE_IF(true, 2) << "conditional verbose 2";
-  PVERBOSE_IF(true, 3) << "conditional verbose 3";
-  PVERBOSE_IF(true, 4) << "conditional verbose 4";
-  PVERBOSE_IF(true, 5) << "conditional verbose 5";
-  PVERBOSE_IF(true, 6) << "conditional verbose 6";
-  PVERBOSE_IF(true, 7) << "conditional verbose 7";
-  PVERBOSE_IF(true, 8) << "conditional verbose 8"; 
-  PVERBOSE_IF(true, 9) << "conditional verbose 9";
-
-  PINFO_EVERY_N(1) << "Info every 1";
-  PWARNING_EVERY_N(1) << "Warning every 1";
-  PDEBUG_EVERY_N(1) << "Debug every 1";
-  PFATAL_EVERY_N(1) << "Fatal every 1";
-  PQA_EVERY_N(1) << "QA every 1";
-  PTRACE_EVERY_N(1) << "Trace every 1";
-  PVERBOSE_EVERY_N(2, 1) << "Verbose every 1 level 2";
 }

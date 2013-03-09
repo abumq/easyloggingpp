@@ -18,8 +18,7 @@ int main(void) {
 
   LDEBUG_IF(1 == 2) << "1 is equal to 2";
 
-  LPERFORMANCE_IF((1 == 2) && (3 == 4)) << "Wow, 1 == 2 and 3 == 4";
-  LPERFORMANCE_IF((1 == 1) && (3 < 4)) << "Wow, 1 == 1 and 3 < 4";
-  _END_EASYLOGGINGPP
+  PINFO_IF((1 == 2) && (3 == 4)) << "Wow, 1 == 2 and 3 == 4";
+  PWARNING_IF((1 == 1) && (3 < 4)) << "Wow, 1 == 1 and 3 < 4";
   return 0;
 }

@@ -71,21 +71,21 @@ int main(int argc, char** argv) {
   writeTrivialLogs();
 #ifndef _DISABLE_LOGS  
   val(_QUALIFIED_LOGGER.registeredLogCounters()->count())
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 8);
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 7);
 #else
   localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
 #endif
 
   writeBusinessLogs();
 #ifndef _DISABLE_LOGS  
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 2));
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (7 * 2));
 #else
   localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
 #endif
 
   writeSecurityLogs();
 #ifndef _DISABLE_LOGS  
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 3));
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (7 * 3));
 #else
   localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == 0);
 #endif
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
   }
 
 #ifndef _DISABLE_LOGS  
-  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (8 * 3) + 1);
+  localAssert(_QUALIFIED_LOGGER.registeredLogCounters()->count() == (7 * 3) + 1);
 #endif
 
   return 0;
