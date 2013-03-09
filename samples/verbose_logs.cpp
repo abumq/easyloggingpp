@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
   LVERBOSE(3) << "This will be printed when program is started using argument --v=3";
   LVERBOSE(1) << "This will be printed when program is started using argument --v=1";
   LVERBOSE_IF(true, 1) << "Always verbose for level 1";
-  _END_EASYLOGGINGPP
+
+  LVERBOSE_EVERY_N(1, 3) << "Verbose every N";
   return 0;
 }

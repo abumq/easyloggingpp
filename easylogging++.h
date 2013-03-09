@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v6.10                                                         //
+//   EasyLogging++ v7.00                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -91,7 +91,7 @@
 #define _QA_LOGS_TO_STANDARD_OUTPUT 1
 #define _QA_LOGS_TO_FILE 1
 
-#define _ENABLE_TRACE_LOGS 1
+#define _ENABLE_TRACE_LOGS 0
 #define _TRACE_LOGS_TO_STANDARD_OUTPUT 1
 #define _TRACE_LOGS_TO_FILE 1
 
@@ -408,15 +408,15 @@ namespace configurations {
 //
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
-const std::string    DEFAULT_LOG_FORMAT       =    "%type [%level] [%datetime] %log\n";
-const std::string    DEBUG_LOG_FORMAT         =    "%type [%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
+const std::string    DEFAULT_LOG_FORMAT       =    "[%type] [%level] [%datetime] %log\n";
+const std::string    DEBUG_LOG_FORMAT         =    "[%type] [%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
 const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
 const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
 const std::string    ERROR_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
 const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
-const std::string    VERBOSE_LOG_FORMAT       =    "%type [%level-%vlevel] [%datetime] %log\n";
+const std::string    VERBOSE_LOG_FORMAT       =    "[%type] [%level-%vlevel] [%datetime] %log\n";
 const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
-const std::string    TRACE_LOG_FORMAT         =    "%type [%level] [%datetime] [%func] [%loc] %log\n";
+const std::string    TRACE_LOG_FORMAT         =    "[%type] [%level] [%datetime] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
 
@@ -491,7 +491,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 namespace easyloggingpp {
 
 namespace version {
-static const char* versionNumber = "6.10";
+static const char* versionNumber = "7.00";
 } // namespace version
 
 namespace internal {
@@ -1257,7 +1257,7 @@ public:
     inline bool injectNewLogType(const std::string& name_, const std::string& logName_) {
         LogType* logType_ = new LogType(name_, logName_);
         if (registeredLogTypes()->inject(logType_)) {
-                return true;
+            return true;
         }
         delete logType_;
         logType_ = NULL;
@@ -1298,9 +1298,6 @@ private:
 }                                                                                          \
 }
 #define _LOG_TO_STREAM _STREAM << log_; return _STREAM;
-#define _LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal,_t, _l, __func__, __FILE__, __LINE__)
-#define _LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
-#define _LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 
 extern easyloggingpp::internal::Logger _LOGGER;
 
@@ -1434,8 +1431,8 @@ private:
 #    define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
 #    define END_FUNC(return_value) RETURN(return_value) }
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; _END_EASYLOGGINGPP; return return_value; }
-#    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
+#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; return return_value; }
+#    define RETURN_MAIN(exit_status) return exit_status;
 #else
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
 #    define END_SUB }
@@ -1443,8 +1440,8 @@ private:
 #    define END_FUNC(x) return x; }
 #    define RETURN(expr) return expr;
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(x) _END_EASYLOGGINGPP return x; }
-#    define RETURN_MAIN(exit_status) _END_EASYLOGGINGPP return exit_status;
+#    define END_MAIN(x) return x; }
+#    define RETURN_MAIN(exit_status) return exit_status;
 #endif // _DEBUG_LOG
 
 namespace easyloggingpp {
@@ -1478,6 +1475,9 @@ public:
 } // namespace helper
 } // namespace easyloggingpp
 
+#define _LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal,_t, _l, __func__, __FILE__, __LINE__)
+#define _LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
+#define _LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 //
 // Custom injected loggers
 //

@@ -11,5 +11,4 @@ _INITIALIZE_EASYLOGGINGPP     // Initialize - Needed only once in your applicati
 
 int main(int argc, char** argv) {
   LINFO << "This is first log!"; // Write
-  _END_EASYLOGGINGPP          // Release all memory - Needed only once in your application
 }

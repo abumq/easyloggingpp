@@ -20,5 +20,4 @@ int main(void) {
     LDEBUG << "Some more logs [" << i << "]";
   }
   LDEBUG << "This is end of logging!";
-  _END_EASYLOGGINGPP
 }

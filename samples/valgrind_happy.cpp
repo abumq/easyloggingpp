@@ -16,5 +16,4 @@ int main(void) {
   for (int i = 1; i <= 10; i++) {
     LINFO << "This is a test number " << i;
   }
-  _END_EASYLOGGINGPP // To make valgrind happy
 }

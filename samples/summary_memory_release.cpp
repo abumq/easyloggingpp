@@ -22,6 +22,4 @@ MAIN(int argc, char** argv)
     LINFO << "After following line all the memory is released!";
     RETURN_MAIN(0);
   }
-  //If you log anything here afterwards,memory will be re allocated and will be deleted by END_MAIN
-  // provided the above condition was not reached
 END_MAIN(0)

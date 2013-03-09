@@ -18,11 +18,10 @@ int main(int argc, char** argv) {
   float n2f = (float)n2;
   
   for (int i = 1; i < 5099; i++) {
-      LINFO_EVERY_N(n) << "i = " << i <<  "  AND  i / " << n << " = " << ((float)i / nf);
-   }
-   for (int i = 1;i < 5099; i++) {
-      LINFO_EVERY_N(n2) << "i = " << i <<  "  AND  i / " << n2 << " = " << ((float)i / n2f);
-   } 
-   _END_EASYLOGGINGPP
-   return 0;
+     LINFO_EVERY_N(n) << "i = " << i <<  "  AND  i / " << n << " = " << ((float)i / nf);
+  }
+  for (int i = 1;i < 5099; i++) {
+     LINFO_EVERY_N(n2) << "i = " << i <<  "  AND  i / " << n2 << " = " << ((float)i / n2f);
+  } 
+  return 0;
 }

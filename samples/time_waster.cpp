@@ -20,6 +20,5 @@ END_SUB
 int main(void) {
    LINFO << "I will now waste 5 seconds";
    timeWaster(5);
-   _END_EASYLOGGINGPP
    return 0;
 }

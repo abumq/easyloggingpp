@@ -17,6 +17,5 @@ END_FUNC(0)
 int main(void) {
    int result = sum(1,2);
    LINFO << "Result is " << result;
-   _END_EASYLOGGINGPP // Release memory from LINFO
    return 0;
 }

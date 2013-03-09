@@ -19,13 +19,12 @@ int main(int argc, char** argv) {
   int n2 = 2;
   
   for (int i = 1; i <= 100; i++) {
-      LINFO_EVERY_N(n) << "This will be printed every " << n << " iteration multiple, this is iteration " << i;
+     LINFO_EVERY_N(n) << "This will be printed every " << n << " iteration multiple, this is iteration " << i;
 
-      LINFO_EVERY_N(n2) << "iter = " << i;
+     LINFO_EVERY_N(n2) << "iter = " << i;
 
-      LVERBOSE_EVERY_N(n2, 2) << "This is verbose level 2 log for iteration " << i;
-   }
+     LVERBOSE_EVERY_N(n2, 2) << "This is verbose level 2 log for iteration " << i;
+  }
  
-   _END_EASYLOGGINGPP // Release all memory
    return 0;
 }
