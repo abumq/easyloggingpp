@@ -26,9 +26,6 @@ Change log was not kept before version 2.1.
     - Improvements:
        - Now you dont need `_END_EASYLOGGINGPP` and dont need to worry about memory leaks, everything is done internally
        - Improved web page (icplusplus.com/tools/easylogging/)
-       - Updated icplusplus articles
-          - http://icplusplus.com/articles/read.php?uid=401c16bd01d12e1b18524dd051e2dd07833d3f80
-          - http://icplusplus.com/articles/read.php?uid=9961861bd75a67ed1d152fd83e2962249495dce5
     - Github issues closed:
        - Issue #27 Re-write whole code to improve performance
        - Issue #14 Make debug logs really when debugging
