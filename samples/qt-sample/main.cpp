@@ -29,8 +29,7 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
         }
     }
 
-
-LINFO << "Running " << easyloggingpp::VersionInfo::releaseDate();
+LINFO << easyloggingpp::VersionInfo::licence();
 
     LVERBOSE(1) << "Verbose ...";
 

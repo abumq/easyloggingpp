@@ -342,11 +342,12 @@ private:
 //
 // Mutex specific initialization
 //
-#    define MUTEX_TYPE tthread::fast_mutex
-#    define _MUTEX_SPECIFIC_INIT static MUTEX_TYPE mutex_;
+#    define _ENABLE_MUTEX 1
+#    define _MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
 #    define _LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
 #    define _UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
 #else
+#    define _ENABLE_MUTEX 0
 #    define _MUTEX_SPECIFIC_INIT
 #    define _LOCK_MUTEX
 #    define _UNLOCK_MUTEX
@@ -492,13 +493,64 @@ namespace easyloggingpp {
 
 class VersionInfo {
 public:
-    static const std::string version(void) { return std::string("7.00"); }
-    static const std::string releaseDate(void) { return std::string("10-03-2013 01:43:49"); }
+    // Minimal formatted displayable information
+    static inline const std::string formattedInfo(void) {
+        std::stringstream ss;
+        ss << "EasyLogging++ v" << version() << " (" << releaseDate() << ")";
+        ss << std::endl;
+        ss << website();
+        ss << std::endl;
+        ss << copyright();
+        return ss.str();
+    }
+
+    // Current version number
+    static inline const std::string version(void) { return std::string("7.00"); }
+
+    // Release date of current version
+    static inline const std::string releaseDate(void) { return std::string("10-03-2013 16:16:02"); }
+
+    // Original author and maintainer
+    static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
+
+    // Web link
+    static inline const std::string website(void) { return std::string("http://tools.icplusplus.com/easylogging"); }
+
+    // Link to source code
+    static inline const std::string sourceCodeLink(void) { return std::string("https://github.com/mkhan3189/EasyLoggingPP"); }
+
+    // Copyright information
+    static inline const std::string copyright(void) { return std::string("Copyright (c) 2012 - 2013 Majid Khan"); }
+
+    // Full licence
+    static const std::string licence(void) {
+        std::stringstream ss;
+        ss << "   This software is provided 'as-is', without any express or implied" << std::endl;
+        ss << "   warranty. In no event will the authors be held liable for any damages" << std::endl;
+        ss << "   arising from the use of this software." << std::endl;
+        ss << std::endl;
+        ss << "   Permission is granted to anyone to use this software for any purpose," << std::endl;
+        ss << "   including commercial applications, and to alter it and redistribute" << std::endl;
+        ss << "   it freely, subject to the following restrictions:" << std::endl;
+        ss << "" << std::endl;
+        ss << "   1. The origin of this software must not be misrepresented; you must" << std::endl;
+        ss << "      not claim that you wrote the original software. If you use this" << std::endl;
+        ss << "      software in a product, an acknowledgment in the product documentation" << std::endl;
+        ss << "      would be appreciated but is not required." << std::endl;
+        ss << std::endl;
+        ss << "   2. Altered source versions must be plainly marked as such, and must" << std::endl;
+        ss << "      not be misrepresented as being the original software." << std::endl;
+        ss << std::endl;
+        ss << "   3. This notice may not be removed or altered from any source" << std::endl;
+        ss << "      distribution";
+        return ss.str();
+    }
+
 private:
     // Disable initialization
+    VersionInfo(void);
     VersionInfo(const VersionInfo&);
     VersionInfo& operator=(const VersionInfo&);
-
 }; // namespace VersionInfo
 
 namespace internal {
@@ -528,6 +580,7 @@ namespace helper {
                 }
                 return std::string(hBuff);
             }
+            return std::string();
 #else
             return std::string();
 #endif // _UNIX
@@ -630,6 +683,7 @@ namespace helper {
 
     class LogManipulator {
     public:
+        // Updates the formatSpecifier_ for currentFormat_ to value_ provided
         static void updateFormatValue(const std::string& formatSpecifier_,
                                       const std::string& value_,
                                       std::string& currentFormat_) {
@@ -653,14 +707,18 @@ namespace helper {
 
     class DateUtilities {
     public:
-        enum kDateTimeFormat { kDateOnly, kTimeOnly, kDateTime };
+        enum kDateTimeFormat {
+            kDateOnly,
+            kTimeOnly,
+            kDateTime
+        };
 
         // Gets current date and time with milliseconds.
         static std::string getDateTime(unsigned int format_) {
             long milliSeconds = 0;
             const int kDateBuffSize_ = 30;
-            const char* kDateFormatLocal_ = "%d/%m/%Y";
             const char* kTimeFormatLocal_ = "%H:%M:%S";
+            const char* kDateFormatLocal_ = "%d/%m/%Y";
             char dateBuffer_[kDateBuffSize_] = "";
             char dateFormat_[kDateBuffSize_];
             if (format_ == kDateOnly) {
@@ -680,7 +738,7 @@ namespace helper {
             }
             struct tm * timeInfo = localtime(&currTime.tv_sec);
 
-            strftime(dateBuffer_, kDateBuffSize_, dateFormat_, timeInfo);
+            strftime(dateBuffer_, sizeof(dateBuffer_), dateFormat_, timeInfo);
             if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
                 sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
             }
@@ -1316,10 +1374,10 @@ extern easyloggingpp::internal::Logger _LOGGER;
 class LogWriter {
 public:
     enum kLogAspect {
-                      kNormal,
-                      kConditional,
-                      kInterval
-                    };
+        kNormal,
+        kConditional,
+        kInterval
+    };
 
     explicit LogWriter(kLogAspect logAspect_,
                        const std::string& logType_,
@@ -1366,41 +1424,41 @@ private:
     inline void writeLog(void) const {
         if (severityLevel_ == "DEBUG") {
 #if (_DEBUG_LOG)
-            _WRITE_LOG(logType_, "DEBUG", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "WARNING") {
 #if (_WARNING_LOG)
-            _WRITE_LOG(logType_, "WARNING", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "ERROR") {
 #if (_ERROR_LOG)
-            _WRITE_LOG(logType_, "ERROR", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "INFO") {
 #if (_INFO_LOG)
-            _WRITE_LOG(logType_, "INFO", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "FATAL") {
 #if (_FATAL_LOG)
-            _WRITE_LOG(logType_, "FATAL", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "QA") {
 #if (_QA_LOG)
-            _WRITE_LOG(logType_, "QA", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "TRACE") {
 #if (_TRACE_LOG)
-            _WRITE_LOG(logType_, "TRACE", func_, file_, line_);
+            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "VERBOSE") {
 #if (_VERBOSE_LOG)
             if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+                _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
             } else if (logAspect_ == kConditional && condition_ && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+                _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
             } else if (logAspect_ == kInterval && _LOGGER.appVerbose() >= verboseLevel_) {
                 if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
-                    _LOGGER.buildLine(logType_, "VERBOSE", func_, file_, line_, verboseLevel_);
+                    _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
                 }
             }
 #endif

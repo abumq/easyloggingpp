@@ -18,7 +18,7 @@ Change log was not kept before version 2.1.
           - `SINFO`, `SWARNING` ... etc, security loggers
           - `PINFO`, `PWARNING` ... etc, performance loggers
        - Inject new log types as per your requirements 
-       - Added `easyloggingpp::version::releaseDate`
+       - Added `easyloggingpp::VersionInfo` with formatted displayable information
     - Removed:
        - PERFORMANCE as severity level instead added it as log type with `PINFO << log;` or `PDEBUG << log` etc
        - Performance tracking disables with debug logs
