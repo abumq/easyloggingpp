@@ -107,23 +107,23 @@
 //
 // Windows
 #if defined(_WIN32)
-#    define _WINDOWS 1
-#    define _WINDOWS_32 1
+#    define _ELPP_OS_WINDOWS 1
+#    define _ELPP_OS_WINDOWS_32 1
 #endif // defined(_WIN32)
 #if defined(_WIN64)
-#    define _WINDOWS 1
-#    define _WINDOWS_64 1
+#    define _ELPP_OS_WINDOWS 1
+#    define _ELPP_OS_WINDOWS_64 1
 #endif // defined(_WIN64)
 // Linux
 #if (defined(__linux) || defined(__linux__))
-#    define _LINUX 1
+#    define _ELPP_OS_LINUX 1
 #endif // (defined(__linux) || defined(__linux__))
 // Mac
 #if defined(__APPLE__)
-#    define _MAC 1
+#    define _ELPP_OS_MAC 1
 #endif // defined(__APPLE__)
 
-#define _UNIX ((_LINUX || _MAC) && (!_WINDOWS))
+#define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
 
 //
 // Log location macros
@@ -140,7 +140,12 @@
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
 #   define __func__ __PRETTY_FUNCTION__
 #else
-#    define __func__ ""
+#    ifdef __func__
+#        undef __func__
+#        define __func__ ""
+#    else
+#        define __func__ ""
+#    endif
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 
 //
@@ -342,15 +347,15 @@ private:
 //
 // Mutex specific initialization
 //
-#    define _ENABLE_MUTEX 1
-#    define _MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
-#    define _LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
-#    define _UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
+#    define _ELPP_ENABLE_MUTEX 1
+#    define _ELPP_MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
+#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
+#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
 #else
-#    define _ENABLE_MUTEX 0
-#    define _MUTEX_SPECIFIC_INIT
-#    define _LOCK_MUTEX
-#    define _UNLOCK_MUTEX
+#    define _ELPP_ENABLE_MUTEX 0
+#    define _ELPP_MUTEX_SPECIFIC_INIT
+#    define _ELPP_LOCK_MUTEX
+#    define _ELPP_UNLOCK_MUTEX
 #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 //
 // Includes
@@ -359,16 +364,16 @@ private:
 #include <cstring>
 #include <cstdlib>
 #include <cctype>
-#if _WINDOWS
+#if _ELPP_OS_WINDOWS
 #    include <direct.h>
 #    ifndef (_WINDOWS_HEADER_INCLUDED_FROM_FAST_MUTEX_H)
 #        include <windows.h>
 #    endif
-#endif // _WINDOWS
-#if _UNIX
+#endif // _ELPP_OS_WINDOWS
+#if _ELPP_OS_UNIX
 #    include <sys/stat.h>
 #    include <sys/time.h>
-#endif // _UNIX
+#endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
 #include <iostream>
@@ -473,19 +478,19 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 //
 // Low-level log evaluation
 //
-#define _DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
-#define _INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS) && (_ENABLE_EASYLOGGING))
-#define _WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS) && (_ENABLE_EASYLOGGING))
-#define _ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS) && (_ENABLE_EASYLOGGING))
-#define _FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS) && (_ENABLE_EASYLOGGING))
-#define _VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
-#define _QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
-#define _TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
+#define _ELPP_INFO_LOG        ((_ENABLE_INFO_LOGS) && !defined(_DISABLE_INFO_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_WARNING_LOG     ((_ENABLE_WARNING_LOGS) && !defined(_DISABLE_WARNING_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_ERROR_LOG       ((_ENABLE_ERROR_LOGS) && !defined(_DISABLE_ERROR_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_FATAL_LOG       ((_ENABLE_FATAL_LOGS) && !defined(_DISABLE_FATAL_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_VERBOSE_LOG     ((_ENABLE_VERBOSE_LOGS) && !defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
+#define _ELPP_QA_LOG          ((_ENABLE_QA_LOGS) && defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
+#define _ELPP_TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 
-#if _UNIX
+#if _ELPP_OS_UNIX
 // Permissions for unix-based systems
 #define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
-#endif // _UNIX
+#endif // _ELPP_OS_UNIX
 
 #define _SUPPRESS_UNUSED_WARN(x) (void)x
 
@@ -532,7 +537,7 @@ public:
         ss << "   Permission is granted to anyone to use this software for any purpose," << std::endl;
         ss << "   including commercial applications, and to alter it and redistribute" << std::endl;
         ss << "   it freely, subject to the following restrictions:" << std::endl;
-        ss << "" << std::endl;
+        ss << std::endl;
         ss << "   1. The origin of this software must not be misrepresented; you must" << std::endl;
         ss << "      not claim that you wrote the original software. If you use this" << std::endl;
         ss << "      software in a product, an acknowledgment in the product documentation" << std::endl;
@@ -554,7 +559,7 @@ private:
 }; // namespace VersionInfo
 
 namespace internal {
-_MUTEX_SPECIFIC_INIT
+_ELPP_MUTEX_SPECIFIC_INIT
 namespace helper {
     // OSUtilities class specifically written for EasyLogging++
     // This class contains functionalities related to operating system
@@ -566,7 +571,7 @@ namespace helper {
             if (command_ == NULL) {
                 return std::string();
             }
-#if _UNIX
+#if _ELPP_OS_UNIX
             FILE* proc = NULL;
             if ((proc = popen(command_, "r")) == NULL) {
                 std::cerr << "\nUnable to run command [" << command_ << "]\n";
@@ -583,16 +588,16 @@ namespace helper {
             return std::string();
 #else
             return std::string();
-#endif // _UNIX
+#endif // _ELPP_OS_UNIX
         }
 
         // Gets current username.
         static std::string currentUser(void) {
-#if _WINDOWS
+#if _ELPP_OS_WINDOWS
             const char* username = getenv("USERNAME");
-#elif _UNIX
+#elif _ELPP_OS_UNIX
             const char* username = getenv("USER");
-#endif // _WINDOWS
+#endif // _ELPP_OS_WINDOWS
             if ((username == NULL) || (!strcmp(username, ""))) {
                 // Try harder on unix-based systems
                 return OSUtilities::getBashOutput("whoami");
@@ -603,11 +608,11 @@ namespace helper {
 
         // Gets current host name or computer name.
         static std::string currentHost(void) {
-#if _WINDOWS
+#if _ELPP_OS_WINDOWS
             const char* hostname = getenv("COMPUTERNAME");
-#elif _UNIX
+#elif _ELPP_OS_UNIX
             const char* hostname = getenv("HOSTNAME");
-#endif // _WINDOWS
+#endif // _ELPP_OS_WINDOWS
             if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
                 // Try harder on unix-based systems
                 std::string hostnameStr = OSUtilities::getBashOutput("hostname");
@@ -626,16 +631,16 @@ namespace helper {
             if (path_ == NULL) {
                 return false;
             }
-#if _WINDOWS
+#if _ELPP_OS_WINDOWS
             DWORD fileType = GetFileAttributesA(path_);
             if (fileType == INVALID_FILE_ATTRIBUTES) {
                 return false;
             }
             return (fileType & FILE_ATTRIBUTE_DIRECTORY);
-#elif _UNIX
+#elif _ELPP_OS_UNIX
             struct stat st;
             return (stat(path_, &st) == 0);
-#endif // _WINDOWS
+#endif // _ELPP_OS_WINDOWS
         }
 
         // Creates path as specified
@@ -646,11 +651,11 @@ namespace helper {
             if (OSUtilities::pathExists(path_.c_str())) {
                 return true;
             }
-#   if _WINDOWS
+#   if _ELPP_OS_WINDOWS
             const char* pathDelim_ = "\\";
-#   elif _UNIX
+#   elif _ELPP_OS_UNIX
             const char* pathDelim_ = "/";
-#   endif // _WINDOWS
+#   endif // _ELPP_OS_WINDOWS
             int status = -1;
             char* currPath_ = const_cast<char*>(path_.c_str());
             std::string buildingPath_;
@@ -661,11 +666,11 @@ namespace helper {
             while (currPath_ != NULL) {
                 buildingPath_.append(currPath_);
                 buildingPath_.append(pathDelim_);
-#   if _WINDOWS
+#   if _ELPP_OS_WINDOWS
                 status = _mkdir(buildingPath_.c_str());
-#   elif _UNIX
+#   elif _ELPP_OS_UNIX
                 status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
-#   endif // _WINDOWS
+#   endif // _ELPP_OS_WINDOWS
                 currPath_ = strtok(NULL, pathDelim_);
             }
             if (status == -1) {
@@ -730,7 +735,7 @@ namespace helper {
                 strcat(dateFormat_, " ");
                 strcat(dateFormat_, kTimeFormatLocal_);
             }
-#if _UNIX
+#if _ELPP_OS_UNIX
             timeval currTime;
             gettimeofday(&currTime, NULL);
             if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
@@ -742,7 +747,7 @@ namespace helper {
             if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
                 sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
             }
-#elif _WINDOWS
+#elif _ELPP_OS_WINDOWS
             if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", dateBuffer_, kDateBufferSize_) != 0) {
                 static DWORD oldTick = GetTickCount();
                 if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
@@ -750,7 +755,7 @@ namespace helper {
                     sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
                 }
             }
-#endif // _UNIX
+#endif // _ELPP_OS_UNIX
             return std::string(dateBuffer_);
         }
 
@@ -1144,7 +1149,7 @@ public:
 
     void setArgs(int argc, char** argv) {
         while (argc-- > 0) {
-#if _VERBOSE_LOG
+#if _ELPP_VERBOSE_LOG
             const unsigned short kMaxVerboseLevel = 9;
             // Look for --v=X argument
             if ((strlen(argv[argc]) >= 5) &&
@@ -1179,7 +1184,7 @@ public:
 #else
             _SUPPRESS_UNUSED_WARN(argv);
             appVerbose_ = 0;
-#endif // _VERBOSE_LOG
+#endif // _ELPP_VERBOSE_LOG
         }
     }
 
@@ -1353,23 +1358,23 @@ private:
 //
 // Helper macros
 //
-#define _LOGGER easyloggingppLogger_
-#define _QUALIFIED_LOGGER ::easyloggingpp::internal::_LOGGER
-#define _STREAM_PTR _LOGGER.stream()
-#define _STREAM *_STREAM_PTR
-#define _WRITE_LOG(type_, level_, func_, file_, line_)                                     \
+#define _ELPP_LOGGER easyloggingppLogger_
+#define _QUALIFIED_LOGGER ::easyloggingpp::internal::_ELPP_LOGGER
+#define _ELPP_STREAM_PTR _ELPP_LOGGER.stream()
+#define _ELPP_STREAM *_ELPP_STREAM_PTR
+#define _WRITE_ELPP_LOG(type_, level_, func_, file_, line_)                                \
     if (logAspect_ == kNormal) {                                                           \
-    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
+    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
 } else if (logAspect_ == kConditional && condition_) {                                     \
-    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
+    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
        } else if (logAspect_ == kInterval) {                                               \
-    if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {                  \
-    _LOGGER.buildLine(type_, level_, func_, file_, line_);                                 \
+    if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {             \
+    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
 }                                                                                          \
 }
-#define _LOG_TO_STREAM _STREAM << log_; return _STREAM;
+#define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return _ELPP_STREAM;
 
-extern easyloggingpp::internal::Logger _LOGGER;
+extern easyloggingpp::internal::Logger _ELPP_LOGGER;
 
 class LogWriter {
 public:
@@ -1397,73 +1402,73 @@ public:
         condition_(condition_),
         verboseLevel_(verboseLevel_),
         counter_(counter_){
-        _LOCK_MUTEX;
+        _ELPP_LOCK_MUTEX;
     }
 
     ~LogWriter(void) {
         writeLog();
-        _UNLOCK_MUTEX;
+        _ELPP_UNLOCK_MUTEX;
     }
 
-    inline std::ostream& operator<<(const std::string& log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(const std::wstring& log_) { _STREAM << "(std::wstring cannot be handled) " << log_.c_str(); return _STREAM; }
-    inline std::ostream& operator<<(char log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(bool log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed short log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned short log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed int log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned int log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed long log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned long log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(float log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(double log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(const char* log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(const void* log_) { _LOG_TO_STREAM }
-    inline std::ostream& operator<<(long double log_) { _LOG_TO_STREAM }
+    inline std::ostream& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring cannot be handled) " << log_.c_str(); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(bool log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned int log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(signed long log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
 private:
     inline void writeLog(void) const {
         if (severityLevel_ == "DEBUG") {
-#if (_DEBUG_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_DEBUG_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "WARNING") {
-#if (_WARNING_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_WARNING_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "ERROR") {
-#if (_ERROR_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_ERROR_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "INFO") {
-#if (_INFO_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_INFO_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "FATAL") {
-#if (_FATAL_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_FATAL_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "QA") {
-#if (_QA_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_QA_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "TRACE") {
-#if (_TRACE_LOG)
-            _WRITE_LOG(logType_, severityLevel_, func_, file_, line_);
+#if (_ELPP_TRACE_LOG)
+            _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
         } else if (severityLevel_ == "VERBOSE") {
-#if (_VERBOSE_LOG)
-            if (logAspect_ == kNormal && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
-            } else if (logAspect_ == kConditional && condition_ && _LOGGER.appVerbose() >= verboseLevel_) {
-                _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
-            } else if (logAspect_ == kInterval && _LOGGER.appVerbose() >= verboseLevel_) {
-                if (_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
-                    _LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
+#if (_ELPP_VERBOSE_LOG)
+            if (logAspect_ == kNormal && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
+                _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kConditional && condition_ && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
+                _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
+            } else if (logAspect_ == kInterval && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
+                if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
+                    _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
                 }
             }
 #endif
         }
-        _LOGGER.clear();
+        _ELPP_LOGGER.clear();
     }
     unsigned int logAspect_;
     std::string logType_;
@@ -1483,7 +1488,7 @@ private:
 //
 // Performance tracking macros
 //
-#if _DEBUG_LOG
+#if _ELPP_DEBUG_LOG
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                  \
          easyloggingpp::internal::DateUtilities::formatSeconds(                                    \
@@ -1512,7 +1517,7 @@ private:
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
 #    define END_MAIN(x) return x; }
 #    define RETURN_MAIN(exit_status) return exit_status;
-#endif // _DEBUG_LOG
+#endif // _ELPP_DEBUG_LOG
 
 namespace easyloggingpp {
 namespace helper {
@@ -1521,7 +1526,7 @@ class MyEasyLog {
 public:
     // Reads log from current log file an returns standard string
     static std::string readLog(void) {
-        _LOCK_MUTEX;
+        _ELPP_LOCK_MUTEX;
         std::stringstream ss;
         if (::easyloggingpp::configurations::SAVE_TO_FILE) {
             std::ifstream logFileReader(_QUALIFIED_LOGGER.kFinalFilename_.c_str(), std::ifstream::in);
@@ -1538,48 +1543,48 @@ public:
         } else {
             ss << "Logs are not being saved to file!";
         }
-        _UNLOCK_MUTEX;
+        _ELPP_UNLOCK_MUTEX;
         return ss.str();
     }
 }; // class MyEasyLog
 } // namespace helper
 } // namespace easyloggingpp
 
-#define _LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal,_t, _l, __func__, __FILE__, __LINE__)
-#define _LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
-#define _LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
+#define _ELPP_LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal,_t, _l, __func__, __FILE__, __LINE__)
+#define _ELPP_LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
+#define _ELPP_LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 //
 // Custom injected loggers
 //
 // Normal loggers
-#define CINFO(type_) _LOG_WRITER(type_, "INFO")
-#define CWARNING(type_) _LOG_WRITER(type_, "WARNING")
-#define CDEBUG(type_) _LOG_WRITER(type_, "DEBUG")
-#define CERROR(type_) _LOG_WRITER(type_, "ERROR")
-#define CFATAL(type_) _LOG_WRITER(type_, "FATAL")
-#define CQA(type_) _LOG_WRITER(type_, "QA")
-#define CTRACE(type_) _LOG_WRITER(type_, "TRACE")
-#define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal, \
+#define CINFO(type_) _ELPP_LOG_WRITER(type_, "INFO")
+#define CWARNING(type_) _ELPP_LOG_WRITER(type_, "WARNING")
+#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, "DEBUG")
+#define CERROR(type_) _ELPP_LOG_WRITER(type_, "ERROR")
+#define CFATAL(type_) _ELPP_LOG_WRITER(type_, "FATAL")
+#define CQA(type_) _ELPP_LOG_WRITER(type_, "QA")
+#define CTRACE(type_) _ELPP_LOG_WRITER(type_, "TRACE")
+#define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                   \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define CINFO_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "INFO")
-#define CWARNING_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "WARNING")
-#define CDEBUG_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "DEBUG")
-#define CERROR_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "ERROR")
-#define CFATAL_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "FATAL")
-#define CQA_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "QA")
-#define CTRACE_IF(condition, type_) _LOG_WRITER_COND(condition, type_, "TRACE")
-#define CVERBOSE_IF(condition, level, type_) LogWriter(LogWriter::kConditional, \
+#define CINFO_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "INFO")
+#define CWARNING_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "WARNING")
+#define CDEBUG_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "DEBUG")
+#define CERROR_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "ERROR")
+#define CFATAL_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "FATAL")
+#define CQA_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "QA")
+#define CTRACE_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "TRACE")
+#define CVERBOSE_IF(condition, level, type_) LogWriter(LogWriter::kConditional,                 \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
 // Interval logs
-#define CINFO_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "INFO")
-#define CWARNING_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "WARNING")
-#define CDEBUG_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "DEBUG")
-#define CERROR_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "ERROR")
-#define CFATAL_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "FATAL")
-#define CQA_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "QA")
-#define CTRACE_EVERY_N(n, type_) _LOG_WRITER_N(n, type_, "TRACE")
-#define CVERBOSE_EVERY_N(n, level, type_) LogWriter(LogWriter::kInterval,        \
+#define CINFO_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "INFO")
+#define CWARNING_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "WARNING")
+#define CDEBUG_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "DEBUG")
+#define CERROR_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "ERROR")
+#define CFATAL_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "FATAL")
+#define CQA_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "QA")
+#define CTRACE_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "TRACE")
+#define CVERBOSE_EVERY_N(n, level, type_) LogWriter(LogWriter::kInterval,                       \
     type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
 //
 // Trivial Loggers
@@ -1734,12 +1739,12 @@ public:
 #endif // _SUPPORT_LEGACY_LOG_NAMES
 
 #define _START_EASYLOGGINGPP(argc, argv) \
-    _LOGGER.setArgs(argc, argv);
+    _ELPP_LOGGER.setArgs(argc, argv);
 
 #define _INITIALIZE_EASYLOGGINGPP   \
     namespace easyloggingpp {       \
         namespace internal {        \
-            Logger _LOGGER;         \
+            Logger _ELPP_LOGGER;    \
         }                           \
     }
 
