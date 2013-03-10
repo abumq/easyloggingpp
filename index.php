@@ -2,7 +2,7 @@
     include_once "../../format.php";
     global $webAddr;
     $currentVersion = "v 7.00";
-    $releaseDate = "10-03-2013 16:16:02";
+    $releaseDate = "10-03-2013 17:16:26";
 ?>
 
 <script language='javascript'>
