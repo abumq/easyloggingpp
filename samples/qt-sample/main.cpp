@@ -5,7 +5,7 @@
  * Compile this program using Qt
  *    qmake qt-sample.pro && make
  *
- * Revision: 1.0
+ * Revision: 1.1
  * @author mkhan3189
  */
 
@@ -19,7 +19,7 @@ _INITIALIZE_EASYLOGGINGPP
 FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracking
     _START_EASYLOGGINGPP(argc, argv)
 
-    bool runThreads = false;
+    bool runThreads = true;
 
     if (runThreads) {
         for (int i = 1; i <= 1; ++i) {
@@ -29,20 +29,12 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
         }
     }
 
-LINFO << easyloggingpp::VersionInfo::licence();
-
-    LVERBOSE(1) << "Verbose ...";
+    LVERBOSE(1) << "Verbose 1 ...";
 
     SDEBUG << "This is security logger for debug";
 
     BINFO << "This is a business logger";
 
-    PTRACE << "Taking too long? No I dont think so";
-
-
-  //  LINFO << OSUtilities::getBashOutput ("asdfasdf");
-
     RETURN(0);
-    //_END_EASYLOGGINGPP
 
 END_FUNC(0)
