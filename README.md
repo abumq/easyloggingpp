@@ -36,7 +36,8 @@ EasyLogging++ comes with following severity levels of logging with complete cont
  * Different aspects of logs
    - EasyLogging++ has different aspects of logging that includes conditional logging, verbose logging and interval logging
  * [More additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
- * [Multi-threaded application support](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#support-for-multi-threaded-applications)
+ * [Thread safe](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#thread-safety)
+ * Type safe
  * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
 
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
@@ -341,7 +342,7 @@ Escape character used in EasyLogging++ is `E`. For example, to write following l
 Debug log format should look like:
 `E%level [%level] [%datetime] %log`
 
-#### Support For Multi-threaded Applications
+#### Thread Safety
 Since v7.0, EasyLogging++ has embedded mutex that is used to support multithreaded applications. Make sure you compile application right and use '-pthread` where needed.
 
 Following are list of thread-safe functionalities:
