@@ -5,7 +5,7 @@ Change log was not kept before version 2.1.
 
 #### 7.xx
  * 7.00:
-    - Completely re-written with focus on performance improvement (issue #27)
+    - Completely re-written with focus on performance and usability improvements (issue #27)
     - Code:
        - C++98 to support old applications as well
        - Now make full use of STL for performance improvement
