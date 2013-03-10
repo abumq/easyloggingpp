@@ -91,7 +91,7 @@
 #define _QA_LOGS_TO_STANDARD_OUTPUT 1
 #define _QA_LOGS_TO_FILE 1
 
-#define _ENABLE_TRACE_LOGS 0
+#define _ENABLE_TRACE_LOGS 1
 #define _TRACE_LOGS_TO_STANDARD_OUTPUT 1
 #define _TRACE_LOGS_TO_FILE 1
 
@@ -391,7 +391,7 @@ namespace configurations {
 // Format specifiers used are as following:
 //
 //  SPECIFIER     |                  DESCRIPTION
-// ===============|==================================================
+// ===============|====================================================
 //   %type        |   Log type, e.g, BusinessLogger, SecurityLogger etc
 //   %level       |   Log level, e.g, INFO, DEBUG, ERROR etc
 //   %datetime    |   Current date and time (while writing log)
@@ -490,10 +490,16 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 
 namespace easyloggingpp {
 
-namespace version {
-static const char* versionNumber = "7.00";
-static const char* releaseDate = "10-03-2013 01:43:49";
-} // namespace version
+class VersionInfo {
+public:
+    static const std::string version(void) { return std::string("7.00"); }
+    static const std::string releaseDate(void) { return std::string("10-03-2013 01:43:49"); }
+private:
+    // Disable initialization
+    VersionInfo(const VersionInfo&);
+    VersionInfo& operator=(const VersionInfo&);
+
+}; // namespace VersionInfo
 
 namespace internal {
 _MUTEX_SPECIFIC_INIT
@@ -504,32 +510,31 @@ namespace helper {
     public:
         // Runs command on terminal and returns the output.
         // This is applicable only on linux and mac, for all other OS, an empty string is returned.
-        static std::string getBashOutput(const char* command) {
-#if _UNIX
-            FILE* proc = popen(command, "r");
-            if (proc != NULL) {
-                const short hBuffMaxSize = 20;
-                char hBuff[hBuffMaxSize];
-                fgets(hBuff, hBuffMaxSize, proc);
-                pclose(proc);
-                short actualHBuffSize = strlen(hBuff);
-                if (actualHBuffSize > 0) {
-                    if (hBuff[actualHBuffSize - 1] == '\n') {
-                        hBuff[actualHBuffSize - 1] = '\0';
-                    }
-                    return std::string(hBuff);
-                }
-                return std::string();
-            } else {
+        static std::string getBashOutput(const char* command_) {
+            if (command_ == NULL) {
                 return std::string();
             }
+#if _UNIX
+            FILE* proc = NULL;
+            if ((proc = popen(command_, "r")) == NULL) {
+                std::cerr << "\nUnable to run command [" << command_ << "]\n";
+                return std::string();
+            }
+            char hBuff[4096];
+            if (fgets(hBuff, sizeof(hBuff), proc) != NULL) {
+                pclose(proc);
+                if (hBuff[strlen(hBuff) - 1] == '\n') {
+                    hBuff[strlen(hBuff) - 1] = '\0';
+                }
+                return std::string(hBuff);
+            }
 #else
-            return "";
+            return std::string();
 #endif // _UNIX
         }
 
         // Gets current username.
-        static const char* currentUser(void) {
+        static std::string currentUser(void) {
 #if _WINDOWS
             const char* username = getenv("USERNAME");
 #elif _UNIX
@@ -537,14 +542,14 @@ namespace helper {
 #endif // _WINDOWS
             if ((username == NULL) || (!strcmp(username, ""))) {
                 // Try harder on unix-based systems
-                return OSUtilities::getBashOutput("whoami").c_str();
+                return OSUtilities::getBashOutput("whoami");
             } else {
-                return username;
+                return std::string(username);
             }
         }
 
         // Gets current host name or computer name.
-        static const char* currentHost(void) {
+        static std::string currentHost(void) {
 #if _WINDOWS
             const char* hostname = getenv("COMPUTERNAME");
 #elif _UNIX
@@ -552,14 +557,14 @@ namespace helper {
 #endif // _WINDOWS
             if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
                 // Try harder on unix-based systems
-                hostname = OSUtilities::getBashOutput("hostname").c_str();
-                if (!strcmp(hostname, "")) {
-                    return "unknown-host";
+                std::string hostnameStr = OSUtilities::getBashOutput("hostname");
+                if (hostnameStr.empty()) {
+                    return std::string("unknown-host");
                 } else {
-                    return hostname;
+                    return hostnameStr;
                 }
             } else {
-                return hostname;
+                return std::string(hostname);
             }
         }
 
@@ -718,6 +723,7 @@ namespace helper {
 using namespace easyloggingpp::configurations;
 using namespace easyloggingpp::internal::helper;
 
+
 template<class Class, class Iterator, class Predicate>
 class Register {
 public:
@@ -753,6 +759,10 @@ public:
         return list_.empty();
     }
 
+    template<typename T2>
+    inline bool exist(const T2& t_) {
+        return (get(t_) != NULL);
+    }
 protected:
     inline void registerNew(Class* c_) {
         list_.push_back(c_);
@@ -829,17 +839,9 @@ public:
     }
 
     inline bool inject(LogType *t_) {
-        if (!exist(t_)) {
+        if (t_ && !exist(t_->name())) {
             registerNew(t_);
             return true;
-        }
-        return false;
-    }
-
-private:
-    inline bool exist(LogType* t_) {
-        if (t_) {
-            return (get(t_->name()) != NULL);
         }
         return false;
     }
@@ -1054,7 +1056,7 @@ public:
                     fileGood_ = false;
                 }
             } else {
-                std::cout << "\nBad file for writing logs to [" << kFinalFilename_ << "] Please check the configurations\n";
+                std::cerr << "\nBad file for writing logs to [" << kFinalFilename_ << "] Please check the configurations\n";
             }
         }
     }
@@ -1227,6 +1229,14 @@ public:
         tempStream_.str("");
     }
 
+    inline std::string applicationName(void) const {
+        return applicationName_;
+    }
+
+    inline void setApplicationName(const std::string& applicationName_) {
+        this->applicationName_ = applicationName_;
+    }
+
     inline std::stringstream* stream(void) {
         return stream_;
     }
@@ -1269,6 +1279,7 @@ public:
     const std::string kUser_;
     const std::string kHost_;
 private:
+    std::string applicationName_;
     bool initialized_;
     bool fileGood_;
     std::string currLogLine_;
@@ -1664,9 +1675,6 @@ public:
 #    define QA_EVERY_N(n_, log_) LQA_EVERY_N(n_) << log_;
 #endif // _SUPPORT_LEGACY_LOG_NAMES
 
-// When using log levels that require program arguments, for example VERBOSE logs require
-// to see what VERBOSE levels to log by looking at --v=X argument or --verbose (for level 9)
-// argument, following macro should be used.
 #define _START_EASYLOGGINGPP(argc, argv) \
     _LOGGER.setArgs(argc, argv);
 

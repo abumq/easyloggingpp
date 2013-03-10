@@ -19,7 +19,7 @@ _INITIALIZE_EASYLOGGINGPP
 FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracking
     _START_EASYLOGGINGPP(argc, argv)
 
-    bool runThreads = true;
+    bool runThreads = false;
 
     if (runThreads) {
         for (int i = 1; i <= 1; ++i) {
@@ -30,6 +30,7 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
     }
 
 
+LINFO << "Running " << easyloggingpp::VersionInfo::releaseDate();
 
     LVERBOSE(1) << "Verbose ...";
 
@@ -39,5 +40,10 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
 
     PTRACE << "Taking too long? No I dont think so";
 
+
+  //  LINFO << OSUtilities::getBashOutput ("asdfasdf");
+
     RETURN(0);
+    //_END_EASYLOGGINGPP
+
 END_FUNC(0)

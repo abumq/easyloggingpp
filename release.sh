@@ -26,11 +26,12 @@ else
 fi
 
 if [ "$confirm" = "y" ]; then
-  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" easylogging++.h
-  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" index.php 
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
-  sed -i "s/static const char\* versionNumber = \"$CURR_VERSION\"/static const char* versionNumber = \"$NEW_VERSION\"/g" easylogging++.h
+  sed -i "s/static const std::string version(void) { return std::string(\"$CURR_VERSION\"); }/static const std::string version(void) { return std::string(\"$NEW_VERSION\"); }/g" easylogging++.h
+  sed -i "s/static const std::string releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/static const std::string releaseDate(void) { return std::string(\"$NEW_RELEASE_DATE\"); }/g" easylogging++.h
   sed -i "s/\$currentVersion = \"v $CURR_VERSION\"*/\$currentVersion = \"v $NEW_VERSION\"/g" index.php
+  sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" index.php
+  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" index.php 
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm releases/easyloggingpp_v$NEW_VERSION.zip
   fi

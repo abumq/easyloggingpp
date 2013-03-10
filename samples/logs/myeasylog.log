@@ -1,56 +1,57 @@
-[LOG] [INFO] [09/03/2013 23:58:10.534] This standard log is written by thread #1
-[LOG] [INFO] [09/03/2013 23:58:10.535] This standard log is written by thread #3
-[LOG] [INFO] [09/03/2013 23:58:10.535] This standard log is written by thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] This is verbose level 2 logging from thread #1
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] This is verbose level 2 logging from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] This is verbose level 2 logging from thread #2
-[LOG] [WARNING] [09/03/2013 23:58:10.535] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.535] Verbose level 3 log every 4th time. This is at 1 from thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.535] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.535] Verbose level 3 log every 4th time. This is at 2 from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.536] Verbose level 3 log every 4th time. This is at 3 from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.536] Verbose level 3 log every 4th time. This is at 4 from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.536] Verbose level 3 log every 4th time. This is at 5 from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.536] Verbose level 3 log every 4th time. This is at 2 from thread #1
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.536] Verbose level 3 log every 4th time. This is at 7 from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.536] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.537] Verbose level 3 log every 4th time. This is at 3 from thread #1
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.537] Verbose level 3 log every 4th time. This is at 4 from thread #1
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.537] Verbose level 3 log every 4th time. This is at 7 from thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.537] Verbose level 3 log every 4th time. This is at 8 from thread #2
-[LOG] [INFO] [09/03/2013 23:58:10.537] This interval log will be logged with every thread, this one is from thread #3
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.537] Verbose level 3 log every 4th time. This is at 9 from thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.537] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.538] Verbose level 3 log every 4th time. This is at 10 from thread #2
-[LOG] [INFO] [09/03/2013 23:58:10.538] This interval log will be logged with every thread, this one is from thread #2
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.538] Verbose condition
-[LOG] [INFO] [09/03/2013 23:58:10.538] This log is only for thread 2 and is ran by thread #2
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.538] Verbose level 3 log every 4th time. This is at 8 from thread #1
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.538] Verbose condition
-[LOG] [VERBOSE-2] [09/03/2013 23:58:10.538] Verbose condition
-[LOG] [VERBOSE-3] [09/03/2013 23:58:10.538] Verbose level 3 log every 4th time. This is at 10 from thread #1
-[LOG] [INFO] [09/03/2013 23:58:10.538] This interval log will be logged with every thread, this one is from thread #1
+[LOG] [INFO] [10/03/2013 06:09:59.816] This standard log is written by thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.880] This is verbose level 2 logging from thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.901] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.905] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.907] Verbose level 3 log every 4th time. This is at 2 from thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.909] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.910] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.911] Verbose level 3 log every 4th time. This is at 4 from thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.912] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.913] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.914] Verbose level 3 log every 4th time. This is at 6 from thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.914] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.915] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.916] Verbose level 3 log every 4th time. This is at 8 from thread #2
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.917] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.917] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.918] Verbose level 3 log every 4th time. This is at 10 from thread #2
+[LOG] [INFO] [10/03/2013 06:09:59.920] This interval log will be logged with every thread, this one is from thread #2
+[LOG] [INFO] [10/03/2013 06:09:59.922] This log is only for thread 2 and is ran by thread #2
+[LOG] [INFO] [10/03/2013 06:09:59.929] This standard log is written by thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.930] This is verbose level 2 logging from thread #1
+[LOG] [WARNING] [10/03/2013 06:09:59.931] This will be logged only once from thread who every reaches this line first. Currently running from thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.932] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.933] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.934] Verbose level 3 log every 4th time. This is at 2 from thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.935] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.936] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.936] Verbose level 3 log every 4th time. This is at 4 from thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.937] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.938] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.939] Verbose level 3 log every 4th time. This is at 6 from thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.940] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.941] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.941] Verbose level 3 log every 4th time. This is at 8 from thread #1
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.942] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.942] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.942] Verbose level 3 log every 4th time. This is at 10 from thread #1
+[LOG] [INFO] [10/03/2013 06:09:59.943] This interval log will be logged with every thread, this one is from thread #1
+[LOG] [INFO] [10/03/2013 06:09:59.943] This standard log is written by thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.944] This is verbose level 2 logging from thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.946] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.947] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.947] Verbose level 3 log every 4th time. This is at 2 from thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.948] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.949] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.950] Verbose level 3 log every 4th time. This is at 4 from thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.950] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.951] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.952] Verbose level 3 log every 4th time. This is at 6 from thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.953] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.953] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.953] Verbose level 3 log every 4th time. This is at 8 from thread #3
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.954] Verbose condition
+[LOG] [VERBOSE-2] [10/03/2013 06:09:59.954] Verbose condition
+[LOG] [VERBOSE-3] [10/03/2013 06:09:59.955] Verbose level 3 log every 4th time. This is at 10 from thread #3
+[LOG] [INFO] [10/03/2013 06:09:59.955] This interval log will be logged with every thread, this one is from thread #3
+[PERFORMANCE] [DEBUG] [10/03/2013 06:09:59.979] [majid@devil-inside-pc] [int main(int, char**)] [./multithread_test.cpp:54] Executed [int main(int, char**)] in [~ 0 seconds]
