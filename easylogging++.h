@@ -513,7 +513,7 @@ public:
     static inline const std::string version(void) { return std::string("7.01"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("11-03-2013 20:34:26"); }
+    static inline const std::string releaseDate(void) { return std::string("11-03-2013 2142hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

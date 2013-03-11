@@ -6,8 +6,8 @@
 [ -d "releases" ] || mkdir releases
 
 CURR_VERSION=$(grep 'EasyLogging++ v' easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
-CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]' easylogging++.h)
-NEW_RELEASE_DATE=$(date +"%d-%m-%Y %T")
+CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' easylogging++.h)
+NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
 NEW_VERSION=$1
 DO_NOT_CONFIRM=$2
 if [ "$NEW_VERSION" = "" ]; then
@@ -27,8 +27,8 @@ fi
 
 if [ "$confirm" = "y" ]; then
   sed -i "s/EasyLogging++ v$CURR_VERSION*/EasyLogging++ v$NEW_VERSION/g" easylogging++.h
-  sed -i "s/static const std::string version(void) { return std::string(\"$CURR_VERSION\"); }/static const std::string version(void) { return std::string(\"$NEW_VERSION\"); }/g" easylogging++.h
-  sed -i "s/static const std::string releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/static const std::string releaseDate(void) { return std::string(\"$NEW_RELEASE_DATE\"); }/g" easylogging++.h
+  sed -i "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" easylogging++.h
+  sed -i "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" easylogging++.h
   sed -i "s/\$currentVersion = \"v $CURR_VERSION\"*/\$currentVersion = \"v $NEW_VERSION\"/g" index.php
   sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" index.php
   sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" index.php 
