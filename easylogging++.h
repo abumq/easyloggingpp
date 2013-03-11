@@ -510,10 +510,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.00"); }
+    static inline const std::string version(void) { return std::string("7.01"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("10-03-2013 16:16:02"); }
+    static inline const std::string releaseDate(void) { return std::string("11-03-2013 20:34:26"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
