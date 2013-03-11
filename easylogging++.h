@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.00                                                         //
+//   EasyLogging++ v7.01                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -552,7 +552,7 @@ public:
     }
 
 private:
-    // Disable initialization
+    // Prevent initialization
     VersionInfo(void);
     VersionInfo(const VersionInfo&);
     VersionInfo& operator=(const VersionInfo&);
@@ -680,7 +680,7 @@ namespace helper {
         }
 
     private:
-        // Disable initilization
+        // Prevent initilization
         OSUtilities(void);
         OSUtilities(const OSUtilities&);
         OSUtilities& operator=(const OSUtilities&);
@@ -704,7 +704,7 @@ namespace helper {
             }
         }
     private:
-        // Disable initilization
+        // Prevent initilization
         LogManipulator(void);
         LogManipulator(const LogManipulator&);
         LogManipulator& operator=(const LogManipulator&);
@@ -776,7 +776,7 @@ namespace helper {
             return stream_.str();
         }
     private:
-        // Disable initilization
+        // Prevent initilization
         DateUtilities(void);
         DateUtilities(const DateUtilities&);
         DateUtilities& operator=(const DateUtilities&);
@@ -786,19 +786,12 @@ namespace helper {
 using namespace easyloggingpp::configurations;
 using namespace easyloggingpp::internal::helper;
 
-
+// Used internally as a register to keep records of 'Class' and provides underlying
+// memory management
 template<class Class, class Iterator, class Predicate>
 class Register {
 public:
     explicit Register(void) {
-    }
-
-    explicit Register(const Register& register_) :
-        list_(register_.list_) {
-    }
-
-    Register& operator=(const Register& register_) {
-        list_ = register_.list_;
     }
 
     virtual ~Register(void) {
@@ -814,17 +807,17 @@ public:
         return NULL;
     }
 
+    template<typename T2>
+    inline bool exist(const T2& t_) {
+        return (get(t_) != NULL);
+    }
+
     inline size_t count(void) const {
         return list_.size();
     }
 
     inline bool empty(void) const {
         return list_.empty();
-    }
-
-    template<typename T2>
-    inline bool exist(const T2& t_) {
-        return (get(t_) != NULL);
     }
 protected:
     inline void registerNew(Class* c_) {
@@ -846,8 +839,14 @@ protected:
     }
 
     std::vector<Class*> list_;
+
+private:
+    // Prevent copy or assignment
+    explicit Register(const Register&);
+    Register& operator=(const Register&);
 }; // class Register
 
+// Represents a log type such as business logger, security logger etc.
 class LogType {
 public:
     typedef std::vector<LogType*>::const_iterator Iterator;
@@ -891,6 +890,7 @@ private:
     std::string logName_;
 }; // class LogType
 
+// Registered log types to be used as finding register while writing logs
 class RegisteredLogTypes : public Register<LogType, LogType::Iterator, LogType::Predicate> {
 public:
     explicit RegisteredLogTypes(void)
@@ -910,6 +910,7 @@ public:
     }
 }; // class RegisteredLogTypes
 
+// Represents severity level for log
 class SeverityLevel {
 public:
     typedef std::vector< SeverityLevel* >::const_iterator Iterator;
@@ -967,6 +968,7 @@ private:
     bool toFile_;
 }; // class SeverityLevel
 
+// All the registered severity levels used while writing logs
 class RegisteredSeverityLevels : public Register<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
 public:
     explicit RegisteredSeverityLevels(void)
@@ -990,6 +992,7 @@ public:
     }
 }; // class RegisteredSeverityLevels
 
+// Represents single counter for interval log
 class LogCounter {
 public:
     typedef std::vector< LogCounter* >::iterator Iterator;
@@ -1058,6 +1061,7 @@ private:
     unsigned int position_;
 }; // class LogCounter
 
+// Represents all the registered counters. This registeration is done at run-time as log is being written
 class RegisteredCounters : public Register<LogCounter, LogCounter::Iterator, LogCounter::Predicate>  {
 public:
     bool valid(const char* file_, unsigned long int line_, unsigned int n_) {
@@ -1083,6 +1087,7 @@ private:
     }
 }; // class RegisteredCounters
 
+// Main logger that holds all the helper values and is used as an entry point of initialization
 class Logger {
 public:
     explicit Logger(void) :
@@ -1376,6 +1381,7 @@ private:
 
 extern easyloggingpp::internal::Logger _ELPP_LOGGER;
 
+// Entry point to write log. All the macros are resolved to c'tor of this class
 class LogWriter {
 public:
     enum kLogAspect {

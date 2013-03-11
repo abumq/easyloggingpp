@@ -36,6 +36,8 @@ Change log was not kept before version 2.1.
        - Issue #31 Ditch PERFORMANCE as severity level, add it as log type
     - Licence: Changed to open source licence with full details within header
 
+ * 7.01: Provides safe interface to use Register template outside EasyLogging++
+
 #### 6.xx
  * 6.00:
     - Changed the way of logging i.e, no parentheses required anymore (issue #26)
