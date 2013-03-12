@@ -1503,7 +1503,7 @@ private:
 //
 #if _ELPP_DEBUG_LOG
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-#    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                               \
+#    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatSeconds(                                                 \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
 #   define FUNC_SUB_COMMON_START {                                                                              \
