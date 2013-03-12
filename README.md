@@ -217,8 +217,8 @@ int main(void) {
 ###### Output (Format: `%type [%level] [%func] %log`)
  ```
  this is test
-PERFORMANCE [DEBUG] Executed [void print(string)] in [~0 seconds]
-PERFORMANCE [DEBUG] Executed [int sum(int, int)] in [~0 seconds]
+PERFORMANCE [DEBUG] Executed [void print(string)] in [0 ms]
+PERFORMANCE [DEBUG] Executed [int sum(int, int)] in [0 ms]
 Sum of 1 and 2 is 3
  ```
 Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
