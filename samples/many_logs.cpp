@@ -10,7 +10,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-int main(void) {
+FUNC(int, main, (void))
   LDEBUG << "This is start of logging!";
   for (int i = 1; i <= 100; i++) {
     LINFO << "This is a test number " << i;
@@ -20,4 +20,4 @@ int main(void) {
     LDEBUG << "Some more logs [" << i << "]";
   }
   LDEBUG << "This is end of logging!";
-}
+END_FUNC(0)

@@ -37,6 +37,7 @@ Change log was not kept before version 2.1.
     - Licence: Changed to open source licence with full details within header
 
  * 7.01: Provides safe interface to use Register template outside EasyLogging++
+ * 7.20: Performance tracking now tracks upto milliseconds
 
 #### 6.xx
  * 6.00:

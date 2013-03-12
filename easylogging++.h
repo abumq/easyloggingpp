@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.01                                                         //
+//   EasyLogging++ v7.20                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -510,10 +510,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.01"); }
+    static inline const std::string version(void) { return std::string("7.20"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("11-03-2013 2142hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("12-03-2013 1142hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -761,19 +761,26 @@ namespace helper {
 
         static std::string formatSeconds(double seconds_) {
             double result = seconds_;
-            std::string unit = "seconds";
+            std::string unit = "ms";
             std::stringstream stream_;
-            if (result > 60.0f) {
-                result /= 60; unit = "minutes";
+            if (result > 1000.0f) {
+                result /= 1000; unit = "seconds";
                 if (result > 60.0f) {
-                    result /= 60; unit = "hours";
-                    if (result > 24.0f) {
-                        result /= 24; unit = "days";
+                    result /= 60; unit = "minutes";
+                    if (result > 60.0f) {
+                        result /= 60; unit = "hours";
+                        if (result > 24.0f) {
+                            result /= 24; unit = "days";
+                        }
                     }
                 }
             }
             stream_ << result << " " << unit;
             return stream_.str();
+        }
+
+        static double getTimeDifference(timeval& endTime, timeval& startTime) {
+             return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec))/1000);
         }
     private:
         // Prevent initilization
@@ -1496,16 +1503,16 @@ private:
 //
 #if _ELPP_DEBUG_LOG
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-#    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                  \
-         easyloggingpp::internal::DateUtilities::formatSeconds(                                    \
-         difftime(functionEndTime, functionStartTime)) << "]"
-#   define FUNC_SUB_COMMON_START {                                                                 \
-        if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                              \
-            PDEBUG << START_FUNCTION_LOG;                                                          \
-        }                                                                                          \
-        time_t functionStartTime, functionEndTime;                                                 \
-        time(&functionStartTime);
-#    define FUNC_SUB_COMMON_END time(&functionEndTime); PDEBUG << TIME_OUTPUT;
+#    define TIME_OUTPUT "Executed [" << __func__ << "] in [~ " <<                                               \
+         easyloggingpp::internal::DateUtilities::formatSeconds(                                                 \
+         easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
+#   define FUNC_SUB_COMMON_START {                                                                              \
+        if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                                           \
+            PDEBUG << START_FUNCTION_LOG;                                                                       \
+        }                                                                                                       \
+        timeval functionStartTime, functionEndTime;                                                             \
+        gettimeofday(&functionStartTime, NULL);
+#    define FUNC_SUB_COMMON_END gettimeofday(&functionEndTime, NULL); PDEBUG << TIME_OUTPUT;
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
 #    define END_SUB FUNC_SUB_COMMON_END }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
