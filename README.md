@@ -445,8 +445,6 @@ You can customize format of logging. Following format specifiers are currently s
 * `\n` New line
 * `\t` Tab
 
-The default format has been made default after careful analysis to improve readibility while investigating by looking at logs.
-
 **Note** Above format specifier can be used only once per severity level. If you define multiple specifiers, only first one will be resolved to its value and others will remain as they are. This is to improve performance and prevent potential formatting errors.
 
 #### Log Format By Log Level
@@ -460,6 +458,8 @@ Since v3.0+, EasyLogging++ supports different format for different log level. Th
 * `VERBOSE_LOG_FORMAT` Sets format used for `VERBOSE` logs
 * `QA_LOG_FORMAT` Sets format used for `QA` logs
 * `TRACE_LOG_FORMAT` Sets format used for `TRACE` logs
+
+The default format for each of above log level has been made default after careful analysis to improve readibility while investigating by looking at logs.
 
 #### Other Configurations
 * `SHOW_STD_OUTPUT` Flag for showing log in standard output (terminal or command prompt for example) 
