@@ -1,8 +1,8 @@
 <?php
     include_once "../../format.php";
     global $webAddr;
-    $currentVersion = "v 7.25";
-    $releaseDate = "13-03-2013 1628hrs";
+    $currentVersion = "v 7.26";
+    $releaseDate = "13-03-2013 1746hrs";
 ?>
 
 <script language='javascript'>

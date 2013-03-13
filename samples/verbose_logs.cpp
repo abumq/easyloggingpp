@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
   LINFO << "This is demo for verbose logs";
   LVERBOSE(1) << "This will be printed when program is started using argument --v=1";
   LVERBOSE(2) << "This will be printed when program is started using argument --v=2";
-  LVERBOSE(3) << "This will be printed when program is started using argument --v=3";
+  BVERBOSE(3) << "This will be printed when program is started using argument --v=3";
   LVERBOSE(1) << "This will be printed when program is started using argument --v=1";
   LVERBOSE_IF(true, 1) << "Always verbose for level 1";
 

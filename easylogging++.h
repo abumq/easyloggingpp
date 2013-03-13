@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.25                                                         //
+//   EasyLogging++ v7.26                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -418,10 +418,10 @@ const std::string    DEFAULT_LOG_FORMAT       =    "%datetime %level [%type] %lo
 const std::string    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
 const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
 const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
-const std::string    ERROR_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
-const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
+const std::string    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
+const std::string    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
 const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
-const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
+const std::string    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
 const std::string    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
@@ -476,6 +476,17 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 } // namespace easyloggingpp
 
 //
+// Log level name outputs
+//
+#define _ELPP_INFO_LEVEL_OUTPUT      "INFO"
+#define _ELPP_DEBUG_LEVEL_OUTPUT     "DEBUG"
+#define _ELPP_WARNING_LEVEL_OUTPUT   "WARN"
+#define _ELPP_ERROR_LEVEL_OUTPUT     "ERROR"
+#define _ELPP_FATAL_LEVEL_OUTPUT     "FATAL"
+#define _ELPP_VERBOSE_LEVEL_OUTPUT   "VER"
+#define _ELPP_QA_LEVEL_OUTPUT        "QA"
+#define _ELPP_TRACE_LEVEL_OUTPUT     "TRACE"
+//
 // Low-level log evaluation
 //
 #define _ELPP_DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
@@ -510,10 +521,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.25"); }
+    static inline const std::string version(void) { return std::string("7.26"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1628hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1812hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -699,7 +710,7 @@ namespace helper {
                     ++foundAt;
                 } else {
                     currentFormat_ = currentFormat_.replace(foundAt, formatSpecifier_.size(), value_);
-                    continue;
+                    return;
                 }
             }
         }
@@ -902,10 +913,10 @@ class RegisteredLogTypes : public Register<LogType, LogType::Iterator, LogType::
 public:
     explicit RegisteredLogTypes(void)
     {
-        registerNew(new LogType("TrivialLogger", "LOG"));
-        registerNew(new LogType("BusinessLogger", "BUSINESS"));
-        registerNew(new LogType("SecurityLogger", "SECURITY"));
-        registerNew(new LogType("PerformanceLogger", "PERFORMANCE"));
+        registerNew(new LogType("TrivialLogger", "log"));
+        registerNew(new LogType("BusinessLogger", "business"));
+        registerNew(new LogType("SecurityLogger", "security"));
+        registerNew(new LogType("PerformanceLogger", "performance"));
     }
 
     inline bool inject(LogType *t_) {
@@ -981,21 +992,21 @@ public:
     explicit RegisteredSeverityLevels(void)
     {
         registerNew(
-                    new SeverityLevel("DEBUG", DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("INFO", INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("WARNING", WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("ERROR", ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("FATAL", FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("VERBOSE", VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("QA", QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel("TRACE", TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1440,35 +1451,35 @@ public:
     inline std::ostream& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
 private:
     inline void writeLog(void) const {
-        if (severityLevel_ == "DEBUG") {
+        if (severityLevel_ == _ELPP_DEBUG_LEVEL_OUTPUT) {
 #if (_ELPP_DEBUG_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "WARNING") {
+        } else if (severityLevel_ == _ELPP_WARNING_LEVEL_OUTPUT) {
 #if (_ELPP_WARNING_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "ERROR") {
+        } else if (severityLevel_ == _ELPP_ERROR_LEVEL_OUTPUT) {
 #if (_ELPP_ERROR_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "INFO") {
+        } else if (severityLevel_ == _ELPP_INFO_LEVEL_OUTPUT) {
 #if (_ELPP_INFO_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "FATAL") {
+        } else if (severityLevel_ == _ELPP_FATAL_LEVEL_OUTPUT) {
 #if (_ELPP_FATAL_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "QA") {
+        } else if (severityLevel_ == _ELPP_QA_LEVEL_OUTPUT) {
 #if (_ELPP_QA_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "TRACE") {
+        } else if (severityLevel_ == _ELPP_TRACE_LEVEL_OUTPUT) {
 #if (_ELPP_TRACE_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == "VERBOSE") {
+        } else if (severityLevel_ == _ELPP_VERBOSE_LEVEL_OUTPUT) {
 #if (_ELPP_VERBOSE_LOG)
             if (logAspect_ == kNormal && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
                 _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
@@ -1570,35 +1581,35 @@ public:
 // Custom injected loggers
 //
 // Normal loggers
-#define CINFO(type_) _ELPP_LOG_WRITER(type_, "INFO")
-#define CWARNING(type_) _ELPP_LOG_WRITER(type_, "WARNING")
-#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, "DEBUG")
-#define CERROR(type_) _ELPP_LOG_WRITER(type_, "ERROR")
-#define CFATAL(type_) _ELPP_LOG_WRITER(type_, "FATAL")
-#define CQA(type_) _ELPP_LOG_WRITER(type_, "QA")
-#define CTRACE(type_) _ELPP_LOG_WRITER(type_, "TRACE")
+#define CINFO(type_) _ELPP_LOG_WRITER(type_, _ELPP_INFO_LEVEL_OUTPUT)
+#define CWARNING(type_) _ELPP_LOG_WRITER(type_, _ELPP_WARNING_LEVEL_OUTPUT)
+#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, _ELPP_DEBUG_LEVEL_OUTPUT)
+#define CERROR(type_) _ELPP_LOG_WRITER(type_, _ELPP_ERROR_LEVEL_OUTPUT)
+#define CFATAL(type_) _ELPP_LOG_WRITER(type_, _ELPP_FATAL_LEVEL_OUTPUT)
+#define CQA(type_) _ELPP_LOG_WRITER(type_, _ELPP_QA_LEVEL_OUTPUT)
+#define CTRACE(type_) _ELPP_LOG_WRITER(type_, _ELPP_TRACE_LEVEL_OUTPUT)
 #define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                   \
-    type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level)
+    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define CINFO_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "INFO")
-#define CWARNING_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "WARNING")
-#define CDEBUG_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "DEBUG")
-#define CERROR_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "ERROR")
-#define CFATAL_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "FATAL")
-#define CQA_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "QA")
-#define CTRACE_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, "TRACE")
+#define CINFO_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_INFO_LEVEL_OUTPUT)
+#define CWARNING_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_WARNING_LEVEL_OUTPUT)
+#define CDEBUG_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
+#define CERROR_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_ERROR_LEVEL_OUTPUT)
+#define CFATAL_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_FATAL_LEVEL_OUTPUT)
+#define CQA_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_QA_LEVEL_OUTPUT)
+#define CTRACE_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_TRACE_LEVEL_OUTPUT)
 #define CVERBOSE_IF(condition, level, type_) LogWriter(LogWriter::kConditional,                 \
-    type_, "VERBOSE", __func__, __FILE__, __LINE__, condition, level)
+    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, condition, level)
 // Interval logs
-#define CINFO_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "INFO")
-#define CWARNING_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "WARNING")
-#define CDEBUG_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "DEBUG")
-#define CERROR_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "ERROR")
-#define CFATAL_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "FATAL")
-#define CQA_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "QA")
-#define CTRACE_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, "TRACE")
+#define CINFO_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_INFO_LEVEL_OUTPUT)
+#define CWARNING_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_WARNING_LEVEL_OUTPUT)
+#define CDEBUG_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
+#define CERROR_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_ERROR_LEVEL_OUTPUT)
+#define CFATAL_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_FATAL_LEVEL_OUTPUT)
+#define CQA_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_QA_LEVEL_OUTPUT)
+#define CTRACE_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_TRACE_LEVEL_OUTPUT)
 #define CVERBOSE_EVERY_N(n, level, type_) LogWriter(LogWriter::kInterval,                       \
-    type_, "VERBOSE", __func__, __FILE__, __LINE__, true, level, n)
+    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level, n)
 //
 // Trivial Loggers
 //

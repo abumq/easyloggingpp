@@ -43,6 +43,10 @@ Change log was not kept before version 2.1.
  * 7.25:
      - Updated default log formats to make logs more easy to read
      - Fixed bug from 7.22
+ * 7.26:
+     - Updated default log format to align to make log easy to read, these log formats can be customized as per requirments
+     - Updated log types format-output to prevent confusion with severity level
+     - Single format specifier per severity level for performance improvement and error preventions.
 
 #### 6.xx
  * 6.00:

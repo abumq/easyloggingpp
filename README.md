@@ -31,7 +31,7 @@ EasyLogging++ comes with following severity levels of logging with complete cont
  * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
  * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
- * [Custom format for logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format)
+ * [Highly configurable logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format)
  * [Ability to inject new loggers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-types)
  * Different aspects of logs
    - EasyLogging++ has different aspects of logging that includes conditional logging, verbose logging and interval logging
@@ -445,7 +445,9 @@ You can customize format of logging. Following format specifiers are currently s
 * `\n` New line
 * `\t` Tab
 
-*Note* Above format can be used once. If you define two `%level`s for example, only first one will take affect. This is for performance improvement.
+The default format has been made default after careful analysis to improve readibility while investigating by looking at logs.
+
+**Note** Above format specifier can be used only once per severity level. If you define multiple specifiers, only first one will be resolved to its value and others will remain as they are. This is to improve performance and prevent potential formatting errors.
 
 #### Log Format By Log Level
 Since v3.0+, EasyLogging++ supports different format for different log level. This is set by following constants in `easylogging++.h` configuration section;
