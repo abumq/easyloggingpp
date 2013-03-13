@@ -420,7 +420,7 @@ const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
 const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
 const std::string    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
 const std::string    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
-const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel  [%type] %log\n";
+const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
 const std::string    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
 const std::string    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
 
@@ -524,7 +524,7 @@ public:
     static inline const std::string version(void) { return std::string("7.26"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1818hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1821hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
