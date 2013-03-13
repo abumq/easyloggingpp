@@ -98,7 +98,7 @@ See [Log Format](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.m
 
 ## Additional Features
 #### Log Types
-EasyLogging++ support different log types, by default three log types are injected.
+EasyLogging++ support different log types, by default four log types are injected.
  * Trivial Logger: Trivial logging unrelated to business logics or security issues / logics (`LOG`)
  * Business Logger: Logs related to business logics (`BUSINESS`)
  * Security Logger: Logs related to security logics (`SECURITY`)
@@ -194,7 +194,7 @@ g++ main.cpp -o main-exec -D_ALWAYS_CLEAN_LOGS
 
  Version: 3.18+
 
-#### Performance Logging
+#### Performance Tracking 
  ```C++
  #include "easylogging++.h"
  _INITIALIZE_EASYLOGGINGPP

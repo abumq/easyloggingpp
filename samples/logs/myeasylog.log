@@ -1,9 +1,2 @@
-[LOG] [INFO] [12/03/2013 11:41:09.426] This standard log is written by thread #1
-[LOG] [INFO] [12/03/2013 11:41:09.426] This standard log is written by thread #2
-[LOG] [WARNING] [12/03/2013 11:41:09.426] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
-[LOG] [INFO] [12/03/2013 11:41:09.426] This standard log is written by thread #3
-[LOG] [INFO] [12/03/2013 11:41:09.427] This interval log will be logged with every thread, this one is from thread #1
-[LOG] [INFO] [12/03/2013 11:41:09.427] This interval log will be logged with every thread, this one is from thread #2
-[LOG] [INFO] [12/03/2013 11:41:09.427] This log is only for thread 2 and is ran by thread #2
-[LOG] [INFO] [12/03/2013 11:41:09.427] This interval log will be logged with every thread, this one is from thread #3
-[PERFORMANCE] [DEBUG] [12/03/2013 11:41:09.427] [mkhan@localhost.localdomain] [int main(int, char**)] [./multithread_test.cpp:54] Executed [int main(int, char**)] in [~ 1 ms]
+[LOG] [INFO] [12/03/2013 17:00:47.604] I will now waste 5 seconds
+[PERFORMANCE] [DEBUG] [12/03/2013 17:00:52.604] [mkhan@localhost.localdomain] [void timeWaster(int)] [./time_waster.cpp:18] Executed [void timeWaster(int)] in [~ 5 seconds]

@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.21                                                         //
+//   EasyLogging++ v7.22                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -510,10 +510,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.21"); }
+    static inline const std::string version(void) { return std::string("7.22"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("12-03-2013 1148hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1620hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -759,8 +759,8 @@ namespace helper {
             return std::string(dateBuffer_);
         }
 
-        static std::string formatSeconds(double seconds_) {
-            double result = seconds_;
+        static std::string formatMilliseconds(double milliSeconds_) {
+            double result = milliSeconds_;
             std::string unit = "ms";
             std::stringstream stream_;
             if (result > 1000.0f) {
@@ -780,7 +780,7 @@ namespace helper {
         }
 
         static double getTimeDifference(timeval& endTime, timeval& startTime) {
-             return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec))/1000);
+             return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
         }
     private:
         // Prevent initilization
@@ -1504,7 +1504,7 @@ private:
 #if _ELPP_DEBUG_LOG
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
-         easyloggingpp::internal::DateUtilities::formatSeconds(                                                 \
+         easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
 #   define FUNC_SUB_COMMON_START {                                                                              \
         if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                                           \

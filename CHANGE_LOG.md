@@ -39,6 +39,7 @@ Change log was not kept before version 2.1.
  * 7.01: Provides safe interface to use Register template outside EasyLogging++
  * 7.20: Performance tracking now tracks upto milliseconds
  * 7.21: Performance tracking is now exact not approx so got rid of ~ char
+ * 7.22: Minor refactoring
 
 #### 6.xx
  * 6.00:
