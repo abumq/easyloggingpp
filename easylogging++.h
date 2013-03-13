@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.22                                                         //
+//   EasyLogging++ v7.25                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -414,15 +414,15 @@ namespace configurations {
 //
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
-const std::string    DEFAULT_LOG_FORMAT       =    "[%type] [%level] [%datetime] %log\n";
-const std::string    DEBUG_LOG_FORMAT         =    "[%type] [%level] [%datetime] [%user@%host] [%func] [%loc] %log\n";
+const std::string    DEFAULT_LOG_FORMAT       =    "%datetime %level [%type] %log\n";
+const std::string    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
 const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
 const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
 const std::string    ERROR_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
 const std::string    FATAL_LOG_FORMAT         =    DEFAULT_LOG_FORMAT;
-const std::string    VERBOSE_LOG_FORMAT       =    "[%type] [%level-%vlevel] [%datetime] %log\n";
+const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
 const std::string    QA_LOG_FORMAT            =    DEFAULT_LOG_FORMAT;
-const std::string    TRACE_LOG_FORMAT         =    "[%type] [%level] [%datetime] [%func] [%loc] %log\n";
+const std::string    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
 
@@ -510,10 +510,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.22"); }
+    static inline const std::string version(void) { return std::string("7.25"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1620hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1628hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -759,7 +759,7 @@ namespace helper {
             return std::string(dateBuffer_);
         }
 
-        static std::string formatMilliseconds(double milliSeconds_) {
+        static std::string formatMilliSeconds(double milliSeconds_) {
             double result = milliSeconds_;
             std::string unit = "ms";
             std::stringstream stream_;

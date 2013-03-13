@@ -40,6 +40,9 @@ Change log was not kept before version 2.1.
  * 7.20: Performance tracking now tracks upto milliseconds
  * 7.21: Performance tracking is now exact not approx so got rid of ~ char
  * 7.22: Minor refactoring
+ * 7.25:
+     - Updated default log formats to make logs more easy to read
+     - Fixed bug from 7.22
 
 #### 6.xx
  * 6.00:
