@@ -1,0 +1,70 @@
+15/03/2013 10:04:17.061 INFO  [log] iter = 2
+15/03/2013 10:04:17.061 INFO  [log] iter = 4
+15/03/2013 10:04:17.061 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 5
+15/03/2013 10:04:17.061 INFO  [log] iter = 6
+15/03/2013 10:04:17.061 INFO  [log] iter = 8
+15/03/2013 10:04:17.061 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 10
+15/03/2013 10:04:17.061 INFO  [log] iter = 10
+15/03/2013 10:04:17.061 INFO  [log] iter = 12
+15/03/2013 10:04:17.061 INFO  [log] iter = 14
+15/03/2013 10:04:17.061 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 15
+15/03/2013 10:04:17.061 INFO  [log] iter = 16
+15/03/2013 10:04:17.061 INFO  [log] iter = 18
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 20
+15/03/2013 10:04:17.062 INFO  [log] iter = 20
+15/03/2013 10:04:17.062 INFO  [log] iter = 22
+15/03/2013 10:04:17.062 INFO  [log] iter = 24
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 25
+15/03/2013 10:04:17.062 INFO  [log] iter = 26
+15/03/2013 10:04:17.062 INFO  [log] iter = 28
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 30
+15/03/2013 10:04:17.062 INFO  [log] iter = 30
+15/03/2013 10:04:17.062 INFO  [log] iter = 32
+15/03/2013 10:04:17.062 INFO  [log] iter = 34
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 35
+15/03/2013 10:04:17.062 INFO  [log] iter = 36
+15/03/2013 10:04:17.062 INFO  [log] iter = 38
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 40
+15/03/2013 10:04:17.062 INFO  [log] iter = 40
+15/03/2013 10:04:17.062 INFO  [log] iter = 42
+15/03/2013 10:04:17.062 INFO  [log] iter = 44
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 45
+15/03/2013 10:04:17.062 INFO  [log] iter = 46
+15/03/2013 10:04:17.062 INFO  [log] iter = 48
+15/03/2013 10:04:17.062 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 50
+15/03/2013 10:04:17.062 INFO  [log] iter = 50
+15/03/2013 10:04:17.063 INFO  [log] iter = 52
+15/03/2013 10:04:17.063 INFO  [log] iter = 54
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 55
+15/03/2013 10:04:17.063 INFO  [log] iter = 56
+15/03/2013 10:04:17.063 INFO  [log] iter = 58
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 60
+15/03/2013 10:04:17.063 INFO  [log] iter = 60
+15/03/2013 10:04:17.063 INFO  [log] iter = 62
+15/03/2013 10:04:17.063 INFO  [log] iter = 64
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 65
+15/03/2013 10:04:17.063 INFO  [log] iter = 66
+15/03/2013 10:04:17.063 INFO  [log] iter = 68
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 70
+15/03/2013 10:04:17.063 INFO  [log] iter = 70
+15/03/2013 10:04:17.063 INFO  [log] iter = 72
+15/03/2013 10:04:17.063 INFO  [log] iter = 74
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 75
+15/03/2013 10:04:17.063 INFO  [log] iter = 76
+15/03/2013 10:04:17.063 INFO  [log] iter = 78
+15/03/2013 10:04:17.063 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 80
+15/03/2013 10:04:17.063 INFO  [log] iter = 80
+15/03/2013 10:04:17.063 INFO  [log] iter = 82
+15/03/2013 10:04:17.063 INFO  [log] iter = 84
+15/03/2013 10:04:17.064 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 85
+15/03/2013 10:04:17.064 INFO  [log] iter = 86
+15/03/2013 10:04:17.064 INFO  [log] iter = 88
+15/03/2013 10:04:17.064 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 90
+15/03/2013 10:04:17.064 INFO  [log] iter = 90
+15/03/2013 10:04:17.064 INFO  [log] iter = 92
+15/03/2013 10:04:17.064 INFO  [log] iter = 94
+15/03/2013 10:04:17.064 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 95
+15/03/2013 10:04:17.064 INFO  [log] iter = 96
+15/03/2013 10:04:17.064 INFO  [log] iter = 98
+15/03/2013 10:04:17.064 INFO  [log] This will be printed every 5 iteration multiple, this is iteration 100
+15/03/2013 10:04:17.064 INFO  [log] iter = 100

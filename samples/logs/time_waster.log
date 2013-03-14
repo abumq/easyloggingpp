@@ -1,0 +1,2 @@
+15/03/2013 10:05:09.692 INFO  [log] I will now waste 5 seconds
+15/03/2013 10:05:14.692 DEBUG [performance] [mkhan@devil-inside] [void timeWaster(int)] [./time_waster.cpp:18] Executed [void timeWaster(int)] in [5 seconds]

@@ -1,0 +1,57 @@
+15/03/2013 10:03:38.509 INFO  [log] This standard log is written by thread #2
+15/03/2013 10:03:38.509 INFO  [log] This standard log is written by thread #1
+15/03/2013 10:03:38.509 INFO  [log] This standard log is written by thread #3
+15/03/2013 10:03:38.509 VER-2 [log] This is verbose level 2 logging from thread #1
+15/03/2013 10:03:38.510 VER-2 [log] This is verbose level 2 logging from thread #2
+15/03/2013 10:03:38.510 VER-2 [log] This is verbose level 2 logging from thread #3
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-3 [log] Verbose level 3 log every 4th time. This is at 2 from thread #1
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-3 [log] Verbose level 3 log every 4th time. This is at 3 from thread #1
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-3 [log] Verbose level 3 log every 4th time. This is at 1 from thread #3
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.510 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 2 from thread #3
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 4 from thread #2
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 3 from thread #3
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 5 from thread #2
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 6 from thread #2
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.511 VER-3 [log] Verbose level 3 log every 4th time. This is at 7 from thread #2
+15/03/2013 10:03:38.511 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-3 [log] Verbose level 3 log every 4th time. This is at 5 from thread #3
+15/03/2013 10:03:38.512 VER-3 [log] Verbose level 3 log every 4th time. This is at 9 from thread #1
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-3 [log] Verbose level 3 log every 4th time. This is at 10 from thread #1
+15/03/2013 10:03:38.512 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+15/03/2013 10:03:38.512 VER-3 [log] Verbose level 3 log every 4th time. This is at 10 from thread #2
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+15/03/2013 10:03:38.512 INFO  [log] This log is only for thread 2 and is ran by thread #2
+15/03/2013 10:03:38.512 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.512 VER-3 [log] Verbose level 3 log every 4th time. This is at 8 from thread #3
+15/03/2013 10:03:38.513 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.513 VER-2 [log] Verbose condition
+15/03/2013 10:03:38.513 VER-3 [log] Verbose level 3 log every 4th time. This is at 10 from thread #3
+15/03/2013 10:03:38.513 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+15/03/2013 10:03:38.513 DEBUG [performance] [mkhan@devil-inside] [int main(int, char**)] [./multithread_test.cpp:54] Executed [int main(int, char**)] in [4 ms]

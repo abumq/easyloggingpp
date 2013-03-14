@@ -6,7 +6,6 @@
 /releases/*
 
 /logs/*
-/samples/logs/*
 /samples/logs/myeasylog.log
 /samples/multiple-files-project/logs/*
 /test/logs/*

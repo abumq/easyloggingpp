@@ -1,0 +1,114 @@
+15/03/2013 10:02:15.054 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:14] This is start of logging!
+15/03/2013 10:02:15.054 INFO  [log] This is a test number 1
+15/03/2013 10:02:15.054 INFO  [log] This is a test number 2
+15/03/2013 10:02:15.054 INFO  [log] This is a test number 3
+15/03/2013 10:02:15.054 INFO  [log] This is a test number 4
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 5
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 6
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 7
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 8
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 9
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 10
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 11
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 12
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 13
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 14
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 15
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 16
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 17
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 18
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 19
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 20
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 21
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 22
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 23
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 24
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 25
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 26
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 27
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 28
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 29
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 30
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 31
+15/03/2013 10:02:15.055 INFO  [log] This is a test number 32
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 33
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 34
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 35
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 36
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 37
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 38
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 39
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 40
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 41
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 42
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 43
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 44
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 45
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 46
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 47
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 48
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 49
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 50
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 51
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 52
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 53
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 54
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 55
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 56
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 57
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 58
+15/03/2013 10:02:15.056 INFO  [log] This is a test number 59
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 60
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 61
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 62
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 63
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 64
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 65
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 66
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 67
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 68
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 69
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 70
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 71
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 72
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 73
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 74
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 75
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 76
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 77
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 78
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 79
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 80
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 81
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 82
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 83
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 84
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 85
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 86
+15/03/2013 10:02:15.057 INFO  [log] This is a test number 87
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 88
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 89
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 90
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 91
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 92
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 93
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 94
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 95
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 96
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 97
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 98
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 99
+15/03/2013 10:02:15.058 INFO  [log] This is a test number 100
+15/03/2013 10:02:15.058 INFO  [log] Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [1]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [2]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [3]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [4]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [5]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [6]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [7]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [8]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [9]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:20] Some more logs [10]
+15/03/2013 10:02:15.058 DEBUG [log] [mkhan@devil-inside] [int main()] [./many_logs.cpp:22] This is end of logging!
+15/03/2013 10:02:15.059 DEBUG [performance] [mkhan@devil-inside] [int main()] [./many_logs.cpp:23] Executed [int main()] in [4 ms]
