@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.26                                                         //
+//   EasyLogging++ v7.27                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -521,10 +521,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.26"); }
+    static inline const std::string version(void) { return std::string("7.27"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-03-2013 1821hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("19-03-2013 2258hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1014,7 +1014,7 @@ public:
 class LogCounter {
 public:
     typedef std::vector< LogCounter* >::iterator Iterator;
-    const static unsigned int kMax = 5000;
+    const static unsigned int kMax = 100000;
 
     explicit LogCounter(void) :
         file_(""),
@@ -1038,7 +1038,7 @@ public:
 
     inline void reset(unsigned int n_) {
         if (position_ >= LogCounter::kMax) {
-            position_ = (n_ >= 1 ? 5000 % n_ : 0);
+            position_ = (n_ >= 1 ? kMax % n_ : 0);
         }
         ++position_;
     }
@@ -1095,7 +1095,6 @@ public:
         return result_;
     }
 
-private:
     LogCounter* get(const char* file_, unsigned long int line_) {
         LogCounter::Iterator iter = std::find_if(list_.begin(), list_.end(), LogCounter::Predicate(file_, line_));
         if (iter != list_.end() && *iter != NULL) {
@@ -1396,6 +1395,8 @@ private:
 }                                                                                          \
 }
 #define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return _ELPP_STREAM;
+#define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
+#define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
 
 extern easyloggingpp::internal::Logger _ELPP_LOGGER;
 

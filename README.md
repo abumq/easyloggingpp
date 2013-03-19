@@ -178,6 +178,8 @@ for (int i = 1; i <= 100; ++i) {
 }
 ```
 
+At any time if you wish to check the counter position for a line, you may do it using `_ELPP_COUNTER_POSITION` that gets position for any interval log registered for the line. This is a macro that expands to finding the position. *Please note that counters do get reset at some point, as per current release, limit is set to `100,000` iterations. It used to be 5000 before v7.27.*
+
 Version: 4.07+
 
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)

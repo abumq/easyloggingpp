@@ -47,6 +47,9 @@ Change log was not kept before version 2.1.
      - Updated default log format to align to make log easy to read, these log formats can be customized as per requirments
      - Updated log types format-output to prevent confusion with severity level
      - Single format specifier per severity level for performance improvement and error preventions.
+ * 7.27:
+     - Ability to check log counter position by introducing `_ELPP_COUNTER_POSITION`
+     - Counter now gets reset every 100,000 instead of 5000 iterations.
 
 #### 6.xx
  * 6.00:
