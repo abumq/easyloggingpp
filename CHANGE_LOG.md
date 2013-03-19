@@ -50,6 +50,8 @@ Change log was not kept before version 2.1.
  * 7.27:
      - Ability to check log counter position by introducing `_ELPP_COUNTER_POSITION`
      - Counter now gets reset every 100,000 instead of 5000 iterations.
+ * 7.28:
+     - Fix date issue on RHEL for applications using Qt
 
 #### 6.xx
  * 6.00:
