@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.27                                                         //
+//   EasyLogging++ v7.28                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -521,10 +521,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.27"); }
+    static inline const std::string version(void) { return std::string("7.28"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("19-03-2013 2258hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("20-03-2013 1057hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -737,6 +737,7 @@ namespace helper {
             const char* kDateFormatLocal_ = "%d/%m/%Y";
             char dateBuffer_[kDateBuffSize_] = "";
             char dateFormat_[kDateBuffSize_];
+            char dateBufferOut_[kDateBuffSize_] = "";
             if (format_ == kDateOnly) {
                 strcpy(dateFormat_, kDateFormatLocal_);
             } else if (format_ == kTimeOnly) {
@@ -756,18 +757,18 @@ namespace helper {
 
             strftime(dateBuffer_, sizeof(dateBuffer_), dateFormat_, timeInfo);
             if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
-                sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
+                sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
             }
 #elif _ELPP_OS_WINDOWS
             if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", dateBuffer_, kDateBufferSize_) != 0) {
                 static DWORD oldTick = GetTickCount();
                 if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
                     milliSeconds = (long)(GetTickCount() - oldTick) % 1000;
-                    sprintf(dateBuffer_, "%s.%03ld", dateBuffer_, milliSeconds);
+                    sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
                 }
             }
 #endif // _ELPP_OS_UNIX
-            return std::string(dateBuffer_);
+            return std::string(dateBufferOut_);
         }
 
         static std::string formatMilliSeconds(double milliSeconds_) {
