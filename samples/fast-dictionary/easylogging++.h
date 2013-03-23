@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.28 (Includes experimental codes)                           //
+//   EasyLogging++ v7.30                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -521,10 +521,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.28"); }
+    static inline const std::string version(void) { return std::string("7.30"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("20-03-2013 1057hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("23-03-2013 2129hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1395,7 +1395,7 @@ private:
         _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
     }                                                                                      \
 }
-#define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return _ELPP_STREAM;
+#define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return *this;
 #define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
 #define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
 
@@ -1436,32 +1436,32 @@ public:
         _ELPP_UNLOCK_MUTEX;
     }
 
-    inline std::ostream& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring cannot be handled) " << log_.c_str(); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(bool log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned int log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(signed long log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(char* log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
-    inline std::ostream& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring could not be handled) " << log_.c_str(); return *this; }
+    inline LogWriter& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(bool log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned int log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed long log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(char* log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
 
-#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES) && defined(_ELPP_EXPERIMENTAL)
+#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
 #include <QString>
-    inline std::ostream& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
-    inline std::ostream& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return _ELPP_STREAM; }
-    inline std::ostream& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return _ELPP_STREAM; }
+    inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
+    inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
+    inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
+    inline LogWriter& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
+    inline LogWriter& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return *this; }
+    inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
+    inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
 #endif
 
 private:

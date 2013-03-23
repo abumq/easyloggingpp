@@ -89,8 +89,7 @@ void ListWithSearch::performSearch(void)
             list->insertItem(0, widgetItem);
         }
     } else {
-        LINFO << "Performing search... [" << txtSearchCriteria->text().toStdString()<< "]";
-
+        LINFO << "Performing search... [" << txtSearchCriteria->text()<< "]";
         for (int i = 0; i < items.count(); ++i) {
             if (items.at(i)->text().startsWith(txtSearchCriteria->text(), searchBehaviour_ == kCaseSensative ?
                                                Qt::CaseSensitive : Qt::CaseInsensitive)) {

@@ -369,6 +369,11 @@ Version: 7.0+
 #### Read Log File
 If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
 
+#### Third-party C++ Libraries 
+EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
+
+ * Qt based classes logging (QString, QChar, QBool, qint64, quint64, QStringRef, QLatin1String) - v7.30
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.
