@@ -374,6 +374,8 @@ EasyLogging++ is being improved on daily basis and goal is to have a complete su
 
  * Qt based classes logging (QString, QChar, QBool, qint64, quint64, QStringRef, QLatin1String) - v7.30
 
+If you ever wish to make sure that third-party libraries are not used, define `_DO_NOT_SUPPORT_CPP_LIBRARIES` during compile time.
+
 ## Configuration
 #### Enable/Disable Logging
 By Default logging is enabled and you can use it in your aplication. There are few things that you might want to configure following in `easylogging++.h` header.

@@ -21,5 +21,3 @@ HEADERS  += mainwindow.hh \
     listwithsearch.hh
 
 FORMS    += mainwindow.ui
-
-DEFINES += _ELPP_EXPERIMENTAL
