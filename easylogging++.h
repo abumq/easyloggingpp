@@ -496,7 +496,7 @@ public:
     static inline const std::string version(void) { return std::string("7.31"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0054hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0125hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -844,15 +844,13 @@ public:
 
     explicit LogType(const std::string& name_) :
         name_(name_),
-        logName_(logName_)
-    {
+        logName_(logName_) {
     }
 
     explicit LogType(const std::string& name_,
                       const std::string& logName_) :
         name_(name_),
-        logName_(logName_)
-    {
+        logName_(logName_) {
     }
 
     inline std::string name(void) const {
@@ -884,8 +882,7 @@ private:
 // Registered log types to be used as finding register while writing logs
 class RegisteredLogTypes : public Register<LogType, LogType::Iterator, LogType::Predicate> {
 public:
-    explicit RegisteredLogTypes(void)
-    {
+    explicit RegisteredLogTypes(void) {
         registerNew(new LogType("TrivialLogger", "log"));
         registerNew(new LogType("BusinessLogger", "business"));
         registerNew(new LogType("SecurityLogger", "security"));
@@ -913,8 +910,7 @@ public:
         name_(name_),
         format_(format_),
         toStandardOutput_(toStandardOutput_),
-        toFile_(toFile_)
-    {
+        toFile_(toFile_) {
         LogManipulator::updateFormatValue("%level", name_, this->format_);
     }
 
@@ -992,8 +988,7 @@ public:
     explicit LogCounter(void) :
         file_(""),
         line_(0),
-        position_(1)
-    {
+        position_(1) {
     }
 
     explicit LogCounter(const char* file_,
@@ -1031,8 +1026,7 @@ public:
     public:
         explicit Predicate(const char* file_, unsigned long int line_)
             : file_(file_),
-              line_(line_)
-        {
+              line_(line_) {
         }
         inline bool operator()(const LogCounter* counter_) {
             return ((counter_ != NULL) &&
@@ -1090,8 +1084,7 @@ public:
         logFile_(NULL),
         registeredLogTypes_(new RegisteredLogTypes()),
         registeredSeverityLevels_(new RegisteredSeverityLevels()),
-        registeredLogCounters_(new RegisteredCounters())
-    {
+        registeredLogCounters_(new RegisteredCounters()) {
         if (SAVE_TO_FILE) {
             fileGood_ = USE_CUSTOM_LOCATION ?
                         !LOG_FILENAME.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
@@ -1404,7 +1397,7 @@ public:
         line_(line_),
         condition_(condition_),
         verboseLevel_(verboseLevel_),
-        counter_(counter_){
+        counter_(counter_) {
         _ELPP_LOCK_MUTEX;
     }
 
@@ -1429,6 +1422,15 @@ public:
     inline LogWriter& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
+    template <typename T>
+    inline LogWriter& operator<<(const std::vector<T>& vec_) {
+        _ELPP_STREAM << "(";
+        for (typename std::vector<T>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
+            _ELPP_STREAM << *it << (it < vec_.end() -1 ? ", " : "");
+        }
+        _ELPP_STREAM << ")";
+        return *this;
+    }
 
 #if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
 #include <QString>
@@ -1440,7 +1442,6 @@ public:
     inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
     inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
 #endif
-
 
 private:
     inline void writeLog(void) const {
