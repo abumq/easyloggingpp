@@ -3,13 +3,14 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QtConcurrentRun>
+#include <QDebug>
 
 int ListWithSearch::kSearchBarHeight = 22;
 
 ListWithSearch::ListWithSearch(int searchBehaviour_, QWidget *parent) :
     QWidget(parent),
-    searchBehaviour_(searchBehaviour_),
-    parent_(parent)
+    parent_(parent),
+    searchBehaviour_(searchBehaviour_)
 {
     setup(parent);
     future_ = new QFuture<void>;
@@ -88,8 +89,9 @@ void ListWithSearch::performSearch(void)
             list->insertItem(0, widgetItem);
         }
     } else {
-        LINFO << "Performing search... [" << txtSearchCriteria->text().toStdString() << "]";
-        for (int i = items.count() - 1; i >= 0; --i) {
+        LINFO << "Performing search... [" << txtSearchCriteria->text().toStdString()<< "]";
+
+        for (int i = 0; i < items.count(); ++i) {
             if (items.at(i)->text().startsWith(txtSearchCriteria->text(), searchBehaviour_ == kCaseSensative ?
                                                Qt::CaseSensitive : Qt::CaseInsensitive)) {
                 list->insertItem(i, items.at(i));

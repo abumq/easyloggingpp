@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.28                                                         //
+//   EasyLogging++ v7.28 (Includes experimental codes)                           //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -1387,13 +1387,13 @@ private:
 #define _ELPP_STREAM *_ELPP_STREAM_PTR
 #define _WRITE_ELPP_LOG(type_, level_, func_, file_, line_)                                \
     if (logAspect_ == kNormal) {                                                           \
+        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
+    } else if (logAspect_ == kConditional && condition_) {                                 \
     _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-} else if (logAspect_ == kConditional && condition_) {                                     \
-    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-       } else if (logAspect_ == kInterval) {                                               \
+    } else if (logAspect_ == kInterval) {                                                  \
     if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {             \
-    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-}                                                                                          \
+        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
+    }                                                                                      \
 }
 #define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return _ELPP_STREAM;
 #define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
@@ -1448,9 +1448,22 @@ public:
     inline std::ostream& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
     inline std::ostream& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
     inline std::ostream& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
+    inline std::ostream& operator<<(char* log_) { _ELPP_LOG_TO_STREAM }
     inline std::ostream& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
     inline std::ostream& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
     inline std::ostream& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
+
+#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES) && defined(_ELPP_EXPERIMENTAL)
+#include <QString>
+    inline std::ostream& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
+    inline std::ostream& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return _ELPP_STREAM; }
+    inline std::ostream& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return _ELPP_STREAM; }
+#endif
+
 private:
     inline void writeLog(void) const {
         if (severityLevel_ == _ELPP_DEBUG_LEVEL_OUTPUT) {
