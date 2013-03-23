@@ -52,7 +52,7 @@ Change log was not kept before version 2.1.
      - Counter now gets reset every 100,000 instead of 5000 iterations.
  * 7.28: Fix date issue on RHEL for applications using Qt
  * 7.30:
-      - Support for QString and other Qt based classes (QBool, qint*, QChar ...) *Container not supported as of yet
+      - Support for QString and other Qt based classes (QBool, qint*, QChar ...) *Container not supported as of yet*
       - Qt based classes have to be used with `_ELPP_EXPERIMENTAL`
 
 #### 6.xx
