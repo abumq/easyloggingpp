@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.32                                                         //
+//   EasyLogging++ v7.33                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -348,10 +348,14 @@ private:
 #endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
+#include <list>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
+#    include <QString>
+#endif
 
 namespace easyloggingpp {
 
@@ -493,10 +497,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.32"); }
+    static inline const std::string version(void) { return std::string("7.33"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0255hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0510hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1434,9 +1438,20 @@ public:
         _ELPP_STREAM << ")";
         return *this;
     }
-
+    template <typename T>
+    inline LogWriter& operator<<(const std::list<T>& list_) {
+        _ELPP_STREAM << "(";
+        unsigned int index_ = 0;
+        for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
+            _ELPP_STREAM << "\"";
+            operator << (*it);
+            _ELPP_STREAM << "\"";
+            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
+        }
+        _ELPP_STREAM << ")";
+        return *this;
+    }
 #if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
-#include <QString>
     inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
     inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
     inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }

@@ -61,6 +61,9 @@ Change log was not kept before version 2.1.
       - Standard vector to support third party libraries if using, see sample for details (samples/container_log.cpp)
       - Primitive bool now logs true/false instead of 1/0
       - Container logs wraps quotes around each element
+ * 7.33:
+      - Support for std::list log
+      - Fixed issue with post-include for QString
 
 #### 6.xx
  * 6.00:
