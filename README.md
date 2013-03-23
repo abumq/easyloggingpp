@@ -381,7 +381,8 @@ This list will continue to grow as time goes by.
 #### Containers Logging
 EasyLogging++ supports container logging restricted to following containers (and data-types)
  * `std::vector<primitive types or std::string>` - v7.31+ ([View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp))
-
+ * `std::vector<Qt classes that are mentioned above>` - v7.32+ ([View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp))
+ 
 This list will continue to grow as time goes by.
 
 ## Configuration
