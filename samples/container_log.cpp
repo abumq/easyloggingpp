@@ -7,7 +7,11 @@
  */
 
 #include <vector>
+#include <list>
 #include "../easylogging++.h"
+#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
+#    include <QString>
+#endif
 
 _INITIALIZE_EASYLOGGINGPP
 
@@ -22,12 +26,15 @@ int main(void) {
     SWARNING << "Security warning log for bool container " << boolVec_;
 
 #if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
-    #include <QString>
     std::vector<QString> qstringVec_;
     qstringVec_.push_back(QString("QString 1"));
     qstringVec_.push_back(QString("QString 2"));
     LINFO << "This will print vector of QString " << qstringVec_;
 #endif
-    
+    std::list<std::string> list_;
+    list_.push_back("String 1");
+    list_.push_back("String 2");
+    LINFO << "This will print std::list of std::string " << list_;
+
     return 0; 
 }
