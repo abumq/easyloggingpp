@@ -57,6 +57,10 @@ Change log was not kept before version 2.1.
  * 7.31:
       - Format source code
       - Standard vector (std::vector) for std::string and other primitive data types
+ * 7.32:
+      - Standard vector to support third party libraries if using, see sample for details (samples/container_log.cpp)
+      - Primitive bool now logs true/false instead of 1/0
+      - Container logs wraps quotes around each element
 
 #### 6.xx
  * 6.00:

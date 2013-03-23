@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.30                                                         //
+//   EasyLogging++ v7.31                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -493,10 +493,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.30"); }
+    static inline const std::string version(void) { return std::string("7.31"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-03-2013 2129hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0125hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1409,7 +1409,7 @@ public:
     inline LogWriter& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring could not be handled) " << log_.c_str(); return *this; }
     inline LogWriter& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(bool log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(bool log_) { _ELPP_STREAM << (log_ != 0 ? "true" : "false"); return *this; }
     inline LogWriter& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
@@ -1426,7 +1426,10 @@ public:
     inline LogWriter& operator<<(const std::vector<T>& vec_) {
         _ELPP_STREAM << "(";
         for (typename std::vector<T>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
-            _ELPP_STREAM << *it << (it < vec_.end() -1 ? ", " : "");
+            _ELPP_STREAM << "\"";
+            operator << (*it);
+            _ELPP_STREAM << "\"";
+            _ELPP_STREAM << (it < vec_.end() -1 ? ", " : "");
         }
         _ELPP_STREAM << ")";
         return *this;

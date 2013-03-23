@@ -20,6 +20,14 @@ int main(void) {
 
     std::vector<bool> boolVec_ = { true, false, true, true, true, false };
     SWARNING << "Security warning log for bool container " << boolVec_;
+
+#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
+    #include <QString>
+    std::vector<QString> qstringVec_;
+    qstringVec_.push_back(QString("QString 1"));
+    qstringVec_.push_back(QString("QString 2"));
+    LINFO << "This will print vector of QString " << qstringVec_;
+#endif
     
     return 0; 
 }
