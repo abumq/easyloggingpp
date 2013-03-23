@@ -54,6 +54,9 @@ Change log was not kept before version 2.1.
  * 7.30:
       - Support for QString and other Qt based classes (QBool, qint*, QChar ...) *Container not supported as of yet*
       - Qt based classes have to be used with `_ELPP_EXPERIMENTAL`
+ * 7.31:
+      - Format source code
+      - Standard vector (std::vector) for std::string and other primitive data types
 
 #### 6.xx
  * 6.00:

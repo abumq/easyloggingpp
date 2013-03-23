@@ -233,8 +233,7 @@ public:
     {
 #if defined(_FAST_MUTEX_ASM_)
         bool gotLock;
-        do {
-            gotLock = try_lock();
+        do { gotLock = try_lock();
             if(!gotLock)
             {
 #if defined(_TTHREAD_WIN32_)
@@ -257,14 +256,7 @@ public:
 #if defined(_FAST_MUTEX_ASM_)
         int oldLock;
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile (
-                    "movl $1,%%eax\n\t"
-                    "xchg %%eax,%0\n\t"
-                    "movl %%eax,%1\n\t"
-                    : "=m" (mLock), "=m" (oldLock)
-                    :
-                    : "%eax", "memory"
-                    );
+        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
 #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
         int *ptrLock = &mLock;
         __asm {
@@ -275,19 +267,8 @@ public:
         }
 #elif defined(__GNUC__) && (defined(__ppc__))
         int newLock = 1;
-        asm volatile (
-                    "\n1:\n\t"
-                    "lwarx  %0,0,%1\n\t"
-                    "cmpwi  0,%0,0\n\t"
-                    "bne-   2f\n\t"
-                    "stwcx. %2,0,%1\n\t"
-                    "bne-   1b\n\t"
-                    "isync\n"
-                    "2:\n\t"
-                    : "=&r" (oldLock)
-                    : "r" (&mLock), "r" (newLock)
-                    : "cr0", "memory"
-                    );
+        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
+                    "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
 #endif
         return (oldLock == 0);
 #else
@@ -302,13 +283,7 @@ public:
     {
 #if defined(_FAST_MUTEX_ASM_)
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile (
-                    "movl $0,%%eax\n\t"
-                    "xchg %%eax,%0\n\t"
-                    : "=m" (mLock)
-                    :
-                    : "%eax", "memory"
-                    );
+        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
 #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
         int *ptrLock = &mLock;
         __asm {
@@ -317,10 +292,7 @@ public:
                     xchg eax,[ecx]
         }
 #elif defined(__GNUC__) && (defined(__ppc__))
-        asm volatile (
-                    "sync\n\t"
-                    : : : "memory"
-                    );
+        asm volatile ("sync\n\t" : : : "memory");
         mLock = 0;
 #endif
 #else
@@ -932,7 +904,7 @@ public:
 // Represents severity level for log
 class SeverityLevel {
 public:
-    typedef std::vector< SeverityLevel* >::const_iterator Iterator;
+    typedef std::vector<SeverityLevel*>::const_iterator Iterator;
 
     explicit SeverityLevel(const std::string& name_,
                            const std::string& format_,
@@ -1014,7 +986,7 @@ public:
 // Represents single counter for interval log
 class LogCounter {
 public:
-    typedef std::vector< LogCounter* >::iterator Iterator;
+    typedef std::vector<LogCounter*>::iterator Iterator;
     const static unsigned int kMax = 100000;
 
     explicit LogCounter(void) :
@@ -1022,7 +994,6 @@ public:
         line_(0),
         position_(1)
     {
-
     }
 
     explicit LogCounter(const char* file_,
@@ -1240,6 +1211,7 @@ public:
             value_ = DateUtilities::getDateTime (dateTimeFormat_);
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
+        // Type
         if (level_->format().find("%type") != std::string::npos) {
             LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
@@ -1263,25 +1235,30 @@ public:
             formatSpecifier_ = "%type";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
+        // Location
         if (level_->format().find("%loc") != std::string::npos) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
             formatSpecifier_ = "%loc";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
+        // Function
         if (level_->format().find("%func") != std::string::npos) {
             value_ = std::string(func_);
             formatSpecifier_ = "%func";
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
+        // User
         if (level_->format().find("%user") != std::string::npos) {
             formatSpecifier_ = "%user";
             LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
+        // Host
         if (level_->format().find("%host") != std::string::npos) {
             formatSpecifier_ = "%host";
             LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
+        // Log
         if (level_->format().find("%log") != std::string::npos) {
             formatSpecifier_ = "%log";
             LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
@@ -1464,6 +1441,7 @@ public:
     inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
 #endif
 
+
 private:
     inline void writeLog(void) const {
         if (severityLevel_ == _ELPP_DEBUG_LEVEL_OUTPUT) {
@@ -1589,7 +1567,7 @@ public:
 } // namespace helper
 } // namespace easyloggingpp
 
-#define _ELPP_LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal,_t, _l, __func__, __FILE__, __LINE__)
+#define _ELPP_LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal, _t, _l, __func__, __FILE__, __LINE__)
 #define _ELPP_LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
 #define _ELPP_LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 //
@@ -1603,28 +1581,28 @@ public:
 #define CFATAL(type_) _ELPP_LOG_WRITER(type_, _ELPP_FATAL_LEVEL_OUTPUT)
 #define CQA(type_) _ELPP_LOG_WRITER(type_, _ELPP_QA_LEVEL_OUTPUT)
 #define CTRACE(type_) _ELPP_LOG_WRITER(type_, _ELPP_TRACE_LEVEL_OUTPUT)
-#define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                   \
+#define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                                \
     type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define CINFO_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_INFO_LEVEL_OUTPUT)
-#define CWARNING_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_WARNING_LEVEL_OUTPUT)
-#define CDEBUG_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
-#define CERROR_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_ERROR_LEVEL_OUTPUT)
-#define CFATAL_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_FATAL_LEVEL_OUTPUT)
-#define CQA_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_QA_LEVEL_OUTPUT)
-#define CTRACE_IF(condition, type_) _ELPP_LOG_WRITER_COND(condition, type_, _ELPP_TRACE_LEVEL_OUTPUT)
-#define CVERBOSE_IF(condition, level, type_) LogWriter(LogWriter::kConditional,                 \
-    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, condition, level)
+#define CINFO_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_INFO_LEVEL_OUTPUT)
+#define CWARNING_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_WARNING_LEVEL_OUTPUT)
+#define CDEBUG_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
+#define CERROR_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_ERROR_LEVEL_OUTPUT)
+#define CFATAL_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_FATAL_LEVEL_OUTPUT)
+#define CQA_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_QA_LEVEL_OUTPUT)
+#define CTRACE_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_TRACE_LEVEL_OUTPUT)
+#define CVERBOSE_IF(condition_, vlevel_, type_) LogWriter(LogWriter::kConditional,                           \
+    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, condition_, vlevel_)
 // Interval logs
-#define CINFO_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_INFO_LEVEL_OUTPUT)
-#define CWARNING_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_WARNING_LEVEL_OUTPUT)
-#define CDEBUG_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
-#define CERROR_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_ERROR_LEVEL_OUTPUT)
-#define CFATAL_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_FATAL_LEVEL_OUTPUT)
-#define CQA_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_QA_LEVEL_OUTPUT)
-#define CTRACE_EVERY_N(n, type_) _ELPP_LOG_WRITER_N(n, type_, _ELPP_TRACE_LEVEL_OUTPUT)
-#define CVERBOSE_EVERY_N(n, level, type_) LogWriter(LogWriter::kInterval,                       \
-    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level, n)
+#define CINFO_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_INFO_LEVEL_OUTPUT)
+#define CWARNING_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_WARNING_LEVEL_OUTPUT)
+#define CDEBUG_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
+#define CERROR_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_ERROR_LEVEL_OUTPUT)
+#define CFATAL_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_FATAL_LEVEL_OUTPUT)
+#define CQA_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_QA_LEVEL_OUTPUT)
+#define CTRACE_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_TRACE_LEVEL_OUTPUT)
+#define CVERBOSE_EVERY_N(interval_, level, type_) LogWriter(LogWriter::kInterval,                           \
+    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level, interval_)
 //
 // Trivial Loggers
 //
