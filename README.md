@@ -416,6 +416,8 @@ LINFO << f;
 
 will give `(1, 2)`
 
+*This has been reported having some issues as per v7.37, please double check your results. The issue is that logger does not go through all the array elements.*
+
 Version: 7.36+
 
 #### Third-party C++ Libraries 
