@@ -70,6 +70,7 @@ Change log was not kept before version 2.1.
       - Introduced `_DISABLE_CPP_LIBRARIES_LOGGING` to disable containers and other classes logging support
  * 7.36: Raw array logging
  * 7.37: Support for container (vector, list) of pointers
+ * 7.38: Fix for overloaded const containers
 
 #### 6.xx
  * 6.00:

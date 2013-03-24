@@ -30,6 +30,7 @@ class Vehicle {
         std::string version_;
 };
 
+
 int main(void) {
 
     Vehicle vehicle1("Land Rover", "Discovery 4", 2013, "TD HSE");
