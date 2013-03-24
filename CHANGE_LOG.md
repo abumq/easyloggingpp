@@ -69,6 +69,7 @@ Change log was not kept before version 2.1.
       - Changed `_DO_NOT_SUPPORT_CPP_LIBRARIES` to `_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING`
       - Introduced `_DISABLE_CPP_LIBRARIES_LOGGING` to disable containers and other classes logging support
  * 7.36: Raw array logging
+ * 7.37: Support for container (vector, list) of pointers
 
 #### 6.xx
  * 6.00:

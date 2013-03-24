@@ -12,7 +12,8 @@
 #include "../../easylogging++.h"
 
 #include "mythread.h"
-#include <stdint.h>
+#include <QVector>
+
 _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[]) {
@@ -28,11 +29,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    int f[2];
-    f[0] = 1;
-    f[1] = 2;
 
-    LINFO << f;
+    QVector<QString> stringsptrList;
+    stringsptrList.push_back (QString("Test"));
+    stringsptrList.push_back (QString("Test 2"));
+    LINFO << stringsptrList;
 
     LVERBOSE(1) << "Verbose 1 ...";
 

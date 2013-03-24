@@ -38,12 +38,20 @@ int main(void) {
 
     BINFO << "We have vehicles available: " << vehicle1  << " " << vehicle2 << " " << vehicle3;
 
-    std::vector<Vehicle> vehicles;
-    vehicles.push_back(vehicle1);
-    vehicles.push_back(vehicle2);
-    vehicles.push_back(vehicle3);
-    LINFO << "Now printing whole vector of classes";
+    std::vector<Vehicle*> vehicles;
+    vehicles.push_back(&vehicle1);
+    vehicles.push_back(&vehicle2);
+    vehicles.push_back(&vehicle3);
+    LINFO << "Now printing whole vector of pointers";
     LINFO << vehicles;
+
+    std::vector<Vehicle> vehiclesStack;
+    vehiclesStack.push_back(vehicle1);
+    vehiclesStack.push_back(vehicle2);
+    vehiclesStack.push_back(vehicle3);
+    LINFO << "Now printing whole vector of classes";
+    LINFO << vehiclesStack;
+
 
     return 0;
 }
