@@ -372,19 +372,81 @@ If you ever want to read log file from your application, you may do this by `eas
 #### Third-party C++ Libraries 
 EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
 
- * Qt based classes logging (`QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`) - v7.30+
+ * Qt based classes logging (`QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`, `QPair<K, V>`) - v7.30+
+ * Qt based containers (see Containers Logging below)
 
-If you ever wish to make sure that third-party libraries are not used, define `_DO_NOT_SUPPORT_CPP_LIBRARIES` during compile time. *Remember, you might end up having compilation errors after disabiling support **if you have tried logging third-party class***
-
-This list will continue to grow as time goes by.
+If you ever wish to make sure that third-party libraries are not used, define `_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING` during compile time. *Remember, you might end up having compilation errors after disabiling support **if you have tried logging third-party library class***
 
 #### Containers Logging
 EasyLogging++ supports container logging restricted to following containers (and data-types)
- * `std::vector<primitive types or std::string>` - v7.31+ ([View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp))
- * `std::vector<Qt classes that are mentioned above>` - v7.32+ ([View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp))
- * `std::list<for all of above supported by vector>` - v7.33+
+ * `std::vector<T>`
+ * `std::list<T>`
+ * `std::map<K, V>`
+ * `QVector<T>`
+ * `QList<T>`
+ * `QMap<K, V>`
  
-This list will continue to grow as time goes by.
+Where `T`, `K`, `V` reflect all normally supported data types. This list will continue to grow as time goes by.
+
+Version: 7.35+ (*Initial support from 7.31+ but data types normally used in logging are supported by containers were added in 7.35+*)
+
+[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp)
+
+#### Other Classes
+ * `std::pair<K, V>` [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/pair_log.cpp)
+ * `QPair<K, V>`
+
+Where `K` and `V` represent normally supported data types. This list will continue to grow as time goes by.
+
+Disable all the class logging by defining `_DISABLE_CPP_LIBRARIES_LOGGING` during compile time. This is not recommended but if you want to disable it anyway to fasten up compile time shorten number of includes, you may as well do it. Remember, this will disable support for logging C++ libraries classes and will log class using `toString() const`. See `Logging Your Own Class` section below for further details
+
+Version: 7.35+
+
+#### Logging Your Own Class
+There will be times when you would want to log your own class, just declare `toString() const` in your class. Return type of `toString()` can vary depending on what you want to log but it has to be some logable data type. Remember, `toString()` SHOULD BE const to prevent any value change.
+
+Example:
+```C++
+#include "easylogging++.h"
+_INITIALIZE_EASYLOGGINGPP
+
+class MyClass {
+    public:
+        MyClass(const std::string& name_) : name_(name_) {}
+
+        std::string name(void) const {
+            return name_;
+        }
+        void setName(const std::string& name_) {
+            this->name_ = name_;
+        }
+
+        std::string toString(void) const {
+            return "MyClass name is " + name();
+        }
+    private:
+        std::string name_;
+};
+
+int main(void) {
+    MyClass myClass("Awesome class");
+    LINFO << myClass;
+
+    return 0;
+}
+```
+
+Will log out something like:
+
+`14:32:47.031 INFO  [log] MyClass name is Awesome class`
+
+Of course, above output varies with your log format configurations. The one above is result of `%time %level [%type] %log`
+
+*Tip: Its always a good idea to wrap brackets around your class log to distinguish one class to another. See sample for details*
+
+Version: 7.34+
+
+[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/custom_class.cpp)
 
 ## Configuration
 #### Enable/Disable Logging

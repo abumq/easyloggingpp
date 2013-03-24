@@ -1,0 +1,3 @@
+24/03/2013 15:25:51.971 INFO  [business] We have vehicles available: (Land Rover Discovery 4 2013 TD HSE) (Honda Accord 2013 V6 Luxury) (Honda Accord 2010)
+24/03/2013 15:25:51.971 INFO  [log] Now printing whole vector of classes
+24/03/2013 15:25:51.971 INFO  [log] ("(Land Rover Discovery 4 2013 TD HSE)", "(Honda Accord 2013 V6 Luxury)", "(Honda Accord 2010)")

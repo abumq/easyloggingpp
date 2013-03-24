@@ -20,6 +20,7 @@
 /samples/qt-sample/Makefile
 
 /samples/qt-sample-build-Desktop-Debug/*
-/samples/qt-sample/qt-sample.pro.user
+/samples/qt-sample/qt-sample.pro.*
+/samples/fast-dictionary/fast-dictionary.pro.*
 
 /experimental/*

@@ -13,10 +13,9 @@
 
 #include "mythread.h"
 
-
 _INITIALIZE_EASYLOGGINGPP
 
-FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracking
+int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv)
 
     bool runThreads = true;
@@ -29,12 +28,13 @@ FUNC(int, main, (int argc, char* argv[]))   // Using FUNC for performance tracki
         }
     }
 
+
     LVERBOSE(1) << "Verbose 1 ...";
 
     SDEBUG << "This is security logger for debug";
 
     BINFO << "This is a business logger";
 
-    RETURN(0);
+    return 0;
 
-END_FUNC(0)
+}

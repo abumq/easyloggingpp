@@ -1,3 +1,3 @@
-24/03/2013 02:56:28.085 INFO  [log] Now I will print std::vector<std::string> and values are --> ("string 1", "string 2") <-- This is end of log
-24/03/2013 02:56:28.085 INFO  [business] Business info log for int container ("1", "2", "3", "4", "5")
-24/03/2013 02:56:28.085 WARN  [security] Security warning log for bool container ("true", "false", "true", "true", "true", "false")
+24/03/2013 15:26:10.961 INFO  [log] Now I will print std::vector<std::string> and values are --> ("string 1", "string 2") <-- This is end of log
+24/03/2013 15:26:10.961 WARN  [security] Security warning log for bool container ("true", "false", "true", "true", "true", "false")
+24/03/2013 15:26:10.961 INFO  [log] This will print std::list of std::string ("String 1", "String 2")

@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.33                                                         //
+//   EasyLogging++ v7.35                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -348,14 +348,24 @@ private:
 #endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
-#include <list>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
+#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+// For logging STL based templates
+#    include <list> // std::list
+#    include <utility> // std::pair
+#    include <map> // std::map
+#endif // !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+// For logging Qt based classes & templates
 #    include <QString>
-#endif
+#    include <QVector>
+#    include <QList>
+#    include <QPair>
+#    include <QMap>
+#endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
 
 namespace easyloggingpp {
 
@@ -497,10 +507,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.33"); }
+    static inline const std::string version(void) { return std::string("7.35"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0510hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 1653hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1426,12 +1436,18 @@ public:
     inline LogWriter& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
+    template <class T>
+    inline LogWriter& operator<<(const T& customClass) {
+        _ELPP_STREAM << customClass.toString();
+        return *this;
+    }
+#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     template <typename T>
-    inline LogWriter& operator<<(const std::vector<T>& vec_) {
+    inline LogWriter& operator<<(std::vector<T>& vec_) {
         _ELPP_STREAM << "(";
         for (typename std::vector<T>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
             _ELPP_STREAM << "\"";
-            operator << (*it);
+            operator << (static_cast<T>(*it));
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (it < vec_.end() -1 ? ", " : "");
         }
@@ -1439,19 +1455,51 @@ public:
         return *this;
     }
     template <typename T>
-    inline LogWriter& operator<<(const std::list<T>& list_) {
+    inline LogWriter& operator<<(const std::vector<T>& vec_) {
+        operator<<(const_cast<std::vector<T> >(vec_));
+        return *this;
+    }
+    template <typename T>
+    inline LogWriter& operator<<(std::list<T>& list_) {
         _ELPP_STREAM << "(";
         unsigned int index_ = 0;
         for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
             _ELPP_STREAM << "\"";
-            operator << (*it);
+            operator << (static_cast<T>(*it));
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
         }
         _ELPP_STREAM << ")";
         return *this;
     }
-#if defined(QT_CORE_LIB) && !defined(_DO_NOT_SUPPORT_CPP_LIBRARIES)
+    template <typename T>
+    inline LogWriter& operator<<(const std::list<T>& vec_) {
+        operator<<(const_cast<std::list<T> >(vec_));
+        return *this;
+    }
+    template <class K, class V>
+    inline LogWriter& operator<<(const std::pair<K, V>& pair_) {
+        _ELPP_STREAM << "[";
+        operator << (static_cast<K>(pair_.first));
+        _ELPP_STREAM << ", ";
+        operator << (static_cast<V>(pair_.second));
+        _ELPP_STREAM << "]";
+        return *this;
+    }
+    template <class K, class V>
+    inline LogWriter& operator<<(const std::map<K, V>& map_) {
+        _ELPP_STREAM << "[";
+        int index_ = 0;
+        for (typename std::map<K, V>::const_iterator it = map_.begin(); it != map_.end(); ++it) {
+            operator << (*it);
+            _ELPP_STREAM << "]";
+            _ELPP_STREAM << (index_++ < map_.size() -1 ? ", " : "");
+        }
+        _ELPP_STREAM << "]";
+        return *this;
+    }
+#endif // !defined(_DISABLE_LIBRARY_CLASS_LOGGING)
+#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
     inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
     inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
@@ -1459,7 +1507,60 @@ public:
     inline LogWriter& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return *this; }
     inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
     inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
-#endif
+    template <typename T>
+    inline LogWriter& operator<<(QList<T>& list_) {
+        _ELPP_STREAM << "(";
+        int index_ = 0;
+        for (typename QList<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
+            _ELPP_STREAM << "\"";
+            operator << (static_cast<T>(*it));
+            _ELPP_STREAM << "\"";
+            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
+        }
+        _ELPP_STREAM << ")";
+        return *this;
+    }
+    template <typename T>
+    inline LogWriter& operator<<(const QList<T>& list_) {
+        operator<<(const_cast<QList<T> >(list_));
+        return *this;
+    }
+    template <typename T>
+    inline LogWriter& operator<<(QVector<T>& vec_) {
+        operator<<(vec_.toList());
+        return *this;
+    }
+    template <typename T>
+    inline LogWriter& operator<<(const QVector<T>& vec_) {
+        operator<<(const_cast<QVector<T> >(vec_));
+        return *this;
+    }
+    template <class K, class V>
+    inline LogWriter& operator<<(const QPair<K, V>& pair_) {
+        _ELPP_STREAM << "[";
+        operator << (static_cast<K>(pair_.first));
+        _ELPP_STREAM << ", ";
+        operator << (static_cast<V>(pair_.second));
+        _ELPP_STREAM << "]";
+        return *this;
+    }
+    template <class K, class V>
+    inline LogWriter& operator<<(const QMap<K, V>& map_) {
+        _ELPP_STREAM << "[";
+        int index_ = 0;
+        QList<K> keys = map_.keys();
+        for (typename QList<K>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
+            _ELPP_STREAM << "[";
+            operator << (static_cast<K>(*it));
+            _ELPP_STREAM << ", ";
+            operator << (static_cast<V>(map_.value(*it)));
+            _ELPP_STREAM << "]";
+            _ELPP_STREAM << (index_++ < map_.keys().size() -1 ? ", " : "");
+        }
+        _ELPP_STREAM << "]";
+        return *this;
+    }
+#endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 
 private:
     inline void writeLog(void) const {
