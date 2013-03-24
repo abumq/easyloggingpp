@@ -373,7 +373,7 @@ If you ever want to read log file from your application, you may do this by `eas
 EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
 
  * Qt based classes logging (`QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`, `QPair<K, V>`) - v7.30+
- * Qt based containers (see Containers Logging below)
+ * Qt based containers (see Containers Logging below) - v7.35
 
 If you ever wish to make sure that third-party libraries are not used, define `_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING` during compile time. *Remember, you might end up having compilation errors after disabiling support **if you have tried logging third-party library class***
 
@@ -398,7 +398,7 @@ Version: 7.35+ (*Initial support from 7.31+ but data types normally used in logg
 
 Where `K` and `V` represent normally supported data types. This list will continue to grow as time goes by.
 
-Disable all the class logging by defining `_DISABLE_CPP_LIBRARIES_LOGGING` during compile time. This is not recommended but if you want to disable it anyway to fasten up compile time shorten number of includes, you may as well do it. Remember, this will disable support for logging C++ libraries classes and will log class using `toString() const`. See `Logging Your Own Class` section below for further details
+Disable all the class logging by defining `_DISABLE_CPP_LIBRARIES_LOGGING` during compile time. This is not recommended but if you want to disable it anyway to fasten up compile time and shorten number of includes, you may as well do it. Remember, this will disable support for logging C++ libraries classes and will log class using `toString() const`. See `Logging Your Own Class` section below for further details
 
 Version: 7.35+
 
