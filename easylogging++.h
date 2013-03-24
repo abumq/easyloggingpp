@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.35                                                         //
+//   EasyLogging++ v7.36                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -507,10 +507,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.35"); }
+    static inline const std::string version(void) { return std::string("7.36"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 1701hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 1924hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1437,8 +1437,19 @@ public:
     inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
     template <class T>
-    inline LogWriter& operator<<(const T& customClass) {
-        _ELPP_STREAM << customClass.toString();
+    inline LogWriter& operator<<(const T& class_) {
+        _ELPP_STREAM << class_.toString();
+        return *this;
+    }
+#define ARR_SZ(arr) (sizeof(arr) / sizeof(arr[0]))
+    template <class T>
+    inline LogWriter& operator<<(T arr_[]) {
+        _ELPP_STREAM << "(";
+        for (unsigned int i = 0; i < ARR_SZ(arr_); ++i) {
+            operator << (arr_[i]);
+            _ELPP_STREAM << (i < ARR_SZ(arr_) -1 ? ", " : "");
+        }
+        _ELPP_STREAM << ")";
         return *this;
     }
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
@@ -1560,7 +1571,6 @@ public:
         return *this;
     }
 #endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-
 private:
     inline void writeLog(void) const {
         if (severityLevel_ == _ELPP_DEBUG_LEVEL_OUTPUT) {

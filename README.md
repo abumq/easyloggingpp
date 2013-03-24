@@ -373,6 +373,19 @@ Version: 7.0+
 #### Read Log File
 If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
 
+#### Array Logging
+EasyLogging++ supports native array logging, example
+```C++
+    int f[2];
+    f[0] = 1;
+    f[1] = 2;
+    LINFO << f;
+```
+
+will give `(1, 2)`
+
+Version: 7.36+
+
 #### Third-party C++ Libraries 
 EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
 

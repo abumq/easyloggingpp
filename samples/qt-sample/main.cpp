@@ -12,7 +12,7 @@
 #include "../../easylogging++.h"
 
 #include "mythread.h"
-
+#include <stdint.h>
 _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[]) {
@@ -28,6 +28,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    int f[2];
+    f[0] = 1;
+    f[1] = 2;
+
+    LINFO << f;
 
     LVERBOSE(1) << "Verbose 1 ...";
 
