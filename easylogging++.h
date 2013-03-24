@@ -510,7 +510,7 @@ public:
     static inline const std::string version(void) { return std::string("7.38"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 2126hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 2137hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1441,21 +1441,10 @@ public:
         _ELPP_STREAM << class_.toString();
         return *this;
     }
-    template <std::size_t N>
-    struct type_of_size
-    {
-        typedef char type[N];
-    };
-
-    template <typename T, std::size_t Size>
-    typename type_of_size<Size>::type& sizeof_array_helper(T(&)[Size]);
-
-    #define sizeof_array(pArray) sizeof(sizeof_array_helper(pArray))
-
     template <class T>
     inline LogWriter& operator<<(T arr_[]) {
         _ELPP_STREAM << "(";
-        size_t size_ = (sizeof arr_  / sizeof arr_[0]);
+        size_t size_ = sizeof(arr_) / sizeof(T);
         for (size_t i = 0; i < size_; ++i) {
             operator << (arr_[i]);
             _ELPP_STREAM << (i < (size_ - 1) ? ", " : "");

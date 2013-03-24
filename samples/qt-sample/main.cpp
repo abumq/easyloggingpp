@@ -29,7 +29,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
     QVector<QString> stringsptrList;
     stringsptrList.push_back (QString("Test"));
     stringsptrList.push_back (QString("Test 2"));
