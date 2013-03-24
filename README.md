@@ -5,25 +5,6 @@ Cross platform logging made easy for C++ applications.
 
 EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C++ logging library that is based on single header file for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers, raw arrays etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
-To use EasyLogging++ in your application, simply include and initialize:
-```C++
-#include "easylogging++.h"
-_INITIALIZE_EASYLOGGINGPP // Should be used once and only once in main.cpp after includes
-```
-EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
-```
-  * INFO
-  * DEBUG
-  * WARNING
-  * ERROR
-  * FATAL
-  * QA
-  * TRACE
-  * VERBOSE(level)
-```
-
-*NOTE: To support old way of logging, i.e, `INFO(..)` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
-
 ## Why EasyLogging++
  * **Native C++ support (from C++98 to latest C++ standard)**
  * **Portablility**
@@ -47,10 +28,27 @@ EasyLogging++ comes with following severity levels of logging with complete cont
    EasyLogging++ supports logging [containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#containers-logging), [third party libraries' classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#third-party-c-libraries), [other utility classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#other-classes) and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
 
 ## Getting Started
-In order to start logging follow these three steps:
- * Include `easylogging++.h` header
- * Initialize ONCE AND ONLY ONCE using `_INITIALIZE_EASYLOGGINGPP`. The best place to put this line is after includes in the main file (where main function is defined). Remember, this should be placed only once in your application.
- * Start logging!
+
+To use EasyLogging++ in your application, simply include and initialize:
+```C++
+#include "easylogging++.h"
+// ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
+// ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
+_INITIALIZE_EASYLOGGINGPP
+```
+EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
+```
+  * INFO
+  * DEBUG
+  * WARNING
+  * ERROR
+  * FATAL
+  * QA
+  * TRACE
+  * VERBOSE(level)
+```
+
+*NOTE: To support legacy logging, i.e, `INFO(..), WARNING(..) etc` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
 
 See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
 
