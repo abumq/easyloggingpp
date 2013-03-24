@@ -69,10 +69,10 @@ Output for above logging varies depending on format you set in configuration sec
 
 ###### Output (Format: `%type [%level] %log\n`)
 ```
-BUSINESS [DEBUG] Staring my EasyLogging++ program
-BUSINESS [INFO] Current value is 0
-BUSINESS [INFO] Now the value has changed from 0 to 1
-BUSINESS [DEBUG] End of my EasyLogging++ program
+business [DEBUG] Staring my EasyLogging++ program
+business [INFO] Current value is 0
+business [INFO] Now the value has changed from 0 to 1
+business [DEBUG] End of my EasyLogging++ program
 ```
 ###### Output (Format: `[%level] [%loc] \n %log`)
 ```
@@ -102,9 +102,9 @@ See [Log Format](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.m
 #### Log Types
 EasyLogging++ support different log types, by default four log types are injected.
  * Trivial Logger: Trivial logging unrelated to business logics or security issues / logics (`LOG`)
- * Business Logger: Logs related to business logics (`BUSINESS`)
- * Security Logger: Logs related to security logics (`SECURITY`)
- * Performance Logger: Logs related to performance (`PERFORMANCE`)
+ * Business Logger: Logs related to business logics (`business`)
+ * Security Logger: Logs related to security logics (`security`)
+ * Performance Logger: Logs related to performance (`performance`)
 
 You can specify log type in log output using format specifier `%type`
 
@@ -255,8 +255,8 @@ int main(void) {
 ###### Output (Format: `%type [%level] [%func] %log`)
  ```
  this is test
-PERFORMANCE [DEBUG] Executed [void print(string)] in [0 ms]
-PERFORMANCE [DEBUG] Executed [int sum(int, int)] in [0 ms]
+performance [DEBUG] Executed [void print(string)] in [0 ms]
+performance [DEBUG] Executed [int sum(int, int)] in [0 ms]
 Sum of 1 and 2 is 3
  ```
 Please note, the function name information varies from compiler to compiler. Some support the whole signature (that is very useful in case of overloaded functions) while others support just function name. This gets hard at times when we have overloaded function or two classes (or namespace) having same function name. But in this kind of situation, EasyLogging++'s `SHOW_LOG_LOCATION` configuration is very useful that you will see in coming section `Configuration`.
@@ -408,10 +408,10 @@ If you ever want to read log file from your application, you may do this by `eas
 #### Array Logging
 EasyLogging++ supports native array logging, example
 ```C++
-    int f[2];
-    f[0] = 1;
-    f[1] = 2;
-    LINFO << f;
+int f[2];
+f[0] = 1;
+f[1] = 2;
+LINFO << f;
 ```
 
 will give `(1, 2)`
