@@ -25,27 +25,25 @@ EasyLogging++ comes with following severity levels of logging with complete cont
 *NOTE: To support old way of logging, i.e, `INFO(..)` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
 
 ## Why EasyLogging++
- * Native C++ support (from C++98 to latest C++ standard)
- * Portablility
+ * **Native C++ support (from C++98 to latest C++ standard)**
+ * **Portablility**
   - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header in your source code and initialize it with one line and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it, so it goes with your project.
-  - It supports multiple OS with multiple architectures 
- * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
- * Open Source
- * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
- * [Highly configurable logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format)
- * [Ability to inject new loggers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-types)
- * Different aspects of logs
-   - EasyLogging++ has different aspects of logging that includes conditional logging, levelled-verbose logging and interval logging
- * [Many additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)
- * [Thread safe](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#thread-safety)
- * Type safe
- * [Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)
-
+ * **Supports multiple OS with multiple architectures**
+ * **[Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)**
+ * **Open Source**
+ * **[Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)**
+ * **[Highly configurable logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format)**
+ * **[Ability to inject new loggers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-types)**
+ * **Different aspects of logs**
+   EasyLogging++ has different aspects of logging that includes conditional logging, levelled-verbose logging and interval logging
+ * **[Many additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#additional-features)**
+ * **[Thread safe](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#thread-safety)**
+ * **Type safe**
+ * **[Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)**
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
 
- * Class and Structs Logging
-
+ * **Class and Structs Logging**
    EasyLogging++ supports logging [containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#containers-logging), [third party libraries' classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#third-party-c-libraries), [other utility classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#other-classes) and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
 
 ## Getting Started
