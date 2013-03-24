@@ -108,24 +108,58 @@ EasyLogging++ support different log types, by default four log types are injecte
 
 You can specify log type in log output using format specifier `%type`
 
-In addition to these log types, you may inject custom log types;
+In addition to these log types, you may inject custom log types; e.g, `FinancialLogger` can be injected using
  ```C++
- _QUALIFIED_LOGGER.injectNewLogType("NAME", "CUSTOM-LOGTYPE");
+ _QUALIFIED_LOGGER.injectNewLogType("FinancialLogger", "finance");
  ```
 
 And when using this custom logger use 
  ```C++
-  CINFO("NAME") << "info log";
-  CWARNING("NAME") << "warning log";
+  CINFO("FinancialLogger") << "info log";
+  CWARNING("FinancialLogger") << "warning log";
  ```
 
 Log output will be something like:
  ```
-  [CUSTOM-LOGTYPE] [INFO] [13/01/2013 17:21:09.571] info log
+  [finance] [INFO] [13/01/2013 17:21:09.571] info log
  ```
 
-if info format is
+For format:
  `[%type] [%level] [%datetime] %log\n`
+
+For your ease, once you inject the logger, you can define a macro; we recommend you use same style macro name as other macros, i.e, first letter starting with log type name followed by severity level. For example, for finance logger above you may use:
+```C++
+#define FINFO CINFO("FinancialLogger")
+#define FWARNING CWARNING("FinancialLogger")
+#define FDEBUG CDEBUG("FinancialLogger")
+#define FERROR CERROR("FinancialLogger")
+#define FFATAL CFATAL("FinancialLogger")
+#define FQA CQA("FinancialLogger")
+#define FTRACE CTRACE("FinancialLogger")
+#define FVERBOSE(level) CVERBOSE(level, "FinancialLogger")
+// Conditional logs
+#define FINFO_IF(condition) CINFO_IF(condition, "FinancialLogger")
+#define FWARNING_IF(condition) CWARNING_IF(condition, "FinancialLogger")
+#define FDEBUG_IF(condition) CDEBUG_IF(condition, "FinancialLogger")
+#define FERROR_IF(condition) CERROR_IF(condition, "FinancialLogger")
+#define FFATAL_IF(condition) CFATAL_IF(condition, "FinancialLogger")
+#define FQA_IF(condition) CQA_IF(condition, "FinancialLogger")
+#define FTRACE_IF(condition) CQA_IF(condition, "FinancialLogger")
+#define FVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "FinancialLogger")
+// Interval logs
+#define FINFO_EVERY_N(n) CINFO_EVERY_N(n, "FinancialLogger")
+#define FWARNING_EVERY_N(n) CWARNING_EVERY_N(n, "FinancialLogger")
+#define FDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "FinancialLogger")
+#define FERROR_EVERY_N(n) CERROR_EVERY_N(n, "FinancialLogger")
+#define FFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "FinancialLogger")
+#define FQA_EVERY_N(n) CQA_EVERY_N(n, "FinancialLogger")
+#define FTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "FinancialLogger")
+#define FVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "FinancialLogger")
+```
+and then use it normally;
+```C++
+FINFO << "This is newly injected financial log"
+```
 
 Note, for trivial log, log type output is `LOG`, you can turn this off by defining `_NO_TRIVIAL_TYPE_DISPLAY` and `%type` will be a placeholder for nothing.
 
