@@ -42,6 +42,10 @@ EasyLogging++ comes with following severity levels of logging with complete cont
 
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
 
+ * Log Classes
+
+   EasyLogging++ supports logging [containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#containers-logging), [third party libraries' classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#third-party-c-libraries), [other utility classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#other-classes) and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
+
 ## Getting Started
 In order to start logging follow these three steps:
  * Include `easylogging++.h` header
