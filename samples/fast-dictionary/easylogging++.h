@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.33                                                         //
+//   EasyLogging++ v7.35                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -507,10 +507,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.33"); }
+    static inline const std::string version(void) { return std::string("7.35"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 0510hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-03-2013 1701hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1492,7 +1492,6 @@ public:
         int index_ = 0;
         for (typename std::map<K, V>::const_iterator it = map_.begin(); it != map_.end(); ++it) {
             operator << (*it);
-            _ELPP_STREAM << "]";
             _ELPP_STREAM << (index_++ < map_.size() -1 ? ", " : "");
         }
         _ELPP_STREAM << "]";
