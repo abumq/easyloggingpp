@@ -314,12 +314,14 @@ When you want to write verbose log, you will use, `LVERBOSE(level) << log`
 As an example
 ```C++
 #include "easylogging++.h"
+_INITIALIZE_EASYLOGGINGPP
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
   bool condition = true;
   LVERBOSE(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
   LVERBOSE(2) << "I will be printed when this application is run using --v=2 arguments";
-  LVERBOSE_I(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
+  LVERBOSE_IF(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
+}
 ```
 Now compile your application normally:
 
