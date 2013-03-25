@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.38                                                         //
+//   EasyLogging++ v7.39                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -507,10 +507,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.38"); }
+    static inline const std::string version(void) { return std::string("7.39"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 2137hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-03-2013 1848hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1442,14 +1442,12 @@ public:
         return *this;
     }
     template <class T>
-    inline LogWriter& operator<<(T arr_[]) {
-        _ELPP_STREAM << "(";
-        size_t size_ = sizeof(arr_) / sizeof(T);
-        for (size_t i = 0; i < size_; ++i) {
-            operator << (arr_[i]);
-            _ELPP_STREAM << (i < (size_ - 1) ? ", " : "");
+    inline LogWriter& operator<<(T* pointer_) {
+        if (pointer_) {
+            _ELPP_STREAM << pointer_->toString();
+        } else {
+            _ELPP_STREAM << "null";
         }
-        _ELPP_STREAM << ")";
         return *this;
     }
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)

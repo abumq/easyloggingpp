@@ -21,3 +21,5 @@ HEADERS  += mainwindow.hh \
     listwithsearch.hh
 
 FORMS    += mainwindow.ui
+
+DEFINES += _ALWAYS_CLEAN_LOGS

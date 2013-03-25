@@ -3,7 +3,7 @@ EasyLogging++
 
 Cross platform logging made easy for C++ applications.
 
-EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C++ logging library that is based on single header file for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers, raw arrays etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
+EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C++ logging library that is based on single header file for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
 ## Why EasyLogging++
  * **Native C++ support (from C++98 to latest C++ standard)**
@@ -404,21 +404,6 @@ Version: 7.0+
 
 #### Read Log File
 If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
-
-#### Array Logging
-EasyLogging++ supports native array logging, example
-```C++
-int f[2];
-f[0] = 1;
-f[1] = 2;
-LINFO << f;
-```
-
-will give `(1, 2)`
-
-*This has been reported having some issues as per v7.37, please double check your results. The issue is that logger does not go through all the array elements.*
-
-Version: 7.36+
 
 #### Third-party C++ Libraries 
 EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:

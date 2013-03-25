@@ -80,16 +80,18 @@ void ListWithSearch::selected(void)
 
 void ListWithSearch::performSearch(void)
 {
-    while(list->count() > 0) {
+    LTRACE << "Performing search...[" << txtSearchCriteria->text()<< "]";
+    PDEBUG << "Cleaning list...";
+    while (list->count()) {
         list->takeItem(0);
     }
+    PDEBUG << "List cleaned!";
     if (txtSearchCriteria->text() == "") {
         for (int i = items.count() - 1; i >= 0; --i) {
             QListWidgetItem* widgetItem = items.at(i);
             list->insertItem(0, widgetItem);
         }
     } else {
-        LINFO << "Performing search... [" << txtSearchCriteria->text()<< "]";
         for (int i = 0; i < items.count(); ++i) {
             if (items.at(i)->text().startsWith(txtSearchCriteria->text(), searchBehaviour_ == kCaseSensative ?
                                                Qt::CaseSensitive : Qt::CaseInsensitive)) {
