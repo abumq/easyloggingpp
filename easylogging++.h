@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.39                                                         //
+//   EasyLogging++ v7.40                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -94,6 +94,12 @@
 #define _ENABLE_TRACE_LOGS 1
 #define _TRACE_LOGS_TO_STANDARD_OUTPUT 1
 #define _TRACE_LOGS_TO_FILE 1
+
+//
+// Configuration to track performance of your functions
+// Details at https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking
+//
+#define _ENABLE_PERFORMANCE_TRACKING 1
 
 //
 // High-level log evaluation
@@ -507,10 +513,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.39"); }
+    static inline const std::string version(void) { return std::string("7.40"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-03-2013 1848hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-03-2013 1930hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1735,7 +1741,7 @@ private:
 //
 // Performance tracking macros
 //
-#if _ELPP_DEBUG_LOG
+#if (_ELPP_DEBUG_LOG && _ENABLE_PERFORMANCE_TRACKING)
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
