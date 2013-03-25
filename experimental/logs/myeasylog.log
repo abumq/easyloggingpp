@@ -1,0 +1,720 @@
+26/03/2013 08:53:46.696 INFO  [log] info
+26/03/2013 08:53:46.696 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 08:53:46.696 ERROR [log] error
+26/03/2013 08:53:46.696 WARN  [log] warning
+26/03/2013 08:53:46.696 FATAL [log] fatal
+26/03/2013 08:53:46.696 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 08:53:46.696 INFO  [log] conditional info
+26/03/2013 08:53:46.696 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 08:53:46.696 ERROR [log] conditional error
+26/03/2013 08:53:46.696 WARN  [log] conditional warning
+26/03/2013 08:53:46.696 FATAL [log] conditional fatal
+26/03/2013 08:53:46.696 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 08:53:46.696 INFO  [log] Info every 1
+26/03/2013 08:53:46.696 WARN  [log] Warning every 1
+26/03/2013 08:53:46.696 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 08:53:46.696 FATAL [log] Fatal every 1
+26/03/2013 08:53:46.696 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 08:53:46.696 INFO  [business] info
+26/03/2013 08:53:46.696 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 08:53:46.696 ERROR [business] error
+26/03/2013 08:53:46.696 WARN  [business] warning
+26/03/2013 08:53:46.696 FATAL [business] fatal
+26/03/2013 08:53:46.696 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 08:53:46.696 INFO  [business] conditional info
+26/03/2013 08:53:46.696 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 08:53:46.696 ERROR [business] conditional error
+26/03/2013 08:53:46.696 WARN  [business] conditional warning
+26/03/2013 08:53:46.696 FATAL [business] conditional fatal
+26/03/2013 08:53:46.696 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 08:53:46.697 INFO  [business] Info every 1
+26/03/2013 08:53:46.697 WARN  [business] Warning every 1
+26/03/2013 08:53:46.697 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 08:53:46.697 FATAL [business] Fatal every 1
+26/03/2013 08:53:46.697 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 08:53:46.697 INFO  [security] info
+26/03/2013 08:53:46.697 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 08:53:46.697 ERROR [security] error
+26/03/2013 08:53:46.697 WARN  [security] warning
+26/03/2013 08:53:46.697 FATAL [security] fatal
+26/03/2013 08:53:46.697 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 08:53:46.697 INFO  [security] conditional info
+26/03/2013 08:53:46.697 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 08:53:46.697 ERROR [security] conditional error
+26/03/2013 08:53:46.697 WARN  [security] conditional warning
+26/03/2013 08:53:46.697 FATAL [security] conditional fatal
+26/03/2013 08:53:46.697 INFO  [security] Info every 1
+26/03/2013 08:53:46.697 WARN  [security] Warning every 1
+26/03/2013 08:53:46.697 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 08:53:46.697 FATAL [security] Fatal every 1
+26/03/2013 08:53:46.697 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 08:53:46.697 INFO  [performance] info
+26/03/2013 08:53:46.697 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 08:53:46.697 ERROR [performance] error
+26/03/2013 08:53:46.697 WARN  [performance] warning
+26/03/2013 08:53:46.697 FATAL [performance] fatal
+26/03/2013 08:53:46.697 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 08:53:46.697 INFO  [performance] conditional info
+26/03/2013 08:53:46.697 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 08:53:46.697 ERROR [performance] conditional error
+26/03/2013 08:53:46.697 WARN  [performance] conditional warning
+26/03/2013 08:53:46.697 FATAL [performance] conditional fatal
+26/03/2013 08:53:46.697 INFO  [performance] Info every 1
+26/03/2013 08:53:46.697 WARN  [performance] Warning every 1
+26/03/2013 08:53:46.697 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 08:53:46.697 FATAL [performance] Fatal every 1
+26/03/2013 08:53:46.697 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:09:49.516 INFO  [log] info
+26/03/2013 09:09:49.516 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:09:49.516 ERROR [log] error
+26/03/2013 09:09:49.516 WARN  [log] warning
+26/03/2013 09:09:49.516 FATAL [log] fatal
+26/03/2013 09:09:49.516 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:09:49.516 INFO  [log] conditional info
+26/03/2013 09:09:49.516 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:09:49.516 ERROR [log] conditional error
+26/03/2013 09:09:49.516 WARN  [log] conditional warning
+26/03/2013 09:09:49.516 FATAL [log] conditional fatal
+26/03/2013 09:09:49.516 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:09:49.516 INFO  [log] Info every 1
+26/03/2013 09:09:49.516 WARN  [log] Warning every 1
+26/03/2013 09:09:49.516 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:09:49.516 FATAL [log] Fatal every 1
+26/03/2013 09:09:49.516 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:09:49.516 INFO  [business] info
+26/03/2013 09:09:49.516 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:09:49.516 ERROR [business] error
+26/03/2013 09:09:49.516 WARN  [business] warning
+26/03/2013 09:09:49.517 FATAL [business] fatal
+26/03/2013 09:09:49.517 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:09:49.517 INFO  [business] conditional info
+26/03/2013 09:09:49.517 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:09:49.517 ERROR [business] conditional error
+26/03/2013 09:09:49.517 WARN  [business] conditional warning
+26/03/2013 09:09:49.517 FATAL [business] conditional fatal
+26/03/2013 09:09:49.517 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:09:49.517 INFO  [business] Info every 1
+26/03/2013 09:09:49.517 WARN  [business] Warning every 1
+26/03/2013 09:09:49.517 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:09:49.517 FATAL [business] Fatal every 1
+26/03/2013 09:09:49.517 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:09:49.517 INFO  [security] info
+26/03/2013 09:09:49.517 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:09:49.517 ERROR [security] error
+26/03/2013 09:09:49.517 WARN  [security] warning
+26/03/2013 09:09:49.517 FATAL [security] fatal
+26/03/2013 09:09:49.517 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:09:49.517 INFO  [security] conditional info
+26/03/2013 09:09:49.517 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:09:49.517 ERROR [security] conditional error
+26/03/2013 09:09:49.517 WARN  [security] conditional warning
+26/03/2013 09:09:49.517 FATAL [security] conditional fatal
+26/03/2013 09:09:49.517 INFO  [security] Info every 1
+26/03/2013 09:09:49.517 WARN  [security] Warning every 1
+26/03/2013 09:09:49.517 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:09:49.517 FATAL [security] Fatal every 1
+26/03/2013 09:09:49.517 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:09:49.517 INFO  [performance] info
+26/03/2013 09:09:49.517 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:09:49.517 ERROR [performance] error
+26/03/2013 09:09:49.517 WARN  [performance] warning
+26/03/2013 09:09:49.517 FATAL [performance] fatal
+26/03/2013 09:09:49.517 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:09:49.517 INFO  [performance] conditional info
+26/03/2013 09:09:49.517 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:09:49.517 ERROR [performance] conditional error
+26/03/2013 09:09:49.517 WARN  [performance] conditional warning
+26/03/2013 09:09:49.517 FATAL [performance] conditional fatal
+26/03/2013 09:09:49.517 INFO  [performance] Info every 1
+26/03/2013 09:09:49.517 WARN  [performance] Warning every 1
+26/03/2013 09:09:49.517 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:09:49.517 FATAL [performance] Fatal every 1
+26/03/2013 09:09:49.517 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:09:49.517 INFO  [log] ("stringVec")
+26/03/2013 09:09:49.517 INFO  [log] ("stringPtrVec")
+26/03/2013 09:09:49.517 INFO  [log] ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:09:49.517 INFO  [log] ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:10:36.773 INFO  [log] info
+26/03/2013 09:10:36.773 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:10:36.773 ERROR [log] error
+26/03/2013 09:10:36.773 WARN  [log] warning
+26/03/2013 09:10:36.773 FATAL [log] fatal
+26/03/2013 09:10:36.773 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:10:36.773 INFO  [log] conditional info
+26/03/2013 09:10:36.773 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:10:36.773 ERROR [log] conditional error
+26/03/2013 09:10:36.773 WARN  [log] conditional warning
+26/03/2013 09:10:36.773 FATAL [log] conditional fatal
+26/03/2013 09:10:36.773 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:10:36.773 INFO  [log] Info every 1
+26/03/2013 09:10:36.773 WARN  [log] Warning every 1
+26/03/2013 09:10:36.773 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:10:36.773 FATAL [log] Fatal every 1
+26/03/2013 09:10:36.773 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:10:36.773 INFO  [business] info
+26/03/2013 09:10:36.773 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:10:36.773 ERROR [business] error
+26/03/2013 09:10:36.773 WARN  [business] warning
+26/03/2013 09:10:36.773 FATAL [business] fatal
+26/03/2013 09:10:36.773 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:10:36.773 INFO  [business] conditional info
+26/03/2013 09:10:36.773 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:10:36.773 ERROR [business] conditional error
+26/03/2013 09:10:36.773 WARN  [business] conditional warning
+26/03/2013 09:10:36.773 FATAL [business] conditional fatal
+26/03/2013 09:10:36.773 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:10:36.774 INFO  [business] Info every 1
+26/03/2013 09:10:36.774 WARN  [business] Warning every 1
+26/03/2013 09:10:36.774 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:10:36.774 FATAL [business] Fatal every 1
+26/03/2013 09:10:36.774 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:10:36.774 INFO  [security] info
+26/03/2013 09:10:36.774 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:10:36.774 ERROR [security] error
+26/03/2013 09:10:36.774 WARN  [security] warning
+26/03/2013 09:10:36.774 FATAL [security] fatal
+26/03/2013 09:10:36.774 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:10:36.774 INFO  [security] conditional info
+26/03/2013 09:10:36.774 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:10:36.774 ERROR [security] conditional error
+26/03/2013 09:10:36.774 WARN  [security] conditional warning
+26/03/2013 09:10:36.774 FATAL [security] conditional fatal
+26/03/2013 09:10:36.774 INFO  [security] Info every 1
+26/03/2013 09:10:36.774 WARN  [security] Warning every 1
+26/03/2013 09:10:36.774 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:10:36.774 FATAL [security] Fatal every 1
+26/03/2013 09:10:36.774 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:10:36.774 INFO  [performance] info
+26/03/2013 09:10:36.774 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:10:36.774 ERROR [performance] error
+26/03/2013 09:10:36.774 WARN  [performance] warning
+26/03/2013 09:10:36.774 FATAL [performance] fatal
+26/03/2013 09:10:36.774 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:10:36.774 INFO  [performance] conditional info
+26/03/2013 09:10:36.774 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:10:36.774 ERROR [performance] conditional error
+26/03/2013 09:10:36.774 WARN  [performance] conditional warning
+26/03/2013 09:10:36.774 FATAL [performance] conditional fatal
+26/03/2013 09:10:36.774 INFO  [performance] Info every 1
+26/03/2013 09:10:36.774 WARN  [performance] Warning every 1
+26/03/2013 09:10:36.774 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:10:36.774 FATAL [performance] Fatal every 1
+26/03/2013 09:10:36.774 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:10:36.774 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:10:36.774 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:10:36.774 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:10:36.774 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:14:57.340 INFO  [log] info
+26/03/2013 09:14:57.340 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:14:57.340 ERROR [log] error
+26/03/2013 09:14:57.340 WARN  [log] warning
+26/03/2013 09:14:57.340 FATAL [log] fatal
+26/03/2013 09:14:57.340 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:14:57.340 INFO  [log] conditional info
+26/03/2013 09:14:57.340 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:14:57.340 ERROR [log] conditional error
+26/03/2013 09:14:57.340 WARN  [log] conditional warning
+26/03/2013 09:14:57.341 FATAL [log] conditional fatal
+26/03/2013 09:14:57.341 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:14:57.341 INFO  [log] Info every 1
+26/03/2013 09:14:57.341 WARN  [log] Warning every 1
+26/03/2013 09:14:57.341 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:14:57.341 FATAL [log] Fatal every 1
+26/03/2013 09:14:57.341 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:14:57.341 INFO  [business] info
+26/03/2013 09:14:57.341 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:14:57.341 ERROR [business] error
+26/03/2013 09:14:57.341 WARN  [business] warning
+26/03/2013 09:14:57.341 FATAL [business] fatal
+26/03/2013 09:14:57.341 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:14:57.341 INFO  [business] conditional info
+26/03/2013 09:14:57.341 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:14:57.341 ERROR [business] conditional error
+26/03/2013 09:14:57.341 WARN  [business] conditional warning
+26/03/2013 09:14:57.341 FATAL [business] conditional fatal
+26/03/2013 09:14:57.342 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:14:57.342 INFO  [business] Info every 1
+26/03/2013 09:14:57.342 WARN  [business] Warning every 1
+26/03/2013 09:14:57.342 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:14:57.342 FATAL [business] Fatal every 1
+26/03/2013 09:14:57.342 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:14:57.342 INFO  [security] info
+26/03/2013 09:14:57.342 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:14:57.342 ERROR [security] error
+26/03/2013 09:14:57.342 WARN  [security] warning
+26/03/2013 09:14:57.342 FATAL [security] fatal
+26/03/2013 09:14:57.342 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:14:57.342 INFO  [security] conditional info
+26/03/2013 09:14:57.342 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:14:57.342 ERROR [security] conditional error
+26/03/2013 09:14:57.342 WARN  [security] conditional warning
+26/03/2013 09:14:57.342 FATAL [security] conditional fatal
+26/03/2013 09:14:57.342 INFO  [security] Info every 1
+26/03/2013 09:14:57.342 WARN  [security] Warning every 1
+26/03/2013 09:14:57.342 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:14:57.343 FATAL [security] Fatal every 1
+26/03/2013 09:14:57.343 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:14:57.343 INFO  [performance] info
+26/03/2013 09:14:57.343 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:14:57.343 ERROR [performance] error
+26/03/2013 09:14:57.343 WARN  [performance] warning
+26/03/2013 09:14:57.343 FATAL [performance] fatal
+26/03/2013 09:14:57.343 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:14:57.343 INFO  [performance] conditional info
+26/03/2013 09:14:57.343 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:14:57.343 ERROR [performance] conditional error
+26/03/2013 09:14:57.343 WARN  [performance] conditional warning
+26/03/2013 09:14:57.343 FATAL [performance] conditional fatal
+26/03/2013 09:14:57.343 INFO  [performance] Info every 1
+26/03/2013 09:14:57.343 WARN  [performance] Warning every 1
+26/03/2013 09:14:57.343 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:14:57.343 FATAL [performance] Fatal every 1
+26/03/2013 09:14:57.343 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:14:57.343 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:14:57.344 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:14:57.344 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:14:57.344 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:17:11.413 INFO  [log] info
+26/03/2013 09:17:11.414 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:17:11.414 ERROR [log] error
+26/03/2013 09:17:11.414 WARN  [log] warning
+26/03/2013 09:17:11.414 FATAL [log] fatal
+26/03/2013 09:17:11.414 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:17:11.414 INFO  [log] conditional info
+26/03/2013 09:17:11.414 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:17:11.414 ERROR [log] conditional error
+26/03/2013 09:17:11.414 WARN  [log] conditional warning
+26/03/2013 09:17:11.414 FATAL [log] conditional fatal
+26/03/2013 09:17:11.414 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:17:11.414 INFO  [log] Info every 1
+26/03/2013 09:17:11.414 WARN  [log] Warning every 1
+26/03/2013 09:17:11.414 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:17:11.414 FATAL [log] Fatal every 1
+26/03/2013 09:17:11.414 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:17:11.414 INFO  [business] info
+26/03/2013 09:17:11.414 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:17:11.414 ERROR [business] error
+26/03/2013 09:17:11.414 WARN  [business] warning
+26/03/2013 09:17:11.414 FATAL [business] fatal
+26/03/2013 09:17:11.414 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:17:11.414 INFO  [business] conditional info
+26/03/2013 09:17:11.414 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:17:11.414 ERROR [business] conditional error
+26/03/2013 09:17:11.414 WARN  [business] conditional warning
+26/03/2013 09:17:11.414 FATAL [business] conditional fatal
+26/03/2013 09:17:11.414 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:17:11.414 INFO  [business] Info every 1
+26/03/2013 09:17:11.414 WARN  [business] Warning every 1
+26/03/2013 09:17:11.414 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:17:11.414 FATAL [business] Fatal every 1
+26/03/2013 09:17:11.414 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:17:11.414 INFO  [security] info
+26/03/2013 09:17:11.414 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:17:11.414 ERROR [security] error
+26/03/2013 09:17:11.414 WARN  [security] warning
+26/03/2013 09:17:11.414 FATAL [security] fatal
+26/03/2013 09:17:11.414 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:17:11.414 INFO  [security] conditional info
+26/03/2013 09:17:11.414 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:17:11.414 ERROR [security] conditional error
+26/03/2013 09:17:11.414 WARN  [security] conditional warning
+26/03/2013 09:17:11.414 FATAL [security] conditional fatal
+26/03/2013 09:17:11.414 INFO  [security] Info every 1
+26/03/2013 09:17:11.414 WARN  [security] Warning every 1
+26/03/2013 09:17:11.414 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:17:11.414 FATAL [security] Fatal every 1
+26/03/2013 09:17:11.414 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:17:11.415 INFO  [performance] info
+26/03/2013 09:17:11.415 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:17:11.415 ERROR [performance] error
+26/03/2013 09:17:11.415 WARN  [performance] warning
+26/03/2013 09:17:11.415 FATAL [performance] fatal
+26/03/2013 09:17:11.415 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:17:11.415 INFO  [performance] conditional info
+26/03/2013 09:17:11.415 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:17:11.415 ERROR [performance] conditional error
+26/03/2013 09:17:11.415 WARN  [performance] conditional warning
+26/03/2013 09:17:11.415 FATAL [performance] conditional fatal
+26/03/2013 09:17:11.415 INFO  [performance] Info every 1
+26/03/2013 09:17:11.415 WARN  [performance] Warning every 1
+26/03/2013 09:17:11.415 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:17:11.415 FATAL [performance] Fatal every 1
+26/03/2013 09:17:11.415 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:17:11.415 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:17:11.415 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:17:11.415 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:17:11.415 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:17:11.415 INFO  [log] stringList : ("stringList")
+26/03/2013 09:17:11.415 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:17:11.415 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:17:11.415 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+26/03/2013 09:18:04.820 INFO  [log] info
+26/03/2013 09:18:04.820 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:18:04.820 ERROR [log] error
+26/03/2013 09:18:04.820 WARN  [log] warning
+26/03/2013 09:18:04.820 FATAL [log] fatal
+26/03/2013 09:18:04.820 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:18:04.820 INFO  [log] conditional info
+26/03/2013 09:18:04.820 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:18:04.820 ERROR [log] conditional error
+26/03/2013 09:18:04.820 WARN  [log] conditional warning
+26/03/2013 09:18:04.821 FATAL [log] conditional fatal
+26/03/2013 09:18:04.821 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:18:04.821 INFO  [log] Info every 1
+26/03/2013 09:18:04.821 WARN  [log] Warning every 1
+26/03/2013 09:18:04.821 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:18:04.821 FATAL [log] Fatal every 1
+26/03/2013 09:18:04.821 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:18:04.821 INFO  [business] info
+26/03/2013 09:18:04.821 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:18:04.821 ERROR [business] error
+26/03/2013 09:18:04.821 WARN  [business] warning
+26/03/2013 09:18:04.821 FATAL [business] fatal
+26/03/2013 09:18:04.821 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:18:04.821 INFO  [business] conditional info
+26/03/2013 09:18:04.821 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:18:04.821 ERROR [business] conditional error
+26/03/2013 09:18:04.821 WARN  [business] conditional warning
+26/03/2013 09:18:04.821 FATAL [business] conditional fatal
+26/03/2013 09:18:04.821 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:18:04.821 INFO  [business] Info every 1
+26/03/2013 09:18:04.821 WARN  [business] Warning every 1
+26/03/2013 09:18:04.821 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:18:04.821 FATAL [business] Fatal every 1
+26/03/2013 09:18:04.821 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:18:04.821 INFO  [security] info
+26/03/2013 09:18:04.821 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:18:04.821 ERROR [security] error
+26/03/2013 09:18:04.821 WARN  [security] warning
+26/03/2013 09:18:04.821 FATAL [security] fatal
+26/03/2013 09:18:04.821 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:18:04.821 INFO  [security] conditional info
+26/03/2013 09:18:04.821 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:18:04.821 ERROR [security] conditional error
+26/03/2013 09:18:04.821 WARN  [security] conditional warning
+26/03/2013 09:18:04.821 FATAL [security] conditional fatal
+26/03/2013 09:18:04.821 INFO  [security] Info every 1
+26/03/2013 09:18:04.821 WARN  [security] Warning every 1
+26/03/2013 09:18:04.821 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:18:04.821 FATAL [security] Fatal every 1
+26/03/2013 09:18:04.821 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:18:04.821 INFO  [performance] info
+26/03/2013 09:18:04.821 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:18:04.821 ERROR [performance] error
+26/03/2013 09:18:04.821 WARN  [performance] warning
+26/03/2013 09:18:04.821 FATAL [performance] fatal
+26/03/2013 09:18:04.821 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:18:04.821 INFO  [performance] conditional info
+26/03/2013 09:18:04.822 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:18:04.822 ERROR [performance] conditional error
+26/03/2013 09:18:04.822 WARN  [performance] conditional warning
+26/03/2013 09:18:04.822 FATAL [performance] conditional fatal
+26/03/2013 09:18:04.822 INFO  [performance] Info every 1
+26/03/2013 09:18:04.822 WARN  [performance] Warning every 1
+26/03/2013 09:18:04.822 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:18:04.822 FATAL [performance] Fatal every 1
+26/03/2013 09:18:04.822 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:18:04.822 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:18:04.822 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:18:04.822 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:18:04.822 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:18:04.822 INFO  [log] stringList : ("stringList")
+26/03/2013 09:18:04.822 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:18:04.822 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:18:04.822 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+26/03/2013 09:18:31.216 INFO  [log] info
+26/03/2013 09:18:31.216 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:18:31.216 ERROR [log] error
+26/03/2013 09:18:31.216 WARN  [log] warning
+26/03/2013 09:18:31.216 FATAL [log] fatal
+26/03/2013 09:18:31.216 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:18:31.216 INFO  [log] conditional info
+26/03/2013 09:18:31.217 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:18:31.217 ERROR [log] conditional error
+26/03/2013 09:18:31.217 WARN  [log] conditional warning
+26/03/2013 09:18:31.217 FATAL [log] conditional fatal
+26/03/2013 09:18:31.217 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:18:31.217 INFO  [log] Info every 1
+26/03/2013 09:18:31.217 WARN  [log] Warning every 1
+26/03/2013 09:18:31.217 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:18:31.217 FATAL [log] Fatal every 1
+26/03/2013 09:18:31.217 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:18:31.217 INFO  [business] info
+26/03/2013 09:18:31.217 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:18:31.217 ERROR [business] error
+26/03/2013 09:18:31.217 WARN  [business] warning
+26/03/2013 09:18:31.217 FATAL [business] fatal
+26/03/2013 09:18:31.217 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:18:31.217 INFO  [business] conditional info
+26/03/2013 09:18:31.218 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:18:31.218 ERROR [business] conditional error
+26/03/2013 09:18:31.218 WARN  [business] conditional warning
+26/03/2013 09:18:31.218 FATAL [business] conditional fatal
+26/03/2013 09:18:31.218 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:18:31.218 INFO  [business] Info every 1
+26/03/2013 09:18:31.218 WARN  [business] Warning every 1
+26/03/2013 09:18:31.218 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:18:31.218 FATAL [business] Fatal every 1
+26/03/2013 09:18:31.218 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:18:31.218 INFO  [security] info
+26/03/2013 09:18:31.218 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:18:31.218 ERROR [security] error
+26/03/2013 09:18:31.218 WARN  [security] warning
+26/03/2013 09:18:31.218 FATAL [security] fatal
+26/03/2013 09:18:31.218 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:18:31.218 INFO  [security] conditional info
+26/03/2013 09:18:31.218 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:18:31.218 ERROR [security] conditional error
+26/03/2013 09:18:31.218 WARN  [security] conditional warning
+26/03/2013 09:18:31.219 FATAL [security] conditional fatal
+26/03/2013 09:18:31.219 INFO  [security] Info every 1
+26/03/2013 09:18:31.219 WARN  [security] Warning every 1
+26/03/2013 09:18:31.219 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:18:31.219 FATAL [security] Fatal every 1
+26/03/2013 09:18:31.219 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:18:31.219 INFO  [performance] info
+26/03/2013 09:18:31.219 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:18:31.219 ERROR [performance] error
+26/03/2013 09:18:31.219 WARN  [performance] warning
+26/03/2013 09:18:31.219 FATAL [performance] fatal
+26/03/2013 09:18:31.219 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:18:31.219 INFO  [performance] conditional info
+26/03/2013 09:18:31.219 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:18:31.219 ERROR [performance] conditional error
+26/03/2013 09:18:31.219 WARN  [performance] conditional warning
+26/03/2013 09:18:31.219 FATAL [performance] conditional fatal
+26/03/2013 09:18:31.219 INFO  [performance] Info every 1
+26/03/2013 09:18:31.219 WARN  [performance] Warning every 1
+26/03/2013 09:18:31.219 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:18:31.220 FATAL [performance] Fatal every 1
+26/03/2013 09:18:31.220 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:18:31.220 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:18:31.220 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:18:31.220 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:18:31.220 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:18:31.220 INFO  [log] stringList : ("stringList")
+26/03/2013 09:18:31.220 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:18:31.220 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:18:31.220 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+26/03/2013 09:28:36.188 INFO  [log] info
+26/03/2013 09:28:36.188 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:28:36.188 ERROR [log] error
+26/03/2013 09:28:36.188 WARN  [log] warning
+26/03/2013 09:28:36.188 FATAL [log] fatal
+26/03/2013 09:28:36.188 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:28:36.188 INFO  [log] conditional info
+26/03/2013 09:28:36.188 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:28:36.188 ERROR [log] conditional error
+26/03/2013 09:28:36.188 WARN  [log] conditional warning
+26/03/2013 09:28:36.188 FATAL [log] conditional fatal
+26/03/2013 09:28:36.188 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:28:36.188 INFO  [log] Info every 1
+26/03/2013 09:28:36.188 WARN  [log] Warning every 1
+26/03/2013 09:28:36.188 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:28:36.188 FATAL [log] Fatal every 1
+26/03/2013 09:28:36.188 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:28:36.188 INFO  [business] info
+26/03/2013 09:28:36.188 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:28:36.188 ERROR [business] error
+26/03/2013 09:28:36.188 WARN  [business] warning
+26/03/2013 09:28:36.188 FATAL [business] fatal
+26/03/2013 09:28:36.188 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:28:36.188 INFO  [business] conditional info
+26/03/2013 09:28:36.188 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:28:36.188 ERROR [business] conditional error
+26/03/2013 09:28:36.188 WARN  [business] conditional warning
+26/03/2013 09:28:36.188 FATAL [business] conditional fatal
+26/03/2013 09:28:36.188 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:28:36.188 INFO  [business] Info every 1
+26/03/2013 09:28:36.188 WARN  [business] Warning every 1
+26/03/2013 09:28:36.188 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:28:36.188 FATAL [business] Fatal every 1
+26/03/2013 09:28:36.188 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:28:36.188 INFO  [security] info
+26/03/2013 09:28:36.188 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:28:36.188 ERROR [security] error
+26/03/2013 09:28:36.188 WARN  [security] warning
+26/03/2013 09:28:36.189 FATAL [security] fatal
+26/03/2013 09:28:36.189 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:28:36.189 INFO  [security] conditional info
+26/03/2013 09:28:36.189 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:28:36.189 ERROR [security] conditional error
+26/03/2013 09:28:36.189 WARN  [security] conditional warning
+26/03/2013 09:28:36.189 FATAL [security] conditional fatal
+26/03/2013 09:28:36.189 INFO  [security] Info every 1
+26/03/2013 09:28:36.189 WARN  [security] Warning every 1
+26/03/2013 09:28:36.189 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:28:36.189 FATAL [security] Fatal every 1
+26/03/2013 09:28:36.189 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:28:36.189 INFO  [performance] info
+26/03/2013 09:28:36.189 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:28:36.189 ERROR [performance] error
+26/03/2013 09:28:36.189 WARN  [performance] warning
+26/03/2013 09:28:36.189 FATAL [performance] fatal
+26/03/2013 09:28:36.189 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:28:36.189 INFO  [performance] conditional info
+26/03/2013 09:28:36.189 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:28:36.189 ERROR [performance] conditional error
+26/03/2013 09:28:36.189 WARN  [performance] conditional warning
+26/03/2013 09:28:36.189 FATAL [performance] conditional fatal
+26/03/2013 09:28:36.189 INFO  [performance] Info every 1
+26/03/2013 09:28:36.189 WARN  [performance] Warning every 1
+26/03/2013 09:28:36.189 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:28:36.189 FATAL [performance] Fatal every 1
+26/03/2013 09:28:36.189 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:28:36.189 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:28:36.189 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:28:36.189 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:28:36.189 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:28:36.189 INFO  [log] stringList : ("stringList")
+26/03/2013 09:28:36.189 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:28:36.189 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:28:36.189 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+26/03/2013 09:31:31.520 INFO  [log] info
+26/03/2013 09:31:31.521 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:31:31.521 ERROR [log] error
+26/03/2013 09:31:31.521 WARN  [log] warning
+26/03/2013 09:31:31.521 FATAL [log] fatal
+26/03/2013 09:31:31.521 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:31:31.521 INFO  [log] conditional info
+26/03/2013 09:31:31.521 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:31:31.521 ERROR [log] conditional error
+26/03/2013 09:31:31.521 WARN  [log] conditional warning
+26/03/2013 09:31:31.521 FATAL [log] conditional fatal
+26/03/2013 09:31:31.521 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:31:31.521 INFO  [log] Info every 1
+26/03/2013 09:31:31.521 WARN  [log] Warning every 1
+26/03/2013 09:31:31.521 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:31:31.521 FATAL [log] Fatal every 1
+26/03/2013 09:31:31.521 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:31:31.521 INFO  [business] info
+26/03/2013 09:31:31.521 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:31:31.521 ERROR [business] error
+26/03/2013 09:31:31.521 WARN  [business] warning
+26/03/2013 09:31:31.521 FATAL [business] fatal
+26/03/2013 09:31:31.521 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:31:31.521 INFO  [business] conditional info
+26/03/2013 09:31:31.521 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:31:31.521 ERROR [business] conditional error
+26/03/2013 09:31:31.521 WARN  [business] conditional warning
+26/03/2013 09:31:31.521 FATAL [business] conditional fatal
+26/03/2013 09:31:31.521 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:31:31.521 INFO  [business] Info every 1
+26/03/2013 09:31:31.521 WARN  [business] Warning every 1
+26/03/2013 09:31:31.521 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:31:31.521 FATAL [business] Fatal every 1
+26/03/2013 09:31:31.521 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:31:31.521 INFO  [security] info
+26/03/2013 09:31:31.521 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:31:31.521 ERROR [security] error
+26/03/2013 09:31:31.521 WARN  [security] warning
+26/03/2013 09:31:31.521 FATAL [security] fatal
+26/03/2013 09:31:31.521 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:31:31.521 INFO  [security] conditional info
+26/03/2013 09:31:31.521 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:31:31.521 ERROR [security] conditional error
+26/03/2013 09:31:31.521 WARN  [security] conditional warning
+26/03/2013 09:31:31.521 FATAL [security] conditional fatal
+26/03/2013 09:31:31.521 INFO  [security] Info every 1
+26/03/2013 09:31:31.521 WARN  [security] Warning every 1
+26/03/2013 09:31:31.521 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:31:31.521 FATAL [security] Fatal every 1
+26/03/2013 09:31:31.521 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:31:31.521 INFO  [performance] info
+26/03/2013 09:31:31.521 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:31:31.522 ERROR [performance] error
+26/03/2013 09:31:31.522 WARN  [performance] warning
+26/03/2013 09:31:31.522 FATAL [performance] fatal
+26/03/2013 09:31:31.522 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:31:31.522 INFO  [performance] conditional info
+26/03/2013 09:31:31.522 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:31:31.522 ERROR [performance] conditional error
+26/03/2013 09:31:31.522 WARN  [performance] conditional warning
+26/03/2013 09:31:31.522 FATAL [performance] conditional fatal
+26/03/2013 09:31:31.522 INFO  [performance] Info every 1
+26/03/2013 09:31:31.522 WARN  [performance] Warning every 1
+26/03/2013 09:31:31.522 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:31:31.522 FATAL [performance] Fatal every 1
+26/03/2013 09:31:31.522 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:31:31.522 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:31:31.522 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:31:31.522 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:31:31.522 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:31:31.522 INFO  [log] stringList : ("stringList")
+26/03/2013 09:31:31.522 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:31:31.522 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:31:31.522 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+26/03/2013 09:38:53.895 INFO  [log] info
+26/03/2013 09:38:53.895 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:10] debug
+26/03/2013 09:38:53.895 ERROR [log] error
+26/03/2013 09:38:53.895 WARN  [log] warning
+26/03/2013 09:38:53.895 FATAL [log] fatal
+26/03/2013 09:38:53.895 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+26/03/2013 09:38:53.895 INFO  [log] conditional info
+26/03/2013 09:38:53.895 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:27] conditional debug
+26/03/2013 09:38:53.895 ERROR [log] conditional error
+26/03/2013 09:38:53.895 WARN  [log] conditional warning
+26/03/2013 09:38:53.895 FATAL [log] conditional fatal
+26/03/2013 09:38:53.895 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+26/03/2013 09:38:53.895 INFO  [log] Info every 1
+26/03/2013 09:38:53.895 WARN  [log] Warning every 1
+26/03/2013 09:38:53.895 DEBUG [log] [mkhan@localhost.localdomain] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+26/03/2013 09:38:53.895 FATAL [log] Fatal every 1
+26/03/2013 09:38:53.895 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+26/03/2013 09:38:53.895 INFO  [business] info
+26/03/2013 09:38:53.896 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:55] debug
+26/03/2013 09:38:53.896 ERROR [business] error
+26/03/2013 09:38:53.896 WARN  [business] warning
+26/03/2013 09:38:53.896 FATAL [business] fatal
+26/03/2013 09:38:53.896 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+26/03/2013 09:38:53.896 INFO  [business] conditional info
+26/03/2013 09:38:53.896 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:72] conditional debug
+26/03/2013 09:38:53.896 ERROR [business] conditional error
+26/03/2013 09:38:53.896 WARN  [business] conditional warning
+26/03/2013 09:38:53.896 FATAL [business] conditional fatal
+26/03/2013 09:38:53.896 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+26/03/2013 09:38:53.896 INFO  [business] Info every 1
+26/03/2013 09:38:53.896 WARN  [business] Warning every 1
+26/03/2013 09:38:53.896 DEBUG [business] [mkhan@localhost.localdomain] [void businessLogs()] [normal-logs.h:90] Debug every 1
+26/03/2013 09:38:53.896 FATAL [business] Fatal every 1
+26/03/2013 09:38:53.896 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+26/03/2013 09:38:53.896 INFO  [security] info
+26/03/2013 09:38:53.896 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:99] debug
+26/03/2013 09:38:53.896 ERROR [security] error
+26/03/2013 09:38:53.896 WARN  [security] warning
+26/03/2013 09:38:53.896 FATAL [security] fatal
+26/03/2013 09:38:53.896 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+26/03/2013 09:38:53.896 INFO  [security] conditional info
+26/03/2013 09:38:53.896 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:116] conditional debug
+26/03/2013 09:38:53.896 ERROR [security] conditional error
+26/03/2013 09:38:53.896 WARN  [security] conditional warning
+26/03/2013 09:38:53.896 FATAL [security] conditional fatal
+26/03/2013 09:38:53.896 INFO  [security] Info every 1
+26/03/2013 09:38:53.896 WARN  [security] Warning every 1
+26/03/2013 09:38:53.896 DEBUG [security] [mkhan@localhost.localdomain] [void securityLogs()] [normal-logs.h:134] Debug every 1
+26/03/2013 09:38:53.896 FATAL [security] Fatal every 1
+26/03/2013 09:38:53.896 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+26/03/2013 09:38:53.896 INFO  [performance] info
+26/03/2013 09:38:53.896 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:143] debug
+26/03/2013 09:38:53.896 ERROR [performance] error
+26/03/2013 09:38:53.896 WARN  [performance] warning
+26/03/2013 09:38:53.896 FATAL [performance] fatal
+26/03/2013 09:38:53.896 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+26/03/2013 09:38:53.896 INFO  [performance] conditional info
+26/03/2013 09:38:53.897 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:160] conditional debug
+26/03/2013 09:38:53.897 ERROR [performance] conditional error
+26/03/2013 09:38:53.897 WARN  [performance] conditional warning
+26/03/2013 09:38:53.897 FATAL [performance] conditional fatal
+26/03/2013 09:38:53.897 INFO  [performance] Info every 1
+26/03/2013 09:38:53.897 WARN  [performance] Warning every 1
+26/03/2013 09:38:53.897 DEBUG [performance] [mkhan@localhost.localdomain] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+26/03/2013 09:38:53.897 FATAL [performance] Fatal every 1
+26/03/2013 09:38:53.897 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+26/03/2013 09:38:53.897 INFO  [log] stringVec : ("stringVec")
+26/03/2013 09:38:53.897 INFO  [log] stringPtrVec : ("stringPtrVec")
+26/03/2013 09:38:53.897 INFO  [log] vehicleVec : ("[Honda Accord 2013 vehicleVec]")
+26/03/2013 09:38:53.897 INFO  [log] vehiclePtrVec : ("[Honda Accord 2013 vehiclePtrVec]")
+26/03/2013 09:38:53.897 INFO  [log] stringList : ("stringList")
+26/03/2013 09:38:53.897 INFO  [log] stringPtrList : ("stringPtrList")
+26/03/2013 09:38:53.897 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
+26/03/2013 09:38:53.897 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")

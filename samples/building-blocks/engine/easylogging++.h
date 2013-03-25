@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.40                                                         //
+//   EasyLogging++ v7.41                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -513,10 +513,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.40"); }
+    static inline const std::string version(void) { return std::string("7.41"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-03-2013 1930hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-03-2013 0941hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1426,22 +1426,36 @@ public:
         _ELPP_UNLOCK_MUTEX;
     }
 
+#define RETURN_PTR(logPtr_) return (logPtr_ != NULL ? operator << (*logPtr_) : operator << ("nullptr"))
+
     inline LogWriter& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(std::string* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring could not be handled) " << log_.c_str(); return *this; }
+    inline LogWriter& operator<<(std::wstring* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(bool log_) { _ELPP_STREAM << (log_ != 0 ? "true" : "false"); return *this; }
+    inline LogWriter& operator<<(bool* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed short* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned short* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed int* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(unsigned int log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned int* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(signed long log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(signed long* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(unsigned long* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(float* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(double* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(char* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
     inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(long double* log_) { RETURN_PTR(log_); }
     template <class T>
     inline LogWriter& operator<<(const T& class_) {
         _ELPP_STREAM << class_.toString();
@@ -1458,86 +1472,13 @@ public:
     }
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     template <typename T>
-    inline LogWriter& operator<<(std::vector<T>& vec_) {
-        _ELPP_STREAM << "(";
-        for (typename std::vector<T>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (it < vec_.end() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(std::vector<T*>& vec_) {
-        _ELPP_STREAM << "(";
-        unsigned int index_ = 0;
-        for (typename std::vector<T*>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            T* t_ = *it;
-            if (t_) {
-                operator << (static_cast<T>(*t_));
-            }
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < vec_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(const std::vector<T*>& vec_) {
-        _ELPP_STREAM << "(";
-        unsigned int index_ = 0;
-        for (typename std::vector<T*>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            T* t_ = *it;
-            if (t_) {
-                operator << (static_cast<T>(*t_));
-            }
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < vec_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
     inline LogWriter& operator<<(const std::vector<T>& vec_) {
         _ELPP_STREAM << "(";
-        for (typename std::vector<T>::const_iterator it = vec_.begin(); it != vec_.end(); ++it) {
+        for (unsigned int i = 0; i < vec_.size(); ++i) {
             _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
+            operator << (static_cast<T>(vec_.at(i)));
             _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (it < vec_.end() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(std::list<T>& list_) {
-        _ELPP_STREAM << "(";
-        unsigned int index_ = 0;
-        for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(std::list<T*>& list_) {
-        _ELPP_STREAM << "(";
-        unsigned int index_ = 0;
-        for (typename std::list<T*>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            T* t_ = *it;
-            if (t_) {
-                operator << (static_cast<T>(*t_));
-            }
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
+            _ELPP_STREAM << (i < vec_.size() -1 ? ", " : "");
         }
         _ELPP_STREAM << ")";
         return *this;
@@ -1549,22 +1490,6 @@ public:
         for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
             _ELPP_STREAM << "\"";
             operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(const std::list<T*>& list_) {
-        _ELPP_STREAM << "(";
-        unsigned int index_ = 0;
-        for (typename std::list<T*>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            T* t_ = *it;
-            if (t_) {
-                operator << (static_cast<T>(*t_));
-            }
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
         }
@@ -1594,41 +1519,19 @@ public:
 #endif // !defined(_DISABLE_LIBRARY_CLASS_LOGGING)
 #if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
-    inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); }
+    inline LogWriter& operator<<(QString* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); return *this; }
+    inline LogWriter& operator<<(QStringRef* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
+    inline LogWriter& operator<<(qint64* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
+    inline LogWriter& operator<<(quint64* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return *this; }
+    inline LogWriter& operator<<(QChar* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
+    inline LogWriter& operator<<(QBool* log_) { RETURN_PTR(log_); }
     inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
-    template <typename T>
-    inline LogWriter& operator<<(QList<T>& list_) {
-        _ELPP_STREAM << "(";
-        int index_ = 0;
-        for (typename QList<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(QList<T*>& list_) {
-        _ELPP_STREAM << "(";
-        int index_ = 0;
-        for (typename QList<T*>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            T* t_ = *it;
-            if (t_) {
-                operator << (static_cast<T>(*t_));
-            }
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << ")";
-        return *this;
-    }
+    inline LogWriter& operator<<(QLatin1String* log_) { RETURN_PTR(log_); }
     template <typename T>
     inline LogWriter& operator<<(const QList<T>& list_) {
         _ELPP_STREAM << "(";
@@ -1640,11 +1543,6 @@ public:
             _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
         }
         _ELPP_STREAM << ")";
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(QVector<T>& vec_) {
-        operator<<(vec_.toList());
         return *this;
     }
     template <typename T>
