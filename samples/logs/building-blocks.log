@@ -1,0 +1,338 @@
+25/03/2013 19:38:29.663 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::Engine::Engine(int, const char**)] [../building-blocks/engine/engine.cc:29] Engine initialized
+25/03/2013 19:38:29.664 VER-1 [log] Constructing board [Default Board] of dimensions [5, 5] and distance [160, 160] in each point
+25/03/2013 19:38:29.664 VER-4 [log] Creating point on board [0, 0]
+25/03/2013 19:38:29.664 VER-4 [log] Creating point on board [160, 0]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [320, 0]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [480, 0]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [640, 0]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [0, 160]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [160, 160]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [320, 160]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [480, 160]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [640, 160]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [0, 320]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [160, 320]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [320, 320]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [480, 320]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [640, 320]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [0, 480]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [160, 480]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [320, 480]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [480, 480]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [640, 480]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [0, 640]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [160, 640]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [320, 640]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [480, 640]
+25/03/2013 19:38:29.665 VER-4 [log] Creating point on board [640, 640]
+25/03/2013 19:38:29.665 VER-1 [log] Constructed board with [25] points and distance [160, 160]
+25/03/2013 19:38:29.665 VER-2 [log] Adding player [Player 1]
+25/03/2013 19:38:29.665 VER-2 [log] Adding player [Player 2]
+25/03/2013 19:38:46.242 VER-4 [log] Found point [160, 640] near [167, 648]
+25/03/2013 19:38:47.206 VER-4 [log] Found point [160, 480] near [168, 484]
+25/03/2013 19:38:47.206 VER-3 [log] Checking if line [[[160, 640], [160, 480]]] is legal as per game rules
+25/03/2013 19:38:47.206 VER-3 [log] Distance for points 160
+25/03/2013 19:38:47.206 VER-2 [log] [Player 1] has put line [[160, 640], [160, 480]]
+25/03/2013 19:38:47.206 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:38:47.206 VER-5 [business] [0] line found parallel to [[160, 640], [160, 480]]
+25/03/2013 19:38:47.206 VER-2 [log] [Player 2] has turn
+25/03/2013 19:38:47.740 VER-4 [log] Found point [160, 480] near [167, 484]
+25/03/2013 19:38:48.620 VER-4 [log] Found point [320, 480] near [329, 485]
+25/03/2013 19:38:48.620 VER-3 [log] Checking if line [[[160, 480], [320, 480]]] is legal as per game rules
+25/03/2013 19:38:48.620 VER-3 [log] Distance for points 160
+25/03/2013 19:38:48.620 VER-2 [log] [Player 2] has put line [[160, 480], [320, 480]]
+25/03/2013 19:38:48.620 VER-5 [business] [0] line found parallel to [[160, 480], [320, 480]]
+25/03/2013 19:38:48.620 VER-2 [log] [Player 1] has turn
+25/03/2013 19:38:49.176 VER-4 [log] Found point [320, 480] near [329, 485]
+25/03/2013 19:38:50.064 VER-4 [log] No point found near [332, 323]
+25/03/2013 19:38:50.490 VER-4 [log] Found point [320, 320] near [328, 323]
+25/03/2013 19:38:50.490 VER-3 [log] Checking if line [[[320, 480], [320, 320]]] is legal as per game rules
+25/03/2013 19:38:50.490 VER-3 [log] Distance for points 160
+25/03/2013 19:38:50.490 VER-2 [log] [Player 1] has put line [[320, 480], [320, 320]]
+25/03/2013 19:38:50.490 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:38:50.490 VER-5 [business] [0] line found parallel to [[320, 480], [320, 320]]
+25/03/2013 19:38:50.490 VER-2 [log] [Player 2] has turn
+25/03/2013 19:38:50.976 VER-4 [log] Found point [320, 320] near [324, 328]
+25/03/2013 19:38:51.470 VER-4 [log] No point found near [330, 326]
+25/03/2013 19:38:52.722 VER-4 [log] Found point [480, 320] near [489, 322]
+25/03/2013 19:38:52.722 VER-3 [log] Checking if line [[[320, 320], [480, 320]]] is legal as per game rules
+25/03/2013 19:38:52.722 VER-3 [log] Distance for points 160
+25/03/2013 19:38:52.722 VER-2 [log] [Player 2] has put line [[320, 320], [480, 320]]
+25/03/2013 19:38:52.722 VER-5 [business] [0] line found parallel to [[320, 320], [480, 320]]
+25/03/2013 19:38:52.722 VER-2 [log] [Player 1] has turn
+25/03/2013 19:38:53.216 VER-4 [log] Found point [480, 320] near [487, 325]
+25/03/2013 19:38:54.190 VER-4 [log] Found point [480, 480] near [487, 485]
+25/03/2013 19:38:54.190 VER-3 [log] Checking if line [[[480, 320], [480, 480]]] is legal as per game rules
+25/03/2013 19:38:54.190 VER-3 [log] Distance for points 160
+25/03/2013 19:38:54.190 VER-2 [log] [Player 1] has put line [[480, 320], [480, 480]]
+25/03/2013 19:38:54.190 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:38:54.190 VER-5 [business] [0] line found parallel to [[480, 320], [480, 480]]
+25/03/2013 19:38:54.190 VER-2 [log] [Player 2] has turn
+25/03/2013 19:38:54.660 VER-4 [log] Found point [480, 480] near [487, 485]
+25/03/2013 19:38:55.758 VER-4 [log] Found point [640, 480] near [647, 485]
+25/03/2013 19:38:55.758 VER-3 [log] Checking if line [[[480, 480], [640, 480]]] is legal as per game rules
+25/03/2013 19:38:55.758 VER-3 [log] Distance for points 160
+25/03/2013 19:38:55.758 VER-2 [log] [Player 2] has put line [[480, 480], [640, 480]]
+25/03/2013 19:38:55.758 VER-5 [business] [0] line found parallel to [[480, 480], [640, 480]]
+25/03/2013 19:38:55.758 VER-2 [log] [Player 1] has turn
+25/03/2013 19:38:56.206 VER-4 [log] Found point [640, 480] near [647, 485]
+25/03/2013 19:38:57.150 VER-4 [log] Found point [640, 640] near [647, 643]
+25/03/2013 19:38:57.150 VER-3 [log] Checking if line [[[640, 480], [640, 640]]] is legal as per game rules
+25/03/2013 19:38:57.150 VER-3 [log] Distance for points 160
+25/03/2013 19:38:57.150 VER-2 [log] [Player 1] has put line [[640, 480], [640, 640]]
+25/03/2013 19:38:57.150 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:38:57.150 VER-5 [business] [0] line found parallel to [[640, 480], [640, 640]]
+25/03/2013 19:38:57.150 VER-2 [log] [Player 2] has turn
+25/03/2013 19:38:57.550 VER-4 [log] No point found near [647, 649]
+25/03/2013 19:38:58.036 VER-4 [log] Found point [640, 640] near [647, 646]
+25/03/2013 19:38:58.926 VER-4 [log] Found point [480, 640] near [485, 648]
+25/03/2013 19:38:58.926 VER-3 [log] Checking if line [[[640, 640], [480, 640]]] is legal as per game rules
+25/03/2013 19:38:58.926 VER-3 [log] Distance for points 160
+25/03/2013 19:38:58.926 VER-2 [log] [Player 2] has put line [[640, 640], [480, 640]]
+25/03/2013 19:38:58.926 VER-5 [business] [0] line found parallel to [[640, 640], [480, 640]]
+25/03/2013 19:38:58.926 VER-2 [log] [Player 1] has turn
+25/03/2013 19:38:59.450 VER-4 [log] Found point [480, 640] near [485, 648]
+25/03/2013 19:39:00.662 VER-4 [log] Found point [320, 640] near [328, 645]
+25/03/2013 19:39:00.662 VER-3 [log] Checking if line [[[480, 640], [320, 640]]] is legal as per game rules
+25/03/2013 19:39:00.662 VER-3 [log] Distance for points 160
+25/03/2013 19:39:00.662 VER-2 [log] [Player 1] has put line [[480, 640], [320, 640]]
+25/03/2013 19:39:00.662 VER-5 [business] [0] line found parallel to [[480, 640], [320, 640]]
+25/03/2013 19:39:00.662 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:01.072 VER-4 [log] Found point [320, 640] near [328, 645]
+25/03/2013 19:39:02.046 VER-4 [log] Found point [480, 480] near [482, 484]
+25/03/2013 19:39:02.046 VER-3 [log] Checking if line [[[320, 640], [480, 480]]] is legal as per game rules
+25/03/2013 19:39:02.046 VER-3 [log] Distance for points 2147483648
+25/03/2013 19:39:02.046 ERROR [business] Adding line [[320, 640], [480, 480]] is not valid as per game rules!
+25/03/2013 19:39:03.976 VER-4 [log] Found point [480, 480] near [488, 484]
+25/03/2013 19:39:06.116 VER-4 [log] Found point [320, 480] near [328, 485]
+25/03/2013 19:39:06.116 VER-3 [log] Checking if line [[[480, 480], [320, 480]]] is legal as per game rules
+25/03/2013 19:39:06.116 VER-3 [log] Distance for points 160
+25/03/2013 19:39:06.116 VER-2 [log] [Player 2] has put line [[480, 480], [320, 480]]
+25/03/2013 19:39:06.116 VER-5 [business] [1] line found parallel to [[480, 480], [320, 480]]
+25/03/2013 19:39:06.116 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:06.116 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:06.116 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:06.116 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:06.116 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:07.214 VER-4 [log] No point found near [319, 485]
+25/03/2013 19:39:08.750 VER-4 [log] No point found near [165, 317]
+25/03/2013 19:39:09.190 VER-4 [log] Found point [160, 320] near [165, 324]
+25/03/2013 19:39:09.808 VER-4 [log] No point found near [232, 326]
+25/03/2013 19:39:10.272 VER-4 [log] No point found near [211, 366]
+25/03/2013 19:39:12.458 VER-4 [log] Found point [160, 480] near [166, 487]
+25/03/2013 19:39:12.458 VER-3 [log] Checking if line [[[160, 320], [160, 480]]] is legal as per game rules
+25/03/2013 19:39:12.458 VER-3 [log] Distance for points 160
+25/03/2013 19:39:12.458 VER-2 [log] [Player 1] has put line [[160, 320], [160, 480]]
+25/03/2013 19:39:12.458 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:12.458 VER-5 [business] [0] line found parallel to [[160, 320], [160, 480]]
+25/03/2013 19:39:12.458 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:13.694 VER-4 [log] Found point [160, 320] near [166, 325]
+25/03/2013 19:39:14.490 VER-4 [log] Found point [320, 320] near [326, 321]
+25/03/2013 19:39:14.490 VER-3 [log] Checking if line [[[160, 320], [320, 320]]] is legal as per game rules
+25/03/2013 19:39:14.490 VER-3 [log] Distance for points 160
+25/03/2013 19:39:14.490 VER-2 [log] [Player 2] has put line [[160, 320], [320, 320]]
+25/03/2013 19:39:14.490 VER-5 [business] [1] line found parallel to [[160, 320], [320, 320]]
+25/03/2013 19:39:14.490 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:14.490 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:14.490 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:14.490 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:14.490 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:15.030 VER-4 [log] Found point [320, 320] near [327, 325]
+25/03/2013 19:39:16.150 VER-4 [log] Found point [320, 160] near [326, 166]
+25/03/2013 19:39:16.150 VER-3 [log] Checking if line [[[320, 320], [320, 160]]] is legal as per game rules
+25/03/2013 19:39:16.150 VER-3 [log] Distance for points 160
+25/03/2013 19:39:16.150 VER-2 [log] [Player 1] has put line [[320, 320], [320, 160]]
+25/03/2013 19:39:16.150 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:16.150 VER-5 [business] [0] line found parallel to [[320, 320], [320, 160]]
+25/03/2013 19:39:16.150 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:16.660 VER-4 [log] Found point [320, 160] near [326, 165]
+25/03/2013 19:39:17.425 VER-4 [log] No point found near [490, 165]
+25/03/2013 19:39:17.849 VER-4 [log] Found point [480, 160] near [485, 163]
+25/03/2013 19:39:17.850 VER-3 [log] Checking if line [[[320, 160], [480, 160]]] is legal as per game rules
+25/03/2013 19:39:17.850 VER-3 [log] Distance for points 160
+25/03/2013 19:39:17.850 VER-2 [log] [Player 2] has put line [[320, 160], [480, 160]]
+25/03/2013 19:39:17.850 VER-5 [business] [1] line found parallel to [[320, 160], [480, 160]]
+25/03/2013 19:39:17.850 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:17.850 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:17.850 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:17.850 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:17.850 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:18.962 VER-4 [log] Found point [480, 160] near [485, 163]
+25/03/2013 19:39:20.251 VER-4 [log] Found point [480, 0] near [484, 2]
+25/03/2013 19:39:20.252 VER-3 [log] Checking if line [[[480, 160], [480, 0]]] is legal as per game rules
+25/03/2013 19:39:20.252 VER-3 [log] Distance for points 160
+25/03/2013 19:39:20.252 VER-2 [log] [Player 1] has put line [[480, 160], [480, 0]]
+25/03/2013 19:39:20.252 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:20.252 VER-5 [business] [0] line found parallel to [[480, 160], [480, 0]]
+25/03/2013 19:39:20.252 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:20.870 VER-4 [log] Found point [480, 0] near [485, 5]
+25/03/2013 19:39:21.749 VER-4 [log] Found point [640, 0] near [649, 5]
+25/03/2013 19:39:21.750 VER-3 [log] Checking if line [[[480, 0], [640, 0]]] is legal as per game rules
+25/03/2013 19:39:21.750 VER-3 [log] Distance for points 160
+25/03/2013 19:39:21.750 VER-2 [log] [Player 2] has put line [[480, 0], [640, 0]]
+25/03/2013 19:39:21.750 VER-5 [business] [0] line found parallel to [[480, 0], [640, 0]]
+25/03/2013 19:39:21.750 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:22.181 VER-4 [log] Found point [640, 0] near [646, 5]
+25/03/2013 19:39:22.969 VER-4 [log] Found point [640, 160] near [644, 163]
+25/03/2013 19:39:22.970 VER-3 [log] Checking if line [[[640, 0], [640, 160]]] is legal as per game rules
+25/03/2013 19:39:22.970 VER-3 [log] Distance for points 160
+25/03/2013 19:39:22.970 VER-2 [log] [Player 1] has put line [[640, 0], [640, 160]]
+25/03/2013 19:39:22.970 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:22.970 VER-5 [business] [0] line found parallel to [[640, 0], [640, 160]]
+25/03/2013 19:39:22.970 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:23.372 VER-4 [log] Found point [640, 160] near [644, 163]
+25/03/2013 19:39:24.097 VER-4 [log] Found point [640, 320] near [649, 322]
+25/03/2013 19:39:24.098 VER-3 [log] Checking if line [[[640, 160], [640, 320]]] is legal as per game rules
+25/03/2013 19:39:24.098 VER-3 [log] Distance for points 160
+25/03/2013 19:39:24.098 VER-2 [log] [Player 2] has put line [[640, 160], [640, 320]]
+25/03/2013 19:39:24.098 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:24.098 VER-5 [business] [0] line found parallel to [[640, 160], [640, 320]]
+25/03/2013 19:39:24.098 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:24.577 VER-4 [log] Found point [640, 320] near [647, 326]
+25/03/2013 19:39:25.829 VER-4 [log] Found point [640, 480] near [642, 483]
+25/03/2013 19:39:25.830 VER-3 [log] Checking if line [[[640, 320], [640, 480]]] is legal as per game rules
+25/03/2013 19:39:25.830 VER-3 [log] Distance for points 160
+25/03/2013 19:39:25.830 VER-2 [log] [Player 1] has put line [[640, 320], [640, 480]]
+25/03/2013 19:39:25.830 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:25.830 VER-5 [business] [0] line found parallel to [[640, 320], [640, 480]]
+25/03/2013 19:39:25.830 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:26.353 VER-4 [log] Found point [640, 480] near [644, 483]
+25/03/2013 19:39:27.349 VER-4 [log] Found point [480, 480] near [486, 485]
+25/03/2013 19:39:27.350 VER-3 [log] Checking if line [[[640, 480], [480, 480]]] is legal as per game rules
+25/03/2013 19:39:27.350 VER-3 [log] Distance for points 160
+25/03/2013 19:39:27.350 VER-2 [log] [Player 2] has put line [[640, 480], [480, 480]]
+25/03/2013 19:39:27.350 VER-5 [business] [1] line found parallel to [[640, 480], [480, 480]]
+25/03/2013 19:39:27.350 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:27.350 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:27.350 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:27.350 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:27.350 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:27.891 VER-4 [log] Found point [480, 480] near [486, 485]
+25/03/2013 19:39:28.957 VER-4 [log] Found point [480, 320] near [486, 327]
+25/03/2013 19:39:28.958 VER-3 [log] Checking if line [[[480, 480], [480, 320]]] is legal as per game rules
+25/03/2013 19:39:28.958 VER-3 [log] Distance for points 160
+25/03/2013 19:39:28.958 VER-2 [log] [Player 1] has put line [[480, 480], [480, 320]]
+25/03/2013 19:39:28.958 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:28.958 VER-5 [business] [0] line found parallel to [[480, 480], [480, 320]]
+25/03/2013 19:39:28.958 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:29.373 VER-4 [log] Found point [480, 320] near [484, 323]
+25/03/2013 19:39:30.409 VER-4 [log] Found point [640, 320] near [647, 325]
+25/03/2013 19:39:30.410 VER-3 [log] Checking if line [[[480, 320], [640, 320]]] is legal as per game rules
+25/03/2013 19:39:30.410 VER-3 [log] Distance for points 160
+25/03/2013 19:39:30.410 VER-2 [log] [Player 2] has put line [[480, 320], [640, 320]]
+25/03/2013 19:39:30.410 VER-5 [business] [1] line found parallel to [[480, 320], [640, 320]]
+25/03/2013 19:39:30.410 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:30.410 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:30.410 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:30.410 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:39:30.410 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:43.757 VER-4 [log] Found point [480, 320] near [483, 322]
+25/03/2013 19:39:45.031 VER-4 [log] Found point [480, 160] near [482, 164]
+25/03/2013 19:39:45.031 VER-3 [log] Checking if line [[[480, 320], [480, 160]]] is legal as per game rules
+25/03/2013 19:39:45.032 VER-3 [log] Distance for points 160
+25/03/2013 19:39:45.032 VER-2 [log] [Player 1] has put line [[480, 320], [480, 160]]
+25/03/2013 19:39:45.032 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:45.032 VER-5 [business] [0] line found parallel to [[480, 320], [480, 160]]
+25/03/2013 19:39:45.032 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:45.795 VER-4 [log] Found point [480, 160] near [485, 164]
+25/03/2013 19:39:46.803 VER-4 [log] Found point [320, 160] near [327, 165]
+25/03/2013 19:39:46.804 VER-3 [log] Checking if line [[[480, 160], [320, 160]]] is legal as per game rules
+25/03/2013 19:39:46.804 VER-3 [log] Distance for points 160
+25/03/2013 19:39:46.804 VER-2 [log] [Player 2] has put line [[480, 160], [320, 160]]
+25/03/2013 19:39:46.804 VER-5 [business] [0] line found parallel to [[480, 160], [320, 160]]
+25/03/2013 19:39:46.804 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:47.287 VER-4 [log] Found point [320, 160] near [326, 165]
+25/03/2013 19:39:48.499 VER-4 [log] Found point [160, 160] near [164, 164]
+25/03/2013 19:39:48.499 VER-3 [log] Checking if line [[[320, 160], [160, 160]]] is legal as per game rules
+25/03/2013 19:39:48.500 VER-3 [log] Distance for points 160
+25/03/2013 19:39:48.500 VER-2 [log] [Player 1] has put line [[320, 160], [160, 160]]
+25/03/2013 19:39:48.500 VER-5 [business] [0] line found parallel to [[320, 160], [160, 160]]
+25/03/2013 19:39:48.500 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:49.141 VER-4 [log] Found point [160, 160] near [165, 169]
+25/03/2013 19:39:50.501 VER-4 [log] Found point [160, 320] near [168, 323]
+25/03/2013 19:39:50.501 VER-3 [log] Checking if line [[[160, 160], [160, 320]]] is legal as per game rules
+25/03/2013 19:39:50.502 VER-3 [log] Distance for points 160
+25/03/2013 19:39:50.502 VER-2 [log] [Player 2] has put line [[160, 160], [160, 320]]
+25/03/2013 19:39:50.502 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:50.502 VER-5 [business] [0] line found parallel to [[160, 160], [160, 320]]
+25/03/2013 19:39:50.502 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:51.111 VER-4 [log] No point found near [167, 330]
+25/03/2013 19:39:52.053 VER-4 [log] Found point [160, 320] near [167, 326]
+25/03/2013 19:39:53.143 VER-4 [log] Found point [0, 320] near [6, 326]
+25/03/2013 19:39:53.143 VER-3 [log] Checking if line [[[160, 320], [0, 320]]] is legal as per game rules
+25/03/2013 19:39:53.144 VER-3 [log] Distance for points 160
+25/03/2013 19:39:53.144 VER-2 [log] [Player 1] has put line [[160, 320], [0, 320]]
+25/03/2013 19:39:53.144 VER-5 [business] [0] line found parallel to [[160, 320], [0, 320]]
+25/03/2013 19:39:53.144 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:53.837 VER-4 [log] Found point [0, 320] near [6, 324]
+25/03/2013 19:39:54.927 VER-4 [log] Found point [0, 160] near [4, 166]
+25/03/2013 19:39:54.927 VER-3 [log] Checking if line [[[0, 320], [0, 160]]] is legal as per game rules
+25/03/2013 19:39:54.927 VER-3 [log] Distance for points 160
+25/03/2013 19:39:54.928 VER-2 [log] [Player 2] has put line [[0, 320], [0, 160]]
+25/03/2013 19:39:54.928 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:54.928 VER-5 [business] [0] line found parallel to [[0, 320], [0, 160]]
+25/03/2013 19:39:54.928 VER-2 [log] [Player 1] has turn
+25/03/2013 19:39:55.429 VER-4 [log] Found point [0, 160] near [4, 166]
+25/03/2013 19:39:58.295 VER-4 [log] Found point [0, 0] near [5, 7]
+25/03/2013 19:39:58.295 VER-3 [log] Checking if line [[[0, 160], [0, 0]]] is legal as per game rules
+25/03/2013 19:39:58.295 VER-3 [log] Distance for points 160
+25/03/2013 19:39:58.296 VER-2 [log] [Player 1] has put line [[0, 160], [0, 0]]
+25/03/2013 19:39:58.296 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:39:58.296 VER-5 [business] [0] line found parallel to [[0, 160], [0, 0]]
+25/03/2013 19:39:58.296 VER-2 [log] [Player 2] has turn
+25/03/2013 19:39:58.927 VER-4 [log] Found point [0, 0] near [5, 7]
+25/03/2013 19:40:00.039 VER-4 [log] Found point [160, 0] near [165, 7]
+25/03/2013 19:40:00.039 VER-3 [log] Checking if line [[[0, 0], [160, 0]]] is legal as per game rules
+25/03/2013 19:40:00.039 VER-3 [log] Distance for points 160
+25/03/2013 19:40:00.040 VER-2 [log] [Player 2] has put line [[0, 0], [160, 0]]
+25/03/2013 19:40:00.040 VER-5 [business] [0] line found parallel to [[0, 0], [160, 0]]
+25/03/2013 19:40:00.040 VER-2 [log] [Player 1] has turn
+25/03/2013 19:40:02.929 VER-4 [log] Found point [160, 0] near [168, 4]
+25/03/2013 19:40:04.095 VER-4 [log] Found point [160, 160] near [165, 164]
+25/03/2013 19:40:04.095 VER-3 [log] Checking if line [[[160, 0], [160, 160]]] is legal as per game rules
+25/03/2013 19:40:04.095 VER-3 [log] Distance for points 160
+25/03/2013 19:40:04.095 VER-2 [log] [Player 1] has put line [[160, 0], [160, 160]]
+25/03/2013 19:40:04.096 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:40:04.096 VER-5 [business] [0] line found parallel to [[160, 0], [160, 160]]
+25/03/2013 19:40:04.096 VER-2 [log] [Player 2] has turn
+25/03/2013 19:40:05.525 VER-4 [log] Found point [160, 160] near [166, 168]
+25/03/2013 19:40:06.389 VER-4 [log] Found point [320, 160] near [330, 164]
+25/03/2013 19:40:06.389 VER-3 [log] Checking if line [[[160, 160], [320, 160]]] is legal as per game rules
+25/03/2013 19:40:06.389 VER-3 [log] Distance for points 160
+25/03/2013 19:40:06.389 VER-2 [log] [Player 2] has put line [[160, 160], [320, 160]]
+25/03/2013 19:40:06.390 VER-5 [business] [1] line found parallel to [[160, 160], [320, 160]]
+25/03/2013 19:40:06.390 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:06.390 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:06.390 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:06.390 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:06.390 VER-2 [log] [Player 1] has turn
+25/03/2013 19:40:07.225 VER-4 [log] Found point [320, 160] near [327, 165]
+25/03/2013 19:40:08.359 VER-4 [log] Found point [320, 0] near [325, 4]
+25/03/2013 19:40:08.359 VER-3 [log] Checking if line [[[320, 160], [320, 0]]] is legal as per game rules
+25/03/2013 19:40:08.359 VER-3 [log] Distance for points 160
+25/03/2013 19:40:08.359 VER-2 [log] [Player 1] has put line [[320, 160], [320, 0]]
+25/03/2013 19:40:08.359 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:40:08.360 VER-5 [business] [1] line found parallel to [[320, 160], [320, 0]]
+25/03/2013 19:40:08.360 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:08.360 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:08.360 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:08.360 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:08.360 VER-2 [log] [Player 2] has turn
+25/03/2013 19:40:17.861 VER-4 [log] No point found near [562, 211]
+25/03/2013 19:40:20.797 VER-4 [log] Found point [480, 480] near [484, 487]
+25/03/2013 19:40:21.661 VER-4 [log] Found point [480, 640] near [485, 643]
+25/03/2013 19:40:21.661 VER-3 [log] Checking if line [[[480, 480], [480, 640]]] is legal as per game rules
+25/03/2013 19:40:21.661 VER-3 [log] Distance for points 160
+25/03/2013 19:40:21.661 VER-2 [log] [Player 2] has put line [[480, 480], [480, 640]]
+25/03/2013 19:40:21.661 WARN  [log] Skipping check for duplicate predicate line
+25/03/2013 19:40:21.661 VER-5 [business] [1] line found parallel to [[480, 480], [480, 640]]
+25/03/2013 19:40:21.661 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:21.662 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:21.662 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:21.662 DEBUG [log] [majid@devil-inside-pc] [buildingblocks::engine::internal::Line* buildingblocks::engine::internal::Board::findRotatedLine(const buildingblocks::engine::internal::Line*, buildingblocks::engine::internal::Board::kRotationPoint, buildingblocks::engine::internal::Board::kRotationDirection)] [../building-blocks/engine/internal/board.cc:329] New point: (240, 400)
+25/03/2013 19:40:21.662 VER-2 [log] [Player 1] has turn
+25/03/2013 19:40:22.271 VER-4 [log] Found point [480, 640] near [486, 644]
+25/03/2013 19:40:23.801 VER-4 [log] No point found near [319, 645]
+25/03/2013 19:40:27.223 VER-1 [log] Resetting board
+25/03/2013 19:40:27.223 VER-2 [log] Adding player [Player 1]
+25/03/2013 19:40:27.223 VER-2 [log] Adding player [Player 2]
