@@ -16,6 +16,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
+
 int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv)
 

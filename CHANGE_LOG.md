@@ -71,6 +71,8 @@ Change log was not kept before version 2.1.
  * 7.36: Raw array logging
  * 7.37: Support for container (vector, list) of pointers
  * 7.38: Fix for overloaded const containers
+ * 7.39: No support for raw arrays any more instead support for pointer
+ * 7.40: Disable performance tracking using `_ENABLE_PERFORMANCE_TRACKING`
 
 #### 6.xx
  * 6.00:

@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.38                                                         //
+//   EasyLogging++ v7.40                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -94,6 +94,12 @@
 #define _ENABLE_TRACE_LOGS 1
 #define _TRACE_LOGS_TO_STANDARD_OUTPUT 1
 #define _TRACE_LOGS_TO_FILE 1
+
+//
+// Configuration to track performance of your functions
+// Details at https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking
+//
+#define _ENABLE_PERFORMANCE_TRACKING 1
 
 //
 // High-level log evaluation
@@ -507,10 +513,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.38"); }
+    static inline const std::string version(void) { return std::string("7.40"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-03-2013 2137hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-03-2013 1930hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1442,14 +1448,12 @@ public:
         return *this;
     }
     template <class T>
-    inline LogWriter& operator<<(T arr_[]) {
-        _ELPP_STREAM << "(";
-        size_t size_ = sizeof(arr_) / sizeof(T);
-        for (size_t i = 0; i < size_; ++i) {
-            operator << (arr_[i]);
-            _ELPP_STREAM << (i < (size_ - 1) ? ", " : "");
+    inline LogWriter& operator<<(T* pointer_) {
+        if (pointer_) {
+            _ELPP_STREAM << pointer_->toString();
+        } else {
+            _ELPP_STREAM << "null";
         }
-        _ELPP_STREAM << ")";
         return *this;
     }
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
@@ -1737,7 +1741,7 @@ private:
 //
 // Performance tracking macros
 //
-#if _ELPP_DEBUG_LOG
+#if (_ELPP_DEBUG_LOG && _ENABLE_PERFORMANCE_TRACKING)
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
