@@ -29,7 +29,7 @@ EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C+
 
 ## Getting Started
 
-To use EasyLogging++ in your application, simply include and initialize:
+[Download EasyLogging++](http://icplusplus.com/tools/easylogging/easyloggingpp.zip) and simply include and initialize:
 ```C++
 #include "easylogging++.h"
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
