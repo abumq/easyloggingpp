@@ -1,5 +1,6 @@
 building-blocks
 
-*THIS IS INCOMPLETE VERSION OF "squares" BOARD GAME (ENGINE AND UI).*
+*THIS IS AN INCOMPLETE VERSION OF "squares" BOARD GAME (ENGINE AND UI).*
 
-This repository can be used as referece for anyone. Mainly this is used as a sample for EasyLogging++ now.
+Check out [sample log here](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/logs/building-blocks.log)
+
