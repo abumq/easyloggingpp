@@ -23,13 +23,14 @@ EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C+
  * **Type safe**
  * **[Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)**
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
+ * **[Performance tracking](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking)**
 
  * **Class and Structs Logging**
    EasyLogging++ supports logging [containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#containers-logging), [third party libraries' classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#third-party-c-libraries), [other utility classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#other-classes) and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
 
 ## Getting Started
 
-To use EasyLogging++ in your application, simply include and initialize:
+[Download EasyLogging++](http://icplusplus.com/tools/easylogging/easyloggingpp.zip) and simply include and initialize:
 ```C++
 #include "easylogging++.h"
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
@@ -292,6 +293,8 @@ END_FUNC(return_value)
 ```
 
 Note: you have many other configurations to change your output. See following section for details
+
+To disable performance tracking at any time set `_ENABLE_PERFORMANCE_TRACKING` to `0`, otherwise `1`
 
  [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
  
