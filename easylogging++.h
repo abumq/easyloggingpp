@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.42                                                         //
+//   EasyLogging++ v7.43                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -102,7 +102,7 @@
 #define _ENABLE_PERFORMANCE_TRACKING 1
 
 //
-// Severity level for performance tracking. Recommendation is PDEBUG
+// Severity level for performance tracking. Default is PDEBUG
 //
 #define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
@@ -203,7 +203,6 @@
 #define __UNDEF_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#define _WINDOWS_HEADER_INCLUDED_FROM_FAST_MUTEX_H // Not part of fastmutex
 #ifdef __UNDEF_LEAN_AND_MEAN
 #undef WIN32_LEAN_AND_MEAN
 #undef __UNDEF_LEAN_AND_MEAN
@@ -349,9 +348,7 @@ private:
 #include <cctype>
 #if _ELPP_OS_WINDOWS
 #    include <direct.h>
-#    ifndef (_WINDOWS_HEADER_INCLUDED_FROM_FAST_MUTEX_H)
-#        include <windows.h>
-#    endif
+#    include <windows.h>
 #endif // _ELPP_OS_WINDOWS
 #if _ELPP_OS_UNIX
 #    include <sys/stat.h>
@@ -518,10 +515,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.42"); }
+    static inline const std::string version(void) { return std::string("7.43"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("27-03-2013 1106hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("27-03-2013 1229hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

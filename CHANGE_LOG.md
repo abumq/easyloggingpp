@@ -75,6 +75,7 @@ Change log was not kept before version 2.1.
  * 7.40: Disable performance tracking using `_ENABLE_PERFORMANCE_TRACKING`
  * 7.41: Major improvements around logging pointers and code clean up around containers
  * 7.42: Configurable severity type for performance tracking
+ * 7.43: Improved comments
 
 #### 6.xx
  * 6.00:
