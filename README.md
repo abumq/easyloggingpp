@@ -62,7 +62,7 @@ See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/sam
     unsigned int i = 0;
     BINFO << "Current value is " << i;
     BINFO << "Now the value has changed from " << i++ << " to " << i;
-   BDEBUG << "End of my EasyLogging++ program";
+    BDEBUG << "End of my EasyLogging++ program";
  }
  ```
 Output for above logging varies depending on format you set in configuration section of `easylogging++.h`. Here are some sample outputs;
@@ -314,12 +314,14 @@ When you want to write verbose log, you will use, `LVERBOSE(level) << log`
 As an example
 ```C++
 #include "easylogging++.h"
+_INITIALIZE_EASYLOGGINGPP
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv);
   bool condition = true;
   LVERBOSE(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
   LVERBOSE(2) << "I will be printed when this application is run using --v=2 arguments";
-  LVERBOSE_I(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
+  LVERBOSE_IF(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
+}
 ```
 Now compile your application normally:
 
@@ -411,7 +413,7 @@ If you ever want to read log file from your application, you may do this by `eas
 EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
 
  * Qt based classes logging (`QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`, `QPair<K, V>`) - v7.30+
- * Qt based containers (see Containers Logging below) - v7.35
+ * Qt based containers (see `Containers Logging` section below) - v7.35
 
 If you ever wish to make sure that third-party libraries are not used, define `_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING` during compile time. *Remember, you might end up having compilation errors after disabiling support **if you have tried logging third-party library class***
 
