@@ -9,9 +9,9 @@
  * @author mkhan3189
  */
 
-#include "../../easylogging++.h"
-
 #include "mythread.h"
+//#include "../../easylogging++.h"
+
 #include <QVector>
 
 _INITIALIZE_EASYLOGGINGPP
@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
 
     if (runThreads) {
         for (int i = 1; i <= 1; ++i) {
-            MyThread t(i);
-            t.start();
-            t.wait();
+           // MyThread t(i);
+           // t.start();
+           // t.wait();
         }
     }
 

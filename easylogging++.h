@@ -111,6 +111,7 @@
 //
 #define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
+#include <string>
 namespace easyloggingpp { namespace configurations {
 //
 // This section contains configurations that are to set by developer.
@@ -143,15 +144,15 @@ namespace easyloggingpp { namespace configurations {
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
 
-const char*    DEFAULT_LOG_FORMAT       =    "%datetime %level  [%type] %log\n";
-const char*    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
-const char*    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
-const char*    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
-const char*    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
-const char*    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
-const char*    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
-const char*    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
-const char*    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
+const std::string    DEFAULT_LOG_FORMAT       =    "%datetime %level  [%type] %log\n";
+const std::string    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
+const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
+const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
+const std::string    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
+const std::string    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
+const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
+const std::string    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
+const std::string    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
 
@@ -175,7 +176,7 @@ const bool           SAVE_TO_FILE             =    true;
 //   Filename of log file. This should only be filename and not the whole path.
 //   Path is set in different configuration below (CUSTOM_LOG_FILE_LOCATION).
 //   If custom location is not used, log will be saved in executable path.
-const char*    LOG_FILENAME             =    "myeasylog.log";
+const std::string    LOG_FILENAME             =    "myeasylog.log";
 
 
 // CUSTOM_LOG_FILE_LOCATION
@@ -186,7 +187,7 @@ const char*    LOG_FILENAME             =    "myeasylog.log";
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value according to your need - Do not leave empty
 //   If you do not want to use this set USE_CUSTOM_LOCATION to false instead.
-const char*    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
 
 
 // USE_CUSTOM_LOCATION
@@ -321,6 +322,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #    include <QPair>
 #    include <QMap>
 #endif // defined(QT_CORE_LIB) && (_ENABLE_EASYLOGGING) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
+
 //
 // Mutex
 //
@@ -483,14 +485,14 @@ private:
 //
 // Log level name outputs
 //
-#define _ELPP_INFO_LEVEL_OUTPUT      "INFO"
-#define _ELPP_DEBUG_LEVEL_OUTPUT     "DEBUG"
-#define _ELPP_WARNING_LEVEL_OUTPUT   "WARN"
-#define _ELPP_ERROR_LEVEL_OUTPUT     "ERROR"
-#define _ELPP_FATAL_LEVEL_OUTPUT     "FATAL"
-#define _ELPP_VERBOSE_LEVEL_OUTPUT   "VER"
-#define _ELPP_QA_LEVEL_OUTPUT        "QA"
-#define _ELPP_TRACE_LEVEL_OUTPUT     "TRACE"
+const std::string _ELPP_INFO_LEVEL_OUTPUT    =  "INFO";
+const std::string _ELPP_DEBUG_LEVEL_OUTPUT   =  "DEBUG";
+const std::string _ELPP_WARNING_LEVEL_OUTPUT =  "WARN";
+const std::string _ELPP_ERROR_LEVEL_OUTPUT   =  "ERROR";
+const std::string _ELPP_FATAL_LEVEL_OUTPUT   =  "FATAL";
+const std::string _ELPP_VERBOSE_LEVEL_OUTPUT =  "VER";
+const std::string _ELPP_QA_LEVEL_OUTPUT      =  "QA";
+const std::string _ELPP_TRACE_LEVEL_OUTPUT   =  "TRACE";
 
 //
 // Low-level log evaluation
@@ -744,8 +746,6 @@ namespace helper {
             kTimeOnly,
             kDateTime
         };
-        static const char* kTimeFormatLocal_;
-        static const char* kDateFormatLocal_;
 #if _ELPP_OS_WINDOWS
     static void gettimeofday(struct timeval *tv) {
         if (tv != NULL) {
@@ -772,6 +772,13 @@ namespace helper {
 #endif
         // Gets current date and time with milliseconds.
         static std::string getDateTime(unsigned int format_) {
+#if _ELPP_OS_UNIX
+            const char* kTimeFormatLocal_ = "%H:%M:%S";
+            const char* kDateFormatLocal_ = "%d/%m/%Y";
+#elif _ELPP_OS_WINDOWS
+            const char* kTimeFormatLocal_ = "HH':'mm':'ss";
+            const char* kDateFormatLocal_ = "dd/MM/yyyy";
+#endif // _ELPP_OS_UNIX
             long milliSeconds = 0;
             const int kDateBuffSize_ = 30;
             char dateBuffer_[kDateBuffSize_] = "";
@@ -1035,21 +1042,21 @@ public:
     explicit RegisteredSeverityLevels(void)
     {
         registerNew(
-                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, std::string(DEBUG_LOG_FORMAT), _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, std::string(INFO_LOG_FORMAT), _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, std::string(WARNING_LOG_FORMAT), _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, std::string(ERROR_LOG_FORMAT), _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, std::string(FATAL_LOG_FORMAT), _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, std::string(VERBOSE_LOG_FORMAT), _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, std::string(QA_LOG_FORMAT), _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, std::string(TRACE_LOG_FORMAT), _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1149,8 +1156,8 @@ class Logger {
 public:
     explicit Logger(void) :
         kFinalFilename_(USE_CUSTOM_LOCATION ?
-                            std::string(CUSTOM_LOG_FILE_LOCATION) + std::string(LOG_FILENAME):
-                            std::string(LOG_FILENAME)),
+                            CUSTOM_LOG_FILE_LOCATION + LOG_FILENAME:
+                            LOG_FILENAME),
         kUser_(OSUtilities::currentUser()),
         kHost_(OSUtilities::currentHost()),
         initialized_(true),
@@ -1420,13 +1427,7 @@ private:
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
 }; // class Logger
-#if _ELPP_OS_UNIX
-    const char* easyloggingpp::internal::DateUtilities::kTimeFormatLocal_ = "%H:%M:%S";
-    const char* easyloggingpp::internal::DateUtilities::kDateFormatLocal_ = "%d/%m/%Y";
-#elif _ELPP_OS_WINDOWS
-    const char* easyloggingpp::internal::DateUtilities::kTimeFormatLocal_ = "HH':'mm':'ss";
-    const char* easyloggingpp::internal::DateUtilities::kDateFormatLocal_ = "dd/MM/yyyy";
-#endif // _ELPP_OS_UNIX
+
 //
 // Helper macros
 //
@@ -1606,7 +1607,7 @@ public:
     }
     template <typename T>
     inline LogWriter& operator<<(const QVector<T>& vec_) {
-        operator<<(const_cast<QVector<T> >(vec_));
+        operator<<(vec_.toList());
         return *this;
     }
     template <class K, class V>

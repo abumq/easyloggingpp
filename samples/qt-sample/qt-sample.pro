@@ -7,5 +7,5 @@ TARGET = main.cpp.bin
 TEMPLATE = app
 
 SOURCES += main.cpp
-HEADERS += mythread.h \
-    ../../easylogging++.h
+HEADERS += ../../easylogging++.h \
+        mythread.h
