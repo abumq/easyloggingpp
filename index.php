@@ -1,7 +1,7 @@
 <?php
     include_once "../../format.php";
     global $webAddr;
-    $currentVersion = "v 7.41";
+    $currentVersion = "v 7.42";
     $releaseDate = "25-03-2013 1844hrs";
 ?>
 

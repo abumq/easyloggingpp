@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.41                                                         //
+//   EasyLogging++ v7.42                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -100,6 +100,11 @@
 // Details at https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking
 //
 #define _ENABLE_PERFORMANCE_TRACKING 1
+
+//
+// Severity level for performance tracking. Recommendation is PDEBUG
+//
+#define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
 //
 // High-level log evaluation
@@ -513,10 +518,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.41"); }
+    static inline const std::string version(void) { return std::string("7.42"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("26-03-2013 0941hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("27-03-2013 1106hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1639,18 +1644,18 @@ private:
 //
 // Performance tracking macros
 //
-#if (_ELPP_DEBUG_LOG && _ENABLE_PERFORMANCE_TRACKING)
+#if (_ENABLE_PERFORMANCE_TRACKING && !defined(_DISABLE_PERFORMANCE_TRACKING))
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
 #   define FUNC_SUB_COMMON_START {                                                                              \
         if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                                           \
-            PDEBUG << START_FUNCTION_LOG;                                                                       \
+            _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                               \
         }                                                                                                       \
         timeval functionStartTime, functionEndTime;                                                             \
         gettimeofday(&functionStartTime, NULL);
-#    define FUNC_SUB_COMMON_END gettimeofday(&functionEndTime, NULL); PDEBUG << TIME_OUTPUT;
+#    define FUNC_SUB_COMMON_END gettimeofday(&functionEndTime, NULL); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
 #    define END_SUB FUNC_SUB_COMMON_END }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
