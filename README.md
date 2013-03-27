@@ -591,3 +591,6 @@ The default format for each of above log level has been made default after caref
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
 
 Version: 5.0+
+
+#### Tips For Performance Improvement
+* When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `SHOW_STD_OUTPUT` to false
