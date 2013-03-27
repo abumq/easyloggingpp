@@ -29,12 +29,17 @@
 //   3. This notice may not be removed or altered from any source                //
 //      distribution                                                             //
 //                                                                               //
-//   Part of this software uses/include code from TinyThread++                   //
 //                                                                               //
 ///////////////////////////////////////////////////////////////////////////////////
 
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
+//
+//
+//
+// ********* ******* ***** *** * CONFIGURATION SECTION * *** ***** ******* *********
+// Details at https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#configuration
+//
 
 // _LOGGING_ENABLED specifies whether or not writing logs are enabled.
 // If this is set to 0, nothing will be logged. On the contrary, 1 means
@@ -106,279 +111,8 @@
 //
 #define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
+namespace easyloggingpp { namespace configurations {
 //
-// High-level log evaluation
-//
-#if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
-#    define _ENABLE_EASYLOGGING 1
-#endif // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
-
-//
-// OS evaluation
-//
-// Windows
-#if defined(_WIN32)
-#    define _ELPP_OS_WINDOWS 1
-#    define _ELPP_OS_WINDOWS_32 1
-#endif // defined(_WIN32)
-#if defined(_WIN64)
-#    define _ELPP_OS_WINDOWS 1
-#    define _ELPP_OS_WINDOWS_64 1
-#endif // defined(_WIN64)
-// Linux
-#if (defined(__linux) || defined(__linux__))
-#    define _ELPP_OS_LINUX 1
-#endif // (defined(__linux) || defined(__linux__))
-// Mac
-#if defined(__APPLE__)
-#    define _ELPP_OS_MAC 1
-#endif // defined(__APPLE__)
-
-#define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
-
-//
-// Log location macros
-//
-#if !defined(__FILE__)
-#    define __FILE__ ""
-#endif // !defined(__FILE__)
-#if !defined(__LINE__)
-#    define __LINE__ ""
-#endif // !defined(__LINE__)
-// Determine appropriate function macro according to current compiler
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#    define __func__ __FUNCTION__
-#elif defined(__GNUC__) && (__GNUC__ >= 2)
-#   define __func__ __PRETTY_FUNCTION__
-#else
-#    ifdef __func__
-#        undef __func__
-#        define __func__ ""
-#    else
-#        define __func__ ""
-#    endif
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
-
-//
-// Compiler evaluation
-//
-// GNU
-#if defined(__GNUC__)
-#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#        define _CXX0X 1
-#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#endif // defined(__GNUC__)
-// VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
-#if defined(_MSC_VER)
-#    if (_MSC_VER == 1600)
-#        define _CXX0X 1
-#    elif (_MSC_VER == 1700)
-#        define _CXX11 1
-#    endif // (_MSC_VER == 1600)
-#endif // defined(_MSC_VER)
-
-#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-// Embedded fast_mutex (part of TinyThread++)
-#ifndef _FAST_MUTEX_H_
-#define _FAST_MUTEX_H_
-#if !defined(_TTHREAD_PLATFORM_DEFINED_)
-#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
-#define _TTHREAD_WIN32_
-#else
-#define _TTHREAD_POSIX_
-#endif
-#define _TTHREAD_PLATFORM_DEFINED_
-#endif
-#if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
-    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) || 	 \
-    (defined(__GNUC__) && (defined(__ppc__)))
-#define _FAST_MUTEX_ASM_
-#else
-#define _FAST_MUTEX_SYS_
-#endif
-
-#if defined(_TTHREAD_WIN32_)
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#define __UNDEF_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#ifdef __UNDEF_LEAN_AND_MEAN
-#undef WIN32_LEAN_AND_MEAN
-#undef __UNDEF_LEAN_AND_MEAN
-#endif
-#else
-#ifdef _FAST_MUTEX_ASM_
-#include <sched.h>
-#else
-#include <pthread.h>
-#endif
-#endif
-namespace tthread {
-class fast_mutex {
-public:
-#if defined(_FAST_MUTEX_ASM_)
-    fast_mutex() : mLock(0) {}
-#else
-    fast_mutex()
-    {
-#if defined(_TTHREAD_WIN32_)
-        InitializeCriticalSection(&mHandle);
-#elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_init(&mHandle, NULL);
-#endif
-    }
-#endif
-#if !defined(_FAST_MUTEX_ASM_)
-    ~fast_mutex()
-    {
-#if defined(_TTHREAD_WIN32_)
-        DeleteCriticalSection(&mHandle);
-#elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_destroy(&mHandle);
-#endif
-    }
-#endif
-    inline void lock()
-    {
-#if defined(_FAST_MUTEX_ASM_)
-        bool gotLock;
-        do { gotLock = try_lock();
-            if(!gotLock)
-            {
-#if defined(_TTHREAD_WIN32_)
-                Sleep(0);
-#elif defined(_TTHREAD_POSIX_)
-                sched_yield();
-#endif
-            }
-        } while(!gotLock);
-#else
-#if defined(_TTHREAD_WIN32_)
-        EnterCriticalSection(&mHandle);
-#elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_lock(&mHandle);
-#endif
-#endif
-    }
-    inline bool try_lock()
-    {
-#if defined(_FAST_MUTEX_ASM_)
-        int oldLock;
-#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
-#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,1
-                    mov ecx,ptrLock
-                    xchg eax,[ecx]
-                    mov oldLock,eax
-        }
-#elif defined(__GNUC__) && (defined(__ppc__))
-        int newLock = 1;
-        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
-                    "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
-#endif
-        return (oldLock == 0);
-#else
-#if defined(_TTHREAD_WIN32_)
-        return TryEnterCriticalSection(&mHandle) ? true : false;
-#elif defined(_TTHREAD_POSIX_)
-        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
-#endif
-#endif
-    }
-    inline void unlock()
-    {
-#if defined(_FAST_MUTEX_ASM_)
-#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
-#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,0
-                    mov ecx,ptrLock
-                    xchg eax,[ecx]
-        }
-#elif defined(__GNUC__) && (defined(__ppc__))
-        asm volatile ("sync\n\t" : : : "memory");
-        mLock = 0;
-#endif
-#else
-#if defined(_TTHREAD_WIN32_)
-        LeaveCriticalSection(&mHandle);
-#elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_unlock(&mHandle);
-#endif
-#endif
-    }
-private:
-#if defined(_FAST_MUTEX_ASM_)
-    int mLock;
-#else
-#if defined(_TTHREAD_WIN32_)
-    CRITICAL_SECTION mHandle;
-#elif defined(_TTHREAD_POSIX_)
-    pthread_mutex_t mHandle;
-#endif
-#endif
-};
-}
-#endif // _FAST_MUTEX_H_
-//
-// Mutex specific initialization
-//
-#    define _ELPP_ENABLE_MUTEX 1
-#    define _ELPP_MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
-#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
-#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
-#else
-#    define _ELPP_ENABLE_MUTEX 0
-#    define _ELPP_MUTEX_SPECIFIC_INIT
-#    define _ELPP_LOCK_MUTEX
-#    define _ELPP_UNLOCK_MUTEX
-#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-//
-// Includes
-//
-#include <ctime>
-#include <cstring>
-#include <cstdlib>
-#include <cctype>
-#if _ELPP_OS_WINDOWS
-#    include <direct.h>
-#    include <windows.h>
-#endif // _ELPP_OS_WINDOWS
-#if _ELPP_OS_UNIX
-#    include <sys/stat.h>
-#    include <sys/time.h>
-#endif // _ELPP_OS_UNIX
-#include <string>
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <algorithm>
-#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-// For logging STL based templates
-#    include <list> // std::list
-#    include <utility> // std::pair
-#    include <map> // std::map
-#endif // !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-// For logging Qt based classes & templates
-#    include <QString>
-#    include <QVector>
-#    include <QList>
-#    include <QPair>
-#    include <QMap>
-#endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
-
-namespace easyloggingpp {
-
-namespace configurations {
-
 // This section contains configurations that are to set by developer.
 // These sections can be splitted into two parts;
 //
@@ -408,15 +142,16 @@ namespace configurations {
 //
 // Further reading on:
 // https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#log-format
-const std::string    DEFAULT_LOG_FORMAT       =    "%datetime %level  [%type] %log\n";
-const std::string    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
-const std::string    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
-const std::string    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
-const std::string    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
-const std::string    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
-const std::string    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
-const std::string    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
-const std::string    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
+
+const char*    DEFAULT_LOG_FORMAT       =    "%datetime %level  [%type] %log\n";
+const char*    DEBUG_LOG_FORMAT         =    "%datetime %level [%type] [%user@%host] [%func] [%loc] %log\n";
+const char*    INFO_LOG_FORMAT          =    DEFAULT_LOG_FORMAT;
+const char*    WARNING_LOG_FORMAT       =    DEFAULT_LOG_FORMAT;
+const char*    ERROR_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
+const char*    FATAL_LOG_FORMAT         =    "%datetime %level [%type] %log\n";
+const char*    VERBOSE_LOG_FORMAT       =    "%datetime %level-%vlevel [%type] %log\n";
+const char*    QA_LOG_FORMAT            =    "%datetime %level    [%type] %log\n";
+const char*    TRACE_LOG_FORMAT         =    "%datetime %level [%type] [%func] [%loc] %log\n";
 
 // Part 2 is miscellaneous configurations
 
@@ -440,18 +175,18 @@ const bool           SAVE_TO_FILE             =    true;
 //   Filename of log file. This should only be filename and not the whole path.
 //   Path is set in different configuration below (CUSTOM_LOG_FILE_LOCATION).
 //   If custom location is not used, log will be saved in executable path.
-const std::string    LOG_FILENAME             =    "myeasylog.log";
+const char*    LOG_FILENAME             =    "myeasylog.log";
 
 
 // CUSTOM_LOG_FILE_LOCATION
 //   Path where log file should be saved. Configuration below (USE_CUSTOM_LOCATION)
 //   must be set to true in order for this to take affect.
 //   NOTES
-//    * This location path should end with slash ( '/' for linux and '\' for windows)
+//    * This location path should end with slash ( '/' for linux and '\\' for windows)
 //    * This has to be absolute path. Relative paths will not work
 //   Recommendation: Set value according to your need - Do not leave empty
 //   If you do not want to use this set USE_CUSTOM_LOCATION to false instead.
-const std::string    CUSTOM_LOG_FILE_LOCATION =    "logs/";
+const char*    CUSTOM_LOG_FILE_LOCATION =    "logs/";
 
 
 // USE_CUSTOM_LOCATION
@@ -468,6 +203,282 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 
 } // namespace configurations
 } // namespace easyloggingpp
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+// ******* ***** *** * PLEASE DO NOT MODIFY ANY LINE BEYOND THIS POINT * *** ***** *******
+//
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+//
+//
+// Log location macros
+//
+#if !defined(__FILE__)
+#    define __FILE__ ""
+#endif // !defined(__FILE__)
+#if !defined(__LINE__)
+#    define __LINE__ ""
+#endif // !defined(__LINE__)
+// Determine appropriate function macro according to current compiler
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#    define __func__ __FUNCSIG__
+#elif defined(__GNUC__) && (__GNUC__ >= 2)
+#   define __func__ __PRETTY_FUNCTION__
+#else
+#    if !defined(__func__)
+#        define __func__ ""
+#    endif // __func__
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
+
+//
+// Compiler evaluation
+//
+// GNU
+#if defined(__GNUC__)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#        define _CXX0X 1
+#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+#endif // defined(__GNUC__)
+// VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
+#if defined(_MSC_VER)
+#    if (_MSC_VER == 1600)
+#        define _CXX0X 1
+#    elif (_MSC_VER == 1700)
+#        define _CXX11 1
+#    endif // (_MSC_VER == 1600)
+#endif // defined(_MSC_VER)
+
+//
+// High-level log evaluation
+//
+#if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
+#    define _ENABLE_EASYLOGGING 1
+#endif // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
+//
+// OS evaluation
+//
+// Windows
+#if defined(_WIN32)
+#    define _ELPP_OS_WINDOWS 1
+#    define _ELPP_OS_WINDOWS_32 1
+#endif // defined(_WIN32)
+#if defined(_WIN64)
+#    define _ELPP_OS_WINDOWS 1
+#    define _ELPP_OS_WINDOWS_64 1
+#endif // defined(_WIN64)
+// Linux
+#if (defined(__linux) || defined(__linux__))
+#    define _ELPP_OS_LINUX 1
+#endif // (defined(__linux) || defined(__linux__))
+// Mac
+#if defined(__APPLE__)
+#    define _ELPP_OS_MAC 1
+#endif // defined(__APPLE__)
+// Unix
+#define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
+
+//
+// Includes
+//
+#include <ctime>
+#include <cstring>
+#include <cstdlib>
+#include <cctype>
+#if _ELPP_OS_UNIX
+#    include <sys/stat.h>
+#    include <sys/time.h>
+#elif _ELPP_OS_WINDOWS
+#    include <direct.h>
+#    include <Windows.h>
+#endif // _ELPP_OS_UNIX
+#include <string>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <functional>
+#include <algorithm>
+#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+// For logging STL based templates
+#    include <list> // std::list
+#    include <utility> // std::pair
+#    include <map> // std::map
+#endif // !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+// For logging Qt based classes & templates
+#    include <QString>
+#    include <QVector>
+#    include <QList>
+#    include <QPair>
+#    include <QMap>
+#endif // defined(QT_CORE_LIB) && (_ENABLE_EASYLOGGING) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
+//
+// Mutex
+//
+#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+// Embedded fast_mutex (part of TinyThread++)
+#    ifndef _ELPP_FAST_MUTEX_H_
+#    define _ELPP_FAST_MUTEX_H_
+#        if !defined(_TTHREAD_PLATFORM_DEFINED_)
+#            if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+#                define _TTHREAD_WIN32_
+#            else
+#                define _TTHREAD_POSIX_
+#            endif
+#            define _TTHREAD_PLATFORM_DEFINED_
+#        endif
+#    if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
+        (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
+        (defined(__GNUC__) && (defined(__ppc__)))
+#        define _FAST_MUTEX_ASM_
+#    else
+#        define _FAST_MUTEX_SYS_
+#    endif
+
+#    if defined(_TTHREAD_WIN32_)
+#        ifndef WIN32_LEAN_AND_MEAN
+#            define WIN32_LEAN_AND_MEAN
+#            define __UNDEF_LEAN_AND_MEAN
+#        endif
+#        ifdef __UNDEF_LEAN_AND_MEAN
+#            undef WIN32_LEAN_AND_MEAN
+#            undef __UNDEF_LEAN_AND_MEAN
+#        endif
+#    else
+#        ifdef _FAST_MUTEX_ASM_
+#            include <sched.h>
+#        else
+#            include <pthread.h>
+#        endif
+#    endif
+namespace tthread {
+class fast_mutex {
+public:
+#    if defined(_FAST_MUTEX_ASM_)
+        fast_mutex() : mLock(0) {}
+#    else
+    fast_mutex() {
+#        if defined(_TTHREAD_WIN32_)
+            InitializeCriticalSection(&mHandle);
+#        elif defined(_TTHREAD_POSIX_)
+            pthread_mutex_init(&mHandle, NULL);
+#        endif
+    }
+#    endif
+#    if !defined(_FAST_MUTEX_ASM_)
+        ~fast_mutex() {
+#        if defined(_TTHREAD_WIN32_)
+            DeleteCriticalSection(&mHandle);
+#        elif defined(_TTHREAD_POSIX_)
+            pthread_mutex_destroy(&mHandle);
+#        endif
+    }
+#    endif
+    inline void lock() {
+#    if defined(_FAST_MUTEX_ASM_)
+        bool gotLock;
+        do { gotLock = try_lock();
+            if(!gotLock) {
+#        if defined(_TTHREAD_WIN32_)
+                Sleep(0);
+#        elif defined(_TTHREAD_POSIX_)
+                sched_yield();
+#        endif
+            }
+        } while(!gotLock);
+#    else
+#        if defined(_TTHREAD_WIN32_)
+            EnterCriticalSection(&mHandle);
+#        elif defined(_TTHREAD_POSIX_)
+            pthread_mutex_lock(&mHandle);
+#        endif
+#    endif
+    }
+    inline bool try_lock() {
+#    if defined(_FAST_MUTEX_ASM_)
+        int oldLock;
+#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+            asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
+#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+            int *ptrLock = &mLock;
+            __asm {
+                mov eax,1
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+                    mov oldLock,eax
+            }
+#        elif defined(__GNUC__) && (defined(__ppc__))
+            int newLock = 1;
+            asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
+                    "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
+#        endif
+            return (oldLock == 0);
+#    else
+#    if defined(_TTHREAD_WIN32_)
+        return TryEnterCriticalSection(&mHandle) ? true : false;
+#    elif defined(_TTHREAD_POSIX_)
+        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
+#    endif
+#    endif
+    }
+    inline void unlock() {
+#    if defined(_FAST_MUTEX_ASM_)
+#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+            asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
+#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+            int *ptrLock = &mLock;
+            __asm {
+                mov eax,0
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+            }
+#        elif defined(__GNUC__) && (defined(__ppc__))
+            asm volatile ("sync\n\t" : : : "memory");
+            mLock = 0;
+#        endif
+#    else
+#        if defined(_TTHREAD_WIN32_)
+            LeaveCriticalSection(&mHandle);
+#           elif defined(_TTHREAD_POSIX_)
+            pthread_mutex_unlock(&mHandle);
+#        endif
+#    endif
+    }
+private:
+#    if defined(_FAST_MUTEX_ASM_)
+        int mLock;
+#    else
+#    if defined(_TTHREAD_WIN32_)
+        CRITICAL_SECTION mHandle;
+#    elif defined(_TTHREAD_POSIX_)
+        pthread_mutex_t mHandle;
+#    endif
+#    endif
+};
+} // namespace tthread
+#endif // _ELPP_FAST_MUTEX_H_
+//
+// Mutex specific initialization
+//
+#    define _ELPP_ENABLE_MUTEX 1
+#    define _ELPP_MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
+#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
+#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
+#else
+#    define _ELPP_ENABLE_MUTEX 0
+#    define _ELPP_MUTEX_SPECIFIC_INIT
+#    define _ELPP_LOCK_MUTEX
+#    define _ELPP_UNLOCK_MUTEX
+#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 
 //
 // Log level name outputs
@@ -480,6 +491,7 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _ELPP_VERBOSE_LEVEL_OUTPUT   "VER"
 #define _ELPP_QA_LEVEL_OUTPUT        "QA"
 #define _ELPP_TRACE_LEVEL_OUTPUT     "TRACE"
+
 //
 // Low-level log evaluation
 //
@@ -493,10 +505,9 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #define _ELPP_TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 
 #if _ELPP_OS_UNIX
-// Permissions for unix-based systems
-#define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
+    // Permissions for unix-based systems
+#   define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
-
 #define _SUPPRESS_UNUSED_WARN(x) (void)x
 
 namespace easyloggingpp {
@@ -598,11 +609,13 @@ namespace helper {
 
         // Gets current username.
         static std::string currentUser(void) {
-#if _ELPP_OS_WINDOWS
-            const char* username = getenv("USERNAME");
-#elif _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX 
             const char* username = getenv("USER");
-#endif // _ELPP_OS_WINDOWS
+#elif _ELPP_OS_WINDOWS
+            char* username = NULL;
+            size_t len;
+            errno_t err = _dupenv_s(&username, &len, "USERNAME");
+#endif // _ELPP_OS_UNIX
             if ((username == NULL) || (!strcmp(username, ""))) {
                 // Try harder on unix-based systems
                 return OSUtilities::getBashOutput("whoami");
@@ -613,11 +626,13 @@ namespace helper {
 
         // Gets current host name or computer name.
         static std::string currentHost(void) {
-#if _ELPP_OS_WINDOWS
-            const char* hostname = getenv("COMPUTERNAME");
-#elif _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX
             const char* hostname = getenv("HOSTNAME");
-#endif // _ELPP_OS_WINDOWS
+#elif _ELPP_OS_WINDOWS
+            char* hostname = NULL;
+            size_t len;
+            errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAME");
+#endif // _ELPP_OS_UNIX
             if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
                 // Try harder on unix-based systems
                 std::string hostnameStr = OSUtilities::getBashOutput("hostname");
@@ -636,16 +651,16 @@ namespace helper {
             if (path_ == NULL) {
                 return false;
             }
-#if _ELPP_OS_WINDOWS
+#if _ELPP_OS_UNIX
+            struct stat st;
+            return (stat(path_, &st) == 0);
+#elif _ELPP_OS_WINDOWS
             DWORD fileType = GetFileAttributesA(path_);
             if (fileType == INVALID_FILE_ATTRIBUTES) {
                 return false;
             }
-            return (fileType & FILE_ATTRIBUTE_DIRECTORY);
-#elif _ELPP_OS_UNIX
-            struct stat st;
-            return (stat(path_, &st) == 0);
-#endif // _ELPP_OS_WINDOWS
+            return (fileType & FILE_ATTRIBUTE_DIRECTORY) == 0 ? false : true;
+#endif // _ELPP_OS_UNIX
         }
 
         // Creates path as specified
@@ -656,27 +671,34 @@ namespace helper {
             if (OSUtilities::pathExists(path_.c_str())) {
                 return true;
             }
-#   if _ELPP_OS_WINDOWS
-            const char* pathDelim_ = "\\";
-#   elif _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX
             const char* pathDelim_ = "/";
-#   endif // _ELPP_OS_WINDOWS
+#elif _ELPP_OS_WINDOWS
+            char pathDelim_[] = "\\";
+#endif // _ELPP_OS_UNIX
             int status = -1;
             char* currPath_ = const_cast<char*>(path_.c_str());
             std::string buildingPath_;
             if (path_[0] == '/') {
                 buildingPath_ = "/";
             }
+#if _ELPP_OS_UNIX
             currPath_ = strtok(currPath_, pathDelim_);
+#elif _ELPP_OS_WINDOWS
+            // Use secure functions API
+            char* nextTok_;
+            currPath_ = strtok_s(currPath_, pathDelim_, &nextTok_);
+#endif // _ELPP_OS_UNIX
             while (currPath_ != NULL) {
                 buildingPath_.append(currPath_);
                 buildingPath_.append(pathDelim_);
-#   if _ELPP_OS_WINDOWS
-                status = _mkdir(buildingPath_.c_str());
-#   elif _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX
                 status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
-#   endif // _ELPP_OS_WINDOWS
                 currPath_ = strtok(NULL, pathDelim_);
+#elif _ELPP_OS_WINDOWS
+                status = _mkdir(buildingPath_.c_str());
+                currPath_ = strtok_s(NULL, pathDelim_, &nextTok_);
+#endif // _ELPP_OS_UNIX
             }
             if (status == -1) {
                 return false;
@@ -722,17 +744,41 @@ namespace helper {
             kTimeOnly,
             kDateTime
         };
-
+        static const char* kTimeFormatLocal_;
+        static const char* kDateFormatLocal_;
+#if _ELPP_OS_WINDOWS
+    static void gettimeofday(struct timeval *tv) {
+        if (tv != NULL) {
+#   if defined(_MSC_EXTENSIONS)
+        const unsigned __int64 delta_ = 11644473600000000Ui64;
+#   else
+        const unsigned __int64 delta_ = 11644473600000000ULL;
+#   endif
+        const double secOffSet = 0.000001;
+        const unsigned long usecOffSet = 1000000;
+        FILETIME fileTime_;
+        GetSystemTimeAsFileTime(&fileTime_);
+        unsigned __int64 present_ = 0;
+        present_ |= fileTime_.dwHighDateTime;
+        present_ = present_ << 32;
+        present_ |= fileTime_.dwLowDateTime;
+        present_ /= 10; // mic-sec
+        // Subtract the difference 
+        present_ -= delta_;
+        tv->tv_sec = static_cast<long>(present_ * secOffSet);
+        tv->tv_usec = static_cast<long>(present_ % usecOffSet);
+      }
+    }
+#endif
         // Gets current date and time with milliseconds.
         static std::string getDateTime(unsigned int format_) {
             long milliSeconds = 0;
             const int kDateBuffSize_ = 30;
-            const char* kTimeFormatLocal_ = "%H:%M:%S";
-            const char* kDateFormatLocal_ = "%d/%m/%Y";
             char dateBuffer_[kDateBuffSize_] = "";
-            char dateFormat_[kDateBuffSize_];
             char dateBufferOut_[kDateBuffSize_] = "";
-            if (format_ == kDateOnly) {
+#if _ELPP_OS_UNIX
+            char dateFormat_[kDateBuffSize_];
+            if (format_ == kDateOnly) { 
                 strcpy(dateFormat_, kDateFormatLocal_);
             } else if (format_ == kTimeOnly) {
                 strcpy(dateFormat_, kTimeFormatLocal_);
@@ -741,7 +787,6 @@ namespace helper {
                 strcat(dateFormat_, " ");
                 strcat(dateFormat_, kTimeFormatLocal_);
             }
-#if _ELPP_OS_UNIX
             timeval currTime;
             gettimeofday(&currTime, NULL);
             if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
@@ -754,11 +799,19 @@ namespace helper {
                 sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
             }
 #elif _ELPP_OS_WINDOWS
-            if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, "HH':'mm':'ss", dateBuffer_, kDateBufferSize_) != 0) {
-                static DWORD oldTick = GetTickCount();
-                if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
-                    milliSeconds = (long)(GetTickCount() - oldTick) % 1000;
-                    sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+            if ((format_ == kDateTime) || (format_ == kDateOnly)) {
+                if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
+                    sprintf_s(dateBufferOut_, "%s", dateBuffer_);
+                }
+            }
+            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+                if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
+                    milliSeconds = (long)(GetTickCount()) % 1000;
+                    if (format_ == kDateTime) {
+                        sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
+                    } else {
+                        sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+                    }
                 }
             }
 #endif // _ELPP_OS_UNIX
@@ -785,9 +838,10 @@ namespace helper {
             return stream_.str();
         }
 
-        static double getTimeDifference(timeval& endTime, timeval& startTime) {
+        static inline double getTimeDifference(timeval& endTime, timeval& startTime) {
              return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
         }
+
     private:
         // Prevent initilization
         DateUtilities(void);
@@ -886,8 +940,7 @@ public:
     class Predicate {
     public:
         explicit Predicate(const std::string& name_) :
-            name_(name_)
-        {
+            name_(name_) {
         }
         bool operator()(const LogType* logType_) {
             return ((logType_ != NULL) &&
@@ -959,8 +1012,7 @@ public:
     class Predicate {
     public:
         explicit Predicate(const std::string& name_) :
-            name_(name_)
-        {
+            name_(name_) {
         }
         inline bool operator()(const SeverityLevel* level_) {
             return *level_ == name_;
@@ -983,21 +1035,21 @@ public:
     explicit RegisteredSeverityLevels(void)
     {
         registerNew(
-                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, std::string(DEBUG_LOG_FORMAT), _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, std::string(INFO_LOG_FORMAT), _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, std::string(WARNING_LOG_FORMAT), _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, std::string(ERROR_LOG_FORMAT), _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, std::string(FATAL_LOG_FORMAT), _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, std::string(VERBOSE_LOG_FORMAT), _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, std::string(QA_LOG_FORMAT), _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, std::string(TRACE_LOG_FORMAT), _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1086,7 +1138,7 @@ public:
     LogCounter* get(const char* file_, unsigned long int line_) {
         LogCounter::Iterator iter = std::find_if(list_.begin(), list_.end(), LogCounter::Predicate(file_, line_));
         if (iter != list_.end() && *iter != NULL) {
-            return *iter;
+            return reinterpret_cast<LogCounter*>(*iter);
         }
         return NULL;
     }
@@ -1097,8 +1149,8 @@ class Logger {
 public:
     explicit Logger(void) :
         kFinalFilename_(USE_CUSTOM_LOCATION ?
-                            CUSTOM_LOG_FILE_LOCATION + LOG_FILENAME:
-                            LOG_FILENAME),
+                            std::string(CUSTOM_LOG_FILE_LOCATION) + std::string(LOG_FILENAME):
+                            std::string(LOG_FILENAME)),
         kUser_(OSUtilities::currentUser()),
         kHost_(OSUtilities::currentHost()),
         initialized_(true),
@@ -1109,8 +1161,8 @@ public:
         registeredLogCounters_(new RegisteredCounters()) {
         if (SAVE_TO_FILE) {
             fileGood_ = USE_CUSTOM_LOCATION ?
-                        !LOG_FILENAME.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
-                        !LOG_FILENAME.empty();
+                        !kFinalFilename_.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
+                        !kFinalFilename_.empty();
             if (fileGood_) {
 #if (_ALWAYS_CLEAN_LOGS)
                 logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out);
@@ -1202,8 +1254,8 @@ public:
         setArgs(argc, args);
     }
 
-    inline void buildLine(const std::string& logType_, const std::string& severityLevel_, const char* func_,
-                          const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
+    void buildLine(const std::string& logType_, const std::string& severityLevel_, const char* func_,
+                       const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
         SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
         currLogLine_ = level_->format();
         std::string formatSpecifier_ = "";
@@ -1234,7 +1286,6 @@ public:
             if (type_ && type_->name() == "TrivialLogger") {
                 displayType_ = false;
             }
-
             if (displayType_) {
 #endif // _NO_TRIVIAL_TYPE_DISPLAY
                 if (type_) {
@@ -1369,7 +1420,13 @@ private:
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
 }; // class Logger
-
+#if _ELPP_OS_UNIX
+    const char* easyloggingpp::internal::DateUtilities::kTimeFormatLocal_ = "%H:%M:%S";
+    const char* easyloggingpp::internal::DateUtilities::kDateFormatLocal_ = "%d/%m/%Y";
+#elif _ELPP_OS_WINDOWS
+    const char* easyloggingpp::internal::DateUtilities::kTimeFormatLocal_ = "HH':'mm':'ss";
+    const char* easyloggingpp::internal::DateUtilities::kDateFormatLocal_ = "dd/MM/yyyy";
+#endif // _ELPP_OS_UNIX
 //
 // Helper macros
 //
@@ -1642,17 +1699,23 @@ private:
 // Performance tracking macros
 //
 #if (_ENABLE_PERFORMANCE_TRACKING && !defined(_DISABLE_PERFORMANCE_TRACKING))
+#    if _ELPP_OS_UNIX
+#        define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
+#    elif _ELPP_OS_WINDOWS
+#        define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::DateUtilities::gettimeofday(tm);
+#    endif
 #    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
-#   define FUNC_SUB_COMMON_START {                                                                              \
+#    define FUNC_SUB_COMMON_START {                                                                             \
         if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                                           \
             _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                               \
         }                                                                                                       \
         timeval functionStartTime, functionEndTime;                                                             \
-        gettimeofday(&functionStartTime, NULL);
-#    define FUNC_SUB_COMMON_END gettimeofday(&functionEndTime, NULL); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
+        _ELPP_GET_CURR_TIME(&functionStartTime)
+#    define LOG_FUNC_PERFORMANCE _ELPP_GET_CURR_TIME(&functionEndTime); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
+#    define FUNC_SUB_COMMON_END LOG_FUNC_PERFORMANCE;
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
 #    define END_SUB FUNC_SUB_COMMON_END }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
@@ -1662,6 +1725,7 @@ private:
 #    define END_MAIN(return_value) FUNC_SUB_COMMON_END; return return_value; }
 #    define RETURN_MAIN(exit_status) return exit_status;
 #else
+#    define LOG_FUNC_PERFORMANCE
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
 #    define END_SUB }
 #    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
@@ -1670,7 +1734,7 @@ private:
 #    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
 #    define END_MAIN(x) return x; }
 #    define RETURN_MAIN(exit_status) return exit_status;
-#endif // _ELPP_DEBUG_LOG
+#endif // (_ENABLE_PERFORMANCE_TRACKING && !defined(_DISABLE_PERFORMANCE_TRACKING))
 
 namespace easyloggingpp {
 namespace helper {
@@ -1704,8 +1768,8 @@ public:
 } // namespace easyloggingpp
 
 #define _ELPP_LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal, _t, _l, __func__, __FILE__, __LINE__)
-#define _ELPP_LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional,_t, _l, __func__, __FILE__, __LINE__, _c)
-#define _ELPP_LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval,_t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
+#define _ELPP_LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional, _t, _l, __func__, __FILE__, __LINE__, _c)
+#define _ELPP_LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval, _t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 //
 // Custom injected loggers
 //
@@ -1905,4 +1969,4 @@ public:
 
 using namespace easyloggingpp::internal;
 
-#endif //EASYLOGGINGPP_H
+#endif // EASYLOGGINGPP_H
