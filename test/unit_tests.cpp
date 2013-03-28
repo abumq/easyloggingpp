@@ -53,16 +53,16 @@ int main(int argc, char** argv) {
   localAssert(_QUALIFIED_LOGGER.kFinalFilename_ == "logs/myeasylog.log");
 
   // Make sure log path exist
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION) == true);
+  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
   
   // Remove path and log file
   system(std::string(std::string("rm -rf ") + std::string(CUSTOM_LOG_FILE_LOCATION)).c_str());
   
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION) == false);
+  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == false);
 
   OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION);  
 
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION) == true);
+  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
 
   // Ensure we have 0 counters before writeLogs() is called,
   // writeLogs() register 1 counter
