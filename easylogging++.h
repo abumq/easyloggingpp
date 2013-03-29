@@ -206,8 +206,8 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 //   Determines length of milliseconds in date - **only applicable in UNIX**;
 //   for windows value is always 3
 //   Range: 3 - 6
-//   Default: 6
-const unsigned int   MILLISECONDS_LENGTH      =    6;
+//   Default: 3
+const unsigned int   MILLISECONDS_LENGTH      =    3;
 
 
 } // namespace configuration
@@ -527,7 +527,7 @@ public:
     static inline const std::string version(void) { return std::string("7.50"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("29-03-2013 1709hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("29-03-2013 1811hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
