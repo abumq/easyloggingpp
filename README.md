@@ -593,5 +593,39 @@ The default format for each of above log level has been made default after caref
 
 Version: 5.0+
 
+
+#### Tested On
+EasyLogging++ has been tested on following platforms (OS and compilers)
+
+**Operating Systems**
+
+![win7] Windows 7 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+
+![win8] Windows 8 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+
+![ubuntu] Ubuntu 12.04 / 12.10 (32-bit, 64-bit, g++ 4.6.3)
+
+![scientificlinux] Scientific Linux 6.2 (64-bit, g++ 4.4)
+
+![linuxmint] Linux Mint 14 (64-bit, g++ 4.7.2)
+
+**Compilers**
+
+![gcc] GNU Compiler Collection (g++ 4.4, g++ 4.6.3, g++ 4.7.2)
+
+![vcpp] Visual C++ (Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+
+*EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
+
 #### Tips For Performance Improvement
 * When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `SHOW_STD_OUTPUT` to false
+
+[ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
+[linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
+[scientificlinux]: http://www.icplusplus.com/tools/easylogging/icons/scientific-linux.png
+[mac]: http://www.icplusplus.com/tools/easylogging/icons/mac-osx.png
+[win7]: http://www.icplusplus.com/tools/easylogging/icons/windows7.png
+[win8]: http://www.icplusplus.com/tools/easylogging/icons/windows8.png
+[qt]: http://www.icplusplus.com/tools/easylogging/icons/qt.png
+[gcc]: http://www.icplusplus.com/tools/easylogging/icons/gcc.png
+[vcpp]: http://www.icplusplus.com/tools/easylogging/icons/vcpp.png
