@@ -16,7 +16,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 using namespace easyloggingpp::internal;
 using namespace easyloggingpp::internal::helper;
-using namespace easyloggingpp::configurations;
+using namespace easyloggingpp::configuration;
 using namespace easyloggingpp::helper;
 
 // Do not use cassert as we want custom

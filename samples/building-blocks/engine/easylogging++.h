@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.43                                                         //
+//   EasyLogging++ v7.45                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -112,7 +112,7 @@
 #define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
 #include <string>
-namespace easyloggingpp { namespace configurations {
+namespace easyloggingpp { namespace configuration {
 //
 // This section contains configurations that are to set by developer.
 // These sections can be splitted into two parts;
@@ -202,7 +202,15 @@ const bool           USE_CUSTOM_LOCATION      =    true;
 //   Recommendation: false
 const bool           SHOW_START_FUNCTION_LOG  =    false;
 
-} // namespace configurations
+// MILLISECONDS_LENGTH
+//   Determines length of milliseconds in date - **only applicable in UNIX**;
+//   for windows value is always 3
+//   Range: 3 - 6
+//   Default: 6
+const unsigned int   MILLISECONDS_LENGTH      =    6;
+
+
+} // namespace configuration
 } // namespace easyloggingpp
 //
 //
@@ -339,8 +347,8 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 #            define _TTHREAD_PLATFORM_DEFINED_
 #        endif
 #    if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
-        (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
-        (defined(__GNUC__) && (defined(__ppc__)))
+    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
+    (defined(__GNUC__) && (defined(__ppc__)))
 #        define _FAST_MUTEX_ASM_
 #    else
 #        define _FAST_MUTEX_SYS_
@@ -366,22 +374,22 @@ namespace tthread {
 class fast_mutex {
 public:
 #    if defined(_FAST_MUTEX_ASM_)
-        fast_mutex() : mLock(0) {}
+    fast_mutex() : mLock(0) {}
 #    else
     fast_mutex() {
 #        if defined(_TTHREAD_WIN32_)
-            InitializeCriticalSection(&mHandle);
+        InitializeCriticalSection(&mHandle);
 #        elif defined(_TTHREAD_POSIX_)
-            pthread_mutex_init(&mHandle, NULL);
+        pthread_mutex_init(&mHandle, NULL);
 #        endif
     }
 #    endif
 #    if !defined(_FAST_MUTEX_ASM_)
-        ~fast_mutex() {
+    ~fast_mutex() {
 #        if defined(_TTHREAD_WIN32_)
-            DeleteCriticalSection(&mHandle);
+        DeleteCriticalSection(&mHandle);
 #        elif defined(_TTHREAD_POSIX_)
-            pthread_mutex_destroy(&mHandle);
+        pthread_mutex_destroy(&mHandle);
 #        endif
     }
 #    endif
@@ -399,9 +407,9 @@ public:
         } while(!gotLock);
 #    else
 #        if defined(_TTHREAD_WIN32_)
-            EnterCriticalSection(&mHandle);
+        EnterCriticalSection(&mHandle);
 #        elif defined(_TTHREAD_POSIX_)
-            pthread_mutex_lock(&mHandle);
+        pthread_mutex_lock(&mHandle);
 #        endif
 #    endif
     }
@@ -409,21 +417,21 @@ public:
 #    if defined(_FAST_MUTEX_ASM_)
         int oldLock;
 #        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
+        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
 #        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-            int *ptrLock = &mLock;
-            __asm {
-                mov eax,1
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,1
                     mov ecx,ptrLock
                     xchg eax,[ecx]
                     mov oldLock,eax
-            }
+        }
 #        elif defined(__GNUC__) && (defined(__ppc__))
-            int newLock = 1;
-            asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
-                    "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
+        int newLock = 1;
+        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
+                      "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
 #        endif
-            return (oldLock == 0);
+        return (oldLock == 0);
 #    else
 #    if defined(_TTHREAD_WIN32_)
         return TryEnterCriticalSection(&mHandle) ? true : false;
@@ -435,34 +443,34 @@ public:
     inline void unlock() {
 #    if defined(_FAST_MUTEX_ASM_)
 #        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
+        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
 #        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-            int *ptrLock = &mLock;
-            __asm {
-                mov eax,0
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,0
                     mov ecx,ptrLock
                     xchg eax,[ecx]
-            }
+        }
 #        elif defined(__GNUC__) && (defined(__ppc__))
-            asm volatile ("sync\n\t" : : : "memory");
-            mLock = 0;
+        asm volatile ("sync\n\t" : : : "memory");
+        mLock = 0;
 #        endif
 #    else
 #        if defined(_TTHREAD_WIN32_)
-            LeaveCriticalSection(&mHandle);
+        LeaveCriticalSection(&mHandle);
 #           elif defined(_TTHREAD_POSIX_)
-            pthread_mutex_unlock(&mHandle);
+        pthread_mutex_unlock(&mHandle);
 #        endif
 #    endif
     }
 private:
 #    if defined(_FAST_MUTEX_ASM_)
-        int mLock;
+    int mLock;
 #    else
 #    if defined(_TTHREAD_WIN32_)
-        CRITICAL_SECTION mHandle;
+    CRITICAL_SECTION mHandle;
 #    elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_t mHandle;
+    pthread_mutex_t mHandle;
 #    endif
 #    endif
 };
@@ -483,18 +491,6 @@ private:
 #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 
 //
-// Log level name outputs
-//
-const std::string _ELPP_INFO_LEVEL_OUTPUT    =  "INFO";
-const std::string _ELPP_DEBUG_LEVEL_OUTPUT   =  "DEBUG";
-const std::string _ELPP_WARNING_LEVEL_OUTPUT =  "WARN";
-const std::string _ELPP_ERROR_LEVEL_OUTPUT   =  "ERROR";
-const std::string _ELPP_FATAL_LEVEL_OUTPUT   =  "FATAL";
-const std::string _ELPP_VERBOSE_LEVEL_OUTPUT =  "VER";
-const std::string _ELPP_QA_LEVEL_OUTPUT      =  "QA";
-const std::string _ELPP_TRACE_LEVEL_OUTPUT   =  "TRACE";
-
-//
 // Low-level log evaluation
 //
 #define _ELPP_DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
@@ -507,7 +503,7 @@ const std::string _ELPP_TRACE_LEVEL_OUTPUT   =  "TRACE";
 #define _ELPP_TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 
 #if _ELPP_OS_UNIX
-    // Permissions for unix-based systems
+// Permissions for unix-based systems
 #   define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
 #define _SUPPRESS_UNUSED_WARN(x) (void)x
@@ -528,10 +524,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.43"); }
+    static inline const std::string version(void) { return std::string("7.45"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("27-03-2013 1229hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("28-03-2013 2153hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -577,7 +573,51 @@ private:
 }; // namespace VersionInfo
 
 namespace internal {
+namespace configuration {
+//
+// Log level name outputs
+//
+const std::string kElppInfoLevelValue    =  "INFO";
+const std::string kElppDebugLevelValue   =  "DEBUG";
+const std::string kElppWarningLevelValue =  "WARN";
+const std::string kElppErrorLevelValue   =  "ERROR";
+const std::string kElppFatalLevelValue   =  "FATAL";
+const std::string kElppVerboseLevelValue =  "VER";
+const std::string kElppQaLevelValue      =  "QA";
+const std::string kElppTraceLevelValue   =  "TRACE";
+
+//
+// Format specifiers
+//
+const std::string kLevelFormatSpecifier          =   "%level";
+const std::string kDateOnlyFormatSpecifier       =   "%date";
+const std::string kTimeOnlyFormatSpecifier       =   "%time";
+const std::string kDateTimeFormatSpecifier       =   "%datetime";
+const std::string kTypeFormatSpecifier           =   "%type";
+const std::string kLocationFormatSpecifier       =   "%loc";
+const std::string kFunctionFormatSpecifier       =   "%func";
+const std::string kUserFormatSpecifier           =   "%user";
+const std::string kHostFormatSpecifier           =   "%host";
+const std::string kLogMessageFormatSpecifier     =   "%log";
+const std::string kVerboseLevelFormatSpecifier   =   "%vlevel";
+
+enum kFormatSpecifiers { kDateOnly = 2,
+                         kTimeOnly = 4,
+                         kDateTime = 8,
+                         kType = 16,
+                         kLocation = 32,
+                         kFunction = 64,
+                         kUser = 128,
+                         kHost = 256,
+                         kLogMessage = 512,
+                         kVerboseLevel = 1024
+                       };
+
+} // namespace configuration
 _ELPP_MUTEX_SPECIFIC_INIT
+
+using namespace easyloggingpp::configuration;
+using namespace easyloggingpp::internal::configuration;
 namespace helper {
     // OSUtilities class specifically written for EasyLogging++
     // This class contains functionalities related to operating system
@@ -741,80 +781,62 @@ namespace helper {
 
     class DateUtilities {
     public:
-        enum kDateTimeFormat {
-            kDateOnly,
-            kTimeOnly,
-            kDateTime
-        };
 #if _ELPP_OS_WINDOWS
-    static void gettimeofday(struct timeval *tv) {
-        if (tv != NULL) {
+        static void gettimeofday(struct timeval *tv) {
+            if (tv != NULL) {
 #   if defined(_MSC_EXTENSIONS)
-        const unsigned __int64 delta_ = 11644473600000000Ui64;
+                const unsigned __int64 delta_ = 11644473600000000Ui64;
 #   else
-        const unsigned __int64 delta_ = 11644473600000000ULL;
+                const unsigned __int64 delta_ = 11644473600000000ULL;
 #   endif
-        const double secOffSet = 0.000001;
-        const unsigned long usecOffSet = 1000000;
-        FILETIME fileTime_;
-        GetSystemTimeAsFileTime(&fileTime_);
-        unsigned __int64 present_ = 0;
-        present_ |= fileTime_.dwHighDateTime;
-        present_ = present_ << 32;
-        present_ |= fileTime_.dwLowDateTime;
-        present_ /= 10; // mic-sec
-        // Subtract the difference 
-        present_ -= delta_;
-        tv->tv_sec = static_cast<long>(present_ * secOffSet);
-        tv->tv_usec = static_cast<long>(present_ % usecOffSet);
-      }
-    }
+                const double secOffSet = 0.000001;
+                const unsigned long usecOffSet = 1000000;
+                FILETIME fileTime_;
+                GetSystemTimeAsFileTime(&fileTime_);
+                unsigned __int64 present_ = 0;
+                present_ |= fileTime_.dwHighDateTime;
+                present_ = present_ << 32;
+                present_ |= fileTime_.dwLowDateTime;
+                present_ /= 10; // mic-sec
+                // Subtract the difference
+                present_ -= delta_;
+                tv->tv_sec = static_cast<long>(present_ * secOffSet);
+                tv->tv_usec = static_cast<long>(present_ % usecOffSet);
+            }
+        }
 #endif
         // Gets current date and time with milliseconds.
-        static std::string getDateTime(unsigned int format_) {
-#if _ELPP_OS_UNIX
-            const char* kTimeFormatLocal_ = "%H:%M:%S";
-            const char* kDateFormatLocal_ = "%d/%m/%Y";
-#elif _ELPP_OS_WINDOWS
-            const char* kTimeFormatLocal_ = "HH':'mm':'ss";
-            const char* kDateFormatLocal_ = "dd/MM/yyyy";
-#endif // _ELPP_OS_UNIX
+        static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, unsigned int milliSecondOffset = 1000) {
             long milliSeconds = 0;
             const int kDateBuffSize_ = 30;
             char dateBuffer_[kDateBuffSize_] = "";
             char dateBufferOut_[kDateBuffSize_] = "";
 #if _ELPP_OS_UNIX
-            char dateFormat_[kDateBuffSize_];
-            if (format_ == kDateOnly) { 
-                strcpy(dateFormat_, kDateFormatLocal_);
-            } else if (format_ == kTimeOnly) {
-                strcpy(dateFormat_, kTimeFormatLocal_);
-            } else {
-                strcpy(dateFormat_, kDateFormatLocal_);
-                strcat(dateFormat_, " ");
-                strcat(dateFormat_, kTimeFormatLocal_);
-            }
+            bool hasTime_ = (type_ & kDateTime || type_ & kTimeOnly);
             timeval currTime;
             gettimeofday(&currTime, NULL);
-            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
-                milliSeconds = currTime.tv_usec / 1000;
+            if (hasTime_) {
+                milliSeconds = currTime.tv_usec / milliSecondOffset ;
             }
             struct tm * timeInfo = localtime(&currTime.tv_sec);
-
-            strftime(dateBuffer_, sizeof(dateBuffer_), dateFormat_, timeInfo);
-            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+            strftime(dateBuffer_, sizeof(dateBuffer_), bufferFormat_.c_str(), timeInfo);
+            if (hasTime_) {
                 sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+            } else {
+                sprintf(dateBufferOut_, "%s", dateBuffer_);
             }
 #elif _ELPP_OS_WINDOWS
-            if ((format_ == kDateTime) || (format_ == kDateOnly)) {
+            const char* kTimeFormatLocal_ = "HH':'mm':'ss";
+            const char* kDateFormatLocal_ = "dd/MM/yyyy";
+            if ((type_ & kDateTime) || (type_ & kDateOnly)) {
                 if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                     sprintf_s(dateBufferOut_, "%s", dateBuffer_);
                 }
             }
-            if ((format_ == kDateTime) || (format_ == kTimeOnly)) {
+            if ((type_ & kDateTime) || (type_ & kTimeOnly)) {
                 if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
-                    milliSeconds = (long)(GetTickCount()) % 1000;
-                    if (format_ == kDateTime) {
+                    milliSeconds = (long)(GetTickCount()) % milliSecondOffset;
+                    if (type_ & kDateTime) {
                         sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
                     } else {
                         sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
@@ -846,7 +868,7 @@ namespace helper {
         }
 
         static inline double getTimeDifference(timeval& endTime, timeval& startTime) {
-             return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
+            return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
         }
 
     private:
@@ -857,7 +879,6 @@ namespace helper {
     }; // class DateUtilities
 } // namespace helper
 
-using namespace easyloggingpp::configurations;
 using namespace easyloggingpp::internal::helper;
 
 // Used internally as a register to keep records of 'Class' and provides underlying
@@ -925,25 +946,6 @@ class LogType {
 public:
     typedef std::vector<LogType*>::const_iterator Iterator;
 
-    explicit LogType(const std::string& name_) :
-        name_(name_),
-        logName_(logName_) {
-    }
-
-    explicit LogType(const std::string& name_,
-                      const std::string& logName_) :
-        name_(name_),
-        logName_(logName_) {
-    }
-
-    inline std::string name(void) const {
-        return name_;
-    }
-
-    inline std::string logName(void) const {
-        return logName_;
-    }
-
     class Predicate {
     public:
         explicit Predicate(const std::string& name_) :
@@ -956,6 +958,26 @@ public:
     private:
         std::string name_;
     };
+
+    explicit LogType(const std::string& name_) :
+        name_(name_),
+        logName_(logName_) {
+    }
+
+    explicit LogType(const std::string& name_,
+                     const std::string& logName_) :
+        name_(name_),
+        logName_(logName_) {
+    }
+
+    inline std::string name(void) const {
+        return name_;
+    }
+
+    inline std::string logName(void) const {
+        return logName_;
+    }
+
 private:
     std::string name_;
     std::string logName_;
@@ -983,7 +1005,74 @@ public:
 // Represents severity level for log
 class SeverityLevel {
 public:
+
     typedef std::vector<SeverityLevel*>::const_iterator Iterator;
+
+    class Predicate {
+    public:
+        explicit Predicate(const std::string& name_) :
+            name_(name_) {
+        }
+        inline bool operator()(const SeverityLevel* level_) {
+            return *level_ == name_;
+        }
+
+    private:
+        std::string name_;
+    };
+
+    class DateFormat {
+    public:
+
+        explicit DateFormat(void) : type_(0) {
+        }
+
+        inline std::string formatSpecifier(void) const {
+            return formatSpecifier_;
+        }
+
+        inline void setFormatSpecifier(const std::string& formatSpecifier_) {
+            this->formatSpecifier_ = formatSpecifier_;
+        }
+
+        inline std::string bufferFormat(void) const {
+            return bufferFormat_;
+        }
+
+        inline void setBufferFormat(const std::string& bufferFormat_) {
+            this->bufferFormat_ = bufferFormat_;
+        }
+
+        inline unsigned int type(void) const {
+            return type_;
+        }
+
+        inline void setType(unsigned int type_) {
+            this->type_ = type_;
+        }
+
+        inline unsigned int milliSecondOffset(void) const {
+            return milliSecondOffset_;
+        }
+
+        inline void setMilliSecondOffset(unsigned int milliSecondOffset_) {
+            this->milliSecondOffset_ = milliSecondOffset_;
+        }
+
+        inline bool hasDate(void) const {
+            return hasDate_;
+        }
+
+        inline void setHasDate_(bool hasDate_) {
+            this->hasDate_ = hasDate_;
+        }
+    private:
+        std::string bufferFormat_;
+        std::string formatSpecifier_;
+        unsigned int type_;
+        bool hasDate_;
+        unsigned int milliSecondOffset_;
+    };
 
     explicit SeverityLevel(const std::string& name_,
                            const std::string& format_,
@@ -993,7 +1082,18 @@ public:
         format_(format_),
         toStandardOutput_(toStandardOutput_),
         toFile_(toFile_) {
-        LogManipulator::updateFormatValue("%level", name_, this->format_);
+            LogManipulator::updateFormatValue("%level", name_, this->format_);
+            dateFormat_ = NULL;
+            availableLogFormats_ = 0;
+            buildDateFormat();
+            determineAvailableLogFormats();
+    }
+
+    virtual ~SeverityLevel(void) {
+        if (dateFormat_ != NULL) {
+            delete dateFormat_;
+            dateFormat_ = NULL;
+        }
     }
 
     inline bool operator==(const std::string& name_) const {
@@ -1016,24 +1116,100 @@ public:
         return toFile_;
     }
 
-    class Predicate {
-    public:
-        explicit Predicate(const std::string& name_) :
-            name_(name_) {
-        }
-        inline bool operator()(const SeverityLevel* level_) {
-            return *level_ == name_;
-        }
+    inline DateFormat* dateFormat(void) const {
+        return dateFormat_;
+    }
 
-    private:
-        std::string name_;
-    };
-
+    inline unsigned int availableLogFormats(void) const {
+        return availableLogFormats_;
+    }
 private:
     std::string name_;
     std::string format_;
+    DateFormat* dateFormat_;
     bool toStandardOutput_;
     bool toFile_;
+    unsigned int availableLogFormats_;
+
+    void buildDateFormat(void) {
+        if (dateFormat_ == NULL) {
+            dateFormat_ = new DateFormat();
+        }
+        if (format_.find(kDateTimeFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(kDateTimeFormatSpecifier);
+            availableLogFormats_ |= kDateTime;
+            dateFormat_->setHasDate_(true);
+        } else if (format_.find(kDateOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(kDateOnlyFormatSpecifier);
+            dateFormat_->setHasDate_(true);
+            availableLogFormats_ |= kDateOnly;
+        } else if (format_.find(kTimeOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(kTimeOnlyFormatSpecifier);
+            dateFormat_->setHasDate_(true);
+            availableLogFormats_ |= kTimeOnly;
+        } else {
+            dateFormat_->setHasDate_(false);
+        }
+        dateFormat_->setType(availableLogFormats_);
+        if (dateFormat_->hasDate()) {
+#if _ELPP_OS_UNIX
+            const std::string kTimeFormatLocal_ = "%H:%M:%S";
+            const std::string kDateFormatLocal_ = "%d/%m/%Y";
+
+            if (dateFormat_->type() & kDateOnly) {
+                dateFormat_->setBufferFormat(kDateFormatLocal_);
+            } else if (dateFormat_->type() & kTimeOnly) {
+                dateFormat_->setBufferFormat(kTimeFormatLocal_);
+            } else {
+                std::stringstream ss;
+                ss << kDateFormatLocal_ << " " << kTimeFormatLocal_;
+                dateFormat_->setBufferFormat(ss.str());
+            }
+            switch (MILLISECONDS_LENGTH) {
+            case 3:
+                dateFormat_->setMilliSecondOffset(1000);
+                break;
+            case 4:
+                dateFormat_->setMilliSecondOffset(100);
+                break;
+            case 5:
+                dateFormat_->setMilliSecondOffset(10);
+                break;
+            case 6:
+                dateFormat_->setMilliSecondOffset(1);
+                break;
+            default:
+                dateFormat_->setMilliSecondOffset(1);
+            }
+#elif _ELPP_OS_WINDOWS
+            dateFormat_->setMilliSecondOffset(1000);
+#endif // _ELPP_OS_UNIX
+        }
+    }
+
+    void determineAvailableLogFormats(void) {
+        if (format_.find(kTypeFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kType;
+        }
+        if (format_.find(kLocationFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kLocation;
+        }
+        if (format_.find(kFunctionFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kFunction;
+        }
+        if (format_.find(kUserFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kUser;
+        }
+        if (format_.find(kHostFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kHost;
+        }
+        if (format_.find(kLogMessageFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kLogMessage;
+        }
+        if (format_.find(kVerboseLevelFormatSpecifier) != std::string::npos) {
+            availableLogFormats_ |= kVerboseLevel;
+        }
+    }
 }; // class SeverityLevel
 
 // All the registered severity levels used while writing logs
@@ -1042,21 +1218,21 @@ public:
     explicit RegisteredSeverityLevels(void)
     {
         registerNew(
-                    new SeverityLevel(_ELPP_DEBUG_LEVEL_OUTPUT, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new SeverityLevel(kElppDebugLevelValue, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_INFO_LEVEL_OUTPUT, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new SeverityLevel(kElppInfoLevelValue, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_WARNING_LEVEL_OUTPUT, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new SeverityLevel(kElppWarningLevelValue, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_ERROR_LEVEL_OUTPUT, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new SeverityLevel(kElppErrorLevelValue, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_FATAL_LEVEL_OUTPUT, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new SeverityLevel(kElppFatalLevelValue, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_VERBOSE_LEVEL_OUTPUT, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new SeverityLevel(kElppVerboseLevelValue, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_QA_LEVEL_OUTPUT, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new SeverityLevel(kElppQaLevelValue, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(_ELPP_TRACE_LEVEL_OUTPUT, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new SeverityLevel(kElppTraceLevelValue, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1065,6 +1241,23 @@ class LogCounter {
 public:
     typedef std::vector<LogCounter*>::iterator Iterator;
     const static unsigned int kMax = 100000;
+
+    class Predicate {
+    public:
+        explicit Predicate(const char* file_, unsigned long int line_)
+            : file_(file_),
+              line_(line_) {
+        }
+        inline bool operator()(const LogCounter* counter_) {
+            return ((counter_ != NULL) &&
+                    (counter_->file_ == file_) &&
+                    (counter_->line_ == line_));
+        }
+
+    private:
+        const char* file_;
+        unsigned long int line_;
+    };
 
     explicit LogCounter(void) :
         file_(""),
@@ -1102,23 +1295,6 @@ public:
     inline unsigned int position(void) const {
         return position_;
     }
-
-    class Predicate {
-    public:
-        explicit Predicate(const char* file_, unsigned long int line_)
-            : file_(file_),
-              line_(line_) {
-        }
-        inline bool operator()(const LogCounter* counter_) {
-            return ((counter_ != NULL) &&
-                    (counter_->file_ == file_) &&
-                    (counter_->line_ == line_));
-        }
-
-    private:
-        const char* file_;
-        unsigned long int line_;
-    };
 
 private:
     const char* file_;
@@ -1168,8 +1344,8 @@ public:
         registeredLogCounters_(new RegisteredCounters()) {
         if (SAVE_TO_FILE) {
             fileGood_ = USE_CUSTOM_LOCATION ?
-                        !kFinalFilename_.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
-                        !kFinalFilename_.empty();
+                            !kFinalFilename_.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
+                            !kFinalFilename_.empty();
             if (fileGood_) {
 #if (_ALWAYS_CLEAN_LOGS)
                 logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out);
@@ -1262,31 +1438,19 @@ public:
     }
 
     void buildLine(const std::string& logType_, const std::string& severityLevel_, const char* func_,
-                       const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
+                   const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
         SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
         currLogLine_ = level_->format();
         std::string formatSpecifier_ = "";
         std::string value_ = "";
         // DateTime
-        unsigned int dateTimeFormat_ = 0;
-        if (level_->format().find("%datetime") != std::string::npos) {
-            dateTimeFormat_ = DateUtilities::kDateTime;
-            formatSpecifier_ = "%datetime";
-        } else if (level_->format().find("%date") != std::string::npos) {
-            dateTimeFormat_ = DateUtilities::kDateOnly;
-            formatSpecifier_ = "%date";
-        } else if (level_->format().find("%time") != std::string::npos) {
-            dateTimeFormat_ = DateUtilities::kTimeOnly;
-            formatSpecifier_ = "%time";
-        } else {
-            dateTimeFormat_ = 0;
-        }
-        if (dateTimeFormat_ != 0) {
-            value_ = DateUtilities::getDateTime (dateTimeFormat_);
-            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+        if (level_->dateFormat()->hasDate()) {
+            value_ = DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->type(),
+                                                level_->dateFormat()->milliSecondOffset());
+            LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
         // Type
-        if (level_->format().find("%type") != std::string::npos) {
+        if (level_->availableLogFormats() | kType) {
             LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
             bool displayType_ = true;
@@ -1305,44 +1469,43 @@ public:
                 value_ = "";
             }
 #endif // _NO_TRIVIAL_TYPE_DISPLAY
-            formatSpecifier_ = "%type";
+            formatSpecifier_ = kTypeFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Location
-        if (level_->format().find("%loc") != std::string::npos) {
+        if (level_->availableLogFormats() & kLocation) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
-            formatSpecifier_ = "%loc";
+            formatSpecifier_ = kLocationFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Function
-        if (level_->format().find("%func") != std::string::npos) {
+        if (level_->availableLogFormats() & kFunction) {
             value_ = std::string(func_);
-            formatSpecifier_ = "%func";
+            formatSpecifier_ = kFunctionFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // User
-        if (level_->format().find("%user") != std::string::npos) {
-            formatSpecifier_ = "%user";
+        if (level_->availableLogFormats() & kUser) {
+            formatSpecifier_ = kUserFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
         // Host
-        if (level_->format().find("%host") != std::string::npos) {
-            formatSpecifier_ = "%host";
+        if (level_->availableLogFormats() & kHost) {
+            formatSpecifier_ = kHostFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
         // Log
-        if (level_->format().find("%log") != std::string::npos) {
-            formatSpecifier_ = "%log";
+        if (level_->availableLogFormats() & kLogMessage) {
+            formatSpecifier_ = kLogMessageFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
         }
         // Verbose specific log
-        if (verboseLevel_ > 0) {
-            // Verbose level
+        if (verboseLevel_ > 0 && (level_->availableLogFormats() & kVerboseLevel)) {
             tempStream_.str("");
             tempStream_ << verboseLevel_;
             value_ = tempStream_.str();
-            formatSpecifier_ = "%vlevel";
+            formatSpecifier_ = kVerboseLevelFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
         }
         write(level_);
@@ -1437,13 +1600,13 @@ private:
 #define _ELPP_STREAM *_ELPP_STREAM_PTR
 #define _WRITE_ELPP_LOG(type_, level_, func_, file_, line_)                                \
     if (logAspect_ == kNormal) {                                                           \
-        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
-    } else if (logAspect_ == kConditional && condition_) {                                 \
     _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-    } else if (logAspect_ == kInterval) {                                                  \
+} else if (logAspect_ == kConditional && condition_) {                                     \
+    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
+} else if (logAspect_ == kInterval) {                                                      \
     if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {             \
-        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
-    }                                                                                      \
+    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
+}                                                                                          \
 }
 #define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return *this;
 #define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
@@ -1638,35 +1801,35 @@ public:
 #endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 private:
     inline void writeLog(void) const {
-        if (severityLevel_ == _ELPP_DEBUG_LEVEL_OUTPUT) {
+        if (severityLevel_ == kElppDebugLevelValue) {
 #if (_ELPP_DEBUG_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_WARNING_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppWarningLevelValue) {
 #if (_ELPP_WARNING_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_ERROR_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppErrorLevelValue) {
 #if (_ELPP_ERROR_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_INFO_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppInfoLevelValue) {
 #if (_ELPP_INFO_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_FATAL_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppFatalLevelValue) {
 #if (_ELPP_FATAL_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_QA_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppQaLevelValue) {
 #if (_ELPP_QA_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_TRACE_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppTraceLevelValue) {
 #if (_ELPP_TRACE_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == _ELPP_VERBOSE_LEVEL_OUTPUT) {
+        } else if (severityLevel_ == kElppVerboseLevelValue) {
 #if (_ELPP_VERBOSE_LOG)
             if (logAspect_ == kNormal && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
                 _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
@@ -1710,11 +1873,11 @@ private:
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
 #    define FUNC_SUB_COMMON_START {                                                                             \
-        if (easyloggingpp::configurations::SHOW_START_FUNCTION_LOG) {                                           \
-            _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                               \
-        }                                                                                                       \
-        timeval functionStartTime, functionEndTime;                                                             \
-        _ELPP_GET_CURR_TIME(&functionStartTime)
+     if (easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) {                                               \
+         _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                                  \
+     }                                                                                                          \
+     timeval functionStartTime, functionEndTime;                                                                \
+     _ELPP_GET_CURR_TIME(&functionStartTime)
 #    define LOG_FUNC_PERFORMANCE _ELPP_GET_CURR_TIME(&functionEndTime); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
 #    define FUNC_SUB_COMMON_END LOG_FUNC_PERFORMANCE;
 #    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
@@ -1746,7 +1909,7 @@ public:
     static std::string readLog(void) {
         _ELPP_LOCK_MUTEX;
         std::stringstream ss;
-        if (::easyloggingpp::configurations::SAVE_TO_FILE) {
+        if (::easyloggingpp::configuration::SAVE_TO_FILE) {
             std::ifstream logFileReader(_QUALIFIED_LOGGER.kFinalFilename_.c_str(), std::ifstream::in);
             if (logFileReader.is_open()) {
                 std::string line;
@@ -1775,35 +1938,35 @@ public:
 // Custom injected loggers
 //
 // Normal loggers
-#define CINFO(type_) _ELPP_LOG_WRITER(type_, _ELPP_INFO_LEVEL_OUTPUT)
-#define CWARNING(type_) _ELPP_LOG_WRITER(type_, _ELPP_WARNING_LEVEL_OUTPUT)
-#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, _ELPP_DEBUG_LEVEL_OUTPUT)
-#define CERROR(type_) _ELPP_LOG_WRITER(type_, _ELPP_ERROR_LEVEL_OUTPUT)
-#define CFATAL(type_) _ELPP_LOG_WRITER(type_, _ELPP_FATAL_LEVEL_OUTPUT)
-#define CQA(type_) _ELPP_LOG_WRITER(type_, _ELPP_QA_LEVEL_OUTPUT)
-#define CTRACE(type_) _ELPP_LOG_WRITER(type_, _ELPP_TRACE_LEVEL_OUTPUT)
+#define CINFO(type_) _ELPP_LOG_WRITER(type_, kElppInfoLevelValue)
+#define CWARNING(type_) _ELPP_LOG_WRITER(type_, kElppWarningLevelValue)
+#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, kElppDebugLevelValue)
+#define CERROR(type_) _ELPP_LOG_WRITER(type_, kElppErrorLevelValue)
+#define CFATAL(type_) _ELPP_LOG_WRITER(type_, kElppFatalLevelValue)
+#define CQA(type_) _ELPP_LOG_WRITER(type_, kElppQaLevelValue)
+#define CTRACE(type_) _ELPP_LOG_WRITER(type_, kElppTraceLevelValue)
 #define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                                \
-    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level)
+    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define CINFO_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_INFO_LEVEL_OUTPUT)
-#define CWARNING_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_WARNING_LEVEL_OUTPUT)
-#define CDEBUG_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
-#define CERROR_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_ERROR_LEVEL_OUTPUT)
-#define CFATAL_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_FATAL_LEVEL_OUTPUT)
-#define CQA_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_QA_LEVEL_OUTPUT)
-#define CTRACE_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, _ELPP_TRACE_LEVEL_OUTPUT)
+#define CINFO_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppInfoLevelValue)
+#define CWARNING_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppWarningLevelValue)
+#define CDEBUG_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppDebugLevelValue)
+#define CERROR_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppErrorLevelValue)
+#define CFATAL_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppFatalLevelValue)
+#define CQA_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppQaLevelValue)
+#define CTRACE_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppTraceLevelValue)
 #define CVERBOSE_IF(condition_, vlevel_, type_) LogWriter(LogWriter::kConditional,                           \
-    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, condition_, vlevel_)
+    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, condition_, vlevel_)
 // Interval logs
-#define CINFO_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_INFO_LEVEL_OUTPUT)
-#define CWARNING_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_WARNING_LEVEL_OUTPUT)
-#define CDEBUG_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_DEBUG_LEVEL_OUTPUT)
-#define CERROR_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_ERROR_LEVEL_OUTPUT)
-#define CFATAL_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_FATAL_LEVEL_OUTPUT)
-#define CQA_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_QA_LEVEL_OUTPUT)
-#define CTRACE_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, _ELPP_TRACE_LEVEL_OUTPUT)
+#define CINFO_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppInfoLevelValue)
+#define CWARNING_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppWarningLevelValue)
+#define CDEBUG_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppDebugLevelValue)
+#define CERROR_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppErrorLevelValue)
+#define CFATAL_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppFatalLevelValue)
+#define CQA_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppQaLevelValue)
+#define CTRACE_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppTraceLevelValue)
 #define CVERBOSE_EVERY_N(interval_, level, type_) LogWriter(LogWriter::kInterval,                           \
-    type_, _ELPP_VERBOSE_LEVEL_OUTPUT, __func__, __FILE__, __LINE__, true, level, interval_)
+    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level, interval_)
 //
 // Trivial Loggers
 //
@@ -1961,9 +2124,9 @@ public:
 
 #define _INITIALIZE_EASYLOGGINGPP   \
     namespace easyloggingpp {       \
-        namespace internal {        \
-            Logger _ELPP_LOGGER;    \
-        }                           \
+    namespace internal {            \
+    Logger _ELPP_LOGGER;            \
+    }                               \
     }
 
 #define _END_EASYLOGGINGPP

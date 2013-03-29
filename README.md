@@ -589,6 +589,7 @@ The default format for each of above log level has been made default after caref
 * `USE_CUSTOM_LOCATION` Flag to set whether log file is saved to custom location defined in `CUSTOM_LOG_FILE_LOCATION`
 * `CUSTOM_LOG_FILE_LOCATION` This is where log file is saved if `USE_CUSTOM_LOCATION` is true. Relative paths are not allowed. This should end with slash
 * `SHOW_START_FUNCTION_LOG` Determines whether to show log when starting any time tracked function
+* `MILLISECONDS_LENGTH` Applicable only in UNIX based OS, sets the length of milliseconds. E.g, `3` will give milliseconds like `259`; `6` will give more detailed like `601766`
 
 Version: 5.0+
 

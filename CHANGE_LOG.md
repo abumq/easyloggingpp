@@ -76,6 +76,10 @@ Change log was not kept before version 2.1.
  * 7.41: Major improvements around logging pointers and code clean up around containers
  * 7.42: Configurable severity type for performance tracking
  * 7.43: Improved comments
+ * 7.45: Fixed all issues on windows (Visual C++ 8.0, 9.0, 10.0, 11.0)
+ * 7.50:
+      - Massive performance improvements by setting formats at initialize time
+      - Introduced MILLISECONDS_LENGTH for UNIX
 
 #### 6.xx
  * 6.00:
