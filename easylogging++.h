@@ -2107,11 +2107,11 @@ public:
 #define _START_EASYLOGGINGPP(argc, argv) \
     _QUALIFIED_LOGGER.setArgs(argc, argv);
 
-#define _INITIALIZE_EASYLOGGINGPP   \
-    namespace easyloggingpp {       \
-    namespace internal {            \
-    Logger _ELPP_LOGGER;            \
-    }                               \
+#define _INITIALIZE_EASYLOGGINGPP       \
+    namespace easyloggingpp {           \
+        namespace internal {            \
+            Logger _ELPP_LOGGER;        \
+        }                               \
     }
 
 #define _END_EASYLOGGINGPP
