@@ -223,7 +223,7 @@ Version: 4.07+
  [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log_2.cpp)
 
 #### Cleaning Logs On Each Run
-If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
+If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. It is also useful where keeping older logs are not necessary for example a session of game you wrote in C++ or a small utility software. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
 
 As an example, you may compile your application as following if you wish to clean logs every time you execute application;
 ```
@@ -603,7 +603,7 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![win8] Windows 8 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
 
-![mac] Mac OSX (LLVM)
+![mac] Mac OSX (clang 3.1/Apple Clang Version 4.1 (LLVM 3.1))
 
 ![ubuntu] Ubuntu 12.04 / 12.10 (32-bit, 64-bit, g++ 4.6.3)
 
