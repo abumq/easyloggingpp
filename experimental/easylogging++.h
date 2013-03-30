@@ -241,7 +241,7 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
     #define __func__ __FUNCSIG__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
-#   define __func__ __PRETTY_FUNCTION__
+    #define __func__ __PRETTY_FUNCTION__
 #else
     #if !defined(__func__)
         #define __func__ ""
@@ -355,8 +355,8 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #define _ELPP_TRACE_LOG       ((_ENABLE_TRACE_LOGS) && !defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 
 #if _ELPP_OS_UNIX
-// Permissions for unix-based systems
-#   define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
+    // Log file permissions for unix-based systems
+    #define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
 #define _SUPPRESS_UNUSED_WARN(x) (void)x
 //
@@ -391,7 +391,7 @@ public:
     static inline const std::string version(void) { return std::string("7.55"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("30-03-2013 1334hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("30-03-2013 1436hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
