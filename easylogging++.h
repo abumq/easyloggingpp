@@ -294,6 +294,14 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #endif // defined(__APPLE__)
 // Unix
 #define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
+// Assembly
+#if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) ||     \
+        (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
+        (defined(__GNUC__) && (defined(__ppc__)))
+#    define _ELPP_ASM_OK 1
+#else
+#    define _ELPP_ASM_OK 0
+#endif
 
 //
 // Includes
@@ -305,9 +313,22 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #if _ELPP_OS_UNIX
 #    include <sys/stat.h>
 #    include <sys/time.h>
+#    if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+#        if _ELPP_ASM_OK 
+#            include <sched.h>
+#        else
+#            include <pthread.h>
+#        endif
+#    endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 #elif _ELPP_OS_WINDOWS
 #    include <direct.h>
+#    if !defined(WIN32_LEAN_AND_MEAN)
+#        define WIN32_LEAN_AND_MEAN
+#    endif // !defined(WIN32_LEAN_AND_MEAN)
 #    include <Windows.h>
+#    if defined(WIN32_LEAN_AND_MEAN)
+#        undef WIN32_LEAN_AND_MEAN
+#    endif // defined(WIN32_LEAN_AND_MEAN)
 #endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
@@ -332,165 +353,6 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #endif // defined(QT_CORE_LIB) && (_ENABLE_EASYLOGGING) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
 
 //
-// Mutex
-//
-#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-// Embedded fast_mutex (part of TinyThread++)
-#    ifndef _ELPP_FAST_MUTEX_H_
-#    define _ELPP_FAST_MUTEX_H_
-#        if !defined(_TTHREAD_PLATFORM_DEFINED_)
-#            if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
-#                define _TTHREAD_WIN32_
-#            else
-#                define _TTHREAD_POSIX_
-#            endif
-#            define _TTHREAD_PLATFORM_DEFINED_
-#        endif
-#    if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || \
-    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
-    (defined(__GNUC__) && (defined(__ppc__)))
-#        define _FAST_MUTEX_ASM_
-#    else
-#        define _FAST_MUTEX_SYS_
-#    endif
-
-#    if defined(_TTHREAD_WIN32_)
-#        ifndef WIN32_LEAN_AND_MEAN
-#            define WIN32_LEAN_AND_MEAN
-#            define __UNDEF_LEAN_AND_MEAN
-#        endif
-#        ifdef __UNDEF_LEAN_AND_MEAN
-#            undef WIN32_LEAN_AND_MEAN
-#            undef __UNDEF_LEAN_AND_MEAN
-#        endif
-#    else
-#        ifdef _FAST_MUTEX_ASM_
-#            include <sched.h>
-#        else
-#            include <pthread.h>
-#        endif
-#    endif
-namespace tthread {
-class fast_mutex {
-public:
-#    if defined(_FAST_MUTEX_ASM_)
-    fast_mutex() : mLock(0) {}
-#    else
-    fast_mutex() {
-#        if defined(_TTHREAD_WIN32_)
-        InitializeCriticalSection(&mHandle);
-#        elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_init(&mHandle, NULL);
-#        endif
-    }
-#    endif
-#    if !defined(_FAST_MUTEX_ASM_)
-    ~fast_mutex() {
-#        if defined(_TTHREAD_WIN32_)
-        DeleteCriticalSection(&mHandle);
-#        elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_destroy(&mHandle);
-#        endif
-    }
-#    endif
-    inline void lock() {
-#    if defined(_FAST_MUTEX_ASM_)
-        bool gotLock;
-        do { gotLock = try_lock();
-            if(!gotLock) {
-#        if defined(_TTHREAD_WIN32_)
-                Sleep(0);
-#        elif defined(_TTHREAD_POSIX_)
-                sched_yield();
-#        endif
-            }
-        } while(!gotLock);
-#    else
-#        if defined(_TTHREAD_WIN32_)
-        EnterCriticalSection(&mHandle);
-#        elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_lock(&mHandle);
-#        endif
-#    endif
-    }
-    inline bool try_lock() {
-#    if defined(_FAST_MUTEX_ASM_)
-        int oldLock;
-#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
-#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,1
-                    mov ecx,ptrLock
-                    xchg eax,[ecx]
-                    mov oldLock,eax
-        }
-#        elif defined(__GNUC__) && (defined(__ppc__))
-        int newLock = 1;
-        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
-                      "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
-#        endif
-        return (oldLock == 0);
-#    else
-#    if defined(_TTHREAD_WIN32_)
-        return TryEnterCriticalSection(&mHandle) ? true : false;
-#    elif defined(_TTHREAD_POSIX_)
-        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
-#    endif
-#    endif
-    }
-    inline void unlock() {
-#    if defined(_FAST_MUTEX_ASM_)
-#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
-#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,0
-                    mov ecx,ptrLock
-                    xchg eax,[ecx]
-        }
-#        elif defined(__GNUC__) && (defined(__ppc__))
-        asm volatile ("sync\n\t" : : : "memory");
-        mLock = 0;
-#        endif
-#    else
-#        if defined(_TTHREAD_WIN32_)
-        LeaveCriticalSection(&mHandle);
-#           elif defined(_TTHREAD_POSIX_)
-        pthread_mutex_unlock(&mHandle);
-#        endif
-#    endif
-    }
-private:
-#    if defined(_FAST_MUTEX_ASM_)
-    int mLock;
-#    else
-#    if defined(_TTHREAD_WIN32_)
-    CRITICAL_SECTION mHandle;
-#    elif defined(_TTHREAD_POSIX_)
-    pthread_mutex_t mHandle;
-#    endif
-#    endif
-};
-} // namespace tthread
-#endif // _ELPP_FAST_MUTEX_H_
-//
-// Mutex specific initialization
-//
-#    define _ELPP_ENABLE_MUTEX 1
-#    define _ELPP_MUTEX_SPECIFIC_INIT static tthread::fast_mutex mutex_;
-#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
-#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
-#else
-#    define _ELPP_ENABLE_MUTEX 0
-#    define _ELPP_MUTEX_SPECIFIC_INIT
-#    define _ELPP_LOCK_MUTEX
-#    define _ELPP_UNLOCK_MUTEX
-#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-
-//
 // Low-level log evaluation
 //
 #define _ELPP_DEBUG_LOG       ((_ENABLE_DEBUG_LOGS) && !defined(_DISABLE_DEBUG_LOGS) && (_ENABLE_EASYLOGGING) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
@@ -507,6 +369,20 @@ private:
 #   define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
 #define _SUPPRESS_UNUSED_WARN(x) (void)x
+//
+// Mutex
+//
+#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+#    define _ELPP_ENABLE_MUTEX 1
+#    define _ELPP_MUTEX_SPECIFIC_INIT static threading::Mutex mutex_;
+#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
+#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
+#else
+#    define _ELPP_ENABLE_MUTEX 0
+#    define _ELPP_MUTEX_SPECIFIC_INIT
+#    define _ELPP_LOCK_MUTEX
+#    define _ELPP_UNLOCK_MUTEX
+#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 
 namespace easyloggingpp {
 
@@ -571,6 +447,118 @@ private:
     VersionInfo(const VersionInfo&);
     VersionInfo& operator=(const VersionInfo&);
 }; // namespace VersionInfo
+//
+// Mutex
+//
+#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+// Following is modified version of fast mutex from tthread lib
+namespace threading {
+class Mutex {
+public:
+#    if _ELPP_ASM_OK
+    Mutex() : mLock(0) {}
+#    else
+    Mutex() {
+#        if _ELPP_OS_WINDOWS
+        InitializeCriticalSection(&mHandle);
+#        elif _ELPP_OS_UNIX
+        pthread_mutex_init(&mHandle, NULL);
+#        endif
+    }
+#    endif
+#    if !(_ELPP_ASM_OK)
+    ~Mutex() {
+#        if _ELPP_OS_WINDOWS
+        DeleteCriticalSection(&mHandle);
+#        elif _ELPP_OS_UNIX 
+        pthread_mutex_destroy(&mHandle);
+#        endif
+    }
+#    endif
+    inline void lock() {
+#    if _ELPP_ASM_OK
+        bool locked;
+        do { 
+            locked = tryLock();
+            if (!locked) {
+#        if _ELPP_OS_WINDOWS 
+                Sleep(0);
+#        elif _ELPP_OS_UNIX
+                sched_yield();
+#        endif
+            }
+        } while(!locked);
+#    else
+#        if _ELPP_OS_WINDOWS
+        EnterCriticalSection(&mHandle);
+#        elif _ELPP_OS_UNIX
+        pthread_mutex_lock(&mHandle);
+#        endif
+#    endif
+    }
+    inline bool tryLock(void) {
+#    if _ELPP_ASM_OK
+        int oldLock;
+#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
+#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,1
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+                    mov oldLock,eax
+        }
+#        elif defined(__GNUC__) && (defined(__ppc__))
+        int newLock = 1;
+        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
+                      "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
+#        endif
+        return (oldLock == 0);
+#    else
+#    if _ELPP_OS_WINDOWS
+        return TryEnterCriticalSection(&mHandle) ? true : false;
+#    elif _ELPP_OS_UNIX
+        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
+#    endif
+#    endif
+    }
+    inline void unlock() {
+#    if _ELPP_ASM_OK
+#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
+#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+        int *ptrLock = &mLock;
+        __asm {
+            mov eax,0
+                    mov ecx,ptrLock
+                    xchg eax,[ecx]
+        }
+#        elif defined(__GNUC__) && (defined(__ppc__))
+        asm volatile ("sync\n\t" : : : "memory");
+        mLock = 0;
+#        endif
+#    else
+#        if _ELPP_OS_WINDOWS
+        LeaveCriticalSection(&mHandle);
+#           elif _ELPP_OS_UNIX
+        pthread_mutex_unlock(&mHandle);
+#        endif
+#    endif
+    }
+private:
+#    if _ELPP_ASM_OK
+    int mLock;
+#    else
+#    if _ELPP_OS_WINDOWS
+    CRITICAL_SECTION mHandle;
+#    elif _ELPP_OS_UNIX
+    pthread_mutex_t mHandle;
+#    endif
+#    endif
+};
+} // namespace threading
+#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 
 namespace internal {
 namespace configuration {
