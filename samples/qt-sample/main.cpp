@@ -10,7 +10,7 @@
  */
 
 #include "mythread.h"
-//#include "../../easylogging++.h"
+#include "../../easylogging++.h"
 
 #include <QVector>
 

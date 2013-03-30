@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.56                                                         //
+//   EasyLogging++ v7.58                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -307,6 +307,7 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #include <cstring>
 #include <cstdlib>
 #include <cctype>
+#include <cwchar>
 #if _ELPP_OS_UNIX
     #include <sys/stat.h>
     #include <sys/time.h>
@@ -318,6 +319,7 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
         #endif
     #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 #elif _ELPP_OS_WINDOWS
+    #include <cerrno>
     #include <direct.h>
     #include <Windows.h>
 #endif // _ELPP_OS_UNIX
@@ -388,10 +390,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.56"); }
+    static inline const std::string version(void) { return std::string("7.58"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("30-03-2013 1553hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("31-03-2013 0615hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -493,7 +495,7 @@ public:
         #if _ELPP_ASSEMBLY_SUPPORTED
             int oldLock_;
             #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            asm volatile (_ELPP_MUTEX_LOCK_GNU_ASM(lockerFlag_, oldLock_));
+                asm volatile (_ELPP_MUTEX_LOCK_GNU_ASM(lockerFlag_, oldLock_));
             #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
                 int *ptrLock = &lockerFlag_;
                 __asm {
@@ -515,7 +517,7 @@ public:
     inline void unlock(void) {
     #if _ELPP_ASSEMBLY_SUPPORTED
         #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile (_ELPP_MUTEX_UNLOCK_GNU_ASM(lockerFlag_));
+            asm volatile (_ELPP_MUTEX_UNLOCK_GNU_ASM(lockerFlag_));
         #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
             int *ptrLock = &lockerFlag_;
             __asm {
@@ -739,7 +741,7 @@ namespace helper {
                                       std::string& currentFormat_) {
             size_t foundAt = -1;
             while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
-				if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
+                if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
                     currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                     ++foundAt;
                 } else {
@@ -1053,7 +1055,7 @@ public:
         unsigned int formatFlag_;
         bool hasDate_;
         unsigned int milliSecondOffset_;
-    };
+    }; // class DateFormat
 
     explicit SeverityLevel(const std::string& name_,
                            const std::string& format_,
@@ -1426,7 +1428,8 @@ public:
         std::string value_ = "";
         // DateTime
         if (level_->dateFormat()->hasDate()) {
-            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->formatFlag(),
+            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), 
+                                                                      level_->dateFormat()->formatFlag(),
                                                                       level_->dateFormat()->milliSecondOffset());
             internal::helper::LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
@@ -1493,13 +1496,13 @@ public:
     }
 
     inline void write(SeverityLevel* level_) {
-        if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
-            std::cout << currLogLine_;
-        }
         if (configuration::SAVE_TO_FILE && fileGood() && level_->toFile()) {
             logFile_->open(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
             (*logFile_) << currLogLine_;
             logFile_->close();
+        }
+        if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
+            std::cout << currLogLine_;
         }
         clear();
     }
@@ -1629,12 +1632,8 @@ public:
         _ELPP_UNLOCK_MUTEX;
     }
 
-#define RETURN_PTR(logPtr_) return (logPtr_ != NULL ? operator << (*logPtr_) : operator << ("nullptr"))
-
     inline LogWriter& operator<<(const std::string& log_) { _ELPP_STREAM << log_; return *this; }
     inline LogWriter& operator<<(std::string* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring could not be handled) " << log_.c_str(); return *this; }
-    inline LogWriter& operator<<(std::wstring* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(char log_) { _ELPP_STREAM << log_; return *this; }
     inline LogWriter& operator<<(bool log_) { _ELPP_STREAM << (log_ != 0 ? "true" : "false"); return *this; }
     inline LogWriter& operator<<(bool* log_) { return writePointer(log_); }
@@ -1659,6 +1658,28 @@ public:
     inline LogWriter& operator<<(const void* log_) { _ELPP_STREAM << log_; return *this; }
     inline LogWriter& operator<<(long double log_) { _ELPP_STREAM << log_; return *this; }
     inline LogWriter& operator<<(long double* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(const std::wstring& log_) { return operator<<(log_.c_str()); }
+    inline LogWriter& operator<<(std::wstring* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(const wchar_t* log_) {
+        if (log_ == NULL) {
+            _ELPP_STREAM << internal::constants::kNullPointerStr;
+            return *this;
+        }
+        size_t len_ = wcslen(log_) + 1;
+        char* buff_ = (char*)malloc(len_ + 1);
+#if _ELPP_OS_UNIX
+        std::wcstombs(buff_, log_, len_);
+#elif _ELPP_OS_WINDOWS
+        size_t convCount_ = 0;
+        mbstate_t mbState_;
+        errno_t err;
+        ::memset((void*)&mbState_, 0, sizeof(mbState_));
+        err = wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
+#endif
+        _ELPP_STREAM << buff_;
+        free(buff_);
+        return *this;
+    }
     template <class T>
     inline LogWriter& operator<<(const T& class_) {
         _ELPP_STREAM << class_.toString();

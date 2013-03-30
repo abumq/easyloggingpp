@@ -9,6 +9,6 @@
 
 _INITIALIZE_EASYLOGGINGPP     // Initialize - Needed only once in your application
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   LINFO << "This is first log!"; // Write
 }
