@@ -214,16 +214,16 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 } // namespace easyloggingpp
 //
 //
-////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-// ******* ***** *** * PLEASE DO NOT MODIFY ANY LINE BEYOND THIS POINT * *** ***** *******
-//
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                              //
+//                                                                                              //
+//                                                                                              //
+// ******* ***** *** * PLEASE DO NOT MODIFY ANY LINE BEYOND THIS POINT * *** ***** *******      //
+//                                                                                              //
+//                                                                                              //
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //
 //
@@ -232,20 +232,20 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 // Log location macros
 //
 #if !defined(__FILE__)
-#    define __FILE__ ""
+    #define __FILE__ ""
 #endif // !defined(__FILE__)
 #if !defined(__LINE__)
-#    define __LINE__ ""
+    #define __LINE__ 0
 #endif // !defined(__LINE__)
 // Determine appropriate function macro according to current compiler
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-#    define __func__ __FUNCSIG__
+    #define __func__ __FUNCSIG__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
 #   define __func__ __PRETTY_FUNCTION__
 #else
-#    if !defined(__func__)
-#        define __func__ ""
-#    endif // __func__
+    #if !defined(__func__)
+        #define __func__ ""
+    #endif // __func__
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 
 //
@@ -253,56 +253,53 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 //
 // GNU
 #if defined(__GNUC__)
-#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#        define _CXX0X 1
-#    endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
+    #if defined(__GXX_EXPERIMENTAL_CXX0X__)
+        #define _CXX0X 1
+    #endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif // defined(__GNUC__)
 // VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
 #if defined(_MSC_VER)
-#    if (_MSC_VER == 1600)
-#        define _CXX0X 1
-#    elif (_MSC_VER == 1700)
-#        define _CXX11 1
-#    endif // (_MSC_VER == 1600)
+    #if (_MSC_VER == 1600)
+        #define _CXX0X 1
+    #elif (_MSC_VER == 1700)
+        #define _CXX11 1
+    #endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
-
 //
 // High-level log evaluation
 //
 #if ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
-#    define _ENABLE_EASYLOGGING 1
+    #define _ENABLE_EASYLOGGING 1
 #endif // ((_LOGGING_ENABLED) && !defined(_DISABLE_LOGS))
 //
 // OS evaluation
 //
 // Windows
 #if defined(_WIN32)
-#    define _ELPP_OS_WINDOWS 1
-#    define _ELPP_OS_WINDOWS_32 1
+    #define _ELPP_OS_WINDOWS 1
+    #define _ELPP_OS_WINDOWS_32 1
 #endif // defined(_WIN32)
 #if defined(_WIN64)
-#    define _ELPP_OS_WINDOWS 1
-#    define _ELPP_OS_WINDOWS_64 1
+    #define _ELPP_OS_WINDOWS 1
+    #define _ELPP_OS_WINDOWS_64 1
 #endif // defined(_WIN64)
 // Linux
 #if (defined(__linux) || defined(__linux__))
-#    define _ELPP_OS_LINUX 1
+    #define _ELPP_OS_LINUX 1
 #endif // (defined(__linux) || defined(__linux__))
 // Mac
 #if defined(__APPLE__)
-#    define _ELPP_OS_MAC 1
+    #define _ELPP_OS_MAC 1
 #endif // defined(__APPLE__)
 // Unix
 #define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
 // Assembly
 #if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) ||     \
-        (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))) ||      \
-        (defined(__GNUC__) && (defined(__ppc__)))
-#    define _ELPP_ASM_OK 1
+        (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64)))
+    #define _ELPP_ASSEMBLY_SUPPORTED 1
 #else
-#    define _ELPP_ASM_OK 0
+    #define _ELPP_ASSEMBLY_SUPPORTED 0
 #endif
-
 //
 // Includes
 //
@@ -311,24 +308,24 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #include <cstdlib>
 #include <cctype>
 #if _ELPP_OS_UNIX
-#    include <sys/stat.h>
-#    include <sys/time.h>
-#    if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-#        if _ELPP_ASM_OK 
-#            include <sched.h>
-#        else
-#            include <pthread.h>
-#        endif
-#    endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+    #include <sys/stat.h>
+    #include <sys/time.h>
+    #if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
+        #if _ELPP_ASSEMBLY_SUPPORTED
+            #include <sched.h>
+        #else
+            #include <pthread.h>
+        #endif
+    #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 #elif _ELPP_OS_WINDOWS
-#    include <direct.h>
-#    if !defined(WIN32_LEAN_AND_MEAN)
-#        define WIN32_LEAN_AND_MEAN
-#    endif // !defined(WIN32_LEAN_AND_MEAN)
-#    include <Windows.h>
-#    if defined(WIN32_LEAN_AND_MEAN)
-#        undef WIN32_LEAN_AND_MEAN
-#    endif // defined(WIN32_LEAN_AND_MEAN)
+    #include <direct.h>
+    #if !defined(WIN32_LEAN_AND_MEAN)
+        #define WIN32_LEAN_AND_MEAN
+    #endif // !defined(WIN32_LEAN_AND_MEAN)
+    #include <Windows.h>
+    #if defined(WIN32_LEAN_AND_MEAN)
+        #undef WIN32_LEAN_AND_MEAN
+    #endif // defined(WIN32_LEAN_AND_MEAN)
 #endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
@@ -339,19 +336,18 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #include <algorithm>
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 // For logging STL based templates
-#    include <list> // std::list
-#    include <utility> // std::pair
-#    include <map> // std::map
+    #include <list> // std::list
+    #include <utility> // std::pair
+    #include <map> // std::map
 #endif // !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 #if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 // For logging Qt based classes & templates
-#    include <QString>
-#    include <QVector>
-#    include <QList>
-#    include <QPair>
-#    include <QMap>
+    #include <QString>
+    #include <QVector>
+    #include <QList>
+    #include <QPair>
+    #include <QMap>
 #endif // defined(QT_CORE_LIB) && (_ENABLE_EASYLOGGING) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
-
 //
 // Low-level log evaluation
 //
@@ -373,19 +369,17 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 // Mutex
 //
 #if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-#    define _ELPP_ENABLE_MUTEX 1
-#    define _ELPP_MUTEX_SPECIFIC_INIT static threading::Mutex mutex_;
-#    define _ELPP_LOCK_MUTEX easyloggingpp::internal::mutex_.lock();
-#    define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::mutex_.unlock();
+    #define _ELPP_ENABLE_MUTEX 1
+    #define _ELPP_MUTEX_SPECIFIC_INIT static threading::Mutex elppMutex_;
+    #define _ELPP_LOCK_MUTEX easyloggingpp::internal::elppMutex_.lock();
+    #define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::elppMutex_.unlock();
 #else
-#    define _ELPP_ENABLE_MUTEX 0
-#    define _ELPP_MUTEX_SPECIFIC_INIT
-#    define _ELPP_LOCK_MUTEX
-#    define _ELPP_UNLOCK_MUTEX
+    #define _ELPP_ENABLE_MUTEX 0
+    #define _ELPP_MUTEX_SPECIFIC_INIT
+    #define _ELPP_LOCK_MUTEX
+    #define _ELPP_UNLOCK_MUTEX
 #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-
 namespace easyloggingpp {
-
 class VersionInfo {
 public:
     // Minimal formatted displayable information
@@ -446,122 +440,117 @@ private:
     VersionInfo(void);
     VersionInfo(const VersionInfo&);
     VersionInfo& operator=(const VersionInfo&);
-}; // namespace VersionInfo
-//
-// Mutex
-//
-#if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-// Following is modified version of fast mutex from tthread lib
+}; // class VersionInfo
+#if _ELPP_ENABLE_MUTEX
 namespace threading {
+//
+// To take care of shared resources in multi-threaded application
+//
 class Mutex {
 public:
-#    if _ELPP_ASM_OK
-    Mutex() : mLock(0) {}
-#    else
-    Mutex() {
-#        if _ELPP_OS_WINDOWS
-        InitializeCriticalSection(&mHandle);
-#        elif _ELPP_OS_UNIX
-        pthread_mutex_init(&mHandle, NULL);
-#        endif
-    }
-#    endif
-#    if !(_ELPP_ASM_OK)
-    ~Mutex() {
-#        if _ELPP_OS_WINDOWS
-        DeleteCriticalSection(&mHandle);
-#        elif _ELPP_OS_UNIX 
-        pthread_mutex_destroy(&mHandle);
-#        endif
-    }
-#    endif
-    inline void lock() {
-#    if _ELPP_ASM_OK
-        bool locked;
-        do { 
-            locked = tryLock();
-            if (!locked) {
-#        if _ELPP_OS_WINDOWS 
-                Sleep(0);
-#        elif _ELPP_OS_UNIX
-                sched_yield();
-#        endif
+    #if _ELPP_ASSEMBLY_SUPPORTED
+        Mutex(void) : mLock(0) {
+        }
+    #else
+        Mutex(void) {
+            #if _ELPP_OS_UNIX
+                pthread_mutex_init(&mHandle, NULL);
+            #elif _ELPP_OS_WINDOWS
+                InitializeCriticalSection(&mHandle);
+            #endif // _ELPP_OS_UNIX
+        }
+        explicit ~Mutex(void) {
+            #if _ELPP_OS_UNIX
+                pthread_mutex_destroy(&mHandle);
+            #elif _ELPP_OS_WINDOWS
+                DeleteCriticalSection(&mHandle);
+            #endif // _ELPP_OS_UNIX
+        }
+    #endif // _ELPP_ASSEMBLY_SUPPORTED
+    inline void lock(void) {
+        #if _ELPP_ASSEMBLY_SUPPORTED
+            bool locked = false;
+            while (!locked) {
+                locked = tryLock();
+                if (!locked) {
+            #if _ELPP_OS_UNIX
+                    sched_yield();
+            #elif _ELPP_OS_WINDOWS
+                    Sleep(0);
+            #endif
+                }
             }
-        } while(!locked);
-#    else
-#        if _ELPP_OS_WINDOWS
-        EnterCriticalSection(&mHandle);
-#        elif _ELPP_OS_UNIX
-        pthread_mutex_lock(&mHandle);
-#        endif
-#    endif
+        #else
+            #if _ELPP_OS_UNIX
+                pthread_mutex_lock(&mHandle);
+            #elif _ELPP_OS_WINDOWS
+                EnterCriticalSection(&mHandle);
+            #endif // _ELPP_OS_UNIX
+        #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
     inline bool tryLock(void) {
-#    if _ELPP_ASM_OK
-        int oldLock;
-#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $1,%%eax\n\txchg %%eax,%0\n\tmovl %%eax,%1\n\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
-#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,1
-                    mov ecx,ptrLock
-                    xchg eax,[ecx]
-                    mov oldLock,eax
-        }
-#        elif defined(__GNUC__) && (defined(__ppc__))
-        int newLock = 1;
-        asm volatile ("\n1:\n\tlwarx  %0,0,%1\n\tcmpwi  0,%0,0\n\tbne-   2f\n\tstwcx. %2,0,%1\n\t"
-                      "bne-   1b\n\tisync\n2:\n\t" : "=&r" (oldLock) : "r" (&mLock), "r" (newLock) : "cr0", "memory");
-#        endif
-        return (oldLock == 0);
-#    else
-#    if _ELPP_OS_WINDOWS
-        return TryEnterCriticalSection(&mHandle) ? true : false;
-#    elif _ELPP_OS_UNIX
-        return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
-#    endif
-#    endif
+        #if _ELPP_ASSEMBLY_SUPPORTED
+            int oldLock;
+            #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+                asm volatile ("movl $1,%%eax\n"
+                                  "\txchg %%eax,%0\n"
+                                  "\tmovl %%eax,%1\n"
+                                  "\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
+            #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+                int *ptrLock = &mLock;
+                __asm {
+                    mov eax,1
+                        mov ecx,ptrLock
+                        xchg eax,[ecx]
+                        mov oldLock,eax
+                }
+            #endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+            return (oldLock == 0);
+        #else
+            #if _ELPP_OS_UNIX
+                return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
+            #elif _ELPP_OS_WINDOWS
+                return TryEnterCriticalSection(&mHandle) ? true : false;
+            #endif // _ELPP_OS_UNIX
+        #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
-    inline void unlock() {
-#    if _ELPP_ASM_OK
-#        if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile ("movl $0,%%eax\n\txchg %%eax,%0\n\t" : "=m" (mLock) : : "%eax", "memory");
-#        elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-        int *ptrLock = &mLock;
-        __asm {
-            mov eax,0
+    inline void unlock(void) {
+    #if _ELPP_ASSEMBLY_SUPPORTED
+        #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+            asm volatile ("movl $0,%%eax\n"
+                              "\txchg %%eax,%0\n"
+                              "\t" : "=m" (mLock) : : "%eax", "memory");
+        #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+            int *ptrLock = &mLock;
+            __asm {
+                mov eax,0
                     mov ecx,ptrLock
                     xchg eax,[ecx]
-        }
-#        elif defined(__GNUC__) && (defined(__ppc__))
-        asm volatile ("sync\n\t" : : : "memory");
-        mLock = 0;
-#        endif
-#    else
-#        if _ELPP_OS_WINDOWS
-        LeaveCriticalSection(&mHandle);
-#           elif _ELPP_OS_UNIX
-        pthread_mutex_unlock(&mHandle);
-#        endif
-#    endif
+            }
+        #endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+    #else
+        #if _ELPP_OS_UNIX
+            pthread_mutex_unlock(&mHandle);
+        #elif _ELPP_OS_WINDOWS
+            LeaveCriticalSection(&mHandle);
+        #endif // _ELPP_OS_UNIX
+    #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
 private:
-#    if _ELPP_ASM_OK
-    int mLock;
-#    else
-#    if _ELPP_OS_WINDOWS
-    CRITICAL_SECTION mHandle;
-#    elif _ELPP_OS_UNIX
-    pthread_mutex_t mHandle;
-#    endif
-#    endif
-};
+    #if _ELPP_ASSEMBLY_SUPPORTED
+        int mLock;
+    #else
+        #if _ELPP_OS_UNIX
+            pthread_mutex_t mHandle;
+        #elif _ELPP_OS_WINDOWS
+            CRITICAL_SECTION mHandle;
+        #endif // _ELPP_OS_UNIX
+    #endif // _ELPP_ASSEMBLY_SUPPORTED
+}; // class Mutex
 } // namespace threading
-#endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
-
+#endif // _ELPP_ENABLE_MUTEX
 namespace internal {
-namespace configuration {
+namespace constants {
 //
 // Log level name outputs
 //
@@ -573,7 +562,6 @@ const std::string kElppFatalLevelValue   =  "FATAL";
 const std::string kElppVerboseLevelValue =  "VER";
 const std::string kElppQaLevelValue      =  "QA";
 const std::string kElppTraceLevelValue   =  "TRACE";
-
 //
 // Format specifiers
 //
@@ -588,27 +576,30 @@ const std::string kUserFormatSpecifier           =   "%user";
 const std::string kHostFormatSpecifier           =   "%host";
 const std::string kLogMessageFormatSpecifier     =   "%log";
 const std::string kVerboseLevelFormatSpecifier   =   "%vlevel";
-
-enum kFormatSpecifiers { kDateOnly = 2,
-                         kTimeOnly = 4,
-                         kDateTime = 8,
-                         kType = 16,
-                         kLocation = 32,
-                         kFunction = 64,
-                         kUser = 128,
-                         kHost = 256,
-                         kLogMessage = 512,
-                         kVerboseLevel = 1024
-                       };
-
+enum kSeverityLevelFormatFlags { kDateOnly = 2,
+                                 kTimeOnly = 4,
+                                 kDateTime = 8,
+                                 kType = 16,
+                                 kLocation = 32,
+                                 kFunction = 64,
+                                 kUser = 128,
+                                 kHost = 256,
+                                 kLogMessage = 512,
+                                 kVerboseLevel = 1024
+                               };
+//
+// Others
+//
+const std::string kNullPoniterStr         = "nullptr";
 } // namespace configuration
 _ELPP_MUTEX_SPECIFIC_INIT
 
 using namespace easyloggingpp::configuration;
-using namespace easyloggingpp::internal::configuration;
+using namespace easyloggingpp::internal::constants;
 namespace helper {
-    // OSUtilities class specifically written for EasyLogging++
-    // This class contains functionalities related to operating system
+    //
+    // Contains utility functions related to operating system
+    //
     class OSUtilities {
     public:
         // Runs command on terminal and returns the output.
@@ -742,7 +733,9 @@ namespace helper {
         OSUtilities(const OSUtilities&);
         OSUtilities& operator=(const OSUtilities&);
     }; // class OSUtilities
-
+    //
+    // Contains static functions related to log manipulation
+    //
     class LogManipulator {
     public:
         // Updates the formatSpecifier_ for currentFormat_ to value_ provided
@@ -766,17 +759,19 @@ namespace helper {
         LogManipulator(const LogManipulator&);
         LogManipulator& operator=(const LogManipulator&);
     }; // class LogManipulator
-
+    //
+    // Contains utility functions related to date/time
+    //
     class DateUtilities {
     public:
 #if _ELPP_OS_WINDOWS
         static void gettimeofday(struct timeval *tv) {
             if (tv != NULL) {
-#   if defined(_MSC_EXTENSIONS)
+#if defined(_MSC_EXTENSIONS)
                 const unsigned __int64 delta_ = 11644473600000000Ui64;
-#   else
+#else
                 const unsigned __int64 delta_ = 11644473600000000ULL;
-#   endif
+#endif // defined(_MSC_EXTENSIONS)
                 const double secOffSet = 0.000001;
                 const unsigned long usecOffSet = 1000000;
                 FILETIME fileTime_;
@@ -792,7 +787,7 @@ namespace helper {
                 tv->tv_usec = static_cast<long>(present_ % usecOffSet);
             }
         }
-#endif
+#endif // _ELPP_OS_WINDOWS
         // Gets current date and time with milliseconds.
         static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, unsigned int milliSecondOffset = 1000) {
             long milliSeconds = 0;
@@ -855,7 +850,7 @@ namespace helper {
             return stream_.str();
         }
 
-        static inline double getTimeDifference(timeval& endTime, timeval& startTime) {
+        static inline double getTimeDifference(const timeval& endTime, const timeval& startTime) {
             return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
         }
 
@@ -868,16 +863,17 @@ namespace helper {
 } // namespace helper
 
 using namespace easyloggingpp::internal::helper;
-
-// Used internally as a register to keep records of 'Class' and provides underlying
+//
+// Registry to keep records of 'Class' and provides underlying
 // memory management
+//
 template<class Class, class Iterator, class Predicate>
-class Register {
+class Registry {
 public:
-    explicit Register(void) {
+    explicit Registry(void) {
     }
 
-    virtual ~Register(void) {
+    virtual ~Registry(void) {
         unregisterAll();
     }
 
@@ -909,7 +905,7 @@ protected:
 
     inline void unregisterAll(void) {
         if (!empty()) {
-            std::for_each(list_.begin(), list_.end(), std::bind1st(std::mem_fun(&Register::unregister), this));
+            std::for_each(list_.begin(), list_.end(), std::bind1st(std::mem_fun(&Registry::unregister), this));
             list_.clear();
         }
     }
@@ -925,11 +921,12 @@ protected:
 
 private:
     // Prevent copy or assignment
-    explicit Register(const Register&);
-    Register& operator=(const Register&);
-}; // class Register
-
+    explicit Registry(const Registry&);
+    Registry& operator=(const Registry&);
+}; // class Registry
+//
 // Represents a log type such as business logger, security logger etc.
+//
 class LogType {
 public:
     typedef std::vector<LogType*>::const_iterator Iterator;
@@ -970,9 +967,10 @@ private:
     std::string name_;
     std::string logName_;
 }; // class LogType
-
+//
 // Registered log types to be used as finding register while writing logs
-class RegisteredLogTypes : public Register<LogType, LogType::Iterator, LogType::Predicate> {
+//
+class RegisteredLogTypes : public Registry<LogType, LogType::Iterator, LogType::Predicate> {
 public:
     explicit RegisteredLogTypes(void) {
         registerNew(new LogType("TrivialLogger", "log"));
@@ -989,8 +987,9 @@ public:
         return false;
     }
 }; // class RegisteredLogTypes
-
+//
 // Represents severity level for log
+//
 class SeverityLevel {
 public:
 
@@ -1012,7 +1011,7 @@ public:
     class DateFormat {
     public:
 
-        explicit DateFormat(void) : type_(0) {
+        explicit DateFormat(void) : formatFlag_(0) {
         }
 
         inline std::string formatSpecifier(void) const {
@@ -1031,12 +1030,12 @@ public:
             this->bufferFormat_ = bufferFormat_;
         }
 
-        inline unsigned int type(void) const {
-            return type_;
+        inline unsigned int formatFlag(void) const {
+            return formatFlag_;
         }
 
-        inline void setType(unsigned int type_) {
-            this->type_ = type_;
+        inline void setFormatFlag(unsigned int formatFlag_) {
+            this->formatFlag_ = formatFlag_;
         }
 
         inline unsigned int milliSecondOffset(void) const {
@@ -1057,7 +1056,7 @@ public:
     private:
         std::string bufferFormat_;
         std::string formatSpecifier_;
-        unsigned int type_;
+        unsigned int formatFlag_;
         bool hasDate_;
         unsigned int milliSecondOffset_;
     };
@@ -1072,7 +1071,7 @@ public:
         toFile_(toFile_) {
             LogManipulator::updateFormatValue("%level", name_, this->format_);
             dateFormat_ = NULL;
-            availableLogFormats_ = 0;
+            severityLevelFormatFlag_ = 0;
             buildDateFormat();
             determineAvailableLogFormats();
     }
@@ -1108,8 +1107,8 @@ public:
         return dateFormat_;
     }
 
-    inline unsigned int availableLogFormats(void) const {
-        return availableLogFormats_;
+    inline unsigned int severityLevelFormatFlag(void) const {
+        return severityLevelFormatFlag_;
     }
 private:
     std::string name_;
@@ -1117,7 +1116,7 @@ private:
     DateFormat* dateFormat_;
     bool toStandardOutput_;
     bool toFile_;
-    unsigned int availableLogFormats_;
+    unsigned int severityLevelFormatFlag_;
 
     void buildDateFormat(void) {
         if (dateFormat_ == NULL) {
@@ -1125,28 +1124,28 @@ private:
         }
         if (format_.find(kDateTimeFormatSpecifier) != std::string::npos) {
             dateFormat_->setFormatSpecifier(kDateTimeFormatSpecifier);
-            availableLogFormats_ |= kDateTime;
+            severityLevelFormatFlag_ |= kDateTime;
             dateFormat_->setHasDate_(true);
         } else if (format_.find(kDateOnlyFormatSpecifier) != std::string::npos) {
             dateFormat_->setFormatSpecifier(kDateOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            availableLogFormats_ |= kDateOnly;
+            severityLevelFormatFlag_ |= kDateOnly;
         } else if (format_.find(kTimeOnlyFormatSpecifier) != std::string::npos) {
             dateFormat_->setFormatSpecifier(kTimeOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            availableLogFormats_ |= kTimeOnly;
+            severityLevelFormatFlag_ |= kTimeOnly;
         } else {
             dateFormat_->setHasDate_(false);
         }
-        dateFormat_->setType(availableLogFormats_);
+        dateFormat_->setFormatFlag(severityLevelFormatFlag_);
         if (dateFormat_->hasDate()) {
 #if _ELPP_OS_UNIX
             const std::string kTimeFormatLocal_ = "%H:%M:%S";
             const std::string kDateFormatLocal_ = "%d/%m/%Y";
 
-            if (dateFormat_->type() & kDateOnly) {
+            if (dateFormat_->formatFlag() & kDateOnly) {
                 dateFormat_->setBufferFormat(kDateFormatLocal_);
-            } else if (dateFormat_->type() & kTimeOnly) {
+            } else if (dateFormat_->formatFlag() & kTimeOnly) {
                 dateFormat_->setBufferFormat(kTimeFormatLocal_);
             } else {
                 std::stringstream ss;
@@ -1177,34 +1176,33 @@ private:
 
     void determineAvailableLogFormats(void) {
         if (format_.find(kTypeFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kType;
+            severityLevelFormatFlag_ |= kType;
         }
         if (format_.find(kLocationFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kLocation;
+            severityLevelFormatFlag_ |= kLocation;
         }
         if (format_.find(kFunctionFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kFunction;
+            severityLevelFormatFlag_ |= kFunction;
         }
         if (format_.find(kUserFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kUser;
+            severityLevelFormatFlag_ |= kUser;
         }
         if (format_.find(kHostFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kHost;
+            severityLevelFormatFlag_ |= kHost;
         }
         if (format_.find(kLogMessageFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kLogMessage;
+            severityLevelFormatFlag_ |= kLogMessage;
         }
         if (format_.find(kVerboseLevelFormatSpecifier) != std::string::npos) {
-            availableLogFormats_ |= kVerboseLevel;
+            severityLevelFormatFlag_ |= kVerboseLevel;
         }
     }
 }; // class SeverityLevel
 
 // All the registered severity levels used while writing logs
-class RegisteredSeverityLevels : public Register<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
+class RegisteredSeverityLevels : public Registry<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
 public:
-    explicit RegisteredSeverityLevels(void)
-    {
+    explicit RegisteredSeverityLevels(void) {
         registerNew(
                     new SeverityLevel(kElppDebugLevelValue, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
@@ -1228,6 +1226,7 @@ public:
 class LogCounter {
 public:
     typedef std::vector<LogCounter*>::iterator Iterator;
+
     const static unsigned int kMax = 100000;
 
     class Predicate {
@@ -1291,9 +1290,9 @@ private:
 }; // class LogCounter
 
 // Represents all the registered counters. This registeration is done at run-time as log is being written
-class RegisteredCounters : public Register<LogCounter, LogCounter::Iterator, LogCounter::Predicate>  {
+class RegisteredCounters : public Registry<LogCounter, LogCounter::Iterator, LogCounter::Predicate>  {
 public:
-    bool valid(const char* file_, unsigned long int line_, unsigned int n_) {
+    bool validate(const char* file_, unsigned long int line_, unsigned int n_) {
         bool result_ = false;
         LogCounter* counter_ = get(file_, line_);
         if (counter_ == NULL) {
@@ -1335,7 +1334,7 @@ public:
                             !kFinalFilename_.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
                             !kFinalFilename_.empty();
             if (fileGood_) {
-#if (_ALWAYS_CLEAN_LOGS)
+#if _ALWAYS_CLEAN_LOGS
                 logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out);
 #else
                 logFile_ = new std::ofstream(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
@@ -1433,12 +1432,12 @@ public:
         std::string value_ = "";
         // DateTime
         if (level_->dateFormat()->hasDate()) {
-            value_ = DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->type(),
+            value_ = DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->formatFlag(),
                                                 level_->dateFormat()->milliSecondOffset());
             LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
         // Type
-        if (level_->availableLogFormats() | kType) {
+        if (level_->severityLevelFormatFlag() | kType) {
             LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
             bool displayType_ = true;
@@ -1461,35 +1460,35 @@ public:
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Location
-        if (level_->availableLogFormats() & kLocation) {
+        if (level_->severityLevelFormatFlag() & kLocation) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
             formatSpecifier_ = kLocationFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Function
-        if (level_->availableLogFormats() & kFunction) {
+        if (level_->severityLevelFormatFlag() & kFunction) {
             value_ = std::string(func_);
             formatSpecifier_ = kFunctionFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // User
-        if (level_->availableLogFormats() & kUser) {
+        if (level_->severityLevelFormatFlag() & kUser) {
             formatSpecifier_ = kUserFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
         // Host
-        if (level_->availableLogFormats() & kHost) {
+        if (level_->severityLevelFormatFlag() & kHost) {
             formatSpecifier_ = kHostFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
         // Log
-        if (level_->availableLogFormats() & kLogMessage) {
+        if (level_->severityLevelFormatFlag() & kLogMessage) {
             formatSpecifier_ = kLogMessageFormatSpecifier;
             LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
         }
         // Verbose specific log
-        if (verboseLevel_ > 0 && (level_->availableLogFormats() & kVerboseLevel)) {
+        if (verboseLevel_ > 0 && (level_->severityLevelFormatFlag() & kVerboseLevel)) {
             tempStream_.str("");
             tempStream_ << verboseLevel_;
             value_ = tempStream_.str();
@@ -1578,9 +1577,8 @@ private:
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
 }; // class Logger
-
 //
-// Helper macros
+// Helper macros for internal use
 //
 #define _ELPP_LOGGER easyloggingppLogger_
 #define _QUALIFIED_LOGGER ::easyloggingpp::internal::_ELPP_LOGGER
@@ -1588,20 +1586,20 @@ private:
 #define _ELPP_STREAM *_ELPP_STREAM_PTR
 #define _WRITE_ELPP_LOG(type_, level_, func_, file_, line_)                                \
     if (logAspect_ == kNormal) {                                                           \
-    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-} else if (logAspect_ == kConditional && condition_) {                                     \
-    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-} else if (logAspect_ == kInterval) {                                                      \
-    if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {             \
-    _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                            \
-}                                                                                          \
-}
-#define _ELPP_LOG_TO_STREAM _ELPP_STREAM << log_; return *this;
+        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
+    } else if (logAspect_ == kConditional && condition_) {                                 \
+        _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                        \
+    } else if (logAspect_ == kInterval) {                                                  \
+        if (_ELPP_LOGGER.registeredLogCounters()->validate(file_, line_, counter_)) {      \
+            _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                    \
+        }                                                                                  \
+    }
 #define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
 #define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
-
+//
+// Main logger
+//
 extern easyloggingpp::internal::Logger _ELPP_LOGGER;
-
 // Entry point to write log. All the macros are resolved to c'tor of this class
 class LogWriter {
 public:
@@ -1632,41 +1630,41 @@ public:
         _ELPP_LOCK_MUTEX;
     }
 
-    ~LogWriter(void) {
+    virtual ~LogWriter(void) {
         writeLog();
         _ELPP_UNLOCK_MUTEX;
     }
 
 #define RETURN_PTR(logPtr_) return (logPtr_ != NULL ? operator << (*logPtr_) : operator << ("nullptr"))
 
-    inline LogWriter& operator<<(const std::string& log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(std::string* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(const std::string& log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(std::string* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(const std::wstring& log_) { _ELPP_STREAM << "(std::wstring could not be handled) " << log_.c_str(); return *this; }
-    inline LogWriter& operator<<(std::wstring* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(char log_) { _ELPP_LOG_TO_STREAM }
+    inline LogWriter& operator<<(std::wstring* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(char log_) { _ELPP_STREAM << log_; return *this; }
     inline LogWriter& operator<<(bool log_) { _ELPP_STREAM << (log_ != 0 ? "true" : "false"); return *this; }
-    inline LogWriter& operator<<(bool* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(signed short log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(signed short* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(unsigned short log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(unsigned short* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(signed int log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(signed int* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(unsigned int log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(unsigned int* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(signed long log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(signed long* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(unsigned long log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(unsigned long* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(float log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(float* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(double log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(double* log_) { RETURN_PTR(log_); }
-    inline LogWriter& operator<<(char* log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(const char* log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(const void* log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(long double log_) { _ELPP_LOG_TO_STREAM }
-    inline LogWriter& operator<<(long double* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(bool* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(signed short log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(signed short* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(unsigned short log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(unsigned short* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(signed int log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(signed int* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(unsigned int log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(unsigned int* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(signed long log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(signed long* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(unsigned long log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(unsigned long* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(float log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(float* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(double log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(double* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(char* log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(const char* log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(const void* log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(long double log_) { _ELPP_STREAM << log_; return *this; }
+    inline LogWriter& operator<<(long double* log_) { return writePointer(log_); }
     template <class T>
     inline LogWriter& operator<<(const T& class_) {
         _ELPP_STREAM << class_.toString();
@@ -1677,26 +1675,26 @@ public:
         if (pointer_) {
             _ELPP_STREAM << pointer_->toString();
         } else {
-            _ELPP_STREAM << "null";
+            _ELPP_STREAM << kNullPoniterStr;
         }
         return *this;
     }
 #if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     template <typename T>
     inline LogWriter& operator<<(const std::vector<T>& vec_) {
-        _ELPP_STREAM << "(";
+        _ELPP_STREAM << "[";
         for (unsigned int i = 0; i < vec_.size(); ++i) {
             _ELPP_STREAM << "\"";
             operator << (static_cast<T>(vec_.at(i)));
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (i < vec_.size() -1 ? ", " : "");
         }
-        _ELPP_STREAM << ")";
+        _ELPP_STREAM << "]";
         return *this;
     }
     template <typename T>
     inline LogWriter& operator<<(const std::list<T>& list_) {
-        _ELPP_STREAM << "(";
+        _ELPP_STREAM << "[";
         unsigned int index_ = 0;
         for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
             _ELPP_STREAM << "\"";
@@ -1704,7 +1702,7 @@ public:
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
         }
-        _ELPP_STREAM << ")";
+        _ELPP_STREAM << "]";
         return *this;
     }
     template <class K, class V>
@@ -1730,22 +1728,22 @@ public:
 #endif // !defined(_DISABLE_LIBRARY_CLASS_LOGGING)
 #if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
     inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
-    inline LogWriter& operator<<(QString* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(QString* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); return *this; }
-    inline LogWriter& operator<<(QStringRef* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(QStringRef* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
-    inline LogWriter& operator<<(qint64* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(qint64* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
-    inline LogWriter& operator<<(quint64* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(quint64* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return *this; }
-    inline LogWriter& operator<<(QChar* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(QChar* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
-    inline LogWriter& operator<<(QBool* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(QBool* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
-    inline LogWriter& operator<<(QLatin1String* log_) { RETURN_PTR(log_); }
+    inline LogWriter& operator<<(QLatin1String* log_) { return writePointer(log_); }
     template <typename T>
     inline LogWriter& operator<<(const QList<T>& list_) {
-        _ELPP_STREAM << "(";
+        _ELPP_STREAM << "[";
         int index_ = 0;
         for (typename QList<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
             _ELPP_STREAM << "\"";
@@ -1753,7 +1751,7 @@ public:
             _ELPP_STREAM << "\"";
             _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
         }
-        _ELPP_STREAM << ")";
+        _ELPP_STREAM << "]";
         return *this;
     }
     template <typename T>
@@ -1788,7 +1786,12 @@ public:
     }
 #endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
 private:
-    inline void writeLog(void) const {
+    template <class Pointer>
+    inline LogWriter& writePointer(Pointer pointer_) {
+        return (pointer_ != NULL ? operator << (*pointer_) : operator << (kNullPoniterStr));
+    }
+
+    void writeLog(void) const {
         if (severityLevel_ == kElppDebugLevelValue) {
 #if (_ELPP_DEBUG_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
@@ -1824,7 +1827,7 @@ private:
             } else if (logAspect_ == kConditional && condition_ && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
                 _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
             } else if (logAspect_ == kInterval && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
-                if (_ELPP_LOGGER.registeredLogCounters()->valid(file_, line_, counter_)) {
+                if (_ELPP_LOGGER.registeredLogCounters()->validate(file_, line_, counter_)) {
                     _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
                 }
             }
@@ -1851,41 +1854,41 @@ private:
 // Performance tracking macros
 //
 #if (_ENABLE_PERFORMANCE_TRACKING && !defined(_DISABLE_PERFORMANCE_TRACKING))
-#    if _ELPP_OS_UNIX
-#        define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
-#    elif _ELPP_OS_WINDOWS
-#        define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::DateUtilities::gettimeofday(tm);
-#    endif
-#    define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-#    define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
+    #if _ELPP_OS_UNIX
+        #define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
+    #elif _ELPP_OS_WINDOWS
+        #define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::DateUtilities::gettimeofday(tm);
+    #endif
+    #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
+    #define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
          easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
          easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
-#    define FUNC_SUB_COMMON_START {                                                                             \
+    #define FUNC_SUB_COMMON_START {                                                                             \
      if (easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) {                                               \
          _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                                  \
      }                                                                                                          \
      timeval functionStartTime, functionEndTime;                                                                \
      _ELPP_GET_CURR_TIME(&functionStartTime)
-#    define LOG_FUNC_PERFORMANCE _ELPP_GET_CURR_TIME(&functionEndTime); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
-#    define FUNC_SUB_COMMON_END LOG_FUNC_PERFORMANCE;
-#    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
-#    define END_SUB FUNC_SUB_COMMON_END }
-#    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
-#    define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
-#    define END_FUNC(return_value) RETURN(return_value) }
-#    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(return_value) FUNC_SUB_COMMON_END; return return_value; }
-#    define RETURN_MAIN(exit_status) return exit_status;
+    #define LOG_FUNC_PERFORMANCE _ELPP_GET_CURR_TIME(&functionEndTime); _PERFORMANCE_TRACKING_SEVERITY << TIME_OUTPUT;
+    #define FUNC_SUB_COMMON_END LOG_FUNC_PERFORMANCE;
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
+    #define END_SUB FUNC_SUB_COMMON_END }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS FUNC_SUB_COMMON_START
+    #define RETURN(return_value) FUNC_SUB_COMMON_END return return_value;
+    #define END_FUNC(return_value) RETURN(return_value) }
+    #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
+    #define END_MAIN(return_value) FUNC_SUB_COMMON_END; return return_value; }
+    #define RETURN_MAIN(exit_status) return exit_status;
 #else
-#    define LOG_FUNC_PERFORMANCE
-#    define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
-#    define END_SUB }
-#    define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
-#    define END_FUNC(x) return x; }
-#    define RETURN(expr) return expr;
-#    define MAIN(argc, argv) FUNC(int, main, (argc, argv))
-#    define END_MAIN(x) return x; }
-#    define RETURN_MAIN(exit_status) return exit_status;
+    #define LOG_FUNC_PERFORMANCE
+    #define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
+    #define END_SUB }
+    #define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
+    #define END_FUNC(x) return x; }
+    #define RETURN(expr) return expr;
+    #define MAIN(argc, argv) FUNC(int, main, (argc, argv))
+    #define END_MAIN(x) return x; }
+    #define RETURN_MAIN(exit_status) return exit_status;
 #endif // (_ENABLE_PERFORMANCE_TRACKING && !defined(_DISABLE_PERFORMANCE_TRACKING))
 
 namespace easyloggingpp {
@@ -2079,32 +2082,32 @@ public:
 //
 #ifdef _SUPPORT_LEGACY_LOG_NAMES
 // Normal logs
-#    define DEBUG(log_) LDEBUG << log_;
-#    define INFO(log_) LINFO << log_;
-#    define WARNING(log_) LWARNING << log_;
-#    define ERROR(log_) LERROR << log_;
-#    define FATAL(log_) LFATAL << log_;
-#    define PERFORMANCE(log_) PINFO << log_;
-#    define VERBOSE(vlevel_, log_) LVERBOSE(vlevel_) << log_;
-#    define QA(log_) LQA << log_;
+    #define DEBUG(log_) LDEBUG << log_;
+    #define INFO(log_) LINFO << log_;
+    #define WARNING(log_) LWARNING << log_;
+    #define ERROR(log_) LERROR << log_;
+    #define FATAL(log_) LFATAL << log_;
+    #define PERFORMANCE(log_) PINFO << log_;
+    #define VERBOSE(vlevel_, log_) LVERBOSE(vlevel_) << log_;
+    #define QA(log_) LQA << log_;
 // Conditional logs
-#    define DEBUG_IF(cond_, log_) LDEBUG_IF(cond_) << log_;
-#    define INFO_IF(cond_, log_) LINFO_IF(cond_) << log_;
-#    define WARNING_IF(cond_, log_) LWARNING_IF(cond_) << log_;
-#    define ERROR_IF(cond_, log_) LERROR_IF(cond_) << log_;
-#    define FATAL_IF(cond_, log_) LFATAL_IF(cond_) << log_;
-#    define PERFORMANCE_IF(cond_, log_) PINFO_IF(cond_) << log_;
-#    define VERBOSE_IF(cond_, vlevel_, log_) LVERBOSE_IF(cond_, vlevel_) << log_;
-#    define QA_IF(cond_, log_) LQA << log_;
+    #define DEBUG_IF(cond_, log_) LDEBUG_IF(cond_) << log_;
+    #define INFO_IF(cond_, log_) LINFO_IF(cond_) << log_;
+    #define WARNING_IF(cond_, log_) LWARNING_IF(cond_) << log_;
+    #define ERROR_IF(cond_, log_) LERROR_IF(cond_) << log_;
+    #define FATAL_IF(cond_, log_) LFATAL_IF(cond_) << log_;
+    #define PERFORMANCE_IF(cond_, log_) PINFO_IF(cond_) << log_;
+    #define VERBOSE_IF(cond_, vlevel_, log_) LVERBOSE_IF(cond_, vlevel_) << log_;
+    #define QA_IF(cond_, log_) LQA << log_;
 // Interval logs
-#    define DEBUG_EVERY_N(n_, log_) LDEBUG_EVERY_N(n_) << log_;
-#    define INFO_EVERY_N(n_, log_) LINFO_EVERY_N(n_) << log_;
-#    define WARNING_EVERY_N(n_, log_) LWARNING_EVERY_N(n_) << log_;
-#    define ERROR_EVERY_N(n_, log_) LERROR_EVERY_N(n_) << log_;
-#    define FATAL_EVERY_N(n_, log_) LFATAL_EVERY_N(n_) << log_;
-#    define PERFORMANCE_EVERY_N(n_, log_) PINFO_EVERY_N(n_) << log_;
-#    define VERBOSE_EVERY_N(n_, vlevel_, log_) LVERBOSE_EVERY_N(n_, vlevel_) << log_;
-#    define QA_EVERY_N(n_, log_) LQA_EVERY_N(n_) << log_;
+    #define DEBUG_EVERY_N(n_, log_) LDEBUG_EVERY_N(n_) << log_;
+    #define INFO_EVERY_N(n_, log_) LINFO_EVERY_N(n_) << log_;
+    #define WARNING_EVERY_N(n_, log_) LWARNING_EVERY_N(n_) << log_;
+    #define ERROR_EVERY_N(n_, log_) LERROR_EVERY_N(n_) << log_;
+    #define FATAL_EVERY_N(n_, log_) LFATAL_EVERY_N(n_) << log_;
+    #define PERFORMANCE_EVERY_N(n_, log_) PINFO_EVERY_N(n_) << log_;
+    #define VERBOSE_EVERY_N(n_, vlevel_, log_) LVERBOSE_EVERY_N(n_, vlevel_) << log_;
+    #define QA_EVERY_N(n_, log_) LQA_EVERY_N(n_) << log_;
 #endif // _SUPPORT_LEGACY_LOG_NAMES
 
 #define _START_EASYLOGGINGPP(argc, argv) \
