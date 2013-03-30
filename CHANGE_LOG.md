@@ -86,6 +86,7 @@ Change log was not kept before version 2.1.
       - Prevent potential naming conflicts with classes
       - Removed `using namespace` and naming explicitly
       - Better format by introducing internal::constants
+ * 7.56: Simplified readibility
 
 #### 6.xx
  * 6.00:
