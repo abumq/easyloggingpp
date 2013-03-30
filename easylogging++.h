@@ -443,21 +443,28 @@ namespace threading {
 class Mutex {
 public:
     #if _ELPP_ASSEMBLY_SUPPORTED
-        explicit Mutex(void) : mLock(0) {
+        #define _ELPP_MUTEX_LOCK_GNU_ASM(lf_, old_) "movl $1,%%eax\n"       \
+                                                        "\txchg %%eax,%0\n" \
+                                                        "\tmovl %%eax,%1\n" \
+                                                        "\t" : "=m" (lf_), "=m" (old_) : : "%eax", "memory"
+        #define _ELPP_MUTEX_UNLOCK_GNU_ASM(lf_) "movl $0,%%eax\n"                                \
+                                                    "\txchg %%eax,%0\n"                          \
+                                                    "\t" : "=m" (lf_) : : "%eax", "memory"
+        explicit Mutex(void) : lockerFlag_(0) {
         }
     #else
         explicit Mutex(void) {
             #if _ELPP_OS_UNIX
-                pthread_mutex_init(&mHandle, NULL);
+                pthread_mutex_init(&underlyingMutex_, NULL);
             #elif _ELPP_OS_WINDOWS
-                InitializeCriticalSection(&mHandle);
+                InitializeCriticalSection(&underlyingMutex_);
             #endif // _ELPP_OS_UNIX
         }
         ~Mutex(void) {
             #if _ELPP_OS_UNIX
-                pthread_mutex_destroy(&mHandle);
+                pthread_mutex_destroy(&underlyingMutex_);
             #elif _ELPP_OS_WINDOWS
-                DeleteCriticalSection(&mHandle);
+                DeleteCriticalSection(&underlyingMutex_);
             #endif // _ELPP_OS_UNIX
         }
     #endif // _ELPP_ASSEMBLY_SUPPORTED
@@ -476,46 +483,41 @@ public:
             }
         #else
             #if _ELPP_OS_UNIX
-                pthread_mutex_lock(&mHandle);
+                pthread_mutex_lock(&underlyingMutex_);
             #elif _ELPP_OS_WINDOWS
-                EnterCriticalSection(&mHandle);
+                EnterCriticalSection(&underlyingMutex_);
             #endif // _ELPP_OS_UNIX
         #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
     inline bool tryLock(void) {
         #if _ELPP_ASSEMBLY_SUPPORTED
-            int oldLock;
+            int oldLock_;
             #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-                asm volatile ("movl $1,%%eax\n"
-                                  "\txchg %%eax,%0\n"
-                                  "\tmovl %%eax,%1\n"
-                                  "\t" : "=m" (mLock), "=m" (oldLock) : : "%eax", "memory");
+            asm volatile (_ELPP_MUTEX_LOCK_GNU_ASM(lockerFlag_, oldLock_));
             #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-                int *ptrLock = &mLock;
+                int *ptrLock = &lockerFlag_;
                 __asm {
                     mov eax,1
                         mov ecx,ptrLock
                         xchg eax,[ecx]
-                        mov oldLock,eax
+                        mov oldLock_,eax
                 }
             #endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            return (oldLock == 0);
+            return (oldLock_ == 0);
         #else
             #if _ELPP_OS_UNIX
-                return (pthread_mutex_trylock(&mHandle) == 0) ? true : false;
+                return (pthread_mutex_trylock(&underlyingMutex_) == 0) ? true : false;
             #elif _ELPP_OS_WINDOWS
-                return TryEnterCriticalSection(&mHandle) ? true : false;
+                return TryEnterCriticalSection(&underlyingMutex_) ? true : false;
             #endif // _ELPP_OS_UNIX
         #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
     inline void unlock(void) {
     #if _ELPP_ASSEMBLY_SUPPORTED
         #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            asm volatile ("movl $0,%%eax\n"
-                              "\txchg %%eax,%0\n"
-                              "\t" : "=m" (mLock) : : "%eax", "memory");
+        asm volatile (_ELPP_MUTEX_UNLOCK_GNU_ASM(lockerFlag_));
         #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
-            int *ptrLock = &mLock;
+            int *ptrLock = &lockerFlag_;
             __asm {
                 mov eax,0
                     mov ecx,ptrLock
@@ -524,20 +526,20 @@ public:
         #endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
     #else
         #if _ELPP_OS_UNIX
-            pthread_mutex_unlock(&mHandle);
+            pthread_mutex_unlock(&underlyingMutex_);
         #elif _ELPP_OS_WINDOWS
-            LeaveCriticalSection(&mHandle);
+            LeaveCriticalSection(&underlyingMutex_);
         #endif // _ELPP_OS_UNIX
     #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
 private:
     #if _ELPP_ASSEMBLY_SUPPORTED
-        int mLock;
+        int lockerFlag_;
     #else
         #if _ELPP_OS_UNIX
-            pthread_mutex_t mHandle;
+            pthread_mutex_t underlyingMutex_;
         #elif _ELPP_OS_WINDOWS
-            CRITICAL_SECTION mHandle;
+            CRITICAL_SECTION underlyingMutex_;
         #endif // _ELPP_OS_UNIX
     #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
