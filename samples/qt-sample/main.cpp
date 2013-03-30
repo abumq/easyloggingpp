@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
 
     if (runThreads) {
         for (int i = 1; i <= 1; ++i) {
-           // MyThread t(i);
-           // t.start();
-           // t.wait();
+            MyThread t(i);
+            t.start();
+            t.wait();
         }
     }
 
@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
     SDEBUG << "This is security logger for debug";
 
     BINFO << "This is a business logger";
+
 
     return 0;
 

@@ -1088,3 +1088,151 @@
 30/03/2013 12:00:04.413 INFO  [log] stringPtrList : ("stringPtrList")
 30/03/2013 12:00:04.413 INFO  [log] vehicleList : ("[Honda Accord 2013 vehicleList]")
 30/03/2013 12:00:04.413 INFO  [log] vehiclePtrList : ("[Honda Accord 2013 vehiclePtrList]")
+30/03/2013 12:56:10.947 INFO  [log] info
+30/03/2013 12:56:10.948 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:10] debug
+30/03/2013 12:56:10.948 ERROR [log] error
+30/03/2013 12:56:10.948 WARN  [log] warning
+30/03/2013 12:56:10.948 FATAL [log] fatal
+30/03/2013 12:56:10.948 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+30/03/2013 12:56:10.948 INFO  [log] conditional info
+30/03/2013 12:56:10.948 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:27] conditional debug
+30/03/2013 12:56:10.948 ERROR [log] conditional error
+30/03/2013 12:56:10.948 WARN  [log] conditional warning
+30/03/2013 12:56:10.948 FATAL [log] conditional fatal
+30/03/2013 12:56:10.948 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+30/03/2013 12:56:10.948 INFO  [log] Info every 1
+30/03/2013 12:56:10.948 WARN  [log] Warning every 1
+30/03/2013 12:56:10.948 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+30/03/2013 12:56:10.948 FATAL [log] Fatal every 1
+30/03/2013 12:56:10.948 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+30/03/2013 12:56:10.948 INFO  [business] info
+30/03/2013 12:56:10.948 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:55] debug
+30/03/2013 12:56:10.948 ERROR [business] error
+30/03/2013 12:56:10.948 WARN  [business] warning
+30/03/2013 12:56:10.948 FATAL [business] fatal
+30/03/2013 12:56:10.948 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+30/03/2013 12:56:10.948 INFO  [business] conditional info
+30/03/2013 12:56:10.948 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:72] conditional debug
+30/03/2013 12:56:10.948 ERROR [business] conditional error
+30/03/2013 12:56:10.948 WARN  [business] conditional warning
+30/03/2013 12:56:10.949 FATAL [business] conditional fatal
+30/03/2013 12:56:10.949 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+30/03/2013 12:56:10.949 INFO  [business] Info every 1
+30/03/2013 12:56:10.949 WARN  [business] Warning every 1
+30/03/2013 12:56:10.949 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:90] Debug every 1
+30/03/2013 12:56:10.949 FATAL [business] Fatal every 1
+30/03/2013 12:56:10.949 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+30/03/2013 12:56:10.949 INFO  [security] info
+30/03/2013 12:56:10.949 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:99] debug
+30/03/2013 12:56:10.949 ERROR [security] error
+30/03/2013 12:56:10.949 WARN  [security] warning
+30/03/2013 12:56:10.949 FATAL [security] fatal
+30/03/2013 12:56:10.949 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+30/03/2013 12:56:10.949 INFO  [security] conditional info
+30/03/2013 12:56:10.949 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:116] conditional debug
+30/03/2013 12:56:10.949 ERROR [security] conditional error
+30/03/2013 12:56:10.949 WARN  [security] conditional warning
+30/03/2013 12:56:10.949 FATAL [security] conditional fatal
+30/03/2013 12:56:10.949 INFO  [security] Info every 1
+30/03/2013 12:56:10.949 WARN  [security] Warning every 1
+30/03/2013 12:56:10.949 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:134] Debug every 1
+30/03/2013 12:56:10.949 FATAL [security] Fatal every 1
+30/03/2013 12:56:10.949 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+30/03/2013 12:56:10.949 INFO  [performance] info
+30/03/2013 12:56:10.949 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:143] debug
+30/03/2013 12:56:10.949 ERROR [performance] error
+30/03/2013 12:56:10.949 WARN  [performance] warning
+30/03/2013 12:56:10.949 FATAL [performance] fatal
+30/03/2013 12:56:10.949 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+30/03/2013 12:56:10.950 INFO  [performance] conditional info
+30/03/2013 12:56:10.950 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:160] conditional debug
+30/03/2013 12:56:10.950 ERROR [performance] conditional error
+30/03/2013 12:56:10.950 WARN  [performance] conditional warning
+30/03/2013 12:56:10.950 FATAL [performance] conditional fatal
+30/03/2013 12:56:10.950 INFO  [performance] Info every 1
+30/03/2013 12:56:10.950 WARN  [performance] Warning every 1
+30/03/2013 12:56:10.950 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+30/03/2013 12:56:10.950 FATAL [performance] Fatal every 1
+30/03/2013 12:56:10.950 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+30/03/2013 12:56:10.950 INFO  [log] stringVec : ["stringVec"]
+30/03/2013 12:56:10.950 INFO  [log] stringPtrVec : ["stringPtrVec"]
+30/03/2013 12:56:10.950 INFO  [log] vehicleVec : ["[Honda Accord 2013 vehicleVec]"]
+30/03/2013 12:56:10.950 INFO  [log] vehiclePtrVec : ["[Honda Accord 2013 vehiclePtrVec]"]
+30/03/2013 12:56:10.950 INFO  [log] stringList : ["stringList"]
+30/03/2013 12:56:10.950 INFO  [log] stringPtrList : ["stringPtrList"]
+30/03/2013 12:56:10.950 INFO  [log] vehicleList : ["[Honda Accord 2013 vehicleList]"]
+30/03/2013 12:56:10.950 INFO  [log] vehiclePtrList : ["[Honda Accord 2013 vehiclePtrList]"]
+30/03/2013 12:58:43.768 INFO  [log] info
+30/03/2013 12:58:43.768 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:10] debug
+30/03/2013 12:58:43.768 ERROR [log] error
+30/03/2013 12:58:43.768 WARN  [log] warning
+30/03/2013 12:58:43.768 FATAL [log] fatal
+30/03/2013 12:58:43.768 TRACE [log] [void trivialLogs()] [normal-logs.h:15] trace
+30/03/2013 12:58:43.768 INFO  [log] conditional info
+30/03/2013 12:58:43.768 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:27] conditional debug
+30/03/2013 12:58:43.768 ERROR [log] conditional error
+30/03/2013 12:58:43.768 WARN  [log] conditional warning
+30/03/2013 12:58:43.768 FATAL [log] conditional fatal
+30/03/2013 12:58:43.768 TRACE [log] [void trivialLogs()] [normal-logs.h:32] conditional trace
+30/03/2013 12:58:43.768 INFO  [log] Info every 1
+30/03/2013 12:58:43.768 WARN  [log] Warning every 1
+30/03/2013 12:58:43.768 DEBUG [log] [majid@devil-inside-pc] [void trivialLogs()] [normal-logs.h:45] Debug every 1
+30/03/2013 12:58:43.769 FATAL [log] Fatal every 1
+30/03/2013 12:58:43.769 TRACE [log] [void trivialLogs()] [normal-logs.h:48] Trace every 1
+30/03/2013 12:58:43.769 INFO  [business] info
+30/03/2013 12:58:43.769 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:55] debug
+30/03/2013 12:58:43.769 ERROR [business] error
+30/03/2013 12:58:43.769 WARN  [business] warning
+30/03/2013 12:58:43.769 FATAL [business] fatal
+30/03/2013 12:58:43.769 TRACE [business] [void businessLogs()] [normal-logs.h:60] trace
+30/03/2013 12:58:43.769 INFO  [business] conditional info
+30/03/2013 12:58:43.769 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:72] conditional debug
+30/03/2013 12:58:43.769 ERROR [business] conditional error
+30/03/2013 12:58:43.769 WARN  [business] conditional warning
+30/03/2013 12:58:43.769 FATAL [business] conditional fatal
+30/03/2013 12:58:43.769 TRACE [business] [void businessLogs()] [normal-logs.h:77] conditional trace
+30/03/2013 12:58:43.769 INFO  [business] Info every 1
+30/03/2013 12:58:43.769 WARN  [business] Warning every 1
+30/03/2013 12:58:43.769 DEBUG [business] [majid@devil-inside-pc] [void businessLogs()] [normal-logs.h:90] Debug every 1
+30/03/2013 12:58:43.769 FATAL [business] Fatal every 1
+30/03/2013 12:58:43.769 TRACE [business] [void businessLogs()] [normal-logs.h:93] Trace every 1
+30/03/2013 12:58:43.769 INFO  [security] info
+30/03/2013 12:58:43.769 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:99] debug
+30/03/2013 12:58:43.769 ERROR [security] error
+30/03/2013 12:58:43.769 WARN  [security] warning
+30/03/2013 12:58:43.769 FATAL [security] fatal
+30/03/2013 12:58:43.769 TRACE [security] [void securityLogs()] [normal-logs.h:104] trace
+30/03/2013 12:58:43.769 INFO  [security] conditional info
+30/03/2013 12:58:43.769 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:116] conditional debug
+30/03/2013 12:58:43.769 ERROR [security] conditional error
+30/03/2013 12:58:43.769 WARN  [security] conditional warning
+30/03/2013 12:58:43.769 FATAL [security] conditional fatal
+30/03/2013 12:58:43.769 INFO  [security] Info every 1
+30/03/2013 12:58:43.770 WARN  [security] Warning every 1
+30/03/2013 12:58:43.770 DEBUG [security] [majid@devil-inside-pc] [void securityLogs()] [normal-logs.h:134] Debug every 1
+30/03/2013 12:58:43.770 FATAL [security] Fatal every 1
+30/03/2013 12:58:43.770 TRACE [security] [void securityLogs()] [normal-logs.h:137] Trace every 1
+30/03/2013 12:58:43.770 INFO  [performance] info
+30/03/2013 12:58:43.770 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:143] debug
+30/03/2013 12:58:43.770 ERROR [performance] error
+30/03/2013 12:58:43.770 WARN  [performance] warning
+30/03/2013 12:58:43.770 FATAL [performance] fatal
+30/03/2013 12:58:43.770 TRACE [performance] [void performanceLogs()] [normal-logs.h:148] trace
+30/03/2013 12:58:43.770 INFO  [performance] conditional info
+30/03/2013 12:58:43.770 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:160] conditional debug
+30/03/2013 12:58:43.770 ERROR [performance] conditional error
+30/03/2013 12:58:43.770 WARN  [performance] conditional warning
+30/03/2013 12:58:43.770 FATAL [performance] conditional fatal
+30/03/2013 12:58:43.770 INFO  [performance] Info every 1
+30/03/2013 12:58:43.770 WARN  [performance] Warning every 1
+30/03/2013 12:58:43.770 DEBUG [performance] [majid@devil-inside-pc] [void performanceLogs()] [normal-logs.h:178] Debug every 1
+30/03/2013 12:58:43.770 FATAL [performance] Fatal every 1
+30/03/2013 12:58:43.770 TRACE [performance] [void performanceLogs()] [normal-logs.h:181] Trace every 1
+30/03/2013 12:58:43.770 INFO  [log] stringVec : ["stringVec"]
+30/03/2013 12:58:43.770 INFO  [log] stringPtrVec : ["stringPtrVec"]
+30/03/2013 12:58:43.770 INFO  [log] vehicleVec : ["[Honda Accord 2013 vehicleVec]"]
+30/03/2013 12:58:43.770 INFO  [log] vehiclePtrVec : ["[Honda Accord 2013 vehiclePtrVec]"]
+30/03/2013 12:58:43.770 INFO  [log] stringList : ["stringList"]
+30/03/2013 12:58:43.770 INFO  [log] stringPtrList : ["stringPtrList"]
+30/03/2013 12:58:43.770 INFO  [log] vehicleList : ["[Honda Accord 2013 vehicleList]"]
+30/03/2013 12:58:43.770 INFO  [log] vehiclePtrList : ["[Honda Accord 2013 vehiclePtrList]"]

@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.50                                                         //
+//   EasyLogging++ v7.55                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -319,13 +319,7 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
     #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 #elif _ELPP_OS_WINDOWS
     #include <direct.h>
-    #if !defined(WIN32_LEAN_AND_MEAN)
-        #define WIN32_LEAN_AND_MEAN
-    #endif // !defined(WIN32_LEAN_AND_MEAN)
     #include <Windows.h>
-    #if defined(WIN32_LEAN_AND_MEAN)
-        #undef WIN32_LEAN_AND_MEAN
-    #endif // defined(WIN32_LEAN_AND_MEAN)
 #endif // _ELPP_OS_UNIX
 #include <string>
 #include <vector>
@@ -394,10 +388,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.50"); }
+    static inline const std::string version(void) { return std::string("7.55"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("29-03-2013 1811hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("30-03-2013 1334hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -449,17 +443,17 @@ namespace threading {
 class Mutex {
 public:
     #if _ELPP_ASSEMBLY_SUPPORTED
-        Mutex(void) : mLock(0) {
+        explicit Mutex(void) : mLock(0) {
         }
     #else
-        Mutex(void) {
+        explicit Mutex(void) {
             #if _ELPP_OS_UNIX
                 pthread_mutex_init(&mHandle, NULL);
             #elif _ELPP_OS_WINDOWS
                 InitializeCriticalSection(&mHandle);
             #endif // _ELPP_OS_UNIX
         }
-        explicit ~Mutex(void) {
+        ~Mutex(void) {
             #if _ELPP_OS_UNIX
                 pthread_mutex_destroy(&mHandle);
             #elif _ELPP_OS_WINDOWS
@@ -590,12 +584,11 @@ enum kSeverityLevelFormatFlags { kDateOnly = 2,
 //
 // Others
 //
-const std::string kNullPoniterStr         = "nullptr";
+const std::string kNullPointerStr             =   "nullptr";
+const char        kLogFormatEscapeCharacter   =    'E';
 } // namespace configuration
 _ELPP_MUTEX_SPECIFIC_INIT
 
-using namespace easyloggingpp::configuration;
-using namespace easyloggingpp::internal::constants;
 namespace helper {
     //
     // Contains utility functions related to operating system
@@ -744,7 +737,7 @@ namespace helper {
                                       std::string& currentFormat_) {
             size_t foundAt = -1;
             while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
-                if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == 'E') {
+				if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
                     currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                     ++foundAt;
                 } else {
@@ -795,7 +788,7 @@ namespace helper {
             char dateBuffer_[kDateBuffSize_] = "";
             char dateBufferOut_[kDateBuffSize_] = "";
 #if _ELPP_OS_UNIX
-            bool hasTime_ = (type_ & kDateTime || type_ & kTimeOnly);
+            bool hasTime_ = (type_ & internal::constants::kDateTime || type_ & internal::constants::kTimeOnly);
             timeval currTime;
             gettimeofday(&currTime, NULL);
             if (hasTime_) {
@@ -811,15 +804,15 @@ namespace helper {
 #elif _ELPP_OS_WINDOWS
             const char* kTimeFormatLocal_ = "HH':'mm':'ss";
             const char* kDateFormatLocal_ = "dd/MM/yyyy";
-            if ((type_ & kDateTime) || (type_ & kDateOnly)) {
+            if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kDateOnly)) {
                 if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                     sprintf_s(dateBufferOut_, "%s", dateBuffer_);
                 }
             }
-            if ((type_ & kDateTime) || (type_ & kTimeOnly)) {
+            if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kTimeOnly)) {
                 if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                     milliSeconds = (long)(GetTickCount()) % milliSecondOffset;
-                    if (type_ & kDateTime) {
+                    if (type_ & internal::constants::kDateTime) {
                         sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
                     } else {
                         sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
@@ -862,7 +855,6 @@ namespace helper {
     }; // class DateUtilities
 } // namespace helper
 
-using namespace easyloggingpp::internal::helper;
 //
 // Registry to keep records of 'Class' and provides underlying
 // memory management
@@ -1069,7 +1061,7 @@ public:
         format_(format_),
         toStandardOutput_(toStandardOutput_),
         toFile_(toFile_) {
-            LogManipulator::updateFormatValue("%level", name_, this->format_);
+            internal::helper::LogManipulator::updateFormatValue("%level", name_, this->format_);
             dateFormat_ = NULL;
             severityLevelFormatFlag_ = 0;
             buildDateFormat();
@@ -1122,18 +1114,18 @@ private:
         if (dateFormat_ == NULL) {
             dateFormat_ = new DateFormat();
         }
-        if (format_.find(kDateTimeFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(kDateTimeFormatSpecifier);
-            severityLevelFormatFlag_ |= kDateTime;
+        if (format_.find(internal::constants::kDateTimeFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(internal::constants::kDateTimeFormatSpecifier);
+            severityLevelFormatFlag_ |= internal::constants::kDateTime;
             dateFormat_->setHasDate_(true);
-        } else if (format_.find(kDateOnlyFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(kDateOnlyFormatSpecifier);
+        } else if (format_.find(internal::constants::kDateOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(internal::constants::kDateOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            severityLevelFormatFlag_ |= kDateOnly;
-        } else if (format_.find(kTimeOnlyFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(kTimeOnlyFormatSpecifier);
+            severityLevelFormatFlag_ |= internal::constants::kDateOnly;
+        } else if (format_.find(internal::constants::kTimeOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(internal::constants::kTimeOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            severityLevelFormatFlag_ |= kTimeOnly;
+            severityLevelFormatFlag_ |= internal::constants::kTimeOnly;
         } else {
             dateFormat_->setHasDate_(false);
         }
@@ -1143,16 +1135,16 @@ private:
             const std::string kTimeFormatLocal_ = "%H:%M:%S";
             const std::string kDateFormatLocal_ = "%d/%m/%Y";
 
-            if (dateFormat_->formatFlag() & kDateOnly) {
+            if (dateFormat_->formatFlag() & internal::constants::kDateOnly) {
                 dateFormat_->setBufferFormat(kDateFormatLocal_);
-            } else if (dateFormat_->formatFlag() & kTimeOnly) {
+            } else if (dateFormat_->formatFlag() & internal::constants::kTimeOnly) {
                 dateFormat_->setBufferFormat(kTimeFormatLocal_);
             } else {
                 std::stringstream ss;
                 ss << kDateFormatLocal_ << " " << kTimeFormatLocal_;
                 dateFormat_->setBufferFormat(ss.str());
             }
-            switch (MILLISECONDS_LENGTH) {
+            switch (configuration::MILLISECONDS_LENGTH) {
             case 3:
                 dateFormat_->setMilliSecondOffset(1000);
                 break;
@@ -1175,26 +1167,26 @@ private:
     }
 
     void determineAvailableLogFormats(void) {
-        if (format_.find(kTypeFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kType;
+        if (format_.find(internal::constants::kTypeFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kType;
         }
-        if (format_.find(kLocationFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kLocation;
+        if (format_.find(internal::constants::kLocationFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kLocation;
         }
-        if (format_.find(kFunctionFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kFunction;
+        if (format_.find(internal::constants::kFunctionFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kFunction;
         }
-        if (format_.find(kUserFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kUser;
+        if (format_.find(internal::constants::kUserFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kUser;
         }
-        if (format_.find(kHostFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kHost;
+        if (format_.find(internal::constants::kHostFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kHost;
         }
-        if (format_.find(kLogMessageFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kLogMessage;
+        if (format_.find(internal::constants::kLogMessageFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kLogMessage;
         }
-        if (format_.find(kVerboseLevelFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= kVerboseLevel;
+        if (format_.find(internal::constants::kVerboseLevelFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= internal::constants::kVerboseLevel;
         }
     }
 }; // class SeverityLevel
@@ -1204,21 +1196,21 @@ class RegisteredSeverityLevels : public Registry<SeverityLevel, SeverityLevel::I
 public:
     explicit RegisteredSeverityLevels(void) {
         registerNew(
-                    new SeverityLevel(kElppDebugLevelValue, DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppDebugLevelValue, configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppInfoLevelValue, INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppInfoLevelValue, configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppWarningLevelValue, WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppWarningLevelValue, configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppErrorLevelValue, ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppErrorLevelValue, configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppFatalLevelValue, FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppFatalLevelValue, configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppVerboseLevelValue, VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppVerboseLevelValue, configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppQaLevelValue, QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppQaLevelValue, configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new SeverityLevel(kElppTraceLevelValue, TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new SeverityLevel(internal::constants::kElppTraceLevelValue, configuration::TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 
@@ -1318,20 +1310,20 @@ public:
 class Logger {
 public:
     explicit Logger(void) :
-        kFinalFilename_(USE_CUSTOM_LOCATION ?
-                            CUSTOM_LOG_FILE_LOCATION + LOG_FILENAME:
-                            LOG_FILENAME),
-        kUser_(OSUtilities::currentUser()),
-        kHost_(OSUtilities::currentHost()),
+        kFinalFilename_(configuration::USE_CUSTOM_LOCATION ?
+                            configuration::CUSTOM_LOG_FILE_LOCATION + configuration::LOG_FILENAME:
+                            configuration::LOG_FILENAME),
+        kUser_(internal::helper::OSUtilities::currentUser()),
+        kHost_(internal::helper::OSUtilities::currentHost()),
         initialized_(true),
         stream_(new std::stringstream()),
         logFile_(NULL),
         registeredLogTypes_(new RegisteredLogTypes()),
         registeredSeverityLevels_(new RegisteredSeverityLevels()),
         registeredLogCounters_(new RegisteredCounters()) {
-        if (SAVE_TO_FILE) {
-            fileGood_ = USE_CUSTOM_LOCATION ?
-                            !kFinalFilename_.empty() && OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION) :
+        if (configuration::SAVE_TO_FILE) {
+            fileGood_ = configuration::USE_CUSTOM_LOCATION ?
+                            !kFinalFilename_.empty() && internal::helper::OSUtilities::createPath(configuration::CUSTOM_LOG_FILE_LOCATION) :
                             !kFinalFilename_.empty();
             if (fileGood_) {
 #if _ALWAYS_CLEAN_LOGS
@@ -1432,12 +1424,12 @@ public:
         std::string value_ = "";
         // DateTime
         if (level_->dateFormat()->hasDate()) {
-            value_ = DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->formatFlag(),
-                                                level_->dateFormat()->milliSecondOffset());
-            LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
+            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->formatFlag(),
+                                                                      level_->dateFormat()->milliSecondOffset());
+            internal::helper::LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
         // Type
-        if (level_->severityLevelFormatFlag() | kType) {
+        if (level_->severityLevelFormatFlag() | internal::constants::kType) {
             LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
             bool displayType_ = true;
@@ -1456,53 +1448,53 @@ public:
                 value_ = "";
             }
 #endif // _NO_TRIVIAL_TYPE_DISPLAY
-            formatSpecifier_ = kTypeFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = internal::constants::kTypeFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Location
-        if (level_->severityLevelFormatFlag() & kLocation) {
+        if (level_->severityLevelFormatFlag() & internal::constants::kLocation) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
-            formatSpecifier_ = kLocationFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = internal::constants::kLocationFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Function
-        if (level_->severityLevelFormatFlag() & kFunction) {
+        if (level_->severityLevelFormatFlag() & internal::constants::kFunction) {
             value_ = std::string(func_);
-            formatSpecifier_ = kFunctionFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = internal::constants::kFunctionFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // User
-        if (level_->severityLevelFormatFlag() & kUser) {
-            formatSpecifier_ = kUserFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
+        if (level_->severityLevelFormatFlag() & internal::constants::kUser) {
+            formatSpecifier_ = internal::constants::kUserFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
         // Host
-        if (level_->severityLevelFormatFlag() & kHost) {
-            formatSpecifier_ = kHostFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
+        if (level_->severityLevelFormatFlag() & internal::constants::kHost) {
+            formatSpecifier_ =internal::constants:: kHostFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
         // Log
-        if (level_->severityLevelFormatFlag() & kLogMessage) {
-            formatSpecifier_ = kLogMessageFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
+        if (level_->severityLevelFormatFlag() & internal::constants::kLogMessage) {
+            formatSpecifier_ = internal::constants::kLogMessageFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
         }
         // Verbose specific log
-        if (verboseLevel_ > 0 && (level_->severityLevelFormatFlag() & kVerboseLevel)) {
+        if (verboseLevel_ > 0 && (level_->severityLevelFormatFlag() & internal::constants::kVerboseLevel)) {
             tempStream_.str("");
             tempStream_ << verboseLevel_;
             value_ = tempStream_.str();
-            formatSpecifier_ = kVerboseLevelFormatSpecifier;
-            LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
+            formatSpecifier_ = internal::constants::kVerboseLevelFormatSpecifier;
+            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
         }
         write(level_);
     }
 
     inline void write(SeverityLevel* level_) {
-        if (SHOW_STD_OUTPUT && level_->toStandardOutput()) {
+        if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
             std::cout << currLogLine_;
         }
-        if (SAVE_TO_FILE && fileGood() && level_->toFile()) {
+        if (configuration::SAVE_TO_FILE && fileGood() && level_->toFile()) {
             logFile_->open(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
             (*logFile_) << currLogLine_;
             logFile_->close();
@@ -1675,7 +1667,7 @@ public:
         if (pointer_) {
             _ELPP_STREAM << pointer_->toString();
         } else {
-            _ELPP_STREAM << kNullPoniterStr;
+            _ELPP_STREAM << internal::constants::kNullPointerStr;
         }
         return *this;
     }
@@ -1788,39 +1780,39 @@ public:
 private:
     template <class Pointer>
     inline LogWriter& writePointer(Pointer pointer_) {
-        return (pointer_ != NULL ? operator << (*pointer_) : operator << (kNullPoniterStr));
+        return (pointer_ != NULL ? operator << (*pointer_) : operator << (internal::constants::kNullPointerStr));
     }
 
     void writeLog(void) const {
-        if (severityLevel_ == kElppDebugLevelValue) {
+        if (severityLevel_ == internal::constants::kElppDebugLevelValue) {
 #if (_ELPP_DEBUG_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppWarningLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppWarningLevelValue) {
 #if (_ELPP_WARNING_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppErrorLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppErrorLevelValue) {
 #if (_ELPP_ERROR_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppInfoLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppInfoLevelValue) {
 #if (_ELPP_INFO_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppFatalLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppFatalLevelValue) {
 #if (_ELPP_FATAL_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppQaLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppQaLevelValue) {
 #if (_ELPP_QA_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppTraceLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppTraceLevelValue) {
 #if (_ELPP_TRACE_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == kElppVerboseLevelValue) {
+        } else if (severityLevel_ == internal::constants::kElppVerboseLevelValue) {
 #if (_ELPP_VERBOSE_LOG)
             if (logAspect_ == kNormal && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
                 _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);
@@ -1857,12 +1849,12 @@ private:
     #if _ELPP_OS_UNIX
         #define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
     #elif _ELPP_OS_WINDOWS
-        #define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::DateUtilities::gettimeofday(tm);
+        #define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::helper::DateUtilities::gettimeofday(tm);
     #endif
     #define START_FUNCTION_LOG "Executing [" << __func__ << "]"
-    #define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                 \
-         easyloggingpp::internal::DateUtilities::formatMilliSeconds(                                            \
-         easyloggingpp::internal::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
+    #define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                                                         \
+         easyloggingpp::internal::helper::DateUtilities::formatMilliSeconds(                                            \
+         easyloggingpp::internal::helper::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
     #define FUNC_SUB_COMMON_START {                                                                             \
      if (easyloggingpp::configuration::SHOW_START_FUNCTION_LOG) {                                               \
          _PERFORMANCE_TRACKING_SEVERITY << START_FUNCTION_LOG;                                                  \
@@ -1900,7 +1892,7 @@ public:
     static std::string readLog(void) {
         _ELPP_LOCK_MUTEX;
         std::stringstream ss;
-        if (::easyloggingpp::configuration::SAVE_TO_FILE) {
+        if (easyloggingpp::configuration::SAVE_TO_FILE) {
             std::ifstream logFileReader(_QUALIFIED_LOGGER.kFinalFilename_.c_str(), std::ifstream::in);
             if (logFileReader.is_open()) {
                 std::string line;
@@ -1922,42 +1914,42 @@ public:
 } // namespace helper
 } // namespace easyloggingpp
 
-#define _ELPP_LOG_WRITER(_t, _l) LogWriter(LogWriter::kNormal, _t, _l, __func__, __FILE__, __LINE__)
-#define _ELPP_LOG_WRITER_COND(_c, _t, _l) LogWriter(LogWriter::kConditional, _t, _l, __func__, __FILE__, __LINE__, _c)
-#define _ELPP_LOG_WRITER_N(_n, _t, _l) LogWriter(LogWriter::kInterval, _t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
+#define _ELPP_LOG_WRITER(_t, _l) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kNormal, _t, _l, __func__, __FILE__, __LINE__)
+#define _ELPP_LOG_WRITER_COND(_c, _t, _l) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kConditional, _t, _l, __func__, __FILE__, __LINE__, _c)
+#define _ELPP_LOG_WRITER_N(_n, _t, _l) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kInterval, _t, _l, __func__, __FILE__, __LINE__, true, 0, _n)
 //
 // Custom injected loggers
 //
 // Normal loggers
-#define CINFO(type_) _ELPP_LOG_WRITER(type_, kElppInfoLevelValue)
-#define CWARNING(type_) _ELPP_LOG_WRITER(type_, kElppWarningLevelValue)
-#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, kElppDebugLevelValue)
-#define CERROR(type_) _ELPP_LOG_WRITER(type_, kElppErrorLevelValue)
-#define CFATAL(type_) _ELPP_LOG_WRITER(type_, kElppFatalLevelValue)
-#define CQA(type_) _ELPP_LOG_WRITER(type_, kElppQaLevelValue)
-#define CTRACE(type_) _ELPP_LOG_WRITER(type_, kElppTraceLevelValue)
-#define CVERBOSE(level, type_) LogWriter(LogWriter::kNormal,                                                \
-    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level)
+#define CINFO(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppInfoLevelValue)
+#define CWARNING(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppWarningLevelValue)
+#define CDEBUG(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppDebugLevelValue)
+#define CERROR(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppErrorLevelValue)
+#define CFATAL(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppFatalLevelValue)
+#define CQA(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppQaLevelValue)
+#define CTRACE(type_) _ELPP_LOG_WRITER(type_, easyloggingpp::internal::constants::kElppTraceLevelValue)
+#define CVERBOSE(level, type_) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kNormal,                                                \
+    type_, easyloggingpp::internal::constants::kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level)
 // Conditional logs
-#define CINFO_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppInfoLevelValue)
-#define CWARNING_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppWarningLevelValue)
-#define CDEBUG_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppDebugLevelValue)
-#define CERROR_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppErrorLevelValue)
-#define CFATAL_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppFatalLevelValue)
-#define CQA_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppQaLevelValue)
-#define CTRACE_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, kElppTraceLevelValue)
-#define CVERBOSE_IF(condition_, vlevel_, type_) LogWriter(LogWriter::kConditional,                           \
-    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, condition_, vlevel_)
+#define CINFO_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppInfoLevelValue)
+#define CWARNING_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppWarningLevelValue)
+#define CDEBUG_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppDebugLevelValue)
+#define CERROR_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppErrorLevelValue)
+#define CFATAL_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppFatalLevelValue)
+#define CQA_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppQaLevelValue)
+#define CTRACE_IF(condition_, type_) _ELPP_LOG_WRITER_COND(condition_, type_, easyloggingpp::internal::constants::kElppTraceLevelValue)
+#define CVERBOSE_IF(condition_, vlevel_, type_) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kConditional,                           \
+    type_, easyloggingpp::internal::constants::kElppVerboseLevelValue, __func__, __FILE__, __LINE__, condition_, vlevel_)
 // Interval logs
-#define CINFO_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppInfoLevelValue)
-#define CWARNING_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppWarningLevelValue)
-#define CDEBUG_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppDebugLevelValue)
-#define CERROR_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppErrorLevelValue)
-#define CFATAL_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppFatalLevelValue)
-#define CQA_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppQaLevelValue)
-#define CTRACE_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, kElppTraceLevelValue)
-#define CVERBOSE_EVERY_N(interval_, level, type_) LogWriter(LogWriter::kInterval,                           \
-    type_, kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level, interval_)
+#define CINFO_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppInfoLevelValue)
+#define CWARNING_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppWarningLevelValue)
+#define CDEBUG_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppDebugLevelValue)
+#define CERROR_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppErrorLevelValue)
+#define CFATAL_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppFatalLevelValue)
+#define CQA_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppQaLevelValue)
+#define CTRACE_EVERY_N(interval_, type_) _ELPP_LOG_WRITER_N(interval_, type_, easyloggingpp::internal::constants::kElppTraceLevelValue)
+#define CVERBOSE_EVERY_N(interval_, level, type_) easyloggingpp::internal::LogWriter(easyloggingpp::internal::LogWriter::kInterval,                           \
+    type_, easyloggingpp::internal::constants::kElppVerboseLevelValue, __func__, __FILE__, __LINE__, true, level, interval_)
 //
 // Trivial Loggers
 //
@@ -2111,7 +2103,7 @@ public:
 #endif // _SUPPORT_LEGACY_LOG_NAMES
 
 #define _START_EASYLOGGINGPP(argc, argv) \
-    _ELPP_LOGGER.setArgs(argc, argv);
+    _QUALIFIED_LOGGER.setArgs(argc, argv);
 
 #define _INITIALIZE_EASYLOGGINGPP   \
     namespace easyloggingpp {       \
@@ -2121,7 +2113,5 @@ public:
     }
 
 #define _END_EASYLOGGINGPP
-
-using namespace easyloggingpp::internal;
 
 #endif // EASYLOGGINGPP_H

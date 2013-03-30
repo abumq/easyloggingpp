@@ -80,6 +80,12 @@ Change log was not kept before version 2.1.
  * 7.50:
       - Massive performance improvements by setting formats at initialize time
       - Introduced MILLISECONDS_LENGTH for UNIX
+ * 7.55:
+      - Improved multi-threading
+      - Dropped support for power PC
+      - Prevent potential naming conflicts with classes
+      - Removed `using namespace` and naming explicitly
+      - Better format by introducing internal::constants
 
 #### 6.xx
  * 6.00:
