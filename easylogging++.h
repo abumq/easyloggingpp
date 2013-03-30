@@ -111,6 +111,7 @@
 //
 #define _PERFORMANCE_TRACKING_SEVERITY PDEBUG
 
+
 #include <string>
 namespace easyloggingpp { namespace configuration {
 //
@@ -208,7 +209,6 @@ const bool           SHOW_START_FUNCTION_LOG  =    false;
 //   Range: 3 - 6
 //   Default: 3
 const unsigned int   MILLISECONDS_LENGTH      =    3;
-
 
 } // namespace configuration
 } // namespace easyloggingpp
