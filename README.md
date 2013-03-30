@@ -603,6 +603,8 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![win8] Windows 8 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
 
+![mac] Mac OSX (LLVM)
+
 ![ubuntu] Ubuntu 12.04 / 12.10 (32-bit, 64-bit, g++ 4.6.3)
 
 ![scientificlinux] Scientific Linux 6.2 (64-bit, g++ 4.4)
