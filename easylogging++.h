@@ -493,7 +493,7 @@ public:
         #if _ELPP_ASSEMBLY_SUPPORTED
             int oldLock_;
             #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-            asm volatile (_ELPP_MUTEX_LOCK_GNU_ASM(lockerFlag_, oldLock_));
+                asm volatile (_ELPP_MUTEX_LOCK_GNU_ASM(lockerFlag_, oldLock_));
             #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
                 int *ptrLock = &lockerFlag_;
                 __asm {
@@ -515,7 +515,7 @@ public:
     inline void unlock(void) {
     #if _ELPP_ASSEMBLY_SUPPORTED
         #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-        asm volatile (_ELPP_MUTEX_UNLOCK_GNU_ASM(lockerFlag_));
+            asm volatile (_ELPP_MUTEX_UNLOCK_GNU_ASM(lockerFlag_));
         #elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
             int *ptrLock = &lockerFlag_;
             __asm {
@@ -1053,7 +1053,7 @@ public:
         unsigned int formatFlag_;
         bool hasDate_;
         unsigned int milliSecondOffset_;
-    };
+    }; // class DateFormat
 
     explicit SeverityLevel(const std::string& name_,
                            const std::string& format_,
@@ -1426,7 +1426,8 @@ public:
         std::string value_ = "";
         // DateTime
         if (level_->dateFormat()->hasDate()) {
-            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), level_->dateFormat()->formatFlag(),
+            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), 
+                                                                      level_->dateFormat()->formatFlag(),
                                                                       level_->dateFormat()->milliSecondOffset());
             internal::helper::LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
@@ -1493,13 +1494,13 @@ public:
     }
 
     inline void write(SeverityLevel* level_) {
-        if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
-            std::cout << currLogLine_;
-        }
         if (configuration::SAVE_TO_FILE && fileGood() && level_->toFile()) {
             logFile_->open(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
             (*logFile_) << currLogLine_;
             logFile_->close();
+        }
+        if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
+            std::cout << currLogLine_;
         }
         clear();
     }
