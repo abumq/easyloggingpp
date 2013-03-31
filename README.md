@@ -347,9 +347,6 @@ You may also run using `--verbose` to display maximum verbose logs (max level: 9
  Version: 3.22+
  
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/verbose.cpp)
- 
-#### Releasing Memory
-Since v7.00, all the memory is managed within EasyLogging++ so you dont need to worry about releasing any memory, for older versions please check older version of README from github
 
 #### Quality Assurance Logs
 Quality assurance (QA) logs are supported by EasyLogging++ for application that are deployed in QA environments for testing purposes. These logs can provide extra information when working in QA and can be disabled in production without having to change the source code.
@@ -420,8 +417,9 @@ EasyLogging++ is being improved on daily basis and goal is to have a complete su
 
 *You should enable logging in order to use it with EasyLogging++ by defining one (or more) of above mentioned macros during compilation or before including `easylogging++.h` file*
 
-[View Sample (STL)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/containers.cpp)
-[View Sample (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/main.cpp)
+[View Sample 1 (STL)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/containers.cpp)
+
+[View Sample 2 (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/main.cpp)
 
 Version: 7.60+
 
