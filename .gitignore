@@ -2,5 +2,8 @@
 easyloggingpp.zip
 releases/*
 
-samples/Qt/*-buildqt
-samples/STL/bin/*
+/samples/Qt/*-buildqt
+/samples/STL/bin/*
+
+/samples/Qt/*/logs/*
+/samples/STL/logs/*
