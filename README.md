@@ -25,7 +25,7 @@ EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C+
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
  * **[Performance tracking](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking)**
  * **Class and Structs Logging**
-   EasyLogging++ supports logging [containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#containers-logging), [third party libraries' classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#third-party-c-libraries), [other utility classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#other-classes) and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
+   EasyLogging++ supports logging [libraries' classes, containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#c-libraries-logging), and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
 
 ## Getting Started
 
@@ -409,38 +409,27 @@ Version: 7.0+
 #### Read Log File
 If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
 
-#### Third-party C++ Libraries 
-EasyLogging++ is being improved on daily basis and goal is to have a complete support logging C++ application in minimal code possible. Some C++ third-party libraries are supported by EasyLogging++, this include following:
+#### C++ Libraries Logging
+EasyLogging++ is being improved on daily basis and goal is to have a complete support for logging in your C++ application with minimal code possible. Currently EasyLogging++ support following libraries and classes/templates;
 
- * Qt based classes logging (`QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`, `QPair<K, V>`) - v7.30+
- * Qt based containers (see `Containers Logging` section below) - v7.35
+ * STL
+    - Enable by defining `_ELPP_STL_LOGGING`
+    - Basic types supported: `string`, `wstring` (Always enabled)
+    - Containers supported: `vector`, `list`, `deque`, `set`, `multiset`, `pair`, `map`, `multimap`
+ * Qt
+    - Enable by defining `_ELPP_QT_LOGGING`
+    - Basic types supported: `QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`
+    - Containers supported: `QVector`, `QList`, `QMap`, `QMultiMap`, `QQueue`, `QPair`, `QSet`, `QHash`, `QMultiHash`, `QLinkedList`
+ * Gnu
+    - Enable by defining `_ELPP_GNUC_LOGGING`
+    - Containers supported: `__gnu_cxx::slist`, `__gnu_cxx::hash_set`, `__gnu_cxx::multiset`
 
-If you ever wish to make sure that third-party libraries are not used, define `_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING` during compile time. *Remember, you might end up having compilation errors after disabiling support **if you have tried logging third-party library class***
+*You should enable logging in order to use it with EasyLogging++ by defining one (or more) of above mentioned macros during compilation or before including `easylogging++.h` file*
 
-#### Containers Logging
-EasyLogging++ supports container logging restricted to following containers (and data-types)
- * `std::vector<T>`
- * `std::list<T>`
- * `std::map<K, V>`
- * `QVector<T>`
- * `QList<T>`
- * `QMap<K, V>`
- 
-Where `T`, `K`, `V` reflect all normally supported data types. This list will continue to grow as time goes by.
+[View Sample (STL)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/stl_log.cpp)
+[View Sample (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qt-sample/main.cpp)
 
-Version: 7.35+ (*Initial support from 7.31+ but data types normally used in logging are supported by containers were added in 7.35+*)
-
-[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/container_log.cpp)
-
-#### Other Classes
- * `std::pair<K, V>` [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/pair_log.cpp)
- * `QPair<K, V>`
-
-Where `K` and `V` represent normally supported data types. This list will continue to grow as time goes by.
-
-Disable all the class logging by defining `_DISABLE_CPP_LIBRARIES_LOGGING` during compile time. This is not recommended but if you want to disable it anyway to fasten up compile time and shorten number of includes, you may as well do it. Remember, this will disable support for logging C++ libraries classes and will log class using `toString() const`. See `Logging Your Own Class` section below for further details
-
-Version: 7.35+
+Version: 7.60+
 
 #### Logging Your Own Class
 There will be times when you would want to log your own class, just declare `toString() const` in your class. Return type of `toString()` can vary depending on what you want to log but it has to be some logable data type. Remember, `toString()` SHOULD BE const to prevent any value change.

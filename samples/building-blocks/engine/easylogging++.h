@@ -330,20 +330,30 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
 #include <fstream>
 #include <functional>
 #include <algorithm>
-#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-// For logging STL based templates
-    #include <list> // std::list
-    #include <utility> // std::pair
-    #include <map> // std::map
-#endif // !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-// For logging Qt based classes & templates
+#if defined(_ELPP_STL_LOGGING)
+    // For logging STL based templates
+    #include <list>
+    #include <utility>
+    #include <map>
+    #include <deque>
+    #include <set>
+#endif // defined(_ELPP_STL_LOGGING)
+#if defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
+    #define _GLIBCXX_PERMIT_BACKWARD_HASH
+    #include <ext/hash_set>
+    #include <ext/hash_map>
+    #include <ext/slist>
+#endif // defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
+#if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+    // For logging Qt based classes & templates
     #include <QString>
     #include <QVector>
     #include <QList>
     #include <QPair>
     #include <QMap>
-#endif // defined(QT_CORE_LIB) && (_ENABLE_EASYLOGGING) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CUSTOM_CLASS_LOGGING)
+    #include <QQueue>
+    #include <QSet>
+#endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 //
 // Low-level log evaluation
 //
@@ -1575,7 +1585,7 @@ private:
     unsigned short appVerbose_;
 }; // class Logger
 //
-// Helper macros for internal use
+// Helper macros for internal (and some external) use
 //
 #define _ELPP_LOGGER easyloggingppLogger_
 #define _QUALIFIED_LOGGER ::easyloggingpp::internal::_ELPP_LOGGER
@@ -1680,13 +1690,13 @@ public:
         free(buff_);
         return *this;
     }
-    template <class T>
-    inline LogWriter& operator<<(const T& class_) {
+    template <class Class>
+    inline LogWriter& operator<<(const Class& class_) {
         _ELPP_STREAM << class_.toString();
         return *this;
     }
-    template <class T>
-    inline LogWriter& operator<<(T* pointer_) {
+    template <class Pointer>
+    inline LogWriter& operator<<(Pointer* pointer_) {
         if (pointer_) {
             _ELPP_STREAM << pointer_->toString();
         } else {
@@ -1694,54 +1704,60 @@ public:
         }
         return *this;
     }
-#if !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
-    template <typename T>
-    inline LogWriter& operator<<(const std::vector<T>& vec_) {
-        _ELPP_STREAM << "[";
-        for (unsigned int i = 0; i < vec_.size(); ++i) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(vec_.at(i)));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (i < vec_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << "]";
-        return *this;
+#if defined(_ELPP_STL_LOGGING)
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::vector<T1, T2>& vec_) {
+        return writeIterator(vec_.begin(), vec_.end(), vec_.size());
     }
-    template <typename T>
-    inline LogWriter& operator<<(const std::list<T>& list_) {
-        _ELPP_STREAM << "[";
-        unsigned int index_ = 0;
-        for (typename std::list<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << "]";
-        return *this;
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::list<T1, T2>& list_) {
+        return writeIterator(list_.begin(), list_.end(), list_.size());
     }
-    template <class K, class V>
-    inline LogWriter& operator<<(const std::pair<K, V>& pair_) {
-        _ELPP_STREAM << "[";
-        operator << (static_cast<K>(pair_.first));
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::deque<T1, T2>& queue_) {
+        return writeIterator(queue_.begin(), queue_.end(), queue_.size());
+    }
+    template <typename T1, typename T2, typename T3>
+    inline LogWriter& operator<<(const std::set<T1, T2, T3>& set_) {
+        return writeIterator(set_.begin(), set_.end(), set_.size());
+    }
+    template <typename T1, typename T2, typename T3>
+    inline LogWriter& operator<<(const std::multiset<T1, T2, T3>& set_) {
+        return writeIterator(set_.begin(), set_.end(), set_.size());
+    }
+    template <typename First, typename Second>
+    inline LogWriter& operator<<(const std::pair<First, Second>& pair_) {
+        _ELPP_STREAM << "(";
+        operator << (static_cast<First>(pair_.first));
         _ELPP_STREAM << ", ";
-        operator << (static_cast<V>(pair_.second));
-        _ELPP_STREAM << "]";
+        operator << (static_cast<Second>(pair_.second));
+        _ELPP_STREAM << ")";
         return *this;
     }
-    template <class K, class V>
-    inline LogWriter& operator<<(const std::map<K, V>& map_) {
-        _ELPP_STREAM << "[";
-        int index_ = 0;
-        for (typename std::map<K, V>::const_iterator it = map_.begin(); it != map_.end(); ++it) {
-            operator << (*it);
-            _ELPP_STREAM << (index_++ < map_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << "]";
-        return *this;
+    template <typename K, typename V, typename Comparator, typename Allocator>
+    inline LogWriter& operator<<(const std::map<K, V, Comparator, Allocator>& map_) {
+        return writeIterator(map_.begin(), map_.end(), map_.size());
     }
-#endif // !defined(_DISABLE_LIBRARY_CLASS_LOGGING)
-#if defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+    template <typename K, typename V, typename Comparator, typename Allocator>
+    inline LogWriter& operator<<(const std::multimap<K, V, Comparator, Allocator>& map_) {
+        return writeIterator(map_.begin(), map_.end(), map_.size());
+    }
+#endif // defined(_ELPP_STL_LOGGING)
+#if defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const __gnu_cxx::slist<T1, T2>& slist_) {
+        return writeIterator(slist_.begin(), slist_.end(), slist_.size());
+    }
+    template <class T1, class T2, class T3, class T4>
+    inline LogWriter& operator<<(const __gnu_cxx::hash_set<T1, T2, T3, T4>& hashSet_) {
+        return writeIterator(hashSet_.begin(), hashSet_.end(), hashSet_.size());
+    }
+    template <class T1, class T2, class T3, class T4>
+    inline LogWriter& operator<<(const __gnu_cxx::hash_multiset<T1, T2, T3, T4>& hashMultiset_) {
+        return writeIterator(hashMultiset_.begin(), hashMultiset_.end(), hashMultiset_.size());
+    }
+#endif // defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
+#if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
     inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
     inline LogWriter& operator<<(QString* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); return *this; }
@@ -1758,52 +1774,85 @@ public:
     inline LogWriter& operator<<(QLatin1String* log_) { return writePointer(log_); }
     template <typename T>
     inline LogWriter& operator<<(const QList<T>& list_) {
-        _ELPP_STREAM << "[";
-        int index_ = 0;
-        for (typename QList<T>::const_iterator it = list_.begin(); it != list_.end(); ++it) {
-            _ELPP_STREAM << "\"";
-            operator << (static_cast<T>(*it));
-            _ELPP_STREAM << "\"";
-            _ELPP_STREAM << (index_++ < list_.size() -1 ? ", " : "");
-        }
-        _ELPP_STREAM << "]";
-        return *this;
+        return writeIterator(list_.begin(), list_.end(), list_.size());
     }
     template <typename T>
     inline LogWriter& operator<<(const QVector<T>& vec_) {
-        operator<<(vec_.toList());
-        return *this;
+        return writeIterator(vec_.begin(), vec_.end(), vec_.size());
     }
-    template <class K, class V>
-    inline LogWriter& operator<<(const QPair<K, V>& pair_) {
-        _ELPP_STREAM << "[";
-        operator << (static_cast<K>(pair_.first));
+    template <typename T>
+    inline LogWriter& operator<<(const QQueue<T>& queue_) {
+        return writeIterator(queue_.begin(), queue_.end(), queue_.size());
+    }
+    template <typename T>
+    inline LogWriter& operator<<(const QSet<T>& set_) {
+        return writeIterator(set_.begin(), set_.end(), set_.size());
+    }
+    template <typename First, typename Second>
+    inline LogWriter& operator<<(const QPair<First, Second>& pair_) {
+        _ELPP_STREAM << "(";
+        operator << (static_cast<First>(pair_.first));
         _ELPP_STREAM << ", ";
-        operator << (static_cast<V>(pair_.second));
-        _ELPP_STREAM << "]";
+        operator << (static_cast<Second>(pair_.second));
+        _ELPP_STREAM << ")";
         return *this;
     }
-    template <class K, class V>
+    template <typename K, typename V>
     inline LogWriter& operator<<(const QMap<K, V>& map_) {
         _ELPP_STREAM << "[";
-        int index_ = 0;
         QList<K> keys = map_.keys();
-        for (typename QList<K>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
-            _ELPP_STREAM << "[";
-            operator << (static_cast<K>(*it));
+        typename QList<K>::const_iterator begin = keys.begin();
+        typename QList<K>::const_iterator end = keys.end();
+        int max_ = static_cast<int>(kContainerMaxLog); // to prevent warning
+        for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
+            _ELPP_STREAM << "(";
+            operator << (static_cast<K>(*begin));
             _ELPP_STREAM << ", ";
-            operator << (static_cast<V>(map_.value(*it)));
-            _ELPP_STREAM << "]";
-            _ELPP_STREAM << (index_++ < map_.keys().size() -1 ? ", " : "");
+            operator << (static_cast<V>(map_.value(*begin)));
+            _ELPP_STREAM << ")";
+            _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
+        }
+        if (begin != end) {
+          _ELPP_STREAM << " ...";
         }
         _ELPP_STREAM << "]";
         return *this;
     }
-#endif // defined(QT_CORE_LIB) && !defined(_DISABLE_CPP_THIRD_PARTY_LIBRARIES_LOGGING) && !defined(_DISABLE_CPP_LIBRARIES_LOGGING)
+    template <typename K, typename V>
+    inline LogWriter& operator<<(const QMultiMap<K, V>& map_) {
+        operator << (static_cast<QMap<K, V> >(map_));
+        return *this;
+    }
+#endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 private:
-    template <class Pointer>
-    inline LogWriter& writePointer(Pointer pointer_) {
+    const static unsigned int kContainerMaxLog = 100;
+    unsigned int logAspect_;
+    std::string logType_;
+    std::string severityLevel_;
+    const char* func_;
+    const char* file_;
+    const unsigned long int line_;
+    bool condition_;
+    unsigned int verboseLevel_;
+    int counter_;
+
+    template <typename Pointer>
+    inline LogWriter& writePointer(const Pointer& pointer_) {
         return (pointer_ != NULL ? operator << (*pointer_) : operator << (internal::constants::kNullPointerStr));
+    }
+
+    template<class Iterator>
+    inline LogWriter& writeIterator(Iterator begin, Iterator end, size_t size_ = kContainerMaxLog) {
+      _ELPP_STREAM << "[";
+      for (unsigned int i = 0; begin != end && i < kContainerMaxLog; ++i, ++begin) {
+          operator << (*begin);
+          _ELPP_STREAM << ((i < size_ - 1) ? ", " : "");
+      }
+      if (begin != end) {
+        _ELPP_STREAM << " ...";
+      }
+      _ELPP_STREAM << "]";
+      return *this;
     }
 
     void writeLog(void) const {
@@ -1850,15 +1899,6 @@ private:
         }
         _ELPP_LOGGER.clear();
     }
-    unsigned int logAspect_;
-    std::string logType_;
-    std::string severityLevel_;
-    const char* func_;
-    const char* file_;
-    const unsigned long int line_;
-    bool condition_;
-    unsigned int verboseLevel_;
-    int counter_;
 }; // class LogWriter
 
 } // namespace internal
@@ -2093,6 +2133,7 @@ public:
 #define PQA_EVERY_N(n) CQA_EVERY_N(n, "PerformanceLogger")
 #define PTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "PerformanceLogger")
 #define PVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "PerformanceLogger")
+//
 // Legacy log macros
 //
 #ifdef _SUPPORT_LEGACY_LOG_NAMES
@@ -2124,6 +2165,10 @@ public:
     #define VERBOSE_EVERY_N(n_, vlevel_, log_) LVERBOSE_EVERY_N(n_, vlevel_) << log_;
     #define QA_EVERY_N(n_, log_) LQA_EVERY_N(n_) << log_;
 #endif // _SUPPORT_LEGACY_LOG_NAMES
+//
+// Disable non-reusable macros
+//
+#undef _WRITE_ELPP_LOG
 
 #define _START_EASYLOGGINGPP(argc, argv) \
     _QUALIFIED_LOGGER.setArgs(argc, argv);

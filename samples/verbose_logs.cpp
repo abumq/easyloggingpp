@@ -10,7 +10,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-int main(int argc, char* argv[]) {
+MAIN(int argc, char* argv[])
   _START_EASYLOGGINGPP(argc, argv);
   LINFO << "This is demo for verbose logs";
   LVERBOSE(1) << "This will be printed when program is started using argument --v=1";
@@ -20,5 +20,5 @@ int main(int argc, char* argv[]) {
   LVERBOSE_IF(true, 1) << "Always verbose for level 1";
 
   LVERBOSE_EVERY_N(1, 3) << "Verbose every N";
-  return 0;
-}
+  RETURN(0);
+END_MAIN(0)
