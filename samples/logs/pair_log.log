@@ -1,3 +1,0 @@
-24/03/2013 15:53:44.076 INFO  [log] [1, Cashew] [2, Peanut]
-24/03/2013 15:53:44.076 TRACE [business] [int main(int, char**)] [./pair_log.cpp:25] Now building vector of pairs
-24/03/2013 15:53:44.076 TRACE [business] [int main(int, char**)] [./pair_log.cpp:34] Now printing whole vector ("[1, Akbar]", "[2, Shumaiz]", "[3, Mellisa]", "[4, Stacy]", "[5, Cancer]")

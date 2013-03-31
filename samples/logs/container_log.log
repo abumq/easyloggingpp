@@ -1,4 +1,0 @@
-24/03/2013 17:01:20.100 INFO  [log] Now I will print std::vector<std::string> and values are --> ("string 1", "string 2") <-- This is end of log
-24/03/2013 17:01:20.101 WARN  [security] Security warning log for bool container ("true", "false", "true", "true", "true", "false")
-24/03/2013 17:01:20.101 INFO  [log] This will print std::list of std::string ("String 1", "String 2")
-24/03/2013 17:01:20.101 INFO  [log] Map: [[1, one], [2, two]]
