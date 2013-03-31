@@ -40,4 +40,5 @@ if [ "$confirm" = "y" ]; then
   fi
   zip releases/easyloggingpp_v$NEW_VERSION.zip easylogging++.h
   zip easyloggingpp.zip easylogging++.h
+  sh copy_to_samples.sh
 fi

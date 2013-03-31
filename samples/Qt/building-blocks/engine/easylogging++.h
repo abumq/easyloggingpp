@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.60                                                         //
+//   EasyLogging++ v7.59                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -335,11 +335,8 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
     #include <list>
     #include <utility>
     #include <map>
-    #include <queue>
     #include <deque>
     #include <set>
-    #include <bitset>
-    #include <stack>
 #endif // defined(_ELPP_STL_LOGGING)
 #if defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
     #define _GLIBCXX_PERMIT_BACKWARD_HASH
@@ -356,10 +353,6 @@ const unsigned int   MILLISECONDS_LENGTH      =    3;
     #include <QMap>
     #include <QQueue>
     #include <QSet>
-    #include <QLinkedList>
-    #include <QHash>
-    #include <QMultiHash>
-    #include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 //
 // Low-level log evaluation
@@ -407,10 +400,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.60"); }
+    static inline const std::string version(void) { return std::string("7.59"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-04-2013 0115hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("31-03-2013 1620hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -607,286 +600,286 @@ enum kSeverityLevelFormatFlags { kDateOnly = 2,
 //
 const std::string kNullPointerStr             =   "nullptr";
 const char        kLogFormatEscapeCharacter   =    'E';
-const unsigned int kMaxLogPerContainer        =   100;
-const unsigned int kMaxForLogCounter          =   100000;
-
 } // namespace configuration
 _ELPP_MUTEX_SPECIFIC_INIT
 
 namespace helper {
-//
-// Contains utility functions related to operating system
-//
-class OSUtilities {
-public:
-    // Runs command on terminal and returns the output.
-    // This is applicable only on linux and mac, for all other OS, an empty string is returned.
-    static std::string getBashOutput(const char* command_) {
-        if (command_ == NULL) {
-            return std::string();
-        }
-#if _ELPP_OS_UNIX
-        FILE* proc = NULL;
-        if ((proc = popen(command_, "r")) == NULL) {
-            std::cerr << "\nUnable to run command [" << command_ << "]\n";
-            return std::string();
-        }
-        char hBuff[4096];
-        if (fgets(hBuff, sizeof(hBuff), proc) != NULL) {
-            pclose(proc);
-            if (hBuff[strlen(hBuff) - 1] == '\n') {
-                hBuff[strlen(hBuff) - 1] = '\0';
+    //
+    // Contains utility functions related to operating system
+    //
+    class OSUtilities {
+    public:
+        // Runs command on terminal and returns the output.
+        // This is applicable only on linux and mac, for all other OS, an empty string is returned.
+        static std::string getBashOutput(const char* command_) {
+            if (command_ == NULL) {
+                return std::string();
             }
-            return std::string(hBuff);
-        }
-        return std::string();
+#if _ELPP_OS_UNIX
+            FILE* proc = NULL;
+            if ((proc = popen(command_, "r")) == NULL) {
+                std::cerr << "\nUnable to run command [" << command_ << "]\n";
+                return std::string();
+            }
+            char hBuff[4096];
+            if (fgets(hBuff, sizeof(hBuff), proc) != NULL) {
+                pclose(proc);
+                if (hBuff[strlen(hBuff) - 1] == '\n') {
+                    hBuff[strlen(hBuff) - 1] = '\0';
+                }
+                return std::string(hBuff);
+            }
+            return std::string();
 #else
-        return std::string();
+            return std::string();
 #endif // _ELPP_OS_UNIX
-    }
+        }
 
-    // Gets current username.
-    static std::string currentUser(void) {
+        // Gets current username.
+        static std::string currentUser(void) {
 #if _ELPP_OS_UNIX 
-        const char* username = getenv("USER");
+            const char* username = getenv("USER");
 #elif _ELPP_OS_WINDOWS
-        char* username = NULL;
-        size_t len;
-        errno_t err = _dupenv_s(&username, &len, "USERNAME");
+            char* username = NULL;
+            size_t len;
+            errno_t err = _dupenv_s(&username, &len, "USERNAME");
 #endif // _ELPP_OS_UNIX
-        if ((username == NULL) || (!strcmp(username, ""))) {
-            // Try harder on unix-based systems
-            return OSUtilities::getBashOutput("whoami");
-        } else {
-            return std::string(username);
-        }
-    }
-
-    // Gets current host name or computer name.
-    static std::string currentHost(void) {
-#if _ELPP_OS_UNIX
-        const char* hostname = getenv("HOSTNAME");
-#elif _ELPP_OS_WINDOWS
-        char* hostname = NULL;
-        size_t len;
-        errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAME");
-#endif // _ELPP_OS_UNIX
-        if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
-            // Try harder on unix-based systems
-            std::string hostnameStr = OSUtilities::getBashOutput("hostname");
-            if (hostnameStr.empty()) {
-                return std::string("unknown-host");
+            if ((username == NULL) || (!strcmp(username, ""))) {
+                // Try harder on unix-based systems
+                return OSUtilities::getBashOutput("whoami");
             } else {
-                return hostnameStr;
+                return std::string(username);
             }
-        } else {
-            return std::string(hostname);
         }
-    }
 
-    // Determines whether or not provided path_ exist in current file system
-    static inline bool pathExists(const char* path_) {
-        if (path_ == NULL) {
-            return false;
-        }
+        // Gets current host name or computer name.
+        static std::string currentHost(void) {
 #if _ELPP_OS_UNIX
-        struct stat st;
-        return (stat(path_, &st) == 0);
+            const char* hostname = getenv("HOSTNAME");
 #elif _ELPP_OS_WINDOWS
-        DWORD fileType = GetFileAttributesA(path_);
-        if (fileType == INVALID_FILE_ATTRIBUTES) {
-            return false;
-        }
-        return (fileType & FILE_ATTRIBUTE_DIRECTORY) == 0 ? false : true;
+            char* hostname = NULL;
+            size_t len;
+            errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAME");
 #endif // _ELPP_OS_UNIX
-    }
-
-    // Creates path as specified
-    static bool createPath(const std::string& path_) {
-        if (path_.empty()) {
-            return false;
+            if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+                // Try harder on unix-based systems
+                std::string hostnameStr = OSUtilities::getBashOutput("hostname");
+                if (hostnameStr.empty()) {
+                    return std::string("unknown-host");
+                } else {
+                    return hostnameStr;
+                }
+            } else {
+                return std::string(hostname);
+            }
         }
-        if (OSUtilities::pathExists(path_.c_str())) {
+
+        // Determines whether or not provided path_ exist in current file system
+        static inline bool pathExists(const char* path_) {
+            if (path_ == NULL) {
+                return false;
+            }
+#if _ELPP_OS_UNIX
+            struct stat st;
+            return (stat(path_, &st) == 0);
+#elif _ELPP_OS_WINDOWS
+            DWORD fileType = GetFileAttributesA(path_);
+            if (fileType == INVALID_FILE_ATTRIBUTES) {
+                return false;
+            }
+            return (fileType & FILE_ATTRIBUTE_DIRECTORY) == 0 ? false : true;
+#endif // _ELPP_OS_UNIX
+        }
+
+        // Creates path as specified
+        static bool createPath(const std::string& path_) {
+            if (path_.empty()) {
+                return false;
+            }
+            if (OSUtilities::pathExists(path_.c_str())) {
+                return true;
+            }
+#if _ELPP_OS_UNIX
+            const char* pathDelim_ = "/";
+#elif _ELPP_OS_WINDOWS
+            char pathDelim_[] = "\\";
+#endif // _ELPP_OS_UNIX
+            int status = -1;
+            char* currPath_ = const_cast<char*>(path_.c_str());
+            std::string buildingPath_;
+            if (path_[0] == '/') {
+                buildingPath_ = "/";
+            }
+#if _ELPP_OS_UNIX
+            currPath_ = strtok(currPath_, pathDelim_);
+#elif _ELPP_OS_WINDOWS
+            // Use secure functions API
+            char* nextTok_;
+            currPath_ = strtok_s(currPath_, pathDelim_, &nextTok_);
+#endif // _ELPP_OS_UNIX
+            while (currPath_ != NULL) {
+                buildingPath_.append(currPath_);
+                buildingPath_.append(pathDelim_);
+#if _ELPP_OS_UNIX
+                status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
+                currPath_ = strtok(NULL, pathDelim_);
+#elif _ELPP_OS_WINDOWS
+                status = _mkdir(buildingPath_.c_str());
+                currPath_ = strtok_s(NULL, pathDelim_, &nextTok_);
+#endif // _ELPP_OS_UNIX
+            }
+            if (status == -1) {
+                return false;
+            }
             return true;
         }
-#if _ELPP_OS_UNIX
-        const char* pathDelim_ = "/";
-#elif _ELPP_OS_WINDOWS
-        char pathDelim_[] = "\\";
-#endif // _ELPP_OS_UNIX
-        int status = -1;
-        char* currPath_ = const_cast<char*>(path_.c_str());
-        std::string buildingPath_;
-        if (path_[0] == '/') {
-            buildingPath_ = "/";
-        }
-#if _ELPP_OS_UNIX
-        currPath_ = strtok(currPath_, pathDelim_);
-#elif _ELPP_OS_WINDOWS
-        // Use secure functions API
-        char* nextTok_;
-        currPath_ = strtok_s(currPath_, pathDelim_, &nextTok_);
-#endif // _ELPP_OS_UNIX
-        while (currPath_ != NULL) {
-            buildingPath_.append(currPath_);
-            buildingPath_.append(pathDelim_);
-#if _ELPP_OS_UNIX
-            status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
-            currPath_ = strtok(NULL, pathDelim_);
-#elif _ELPP_OS_WINDOWS
-            status = _mkdir(buildingPath_.c_str());
-            currPath_ = strtok_s(NULL, pathDelim_, &nextTok_);
-#endif // _ELPP_OS_UNIX
-        }
-        if (status == -1) {
-            return false;
-        }
-        return true;
-    }
 
-private:
-    // Prevent initilization
-    OSUtilities(void);
-    OSUtilities(const OSUtilities&);
-    OSUtilities& operator=(const OSUtilities&);
-}; // class OSUtilities
-//
-// Contains static functions related to log manipulation
-//
-class LogManipulator {
-public:
-    // Updates the formatSpecifier_ for currentFormat_ to value_ provided
-    static void updateFormatValue(const std::string& formatSpecifier_,
-                                  const std::string& value_,
-                                  std::string& currentFormat_) {
-        size_t foundAt = -1;
-        while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
-            if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
-                currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
-                ++foundAt;
-            } else {
-                currentFormat_ = currentFormat_.replace(foundAt, formatSpecifier_.size(), value_);
-                return;
-            }
-        }
-    }
-private:
-    // Prevent initilization
-    LogManipulator(void);
-    LogManipulator(const LogManipulator&);
-    LogManipulator& operator=(const LogManipulator&);
-}; // class LogManipulator
-//
-// Contains utility functions related to date/time
-//
-class DateUtilities {
-public:
-#if _ELPP_OS_WINDOWS
-    static void gettimeofday(struct timeval *tv) {
-        if (tv != NULL) {
-#if defined(_MSC_EXTENSIONS)
-            const unsigned __int64 delta_ = 11644473600000000Ui64;
-#else
-            const unsigned __int64 delta_ = 11644473600000000ULL;
-#endif // defined(_MSC_EXTENSIONS)
-            const double secOffSet = 0.000001;
-            const unsigned long usecOffSet = 1000000;
-            FILETIME fileTime_;
-            GetSystemTimeAsFileTime(&fileTime_);
-            unsigned __int64 present_ = 0;
-            present_ |= fileTime_.dwHighDateTime;
-            present_ = present_ << 32;
-            present_ |= fileTime_.dwLowDateTime;
-            present_ /= 10; // mic-sec
-            // Subtract the difference
-            present_ -= delta_;
-            tv->tv_sec = static_cast<long>(present_ * secOffSet);
-            tv->tv_usec = static_cast<long>(present_ % usecOffSet);
-        }
-    }
-#endif // _ELPP_OS_WINDOWS
-    // Gets current date and time with milliseconds.
-    static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, unsigned int milliSecondOffset = 1000) {
-        long milliSeconds = 0;
-        const int kDateBuffSize_ = 30;
-        char dateBuffer_[kDateBuffSize_] = "";
-        char dateBufferOut_[kDateBuffSize_] = "";
-#if _ELPP_OS_UNIX
-        bool hasTime_ = (type_ & internal::constants::kDateTime || type_ & internal::constants::kTimeOnly);
-        timeval currTime;
-        gettimeofday(&currTime, NULL);
-        if (hasTime_) {
-            milliSeconds = currTime.tv_usec / milliSecondOffset ;
-        }
-        struct tm * timeInfo = localtime(&currTime.tv_sec);
-        strftime(dateBuffer_, sizeof(dateBuffer_), bufferFormat_.c_str(), timeInfo);
-        if (hasTime_) {
-            sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
-        } else {
-            sprintf(dateBufferOut_, "%s", dateBuffer_);
-        }
-#elif _ELPP_OS_WINDOWS
-        const char* kTimeFormatLocal_ = "HH':'mm':'ss";
-        const char* kDateFormatLocal_ = "dd/MM/yyyy";
-        if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kDateOnly)) {
-            if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
-                sprintf_s(dateBufferOut_, "%s", dateBuffer_);
-            }
-        }
-        if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kTimeOnly)) {
-            if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
-                milliSeconds = (long)(GetTickCount()) % milliSecondOffset;
-                if (type_ & internal::constants::kDateTime) {
-                    sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
+    private:
+        // Prevent initilization
+        OSUtilities(void);
+        OSUtilities(const OSUtilities&);
+        OSUtilities& operator=(const OSUtilities&);
+    }; // class OSUtilities
+    //
+    // Contains static functions related to log manipulation
+    //
+    class LogManipulator {
+    public:
+        // Updates the formatSpecifier_ for currentFormat_ to value_ provided
+        static void updateFormatValue(const std::string& formatSpecifier_,
+                                      const std::string& value_,
+                                      std::string& currentFormat_) {
+            size_t foundAt = -1;
+            while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
+                if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
+                    currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+                    ++foundAt;
                 } else {
-                    sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+                    currentFormat_ = currentFormat_.replace(foundAt, formatSpecifier_.size(), value_);
+                    return;
                 }
             }
         }
-#endif // _ELPP_OS_UNIX
-        return std::string(dateBufferOut_);
-    }
-
-    static std::string formatMilliSeconds(double milliSeconds_) {
-        double result = milliSeconds_;
-        std::string unit = "ms";
-        std::stringstream stream_;
-        if (result > 1000.0f) {
-            result /= 1000; unit = "seconds";
-            if (result > 60.0f) {
-                result /= 60; unit = "minutes";
-                if (result > 60.0f) {
-                    result /= 60; unit = "hours";
-                    if (result > 24.0f) {
-                        result /= 24; unit = "days";
+    private:
+        // Prevent initilization
+        LogManipulator(void);
+        LogManipulator(const LogManipulator&);
+        LogManipulator& operator=(const LogManipulator&);
+    }; // class LogManipulator
+    //
+    // Contains utility functions related to date/time
+    //
+    class DateUtilities {
+    public:
+#if _ELPP_OS_WINDOWS
+        static void gettimeofday(struct timeval *tv) {
+            if (tv != NULL) {
+#if defined(_MSC_EXTENSIONS)
+                const unsigned __int64 delta_ = 11644473600000000Ui64;
+#else
+                const unsigned __int64 delta_ = 11644473600000000ULL;
+#endif // defined(_MSC_EXTENSIONS)
+                const double secOffSet = 0.000001;
+                const unsigned long usecOffSet = 1000000;
+                FILETIME fileTime_;
+                GetSystemTimeAsFileTime(&fileTime_);
+                unsigned __int64 present_ = 0;
+                present_ |= fileTime_.dwHighDateTime;
+                present_ = present_ << 32;
+                present_ |= fileTime_.dwLowDateTime;
+                present_ /= 10; // mic-sec
+                // Subtract the difference
+                present_ -= delta_;
+                tv->tv_sec = static_cast<long>(present_ * secOffSet);
+                tv->tv_usec = static_cast<long>(present_ % usecOffSet);
+            }
+        }
+#endif // _ELPP_OS_WINDOWS
+        // Gets current date and time with milliseconds.
+        static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, unsigned int milliSecondOffset = 1000) {
+            long milliSeconds = 0;
+            const int kDateBuffSize_ = 30;
+            char dateBuffer_[kDateBuffSize_] = "";
+            char dateBufferOut_[kDateBuffSize_] = "";
+#if _ELPP_OS_UNIX
+            bool hasTime_ = (type_ & internal::constants::kDateTime || type_ & internal::constants::kTimeOnly);
+            timeval currTime;
+            gettimeofday(&currTime, NULL);
+            if (hasTime_) {
+                milliSeconds = currTime.tv_usec / milliSecondOffset ;
+            }
+            struct tm * timeInfo = localtime(&currTime.tv_sec);
+            strftime(dateBuffer_, sizeof(dateBuffer_), bufferFormat_.c_str(), timeInfo);
+            if (hasTime_) {
+                sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+            } else {
+                sprintf(dateBufferOut_, "%s", dateBuffer_);
+            }
+#elif _ELPP_OS_WINDOWS
+            const char* kTimeFormatLocal_ = "HH':'mm':'ss";
+            const char* kDateFormatLocal_ = "dd/MM/yyyy";
+            if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kDateOnly)) {
+                if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
+                    sprintf_s(dateBufferOut_, "%s", dateBuffer_);
+                }
+            }
+            if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kTimeOnly)) {
+                if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
+                    milliSeconds = (long)(GetTickCount()) % milliSecondOffset;
+                    if (type_ & internal::constants::kDateTime) {
+                        sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
+                    } else {
+                        sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
                     }
                 }
             }
+#endif // _ELPP_OS_UNIX
+            return std::string(dateBufferOut_);
         }
-        stream_ << result << " " << unit;
-        return stream_.str();
-    }
 
-    static inline double getTimeDifference(const timeval& endTime, const timeval& startTime) {
-        return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
-    }
+        static std::string formatMilliSeconds(double milliSeconds_) {
+            double result = milliSeconds_;
+            std::string unit = "ms";
+            std::stringstream stream_;
+            if (result > 1000.0f) {
+                result /= 1000; unit = "seconds";
+                if (result > 60.0f) {
+                    result /= 60; unit = "minutes";
+                    if (result > 60.0f) {
+                        result /= 60; unit = "hours";
+                        if (result > 24.0f) {
+                            result /= 24; unit = "days";
+                        }
+                    }
+                }
+            }
+            stream_ << result << " " << unit;
+            return stream_.str();
+        }
 
-private:
-    // Prevent initilization
-    DateUtilities(void);
-    DateUtilities(const DateUtilities&);
-    DateUtilities& operator=(const DateUtilities&);
-}; // class DateUtilities
+        static inline double getTimeDifference(const timeval& endTime, const timeval& startTime) {
+            return static_cast<double>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
+        }
+
+    private:
+        // Prevent initilization
+        DateUtilities(void);
+        DateUtilities(const DateUtilities&);
+        DateUtilities& operator=(const DateUtilities&);
+    }; // class DateUtilities
+} // namespace helper
+
 //
-// Provides registeration management for pointers with underlying memory management
+// Registry to keep records of 'Class' and provides underlying
+// memory management
 //
-template<class Class, class Predicate>
-class PointerRegistryManager {
+template<class Class, class Iterator, class Predicate>
+class Registry {
 public:
-    explicit PointerRegistryManager(void) {
+    explicit Registry(void) {
     }
 
-    virtual ~PointerRegistryManager(void) {
+    virtual ~Registry(void) {
         unregisterAll();
     }
 
@@ -918,7 +911,7 @@ protected:
 
     inline void unregisterAll(void) {
         if (!empty()) {
-            std::for_each(list_.begin(), list_.end(), std::bind1st(std::mem_fun(&PointerRegistryManager::unregister), this));
+            std::for_each(list_.begin(), list_.end(), std::bind1st(std::mem_fun(&Registry::unregister), this));
             list_.clear();
         }
     }
@@ -931,19 +924,18 @@ protected:
     }
 
     std::vector<Class*> list_;
-    typedef typename std::vector<Class*>::iterator Iterator;
+
 private:
     // Prevent copy or assignment
-    explicit PointerRegistryManager(const PointerRegistryManager&);
-    PointerRegistryManager& operator=(const PointerRegistryManager&);
+    explicit Registry(const Registry&);
+    Registry& operator=(const Registry&);
 }; // class Registry
-} // namespace helper
-namespace model {
 //
 // Represents a log type such as business logger, security logger etc.
 //
 class LogType {
 public:
+    typedef std::vector<LogType*>::const_iterator Iterator;
 
     class Predicate {
     public:
@@ -982,10 +974,32 @@ private:
     std::string logName_;
 }; // class LogType
 //
+// Registered log types to be used as finding register while writing logs
+//
+class RegisteredLogTypes : public Registry<LogType, LogType::Iterator, LogType::Predicate> {
+public:
+    explicit RegisteredLogTypes(void) {
+        registerNew(new LogType("TrivialLogger", "log"));
+        registerNew(new LogType("BusinessLogger", "business"));
+        registerNew(new LogType("SecurityLogger", "security"));
+        registerNew(new LogType("PerformanceLogger", "performance"));
+    }
+
+    inline bool inject(LogType *t_) {
+        if (t_ && !exist(t_->name())) {
+            registerNew(t_);
+            return true;
+        }
+        return false;
+    }
+}; // class RegisteredLogTypes
+//
 // Represents severity level for log
 //
 class SeverityLevel {
 public:
+
+    typedef std::vector<SeverityLevel*>::const_iterator Iterator;
 
     class Predicate {
     public:
@@ -1190,13 +1204,36 @@ private:
         }
     }
 }; // class SeverityLevel
-//
+
+// All the registered severity levels used while writing logs
+class RegisteredSeverityLevels : public Registry<SeverityLevel, SeverityLevel::Iterator, SeverityLevel::Predicate> {
+public:
+    explicit RegisteredSeverityLevels(void) {
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppDebugLevelValue, configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppInfoLevelValue, configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppWarningLevelValue, configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppErrorLevelValue, configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppFatalLevelValue, configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppVerboseLevelValue, configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppQaLevelValue, configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+        registerNew(
+                    new SeverityLevel(internal::constants::kElppTraceLevelValue, configuration::TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+    }
+}; // class RegisteredSeverityLevels
+
 // Represents single counter for interval log
-//
 class LogCounter {
 public:
+    typedef std::vector<LogCounter*>::iterator Iterator;
 
-    const static unsigned int kMax = internal::constants::kMaxForLogCounter;
+    const static unsigned int kMax = 100000;
 
     class Predicate {
     public:
@@ -1257,59 +1294,15 @@ private:
     unsigned long int line_;
     unsigned int position_;
 }; // class LogCounter
-} // namespace model
-//
-// Registered log types to be used as finding register while writing logs
-//
-class RegisteredLogTypes : public helper::PointerRegistryManager<model::LogType, model::LogType::Predicate> {
-public:
-    explicit RegisteredLogTypes(void) {
-        registerNew(new model::LogType("TrivialLogger", "log"));
-        registerNew(new model::LogType("BusinessLogger", "business"));
-        registerNew(new model::LogType("SecurityLogger", "security"));
-        registerNew(new model::LogType("PerformanceLogger", "performance"));
-    }
 
-    inline bool inject(model::LogType *t_) {
-        if (t_ && !exist(t_->name())) {
-            registerNew(t_);
-            return true;
-        }
-        return false;
-    }
-}; // class RegisteredLogTypes
-
-
-// All the registered severity levels used while writing logs
-class RegisteredSeverityLevels : public helper::PointerRegistryManager<model::SeverityLevel, model::SeverityLevel::Predicate> {
-public:
-    explicit RegisteredSeverityLevels(void) {
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppDebugLevelValue, configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppInfoLevelValue, configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppWarningLevelValue, configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppErrorLevelValue, configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppFatalLevelValue, configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppVerboseLevelValue, configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppQaLevelValue, configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
-        registerNew(
-                    new model::SeverityLevel(internal::constants::kElppTraceLevelValue, configuration::TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
-    }
-}; // class RegisteredSeverityLevels
 // Represents all the registered counters. This registeration is done at run-time as log is being written
-class RegisteredCounters : public helper::PointerRegistryManager<model::LogCounter, model::LogCounter::Predicate>  {
+class RegisteredCounters : public Registry<LogCounter, LogCounter::Iterator, LogCounter::Predicate>  {
 public:
     bool validate(const char* file_, unsigned long int line_, unsigned int n_) {
         bool result_ = false;
-        model::LogCounter* counter_ = get(file_, line_);
+        LogCounter* counter_ = get(file_, line_);
         if (counter_ == NULL) {
-            registerNew(counter_ = new model::LogCounter(file_, line_));
+            registerNew(counter_ = new LogCounter(file_, line_));
         }
         if (n_ >= 1 && counter_->position() != 0 && counter_->position() % n_ == 0) {
             result_ = true;
@@ -1318,10 +1311,10 @@ public:
         return result_;
     }
 
-    model::LogCounter* get(const char* file_, unsigned long int line_) {
-        Iterator iter = std::find_if(list_.begin(), list_.end(), model::LogCounter::Predicate(file_, line_));
+    LogCounter* get(const char* file_, unsigned long int line_) {
+        LogCounter::Iterator iter = std::find_if(list_.begin(), list_.end(), LogCounter::Predicate(file_, line_));
         if (iter != list_.end() && *iter != NULL) {
-            return reinterpret_cast<model::LogCounter*>(*iter);
+            return reinterpret_cast<LogCounter*>(*iter);
         }
         return NULL;
     }
@@ -1440,7 +1433,7 @@ public:
 
     void buildLine(const std::string& logType_, const std::string& severityLevel_, const char* func_,
                    const char* file_, const unsigned long int line_, unsigned short verboseLevel_ = 0) {
-        model::SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
+        SeverityLevel* level_ = registeredSeverityLevels_->get(severityLevel_);
         currLogLine_ = level_->format();
         std::string formatSpecifier_ = "";
         std::string value_ = "";
@@ -1453,7 +1446,7 @@ public:
         }
         // Type
         if (level_->severityLevelFormatFlag() | internal::constants::kType) {
-            model::LogType* type_ = registeredLogTypes_->get(logType_);
+            LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
             bool displayType_ = true;
             if (type_ && type_->name() == "TrivialLogger") {
@@ -1513,7 +1506,7 @@ public:
         write(level_);
     }
 
-    inline void write(model::SeverityLevel* level_) {
+    inline void write(SeverityLevel* level_) {
         if (configuration::SAVE_TO_FILE && fileGood() && level_->toFile()) {
             (*logFile_) << currLogLine_;
             logFile_->flush();
@@ -1566,7 +1559,7 @@ public:
     }
 
     inline bool injectNewLogType(const std::string& name_, const std::string& logName_) {
-        model::LogType* logType_ = new model::LogType(name_, logName_);
+        LogType* logType_ = new LogType(name_, logName_);
         if (registeredLogTypes()->inject(logType_)) {
             return true;
         }
@@ -1591,87 +1584,6 @@ private:
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
 }; // class Logger
-
-#if defined(_ELPP_STL_LOGGING)
-    namespace workarounds {
-    // There is workaround needed to loop through some stl containers. In order to do that, we need iterable containers
-    // of same type and provide iterator interface and pass it on to writeIterator().
-    // Remember, this is passed by value in constructor so that we dont change original queue.
-    // This operation is as expensive as O(class_.size()) or O(kContainerMaxLog) which ever is smaller.
-
-    //
-    // Abstract IterableContainer template that provides interface for iterable classes of type T
-    //
-    template <typename T, typename Container>
-    class IterableContainer {
-    public:
-        typedef typename Container::iterator iterator;
-        typedef typename Container::const_iterator const_iterator;
-        IterableContainer(void){}
-        iterator begin(void) { return getContainer().begin(); }
-        iterator end(void) { return getContainer().end(); }
-        const_iterator begin(void) const { return getContainer().begin(); }
-        const_iterator end(void) const { return getContainer().end(); }
-    protected:
-        virtual Container& getContainer(void) = 0;
-    };
-
-    //
-    // Implements IterableContainer and provides iterable std::priority_queue class
-    //
-    template<typename T, typename Container = std::vector<T>, typename Comparator = std::less<typename Container::value_type> >
-    class IterablePriorityQueue : public IterableContainer<T, Container>, public std::priority_queue<T, Container, Comparator> {
-    public:
-        explicit IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
-            unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !queue_.empty()) {
-                this->push(queue_.top());
-                queue_.pop();
-            }
-        }
-        inline Container& getContainer(void) {
-            return this->c;
-        }
-    };
-
-    //
-    // Implements IterableContainer and provides iterable std::queue class
-    //
-    template<typename T, typename Container = std::deque<T> >
-    class IterableQueue : public IterableContainer<T, Container>, public std::queue<T, Container> {
-    public:
-        explicit IterableQueue(std::queue<T, Container> queue_) {
-            unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !queue_.empty()) {
-                this->push(queue_.front());
-                queue_.pop();
-            }
-        }
-        inline Container& getContainer(void) {
-            return this->c;
-        }
-    };
-
-    //
-    // Implements IterableContainer and provides iterable std::stack class
-    //
-    template<typename T, typename Container = std::deque<T> >
-    class IterableStack : public IterableContainer<T, Container>, public std::stack<T, Container> {
-    public:
-        explicit IterableStack(std::stack<T, Container> stack_) {
-            unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !stack_.empty()) {
-                this->push(stack_.top());
-                stack_.pop();
-            }
-        }
-        inline Container& getContainer(void) {
-            return this->c;
-        }
-    };
-    } // namespace workarounds
-#endif //defined(_ELPP_STL_LOGGING)
-
 //
 // Helper macros for internal (and some external) use
 //
@@ -1793,42 +1705,24 @@ public:
         return *this;
     }
 #if defined(_ELPP_STL_LOGGING)
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const std::vector<T, Container>& vec_) {
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::vector<T1, T2>& vec_) {
         return writeIterator(vec_.begin(), vec_.end(), vec_.size());
     }
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const std::list<T, Container>& list_) {
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::list<T1, T2>& list_) {
         return writeIterator(list_.begin(), list_.end(), list_.size());
     }
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const std::deque<T, Container>& deque_) {
-        return writeIterator(deque_.begin(), deque_.end(), deque_.size());
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const std::deque<T1, T2>& queue_) {
+        return writeIterator(queue_.begin(), queue_.end(), queue_.size());
     }
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const std::queue<T, Container>& queue_) {
-        internal::workarounds::IterableQueue<T, Container> iterableQueue_ =
-                static_cast<internal::workarounds::IterableQueue<T, Container> >(queue_);
-        return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
-    }
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const std::stack<T, Container>& stack_) {
-        internal::workarounds::IterableStack<T, Container> iterableStack_ =
-                static_cast<internal::workarounds::IterableStack<T, Container> >(stack_);
-        return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
-    }
-    template <typename T, typename Container, typename Comparator>
-    inline LogWriter& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
-        internal::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
-                static_cast<internal::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
-        return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
-    }
-    template <typename T, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const std::set<T, Comparator, Container>& set_) {
+    template <typename T1, typename T2, typename T3>
+    inline LogWriter& operator<<(const std::set<T1, T2, T3>& set_) {
         return writeIterator(set_.begin(), set_.end(), set_.size());
     }
-    template <typename T, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const std::multiset<T, Comparator, Comparator>& set_) {
+    template <typename T1, typename T2, typename T3>
+    inline LogWriter& operator<<(const std::multiset<T1, T2, T3>& set_) {
         return writeIterator(set_.begin(), set_.end(), set_.size());
     }
     template <typename First, typename Second>
@@ -1840,33 +1734,26 @@ public:
         _ELPP_STREAM << ")";
         return *this;
     }
-    template <size_t Size>
-    inline LogWriter& operator<<(const std::bitset<Size>& bitset_) {
-        _ELPP_STREAM << "[";
-        _ELPP_STREAM << bitset_.to_string();
-        _ELPP_STREAM << "]";
-        return *this;
-    }
-    template <typename K, typename V, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const std::map<K, V, Comparator, Container>& map_) {
+    template <typename K, typename V, typename Comparator, typename Allocator>
+    inline LogWriter& operator<<(const std::map<K, V, Comparator, Allocator>& map_) {
         return writeIterator(map_.begin(), map_.end(), map_.size());
     }
-    template <typename K, typename V, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const std::multimap<K, V, Comparator, Container>& map_) {
+    template <typename K, typename V, typename Comparator, typename Allocator>
+    inline LogWriter& operator<<(const std::multimap<K, V, Comparator, Allocator>& map_) {
         return writeIterator(map_.begin(), map_.end(), map_.size());
     }
 #endif // defined(_ELPP_STL_LOGGING)
 #if defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
-    template <typename T, typename Container>
-    inline LogWriter& operator<<(const __gnu_cxx::slist<T, Container>& slist_) {
+    template <typename T1, typename T2>
+    inline LogWriter& operator<<(const __gnu_cxx::slist<T1, T2>& slist_) {
         return writeIterator(slist_.begin(), slist_.end(), slist_.size());
     }
-    template <typename T, typename HashFunction, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const __gnu_cxx::hash_set<T, HashFunction, Comparator, Container>& hashSet_) {
+    template <class T1, class T2, class T3, class T4>
+    inline LogWriter& operator<<(const __gnu_cxx::hash_set<T1, T2, T3, T4>& hashSet_) {
         return writeIterator(hashSet_.begin(), hashSet_.end(), hashSet_.size());
     }
-    template <typename T, typename HashFunction, typename Comparator, typename Container>
-    inline LogWriter& operator<<(const __gnu_cxx::hash_multiset<T, HashFunction, Comparator, Container>& hashMultiset_) {
+    template <class T1, class T2, class T3, class T4>
+    inline LogWriter& operator<<(const __gnu_cxx::hash_multiset<T1, T2, T3, T4>& hashMultiset_) {
         return writeIterator(hashMultiset_.begin(), hashMultiset_.end(), hashMultiset_.size());
     }
 #endif // defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
@@ -1936,43 +1823,9 @@ public:
         operator << (static_cast<QMap<K, V> >(map_));
         return *this;
     }
-    template <typename K, typename V>
-    inline LogWriter& operator<<(const QHash<K, V>& hash_) {
-        _ELPP_STREAM << "[";
-        QList<K> keys = hash_.keys();
-        typename QList<K>::const_iterator begin = keys.begin();
-        typename QList<K>::const_iterator end = keys.end();
-        int max_ = static_cast<int>(kContainerMaxLog); // prevent type warning
-        for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            _ELPP_STREAM << "(";
-            operator << (static_cast<K>(*begin));
-            _ELPP_STREAM << ", ";
-            operator << (static_cast<V>(hash_.value(*begin)));
-            _ELPP_STREAM << ")";
-            _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
-        }
-        if (begin != end) {
-          _ELPP_STREAM << " ...";
-        }
-        _ELPP_STREAM << "]";
-        return *this;
-    }
-    template <typename K, typename V>
-    inline LogWriter& operator<<(const QMultiHash<K, V>& multiHash_) {
-        operator << (static_cast<QHash<K, V> >(multiHash_));
-        return *this;
-    }
-    template <typename T>
-    inline LogWriter& operator<<(const QLinkedList<T>& linkedList_) {
-        return writeIterator(linkedList_.begin(), linkedList_.end(), linkedList_.size());
-    }
-    template <typename T>
-    inline LogWriter& operator<<(const QStack<T>& stack_) {
-        return writeIterator(stack_.begin(), stack_.end(), stack_.size());
-    }
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 private:
-    const static unsigned int kContainerMaxLog = internal::constants::kMaxLogPerContainer;
+    const static unsigned int kContainerMaxLog = 100;
     unsigned int logAspect_;
     std::string logType_;
     std::string severityLevel_;
