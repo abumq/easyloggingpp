@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.58                                                         //
+//   EasyLogging++ v7.59                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -390,10 +390,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.58"); }
+    static inline const std::string version(void) { return std::string("7.59"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("31-03-2013 0618hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("31-03-2013 1620hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1337,7 +1337,7 @@ public:
 #endif
 
                 if (logFile_->is_open()) {
-                    logFile_->close();
+                    logFile_->flush();
                 } else {
                     if (logFile_) {
                         delete logFile_;
@@ -1357,6 +1357,7 @@ public:
             stream_ = NULL;
         }
         if (logFile_) {
+            logFile_->close();
             delete logFile_;
             logFile_ = NULL;
         }
@@ -1497,9 +1498,8 @@ public:
 
     inline void write(SeverityLevel* level_) {
         if (configuration::SAVE_TO_FILE && fileGood() && level_->toFile()) {
-            logFile_->open(kFinalFilename_.c_str(), std::ofstream::out | std::ofstream::app);
             (*logFile_) << currLogLine_;
-            logFile_->close();
+            logFile_->flush();
         }
         if (configuration::SHOW_STD_OUTPUT && level_->toStandardOutput()) {
             std::cout << currLogLine_;

@@ -88,6 +88,7 @@ Change log was not kept before version 2.1.
       - Better format by introducing internal::constants
  * 7.56: Simplified readibility
  * 7.58: Handle wide characters
+ * 7.59: Improved performance by syncing using flush
 
 #### 6.xx
  * 6.00:
