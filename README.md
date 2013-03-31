@@ -50,7 +50,7 @@ EasyLogging++ comes with following severity levels of logging with complete cont
 
 *NOTE: To support legacy logging, i.e, `INFO(..), WARNING(..) etc` define a macro `_SUPPORT_LEGACY_LOG_NAMES`. See [issue #25](https://github.com/mkhan3189/EasyLoggingPP/issues/25) for further details on this change*
 
-See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/very_basic.cpp)
+See [simplest sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/STL/very_basic.cpp)
 
 ## Examples
 #### Basic Logging
@@ -187,7 +187,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * `LTRACE_IF(condition) log`
 * `LVERBOSE_IF(condition, level) << log`
 
-A typical example is as follow (taken from samples/conditional_log.cpp)
+A typical example is as follow (taken from samples/STL/conditional.cpp)
 ```C++
   LINFO_IF(1 == 1) << "1 is equal to 1";
   // Or some complex condition
@@ -195,7 +195,7 @@ A typical example is as follow (taken from samples/conditional_log.cpp)
   // verbose log
   LVERBOSE_IF(true, 1) <<  "Printing verbose level-1";
 ```
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/conditional_logs.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/conditional.cpp)
 
 #### Interval Logging 
 You can log something every N times using `***_EVERY_N` where `***` represent different log levels. Following are the usable macros:
@@ -218,9 +218,7 @@ At any time if you wish to check the counter position for a line, you may do it 
 
 Version: 4.07+
 
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log.cpp)
-
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/every_n_log_2.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/interval.cpp)
 
 #### Cleaning Logs On Each Run
 If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. It is also useful where keeping older logs are not necessary for example a session of game you wrote in C++ or a small utility software. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
@@ -294,10 +292,6 @@ END_FUNC(return_value)
 Note: You can specify the severity level and log type (recommended is `PerformanceLogger`) by setting `_PERFORMANCE_TRACKING_SEVERITY` in `easylogging++.h` to one of the reusable macros i.e, `PINFO`, `PDEBUG` etc.
 
 To disable performance tracking at any time set `_ENABLE_PERFORMANCE_TRACKING` to `0`, otherwise `1`. Alternatively, define macro `_DISABLE_PERFORMANCE_TRACKING`.
-
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_tracker.cpp)
- 
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/time_waster.cpp)
  
 #### Verbose Logging
 To start using verbose logging you will need to have following right after your `int main(int, char**)` function `_START_EASYLOGGINGPP(argc, argv);`, so your main function will look something like
@@ -352,7 +346,7 @@ You may also run using `--verbose` to display maximum verbose logs (max level: 9
 
  Version: 3.22+
  
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/verbose_logs.cpp)
+ [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/verbose.cpp)
  
 #### Releasing Memory
 Since v7.00, all the memory is managed within EasyLogging++ so you dont need to worry about releasing any memory, for older versions please check older version of README from github
@@ -373,8 +367,6 @@ will log `QA` if program is compiled using following line at minimum (notice the
 `g++ main.cpp -o main-exec -D_QUALITY_ASSURANCE`
 
  Version: 3.30+
- 
- [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qa_logs.cpp)
 
 #### Escaping Log Format
 Escape character used in EasyLogging++ is `E`. For example, to write following log
@@ -402,9 +394,11 @@ Sample has very well explained comment on each of above way of loggings.
 
 Version: 7.0+
 
- [View Sample 1](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/multithread_test.cpp)
+ [View Sample 1 (std::thread)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/std_thread.cpp)
 
- [View Sample 2](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/pthread_example.cpp)
+ [View Sample 2 (pthread)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/pthread.cpp)
+ 
+ [View Sample 3 (QThread)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/)
 
 #### Read Log File
 If you ever want to read log file from your application, you may do this by `easyloggingpp::helper::MyEasyLog::readLog()` that returns standard string containing the contents of current log file.
@@ -426,7 +420,8 @@ EasyLogging++ is being improved on daily basis and goal is to have a complete su
 
 *You should enable logging in order to use it with EasyLogging++ by defining one (or more) of above mentioned macros during compilation or before including `easylogging++.h` file*
 
-[View Sample (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qt-sample/main.cpp)
+[View Sample (STL)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/containers.cpp)
+[View Sample (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/main.cpp)
 
 Version: 7.60+
 
@@ -474,7 +469,7 @@ Of course, above output varies with your log format configurations. The one abov
 
 Version: 7.34+
 
-[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/custom_class.cpp)
+[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/custom_class.cpp)
 
 ## Configuration
 #### Enable/Disable Logging
