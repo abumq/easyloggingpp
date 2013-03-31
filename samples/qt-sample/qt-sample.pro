@@ -5,7 +5,7 @@ CONFIG += static
 DEFINES += _ALWAYS_CLEAN_LOGS \
           _ELPP_QT_LOGGING    \
           _ELPP_STL_LOGGING   \
-         _ELPP_GNUC_LOGGING
+          _ELPP_GNUC_LOGGING
 
 TARGET = main.cpp.bin
 TEMPLATE = app

@@ -89,6 +89,9 @@ Change log was not kept before version 2.1.
  * 7.56: Simplified readibility
  * 7.58: Handle wide characters
  * 7.59: Improved performance by syncing using flush
+ * 7.60:
+      - Support for all STL containers, Qt containers and some deprecated GNU containers (issue #35)
+      - Limits containers log for logging containers faster (issue #37)
 
 #### 6.xx
  * 6.00:

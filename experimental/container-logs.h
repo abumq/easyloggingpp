@@ -34,9 +34,40 @@ void listLogs() {
   LINFO << "vehiclePtrList : " << vehiclePtrList;
 }
 
+void otherContainerLogs() {
+    std::map<int, std::string> map_;
+    map_.insert (std::pair<int, std::string>(1, "one"));
+    map_.insert (std::pair<int, std::string>(2, "two"));
+    LINFO << "Map: " << map_;
+
+    std::queue<int> queue_;
+    queue_.push(77);
+    queue_.push(16);
+    LINFO << queue_;
+
+    std::bitset<10> bitset_ (std::string("10110"));
+    LINFO << bitset_;
+
+    int pqueueArr_[]= { 10, 60, 50, 20 };
+    std::priority_queue< int, std::vector<int>, std::greater<int> > pqueue (pqueueArr_, pqueueArr_ + 4);
+    LINFO << pqueue;
+
+    std::deque<int> mydeque_ (3,100);
+    mydeque_.at(1) = 200;
+
+    std::stack<int> stack_ (mydeque_);
+    LINFO << stack_;
+
+    std::stack<std::string*> stackStr_;
+    stackStr_.push (new std::string("test"));
+    LINFO << stackStr_;
+    delete stackStr_.top();
+}
+
 void containerLogs() {
     vectorLogs();
     listLogs();
+    otherContainerLogs();
 }
 
 #endif

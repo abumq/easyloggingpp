@@ -415,18 +415,17 @@ EasyLogging++ is being improved on daily basis and goal is to have a complete su
  * STL
     - Enable by defining `_ELPP_STL_LOGGING`
     - Basic types supported: `string`, `wstring` (Always enabled)
-    - Containers supported: `vector`, `list`, `deque`, `set`, `multiset`, `pair`, `map`, `multimap`
+    - Containers supported: `vector`, `list`, `deque`, `set`, `multiset`, `bitset`, `pair`, `map`, `multimap`, `queue`, `priority_queue`, `stack`
  * Qt
     - Enable by defining `_ELPP_QT_LOGGING`
     - Basic types supported: `QString`, `QChar`, `QBool`, `qint64`, `quint64`, `QStringRef`, `QLatin1String`
-    - Containers supported: `QVector`, `QList`, `QMap`, `QMultiMap`, `QQueue`, `QPair`, `QSet`, `QHash`, `QMultiHash`, `QLinkedList`
+    - Containers supported: `QVector`, `QList`, `QMap`, `QMultiMap`, `QQueue`, `QPair`, `QSet`, `QHash`, `QMultiHash`, `QLinkedList`, `QStack`
  * Gnu
     - Enable by defining `_ELPP_GNUC_LOGGING`
     - Containers supported: `__gnu_cxx::slist`, `__gnu_cxx::hash_set`, `__gnu_cxx::multiset`
 
 *You should enable logging in order to use it with EasyLogging++ by defining one (or more) of above mentioned macros during compilation or before including `easylogging++.h` file*
 
-[View Sample (STL)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/stl_log.cpp)
 [View Sample (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/qt-sample/main.cpp)
 
 Version: 7.60+
