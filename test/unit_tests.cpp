@@ -24,7 +24,7 @@ using namespace easyloggingpp::helper;
 #define localAssert(assertion) \
   if (!(assertion)) { \
     std::cout << "TEST FAILED: " << #assertion << " [Line: " << __LINE__ << "]"; \
-    return 1; \
+    exit(1); \
   } \
 
 #define val(x) \
