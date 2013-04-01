@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.60                                                         //
+//   EasyLogging++ v7.61                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -407,10 +407,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.60"); }
+    static inline const std::string version(void) { return std::string("7.61"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-04-2013 0138hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("01-04-2013 1146hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -462,13 +462,15 @@ namespace threading {
 class Mutex {
 public:
     #if _ELPP_ASSEMBLY_SUPPORTED
-        #define _ELPP_MUTEX_LOCK_GNU_ASM(lf_, old_) "movl $1,%%eax\n"       \
-                                                        "\txchg %%eax,%0\n" \
-                                                        "\tmovl %%eax,%1\n" \
-                                                        "\t" : "=m" (lf_), "=m" (old_) : : "%eax", "memory"
-        #define _ELPP_MUTEX_UNLOCK_GNU_ASM(lf_) "movl $0,%%eax\n"                                \
-                                                    "\txchg %%eax,%0\n"                          \
-                                                    "\t" : "=m" (lf_) : : "%eax", "memory"
+        #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+            #define _ELPP_MUTEX_LOCK_GNU_ASM(lf_, old_) "movl $1,%%eax\n"       \
+                                                            "\txchg %%eax,%0\n" \
+                                                            "\tmovl %%eax,%1\n" \
+                                                            "\t" : "=m" (lf_), "=m" (old_) : : "%eax", "memory"
+            #define _ELPP_MUTEX_UNLOCK_GNU_ASM(lf_) "movl $0,%%eax\n"                                \
+                                                        "\txchg %%eax,%0\n"                          \
+                                                        "\t" : "=m" (lf_) : : "%eax", "memory"
+        #endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
         explicit Mutex(void) : lockerFlag_(0) {
         }
     #else
@@ -609,6 +611,7 @@ const std::string kNullPointerStr             =   "nullptr";
 const char        kLogFormatEscapeCharacter   =    'E';
 const unsigned int kMaxLogPerContainer        =   100;
 const unsigned int kMaxForLogCounter          =   100000;
+const unsigned int kDefaultMilliSecondOffset  =   1000;
 
 } // namespace configuration
 _ELPP_MUTEX_SPECIFIC_INIT
@@ -761,7 +764,7 @@ public:
                                   std::string& currentFormat_) {
         size_t foundAt = -1;
         while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
-            if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == internal::constants::kLogFormatEscapeCharacter) {
+            if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == constants::kLogFormatEscapeCharacter) {
                 currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                 ++foundAt;
             } else {
@@ -812,7 +815,7 @@ public:
         char dateBuffer_[kDateBuffSize_] = "";
         char dateBufferOut_[kDateBuffSize_] = "";
 #if _ELPP_OS_UNIX
-        bool hasTime_ = (type_ & internal::constants::kDateTime || type_ & internal::constants::kTimeOnly);
+        bool hasTime_ = (type_ & constants::kDateTime || type_ & constants::kTimeOnly);
         timeval currTime;
         gettimeofday(&currTime, NULL);
         if (hasTime_) {
@@ -828,15 +831,15 @@ public:
 #elif _ELPP_OS_WINDOWS
         const char* kTimeFormatLocal_ = "HH':'mm':'ss";
         const char* kDateFormatLocal_ = "dd/MM/yyyy";
-        if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kDateOnly)) {
+        if ((type_ & constants::kDateTime) || (type_ & constants::kDateOnly)) {
             if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                 sprintf_s(dateBufferOut_, "%s", dateBuffer_);
             }
         }
-        if ((type_ & internal::constants::kDateTime) || (type_ & internal::constants::kTimeOnly)) {
+        if ((type_ & constants::kDateTime) || (type_ & constants::kTimeOnly)) {
             if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                 milliSeconds = (long)(GetTickCount()) % milliSecondOffset;
-                if (type_ & internal::constants::kDateTime) {
+                if (type_ & constants::kDateTime) {
                     sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
                 } else {
                     sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
@@ -912,6 +915,8 @@ public:
         return list_.empty();
     }
 protected:
+    typedef typename std::vector<Class*>::iterator Iterator;
+
     inline void registerNew(Class* c_) {
         list_.push_back(c_);
     }
@@ -930,9 +935,11 @@ protected:
         }
     }
 
-    std::vector<Class*> list_;
-    typedef typename std::vector<Class*>::iterator Iterator;
+    std::vector<Class*>& list(void) {
+        return list_;
+    }
 private:
+    std::vector<Class*> list_;
     // Prevent copy or assignment
     explicit PointerRegistryManager(const PointerRegistryManager&);
     PointerRegistryManager& operator=(const PointerRegistryManager&);
@@ -1061,7 +1068,7 @@ public:
         format_(format_),
         toStandardOutput_(toStandardOutput_),
         toFile_(toFile_) {
-            internal::helper::LogManipulator::updateFormatValue("%level", name_, this->format_);
+            helper::LogManipulator::updateFormatValue("%level", name_, this->format_);
             dateFormat_ = NULL;
             severityLevelFormatFlag_ = 0;
             buildDateFormat();
@@ -1114,18 +1121,18 @@ private:
         if (dateFormat_ == NULL) {
             dateFormat_ = new DateFormat();
         }
-        if (format_.find(internal::constants::kDateTimeFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(internal::constants::kDateTimeFormatSpecifier);
-            severityLevelFormatFlag_ |= internal::constants::kDateTime;
+        if (format_.find(constants::kDateTimeFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(constants::kDateTimeFormatSpecifier);
+            severityLevelFormatFlag_ |= constants::kDateTime;
             dateFormat_->setHasDate_(true);
-        } else if (format_.find(internal::constants::kDateOnlyFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(internal::constants::kDateOnlyFormatSpecifier);
+        } else if (format_.find(constants::kDateOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(constants::kDateOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            severityLevelFormatFlag_ |= internal::constants::kDateOnly;
-        } else if (format_.find(internal::constants::kTimeOnlyFormatSpecifier) != std::string::npos) {
-            dateFormat_->setFormatSpecifier(internal::constants::kTimeOnlyFormatSpecifier);
+            severityLevelFormatFlag_ |= constants::kDateOnly;
+        } else if (format_.find(constants::kTimeOnlyFormatSpecifier) != std::string::npos) {
+            dateFormat_->setFormatSpecifier(constants::kTimeOnlyFormatSpecifier);
             dateFormat_->setHasDate_(true);
-            severityLevelFormatFlag_ |= internal::constants::kTimeOnly;
+            severityLevelFormatFlag_ |= constants::kTimeOnly;
         } else {
             dateFormat_->setHasDate_(false);
         }
@@ -1135,9 +1142,9 @@ private:
             const std::string kTimeFormatLocal_ = "%H:%M:%S";
             const std::string kDateFormatLocal_ = "%d/%m/%Y";
 
-            if (dateFormat_->formatFlag() & internal::constants::kDateOnly) {
+            if (dateFormat_->formatFlag() & constants::kDateOnly) {
                 dateFormat_->setBufferFormat(kDateFormatLocal_);
-            } else if (dateFormat_->formatFlag() & internal::constants::kTimeOnly) {
+            } else if (dateFormat_->formatFlag() & constants::kTimeOnly) {
                 dateFormat_->setBufferFormat(kTimeFormatLocal_);
             } else {
                 std::stringstream ss;
@@ -1158,7 +1165,7 @@ private:
                 dateFormat_->setMilliSecondOffset(1);
                 break;
             default:
-                dateFormat_->setMilliSecondOffset(1);
+                dateFormat_->setMilliSecondOffset(constants::kDefaultMilliSecondOffset);
             }
 #elif _ELPP_OS_WINDOWS
             dateFormat_->setMilliSecondOffset(1000);
@@ -1167,26 +1174,26 @@ private:
     }
 
     void determineAvailableLogFormats(void) {
-        if (format_.find(internal::constants::kTypeFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kType;
+        if (format_.find(constants::kTypeFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kType;
         }
-        if (format_.find(internal::constants::kLocationFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kLocation;
+        if (format_.find(constants::kLocationFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kLocation;
         }
-        if (format_.find(internal::constants::kFunctionFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kFunction;
+        if (format_.find(constants::kFunctionFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kFunction;
         }
-        if (format_.find(internal::constants::kUserFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kUser;
+        if (format_.find(constants::kUserFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kUser;
         }
-        if (format_.find(internal::constants::kHostFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kHost;
+        if (format_.find(constants::kHostFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kHost;
         }
-        if (format_.find(internal::constants::kLogMessageFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kLogMessage;
+        if (format_.find(constants::kLogMessageFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kLogMessage;
         }
-        if (format_.find(internal::constants::kVerboseLevelFormatSpecifier) != std::string::npos) {
-            severityLevelFormatFlag_ |= internal::constants::kVerboseLevel;
+        if (format_.find(constants::kVerboseLevelFormatSpecifier) != std::string::npos) {
+            severityLevelFormatFlag_ |= constants::kVerboseLevel;
         }
     }
 }; // class SeverityLevel
@@ -1195,8 +1202,6 @@ private:
 //
 class LogCounter {
 public:
-
-    const static unsigned int kMax = internal::constants::kMaxForLogCounter;
 
     class Predicate {
     public:
@@ -1234,8 +1239,8 @@ public:
     }
 
     inline void reset(unsigned int n_) {
-        if (position_ >= LogCounter::kMax) {
-            position_ = (n_ >= 1 ? kMax % n_ : 0);
+        if (position_ >= constants::kMaxForLogCounter) {
+            position_ = (n_ >= 1 ? constants::kMaxForLogCounter % n_ : 0);
         }
         ++position_;
     }
@@ -1252,6 +1257,11 @@ public:
         return position_;
     }
 
+    inline std::string toString(void) const {
+        std::stringstream ss;
+        ss << position_;
+        return ss.str();
+    }
 private:
     const char* file_;
     unsigned long int line_;
@@ -1285,21 +1295,21 @@ class RegisteredSeverityLevels : public helper::PointerRegistryManager<model::Se
 public:
     explicit RegisteredSeverityLevels(void) {
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppDebugLevelValue, configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppDebugLevelValue, configuration::DEBUG_LOG_FORMAT, _DEBUG_LOGS_TO_STANDARD_OUTPUT, _DEBUG_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppInfoLevelValue, configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppInfoLevelValue, configuration::INFO_LOG_FORMAT, _INFO_LOGS_TO_STANDARD_OUTPUT, _INFO_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppWarningLevelValue, configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppWarningLevelValue, configuration::WARNING_LOG_FORMAT, _WARNING_LOGS_TO_STANDARD_OUTPUT, _WARNING_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppErrorLevelValue, configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppErrorLevelValue, configuration::ERROR_LOG_FORMAT, _ERROR_LOGS_TO_STANDARD_OUTPUT, _ERROR_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppFatalLevelValue, configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppFatalLevelValue, configuration::FATAL_LOG_FORMAT, _FATAL_LOGS_TO_STANDARD_OUTPUT, _FATAL_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppVerboseLevelValue, configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppVerboseLevelValue, configuration::VERBOSE_LOG_FORMAT, _VERBOSE_LOGS_TO_STANDARD_OUTPUT, _VERBOSE_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppQaLevelValue, configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppQaLevelValue, configuration::QA_LOG_FORMAT, _QA_LOGS_TO_STANDARD_OUTPUT, _QA_LOGS_TO_FILE));
         registerNew(
-                    new model::SeverityLevel(internal::constants::kElppTraceLevelValue, configuration::TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
+                    new model::SeverityLevel(constants::kElppTraceLevelValue, configuration::TRACE_LOG_FORMAT, _TRACE_LOGS_TO_STANDARD_OUTPUT, _TRACE_LOGS_TO_FILE));
     }
 }; // class RegisteredSeverityLevels
 // Represents all the registered counters. This registeration is done at run-time as log is being written
@@ -1319,8 +1329,8 @@ public:
     }
 
     model::LogCounter* get(const char* file_, unsigned long int line_) {
-        Iterator iter = std::find_if(list_.begin(), list_.end(), model::LogCounter::Predicate(file_, line_));
-        if (iter != list_.end() && *iter != NULL) {
+        Iterator iter = std::find_if(list().begin(), list().end(), model::LogCounter::Predicate(file_, line_));
+        if (iter != list().end() && *iter != NULL) {
             return reinterpret_cast<model::LogCounter*>(*iter);
         }
         return NULL;
@@ -1334,8 +1344,8 @@ public:
         kFinalFilename_(configuration::USE_CUSTOM_LOCATION ?
                             configuration::CUSTOM_LOG_FILE_LOCATION + configuration::LOG_FILENAME:
                             configuration::LOG_FILENAME),
-        kUser_(internal::helper::OSUtilities::currentUser()),
-        kHost_(internal::helper::OSUtilities::currentHost()),
+        kUser_(helper::OSUtilities::currentUser()),
+        kHost_(helper::OSUtilities::currentHost()),
         initialized_(true),
         stream_(new std::stringstream()),
         logFile_(NULL),
@@ -1344,7 +1354,7 @@ public:
         registeredLogCounters_(new RegisteredCounters()) {
         if (configuration::SAVE_TO_FILE) {
             fileGood_ = configuration::USE_CUSTOM_LOCATION ?
-                            !kFinalFilename_.empty() && internal::helper::OSUtilities::createPath(configuration::CUSTOM_LOG_FILE_LOCATION) :
+                            !kFinalFilename_.empty() && helper::OSUtilities::createPath(configuration::CUSTOM_LOG_FILE_LOCATION) :
                             !kFinalFilename_.empty();
             if (fileGood_) {
 #if _ALWAYS_CLEAN_LOGS
@@ -1446,13 +1456,13 @@ public:
         std::string value_ = "";
         // DateTime
         if (level_->dateFormat()->hasDate()) {
-            value_ = internal::helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(), 
+            value_ = helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(),
                                                                       level_->dateFormat()->formatFlag(),
                                                                       level_->dateFormat()->milliSecondOffset());
-            internal::helper::LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
+            helper::LogManipulator::updateFormatValue(level_->dateFormat()->formatSpecifier(), value_, currLogLine_);
         }
         // Type
-        if (level_->severityLevelFormatFlag() | internal::constants::kType) {
+        if (level_->severityLevelFormatFlag() | constants::kType) {
             model::LogType* type_ = registeredLogTypes_->get(logType_);
 #ifdef _NO_TRIVIAL_TYPE_DISPLAY
             bool displayType_ = true;
@@ -1471,44 +1481,44 @@ public:
                 value_ = "";
             }
 #endif // _NO_TRIVIAL_TYPE_DISPLAY
-            formatSpecifier_ = internal::constants::kTypeFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = constants::kTypeFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Location
-        if (level_->severityLevelFormatFlag() & internal::constants::kLocation) {
+        if (level_->severityLevelFormatFlag() & constants::kLocation) {
             tempStream_ << file_ << ":" << line_;
             value_ = tempStream_.str();
-            formatSpecifier_ = internal::constants::kLocationFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = constants::kLocationFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // Function
-        if (level_->severityLevelFormatFlag() & internal::constants::kFunction) {
+        if (level_->severityLevelFormatFlag() & constants::kFunction) {
             value_ = std::string(func_);
-            formatSpecifier_ = internal::constants::kFunctionFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
+            formatSpecifier_ = constants::kFunctionFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_);
         }
         // User
-        if (level_->severityLevelFormatFlag() & internal::constants::kUser) {
-            formatSpecifier_ = internal::constants::kUserFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
+        if (level_->severityLevelFormatFlag() & constants::kUser) {
+            formatSpecifier_ = constants::kUserFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_);
         }
         // Host
-        if (level_->severityLevelFormatFlag() & internal::constants::kHost) {
-            formatSpecifier_ =internal::constants:: kHostFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
+        if (level_->severityLevelFormatFlag() & constants::kHost) {
+            formatSpecifier_ =constants:: kHostFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_);
         }
         // Log
-        if (level_->severityLevelFormatFlag() & internal::constants::kLogMessage) {
-            formatSpecifier_ = internal::constants::kLogMessageFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
+        if (level_->severityLevelFormatFlag() & constants::kLogMessage) {
+            formatSpecifier_ = constants::kLogMessageFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, stream_->str(), currLogLine_);
         }
         // Verbose specific log
-        if (verboseLevel_ > 0 && (level_->severityLevelFormatFlag() & internal::constants::kVerboseLevel)) {
+        if (verboseLevel_ > 0 && (level_->severityLevelFormatFlag() & constants::kVerboseLevel)) {
             tempStream_.str("");
             tempStream_ << verboseLevel_;
             value_ = tempStream_.str();
-            formatSpecifier_ = internal::constants::kVerboseLevelFormatSpecifier;
-            internal::helper::LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
+            formatSpecifier_ = constants::kVerboseLevelFormatSpecifier;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, tempStream_.str(), currLogLine_);
         }
         write(level_);
     }
@@ -1612,7 +1622,7 @@ private:
         iterator end(void) { return getContainer().end(); }
         const_iterator begin(void) const { return getContainer().begin(); }
         const_iterator end(void) const { return getContainer().end(); }
-    protected:
+    private:
         virtual Container& getContainer(void) = 0;
     };
 
@@ -1624,11 +1634,12 @@ private:
     public:
         explicit IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
             unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !queue_.empty()) {
+            while (count_++ < constants::kMaxLogPerContainer && !queue_.empty()) {
                 this->push(queue_.top());
                 queue_.pop();
             }
         }
+    private:
         inline Container& getContainer(void) {
             return this->c;
         }
@@ -1642,11 +1653,12 @@ private:
     public:
         explicit IterableQueue(std::queue<T, Container> queue_) {
             unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !queue_.empty()) {
+            while (count_++ < constants::kMaxLogPerContainer && !queue_.empty()) {
                 this->push(queue_.front());
                 queue_.pop();
             }
         }
+    private:
         inline Container& getContainer(void) {
             return this->c;
         }
@@ -1660,11 +1672,12 @@ private:
     public:
         explicit IterableStack(std::stack<T, Container> stack_) {
             unsigned int count_ = 0;
-            while (count_++ < internal::constants::kMaxLogPerContainer && !stack_.empty()) {
+            while (count_++ < constants::kMaxLogPerContainer && !stack_.empty()) {
                 this->push(stack_.top());
                 stack_.pop();
             }
         }
+    private:
         inline Container& getContainer(void) {
             return this->c;
         }
@@ -1689,7 +1702,7 @@ private:
             _ELPP_LOGGER.buildLine(type_, level_, func_, file_, line_);                    \
         }                                                                                  \
     }
-#define _ELPP_COUNTER _ELPP_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
+#define _ELPP_COUNTER _QUALIFIED_LOGGER.registeredLogCounters()->get(__FILE__, __LINE__)
 #define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
 //
 // Main logger
@@ -1760,7 +1773,7 @@ public:
     inline LogWriter& operator<<(std::wstring* log_) { return writePointer(log_); }
     inline LogWriter& operator<<(const wchar_t* log_) {
         if (log_ == NULL) {
-            _ELPP_STREAM << internal::constants::kNullPointerStr;
+            _ELPP_STREAM << constants::kNullPointerStr;
             return *this;
         }
         size_t len_ = wcslen(log_) + 1;
@@ -1788,7 +1801,7 @@ public:
         if (pointer_) {
             _ELPP_STREAM << pointer_->toString();
         } else {
-            _ELPP_STREAM << internal::constants::kNullPointerStr;
+            _ELPP_STREAM << constants::kNullPointerStr;
         }
         return *this;
     }
@@ -1807,20 +1820,20 @@ public:
     }
     template <typename T, typename Container>
     inline LogWriter& operator<<(const std::queue<T, Container>& queue_) {
-        internal::workarounds::IterableQueue<T, Container> iterableQueue_ =
-                static_cast<internal::workarounds::IterableQueue<T, Container> >(queue_);
+        workarounds::IterableQueue<T, Container> iterableQueue_ =
+                static_cast<workarounds::IterableQueue<T, Container> >(queue_);
         return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
     }
     template <typename T, typename Container>
     inline LogWriter& operator<<(const std::stack<T, Container>& stack_) {
-        internal::workarounds::IterableStack<T, Container> iterableStack_ =
-                static_cast<internal::workarounds::IterableStack<T, Container> >(stack_);
+        workarounds::IterableStack<T, Container> iterableStack_ =
+                static_cast<workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
     }
     template <typename T, typename Container, typename Comparator>
     inline LogWriter& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
-        internal::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
-                static_cast<internal::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
+        workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
+                static_cast<workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
     }
     template <typename T, typename Comparator, typename Container>
@@ -1972,7 +1985,7 @@ public:
     }
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 private:
-    const static unsigned int kContainerMaxLog = internal::constants::kMaxLogPerContainer;
+    const static unsigned int kContainerMaxLog = constants::kMaxLogPerContainer;
     unsigned int logAspect_;
     std::string logType_;
     std::string severityLevel_;
@@ -1985,7 +1998,7 @@ private:
 
     template <typename Pointer>
     inline LogWriter& writePointer(const Pointer& pointer_) {
-        return (pointer_ != NULL ? operator << (*pointer_) : operator << (internal::constants::kNullPointerStr));
+        return (pointer_ != NULL ? operator << (*pointer_) : operator << (constants::kNullPointerStr));
     }
 
     template<class Iterator>
@@ -2003,35 +2016,35 @@ private:
     }
 
     void writeLog(void) const {
-        if (severityLevel_ == internal::constants::kElppDebugLevelValue) {
+        if (severityLevel_ == constants::kElppDebugLevelValue) {
 #if (_ELPP_DEBUG_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppWarningLevelValue) {
+        } else if (severityLevel_ == constants::kElppWarningLevelValue) {
 #if (_ELPP_WARNING_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppErrorLevelValue) {
+        } else if (severityLevel_ == constants::kElppErrorLevelValue) {
 #if (_ELPP_ERROR_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppInfoLevelValue) {
+        } else if (severityLevel_ == constants::kElppInfoLevelValue) {
 #if (_ELPP_INFO_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppFatalLevelValue) {
+        } else if (severityLevel_ == constants::kElppFatalLevelValue) {
 #if (_ELPP_FATAL_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppQaLevelValue) {
+        } else if (severityLevel_ == constants::kElppQaLevelValue) {
 #if (_ELPP_QA_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppTraceLevelValue) {
+        } else if (severityLevel_ == constants::kElppTraceLevelValue) {
 #if (_ELPP_TRACE_LOG)
             _WRITE_ELPP_LOG(logType_, severityLevel_, func_, file_, line_);
 #endif
-        } else if (severityLevel_ == internal::constants::kElppVerboseLevelValue) {
+        } else if (severityLevel_ == constants::kElppVerboseLevelValue) {
 #if (_ELPP_VERBOSE_LOG)
             if (logAspect_ == kNormal && _ELPP_LOGGER.appVerbose() >= verboseLevel_) {
                 _ELPP_LOGGER.buildLine(logType_, severityLevel_, func_, file_, line_, verboseLevel_);

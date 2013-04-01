@@ -17,10 +17,12 @@ MAIN(int argc, char** argv)
   int n2 = 10;
   float n2f = (float)n2;
   
-  for (int i = 1; i < 5099; i++) {
+  for (int i = 1; i < 5099; ++i) {
      LINFO_EVERY_N(n) << "i = " << i <<  "  AND  i / " << n << " = " << ((float)i / nf);
   }
-  for (int i = 1;i < 5099; i++) {
+  for (int i = 1;i < 110099; ++i) {
      LINFO_EVERY_N(n2) << "i = " << i <<  "  AND  i / " << n2 << " = " << ((float)i / n2f);
+     LINFO_EVERY_N(5000) << "Current position is " << _ELPP_COUNTER_POSITION;
   } 
+
 END_MAIN(0)
