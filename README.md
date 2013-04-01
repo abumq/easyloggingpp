@@ -592,6 +592,8 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![linuxmint] Linux Mint 14 (64-bit, g++ 4.7.2)
 
+![android] Android 2.2+ (NDK)
+
 **Compilers**
 
 ![gcc] GNU Compiler Collection (g++ 4.4, g++ 4.6.3, g++ 4.7.2)
@@ -612,3 +614,4 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 [qt]: http://www.icplusplus.com/tools/easylogging/icons/qt.png
 [gcc]: http://www.icplusplus.com/tools/easylogging/icons/gcc.png
 [vcpp]: http://www.icplusplus.com/tools/easylogging/icons/vcpp.png
+[android]: http://www.icplusplus.com/tools/easylogging/icons/android.png
