@@ -12,7 +12,7 @@
 
 <meta name='title' content='EasyLogging++ - C++ Tools' />
 <meta name='description' content='Cross platform logging made easy for C/C++ applications.' />
-<meta name='keywords' content='C++ logging, c++ light fast logging, Thread-safe C++ logger, generic C++ logging, easy to use C++ logger' />
+<meta name='keywords' content='C++ logging, c++ light fast logging, Thread-safe C++ logger, generic C++ logging, easy to use C++ logger, STL logging, Qt logging, qlog, elpp, easylogging c++, best C++ logger, best c++ logging library' />
 <meta charset="UTF-8">
 
 <?php
@@ -35,6 +35,7 @@ print '
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Type-safe</span><br/>
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Highly configurable</span><br/>
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">High performance</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">STL Logging</span><br/>
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Easy to setup</span><br/>
 
 
