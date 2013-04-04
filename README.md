@@ -533,13 +533,6 @@ This can be set by following configurations
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
 
-* %host 
-* %func Function where log was written from
-* %loc Location with filename and line number where log was written from
-* %log Actual log
-* \n New line
-* \t Tab
-
 <table>
     <tr>
         <td><b>Format Specifier</b></td>
