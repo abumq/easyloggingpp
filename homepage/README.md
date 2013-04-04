@@ -1,3 +1,3 @@
 ###### EasyLogging++ Homepage
 
-This is source for [EasyLogging++ homepage](http://tools.icplusplus.com/easylogging)
+This is source for [EasyLogging++ homepage](http://icplusplus.com/tools/easylogging)
