@@ -12,6 +12,8 @@
 
 <meta name='title' content='EasyLogging++ - C++ Tools' />
 <meta name='description' content='Cross platform logging made easy for C/C++ applications.' />
+<meta name='keywords' content='C++ logging, c++ light fast logging, Thread-safe C++ logger, generic C++ logging, easy to use C++ logger' />
+<meta charset="UTF-8">
 
 <?php
 
@@ -23,6 +25,21 @@ print '
 <table width="100%">
     <tr><td>
         <h1><font color=green>EasyLogging++ <sup><font size=3>'. $currentVersion. '</font></sup></font></h1>
+	<div style="
+	    float: right;
+	    position: absolute;
+	    right: 30%;
+	">
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Cross platform</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Thread-safe</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Type-safe</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Highly configurable</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">High performance</span><br/>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Easy to setup</span><br/>
+
+
+</div>
+
         <font color=green>
             <b>Cross platform logging made easy for C++ applications.</b>
             <br/>
@@ -55,11 +72,41 @@ print '
 
 <img src="'. $webAddr .'/images/accordion/download.png" />
 <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">Download Latest Version</a>
+</td></tr><tr>
+<td width="100%" valign="top">
+<br/><br/><p>
+Hopefully, by now you have some great reasons to use EasyLogging++, if you are still confused whether or not you should use EasyLogging++, check out read me, and I am sure you will be convinced.<br/>
+<br/>
+To start using EasyLogging++, <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">download the latest version</a>, configure it directly, initialize it in your application and you are good to go.<br/>
+';
+$codeBlock="[cpp_code_no_line]#include \"easylogging++.h\"
 
-<br/>
-<br/>
-<br/>
-<div id="licence"  width="50%">
+_INITIALIZE_EASYLOGGINGPP
+
+int main(int argv, const char** argc) {
+    LINFO << \"my trivial info log\";
+    BINFO << \"my business info log\";
+    SINFO << \"my security info log\";
+    PINFO << \"my performance info log\";
+    PDEBUG << \"debug performance log\";
+    return 0;
+}[/cpp_code]";
+
+$basicUsage=$highlighter->findCppCodeInHtmlBlock($codeBlock);
+print $basicUsage;
+
+print '
+You might be wondering, what is the output we get? Well, it completely depends on your configuration, if you haven&#39;t configured your EasyLogging++, here is what you will get with default configuration for <i>INFO</i> logs;<br/>
+<pre style="border: 1px lightgrey solid;width:50">04/04/2013 20:40:19.671 INFO  [log] my trivial info log
+04/04/2013 20:40:19.671 INFO  [business] my business info log
+04/04/2013 20:40:19.671 INFO  [security] my security info log
+04/04/2013 20:40:19.671 INFO  [performance] my performance info log
+04/04/2013 21:07:58.763 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
+</pre>
+This is very basic form of logging using EasyLogging++, there is a lot more to it. Jump to <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">read me</a> to check out true potential of EasyLogging++.
+</p>
+</td></tr><tr>
+<td><br/><p>
     <b>Licence</b>
     <br/>
     <pre>
@@ -83,43 +130,7 @@ it freely, subject to the following restrictions:
                                                                          
 3. This notice may not be removed or altered from any source             
    distribution                                                          
-    </pre>
-</div>
-</td>
-<td width="50%" valign="top">
-<div style="overflow: auto; width: 100%; max-height:510px">
-<p>
-Hopefully, by now you have some great reasons to use EasyLogging++, if you are still confused whether or not you should use EasyLogging++, check out read me, and I am sure you will be convinced.<br/>
-<br/>
-To start using EasyLogging++, <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="http://icplusplus.com/tools/easylogging/easyloggingpp.zip">download the latest version</a>, configure it directly, initialize it in your application and you are good to go.<br/>
-';
-$codeBlock="[cpp_code_no_line]#include \"easylogging++.h\"
-
-_INITIALIZE_EASYLOGGINGPP
-
-int main(int argv, const char** argc) {
-    LINFO << \"my trivial info log\";
-    BINFO << \"my business info log\";
-    SINFO << \"my security info log\";
-    PINFO << \"my performance info log\";
-    PDEBUG << \"debug performance log\";
-    return 0;
-}[/cpp_code]";
-
-$basicUsage=$highlighter->findCppCodeInHtmlBlock($codeBlock);
-print $basicUsage;
-
-print '
-You might be wondering, what is the output we get? Well, it completely depends on your configuration, if you haven&#39;t configured your EasyLogging++, here is what you will get with default configuration for <i>INFO</i> logs;<br/>
-<pre style="border: 1px lightgrey solid;">04/04/2013 20:40:19.671 INFO  [log] my trivial info log
-04/04/2013 20:40:19.671 INFO  [business] my business info log
-04/04/2013 20:40:19.671 INFO  [security] my security info log
-04/04/2013 20:40:19.671 INFO  [performance] my performance info log
-04/04/2013 21:07:58.763 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
-</pre>
-<b>This is very basic form of logging using EasyLogging++, there is a lot more to it. Check out <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">read me</a> where most of EasyLogging++ potential is covered.</b>
-</p>
-</div>
+    </pre></p>
 </td>
 </tr></table>
 
