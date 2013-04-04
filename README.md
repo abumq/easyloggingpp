@@ -542,8 +542,8 @@ You can customize format of logging. Following format specifiers are currently s
 
 <table>
     <tr>
-        <td>Format Specifier</td>
-        <td>Description</td>
+        <td><b>Format Specifier</b></td>
+        <td><b>Description</b></td>
     </tr>
     <tr>
         <td>%type</td>
