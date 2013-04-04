@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.61                                                         //
+//   EasyLogging++ v7.62                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -407,10 +407,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.61"); }
+    static inline const std::string version(void) { return std::string("7.62"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-04-2013 1146hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("04-04-2013 1828hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1739,70 +1739,211 @@ public:
     }
 
     virtual ~LogWriter(void) {
+#if _ENABLE_EASYLOGGING
         writeLog();
+#endif // _ENABLE_EASYLOGGING
         _ELPP_UNLOCK_MUTEX;
     }
 
-    inline LogWriter& operator<<(const std::string& log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(std::string* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(char log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(bool log_) { _ELPP_STREAM << (log_ != 0 ? "true" : "false"); return *this; }
-    inline LogWriter& operator<<(bool* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(signed short log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(signed short* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(unsigned short log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(unsigned short* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(signed int log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(signed int* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(unsigned int log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(unsigned int* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(signed long log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(signed long* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(unsigned long log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(unsigned long* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(float log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(float* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(double log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(double* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(char* log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(const char* log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(const void* log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(long double log_) { _ELPP_STREAM << log_; return *this; }
-    inline LogWriter& operator<<(long double* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(const std::wstring& log_) { return operator<<(log_.c_str()); }
-    inline LogWriter& operator<<(std::wstring* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(const std::string& log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(std::string* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(char log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(bool log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << (log_ != 0 ? "true" : "false");
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(bool* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(signed short log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(signed short* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(unsigned short log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(unsigned short* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(signed int log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(signed int* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(unsigned int log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(unsigned int* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(signed long log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(signed long* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(unsigned long log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(unsigned long* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(float log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+ #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(float* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(double log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(double* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(char* log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(const char* log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(const void* log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(long double log_) {
+#if _ENABLE_EASYLOGGING
+        _ELPP_STREAM << log_;
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(long double* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(const std::wstring& log_) {
+        return operator<<(log_.c_str());
+    }
+    inline LogWriter& operator<<(std::wstring* log_) {
+        return writePointer(log_);
+    }
     inline LogWriter& operator<<(const wchar_t* log_) {
+#if _ENABLE_EASYLOGGING
         if (log_ == NULL) {
             _ELPP_STREAM << constants::kNullPointerStr;
             return *this;
         }
         size_t len_ = wcslen(log_) + 1;
         char* buff_ = (char*)malloc(len_ + 1);
-#if _ELPP_OS_UNIX
+    #if _ELPP_OS_UNIX
         std::wcstombs(buff_, log_, len_);
-#elif _ELPP_OS_WINDOWS
+    #elif _ELPP_OS_WINDOWS
         size_t convCount_ = 0;
         mbstate_t mbState_;
         errno_t err;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
         err = wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
-#endif
+    #endif // _ELPP_OS_UNIX
         _ELPP_STREAM << buff_;
         free(buff_);
+#else
+        _SUPPRESS_UNUSED_WARN(log_);
+#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <class Class>
     inline LogWriter& operator<<(const Class& class_) {
+#if _ENABLE_EASYLOGGING 
         _ELPP_STREAM << class_.toString();
+#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <class Pointer>
     inline LogWriter& operator<<(Pointer* pointer_) {
+#if _ENABLE_EASYLOGGING
         if (pointer_) {
             _ELPP_STREAM << pointer_->toString();
         } else {
             _ELPP_STREAM << constants::kNullPointerStr;
         }
+#endif // _ENABLE_EASYLOGGING
         return *this;
     }
 #if defined(_ELPP_STL_LOGGING)
@@ -1820,21 +1961,33 @@ public:
     }
     template <typename T, typename Container>
     inline LogWriter& operator<<(const std::queue<T, Container>& queue_) {
-        workarounds::IterableQueue<T, Container> iterableQueue_ =
-                static_cast<workarounds::IterableQueue<T, Container> >(queue_);
-        return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
+    #if _ENABLE_EASYLOGGING
+            workarounds::IterableQueue<T, Container> iterableQueue_ =
+                    static_cast<workarounds::IterableQueue<T, Container> >(queue_);
+            return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
+    #else
+            return *this;
+    #endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Container>
     inline LogWriter& operator<<(const std::stack<T, Container>& stack_) {
+    #if _ENABLE_EASYLOGGING
         workarounds::IterableStack<T, Container> iterableStack_ =
                 static_cast<workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
+    #else
+        return *this;
+    #endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Container, typename Comparator>
     inline LogWriter& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
+    #if _ENABLE_EASYLOGGING
         workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
                 static_cast<workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
+    #else
+        return *this;
+    #endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Comparator, typename Container>
     inline LogWriter& operator<<(const std::set<T, Comparator, Container>& set_) {
@@ -1846,18 +1999,22 @@ public:
     }
     template <typename First, typename Second>
     inline LogWriter& operator<<(const std::pair<First, Second>& pair_) {
+    #if _ENABLE_EASYLOGGING
         _ELPP_STREAM << "(";
         operator << (static_cast<First>(pair_.first));
         _ELPP_STREAM << ", ";
         operator << (static_cast<Second>(pair_.second));
         _ELPP_STREAM << ")";
+    #endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <size_t Size>
     inline LogWriter& operator<<(const std::bitset<Size>& bitset_) {
+    #if _ENABLE_EASYLOGGING
         _ELPP_STREAM << "[";
         _ELPP_STREAM << bitset_.to_string();
         _ELPP_STREAM << "]";
+    #endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V, typename Comparator, typename Container>
@@ -1884,20 +2041,78 @@ public:
     }
 #endif // defined(__GNUC__) && defined(_ELPP_GNUC_LOGGING)
 #if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
-    inline LogWriter& operator<<(const QString& log_) { _ELPP_STREAM << log_.toStdString(); return *this; }
-    inline LogWriter& operator<<(QString* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(const QStringRef& log_) { return operator<<(log_.toString()); return *this; }
-    inline LogWriter& operator<<(QStringRef* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(qint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
-    inline LogWriter& operator<<(qint64* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(quint64 log_) { _ELPP_STREAM << QString::number(log_).toStdString(); return *this; }
-    inline LogWriter& operator<<(quint64* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(QChar log_) { _ELPP_STREAM << log_.toAscii(); return *this; }
-    inline LogWriter& operator<<(QChar* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(QBool log_) { _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false"); return *this; }
-    inline LogWriter& operator<<(QBool* log_) { return writePointer(log_); }
-    inline LogWriter& operator<<(const QLatin1String& log_) { _ELPP_STREAM << log_.latin1(); return *this; }
-    inline LogWriter& operator<<(QLatin1String* log_) { return writePointer(log_); }
+    inline LogWriter& operator<<(const QString& log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << log_.toStdString();
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(QString* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(const QStringRef& log_) {
+        return operator<<(log_.toString());
+    }
+    inline LogWriter& operator<<(QStringRef* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(qint64 log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << QString::number(log_).toStdString();
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(qint64* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(quint64 log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << QString::number(log_).toStdString();
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(quint64* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(QChar log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << log_.toAscii();
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(QChar* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(QBool log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << (bool(log_ != 0) ? "true" : "false");
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(QBool* log_) {
+        return writePointer(log_);
+    }
+    inline LogWriter& operator<<(const QLatin1String& log_) {
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << log_.latin1();
+        #else
+            _SUPPRESS_UNUSED_WARN(log_);
+        #endif // _ENABLE_EASYLOGGING
+        return *this;
+    }
+    inline LogWriter& operator<<(QLatin1String* log_) {
+        return writePointer(log_);
+    }
     template <typename T>
     inline LogWriter& operator<<(const QList<T>& list_) {
         return writeIterator(list_.begin(), list_.end(), list_.size());
@@ -1916,32 +2131,40 @@ public:
     }
     template <typename First, typename Second>
     inline LogWriter& operator<<(const QPair<First, Second>& pair_) {
-        _ELPP_STREAM << "(";
-        operator << (static_cast<First>(pair_.first));
-        _ELPP_STREAM << ", ";
-        operator << (static_cast<Second>(pair_.second));
-        _ELPP_STREAM << ")";
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << "(";
+            operator << (static_cast<First>(pair_.first));
+            _ELPP_STREAM << ", ";
+            operator << (static_cast<Second>(pair_.second));
+            _ELPP_STREAM << ")";
+        #else
+            _SUPPRESS_UNUSED_WARN(pair_);
+        #endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
     inline LogWriter& operator<<(const QMap<K, V>& map_) {
-        _ELPP_STREAM << "[";
-        QList<K> keys = map_.keys();
-        typename QList<K>::const_iterator begin = keys.begin();
-        typename QList<K>::const_iterator end = keys.end();
-        int max_ = static_cast<int>(kContainerMaxLog); // to prevent warning
-        for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            _ELPP_STREAM << "(";
-            operator << (static_cast<K>(*begin));
-            _ELPP_STREAM << ", ";
-            operator << (static_cast<V>(map_.value(*begin)));
-            _ELPP_STREAM << ")";
-            _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
-        }
-        if (begin != end) {
-          _ELPP_STREAM << " ...";
-        }
-        _ELPP_STREAM << "]";
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << "[";
+            QList<K> keys = map_.keys();
+            typename QList<K>::const_iterator begin = keys.begin();
+            typename QList<K>::const_iterator end = keys.end();
+            int max_ = static_cast<int>(kContainerMaxLog); // to prevent warning
+            for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
+                _ELPP_STREAM << "(";
+                operator << (static_cast<K>(*begin));
+                _ELPP_STREAM << ", ";
+                operator << (static_cast<V>(map_.value(*begin)));
+                _ELPP_STREAM << ")";
+                _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
+            }
+            if (begin != end) {
+              _ELPP_STREAM << " ...";
+            }
+            _ELPP_STREAM << "]";
+        #else
+            _SUPPRESS_UNUSED_WARN(map_);
+        #endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
@@ -1951,23 +2174,27 @@ public:
     }
     template <typename K, typename V>
     inline LogWriter& operator<<(const QHash<K, V>& hash_) {
-        _ELPP_STREAM << "[";
-        QList<K> keys = hash_.keys();
-        typename QList<K>::const_iterator begin = keys.begin();
-        typename QList<K>::const_iterator end = keys.end();
-        int max_ = static_cast<int>(kContainerMaxLog); // prevent type warning
-        for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            _ELPP_STREAM << "(";
-            operator << (static_cast<K>(*begin));
-            _ELPP_STREAM << ", ";
-            operator << (static_cast<V>(hash_.value(*begin)));
-            _ELPP_STREAM << ")";
-            _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
-        }
-        if (begin != end) {
-          _ELPP_STREAM << " ...";
-        }
-        _ELPP_STREAM << "]";
+        #if _ENABLE_EASYLOGGING
+            _ELPP_STREAM << "[";
+            QList<K> keys = hash_.keys();
+            typename QList<K>::const_iterator begin = keys.begin();
+            typename QList<K>::const_iterator end = keys.end();
+            int max_ = static_cast<int>(kContainerMaxLog); // prevent type warning
+            for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
+                _ELPP_STREAM << "(";
+                operator << (static_cast<K>(*begin));
+                _ELPP_STREAM << ", ";
+                operator << (static_cast<V>(hash_.value(*begin)));
+                _ELPP_STREAM << ")";
+                _ELPP_STREAM << ((index_ < keys.size() -1) ? ", " : "");
+            }
+            if (begin != end) {
+              _ELPP_STREAM << " ...";
+            }
+            _ELPP_STREAM << "]";
+        #else
+            _SUPPRESS_UNUSED_WARN(hash_);
+        #endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
@@ -1998,11 +2225,17 @@ private:
 
     template <typename Pointer>
     inline LogWriter& writePointer(const Pointer& pointer_) {
+#if _ENABLE_EASYLOGGING
         return (pointer_ != NULL ? operator << (*pointer_) : operator << (constants::kNullPointerStr));
+#else
+        _SUPPRESS_UNUSED_WARN(pointer_);
+        return *this;
+#endif // _ENABLE_EASYLOGGING
     }
 
     template<class Iterator>
     inline LogWriter& writeIterator(Iterator begin, Iterator end, size_t size_ = kContainerMaxLog) {
+#if _ENABLE_EASYLOGGING
       _ELPP_STREAM << "[";
       for (unsigned int i = 0; begin != end && i < kContainerMaxLog; ++i, ++begin) {
           operator << (*begin);
@@ -2012,6 +2245,11 @@ private:
         _ELPP_STREAM << " ...";
       }
       _ELPP_STREAM << "]";
+#else
+        _SUPPRESS_UNUSED_WARN(begin);
+        _SUPPRESS_UNUSED_WARN(end);
+        _SUPPRESS_UNUSED_WARN(size_);
+#endif // _ENABLE_EASYLOGGING
       return *this;
     }
 
@@ -2297,7 +2535,7 @@ public:
 // Legacy log macros
 //
 #ifdef _SUPPORT_LEGACY_LOG_NAMES
-// Normal logs
+    // Normal logs
     #define DEBUG(log_) LDEBUG << log_;
     #define INFO(log_) LINFO << log_;
     #define WARNING(log_) LWARNING << log_;
@@ -2306,7 +2544,7 @@ public:
     #define PERFORMANCE(log_) PINFO << log_;
     #define VERBOSE(vlevel_, log_) LVERBOSE(vlevel_) << log_;
     #define QA(log_) LQA << log_;
-// Conditional logs
+    // Conditional logs
     #define DEBUG_IF(cond_, log_) LDEBUG_IF(cond_) << log_;
     #define INFO_IF(cond_, log_) LINFO_IF(cond_) << log_;
     #define WARNING_IF(cond_, log_) LWARNING_IF(cond_) << log_;
@@ -2315,7 +2553,7 @@ public:
     #define PERFORMANCE_IF(cond_, log_) PINFO_IF(cond_) << log_;
     #define VERBOSE_IF(cond_, vlevel_, log_) LVERBOSE_IF(cond_, vlevel_) << log_;
     #define QA_IF(cond_, log_) LQA << log_;
-// Interval logs
+    // Interval logs
     #define DEBUG_EVERY_N(n_, log_) LDEBUG_EVERY_N(n_) << log_;
     #define INFO_EVERY_N(n_, log_) LINFO_EVERY_N(n_) << log_;
     #define WARNING_EVERY_N(n_, log_) LWARNING_EVERY_N(n_) << log_;
@@ -2329,6 +2567,9 @@ public:
 // Disable non-reusable macros
 //
 #undef _WRITE_ELPP_LOG
+#undef _ELPP_STREAM_PTR
+#undef _ELPP_STREAM
+#undef _SUPPRESS_UNUSED_WARN
 
 #define _START_EASYLOGGINGPP(argc, argv) \
     _QUALIFIED_LOGGER.setArgs(argc, argv);
