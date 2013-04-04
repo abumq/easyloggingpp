@@ -3,14 +3,14 @@ EasyLogging++
 
 Extremely light-weight cross platform logging library for C++ applications
 
-EasyLogging++ is extremely light-weight, easy-to-import, thread and type safe C++ logging library that is based on **single header file** for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
+EasyLogging++ is extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library that is based on **single header file** for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
 ## Why EasyLogging++
  * **Native C++ support (from C++98 to latest C++ standard)**
  * **Easily portable**
   - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header in your source code and initialize it with one line and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it, so it goes with your project.
- * **Supports multiple OS with multiple architectures**
+ * **[Supports multiple OS with multiple architectures](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#tested-on)** EasyLogging++ has been tested on multiple platforms and believed to work on alot of other platforms ones as well.
  * **[Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)**
  * **Open Source**
  * **[Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)**
@@ -532,20 +532,65 @@ This can be set by following configurations
 
 #### Log Format
 You can customize format of logging. Following format specifiers are currently supported by EasyLogging++
-* `%type` Type of logging
-* `%level` Level of logging
-* `%vlevel` Verbose level [integer] only applicable for verbose logs
-* Date/Time [Remember to use either one of above. Having `%date %time` for example, will result in failure.]
- - `%date` Date only
- - `%time` Time only
- - `%datetime` Date and Time
-* `%user` Username currently running application
-* `%host` Computer name / host name
-* `%func` Function where log was written from
-* `%loc` Location with filename and line number where log was written from
-* `%log` Actual log
-* `\n` New line
-* `\t` Tab
+
+<table>
+    <tr>
+        <td><b>Format Specifier</b></td>
+        <td><b>Description</b></td>
+    </tr>
+    <tr>
+        <td>%type</td>
+        <td>Type of logging (Business logger, performance logger etc.) </td>
+    </tr>
+    <tr>
+        <td>%level</td>
+        <td>Severity level (Info, Warning, Error, Debug etc.)</td>
+    </tr>
+    <tr>
+        <td>%vlevel</td>
+        <td>Verbocity level (Only applicable to verbose logs)</td>
+    </tr>
+    <tr>
+        <td>%datetime</td>
+        <td>Date/time</td>
+    </tr>
+    <tr>
+        <td>%date</td>
+        <td>Date only</td>
+    </tr>
+    <tr>
+        <td>%time</td>
+        <td>Time only</td>
+    </tr>
+    <tr>
+        <td>%user</td>
+        <td>Username currently running application</td>
+    </tr>
+    <tr>
+        <td>%host</td>
+        <td>Computer name that application is running on.</td>
+    </tr>
+    <tr>
+        <td>%func</td>
+        <td>Function where log was written from</td>
+    </tr>
+    <tr>
+        <td>%loc</td>
+        <td>Location with filename and line number where log was written from</td>
+    </tr>
+    <tr>
+        <td>%log</td>
+        <td>Log message</td>
+    </tr>
+    <tr>
+        <td>\n</td>
+        <td>New line</td>
+    </tr>
+    <tr>
+        <td>\t</td>
+        <td>Tab</td>
+    </tr>
+</table>
 
 **Note** Above format specifier can be used only once per severity level. If you define multiple specifiers, only first one will be resolved to its value and others will remain as they are. This is to improve performance and prevent potential formatting errors.
 
