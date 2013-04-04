@@ -30,13 +30,14 @@ print '
 	    position: absolute;
 	    right: 30%;
 	">
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Cross platform</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Thread-safe</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Type-safe</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Highly configurable</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">High performance</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">STL Logging</span><br/>
-	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Easy to setup</span><br/>
+        <table><tr><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Cross platform</span></td><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Thread-safe</span></td></tr><tr><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Type-safe</span></td><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Highly configurable</span></td></tr><tr><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">High performance</span></td><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">STL Logging</span></td></tr><tr><td>
+	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Easy to setup</span></td></tr></table>
 
 
 </div>
