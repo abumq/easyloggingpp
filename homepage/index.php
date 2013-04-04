@@ -102,6 +102,7 @@ int main(int argv, const char** argc) {
     BINFO << \"my business info log\";
     SINFO << \"my security info log\";
     PINFO << \"my performance info log\";
+    PDEBUG << \"debug performance log\";
     return 0;
 }[/cpp_code]";
 
@@ -113,8 +114,10 @@ You might be wondering, what is the output we get? Well, it completely depends o
 <pre style="border: 1px lightgrey solid;">04/04/2013 20:40:19.671 INFO  [log] my trivial info log
 04/04/2013 20:40:19.671 INFO  [business] my business info log
 04/04/2013 20:40:19.671 INFO  [security] my security info log
-04/04/2013 20:40:19.671 INFO  [performance] my performance info log</pre>
-This is very basic form of logging using EasyLogging++, there is a lot more to it. Check out <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">read me</a> where most of EasyLogging++ potential is covered.
+04/04/2013 20:40:19.671 INFO  [performance] my performance info log
+04/04/2013 21:07:58.763 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
+</pre>
+<b>This is very basic form of logging using EasyLogging++, there is a lot more to it. Check out <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">read me</a> where most of EasyLogging++ potential is covered.</b>
 </p>
 </div>
 </td>
