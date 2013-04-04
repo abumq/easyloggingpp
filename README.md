@@ -7,7 +7,7 @@ EasyLogging++ is extremely light-weight, robust, easy-to-import, thread and type
 
 ## Why EasyLogging++
  * **Open source and 100% Free**
- * **Native C++ support (from C++98 to latest C++ standard)** EasyLogging++ deliberately does not use any C++0x/C++11 feature to support C++98 based applications
+ * **Native C++ support (from C++98 to latest C++ standard)** EasyLogging++ deliberately does not use any features from C++0x/C++11. This is to support C++98 based applications.
  * **Highly portable including most C++ compilers and Windows, most/all flavours of UNIX including Linux and Mac OS-X**
   - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header in your source code and initialize it with one line and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it, so it goes with your project.
