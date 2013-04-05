@@ -667,6 +667,9 @@ You may be getting this error because you are using EasyLogging++ as well as a l
 
 On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
 
+* **I am getting `Segmentation fault` when I run application using EasyLogging++**
+
+If you see EasyLogging++'s Logger constructor in stack trace, you would be happy to know that this is because a library you are using has used `_INITIALIZE_EASYLOGGINGPP` in their library. If you can modify the library, just remove the `_INITIALIZE_EASYLOGGINGPP` from all the libraries and use it in your main.cpp function. Please see question above for further details.
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
