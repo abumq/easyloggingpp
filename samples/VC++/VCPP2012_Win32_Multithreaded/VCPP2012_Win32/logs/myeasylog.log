@@ -1,0 +1,135 @@
+31/03/2013 05:47:55.359 INFO  [log] A wide string
+31/03/2013 05:47:55.375 INFO  [log] This standard log is written by thread #1
+31/03/2013 05:47:55.609 INFO  [log] This standard log is written by thread #2
+31/03/2013 05:47:55.609 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+31/03/2013 05:47:55.718 INFO  [log] This standard log is written by thread #3
+31/03/2013 05:47:56.062 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+31/03/2013 05:47:56.312 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+31/03/2013 05:47:56.312 INFO  [log] This log is only for thread 2 and is ran by thread #2
+31/03/2013 05:47:56.515 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+31/03/2013 05:47:56.515 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:55] Executed [int __cdecl main(int,char **)] in [1.156 seconds]
+31/03/2013 06:04:47.406 INFO  [log] A wide stringÍýýýý««««««««îþîþîþ
+31/03/2013 06:04:47.593 INFO  [log] This standard log is written by thread #1
+31/03/2013 06:04:47.890 INFO  [log] This standard log is written by thread #2
+31/03/2013 06:04:47.890 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+31/03/2013 06:04:48.390 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+31/03/2013 06:04:48.390 INFO  [log] This log is only for thread 2 and is ran by thread #2
+31/03/2013 06:04:48.390 INFO  [log] This standard log is written by thread #3
+31/03/2013 06:04:48.859 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+31/03/2013 06:04:48.140 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+31/03/2013 06:04:48.140 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:55] Executed [int __cdecl main(int,char **)] in [1.734 seconds]
+31/03/2013 06:05:47.781 INFO  [log] A wide string
+31/03/2013 06:05:47.812 INFO  [log] This standard log is written by thread #1
+31/03/2013 06:05:47.187 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+31/03/2013 06:05:47.187 INFO  [log] This standard log is written by thread #2
+31/03/2013 06:05:47.203 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+31/03/2013 06:05:48.312 INFO  [log] This standard log is written by thread #3
+31/03/2013 06:05:48.828 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+31/03/2013 06:05:48.843 INFO  [log] This log is only for thread 2 and is ran by thread #2
+31/03/2013 06:05:48.000 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+31/03/2013 06:05:48.000 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:58] Executed [int __cdecl main(int,char **)] in [1.218 seconds]
+31/03/2013 06:07:15.046 INFO  [log] A wide string
+31/03/2013 06:07:15.125 INFO  [log] This standard log is written by thread #1
+31/03/2013 06:07:16.406 INFO  [log] This standard log is written by thread #2
+31/03/2013 06:07:16.406 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+31/03/2013 06:07:16.640 INFO  [log] This standard log is written by thread #3
+31/03/2013 06:07:17.343 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+31/03/2013 06:07:17.453 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+31/03/2013 06:07:17.453 INFO  [log] This log is only for thread 2 and is ran by thread #2
+31/03/2013 06:07:17.546 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+31/03/2013 06:07:17.546 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:58] Executed [int __cdecl main(int,char **)] in [1.492 seconds]
+31/03/2013 06:07:32.625 INFO  [log] A wide string
+31/03/2013 06:07:32.703 INFO  [log] This standard log is written by thread #1
+31/03/2013 06:07:32.187 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+31/03/2013 06:07:32.265 INFO  [log] This standard log is written by thread #2
+31/03/2013 06:07:32.265 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+31/03/2013 06:07:33.609 INFO  [log] This standard log is written by thread #3
+31/03/2013 06:07:33.203 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+31/03/2013 06:07:33.218 INFO  [log] This log is only for thread 2 and is ran by thread #2
+31/03/2013 06:07:34.296 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+31/03/2013 06:07:34.296 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:58] Executed [int __cdecl main(int,char **)] in [1.677 seconds]
+01/04/2013 01:57:24.843 INFO  [log] A wide string
+01/04/2013 01:57:24.062 INFO  [log] This standard log is written by thread #1
+01/04/2013 01:57:24.421 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+01/04/2013 01:57:24.453 INFO  [log] This standard log is written by thread #3
+01/04/2013 01:57:24.453 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #3
+01/04/2013 01:57:25.875 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+01/04/2013 01:57:25.890 INFO  [log] This standard log is written by thread #2
+01/04/2013 01:57:25.250 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+01/04/2013 01:57:25.250 INFO  [log] This log is only for thread 2 and is ran by thread #2
+01/04/2013 01:57:25.265 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:58] Executed [int __cdecl main(int,char **)] in [1.255 seconds]
+01/04/2013 01:58:00.437 INFO  [log] A wide string
+01/04/2013 01:58:00.531 INFO  [log] This standard log is written by thread #1
+01/04/2013 01:58:00.015 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+01/04/2013 01:58:00.062 INFO  [log] This standard log is written by thread #2
+01/04/2013 01:58:00.078 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+01/04/2013 01:58:01.453 INFO  [log] This standard log is written by thread #3
+01/04/2013 01:58:01.859 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+01/04/2013 01:58:01.984 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+01/04/2013 01:58:01.984 INFO  [log] This log is only for thread 2 and is ran by thread #2
+01/04/2013 01:58:01.000 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:58] Executed [int __cdecl main(int,char **)] in [1.816 seconds]
+01/04/2013 01:59:08.000 INFO  [log] A wide string
+01/04/2013 01:59:08.093 INFO  [log] This standard log is written by thread #1
+01/04/2013 01:59:08.515 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+01/04/2013 01:59:08.531 INFO  [log] This standard log is written by thread #2
+01/04/2013 01:59:08.531 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+01/04/2013 01:59:08.656 INFO  [log] This standard log is written by thread #3
+01/04/2013 01:59:09.218 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+01/04/2013 01:59:09.218 INFO  [log] This log is only for thread 2 and is ran by thread #2
+01/04/2013 01:59:09.312 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+01/04/2013 01:59:09.328 INFO  [log] Map: [(1, one), (2, two)]
+01/04/2013 01:59:09.328 INFO  [log] [77, 16]
+01/04/2013 01:59:09.328 INFO  [log] [0000010110]
+01/04/2013 01:59:09.328 INFO  [log] [10, 20, 50, 60]
+01/04/2013 01:59:09.328 INFO  [log] [100, 200, 100]
+01/04/2013 01:59:09.328 INFO  [log] [test]
+01/04/2013 01:59:09.343 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:92] Executed [int __cdecl main(int,char **)] in [1.115 seconds]
+01/04/2013 18:13:24.593 INFO  [log] A wide string
+01/04/2013 18:13:24.609 INFO  [log] Wide characters  chinese
+01/04/2013 18:13:24.828 INFO  [log] This standard log is written by thread #1
+01/04/2013 18:13:24.156 INFO  [log] This standard log is written by thread #3
+01/04/2013 18:13:24.156 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #3
+01/04/2013 18:13:25.484 INFO  [log] This standard log is written by thread #2
+01/04/2013 18:13:25.640 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+01/04/2013 18:13:25.734 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+01/04/2013 18:13:25.000 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+01/04/2013 18:13:25.000 INFO  [log] This log is only for thread 2 and is ran by thread #2
+01/04/2013 18:13:25.000 INFO  [log] Map: [(1, one), (2, two)]
+01/04/2013 18:13:25.000 INFO  [log] [77, 16]
+01/04/2013 18:13:25.000 INFO  [log] [0000010110]
+01/04/2013 18:13:25.015 INFO  [log] [10, 20, 50, 60]
+01/04/2013 18:13:25.015 INFO  [log] [100, 200, 100]
+01/04/2013 18:13:25.015 INFO  [log] [test]
+01/04/2013 18:13:25.015 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:92] Executed [int __cdecl main(int,char **)] in [1.488 seconds]
+01/04/2013 18:14:27.421 INFO  [log] A wide string
+01/04/2013 18:14:27.562 INFO  [log] This standard log is written by thread #1
+01/04/2013 18:14:27.843 INFO  [log] This standard log is written by thread #2
+01/04/2013 18:14:27.843 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+01/04/2013 18:14:28.328 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+01/04/2013 18:14:28.328 INFO  [log] This log is only for thread 2 and is ran by thread #2
+01/04/2013 18:14:28.328 INFO  [log] This standard log is written by thread #3
+01/04/2013 18:14:28.859 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+01/04/2013 18:14:28.921 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+01/04/2013 18:14:28.937 INFO  [log] Map: [(1, one), (2, two)]
+01/04/2013 18:14:28.937 INFO  [log] [77, 16]
+01/04/2013 18:14:28.937 INFO  [log] [0000010110]
+01/04/2013 18:14:28.937 INFO  [log] [10, 20, 50, 60]
+01/04/2013 18:14:28.937 INFO  [log] [100, 200, 100]
+01/04/2013 18:14:28.937 INFO  [log] [test]
+01/04/2013 18:14:29.953 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:89] Executed [int __cdecl main(int,char **)] in [1.692 seconds]
+04/04/2013 18:27:53.687 INFO  [log] A wide string
+04/04/2013 18:27:53.906 INFO  [log] This standard log is written by thread #1
+04/04/2013 18:27:53.125 INFO  [log] This standard log is written by thread #2
+04/04/2013 18:27:53.125 WARN  [log] This will be logged only once from thread who every reaches this line first. Currently running from thread #2
+04/04/2013 18:27:53.343 INFO  [log] This standard log is written by thread #3
+04/04/2013 18:27:54.750 INFO  [log] This interval log will be logged with every thread, this one is from thread #1
+04/04/2013 18:27:54.890 INFO  [log] This interval log will be logged with every thread, this one is from thread #3
+04/04/2013 18:27:54.078 INFO  [log] This interval log will be logged with every thread, this one is from thread #2
+04/04/2013 18:27:54.078 INFO  [log] This log is only for thread 2 and is ran by thread #2
+04/04/2013 18:27:54.078 INFO  [log] Map: [(1, one), (2, two)]
+04/04/2013 18:27:54.078 INFO  [log] [77, 16]
+04/04/2013 18:27:54.078 INFO  [log] [0000010110]
+04/04/2013 18:27:54.093 INFO  [log] [10, 20, 50, 60]
+04/04/2013 18:27:54.093 INFO  [log] [100, 200, 100]
+04/04/2013 18:27:54.093 INFO  [log] [test]
+04/04/2013 18:27:54.093 DEBUG [performance] [Majid@DEVIL-INSIDE-W7] [int __cdecl main(int,char **)] [c:\users\majid\documents\visual studio 2012\projects\vcpp2012_win32\vcpp2012_win32\main.cpp:89] Executed [int __cdecl main(int,char **)] in [1.427 seconds]
