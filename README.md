@@ -651,6 +651,18 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 #### Tips For Performance Improvement
 * When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `SHOW_STD_OUTPUT` to false
+* Try to avoid complicated `toString() const` in your custom classes, as this gets called when you log a C++ class
+* If your application is not multi-threaded, define `_DISABLE_MUTEX` to prevent overhead of multi-threading features, make sure you do not do this if you are writing library (in binary) because this can potentially affect application using your library.
+
+#### FAQs
+* **I want to update my EasyLogging++ to newer version, what's changed?**
+
+EasyLogging++ is being improved every day to improve performance and efficiency. A lot of extra care is taken to make sure old users do not have to change their code. So newer version of easylogging++ will not affect anyone. That being said, you would need to re-configure log settings to make sure you are getting same results. Additionally, the following changes may need to be made; remove all instances of `_END_EASYLOGGINGPP` since this is not needed anymore. Keeping this in your code will not affect anything because this macro is still defined in newer versions that expands to nothing to prevent syntax errors.
+
+* **I am getting `multiple definition of 'easyloggingpp::internal::easyloggingppLogger_'` error, why and how to resolve it?**
+
+You may be getting this error because you are using EasyLogging++ as well as a library that is using EasyLogging++ too. That library has already used `_INITIALIZE_EASYLOGGINGPP`. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks. Workaround to this problem is to remove your version of `_INITIALIZE_EASYLOGGINGPP`. This is because you cannot ask the library not to undefine it. You will definitely still be able to use logger in your application.
+
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
