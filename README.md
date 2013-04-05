@@ -667,7 +667,7 @@ You may be getting this error because you are using EasyLogging++ as well as a l
 
 On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
 
-See [https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs](useful sample) that is written specifically to explain the scenerios here.
+See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
 
 * **I am getting `Segmentation fault` when I run application using EasyLogging++**
 
