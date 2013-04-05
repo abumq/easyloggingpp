@@ -675,7 +675,7 @@ If you see EasyLogging++'s Logger constructor in stack trace, you would be happy
 
 * **Why is EasyLogging++ better than other single header based logging libraries?**
 
-There are many reasons for that, some of them are; I cannot think of any library off top of my head that does not use external library to support for example multi-threading. EasyLogging++ supports muli-threaded applications without using any external library. It supports C++98. In addition to that, it supports STL and Qt logging built right into EasyLogging++ single sophisticated header. Besides these major reasons there are incredibly many other reasons including additional features EasyLogging++ supports like logging aspects, performance tracking etc. See [https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging](Why EasyLogging++) section that sums it all.
+There are many reasons for that, some of them are; I cannot think of any library off top of my head that does not use external library to support for example multi-threading. EasyLogging++ supports muli-threaded applications without using any external library. It supports C++98. In addition to that, it supports STL and Qt logging built right into EasyLogging++ single sophisticated header. Besides these major reasons there are incredibly many other reasons including additional features EasyLogging++ supports like logging aspects, performance tracking etc. See [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section that sums it all.
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
