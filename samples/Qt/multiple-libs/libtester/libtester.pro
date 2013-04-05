@@ -8,6 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+DEFINES += _ALWAYS_CLEAN_LOGS
+
 TARGET = libtester
 TEMPLATE = app
 

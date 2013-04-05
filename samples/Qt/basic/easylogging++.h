@@ -402,14 +402,8 @@ private:
 //
 #if (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
     #define _ELPP_ENABLE_MUTEX 1
-    #define _ELPP_MUTEX_SPECIFIC_INIT static threading::Mutex elppMutex_;
-    #define _ELPP_LOCK_MUTEX easyloggingpp::internal::elppMutex_.lock();
-    #define _ELPP_UNLOCK_MUTEX easyloggingpp::internal::elppMutex_.unlock();
 #else
     #define _ELPP_ENABLE_MUTEX 0
-    #define _ELPP_MUTEX_SPECIFIC_INIT
-    #define _ELPP_LOCK_MUTEX
-    #define _ELPP_UNLOCK_MUTEX
 #endif // (!defined(_DISABLE_MUTEX) && (_ENABLE_EASYLOGGING))
 namespace easyloggingpp {
 class VersionInfo {
@@ -583,7 +577,6 @@ private:
         #endif // _ELPP_OS_UNIX
     #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
-
 class ScopedLock {
 public:
     explicit ScopedLock(void) {
@@ -688,8 +681,6 @@ private:
 }; // class InternalConfiguration
 
 } // namespace configuration
-_ELPP_MUTEX_SPECIFIC_INIT
-
 namespace helper {
 //
 // Contains utility functions related to operating system
@@ -1016,7 +1007,7 @@ protected:
 private:
     std::vector<Class*> list_;
     // Prevent copy or assignment
-    explicit PointerRegistryManager(const PointerRegistryManager&);
+    PointerRegistryManager(const PointerRegistryManager&);
     PointerRegistryManager& operator=(const PointerRegistryManager&);
 }; // class Registry
 } // namespace helper
@@ -1700,10 +1691,20 @@ public:
         logType_ = NULL;
         return false;
     }
+    inline void lock(void) {
+#if _ELPP_ENABLE_MUTEX
+        mutex_.lock();
+#endif // _ELPP_ENABLE_MUTEX
+    }
 
+    inline void unlock(void) {
+#if _ELPP_ENABLE_MUTEX
+        mutex_.unlock();
+#endif // _ELPP_ENABLE_MUTEX
+    }
 private:
-    configuration::InternalConfiguration* volatile internalConfigs_;
-    configuration::UserConfiguration* volatile userConfigs_;
+    configuration::InternalConfiguration* internalConfigs_;
+    configuration::UserConfiguration* userConfigs_;
     const std::string logFilename_;
     const std::string kUser_;
     const std::string kHost_;
@@ -1712,12 +1713,15 @@ private:
     bool fileGood_;
     std::string currLogLine_;
     std::stringstream tempStream_;
-    std::stringstream* volatile stream_;
+    std::stringstream* stream_;
     std::ofstream* logFile_;
     RegisteredLogTypes* registeredLogTypes_;
     RegisteredSeverityLevels* registeredSeverityLevels_;
     RegisteredCounters* registeredLogCounters_;
     unsigned short appVerbose_;
+#if _ELPP_ENABLE_MUTEX
+    threading::Mutex mutex_;
+#endif // _ELPP_ENABLE_MUTEX
 }; // class Logger
 
 //
@@ -1827,7 +1831,9 @@ extern easyloggingpp::internal::Logger _ELPP_LOGGER;
     } // namespace workarounds
 #endif //defined(_ELPP_STL_LOGGING)
 
+//
 // Entry point to write log. All the macros are resolved to c'tor of this class
+//
 class LogWriter {
 public:
     enum kLogAspect {
@@ -1854,14 +1860,14 @@ public:
         condition_(condition_),
         verboseLevel_(verboseLevel_),
         counter_(counter_) {
-        _ELPP_LOCK_MUTEX
+        _ELPP_LOGGER.lock();
     }
 
     virtual ~LogWriter(void) {
 #if _ENABLE_EASYLOGGING
         writeLog();
 #endif // _ENABLE_EASYLOGGING
-        _ELPP_UNLOCK_MUTEX
+        _ELPP_LOGGER.unlock();
     }
 
     inline LogWriter& operator<<(const std::string& log_) {
@@ -2463,7 +2469,9 @@ class MyEasyLog {
 public:
     // Reads log from current log file an returns standard string
     static std::string readLog(void) {
-        _ELPP_LOCK_MUTEX;
+#if _ELPP_ENABLE_MUTEX
+        threading::ScopedLock lock_;
+#endif // _ELPP_ENABLE_MUTEX
         std::stringstream ss;
         if (_QUALIFIED_LOGGER.userConfigs()->SAVE_TO_FILE) {
             std::ifstream logFileReader(_QUALIFIED_LOGGER.logFilename().c_str(), std::ifstream::in);
@@ -2480,9 +2488,12 @@ public:
         } else {
             ss << "Logs are not being saved to file!";
         }
-        _ELPP_UNLOCK_MUTEX;
         return ss.str();
     }
+private:
+    MyEasyLog(void);
+    MyEasyLog(const MyEasyLog&);
+    MyEasyLog& operator=(const MyEasyLog&);
 }; // class MyEasyLog
 } // namespace helper
 } // namespace easyloggingpp
@@ -2680,6 +2691,8 @@ public:
 //
 #undef _WRITE_ELPP_LOG
 #undef _SUPPRESS_UNUSED_WARN
+#undef _ELPP_STREAM
+#undef _ELPP_STREAM_PTR
 
 #define _START_EASYLOGGINGPP(argc, argv) \
     _QUALIFIED_LOGGER.setArgs(argc, argv);
@@ -2693,9 +2706,3 @@ public:
 #define _END_EASYLOGGINGPP
 
 #endif // EASYLOGGINGPP_H
-
-
-
-
-
-

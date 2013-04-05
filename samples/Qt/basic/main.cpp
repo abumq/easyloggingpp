@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     bool runThreads = true;
 
     if (runThreads) {
-        for (int i = 1; i <= 1; ++i) {
+        for (int i = 1; i <= 50; ++i) {
             MyThread t(i);
             t.start();
             t.wait();

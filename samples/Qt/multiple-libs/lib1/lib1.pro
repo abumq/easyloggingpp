@@ -9,7 +9,7 @@ QT       -= core gui
 TARGET = lib1
 TEMPLATE = lib
 
-DEFINES += LIB1_LIBRARY
+DEFINES += LIB1_LIBRARY _DISABLE_MUTEX
 
 SOURCES += lib1.cc
 
