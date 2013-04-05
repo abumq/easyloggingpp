@@ -18,10 +18,9 @@ INCLUDEPATH +=  ../lib2
 LIBS+=  -L../lib1-buildqt/ -llib1
 LIBS+=  -L../lib2-buildqt/ -llib2
 
-SOURCES += main.cc\
-        mainwindow.cc
+SOURCES += main.cc
 
-HEADERS  += mainwindow.hh\
+HEADERS  +=\
             easylogging++.h
 
-FORMS    += mainwindow.ui
+FORMS    +=

@@ -120,7 +120,8 @@ std::string Point::toString() const
 {
     std::stringstream ss;
     ss << "[" << x() << ", " << y() << "]";
-    return ss.str();
+    std::string result_ = ss.str(); // for debugging
+    return result_;
 }
 } // namespace internal
 } // namespace engine
