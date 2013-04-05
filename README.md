@@ -665,6 +665,8 @@ EasyLogging++ is being improved every day to improve performance and efficiency.
 
 You may be getting this error because you are using EasyLogging++ as well as a library that is using EasyLogging++ too. That library has already used `_INITIALIZE_EASYLOGGINGPP`. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks. Workaround to this problem is to remove your version of `_INITIALIZE_EASYLOGGINGPP`. This is because you cannot ask the library not to undefine it. You will definitely still be able to use logger in your application.
 
+On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
+
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
