@@ -667,9 +667,15 @@ You may be getting this error because you are using EasyLogging++ as well as a l
 
 On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
 
+See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
+
 * **I am getting `Segmentation fault` when I run application using EasyLogging++**
 
 If you see EasyLogging++'s Logger constructor in stack trace, you would be happy to know that this is because a library you are using has used `_INITIALIZE_EASYLOGGINGPP` in their library. If you can modify the library, just remove the `_INITIALIZE_EASYLOGGINGPP` from all the libraries and use it in your main.cpp function. Please see question above for further details.
+
+* **Why is EasyLogging++ better than other single header based logging libraries?**
+
+There are many reasons for that, some of them are; I cannot think of any library off top of my head that does not use external library to support for example multi-threading. EasyLogging++ supports muli-threaded applications without using any external library. It supports C++98. In addition to that, it supports STL and Qt logging built right into EasyLogging++ single sophisticated header. Besides these major reasons there are incredibly many other reasons including additional features EasyLogging++ supports like logging aspects, performance tracking etc. See [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section that sums it all.
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
