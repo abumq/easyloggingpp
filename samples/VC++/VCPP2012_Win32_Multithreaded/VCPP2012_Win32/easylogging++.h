@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.65                                                         //
+//   EasyLogging++ v7.66                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -420,10 +420,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.65"); }
+    static inline const std::string version(void) { return std::string("7.66"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-04-2013 0207hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("06-04-2013 0334hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1427,7 +1427,7 @@ public:
         internalConfigs_(new configuration::InternalConfiguration()),
         userConfigs_(new configuration::UserConfiguration()),
         logFilename_(userConfigs_->USE_CUSTOM_LOCATION ?
-                            userConfigs_->CUSTOM_LOG_FILE_LOCATION :
+                            userConfigs_->CUSTOM_LOG_FILE_LOCATION + userConfigs_->LOG_FILENAME:
                             userConfigs_->LOG_FILENAME),
         kUser_(helper::OSUtilities::currentUser()),
         kHost_(helper::OSUtilities::currentHost()),
