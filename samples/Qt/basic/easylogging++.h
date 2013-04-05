@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.62                                                         //
+//   EasyLogging++ v7.65                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -243,7 +243,7 @@ public:
 private:
     UserConfiguration(const UserConfiguration&);
     void operator=(const UserConfiguration&);
-}; // class Config
+}; // class UserConfiguration
 } // namespace configuration
 } // namespace internal
 } // namespace easyloggingpp
@@ -420,10 +420,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.62"); }
+    static inline const std::string version(void) { return std::string("7.65"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("04-04-2013 1828hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("06-04-2013 0207hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -627,9 +627,9 @@ public:
         //
         kNullPointerStr             =   "nullptr";
         kLogFormatEscapeCharacter   =    'E';
-        kMaxLogPerContainer        =   100;
-        kMaxForLogCounter          =   100000;
-        kDefaultMilliSecondOffset  =   1000;
+        kMaxLogPerContainer         =   100;
+        kMaxForLogCounter           =   100000;
+        kDefaultMilliSecondOffset   =   1000;
     } // C'tor
     //
     // Log level name outputs
@@ -2697,12 +2697,15 @@ private:
 #define _START_EASYLOGGINGPP(argc, argv) \
     _QUALIFIED_LOGGER.setArgs(argc, argv);
 
-#define _INITIALIZE_EASYLOGGINGPP \
-    namespace easyloggingpp {           \
-        namespace internal {            \
-            Logger easyloggingppLogger_;\
-        }                               \
+#if !defined(_INITIALIZE_EASYLOGGINGPP)
+#define _INITIALIZE_EASYLOGGINGPP        \
+    namespace easyloggingpp {            \
+        namespace internal {             \
+            Logger easyloggingppLogger_; \
+        }                                \
     }
+#endif // !defined(_INITIALIZE_EASYLOGGINGPP)
+
 #define _END_EASYLOGGINGPP
 
 #endif // EASYLOGGINGPP_H

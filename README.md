@@ -661,17 +661,13 @@ EasyLogging++ has been tested several times a day for performances glitches. Tha
 
 EasyLogging++ is being improved every day to improve performance and efficiency. A lot of extra care is taken to make sure old users do not have to change their code. So newer version of easylogging++ will not affect anyone. That being said, you would need to re-configure log settings to make sure you are getting same results. Additionally, the following changes may need to be made; remove all instances of `_END_EASYLOGGINGPP` since this is not needed anymore. Keeping this in your code will not affect anything because this macro is still defined in newer versions that expands to nothing to prevent syntax errors.
 
-* **I am getting `multiple definition of 'easyloggingpp::internal::easyloggingppLogger_'` error, why and how to resolve it?**
+* **I am getting `double free or corruption` error, why and how to resolve it?**
 
-You may be getting this error because you are using EasyLogging++ as well as a library that is using EasyLogging++ too. That library has already used `_INITIALIZE_EASYLOGGINGPP`. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks. Workaround to this problem is to remove your version of `_INITIALIZE_EASYLOGGINGPP`. This is because you cannot ask the library not to undefine it. You will definitely still be able to use logger in your application.
+You may be getting this error because you are using an external library that has defined `_INITIALIZE_EASYLOGGINGPP` when they should not. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks but it has been released from library's instance of Logger. Workaround to this problem is to modify library and remove `_INITIALIZE_EASYLOGGINGPP` from it and re-compile it (Please double check library's licence before you make any modifications).
 
-On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
+On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions. 
 
-See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
-
-* **I am getting `Segmentation fault` when I run application using EasyLogging++**
-
-If you see EasyLogging++'s Logger constructor in stack trace, you would be happy to know that this is because a library you are using has used `_INITIALIZE_EASYLOGGINGPP` in their library. If you can modify the library, just remove the `_INITIALIZE_EASYLOGGINGPP` from all the libraries and use it in your main.cpp function. Please see question above for further details.
+In addition to that, because you do not know if user of your library is using EasyLogging++ as well, you should include 'easylogging++.h' in the header file of your library to ask user to initialize easylogging++ when they are ready to use your library. See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
 
 * **Why is EasyLogging++ better than other single header based logging libraries?**
 

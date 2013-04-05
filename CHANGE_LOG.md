@@ -94,6 +94,11 @@ Change log was not kept before version 2.1.
       - Limits containers log for logging containers faster (issue #37)
  * 7.61: Improvements around EasyLogging++ design structure
  * 7.62: Improvements around overhead when logging is disabled.
+ * 7.65:
+      - Some massive improvements around removing orphan variables for multiple libs support
+      - Mutex now part of Logger
+      - Internal configs and user configs are now part of Logger and are used throughout via pointers for speed
+      - Now compiler will not complained about multiple definitions errors but introduced conditional run-time error (see FAQ 2)
 
 #### 6.xx
  * 6.00:
