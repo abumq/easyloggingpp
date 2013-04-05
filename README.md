@@ -6,11 +6,13 @@ Extremely light-weight cross platform logging library for C++ applications
 EasyLogging++ is extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library that is based on **single header file** for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
 ## Why EasyLogging++
- * **Native C++ support (from C++98 to latest C++ standard)**
- * **Easily portable**
+ * **Open source and 100% Free**
+ * **Native C++ support (from C++98 to latest C++ standard)** EasyLogging++ deliberately does not use any features from C++0x/C++11. This is to support C++98 based applications.
+ * **Highly portable including most C++ compilers and Windows, most/all flavours of UNIX including Linux and Mac OS-X**
   - EasyLogging++ is based on just one header file that is enough for writing logs for you. All you need to do is include that header in your source code and initialize it with one line and you will be good to go!
   - It is based on source code rather than binary. So, no installation is required. As you include header into your C++ application, it gets compiled with it, so it goes with your project.
  * **[Supports multiple OS with multiple architectures](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#tested-on)** EasyLogging++ has been tested on multiple platforms and believed to work on alot of other platforms ones as well.
+ * **Highly extensible**
  * **[Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)**
  * **Open Source**
  * **[Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)**
@@ -24,8 +26,8 @@ EasyLogging++ is extremely light-weight, robust, easy-to-import, thread and type
  * **[Supports hierarchical logging](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#enabledisable-logging)**
     Which means that you can turn different parts of logging on or off depending on the requirements. EasyLogging++ uses power of preprocessor directives to allow developers to enable or disable all or certain logs. Disabling log will not cause any harm 
  * **[Performance tracking](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking)**
- * **Class and Structs Logging**
-   EasyLogging++ supports logging [libraries' classes, containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#c-libraries-logging), and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
+ * **STL, Qt and Custom Class' Logging**
+   EasyLogging++ supports logging [libraries', containers](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#c-libraries-logging), and [your own classes](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#logging-your-own-class)
 
 ## Getting Started
 
@@ -648,7 +650,26 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 
 #### Tips For Performance Improvement
+EasyLogging++ has been tested several times a day for performances glitches. That being said, you can still improve performance in a lot of other ways that are following;
+
 * When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `SHOW_STD_OUTPUT` to false
+* Try to avoid complicated `toString() const` in your custom classes, as this gets called when you log a C++ class
+* If your application is not multi-threaded, define `_DISABLE_MUTEX` to prevent overhead of multi-threading features, make sure you do not do this if you are writing library (in binary) because this can potentially affect application using your library.
+
+#### FAQs
+* **I want to update my EasyLogging++ to newer version, what's changed?**
+
+EasyLogging++ is being improved every day to improve performance and efficiency. A lot of extra care is taken to make sure old users do not have to change their code. So newer version of easylogging++ will not affect anyone. That being said, you would need to re-configure log settings to make sure you are getting same results. Additionally, the following changes may need to be made; remove all instances of `_END_EASYLOGGINGPP` since this is not needed anymore. Keeping this in your code will not affect anything because this macro is still defined in newer versions that expands to nothing to prevent syntax errors.
+
+* **I am getting `multiple definition of 'easyloggingpp::internal::easyloggingppLogger_'` error, why and how to resolve it?**
+
+You may be getting this error because you are using EasyLogging++ as well as a library that is using EasyLogging++ too. That library has already used `_INITIALIZE_EASYLOGGINGPP`. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks. Workaround to this problem is to remove your version of `_INITIALIZE_EASYLOGGINGPP`. This is because you cannot ask the library not to undefine it. You will definitely still be able to use logger in your application.
+
+On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions.
+
+* **I am getting `Segmentation fault` when I run application using EasyLogging++**
+
+If you see EasyLogging++'s Logger constructor in stack trace, you would be happy to know that this is because a library you are using has used `_INITIALIZE_EASYLOGGINGPP` in their library. If you can modify the library, just remove the `_INITIALIZE_EASYLOGGINGPP` from all the libraries and use it in your main.cpp function. Please see question above for further details.
 
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
 [linuxmint]: http://www.icplusplus.com/tools/easylogging/icons/linux-mint.png
