@@ -25,6 +25,7 @@ print '
 <table width="100%">
     <tr><td>
         <h1><font color=green>EasyLogging++ <sup><font size=3>'. $currentVersion. '</font></sup></font></h1>
+<!--
 	<div style="
 	    float: right;
 	    position: absolute;
@@ -38,9 +39,8 @@ print '
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">High performance</span></td><td>
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">STL Logging</span></td></tr><tr><td>
 	<img src="'.$webAddr.'/images/tick.png">&nbsp;&nbsp;<span style="position: relative; top: -10px; font-size: 1.4em; color: green;">Easy to setup</span></td></tr></table>
-
-
 </div>
+-->
 
         <font color=green>
             <b>Cross platform logging made easy for C++ applications.</b>
@@ -105,7 +105,7 @@ You might be wondering, what is the output we get? Well, it completely depends o
 04/04/2013 20:40:19.671 INFO  [performance] my performance info log
 04/04/2013 21:07:58.763 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
 </pre>
-This is very basic form of logging using EasyLogging++, there is a lot more to it. Jump to <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md">read me</a> to check out true potential of EasyLogging++.
+This is very basic form of logging using EasyLogging++, there is a lot more to it. Jump to <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md"><b>read me</b></a> to check out true potential of EasyLogging++.
 </p>
 </td></tr><tr>
 <td><br/><p>
