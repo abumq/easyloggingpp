@@ -650,6 +650,8 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 
 #### Tips For Performance Improvement
+EasyLogging++ has been tested several times a day for performances glitches. That being said, you can still improve performance in a lot of other ways that are following;
+
 * When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `SHOW_STD_OUTPUT` to false
 * Try to avoid complicated `toString() const` in your custom classes, as this gets called when you log a C++ class
 * If your application is not multi-threaded, define `_DISABLE_MUTEX` to prevent overhead of multi-threading features, make sure you do not do this if you are writing library (in binary) because this can potentially affect application using your library.
