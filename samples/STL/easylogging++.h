@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.66                                                         //
+//   EasyLogging++ v7.67                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -420,10 +420,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.66"); }
+    static inline const std::string version(void) { return std::string("7.67"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-04-2013 0334hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("06-04-2013 1425hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1998,7 +1998,6 @@ public:
     }
     inline LogWriter& operator<<(const char* log_) {
 #if _ENABLE_EASYLOGGING
-        std::string currLog_ = (_ELPP_STREAM).str();
         _ELPP_STREAM << log_;
 #else
         _SUPPRESS_UNUSED_WARN(log_);
