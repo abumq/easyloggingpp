@@ -16,7 +16,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 using namespace easyloggingpp::internal;
 using namespace easyloggingpp::internal::helper;
-using namespace easyloggingpp::configuration;
+using namespace easyloggingpp::internal::configuration;
 using namespace easyloggingpp::helper;
 
 // Do not use cassert as we want custom
@@ -45,24 +45,24 @@ int main(int argc, char** argv) {
     localAssert(utils::ilike(easyloggingpp::helper::MyEasyLog::readLog(), "%Write unique log...%") == true);
     // Make sure username and hostname is fetch correctly. The correct username
     // and host name is passed into test via bash script
-    localAssert(strcmp(_QUALIFIED_LOGGER.kUser_.c_str(), argv[1]) == 0);
-    localAssert(strcmp(_QUALIFIED_LOGGER.kHost_.c_str(), argv[2]) == 0);
+    localAssert(strcmp(_QUALIFIED_LOGGER.username().c_str(), argv[1]) == 0);
+    localAssert(strcmp(_QUALIFIED_LOGGER.hostname().c_str(), argv[2]) == 0);
   #endif 
  
   // Verify log is written to correct path
-  localAssert(_QUALIFIED_LOGGER.kFinalFilename_ == "logs/myeasylog.log");
+  localAssert(_QUALIFIED_LOGGER.logFilename() == "logs/myeasylog.log");
 
   // Make sure log path exist
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
+  localAssert(OSUtilities::pathExists(_QUALIFIED_LOGGER.userConfigs()->CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
   
   // Remove path and log file
-  system(std::string(std::string("rm -rf ") + std::string(CUSTOM_LOG_FILE_LOCATION)).c_str());
+  system(std::string(std::string("rm -rf ") + std::string(_QUALIFIED_LOGGER.userConfigs()->CUSTOM_LOG_FILE_LOCATION)).c_str());
   
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == false);
+  localAssert(OSUtilities::pathExists(_QUALIFIED_LOGGER.userConfigs()->CUSTOM_LOG_FILE_LOCATION.c_str()) == false);
 
-  OSUtilities::createPath(CUSTOM_LOG_FILE_LOCATION);  
+  OSUtilities::createPath(_QUALIFIED_LOGGER.userConfigs()->CUSTOM_LOG_FILE_LOCATION);  
 
-  localAssert(OSUtilities::pathExists(CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
+  localAssert(OSUtilities::pathExists(_QUALIFIED_LOGGER.userConfigs()->CUSTOM_LOG_FILE_LOCATION.c_str()) == true);
 
   // Ensure we have 0 counters before writeLogs() is called,
   // writeLogs() register 1 counter

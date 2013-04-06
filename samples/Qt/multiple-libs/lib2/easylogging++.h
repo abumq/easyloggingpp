@@ -397,6 +397,7 @@ private:
     // Log file permissions for unix-based systems
     #define _LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
+#define _SUPPRESS_UNUSED_WARN(x) (void)x;
 //
 // Mutex
 //
@@ -423,7 +424,7 @@ public:
     static inline const std::string version(void) { return std::string("7.67"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-04-2013 1425hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("06-04-2013 1436hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -1429,8 +1430,8 @@ public:
         logFilename_(userConfigs_->USE_CUSTOM_LOCATION ?
                             userConfigs_->CUSTOM_LOG_FILE_LOCATION + userConfigs_->LOG_FILENAME:
                             userConfigs_->LOG_FILENAME),
-        kUser_(helper::OSUtilities::currentUser()),
-        kHost_(helper::OSUtilities::currentHost()),
+        username_(helper::OSUtilities::currentUser()),
+        hostname_(helper::OSUtilities::currentHost()),
         initialized_(true),
         stream_(new std::stringstream()),
         logFile_(NULL),
@@ -1595,12 +1596,12 @@ public:
         // User
         if (level_->severityLevelFormatFlag() & internalConfigs_->kUser) {
             formatSpecifier_ = internalConfigs_->USER_FORMAT_SPECIFIER;
-            helper::LogManipulator::updateFormatValue(formatSpecifier_, kUser_, currLogLine_, internalConfigs_);
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, username_, currLogLine_, internalConfigs_);
         }
         // Host
         if (level_->severityLevelFormatFlag() & internalConfigs_->kHost) {
             formatSpecifier_ =internalConfigs_-> HOST_FORMAT_SPECIFIER;
-            helper::LogManipulator::updateFormatValue(formatSpecifier_, kHost_, currLogLine_, internalConfigs_);
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, hostname_, currLogLine_, internalConfigs_);
         }
         // Log
         if (level_->severityLevelFormatFlag() & internalConfigs_->kLogMessage) {
@@ -1682,6 +1683,14 @@ public:
         return logFilename_;
     }
 
+    inline const std::string username(void) const {
+        return username_;
+    }
+
+    inline const std::string hostname(void) const {
+        return hostname_;
+    }
+
     inline bool injectNewLogType(const std::string& name_, const std::string& logName_) {
         model::LogType* logType_ = new model::LogType(name_, logName_);
         if (registeredLogTypes()->inject(logType_)) {
@@ -1706,8 +1715,8 @@ private:
     configuration::InternalConfiguration* internalConfigs_;
     configuration::UserConfiguration* userConfigs_;
     const std::string logFilename_;
-    const std::string kUser_;
-    const std::string kHost_;
+    const std::string username_;
+    const std::string hostname_;
     std::string applicationName_;
     bool initialized_;
     bool fileGood_;
@@ -2689,7 +2698,6 @@ private:
 // Disable non-reusable macros
 //
 #undef _WRITE_ELPP_LOG
-#undef _SUPPRESS_UNUSED_WARN
 #undef _ELPP_STREAM
 #undef _ELPP_STREAM_PTR
 
@@ -2708,3 +2716,4 @@ private:
 #define _END_EASYLOGGINGPP
 
 #endif // EASYLOGGINGPP_H
+
