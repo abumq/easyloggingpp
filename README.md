@@ -1,9 +1,9 @@
 EasyLogging++
 -------------
 
-Extremely light-weight cross platform logging library for C++ applications
+Single header based, extremely light-weight cross platform logging library for C++ applications
 
-EasyLogging++ is extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library that is based on **single header file** for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
+EasyLogging++ is  single header based, extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library that is based on single header file for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
 ## Why EasyLogging++
  * **Open source and 100% Free**
