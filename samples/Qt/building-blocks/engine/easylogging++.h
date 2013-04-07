@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v7.67                                                         //
+//   EasyLogging++ v7.68                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com                                                   //
@@ -130,7 +130,8 @@ public:
             // Format specifiers used are as following:
             //
             //  SPECIFIER     |                  DESCRIPTION
-            // ===============|====================================================
+            // ===============|======================================================================
+            //   %app         |   Application name (set by _QUALIFIED_LOGGER.setApplicationName(..)
             //   %type        |   Log type, e.g, BusinessLogger, SecurityLogger etc
             //   %level       |   Log level, e.g, INFO, DEBUG, ERROR etc
             //   %datetime    |   Current date and time (while writing log)
@@ -421,10 +422,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("7.67"); }
+    static inline const std::string version(void) { return std::string("7.68"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-04-2013 1436hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("07-04-2013 1444hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -612,25 +613,26 @@ public:
         //
         // Format specifiers
         //
+        APP_NAME_FORMAT_SPECIFIER       =   "%app";
         LEVEL_FORMAT_SPECIFIER          =   "%level";
-        DATE_ONLY_FORMAT_SPECIFIER       =   "%date";
-        TIME_ONLY_FORMAT_SPECIFIER       =   "%time";
-        DATE_TIME_FORMAT_SPECIFIER       =   "%datetime";
+        DATE_ONLY_FORMAT_SPECIFIER      =   "%date";
+        TIME_ONLY_FORMAT_SPECIFIER      =   "%time";
+        DATE_TIME_FORMAT_SPECIFIER      =   "%datetime";
         TYPE_FORMAT_SPECIFIER           =   "%type";
         LOCATION_FORMAT_SPECIFIER       =   "%loc";
         FUNCTION_FORMAT_SPECIFIER       =   "%func";
         USER_FORMAT_SPECIFIER           =   "%user";
         HOST_FORMAT_SPECIFIER           =   "%host";
-        LOG_MESSAGE_FORMAT_SPECIFIER     =   "%log";
-        VERBOSE_LEVEL_FORMAT_SPECIFIER   =   "%vlevel";
+        LOG_MESSAGE_FORMAT_SPECIFIER    =   "%log";
+        VERBOSE_LEVEL_FORMAT_SPECIFIER  =   "%vlevel";
         //
         // Others
         //
-        NULL_POINTER             =   "nullptr";
+        NULL_POINTER                   =   "nullptr";
         FORMAT_SPECIFIER_ESCAPE_CHAR   =    'E';
-        MAX_LOG_PER_CONTAINER         =   100;
-        MAX_LOG_PER_COUNTER           =   100000;
-        DEFAULT_MILLISECOND_OFFSET   =   1000;
+        MAX_LOG_PER_CONTAINER          =   100;
+        MAX_LOG_PER_COUNTER            =   100000;
+        DEFAULT_MILLISECOND_OFFSET     =   1000;
     } // C'tor
     //
     // Log level name outputs
@@ -646,6 +648,7 @@ public:
     //
     // Format specifiers
     //
+    std::string APP_NAME_FORMAT_SPECIFIER;
     std::string LEVEL_FORMAT_SPECIFIER;
     std::string DATE_ONLY_FORMAT_SPECIFIER;
     std::string TIME_ONLY_FORMAT_SPECIFIER;
@@ -666,7 +669,8 @@ public:
                                      kUser = 128,
                                      kHost = 256,
                                      kLogMessage = 512,
-                                     kVerboseLevel = 1024
+                                     kVerboseLevel = 1024,
+                                     kAppName = 2048
                                    };
     //
     // Others
@@ -1268,6 +1272,9 @@ private:
         if (format_.find(internalConfigs_->VERBOSE_LEVEL_FORMAT_SPECIFIER) != std::string::npos) {
             severityLevelFormatFlag_ |= internalConfigs_->kVerboseLevel;
         }
+        if (format_.find(internalConfigs_->APP_NAME_FORMAT_SPECIFIER) != std::string::npos) {
+            severityLevelFormatFlag_ |= internalConfigs_->kAppName;
+        }
     }
 }; // class SeverityLevel
 //
@@ -1549,6 +1556,12 @@ public:
         currLogLine_ = level_->format();
         std::string formatSpecifier_ = "";
         std::string value_ = "";
+        // Application Name
+        if (level_->severityLevelFormatFlag() & internalConfigs_->kAppName) {
+            value_ = applicationName_;
+            formatSpecifier_ = internalConfigs_->APP_NAME_FORMAT_SPECIFIER;
+            helper::LogManipulator::updateFormatValue(formatSpecifier_, value_, currLogLine_, internalConfigs_);
+        }
         // DateTime
         if (level_->dateFormat()->hasDate()) {
             value_ = helper::DateUtilities::getDateTime(level_->dateFormat()->bufferFormat(),

@@ -101,6 +101,7 @@ Change log was not kept before version 2.1.
       - Now compiler will not complained about multiple definitions errors but introduced conditional run-time error (see FAQ 2)
  * 7.66: Emerg release to fix writing to custom location
  * 7.67: Fixed undefined `_SUPPRESS_UNUSED_WARN` error
+ * 7.68: Added application name support in format.
 
 #### 6.xx
  * 6.00:
