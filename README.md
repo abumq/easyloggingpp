@@ -667,6 +667,8 @@ You may be getting this error because you are using an external library that has
 
 On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions. 
 
+**Update:** This is currently being resolved as part of issue #39. Stay tuned!
+
 In addition to that, because you do not know if user of your library is using EasyLogging++ as well, you should include 'easylogging++.h' in the header file of your library to ask user to initialize easylogging++ when they are ready to use your library. See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
 
 * **Why is EasyLogging++ better than other single header based logging libraries?**
