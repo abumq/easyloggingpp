@@ -3,7 +3,7 @@ EasyLogging++
 
 Single header based, extremely light-weight cross platform logging library for C++ applications
 
-EasyLogging++ is  single header based, extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
+EasyLogging++ is  single header based, extremely light-weight, robust, easy-to-import, thread and type safe C++ logging library that is based on single header file for easy portability. It provides support for writing logs in your customized format, ability to log your own classes, multiple logging aspects including conditional, interval and verbose logging. It also provide support for logging third-party libraries, STL and third-party containers etc. Please check out [Why EasyLogging++](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#why-easylogging) section for further details.
 
 ## Why EasyLogging++
  * **Open source and 100% Free**
@@ -666,8 +666,6 @@ EasyLogging++ is being improved every day to improve performance and efficiency.
 You may be getting this error because you are using an external library that has defined `_INITIALIZE_EASYLOGGINGPP` when they should not. Error is because logger is defined as 'extern' variable in EasyLogging++ to manage memory properly and prevent any potential memory leaks but it has been released from library's instance of Logger. Workaround to this problem is to modify library and remove `_INITIALIZE_EASYLOGGINGPP` from it and re-compile it (Please double check library's licence before you make any modifications).
 
 On the other hand, if you are a library writer, once you finish your testing and your library is ready to be released, remove your version of `_INITIALIZE_EASYLOGGINGPP` and add to your library documentation to inform user to use `_INITIALIZE_EASYLOGGINGPP` in their main file (containing main function). This just reduces all the confusions. 
-
-**Update:** This is currently being resolved as part of issue #39. Stay tuned!
 
 In addition to that, because you do not know if user of your library is using EasyLogging++ as well, you should include 'easylogging++.h' in the header file of your library to ask user to initialize easylogging++ when they are ready to use your library. See [useful sample](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples/Qt/multiple-libs) that is written specifically to explain the scenerios here.
 

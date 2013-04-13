@@ -1,9 +1,7 @@
 #include "lib2.hh"
 
-//  _INITIALIZE_EASYLOGGINGPP
-//  ** DO NOT USE _INITIALIZE_EASYLOGGINGPP IN LIBRARIES / APIs
-//  ** COMMENT THEM OUT WHEN YOU HAVE FINISHED TESTING **
-
+#include "easylogging++.h"
+_INITIALIZE_EASYLOGGINGPP
 Lib2::Lib2()
 {
     LINFO << "Lib2 initialized";

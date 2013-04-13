@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Bash script that helps with releasing new versions of EasyLogging++
+# Revision: 1.1
 # @author mkhan3189
 
 [ -d "releases" ] || mkdir releases

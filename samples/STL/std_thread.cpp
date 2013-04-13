@@ -1,6 +1,5 @@
 /**
- * This file is part of EasyLogging++ samples
- * Demonstration of multithreaded application in C++ (0x | 11) 
+ * This file is part of EasyLogging++ samples * Demonstration of multithreaded application in C++ (0x | 11) 
  * 
  * Compile this program using (if using gcc-c++):
  *     g++ -o bin/multithread_test.cpp.bin multithread_test.cpp -std=c++0x -pthread
@@ -30,7 +29,7 @@ void writeLogFromThread(int threadId) {
   LWARNING_EVERY_N(2) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
 
   for (int i = 1; i <= 10000; ++i) {
-     LVERBOSE_IF(true, 2) << "Verbose condition";
+     LVERBOSE_IF(true, 2) << "Verbose condition for level 2";
      LVERBOSE_EVERY_N(2, 3) << "Verbose level 3 log every 4th time. This is at " << i << " from thread #" << threadId;
   }
 
@@ -40,8 +39,14 @@ void writeLogFromThread(int threadId) {
   LINFO_IF(threadId == 2) << "This log is only for thread 2 and is ran by thread #" << threadId;
 }
 
-FUNC(int, main, (int argc, char** argv))   // Using FUNC for performance tracking
- _START_EASYLOGGINGPP(argc, argv)
+int main(int argc, char** argv) {  // Using FUNC for performance tracking
+ _START_EASYLOGGINGPP(argc, argv);
+ easyloggingpp::Configurations c(easyloggingpp::Loggers::DefaultLoggers::trivialLogger()->configurations()); // Get configurations from existing logger
+ c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, "false");
+
+ easyloggingpp::Loggers::DefaultLoggers::trivialLogger()->configure(c); // Reset configurations
+ c.clear(); // Clean memory | this is not necessary but we just want our heap back from things that are not using it - otherwise internal memory manage takes care of it anyway
+
  #if _CXX0X || _CXX11
    // Create three thread and call writeLogFromThread()
    std::thread t1(writeLogFromThread, 1);
@@ -51,5 +56,5 @@ FUNC(int, main, (int argc, char** argv))   // Using FUNC for performance trackin
    t2.join();
    t3.join();
  #endif // _CXX0X || _CXX11
-   RETURN(0);
-END_FUNC(0)
+ return 0;
+}
