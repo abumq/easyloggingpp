@@ -2992,6 +2992,34 @@ namespace easyloggingpp {
 #define _ELPP_LOG_WRITER_N(_n, _logger, _level) if (easyloggingpp::internal::registeredLoggers->validateCounter(\
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
+//
+// Custom loggers
+//
+// Undef any exising custom logger macros
+#if defined(CINFO)
+#   undef CINFO
+#endif
+#if defined(CWARNING)
+#   undef CWARNING
+#endif
+#if defined(CDEBUG)
+#   undef CDEBUG
+#endif
+#if defined(CERROR)
+#   undef CERROR
+#endif
+#if defined(CFATAL)
+#   undef CFATAL
+#endif
+#if defined(CQA)
+#   undef CQA
+#endif
+#if defined(CTRACE)
+#   undef CTRACE
+#endif
+#if defined(CVERBOSE)
+#   undef CVERBOSE
+#endif
 // Normal logs
 #define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_INFO)
 #define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_WARNING)
@@ -3026,6 +3054,31 @@ namespace easyloggingpp {
 //
 // default Loggers
 //
+// undef any existing default logger macros
+#if defined(LINFO)
+#   undef LINFO
+#endif
+#if defined(LWARNING)
+#   undef LWARNING
+#endif
+#if defined(LDEBUG)
+#   undef LDEBUG
+#endif
+#if defined(LERROR)
+#   undef LERROR
+#endif
+#if defined(LFATAL)
+#   undef LFATAL
+#endif
+#if defined(LQA)
+#   undef LQA
+#endif
+#if defined(LTRACE)
+#   undef LTRACE
+#endif
+#if defined(LVERBOSE)
+#   undef LVERBOSE
+#endif
 // Normal logs
 #define LINFO CINFO("")
 #define LWARNING CWARNING("")
@@ -3053,6 +3106,31 @@ namespace easyloggingpp {
 #define LQA_EVERY_N(n) CQA_EVERY_N(n, "")
 #define LTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "")
 #define LVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "")
+// undef any exising business logger macros
+#if defined(BINFO)
+#   undef BINFO
+#endif
+#if defined(BWARNING)
+#   undef BWARNING
+#endif
+#if defined(BDEBUG)
+#   undef BDEBUG
+#endif
+#if defined(BERROR)
+#   undef BERROR
+#endif
+#if defined(BFATAL)
+#   undef BFATAL
+#endif
+#if defined(BQA)
+#   undef BQA
+#endif
+#if defined(BTRACE)
+#   undef BTRACE
+#endif
+#if defined(BVERBOSE)
+#   undef BVERBOSE
+#endif
 //
 // business Loggers
 //
@@ -3086,6 +3164,31 @@ namespace easyloggingpp {
 //
 // security Loggers
 //
+// undef any existing security logger macros
+#if defined(SINFO)
+#   undef SINFO
+#endif
+#if defined(SWARNING)
+#   undef SWARNING
+#endif
+#if defined(SDEBUG)
+#   undef SDEBUG
+#endif
+#if defined(SERROR)
+#   undef SERROR
+#endif
+#if defined(SFATAL)
+#   undef SFATAL
+#endif
+#if defined(SQA)
+#   undef SQA
+#endif
+#if defined(STRACE)
+#   undef STRACE
+#endif
+#if defined(SVERBOSE)
+#   undef SVERBOSE
+#endif
 // Normal logs
 #define SINFO CINFO("security")
 #define SWARNING CWARNING("security")
@@ -3116,6 +3219,32 @@ namespace easyloggingpp {
 //
 // performance Loggers
 //
+// undef any existing performance logger macros
+#if defined(PINFO)
+#   undef PINFO
+#endif
+#if defined(PWARNING)
+#   undef PWARNING
+#endif
+#if defined(PDEBUG)
+#   undef PDEBUG
+#endif
+#if defined(PERROR)
+#   undef PERROR
+#endif
+#if defined(PFATAL)
+#   undef PFATAL
+#endif
+#if defined(PQA)
+#   undef PQA
+#endif
+#if defined(PTRACE)
+#   undef PTRACE
+#endif
+#if defined(PVERBOSE)
+#   undef PVERBOSE
+#endif
+#undef NON_EXISTING_MACRO
 // Normal logs
 #define PINFO CINFO("performance")
 #define PWARNING CWARNING("performance")

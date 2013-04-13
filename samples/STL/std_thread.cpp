@@ -42,7 +42,7 @@ void writeLogFromThread(int threadId) {
 int main(int argc, char** argv) {  // Using FUNC for performance tracking
  _START_EASYLOGGINGPP(argc, argv);
  easyloggingpp::Configurations c(easyloggingpp::Loggers::DefaultLoggers::trivialLogger()->configurations()); // Get configurations from existing logger
- c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, "false");
+ c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, "true");
 
  easyloggingpp::Loggers::DefaultLoggers::trivialLogger()->configure(c); // Reset configurations
  c.clear(); // Clean memory | this is not necessary but we just want our heap back from things that are not using it - otherwise internal memory manage takes care of it anyway

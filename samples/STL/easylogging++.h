@@ -5,8 +5,10 @@
  //   EasyLogging++ v8.00                                                         //
  //   Cross platform logging made easy for C++ applications                       //
  //   Author Majid Khan <mkhan3189@gmail.com>                                     //
+ //                                                                               //
  //   http://www.icplusplus.com/tools/easylogging                                 //
  //   https://github.com/mkhan3189/EasyLoggingPP                                  //
+ //   https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md            //
  //                                                                               //
  //   Copyright (c) 2012-2013 Majid Khan                                          //
  //                                                                               //
@@ -259,11 +261,11 @@ namespace easyloggingpp {
                 MAX_VERBOSE_LEVEL             (9),
                 CURRENT_VERBOSE_LEVEL         (0),  // Set dynamically from registeredLoggers
 #if _ELPP_OS_UNIX
-                PATH_SLASH                    ( "/"),
+                PATH_SLASH                    ("/"),
 #elif _ELPP_OS_WINDOWS
-                PATH_SLASH                    ( "\\"),
+                PATH_SLASH                    ("\\"),
 #endif // _ELPP_OS_UNIX
-                DEFAULT_LOG_FILENAME          ( "myeasylog.log")
+                DEFAULT_LOG_FILENAME          ("myeasylog.log")
                 {
                     // Default logger configuration - only to set format (difference: not using %logger)
                     std::stringstream ss;
@@ -324,24 +326,14 @@ namespace easyloggingpp {
             const std::string     DEFAULT_LOG_FILENAME;
             std::string           DEFAULT_LOGGER_CONFIGURATION;
 
-            enum kFormatFlags { kDateOnly = 2,
-                kTimeOnly = 4,
-                kDateTime = 8,
-                kLoggerId = 16,
-                kLocation = 32,
-                kFunction = 64,
-                kUser = 128,
-                kHost = 256,
-                kLogMessage = 512,
-                kVerboseLevel = 1024,
-                kAppName = 2048
+            enum kFormatFlags { kDateOnly = 2, kTimeOnly = 4, kDateTime = 8, kLoggerId = 16, 
+                                kLocation = 32, kFunction = 64, kUser = 128, kHost = 256, 
+                                kLogMessage = 512, kVerboseLevel = 1024, kAppName = 2048
             };
         private:
         }; // class Constants
+
         namespace threading {
-            //
-            // To take care of shared resources in multi-threaded application
-            //
             class Mutex {
             public:
 #if _ELPP_ASSEMBLY_SUPPORTED
@@ -447,6 +439,7 @@ namespace easyloggingpp {
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
             }; // class Mutex
+
             class ScopedLock {
                 _ELPP_NO_COPY(ScopedLock)
             public:
@@ -460,6 +453,7 @@ namespace easyloggingpp {
                 Mutex mutex_;
             }; // class ScopedLock
         } // namespace threading
+
         namespace utilities {
             class StringUtilities {
                 _ELPP_NO_INITIALIZATION(StringUtilities)
@@ -663,6 +657,7 @@ namespace easyloggingpp {
                     return fullPath_.substr(0, lastSlashAt + 1);
                 }
             }; // class OSUtilities
+
             //
             // Contains static functions related to log manipulation
             //
@@ -685,6 +680,7 @@ namespace easyloggingpp {
                         }
                 }
             }; // class LogManipulator
+
             //
             // Contains utility functions related to date/time
             //
@@ -1050,6 +1046,7 @@ namespace easyloggingpp {
         };
 
     } // namespace internal
+
     class Configurations : public internal::Registry<internal::Configuration, internal::Configuration::Predicate> {
     public:
         explicit Configurations(void) :
@@ -1272,7 +1269,9 @@ namespace easyloggingpp {
         std::string configurationFile_;
         bool isFromFile_;
     };
+
     class Loggers;  // fwd declaration
+
     namespace internal {
         class TypedConfigurations {
         public:
@@ -1644,6 +1643,7 @@ namespace easyloggingpp {
         };
         class Writer;  // fwd declaration
     } // namespace internal
+
     class Logger {
     public:
         explicit Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
@@ -1740,6 +1740,7 @@ namespace easyloggingpp {
             return stream_;
         }
     };
+
     namespace internal {
         class LogCounter {
             _ELPP_NO_COPY(LogCounter)
@@ -1939,6 +1940,7 @@ namespace easyloggingpp {
         };
 
         extern internal::SmartPointer<RegisteredLoggers> registeredLoggers;
+
 #if defined(_ELPP_STL_LOGGING)
         namespace workarounds {
             // There is workaround needed to loop through some stl containers. In order to do that, we need iterable containers
@@ -2992,6 +2994,34 @@ namespace easyloggingpp {
 #define _ELPP_LOG_WRITER_N(_n, _logger, _level) if (easyloggingpp::internal::registeredLoggers->validateCounter(\
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
+//
+// Custom loggers
+//
+// Undef any exising custom logger macros
+#if defined(CINFO)
+#   undef CINFO
+#endif
+#if defined(CWARNING)
+#   undef CWARNING
+#endif
+#if defined(CDEBUG)
+#   undef CDEBUG
+#endif
+#if defined(CERROR)
+#   undef CERROR
+#endif
+#if defined(CFATAL)
+#   undef CFATAL
+#endif
+#if defined(CQA)
+#   undef CQA
+#endif
+#if defined(CTRACE)
+#   undef CTRACE
+#endif
+#if defined(CVERBOSE)
+#   undef CVERBOSE
+#endif
 // Normal logs
 #define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_INFO)
 #define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_WARNING)
@@ -3026,6 +3056,31 @@ namespace easyloggingpp {
 //
 // default Loggers
 //
+// undef any existing default logger macros
+#if defined(LINFO)
+#   undef LINFO
+#endif
+#if defined(LWARNING)
+#   undef LWARNING
+#endif
+#if defined(LDEBUG)
+#   undef LDEBUG
+#endif
+#if defined(LERROR)
+#   undef LERROR
+#endif
+#if defined(LFATAL)
+#   undef LFATAL
+#endif
+#if defined(LQA)
+#   undef LQA
+#endif
+#if defined(LTRACE)
+#   undef LTRACE
+#endif
+#if defined(LVERBOSE)
+#   undef LVERBOSE
+#endif
 // Normal logs
 #define LINFO CINFO("")
 #define LWARNING CWARNING("")
@@ -3056,6 +3111,31 @@ namespace easyloggingpp {
 //
 // business Loggers
 //
+// undef any exising business logger macros
+#if defined(BINFO)
+#   undef BINFO
+#endif
+#if defined(BWARNING)
+#   undef BWARNING
+#endif
+#if defined(BDEBUG)
+#   undef BDEBUG
+#endif
+#if defined(BERROR)
+#   undef BERROR
+#endif
+#if defined(BFATAL)
+#   undef BFATAL
+#endif
+#if defined(BQA)
+#   undef BQA
+#endif
+#if defined(BTRACE)
+#   undef BTRACE
+#endif
+#if defined(BVERBOSE)
+#   undef BVERBOSE
+#endif
 // Normal logs
 #define BINFO CINFO("business")
 #define BWARNING CWARNING("business")
@@ -3086,6 +3166,31 @@ namespace easyloggingpp {
 //
 // security Loggers
 //
+// undef any existing security logger macros
+#if defined(SINFO)
+#   undef SINFO
+#endif
+#if defined(SWARNING)
+#   undef SWARNING
+#endif
+#if defined(SDEBUG)
+#   undef SDEBUG
+#endif
+#if defined(SERROR)
+#   undef SERROR
+#endif
+#if defined(SFATAL)
+#   undef SFATAL
+#endif
+#if defined(SQA)
+#   undef SQA
+#endif
+#if defined(STRACE)
+#   undef STRACE
+#endif
+#if defined(SVERBOSE)
+#   undef SVERBOSE
+#endif
 // Normal logs
 #define SINFO CINFO("security")
 #define SWARNING CWARNING("security")
@@ -3116,6 +3221,32 @@ namespace easyloggingpp {
 //
 // performance Loggers
 //
+// undef any existing performance logger macros
+#if defined(PINFO)
+#   undef PINFO
+#endif
+#if defined(PWARNING)
+#   undef PWARNING
+#endif
+#if defined(PDEBUG)
+#   undef PDEBUG
+#endif
+#if defined(PERROR)
+#   undef PERROR
+#endif
+#if defined(PFATAL)
+#   undef PFATAL
+#endif
+#if defined(PQA)
+#   undef PQA
+#endif
+#if defined(PTRACE)
+#   undef PTRACE
+#endif
+#if defined(PVERBOSE)
+#   undef PVERBOSE
+#endif
+#undef NON_EXISTING_MACRO
 // Normal logs
 #define PINFO CINFO("performance")
 #define PWARNING CWARNING("performance")
