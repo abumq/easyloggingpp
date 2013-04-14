@@ -265,7 +265,7 @@ namespace easyloggingpp {
 #endif // _ELPP_OS_UNIX
                 DEFAULT_LOG_FILENAME          ( "myeasylog.log")
                 {
-                    // Default logger configuration - only to set format (difference: not using %logger)
+                    // Trivial logger configuration - only to set format (difference: not using %logger)
                     std::stringstream ss;
                     ss << " * ALL:\n";
                     ss << "    FORMAT               =  %datetime %level  %log\n";
@@ -529,7 +529,7 @@ namespace easyloggingpp {
             public:
                 // Runs command on terminal and returns the output.
                 // This is applicable only on linux and mac, for all other OS, an empty string is returned.
-                static std::string getBashOutput(const char* command_) {
+                static const std::string getBashOutput(const char* command_) {
                     if (command_ == NULL) {
                         return std::string();
                     }
@@ -554,7 +554,7 @@ namespace easyloggingpp {
                 }
 
                 // Gets current username.
-                static std::string currentUser(void) {
+                static const std::string currentUser(void) {
 #if _ELPP_OS_UNIX
                     const char* username = getenv("USER");
 #elif _ELPP_OS_WINDOWS
@@ -571,7 +571,7 @@ namespace easyloggingpp {
                 }
 
                 // Gets current host name or computer name.
-                static std::string currentHost(void) {
+                static const std::string currentHost(void) {
 #if _ELPP_OS_UNIX
                     const char* hostname = getenv("HOSTNAME");
 #elif _ELPP_OS_WINDOWS
@@ -1842,7 +1842,7 @@ namespace easyloggingpp {
                 counters_(new internal::RegisteredCounters()) {
                     Configurations conf;
                     conf.parseFromText(constants_->DEFAULT_LOGGER_CONFIGURATION);
-                    registerNew(new Logger("", constants_, conf));
+                    registerNew(new Logger("trivial", constants_, conf));
                     registerNew(new Logger("business", constants_));
                     registerNew(new Logger("security", constants_));
                     Configurations confPerformance;
@@ -2866,34 +2866,37 @@ namespace easyloggingpp {
         }
 
         static inline bool performanceTrackingEnabled(void) {
-            return DefaultLoggers::performanceLogger()->typedConfigurations_->performanceTracking();
+            return performanceLogger()->typedConfigurations_->performanceTracking();
         }
 
         static inline void disablePerformanceTracking(void) {
-            Logger* l = Loggers::DefaultLoggers::performanceLogger();
+            Logger* l = Loggers::performanceLogger();
             l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "false");
             l->reconfigure();
         }
 
-        class DefaultLoggers {
-            _ELPP_NO_INITIALIZATION(DefaultLoggers)
-        public:
-            static inline Logger* trivialLogger(void) {
-                return Loggers::getLogger("");
+        static inline void getAllLogIdentifiers(std::vector<std::string>& listOfIds) {
+            listOfIds.clear();
+            for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
+                listOfIds.push_back(internal::registeredLoggers->at(i)->id());
             }
+        }
 
-            static inline Logger* businessLogger(void) {
-                return Loggers::getLogger("business");
-            }
+        static inline Logger* trivialLogger(void) {
+            return Loggers::getLogger("trivial");
+        }
 
-            static inline Logger* securityLogger(void) {
-                return Loggers::getLogger("security");
-            }
+        static inline Logger* businessLogger(void) {
+            return Loggers::getLogger("business");
+        }
 
-            static inline Logger* performanceLogger(void) {
-                return Loggers::getLogger("performance");
-            }
-        }; // class DefaultLoggers
+        static inline Logger* securityLogger(void) {
+            return Loggers::getLogger("security");
+        }
+
+        static inline Logger* performanceLogger(void) {
+            return Loggers::getLogger("performance");
+        }
 
         class ConfigurationsReader {
             _ELPP_NO_INITIALIZATION(ConfigurationsReader)
@@ -2951,7 +2954,7 @@ namespace easyloggingpp {
 //
 // Performance tracking macros
 //
-#if (!defined(_DISABLE_PERFORMANCE_TRACKING))
+#if ((!defined(_DISABLE_PERFORMANCE_TRACKING)) || (!defined(_DISABLE_INFO_LOGS)))
 #   if _ELPP_OS_UNIX
 #      define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
 #   elif _ELPP_OS_WINDOWS
@@ -2974,7 +2977,6 @@ namespace easyloggingpp {
 #   define END_MAIN(return_value) FUNC_SUB_COMMON_END; return return_value; }
 #   define RETURN_MAIN(exit_status) return exit_status;
 #else
-#   define WRITE_FUNC_PERFORMANCE
 #   define SUB(FUNCTION_NAME,PARAMS) void FUNCTION_NAME PARAMS {
 #   define END_SUB }
 #   define FUNC(RETURNING_TYPE,FUNCTION_NAME,PARAMS) RETURNING_TYPE FUNCTION_NAME PARAMS {
@@ -2983,7 +2985,7 @@ namespace easyloggingpp {
 #   define MAIN(argc, argv) FUNC(int, main, (argc, argv))
 #   define END_MAIN(x) return x; }
 #   define RETURN_MAIN(exit_status) return exit_status;
-#endif // (!defined(_DISABLE_PERFORMANCE_TRACKING))
+#endif // ((!defined(_DISABLE_PERFORMANCE_TRACKING)) || (!defined(_DISABLE_INFO_LOGS)))
 
 #define _ELPP_LOG_WRITER(_logger, _level) easyloggingpp::internal::Writer(\
     _logger, easyloggingpp::internal::Aspect::Normal, _level, __func__, __FILE__, __LINE__)
@@ -3080,32 +3082,32 @@ namespace easyloggingpp {
 #   undef LVERBOSE
 #endif
 // Normal logs
-#define LINFO CINFO("")
-#define LWARNING CWARNING("")
-#define LDEBUG CDEBUG("")
-#define LERROR CERROR("")
-#define LFATAL CFATAL("")
-#define LQA CQA("")
-#define LTRACE CTRACE("")
-#define LVERBOSE(level) CVERBOSE(level, "")
+#define LINFO CINFO("trivial")
+#define LWARNING CWARNING("trivial")
+#define LDEBUG CDEBUG("trivial")
+#define LERROR CERROR("trivial")
+#define LFATAL CFATAL("trivial")
+#define LQA CQA("trivial")
+#define LTRACE CTRACE("trivial")
+#define LVERBOSE(level) CVERBOSE(level, "trivial")
 // Conditional logs
-#define LINFO_IF(condition) CINFO_IF(condition, "")
-#define LWARNING_IF(condition) CWARNING_IF(condition, "")
-#define LDEBUG_IF(condition) CDEBUG_IF(condition, "")
-#define LERROR_IF(condition) CERROR_IF(condition, "")
-#define LFATAL_IF(condition) CFATAL_IF(condition, "")
-#define LQA_IF(condition) CQA_IF(condition, "")
-#define LTRACE_IF(condition) CTRACE_IF(condition, "")
-#define LVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "")
+#define LINFO_IF(condition) CINFO_IF(condition, "trivial")
+#define LWARNING_IF(condition) CWARNING_IF(condition, "trivial")
+#define LDEBUG_IF(condition) CDEBUG_IF(condition, "trivial")
+#define LERROR_IF(condition) CERROR_IF(condition, "trivial")
+#define LFATAL_IF(condition) CFATAL_IF(condition, "trivial")
+#define LQA_IF(condition) CQA_IF(condition, "trivial")
+#define LTRACE_IF(condition) CTRACE_IF(condition, "trivial")
+#define LVERBOSE_IF(condition, level) CVERBOSE_IF(condition, level, "trivial")
 // Interval logs
-#define LINFO_EVERY_N(n) CINFO_EVERY_N(n, "")
-#define LWARNING_EVERY_N(n) CWARNING_EVERY_N(n, "")
-#define LDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "")
-#define LERROR_EVERY_N(n) CERROR_EVERY_N(n, "")
-#define LFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "")
-#define LQA_EVERY_N(n) CQA_EVERY_N(n, "")
-#define LTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "")
-#define LVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "")
+#define LINFO_EVERY_N(n) CINFO_EVERY_N(n, "trivial")
+#define LWARNING_EVERY_N(n) CWARNING_EVERY_N(n, "trivial")
+#define LDEBUG_EVERY_N(n) CDEBUG_EVERY_N(n, "trivial")
+#define LERROR_EVERY_N(n) CERROR_EVERY_N(n, "trivial")
+#define LFATAL_EVERY_N(n) CFATAL_EVERY_N(n, "trivial")
+#define LQA_EVERY_N(n) CQA_EVERY_N(n, "trivial")
+#define LTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "trivial")
+#define LVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "trivial")
 // undef any exising business logger macros
 #if defined(BINFO)
 #   undef BINFO

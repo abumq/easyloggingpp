@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     bool runThreads = true;
 
     if (runThreads) {
-        for (int i = 1; i <= 50; ++i) {
+        for (int i = 1; i <= 100; ++i) {
             MyThread t(i);
             t.start();
             t.wait();
@@ -72,6 +72,7 @@ int main(int argc, char* argv[]) {
     qstack_.push ("200");
     qstack_.push ("100");
     LINFO << "Printing qstack " << qstack_;
+
 
     return 0;
 
