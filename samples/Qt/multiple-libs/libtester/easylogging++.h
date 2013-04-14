@@ -2767,7 +2767,7 @@ namespace easyloggingpp {
         static inline const std::string version(void) { return std::string("8.00"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("13-04-2013 1945hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("14-04-2013 1919hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
