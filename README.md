@@ -32,7 +32,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#conditional-logging">Conditional Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#interval-logging">Interval Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#cleaning-logs-on-each-run">Cleaning Logs On Each Run</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking">Performance Tracking</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking-1">Performance Tracking</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#verbose-logging">Verbose Logging<a/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#quality-assurance-logging">Quality Assurance Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#escaping-log-format">Escape Log Format</a>
