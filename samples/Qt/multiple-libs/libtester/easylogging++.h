@@ -2767,7 +2767,7 @@ namespace easyloggingpp {
         static inline const std::string version(void) { return std::string("8.00"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("14-04-2013 2204hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("14-04-2013 2217hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2921,14 +2921,6 @@ namespace easyloggingpp {
                     return constConf(logger_)->logFormat(level_);
                 }
 
-                static inline std::string dateFormat(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
-                    return constConf(logger_)->dateFormat(level_);
-                }
-
-                static inline std::string dateFormatSpecifier(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
-                    return constConf(logger_)->dateFormatSpecifier(level_);
-                }
-
                 static inline int millisecondsLength(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
                     return constConf(logger_)->millisecondsLength(level_);
                 }
@@ -2937,13 +2929,6 @@ namespace easyloggingpp {
                     return constConf(logger_)->performanceTracking(level_);
                 }
 
-                static inline std::ofstream* fileStream(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
-                    return constConf(logger_)->fileStream(level_);
-                }
-
-                static inline int formatFlag(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
-                    return constConf(logger_)->formatFlag(level_);
-                }
         private:
             static inline internal::TypedConfigurations* constConf(Logger* logger_) {
                 return logger_->typedConfigurations_;
