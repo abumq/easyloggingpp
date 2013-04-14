@@ -39,6 +39,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#thread-safety">Thread Safety</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#c-libraries-logging">C++ Libraries Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-your-own-class">Logging Your Own Class</a>
+<a href="#important-macros">Important Macros</a>
 <a href="#compatibility">Compatibility</a>
 <a href="#tips-for-performance-improvement">Tips For Performance Improvement</a><br/>
 </pre>
@@ -640,6 +641,29 @@ Will log out something like:
 
 Of course, above output varies with your log format configurations. The one above is result of `%time %level [%type] %log`
 <pre><a href="#easylogging">Goto Top</a></pre>
+
+### Important Macros
+Apart from already mentioned macros there are few that have not been mentioned yet. You may define these macros at time of compilation or before including header into your application, (of course at time of compilation is best to make sure that macro has affect). This is to change behaviour of easylogging++ as described below.
+
+<table>
+    <tr>
+        <td><b>Macro</b></td>
+        <td><b>Description</b></td>
+    </tr>
+    <tr>
+        <td>_DISABLE_ELPP_ASSERT</td>
+        <td>Disables internal assertion. This calls std::cerr</td>
+    </tr>
+    <tr>
+        <td>_STOP_ON_FIRST_ELPP_ASSERTION</td>
+        <td>Exits program on first internal assertion</td>
+    </tr>
+    <tr>
+        <td>_DISABLE_MUTEX</td>
+        <td>Not recommended but you may disable mutual exclusion for single threaded applications by defining this.</td>
+    </tr>
+</table>
+
 ### Compatibility
 EasyLogging++ has been tested on following platforms (OS and compilers)
 

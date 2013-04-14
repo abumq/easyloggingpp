@@ -49,9 +49,9 @@
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
 #   define __func__ __PRETTY_FUNCTION__
 #else
-#      if !defined(__func__)
-#         define __func__ ""
-#      endif // __func__
+#   if !defined(__func__)
+#      define __func__ ""
+#   endif // !defined(__func__)
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 //
 // Compiler evaluation
@@ -2767,7 +2767,7 @@ namespace easyloggingpp {
         static inline const std::string version(void) { return std::string("8.00"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("14-04-2013 2131hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("14-04-2013 2204hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
