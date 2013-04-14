@@ -511,7 +511,7 @@ As an example
 _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
-  _START_EASYLOGGINGPP(argc, argv);
+  _START_EASYLOGGINGPP(argc, argv); // Alternatively you may do easyloggingpp::Loggers::setApplicationArguments(argc, argv);
   bool condition = true;
   LVERBOSE(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
   LVERBOSE(2) << "I will be printed when this application is run using --v=2 arguments";
@@ -537,7 +537,6 @@ and if you run application using following parameter;
 You can disable verbose logs by many ways,
  * Do not run application using `--v` argument
  * Define `_DISABLE_VERBOSE_LOGS` i.e, `g++ main.cpp -o main-exec -D _DISABLE_VERBOSE_LOGS`
- * Make `_ENABLE_VERBOSE_LOGS` `0`
 
 Just like other logs, you may choose the final location of verbose logs, i.e, file or standard output.
 
@@ -637,7 +636,7 @@ int main(void) {
 
 Will log out something like:
 
-`14:32:47.031 INFO  [log] MyClass name is Awesome class`
+`14:32:47.031 INFO  MyClass name is Awesome class`
 
 Of course, above output varies with your log format configurations. The one above is result of `%time %level [%type] %log`
 <pre><a href="#easylogging">Goto Top</a></pre>
