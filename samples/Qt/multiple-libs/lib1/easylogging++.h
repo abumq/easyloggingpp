@@ -2,7 +2,7 @@
  //                                                                               //
  //   easylogging++.h - Core of EasyLogging++                                     //
  //                                                                               //
- //   EasyLogging++ v8.01                                                         //
+ //   EasyLogging++ v8.02                                                         //
  //   Cross platform logging made easy for C++ applications                       //
  //   Author Majid Khan <mkhan3189@gmail.com>                                     //
  //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1057,10 +1057,15 @@ namespace easyloggingpp {
             setToDefault();
         }
 
-        Configurations(const std::string& configurationFile_) :
+        explicit Configurations(const std::string& configurationFile_, Configurations* base_ = NULL) :
             configurationFile_(configurationFile_),
             isFromFile_(false) {
-                parseFromFile(configurationFile_);
+                parseFromFile(configurationFile_, base_);
+        }
+
+        inline void setFromBase(Configurations* base_) {
+            if (base_ == NULL || base_ == this) return;
+            std::for_each(base_->list().begin(), base_->list().end(), std::bind1st(std::mem_fun(&Configurations::set), this));
         }
 
         void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
@@ -1082,7 +1087,8 @@ namespace easyloggingpp {
             }
         }
 
-        bool parseFromFile(const std::string& configurationFile_) {
+        bool parseFromFile(const std::string& configurationFile_, Configurations* base_ = NULL) {
+            setFromBase(base_);
             std::ifstream fileStream_(configurationFile_.c_str(), std::ifstream::in);
             __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file for parsing.");
             bool parsedSuccessfully_ = false;
@@ -1110,6 +1116,40 @@ namespace easyloggingpp {
             }
             isFromFile_ = false;
             return parsedSuccessfully_;
+        }
+
+        void setToDefault(void) {
+            setAll(ConfigurationType::ELPP_Enabled, "true");
+            setAll(ConfigurationType::ELPP_Filename, "logs/myeasylog.log");
+            setAll(ConfigurationType::ELPP_ToFile, "true");
+            setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
+            setAll(ConfigurationType::ELPP_MillisecondsLength, "3");
+            setAll(ConfigurationType::ELPP_PerformanceTracking, "false");
+            setAll(ConfigurationType::ELPP_Format, "%datetime %level  [%logger] %log");
+            set(Level::ELPP_DEBUG, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
+            // INFO and WARNING are set to default by Level::ALL
+            set(Level::ELPP_ERROR, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
+            set(Level::ELPP_FATAL, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
+            set(Level::ELPP_VERBOSE, ConfigurationType::ELPP_Format, "%datetime %level-%vlevel [%logger] %log");
+            set(Level::ELPP_QA, ConfigurationType::ELPP_Format, "%datetime %level    [%logger] %log");
+            set(Level::ELPP_TRACE, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%func] [%loc] %log");
+        }
+
+        inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipELPP_ALL = false) {
+            if (!skipELPP_ALL) {
+                set(Level::ELPP_ALL, configurationType_, value_);
+            }
+            for (unsigned int i = 1; i <= 128; i <<= 1) {
+                set(i, configurationType_, value_);
+            }
+        }
+
+        inline void clear(void) {
+            unregisterAll();
+        }
+
+        std::string configurationFile(void) const {
+            return configurationFile_;
         }
 
         class Parser {
@@ -1233,47 +1273,19 @@ namespace easyloggingpp {
                 conf->set(currLevel, currConfig, currValue);
                 return true;
             }
-        };
-
-        void setToDefault(void) {
-            setAll(ConfigurationType::ELPP_Enabled, "true");
-            setAll(ConfigurationType::ELPP_Filename, "logs/myeasylog.log");
-            setAll(ConfigurationType::ELPP_ToFile, "true");
-            setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
-            setAll(ConfigurationType::ELPP_MillisecondsLength, "3");
-            setAll(ConfigurationType::ELPP_PerformanceTracking, "false");
-            setAll(ConfigurationType::ELPP_Format, "%datetime %level  [%logger] %log");
-            set(Level::ELPP_DEBUG, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
-            // INFO and WARNING are set to default by Level::ALL
-            set(Level::ELPP_ERROR, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
-            set(Level::ELPP_FATAL, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
-            set(Level::ELPP_VERBOSE, ConfigurationType::ELPP_Format, "%datetime %level-%vlevel [%logger] %log");
-            set(Level::ELPP_QA, ConfigurationType::ELPP_Format, "%datetime %level    [%logger] %log");
-            set(Level::ELPP_TRACE, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%func] [%loc] %log");
-        }
-
-        inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipELPP_ALL = false) {
-            if (!skipELPP_ALL) {
-                set(Level::ELPP_ALL, configurationType_, value_);
-            }
-            for (unsigned int i = 1; i <= 128; i <<= 1) {
-                set(i, configurationType_, value_);
-            }
-        }
-
-        inline void clear(void) {
-            unregisterAll();
-        }
-
-        std::string configurationFile(void) const {
-            return configurationFile_;
-        }
-
+        }; // class Parser
     private:
         std::string configurationFile_;
         bool isFromFile_;
-    };
+        
+        inline void set(internal::Configuration* conf_) {
+            if (conf_ == NULL) return;
+            set(conf_->level(), conf_->type(), conf_->value());
+        }
+    }; // class Configurations
+
     class Loggers;  // fwd declaration
+
     namespace internal {
         class TypedConfigurations {
         public:
@@ -2765,10 +2777,10 @@ namespace easyloggingpp {
         }
 
         // Current version number
-        static inline const std::string version(void) { return std::string("8.01"); }
+        static inline const std::string version(void) { return std::string("8.02"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("15-04-2013 1139hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("15-04-2013 1309hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

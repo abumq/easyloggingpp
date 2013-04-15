@@ -11,6 +11,7 @@ Change log was not kept before version 2.1.
     - Support for libraries - no need to take extra care - just initialize and start logging (see issue #39)
     - Multiple desitinations for each logger and for each level now possible - fully configurable (see issue #40)
     - Introduced new way of logging by combining conditional and interval log (issue #36)
+ * 8.01 & 8.02: Bug fixes
 
 #### 7.xx
  * 7.00:
