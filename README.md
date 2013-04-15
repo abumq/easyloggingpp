@@ -77,7 +77,7 @@ _INITIALIZE_EASYLOGGINGPP
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Configuring
 
-When you start logging using default configurations, logs get written in your applications' executable path in a file `/tmp/logs/myeasylog.log`.
+When you start logging using default configurations, logs get written in your applications' executable path in windows (logs/myeasylog.log). For unix applications logs are in `/tmp/logs/myeasylog.log`. It is highly recommended to set it upfront via `easyloggingpp::Loggers::setFilename(filename)` to avoid any confusions.
 
 You can configure your logger(s) in three different ways. You may choose whats best for you:
 

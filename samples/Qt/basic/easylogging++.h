@@ -1120,7 +1120,11 @@ namespace easyloggingpp {
 
         void setToDefault(void) {
             setAll(ConfigurationType::ELPP_Enabled, "true");
+#if _ELPP_OS_UNIX
             setAll(ConfigurationType::ELPP_Filename, "/tmp/logs/myeasylog.log");
+#elif _ELPP_OS_WINDOWS
+            setAll(ConfigurationType::ELPP_Filename, "logs/myeasylog.log");
+#endif // _ELPP_OS_UNIX
             setAll(ConfigurationType::ELPP_ToFile, "true");
             setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
             setAll(ConfigurationType::ELPP_MillisecondsLength, "3");
@@ -2780,7 +2784,7 @@ namespace easyloggingpp {
         static inline const std::string version(void) { return std::string("8.03"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("15-04-2013 1326hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("15-04-2013 1333hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
