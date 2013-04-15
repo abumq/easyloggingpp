@@ -668,9 +668,9 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 **Operating Systems**
 
-![win8] Windows 8 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+![win8] Windows 8 (64-bit, Visual C++ 8.0, 9.0, 11.0)
 
-![win7] Windows 7 (64-bit, Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+![win7] Windows 7 (64-bit, Visual C++ 8.0, 9.0, 11.0)
 
 ![mac] Mac OSX (clang 3.1/Apple Clang Version 4.1 (LLVM 3.1))
 
@@ -684,9 +684,11 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 **Compilers**
 
-![gcc] GNU Compiler Collection (g++ 4.4, g++ 4.6.3, g++ 4.7.2)
+![gcc] GNU Compiler Collection (g++) (4.4, 4.6.3, 4.7.2)
 
-![vcpp] Visual C++ (Visual C++ 8.0, Visual C++ 9.0, Visual C++ 11.0)
+![vcpp] Visual C++ (8.0, 9.0, 11.0)
+
+![llvm] LLVM (3.1, 3.2)
 
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 <pre><a href="#easylogging">Goto Top</a></pre>
@@ -708,3 +710,4 @@ EasyLogging++ has been tested several times a day for performances glitches. Tha
 [gcc]: http://www.icplusplus.com/tools/easylogging/icons/gcc.png
 [vcpp]: http://www.icplusplus.com/tools/easylogging/icons/vcpp.png
 [android]: http://www.icplusplus.com/tools/easylogging/icons/android.png
+[llvm]: http://www.icplusplus.com/tools/easylogging/icons/llvm.png
