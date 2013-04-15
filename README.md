@@ -77,7 +77,7 @@ _INITIALIZE_EASYLOGGINGPP
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Configuring
 
-When you start logging using default configurations, logs get written in your applications' executable path in a file `logs/myeasylog.log`.
+When you start logging using default configurations, logs get written in your applications' executable path in a file `/tmp/logs/myeasylog.log`.
 
 You can configure your logger(s) in three different ways. You may choose whats best for you:
 

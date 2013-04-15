@@ -12,6 +12,7 @@ Change log was not kept before version 2.1.
     - Multiple desitinations for each logger and for each level now possible - fully configurable (see issue #40)
     - Introduced new way of logging by combining conditional and interval log (issue #36)
  * 8.01 & 8.02: Bug fixes
+ * 8.03: Default log location is now `/tmp/logs/myeasylog.log`
 
 #### 7.xx
  * 7.00:
