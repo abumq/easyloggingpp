@@ -21,50 +21,6 @@ SUB(write, (void))
   }
   LDEBUG << "This is end of logging!";
 
-  PINFO << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-  << "this" << " is " << 1 << 'c' << " and " << " this is " << true
-;
-
 END_SUB
 
 int main(void) {

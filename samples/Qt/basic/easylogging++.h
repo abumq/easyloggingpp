@@ -2,7 +2,7 @@
  //                                                                               //
  //   easylogging++.h - Core of EasyLogging++                                     //
  //                                                                               //
- //   EasyLogging++ v8.03                                                         //
+ //   EasyLogging++ v8.04                                                         //
  //   Cross platform logging made easy for C++ applications                       //
  //   Author Majid Khan <mkhan3189@gmail.com>                                     //
  //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1229,10 +1229,10 @@ namespace easyloggingpp {
                 return 1010;
             }
             static bool parseLine(std::string& line, unsigned int& currLevel, Configurations* conf) {
-                std::string currLevelStr;
-                unsigned int currConfig;
-                std::string currConfigStr;
-                std::string currValue;
+                std::string currLevelStr = std::string();
+                unsigned int currConfig = 1010;
+                std::string currConfigStr = std::string();
+                std::string currValue = std::string();
                 if (isComment(line)) return true;
                 ignoreComments(line);
                 line = ELPP_StringUtils::trim(line);
@@ -2781,10 +2781,10 @@ namespace easyloggingpp {
         }
 
         // Current version number
-        static inline const std::string version(void) { return std::string("8.03"); }
+        static inline const std::string version(void) { return std::string("8.04"); }
 
         // Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("15-04-2013 1333hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("16-04-2013 0023hrs"); }
 
         // Original author and maintainer
         static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
