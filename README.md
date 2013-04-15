@@ -638,7 +638,7 @@ Will log out something like:
 
 `14:32:47.031 INFO  MyClass name is Awesome class`
 
-Of course, above output varies with your log format configurations. The one above is result of `%time %level [%type] %log`
+Of course, above output varies with your log format configurations. The one above is result of `%time %level %log`
 <pre><a href="#easylogging">Goto Top</a></pre>
 
 ### Important Macros
