@@ -38,7 +38,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#escaping-log-format">Escape Log Format</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#thread-safety">Thread Safety</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#c-libraries-logging">C++ Libraries Logging</a>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-your-own-class">Logging Your Own Class</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#extending-the-library---logging-your-own-class">Extending the Library - Logging Your Own Class</a>
 <a href="#important-macros">Important Macros</a>
 <a href="#compatibility">Compatibility</a>
 <a href="#tips-for-performance-improvement">Tips For Performance Improvement</a><br/>
@@ -57,7 +57,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
  * Type safe
  * Supports hierarchical logging
  * [Performance tracking](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#performance-tracking)
- * STL, Qt and Custom Class' Logging
+ * STL, Qt and extendable logging (Your own class' logging)
 
 ... and  list goes on! It is complete library wrapped into single header file that you can use in any C++ application.
 <pre><a href="#easylogging">Goto Top</a></pre>
@@ -600,7 +600,7 @@ Currently EasyLogging++ support following libraries and classes/templates;
 
 [View Sample 2 (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/main.cpp)
 
-#### Logging Your Own Class
+#### Extending the Library - Logging Your Own Class
 There will be times when you would want to log your own class, just declare `toString() const` in your class. Return type of `toString()` can vary depending on what you want to log but it has to be some logable data type. Remember, `toString()` SHOULD BE const to prevent any value change.
 
 Example:
