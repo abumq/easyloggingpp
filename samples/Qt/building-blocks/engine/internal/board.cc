@@ -167,9 +167,10 @@ void Board::setBoardHeight(unsigned int boardHeight_)
     adjustPoints();
 }
 
-std::string Board::toString() const
+std::ostream& operator<<(std::ostream& ss, const Board& board_)
 {
-    return name();
+    ss << board_.name();
+    return ss;
 }
 
 void Board::reset(void)
@@ -494,7 +495,7 @@ void Board::plot(void)
 void Board::createPoint(unsigned int id, unsigned int x, unsigned int y)
 {
     buildingblocks::engine::internal::Point* currentPoint = new buildingblocks::engine::internal::Point(id, x, y);
-    LVERBOSE(4) << "Creating point on board " << currentPoint;
+    LVERBOSE(4) << "Creating point on board " << *currentPoint;
     points_.push_back(currentPoint);
 }
 
@@ -545,7 +546,7 @@ buildingblocks::engine::internal::Player* Board::playerWithTurn(void)
 void Board::nextPlayer(void)
 {
     playerWithTurn()->setHasTurn(false);
-    LVERBOSE(2) << "[" << playerWithTurn() << "] has turn";
+    LVERBOSE(2) << "[" << *playerWithTurn() << "] has turn";
 }
 
 void Board::initializePlayers(kPlayerTurn playerTurn)
@@ -566,11 +567,11 @@ void Board::initializePlayers(kPlayerTurn playerTurn)
 int Board::addLine(buildingblocks::engine::internal::Line *line, buildingblocks::engine::internal::Player* player)
 {
     if (!isLegalToAddLine(line)) {
-        BERROR << "Adding line " << line << " is not valid as per game rules!";
+        BERROR << "Adding line " << *line << " is not valid as per game rules!";
         return kInvalidTurn;
     }
 
-    LVERBOSE(2) << "[" << player << "] has put line " << line;
+    LVERBOSE(2) << "[" << *player << "] has put line " << line;
     lines_.push_back(line);
     buildingblocks::engine::internal::Block* block = NULL;
     if (determineIfLineMakesBlock(line, block)) {
@@ -585,7 +586,7 @@ int Board::addLine(buildingblocks::engine::internal::Line *line, buildingblocks:
 
 bool Board::isLegalToAddLine(const buildingblocks::engine::internal::Line *line)
 {
-    LVERBOSE(3) << "Checking if line [" << line << "] is legal as per game rules";
+    LVERBOSE(3) << "Checking if line [" << *line << "] is legal as per game rules";
     unsigned int distance_ = line->start()->distance(*line->end());
 
     LVERBOSE(3) << "Distance for points " << distance_;
@@ -595,7 +596,7 @@ bool Board::isLegalToAddLine(const buildingblocks::engine::internal::Line *line)
 
     bool lineAlreadyExist = false;
 
-    BERROR_IF(lineAlreadyExist) << "Line [" << line << "] already exist";
+    BERROR_IF(lineAlreadyExist) << "Line [" << *line << "] already exist";
     return distanceOk && !lineAlreadyExist;
 }
 
@@ -606,11 +607,11 @@ void Board::addPlayer(buildingblocks::engine::internal::Player* player_)
         return;
     }
     if (players_.size() == 2) {
-        BWARNING << "Already have two players, replacing player [" << players_.at(0) << "] with [" << player_ << "]";
+        BWARNING << "Already have two players, replacing player [" << *players_.at(0) << "] with [" << *player_ << "]";
         delete players_[0];
         players_[0] = player_;
     } else {
-        LVERBOSE(2) << "Adding player [" << player_ << "]";
+        LVERBOSE(2) << "Adding player [" << *player_ << "]";
         players_.push_back(player_);
     }
 }

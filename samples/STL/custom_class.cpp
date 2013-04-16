@@ -17,12 +17,7 @@ class Vehicle {
                     const std::string& version_ = "") :
             make_(make_), model_(model_), year_(year_), version_(version_) {}
 
-        std::string toString(void) const {
-            std::stringstream ss;
-            ss << "(" << make_ << " " << model_ << " " << year_ << (version_.size() > 0 ? " " : "") << version_ << ")";
-            return ss.str();
-        }
-
+        friend std::ostream& operator<<(std::ostream& w, const Vehicle& v);
     private:
         std::string make_;
         std::string model_;
@@ -30,6 +25,10 @@ class Vehicle {
         std::string version_;
 };
 
+std::ostream& operator<<(std::ostream& w, const Vehicle& v) {
+    w << "(" << v.make_ << " " << v.model_ << " " << v.year_ << (v.version_.size() > 0 ? " " : "") << v.version_ << ")";
+    return w;
+}
 
 int main(void) {
 

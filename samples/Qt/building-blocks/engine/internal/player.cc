@@ -106,9 +106,10 @@ void Player::setOpponent(Player *player_)
     player_->opponent_ = this;
 }
 
-std::string Player::toString() const
+std::ostream& operator<<(std::ostream& ss, const Player& player_)
 {
-    return name();
+    ss << player_.name();
+    return ss;
 }
 
 } // namespace internal

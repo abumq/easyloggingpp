@@ -14,6 +14,9 @@ Change log was not kept before version 2.1.
  * 8.01 & 8.02: Bug fixes
  * 8.03: Default log location is now `/tmp/logs/myeasylog.log`
  * 8.04: Fixed issue with uninitialized variable error on llvm-gcc-4.2
+ * 8.05:
+     - Fixes issue with setting std::ios_base::fmtflags to stream (issue #45)
+     - Change the way extending library work - now user need to write left shift operator with `std::ostream` - see README for details
 
 #### 7.xx
  * 7.00:

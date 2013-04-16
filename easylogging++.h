@@ -2137,10 +2137,6 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(std::string* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
-            }
             inline Writer& operator<<(char log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
@@ -2153,15 +2149,11 @@ namespace easyloggingpp {
             inline Writer& operator<<(bool log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
-                _ELPP_STREAM(logger_) << (log_ != 0 ? "true" : "false");
+                _ELPP_STREAM(logger_) << log_;
 #else
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            inline Writer& operator<<(bool* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(signed short log_) {
 #if _ENABLE_EASYLOGGING
@@ -2172,10 +2164,6 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(signed short* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
-            }
             inline Writer& operator<<(unsigned short log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
@@ -2184,10 +2172,6 @@ namespace easyloggingpp {
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            inline Writer& operator<<(unsigned short* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(signed int log_) {
 #if _ENABLE_EASYLOGGING
@@ -2198,10 +2182,6 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(signed int* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
-            }
             inline Writer& operator<<(unsigned int log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
@@ -2210,10 +2190,6 @@ namespace easyloggingpp {
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            inline Writer& operator<<(unsigned int* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(signed long log_) {
 #if _ENABLE_EASYLOGGING
@@ -2224,9 +2200,6 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(signed long* log_) {
-                return writePointer(log_);
-            }
             inline Writer& operator<<(unsigned long log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
@@ -2235,10 +2208,6 @@ namespace easyloggingpp {
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            inline Writer& operator<<(unsigned long* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(float log_) {
 #if _ENABLE_EASYLOGGING
@@ -2249,10 +2218,6 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(float* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
-            }
             inline Writer& operator<<(double log_) {
 #if _ENABLE_EASYLOGGING
                 if (!proceed_) { return *this; }
@@ -2261,10 +2226,6 @@ namespace easyloggingpp {
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            inline Writer& operator<<(double* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(char* log_) {
 #if _ENABLE_EASYLOGGING
@@ -2302,17 +2263,9 @@ namespace easyloggingpp {
 #endif // _ENABLE_EASYLOGGING
                 return *this;
             }
-            inline Writer& operator<<(long double* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
-            }
             inline Writer& operator<<(const std::wstring& log_) {
                 if (!proceed_) { return *this; }
                 return operator<<(log_.c_str());
-            }
-            inline Writer& operator<<(std::wstring* log_) {
-                if (!proceed_) { return *this; }
-                return writePointer(log_);
             }
             inline Writer& operator<<(const wchar_t* log_) {
 #if _ENABLE_EASYLOGGING
@@ -2338,19 +2291,6 @@ namespace easyloggingpp {
                 __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #endif // _ENABLE_EASYLOGGING
                 return *this;
-            }
-            template <class Class>
-            inline Writer& operator<<(const Class& class_) {
-#if _ENABLE_EASYLOGGING
-                if (!proceed_) { return *this; }
-                _ELPP_STREAM(logger_) << class_.toString();
-#endif // _ENABLE_EASYLOGGING
-                return *this;
-            }
-            template <class Pointer>
-            inline Writer& operator<<(Pointer* pointer_) {
-                if (!proceed_) { return *this; }
-                return writePointer(pointer_);
             }
 #if defined(_ELPP_STL_LOGGING)
             template <typename T, typename Container>
@@ -2639,6 +2579,14 @@ namespace easyloggingpp {
                 return writeIterator(stack_.begin(), stack_.end(), stack_.size());
             }
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+            template <class Class>
+            inline Writer& operator<<(const Class& class_) {
+#if _ENABLE_EASYLOGGING
+                if (!proceed_) { return *this; }
+                _ELPP_STREAM(logger_) << class_;
+#endif // _ENABLE_EASYLOGGING
+                return *this;
+            }
         private:
             unsigned int aspect_;
             unsigned int severity_;

@@ -64,11 +64,10 @@ bool Line::isVertical(void) const
     return  start()->x() - end()->x() == 0;
 }
 
-std::string Line::toString(void) const
+std::ostream& operator<<(std::ostream& ss, const Line& line_)
 {
-    std::stringstream ss;
-    ss << "[" << points_[0]->toString() << ", " << points_[1]->toString() << "]";
-    return ss.str();
+    ss << "[" << line_.points_[0] << ", " << line_.points_[1] << "]";
+    return ss;
 }
 
 } // namespace internal

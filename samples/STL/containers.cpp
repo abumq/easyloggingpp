@@ -14,27 +14,24 @@ class Vehicle {
             ss << "[" << make_ << " " << model_ << " " << year_ << (version_.size() > 0 ? " " : "") << version_ << "]";
             return ss.str();
         }
-
+    friend std::ostream& operator<<(std::ostream& w, const Vehicle& v);
     private:
         std::string make_;
         std::string model_;
         int year_;
         std::string version_;
 };
-
+std::ostream& operator<<(std::ostream& w, const Vehicle& v) {
+    w << "(" << v.make_ << " " << v.model_ << " " << v.year_ << (v.version_.size() > 0 ? " " : "") << v.version_ << ")";
+    return w;
+}
 void vectorLogs() {
   std::vector<std::string> stringVec;
-  std::vector<std::string*> stringPtrVec;
   std::vector<Vehicle> vehicleVec;
-  std::vector<Vehicle*> vehiclePtrVec;
   stringVec.push_back("stringVec");
-  stringPtrVec.push_back(new std::string("stringPtrVec"));
   vehicleVec.push_back(Vehicle("Honda", "Accord", 2013, "vehicleVec")); 
-  vehiclePtrVec.push_back(new Vehicle("Honda", "Accord", 2013, "vehiclePtrVec"));
   LINFO << "stringVec : " << stringVec; 
-  LINFO << "stringPtrVec : " << stringPtrVec; 
   LINFO << "vehicleVec : " << vehicleVec; 
-  LINFO << "vehiclePtrVec : " << vehiclePtrVec; 
 }
 
 void listLogs() {

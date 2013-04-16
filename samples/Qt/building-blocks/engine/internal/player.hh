@@ -73,7 +73,7 @@ public:
     void setColor(const buildingblocks::engine::internal::Color& color_);
     void setHasTurn(bool hasTurn_);
     void setOpponent(Player* player_);
-    std::string toString() const;
+    friend std::ostream& operator<<(std::ostream& ss, const Player& player_);
 private:
     std::string name_;
     buildingblocks::engine::internal::Color color_;

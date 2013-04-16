@@ -54,7 +54,7 @@ public:
     unsigned int boardHeight(void) const;
     void setBoardWidth(unsigned int boardWidth_);
     void setBoardHeight(unsigned int boardHeight_);
-    std::string toString(void) const;
+    friend std::ostream& operator<<(std::ostream& ss, const Board& board_);
     virtual void reset(void);
     std::vector<buildingblocks::engine::internal::Player*> players(void) const;
 protected:

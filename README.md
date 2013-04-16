@@ -601,7 +601,7 @@ Currently EasyLogging++ support following libraries and classes/templates;
 [View Sample 2 (Qt)](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/Qt/basic/main.cpp)
 
 #### Extending the Library - Logging Your Own Class
-There will be times when you would want to log your own class, just declare `toString() const` in your class. Return type of `toString()` can vary depending on what you want to log but it has to be some logable data type. Remember, `toString()` SHOULD BE const to prevent any value change.
+There will be times when you would want to log your own class, just define left shift operator that returns `std::ostream&` in your class. If you can use `std::cout` to log your class to standard output, you should be able to do it flawlessly with EasyLogging++
 
 Example:
 ```C++
@@ -619,12 +619,15 @@ class MyClass {
             this->name_ = name_;
         }
 
-        std::string toString(void) const {
-            return "MyClass name is " + name();
-        }
+        friend std::ostream& operator<<(std::ostream& stream_, const MyClass& myClass);
     private:
         std::string name_;
 };
+
+std::ostream& operator<<(std::ostream& stream_, const MyClass& myClass) {
+    stream_ << "MyClass name is " << myClass.name();
+    return stream_;
+}
 
 int main(void) {
     MyClass myClass("Awesome class");
@@ -639,6 +642,7 @@ Will log out something like:
 `14:32:47.031 INFO  MyClass name is Awesome class`
 
 Of course, above output varies with your log format configurations. The one above is result of `%time %level %log`
+
 <pre><a href="#easylogging">Goto Top</a></pre>
 
 ### Important Macros

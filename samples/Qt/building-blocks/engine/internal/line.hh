@@ -38,7 +38,7 @@ public:
     const buildingblocks::engine::internal::Point* end(void) const;
     bool isHorizontal(void) const;
     bool isVertical(void) const;
-    std::string toString(void) const;
+    friend std::ostream& operator<<(std::ostream& ss, const Line& list_);
 private:
     const buildingblocks::engine::internal::Point* points_[kMaxPoints];
 };

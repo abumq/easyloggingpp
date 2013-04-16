@@ -55,12 +55,6 @@ void GameBoard::initializeVisiblePoints()
     for (unsigned int i = 0; i < Board::totalPoints(); ++i) {
         buildingblocks::engine::internal::Point* point = points().at(i);
         QGraphicsEllipseItem *visiblePoint = scene_->addEllipse(point->x(), point->y(), point->diameter(), point->diameter(), blackPen);
-#if (BUILDING_BLOCKS_DEVELOPMENT_STAGE)
-        visiblePoint->setToolTip(QString::fromStdString(point->toString()));
-        QGraphicsTextItem *txt = scene_->addText(QString::fromStdString(point->toString()), QFont("Arial", 8));
-        txt->setX(point->x());
-        txt->setY(point->y() + 2);
-#endif
     }
 }
 

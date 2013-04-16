@@ -41,7 +41,7 @@ public:
     void setY(unsigned int newY);
     void setId(unsigned int id_);
     void reset(unsigned int newX, unsigned int newY);
-    std::string toString(void) const;
+    friend std::ostream& operator<<(std::ostream& ss, const Point& point_);
 
 private:
     unsigned int id_;

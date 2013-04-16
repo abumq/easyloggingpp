@@ -116,12 +116,9 @@ void Point::reset(unsigned int newX, unsigned int newY)
     setY(newY);
 }
 
-std::string Point::toString() const
-{
-    std::stringstream ss;
-    ss << "[" << x() << ", " << y() << "]";
-    std::string result_ = ss.str(); // for debugging
-    return result_;
+std::ostream& operator<<(std::ostream& ss, const Point& point_) {
+    ss << "[" << point_.x() << ", " << point_.y() << "]";
+    return ss;
 }
 } // namespace internal
 } // namespace engine
