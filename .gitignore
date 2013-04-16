@@ -1,4 +1,5 @@
 *.swp
+*.pro.user
 easyloggingpp.zip
 releases/*
 
@@ -7,3 +8,5 @@ releases/*
 
 /samples/Qt/*/logs/*
 /samples/STL/logs/*
+
+/tools/build-*
