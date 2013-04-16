@@ -18,6 +18,7 @@ Change log was not kept before version 2.1.
      - Fixes issue with setting std::ios_base::fmtflags to stream (issue #45)
      - Change the way extending library work - now user need to write left shift operator with `std::ostream` - see README for details
  * 8.06: Fixes some more gcc warnings
+ * 8.07: Support for Qt5
 
 #### 7.xx
  * 7.00:

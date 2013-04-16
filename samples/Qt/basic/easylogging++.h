@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.06                                                         //
+//   EasyLogging++ v8.07                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -70,6 +70,13 @@
 #      define _CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
+#if defined(QT_CORE_LIB)
+#   if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#      define _ELPP_QT_5 1
+#   else
+#      define _ELPP_QT_5 0
+#   endif // (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#endif // defined(QT_CORE_LIB)
 //
 // High-level log evaluation
 //
@@ -2439,7 +2446,7 @@ public:
     inline Writer& operator<<(QChar log_) {
 #   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
-        _ELPP_STREAM(logger_) << log_.toAscii();
+        _ELPP_STREAM(logger_) << log_.toLatin1();
 #   else
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #   endif // _ENABLE_EASYLOGGING
@@ -2449,18 +2456,20 @@ public:
         if (!proceed_) { return *this; }
         return writePointer(log_);
     }
+#   if (!_ELPP_QT_5)
     inline Writer& operator<<(QBool log_) {
-#   if _ENABLE_EASYLOGGING
+#      if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << (bool(log_ != 0) ? "true" : "false");
-#   else
+#      else
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
+#      endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(QBool* log_) {
         return writePointer(log_);
     }
+#   endif // (!_ELPP_QT_5)
     inline Writer& operator<<(const QLatin1String& log_) {
 #   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
@@ -2733,10 +2742,10 @@ class VersionInfo {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.06"); }
+    static inline const std::string version(void) { return std::string("8.07"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("16-04-2013 2110hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("17-04-2013 0759hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
