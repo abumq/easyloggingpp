@@ -15,7 +15,9 @@
 _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[]) {
-    _START_EASYLOGGINGPP(argc, argv)
+    _START_EASYLOGGINGPP(argc, argv);
+
+    easyloggingpp::Configurations c("/home/majid/projects/EasyLoggingPP/test/test_conf.conf");
 
     bool runThreads = true;
 

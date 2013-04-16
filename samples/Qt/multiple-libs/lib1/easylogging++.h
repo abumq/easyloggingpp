@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.05                                                         //
+//   EasyLogging++ v8.06                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1092,8 +1092,8 @@ public:
         std::ifstream fileStream_(configurationFile_.c_str(), std::ifstream::in);
         __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file for parsing.");
         bool parsedSuccessfully_ = false;
-        std::string line;
-        unsigned int currLevel;
+        std::string line = std::string();
+        unsigned int currLevel = 0;
         while (fileStream_.good()) {
             std::getline(fileStream_, line);
             parsedSuccessfully_ = Parser::parseLine(line, currLevel, this);
@@ -1105,8 +1105,8 @@ public:
 
     bool parseFromText(const std::string& configurationsString) {
         bool parsedSuccessfully_ = false;
-        std::string line;
-        unsigned int currLevel;
+        std::string line = std::string();
+        unsigned int currLevel = 0;
         std::vector<std::string> lines;
         ELPP_StringUtils::split(configurationsString, '\n', lines);
         for (unsigned int i = 0; i < lines.size(); ++i) {
@@ -1230,12 +1230,16 @@ public:
         }
         static bool parseLine(std::string& line, unsigned int& currLevel, Configurations* conf) {
             std::string currLevelStr = std::string();
-            unsigned int currConfig = 1010;
+            unsigned int currConfig = 0;
             std::string currConfigStr = std::string();
             std::string currValue = std::string();
             if (isComment(line)) return true;
             ignoreComments(line);
             line = ELPP_StringUtils::trim(line);
+            if (line == "") {
+                // Comment ignored
+                return true;
+            }
             if (Parser::isLevel(line)) {
                 currLevelStr = ELPP_StringUtils::stripAllWhiteSpaces(line);
                 if (currLevelStr.size() <= 2) {
@@ -2729,10 +2733,10 @@ class VersionInfo {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.05"); }
+    static inline const std::string version(void) { return std::string("8.06"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("16-04-2013 2051hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("16-04-2013 2110hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

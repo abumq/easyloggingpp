@@ -13,3 +13,6 @@ TEMPLATE = app
 SOURCES += main.cpp
 HEADERS += easylogging++.h \
            mythread.h
+
+OTHER_FILES += \
+    test_conf.conf
