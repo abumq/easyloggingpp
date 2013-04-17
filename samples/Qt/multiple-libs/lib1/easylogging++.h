@@ -212,7 +212,7 @@ struct ConfigurationType {
     public:
         enum {
         ELPP_Enabled = 0, ELPP_ToFile = 1, ELPP_ToStandardOutput = 2, ELPP_Format = 4, ELPP_Filename = 8,
-                ELPP_MillisecondsLength = 16, ELPP_PerformanceTracking = 32
+                ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32
     };
 };
 
@@ -1078,7 +1078,7 @@ public:
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
-                (configurationType_ == ConfigurationType::ELPP_MillisecondsLength && level_ != Level::ELPP_ALL)) {
+                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL)) {
             // configurationType_ not applicable for this level_
             return;
         }
@@ -1134,7 +1134,7 @@ public:
 #endif // _ELPP_OS_UNIX
         setAll(ConfigurationType::ELPP_ToFile, "true");
         setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
-        setAll(ConfigurationType::ELPP_MillisecondsLength, "3");
+        setAll(ConfigurationType::ELPP_MillisecondsWidth, "3");
         setAll(ConfigurationType::ELPP_PerformanceTracking, "false");
         setAll(ConfigurationType::ELPP_Format, "%datetime %level  [%logger] %log");
         set(Level::ELPP_DEBUG, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
@@ -1229,8 +1229,8 @@ public:
                 return ConfigurationType::ELPP_Format;
             if (configStr == "filename")
                 return ConfigurationType::ELPP_Filename;
-            if (configStr == "milliseconds_length")
-                return ConfigurationType::ELPP_MillisecondsLength;
+            if (configStr == "milliseconds_width")
+                return ConfigurationType::ELPP_MillisecondsWidth;
             if (configStr == "performance_tracking")
                 return ConfigurationType::ELPP_PerformanceTracking;
             return 1010;
@@ -1429,7 +1429,7 @@ private:
             case ConfigurationType::ELPP_Format:
                 determineFormats(conf->level(), conf->value());
                 break;
-            case ConfigurationType::ELPP_MillisecondsLength:
+            case ConfigurationType::ELPP_MillisecondsWidth:
                 if (conf->level() == Level::ELPP_ALL) {
                     int origVal = getInt(conf->value());
                     int msl_;

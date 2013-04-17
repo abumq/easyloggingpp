@@ -103,7 +103,7 @@ Always start your configuration file by starting with `ALL` level. This sets con
     ENABLED					=	true
     TO_FILE					=	true
     TO_STANDARD_OUTPUT		=	false
-    MILLISECONDS_LENGTH		=	3
+    MILLISECONDS_WIDTH		=	3
     PERFORMANCE_TRACKING	=	false
 
 // Following configuration only defines FORMAT for INFO, rest of the configurations are used from ALL configurations above
@@ -189,7 +189,7 @@ Determines where to write logs (if ToFile enabled). Configuration type: `ELPP_Fi
 
 ###### Milliseconds Length
 
-Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only applicable for unix based. Configuration type: `ELPP_MillisecondsLength`
+Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only applicable for unix based. Configuration type: `ELPP_MillisecondsWidth`
 
 ###### Performance tracking
 
