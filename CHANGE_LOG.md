@@ -19,6 +19,7 @@ Change log was not kept before version 2.1.
      - Change the way extending library work - now user need to write left shift operator with `std::ostream` - see README for details
  * 8.06: Fixes some more gcc warnings
  * 8.07: Support for Qt5
+ * 8.08: Changes `ELPP_MillisecondsLength` to `ELPP_MillisecondsWidth` (issue #49)
 
 #### 7.xx
  * 7.00:
