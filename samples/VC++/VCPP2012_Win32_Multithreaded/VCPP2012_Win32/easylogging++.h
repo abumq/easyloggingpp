@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.08                                                         //
+//   EasyLogging++ vv8.09                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1320,7 +1320,7 @@ private:
     std::map<unsigned int, std::string> logFormatMap_;
     std::map<unsigned int, std::string> dateFormatMap_;
     std::map<unsigned int, std::string> dateFormatSpecifierMap_;
-    std::map<unsigned int, int> millisecondsLengthMap_;
+    std::map<unsigned int, int> millisecondsWidthMap_;
     std::map<unsigned int, bool> performanceTrackingMap_;
     std::map<unsigned int, std::ofstream*> fileStreamMap_;
     std::map<unsigned int, unsigned int> formatFlagMap_;
@@ -1384,9 +1384,9 @@ private:
         return it->second;
     }
 
-    int millisecondsLength(unsigned int level_ = Level::ELPP_ALL) {
+    int millisecondsWidth(unsigned int level_ = Level::ELPP_ALL) {
         __EASYLOGGINGPP_SUPPRESS_UNSED(level_);
-        return millisecondsLengthMap_[Level::ELPP_ALL];
+        return millisecondsWidthMap_[Level::ELPP_ALL];
     }
 
     bool performanceTracking(unsigned int level_ = Level::ELPP_ALL) {
@@ -1453,7 +1453,7 @@ private:
 #elif _ELPP_OS_WINDOWS
                     msl_ = 1000;
 #endif // _ELPP_OS_UNIX
-                    setValue(conf->level(), msl_, millisecondsLengthMap_);
+                    setValue(conf->level(), msl_, millisecondsWidthMap_);
                 }
                 break;
             case ConfigurationType::ELPP_PerformanceTracking:
@@ -2668,7 +2668,7 @@ private:
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
             v_ = easyloggingpp::internal::utilities::DateUtilities::getDateTime(dateFormat,
-                                                                                f_, constants_, conf_->millisecondsLength(Level::ELPP_ALL));
+                                                                                f_, constants_, conf_->millisecondsWidth(Level::ELPP_ALL));
             fs_ = conf_->dateFormatSpecifier(severity_);
             easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
@@ -2742,10 +2742,10 @@ class VersionInfo {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.08"); }
+    static inline const std::string version(void) { return std::string("v8.09"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("17-04-2013 2045hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("17-04-2013 2054hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2899,8 +2899,8 @@ class Loggers {
             return constConf(logger_)->logFormat(level_);
         }
 
-        static inline int millisecondsLength(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
-            return constConf(logger_)->millisecondsLength(level_);
+        static inline int millisecondsWidth(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            return constConf(logger_)->millisecondsWidth(level_);
         }
 
         static inline bool performanceTracking(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {

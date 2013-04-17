@@ -17,7 +17,7 @@ TEST(ConfigurationTest, Parsing) {
     EXPECT_TRUE(Loggers::ConfigurationsReader::enabled(testLogger, Level::ELPP_ALL));
     EXPECT_TRUE(Loggers::ConfigurationsReader::toFile(testLogger, Level::ELPP_ALL));
     EXPECT_FALSE(Loggers::ConfigurationsReader::toStandardOutput(testLogger, Level::ELPP_ALL));
-    EXPECT_EQ(1, Loggers::ConfigurationsReader::millisecondsLength(testLogger, Level::ELPP_ALL)); // For milliseconds 1 = 6, 10 = 5 and so on ...
+    EXPECT_EQ(1, Loggers::ConfigurationsReader::millisecondsWidth(testLogger, Level::ELPP_ALL)); // For milliseconds 1 = 6, 10 = 5 and so on ...
     EXPECT_FALSE(Loggers::ConfigurationsReader::performanceTracking(testLogger, Level::ELPP_ALL));
     EXPECT_EQ("%datetime INFO %logger %log\n", Loggers::ConfigurationsReader::logFormat(testLogger, Level::ELPP_INFO));
     
