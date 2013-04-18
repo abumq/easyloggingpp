@@ -5,8 +5,8 @@ EasyLogging++ git repository has following design:
 
  <table>
   <tr>
-   <td>Branch</td>
-   <td>What is it for</td>
+   <td><b>Branch</b></td>
+   <td><b>What is it for</b></td>
   </tr>
   <tr>
    <td>master</td>
@@ -17,7 +17,7 @@ EasyLogging++ git repository has following design:
    <td>Contains new features that are being worked on. This branch is always under development.
   </tr>
   <tr>
-   <tr>header</td>
+   <td>header</td>
    <td>Contains only updates for easylogging++.h header file
   </tr>
 </table>
