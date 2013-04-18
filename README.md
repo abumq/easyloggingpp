@@ -50,7 +50,6 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
  * Highly portable including most C++ compilers and Windows, most/all flavours of UNIX including Linux and Mac OS
  * Highly configurable
  * [Extremely easy to use](https://github.com/mkhan3189/EasyLoggingPP/tree/master/samples)
- * Open Source
  * [Actively developed and maintained](https://github.com/mkhan3189/EasyLoggingPP/commits/master)
  * [Many additional features](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#features)
  * [Thread safe](https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md#thread-safety)
