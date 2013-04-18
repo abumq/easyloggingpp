@@ -30,13 +30,6 @@ class MyThread : public QThread {
 
       LINFO_IF(threadId == 2) << "This log is only for thread 2 and is ran by thread #" << threadId;
 
-      std::vector<std::string> myLoggers;
-      easyloggingpp::Loggers::getAllLogIdentifiers(myLoggers);
-      for (unsigned int i = 0; i < myLoggers.size(); ++i) {
-          std::cout << "Logger ID [" << myLoggers.at(i) << "]";
-      }
-      easyloggingpp::Configurations c;
-      c.parseFromText("*ALL:\n\nFORMAT = %level");
     }
 };
 #endif
