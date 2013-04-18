@@ -3,7 +3,7 @@
     require_once "syntax_highlighter/cppToHtmlSyntaxHighlighter.php";
     global $webAddr;
     $currentVersion = "v v8.09";
-    $releaseDate = "17-04-2013 2054hrs";
+    $releaseDate = "18-04-2013 1021hrs";
 ?>
 
 <script language='javascript'>

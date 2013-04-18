@@ -21,6 +21,7 @@ Change log was not kept before version 2.1.
  * 8.07: Support for Qt5
  * 8.08: Changes `ELPP_MillisecondsLength` to `ELPP_MillisecondsWidth` (issue #49)
  * 8.09: `millisecondsLength` function is now changed to `millisecondsWidth`
+ * 8.10: Added a note of potentially changed file and links to download original version
 
 #### 7.xx
  * 7.00:
