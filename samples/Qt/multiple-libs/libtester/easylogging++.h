@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.10                                                         //
+//   EasyLogging++ v8.11                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2748,7 +2748,7 @@ class VersionInfo {
     static inline const std::string version(void) { return std::string("v8.10"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("18-04-2013 1929hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("19-04-2013 1043hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2853,6 +2853,12 @@ class Loggers {
     static inline void disablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
         l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "false");
+        l->reconfigure();
+    }
+
+    static inline void enablePerformanceTracking(void) {
+        Logger* l = Loggers::performanceLogger();
+        l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "true");
         l->reconfigure();
     }
 
