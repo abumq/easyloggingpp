@@ -23,6 +23,7 @@ Change log was not kept before version 2.1.
  * 8.09: `millisecondsLength` function is now changed to `millisecondsWidth`
  * 8.10: Added a note of potentially changed file and links to download original version
  * 8.11: Added `enablePerformanceTracking` in `Loggers`
+ * 8.12: Fixed memory leak `getCurrentHost` and `getCurrentUser` in windows (thanks to Les Lewicki for reporting)
 
 #### 7.xx
  * 7.00:

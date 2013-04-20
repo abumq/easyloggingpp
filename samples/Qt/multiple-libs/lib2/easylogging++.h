@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.11                                                         //
+//   EasyLogging++ v8.12                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -573,10 +573,18 @@ class OSUtilities {
         errno_t err = _dupenv_s(&username, &len, "USERNAME");
 #endif // _ELPP_OS_UNIX
         if ((username == NULL) || (!strcmp(username, ""))) {
+#if _ELPP_OS_WINDOWS
+            free(username);
+#endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
             return OSUtilities::getBashOutput("whoami");
         } else {
-            return std::string(username);
+            std::string result = std::string(username);
+#if _ELPP_OS_WINDOWS
+            free(username);
+            username = NULL;
+#endif // _ELPP_OS_WINDOWS
+            return result;
         }
     }
 
@@ -587,9 +595,12 @@ class OSUtilities {
 #elif _ELPP_OS_WINDOWS
         char* hostname = NULL;
         size_t len;
-        errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAME");
+        errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAMEF");
 #endif // _ELPP_OS_UNIX
         if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
+#if _ELPP_OS_WINDOWS
+            free(hostname);
+#endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
             std::string hostnameStr = OSUtilities::getBashOutput("hostname");
             if (hostnameStr.empty()) {
@@ -598,7 +609,12 @@ class OSUtilities {
                 return hostnameStr;
             }
         } else {
-            return std::string(hostname);
+            std::string result = std::string(hostname);
+#if _ELPP_OS_WINDOWS
+            free(hostname);
+            hostname = NULL;
+#endif // _ELPP_OS_WINDOWS
+            return result;
         }
     }
 
@@ -2748,7 +2764,7 @@ class VersionInfo {
     static inline const std::string version(void) { return std::string("v8.10"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("19-04-2013 1043hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("20-04-2013 1246hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
