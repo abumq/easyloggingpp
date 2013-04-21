@@ -1492,7 +1492,7 @@ private:
                 break;
             case ConfigurationType::ELPP_RollOutSize:
                 if (conf->level() == Level::ELPP_ALL) {
-                    constants_->ROLL_OUT_SIZE = getInt(conf->value());
+                    constants_->ROLL_OUT_SIZE = getULong(conf->value());
                     checkRollOuts();
                 }
                 break;
@@ -2836,7 +2836,7 @@ class VersionInfo : private internal::NoInitialization {
     static inline const std::string version(void) { return std::string("v8.10"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("21-04-2013 1341hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("21-04-2013 1347hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

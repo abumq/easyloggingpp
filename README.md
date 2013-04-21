@@ -209,6 +209,8 @@ can define this in dev and QA environments though.
     easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
 ```
 
+*Note: Rollout size can hold values up to unsigned long*
+
 Version: 8.15+
 
 #### Logging Pattern
