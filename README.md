@@ -204,9 +204,9 @@ Besides `_ALWAYS_CLEAN_LOGS`, you can use configurations to roll out log files. 
 can define this in dev and QA environments though.
 
 ```C++
-    easyloggingpp::Configurations c; // Initialize clean configurations
-    c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_RollOutSize, "2048"); // Roll out log files every 2KB
-    easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
+easyloggingpp::Configurations c; // Initialize clean configurations
+c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_RollOutSize, "2048"); // Roll out log files every 2KB
+easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
 ```
 
 Version: 8.15+
