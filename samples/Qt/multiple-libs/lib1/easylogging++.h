@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.13                                                         //
+//   EasyLogging++ v8.15                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -145,8 +145,6 @@
 #define _ELPP_VERBOSE_LOG     (!defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
 #define _ELPP_QA_LOG          (defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
 #define _ELPP_TRACE_LOG       (!defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
-#define _ELPP_NO_COPY(className) private: className(const className&); className& operator=(const className&);
-#define _ELPP_NO_INITIALIZATION(className) private: className(void); _ELPP_NO_COPY(className)
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -201,8 +199,25 @@
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 namespace easyloggingpp {
 
-struct Level {
-    _ELPP_NO_INITIALIZATION(Level)
+namespace internal {
+
+class NoCopy {
+protected:
+    NoCopy(void) {}
+private:
+    NoCopy(const NoCopy&);
+    NoCopy& operator=(const NoCopy&);
+};
+
+class NoInitialization {
+private:
+    NoInitialization(void);
+    NoInitialization(const NoInitialization&);
+    NoInitialization& operator=(const NoInitialization&);
+};
+} // namespace internal
+
+struct Level : private internal::NoInitialization {
     public:
         enum {
         ELPP_ALL = 0, ELPP_DEBUG = 1, ELPP_INFO = 2, ELPP_WARNING = 4, ELPP_ERROR = 8,
@@ -210,26 +225,23 @@ struct Level {
     };
 };
 
-struct ConfigurationType {
-    _ELPP_NO_INITIALIZATION(ConfigurationType)
+struct ConfigurationType : private internal::NoInitialization {
     public:
         enum {
         ELPP_Enabled = 0, ELPP_ToFile = 1, ELPP_ToStandardOutput = 2, ELPP_Format = 4, ELPP_Filename = 8,
-                ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32
+                ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32, ELPP_RollOutSize = 64
     };
 };
 
 namespace internal {
-struct Aspect {
-    _ELPP_NO_INITIALIZATION(Aspect)
+struct Aspect : private internal::NoInitialization {
     public:
         enum {
         Normal = 0, Conditional = 1, Interval = 2
     };
 };
 
-class Constants {
-    _ELPP_NO_COPY(Constants)
+class Constants : private internal::NoCopy {
     public:
         explicit Constants (void) :
       //
@@ -273,7 +285,8 @@ class Constants {
     #elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
     #endif // _ELPP_OS_UNIX
-        DEFAULT_LOG_FILENAME          ("myeasylog.log")
+        DEFAULT_LOG_FILENAME          ("myeasylog.log"),
+        ROLL_OUT_SIZE                 (0)
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
         std::stringstream ss;
@@ -333,6 +346,7 @@ class Constants {
     const std::string     PATH_SLASH;
     const std::string     DEFAULT_LOG_FILENAME;
     std::string           DEFAULT_LOGGER_CONFIGURATION;
+    unsigned long         ROLL_OUT_SIZE;
 
     enum kFormatFlags { kDateOnly = 2,
                         kTimeOnly = 4,
@@ -457,8 +471,7 @@ private:
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
-class ScopedLock {
-    _ELPP_NO_COPY(ScopedLock)
+class ScopedLock : private internal::NoCopy {
     public:
         explicit ScopedLock(void) {
         mutex_.lock();
@@ -471,8 +484,7 @@ private:
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
-class StringUtilities {
-    _ELPP_NO_INITIALIZATION(StringUtilities)
+class StringUtilities : private internal::NoInitialization {
     public:
         static inline std::string trim(const std::string &str) {
         size_t s = str.find_first_not_of(" \n\r\t");
@@ -534,8 +546,7 @@ class StringUtilities {
     }
 };
 #define ELPP_StringUtils internal::utilities::StringUtilities
-class OSUtilities {
-    _ELPP_NO_INITIALIZATION(OSUtilities)
+class OSUtilities : private internal::NoInitialization {
     public:
         // Runs command on terminal and returns the output.
         // This is applicable only on linux and mac, for all other OS, an empty string is returned.
@@ -692,8 +703,7 @@ class OSUtilities {
 //
 // Contains static functions related to log manipulation
 //
-class LogManipulator {
-    _ELPP_NO_INITIALIZATION(LogManipulator)
+class LogManipulator : private internal::NoInitialization {
     public:
         // Updates the formatSpecifier_ for currentFormat_ to value_ provided
         static void updateFormatValue(const std::string& formatSpecifier_,
@@ -714,8 +724,7 @@ class LogManipulator {
 //
 // Contains utility functions related to date/time
 //
-class DateUtilities {
-    _ELPP_NO_INITIALIZATION(DateUtilities)
+class DateUtilities : private internal::NoInitialization {
     public:
     #if _ELPP_OS_WINDOWS
         static void gettimeofday(struct timeval *tv) {
@@ -1033,7 +1042,7 @@ private:
 
 class Configuration {
 public:
-    explicit Configuration(unsigned int level_, unsigned int type_, const std::string& value_) :
+    Configuration(unsigned int level_, unsigned int type_, const std::string& value_) :
         level_(level_),
         type_(type_),
         value_(value_) {
@@ -1056,7 +1065,7 @@ public:
 
     class Predicate {
     public:
-        explicit Predicate(unsigned int level_, unsigned int type_) :
+        Predicate(unsigned int level_, unsigned int type_) :
             level_(level_),
             type_(type_) {
         }
@@ -1080,10 +1089,9 @@ class Configurations : public internal::Registry<internal::Configuration, intern
 public:
     explicit Configurations(void) :
         isFromFile_(false) {
-        setToDefault();
     }
 
-    explicit Configurations(const std::string& configurationFile_, Configurations* base_ = NULL) :
+    Configurations(const std::string& configurationFile_, Configurations* base_ = NULL) :
         configurationFile_(configurationFile_),
         isFromFile_(false) {
         parseFromFile(configurationFile_, base_);
@@ -1097,7 +1105,8 @@ public:
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
-                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL)) {
+                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL) ||
+                (configurationType_ == ConfigurationType::ELPP_RollOutSize && level_ != Level::ELPP_ALL)) {
             // configurationType_ not applicable for this level_
             return;
         }
@@ -1182,8 +1191,7 @@ public:
         return configurationFile_;
     }
 
-    class Parser {
-        _ELPP_NO_INITIALIZATION(Parser)
+    class Parser : private internal::NoInitialization {
         public:
             static void ignoreComments(std::string& line) {
             size_t foundAt = 0;
@@ -1252,6 +1260,8 @@ public:
                 return ConfigurationType::ELPP_MillisecondsWidth;
             if (configStr == "performance_tracking")
                 return ConfigurationType::ELPP_PerformanceTracking;
+            if (configStr == "roll_out_size")
+                return ConfigurationType::ELPP_RollOutSize;
             return 1010;
         }
         static bool parseLine(std::string& line, unsigned int& currLevel, Configurations* conf) {
@@ -1323,7 +1333,7 @@ class Loggers;  // fwd declaration
 namespace internal {
 class TypedConfigurations {
 public:
-    explicit TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
+    TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
         constants_(constants_) {
         parse(configurations);
     }
@@ -1341,7 +1351,7 @@ private:
     std::map<unsigned int, std::string> dateFormatSpecifierMap_;
     std::map<unsigned int, int> millisecondsWidthMap_;
     std::map<unsigned int, bool> performanceTrackingMap_;
-    std::map<unsigned int, std::ofstream*> fileStreamMap_;
+    std::map<unsigned int, std::fstream*> fileStreamMap_;
     std::map<unsigned int, unsigned int> formatFlagMap_;
     internal::Constants* constants_;
     friend class Writer;
@@ -1413,8 +1423,8 @@ private:
         return performanceTrackingMap_[Level::ELPP_ALL];
     }
 
-    std::ofstream* fileStream(unsigned int level_) {
-        std::map<unsigned int, std::ofstream*>::iterator it = fileStreamMap_.find(level_);
+    std::fstream* fileStream(unsigned int level_) {
+        std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.find(level_);
         if (it == fileStreamMap_.end()) {
             return fileStreamMap_[Level::ELPP_ALL];
         }
@@ -1478,6 +1488,12 @@ private:
             case ConfigurationType::ELPP_PerformanceTracking:
                 if (conf->level() == Level::ELPP_ALL) {
                     setValue(conf->level(), getBool(conf->value()), performanceTrackingMap_);
+                }
+                break;
+            case ConfigurationType::ELPP_RollOutSize:
+                if (conf->level() == Level::ELPP_ALL) {
+                    constants_->ROLL_OUT_SIZE = getInt(conf->value());
+                    checkRollOuts();
                 }
                 break;
             }
@@ -1577,7 +1593,7 @@ private:
     }
 
     void deleteFileStreams(void) {
-        for (std::map<unsigned int, std::ofstream*>::iterator it = fileStreamMap_.begin();
+        for (std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.begin();
              it != fileStreamMap_.end(); ++it) {
             if (it->second) {
                 if (it->second->is_open()) {
@@ -1591,7 +1607,7 @@ private:
     }
 
     // This is different since we need unique values
-    void insertFilename(unsigned int level_, const std::string& fname_) {
+    void insertFilename(unsigned int level_, const std::string& fname_, bool forceNew = false) {
         std::string fnameFull = fname_;
         if (utilities::StringUtilities::endsWith(fnameFull, constants_->PATH_SLASH)) {
             fnameFull.append(constants_->DEFAULT_LOG_FILENAME);
@@ -1603,9 +1619,9 @@ private:
         }
         if (filenameMap_.size() == 0) {
             filenameMap_.insert(std::pair<unsigned int, std::string>(Level::ELPP_ALL, fnameFull));
-            std::ofstream *fsAll = newFileStream(fnameFull);
+            std::fstream *fsAll = newFileStream(fnameFull, forceNew);
             if (fsAll != NULL) {
-                fileStreamMap_.insert(std::pair<unsigned int, std::ofstream*>(Level::ELPP_ALL, fsAll));
+                fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(Level::ELPP_ALL, fsAll));
             }
             return;
         }
@@ -1617,15 +1633,15 @@ private:
         filenameMap_.insert(std::pair<unsigned int, std::string>(level_, fnameFull));
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
-        std::ofstream *fs = fileStreamMap_[level_];
+        std::fstream *fs = fileStreamMap_[level_];
         if (fs != NULL) {
             delete fs;
             fs = NULL;
         }
         fileStreamMap_.erase(level_);
-        fs = newFileStream(fnameFull);
+        fs = newFileStream(fnameFull, forceNew);
         if (fs != NULL) {
-            fileStreamMap_.insert(std::pair<unsigned int, std::ofstream*>(level_, fs));
+            fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(level_, fs));
         }
     }
 
@@ -1649,11 +1665,16 @@ private:
         }
     }
 
-    std::ofstream* newFileStream(const std::string& filename) {
+    std::fstream* newFileStream(const std::string& filename, bool forceNew = false) {
 #if defined(_ALWAYS_CLEAN_LOGS)
-        std::ofstream *fs = new std::ofstream(filename.c_str(), std::ofstream::out);
+        std::fstream *fs = new std::fstream(filename.c_str(), std::fstream::out);
 #else
-        std::ofstream *fs = new std::ofstream(filename.c_str(), std::ofstream::out | std::ofstream::app);
+        std::fstream *fs = NULL;
+        if (forceNew) {
+            fs = new std::fstream(filename.c_str(), std::fstream::out);
+        } else {
+            fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
+        }
 #endif // defined(_ALWAYS_CLEAN_LOGS)
         if (fs->is_open()) {
             fs->flush();
@@ -1661,11 +1682,12 @@ private:
             delete fs;
             fs = NULL;
             std::cerr << "Bad file [" << filename << "]" << std::endl;
+            return NULL;
         }
         return fs;
     }
 
-    int getInt(const std::string& confValue_) {
+    unsigned long getULong(const std::string& confValue_) {
         bool valid = true;
         std::string trimmedVal = utilities::StringUtilities::trim(confValue_);
         if (trimmedVal.size() == 0) {
@@ -1681,19 +1703,62 @@ private:
         }
         __EASYLOGGINGPP_SUPPRESS_UNSED(valid);
         __EASYLOGGINGPP_ASSERT(valid, "Configuration value not a valid integer " << trimmedVal);
-        return atoi(confValue_.c_str());
+        return atol(confValue_.c_str());
+    }
+
+    int getInt(const std::string& confValue_) {
+        return static_cast<int>(getULong(confValue_));
     }
 
     inline bool getBool(const std::string& confValue_) {
         std::string trimmedVal = utilities::StringUtilities::trim(confValue_);
         return (trimmedVal == "1" || trimmedVal == "true" || trimmedVal == "TRUE");
     }
+
+    unsigned long getSizeOfFile(std::fstream *fs) {
+        if (!fs) {
+            return 0;
+        }
+        fs->seekg (0, fs->end);
+        unsigned long size = static_cast<unsigned long>(fs->tellg());
+        fs->seekg (0, fs->beg);
+        return size;
+    }
+
+    void checkRollOuts(void) {
+        for (unsigned int i = 0; i < fileStreamMap_.size(); i <<= 1) {
+            std::fstream* fs = fileStreamMap_[i];
+            if (constants_->ROLL_OUT_SIZE != 0 && getSizeOfFile(fs)  >= constants_->ROLL_OUT_SIZE) {
+                std::string fname = filename(i);
+                std::cout << "Cleaning log file [" << fname << "]";
+                removeFile(i);
+                insertFilename(i, fname, true);
+            }
+            if (i == 0) {
+                ++i;
+            }
+        }
+    }
+
+    void removeFile(unsigned int level_) {
+        std::fstream* fs = fileStreamMap_[level_];
+        if (!fs) {
+            return;
+        }
+        if (fs->is_open()) {
+            fs->close();
+        }
+        delete fs;
+        fs = NULL;
+        fileStreamMap_.erase(level_);
+        filenameMap_.erase(level_);
+    }
 };
 class Writer;  // fwd declaration
 } // namespace internal
 class Logger {
 public:
-    explicit Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
+    Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
         id_(uniqueIdentifier_),
         constants_(constants_),
         typedConfigurations_(NULL),
@@ -1704,7 +1769,7 @@ public:
         defaultConfs.clear();
     }
 
-    explicit Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_, const Configurations& configurations) :
+    Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_, const Configurations& configurations) :
         id_(uniqueIdentifier_),
         constants_(constants_),
         typedConfigurations_(NULL),
@@ -1728,14 +1793,19 @@ public:
     }
 
     void configure(const Configurations& configurations_) {
+        // Configuring uses existing configuration as starting point
+        // and then sets configurations_ as base to prevent losing any
+        // previous configurations
+        Configurations base_ = this->userConfigurations_;
         if (this->userConfigurations_ != configurations_) {
             this->userConfigurations_ = configurations_;
+            base_.setFromBase(const_cast<Configurations*>(&configurations_));
         }
         if (typedConfigurations_) {
             delete typedConfigurations_;
             typedConfigurations_ = NULL;
         }
-        typedConfigurations_ = new internal::TypedConfigurations(configurations_, constants_);
+        typedConfigurations_ = new internal::TypedConfigurations(base_, constants_);
         configured_ = true;
     }
 
@@ -1788,8 +1858,7 @@ private:
     }
 };
 namespace internal {
-class LogCounter {
-    _ELPP_NO_COPY(LogCounter)
+class LogCounter : private internal::NoCopy {
     public:
         explicit LogCounter(Constants* constants_) :
       file_(""),
@@ -1798,9 +1867,9 @@ class LogCounter {
         constants_(constants_) {
     }
 
-    explicit LogCounter(const char* file_,
-                        unsigned long int line_,
-                        Constants* constants_) :
+    LogCounter(const char* file_,
+               unsigned long int line_,
+               Constants* constants_) :
         file_(file_),
         line_(line_),
         position_(1),
@@ -1843,7 +1912,7 @@ class LogCounter {
 
     class Predicate {
     public:
-        explicit Predicate(const char* file_, unsigned long int line_)
+        Predicate(const char* file_, unsigned long int line_)
             : file_(file_),
               line_(line_) {
         }
@@ -1888,6 +1957,7 @@ public:
         hostname_(utilities::OSUtilities::currentHost()),
         counters_(new internal::RegisteredCounters()) {
         Configurations conf;
+        conf.setToDefault();
         conf.parseFromText(constants_->DEFAULT_LOGGER_CONFIGURATION);
         registerNew(new Logger("trivial", constants_, conf));
         registerNew(new Logger("business", constants_));
@@ -2016,7 +2086,7 @@ private:
 template<typename T, typename Container = std::vector<T>, typename Comparator = std::less<typename Container::value_type> >
 class IterablePriorityQueue : public IterableContainer<T, Container>, public std::priority_queue<T, Container, Comparator> {
 public:
-    explicit IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
+    IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
         unsigned int count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !queue_.empty()) {
             this->push(queue_.top());
@@ -2035,7 +2105,7 @@ private:
 template<typename T, typename Container = std::deque<T> >
 class IterableQueue : public IterableContainer<T, Container>, public std::queue<T, Container> {
 public:
-    explicit IterableQueue(std::queue<T, Container> queue_) {
+    IterableQueue(std::queue<T, Container> queue_) {
         unsigned int count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !queue_.empty()) {
             this->push(queue_.front());
@@ -2054,7 +2124,7 @@ private:
 template<typename T, typename Container = std::deque<T> >
 class IterableStack : public IterableContainer<T, Container>, public std::stack<T, Container> {
 public:
-    explicit IterableStack(std::stack<T, Container> stack_) {
+    IterableStack(std::stack<T, Container> stack_) {
         unsigned int count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !stack_.empty()) {
             this->push(stack_.top());
@@ -2071,17 +2141,17 @@ private:
 
 #define _ELPP_STREAM(l) (*(l->stream()))
 
-class Writer {
+class Writer : private internal::NoCopy {
 public:
-    explicit Writer(const std::string& loggerId_,
-                    unsigned int aspect_,
-                    unsigned int severity_,
-                    const char* func_,
-                    const char* file_,
-                    const unsigned long int line_,
-                    bool condition_ = true,
-                    int verboseLevel_ = 0,
-                    int counter_ = 0) :
+    Writer(const std::string& loggerId_,
+            unsigned int aspect_,
+            unsigned int severity_,
+            const char* func_,
+            const char* file_,
+            const unsigned long int line_,
+            bool condition_ = true,
+            int verboseLevel_ = 0,
+            int counter_ = 0) :
         aspect_(aspect_),
         severity_(severity_),
         func_(func_),
@@ -2099,6 +2169,9 @@ public:
             logger_ = NULL; // unregister() should do this - but isnt
             proceed_ = false;
         }
+#if (defined(_ELPP_STRICT_ROLLOUT))
+        logger_->typedConfigurations_->checkRollOuts();
+#endif // (defined(_ELPP_STRICT_ROLLOUT))
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
@@ -2733,7 +2806,7 @@ private:
     void log(void) {
         if (logger_->stream_) {
             if (logger_->typedConfigurations_->toFile(severity_)) {
-                std::ofstream* fstr = logger_->typedConfigurations_->fileStream(severity_);
+                std::fstream* fstr = logger_->typedConfigurations_->fileStream(severity_);
                 (*fstr) << currLine_;
                 fstr->flush();
             }
@@ -2746,8 +2819,7 @@ private:
 };
 } // namespace internal
 
-class VersionInfo {
-    _ELPP_NO_INITIALIZATION(VersionInfo)
+class VersionInfo : private internal::NoInitialization {
     public:
         // Minimal formatted displayable information
         static inline const std::string formattedInfo(void) {
@@ -2764,7 +2836,7 @@ class VersionInfo {
     static inline const std::string version(void) { return std::string("v8.10"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("21-04-2013 1139hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("21-04-2013 1341hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2803,20 +2875,19 @@ class VersionInfo {
     }
 }; // class VersionInfo
 
-class Loggers {
-    _ELPP_NO_INITIALIZATION(Loggers)
+class Loggers : private internal::NoInitialization {
     public:
         static inline Logger* getLogger(const std::string& identifier_) {
         return internal::registeredLoggers->get(identifier_);
     }
 
-    static inline Logger* reConfigureLogger(const std::string& identifier_, const Configurations& configurations_) {
+    static inline Logger* reconfigureLogger(const std::string& identifier_, const Configurations& configurations_) {
         Logger* logger_ = Loggers::getLogger(identifier_);
         logger_->configure(configurations_);
         return logger_;
     }
 
-    static inline Logger* reConfigureLogger(Logger* logger_, const Configurations& configurations_) {
+    static inline Logger* reconfigureLogger(Logger* logger_, const Configurations& configurations_) {
         if (!logger_) return NULL;
         logger_->configure(configurations_);
         return logger_;
@@ -2830,14 +2901,14 @@ class Loggers {
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
-    static inline void resetAllLoggersConfigurations(const Configurations& configurations_) {
+    static inline void reconfigureAllLoggers(const Configurations& configurations_) {
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
-            reConfigureLogger(l, configurations_);
+            reconfigureLogger(l, configurations_);
         }
     }
 
-    static inline void resetAllLoggersConfigurations(unsigned int configurationType_, const std::string& value_) {
+    static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             l->configurations().setAll(configurationType_, value_);
@@ -2846,15 +2917,15 @@ class Loggers {
     }
 
     static inline void disableAll(void) {
-        resetAllLoggersConfigurations(ConfigurationType::ELPP_Enabled, "false");
+        reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "false");
     }
 
     static inline void enableAll(void) {
-        resetAllLoggersConfigurations(ConfigurationType::ELPP_Enabled, "true");
+        reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "true");
     }
 
     static inline void setFilename(const std::string& logFilename_) {
-        resetAllLoggersConfigurations(ConfigurationType::ELPP_Filename, logFilename_);
+        reconfigureAllLoggers(ConfigurationType::ELPP_Filename, logFilename_);
     }
 
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
@@ -2901,8 +2972,7 @@ class Loggers {
         return Loggers::getLogger("performance");
     }
 
-    class ConfigurationsReader {
-        _ELPP_NO_INITIALIZATION(ConfigurationsReader)
+    class ConfigurationsReader : private internal::NoInitialization {
         public:
             static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->enabled(level_);
@@ -2930,6 +3000,10 @@ class Loggers {
 
         static inline bool performanceTracking(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->performanceTracking(level_);
+        }
+
+        static inline int logRollOutSize(void) {
+            return internal::registeredLoggers->constants_->ROLL_OUT_SIZE;
         }
 
     private:

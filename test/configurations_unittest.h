@@ -9,8 +9,7 @@ using namespace easyloggingpp::internal;
 
 TEST(ConfigurationTest, Parsing) {
     Configurations confFile("test_conf.conf");
-
-    Logger* testLogger = Loggers::reConfigureLogger("testLogger", confFile);
+    Logger* testLogger = Loggers::reconfigureLogger("testLogger", confFile);
 
     EXPECT_EQ("%level %user %host %log\n", Loggers::ConfigurationsReader::logFormat(testLogger, Level::ELPP_ALL));
     EXPECT_EQ("logs/testLog.log", Loggers::ConfigurationsReader::filename(testLogger, Level::ELPP_ALL));
@@ -20,6 +19,8 @@ TEST(ConfigurationTest, Parsing) {
     EXPECT_EQ(1, Loggers::ConfigurationsReader::millisecondsWidth(testLogger, Level::ELPP_ALL)); // For milliseconds 1 = 6, 10 = 5 and so on ...
     EXPECT_FALSE(Loggers::ConfigurationsReader::performanceTracking(testLogger, Level::ELPP_ALL));
     EXPECT_EQ("%datetime INFO %logger %log\n", Loggers::ConfigurationsReader::logFormat(testLogger, Level::ELPP_INFO));
+
+    confFile.clear();
     
 }
 

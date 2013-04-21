@@ -25,6 +25,13 @@ Change log was not kept before version 2.1.
  * 8.11: Added `enablePerformanceTracking` in `Loggers`
  * 8.12: Fixed memory leak `getCurrentHost` and `getCurrentUser` in windows (thanks to Les Lewicki for reporting)
  * 8.13: Fixed computer name env var on windows
+ * 8.15:
+     - Introduced `ELPP_RollOutSize` configuration to roll out logs after certain size
+     - Introduced `_ELPP_STRICT_ROLLOUT` macro to check for rollable files with each log. (Usage is only recommended in dev and QA)
+     - Replaced macro NO-INIT and NO-COPY with class based
+     - Refactored `reConfigureLogger` to `reconfigureLogger` and `resetAllLoggersConfigurations` to `reconfigureAllLoggers`
+     - Introduced `Loggers::ConfigurationsReader::logRollOutSize()`
+     - `Configurations` constructor does not set default value internally to prevent loss of configurations. Developers are asked to use `setToDefault()` to do so.
 
 #### 7.xx
  * 7.00:

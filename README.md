@@ -19,8 +19,9 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#log-to-file">Log To File</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#log-to-standard-output">Log To Standard Output</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#log-filename">Log Filename</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#milliseconds-length">Milliseconds Length</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#milliseconds-width">Milliseconds Width</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking">Performance Tracking</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rolling-log-files">Rolling Log Files</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-pattern">Logging Pattern</a>
 <a href="#logging">Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#writing-logs">Writing Logs</a>
@@ -116,9 +117,10 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char** argv) {
     easyloggingpp::Configurations confFromFile("myconfiguration_file");  // Load configuration from file
-    easyloggingpp::Loggers::resetAllLoggersConfigurations(confFromFile); // Re-configures all the loggers to current configuration file
-    easyloggingpp::Configurations defaultConf; // Load default configurations
-    easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureAllLoggers(confFromFile); // Re-configures all the loggers to current configuration file
+    easyloggingpp::Configurations defaultConf;
+    defaultConf.setToDefault();
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     LINFO << "Log using conf from file";  // Log message:  INFO: Log using conf from file
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
 
@@ -131,6 +133,7 @@ Inline configuration means you can set configurations in `std::string`
 
 ```C++
     easyloggingpp::Configurations c;
+    c.setToDefault();
     c.parseFromText("*ALL:\nFORMAT = %level");
 ```
 And reconfigure your logger. Remember, configurations are parsed line-by-line so please make sure you add `\n` at the end of each line.
@@ -146,6 +149,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char** argv) {
     easyloggingpp::Configurations defaultConf;
+    defaultConf.setToDefault();
     defaultConf.set(easyloggingpp::Level::ELPP_INFO, easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log"); // Values are always std::string
     easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
@@ -186,13 +190,26 @@ Determines whether or not logs need to be written to standard output (terminal, 
 
 Determines where to write logs (if ToFile enabled). Configuration type: `ELPP_Filename`
 
-###### Milliseconds Length
+###### Milliseconds Width
 
 Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only applicable for unix based. Configuration type: `ELPP_MillisecondsWidth`
 
 ###### Performance tracking
 
 Determines whether or not performance tracking is enabled. This effects performanceLogger. Configuration type: `ELPP_PerformanceTracking`
+
+###### Rolling Log Files
+
+Besides `_ALWAYS_CLEAN_LOGS`, you can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish logs to roll out. Since this is part of configurations, it needs log reconfiguration. This happens with everytime you start your application. But if you wish for EasyLogging++ to roll out as application is running, you can do so by defining `_ELPP_STRICT_ROLLOUT`. This checks for rollout with every log you write. Remember, defining this macro is not recommended if you are concerned with performance. You 
+can define this in dev and QA environments though.
+
+```C++
+    easyloggingpp::Configurations c; // Initialize clean configurations
+    c.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_RollOutSize, "2048"); // Roll out log files every 2KB
+    easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
+```
+
+Version: 8.15+
 
 #### Logging Pattern
 
