@@ -211,9 +211,7 @@ easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
 
 Note: Rollout size can hold values up to `unsigned long`
 
-Since 8.15+
-
-Stable 8.19+
+Version 8.19+
 
 #### Logging Pattern
 
