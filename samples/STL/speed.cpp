@@ -18,6 +18,7 @@ SUB(write, (void))
   LINFO << "Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default";
   for (int i = 1; i <= 10; i++) {
     LDEBUG << "Some more logs [" << i << "]";
+    LINFO_EVERY_N(2) << "Every second iter [" << i << "]";
   }
   LDEBUG << "This is end of logging!";
 

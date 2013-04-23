@@ -2838,10 +2838,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("v8.10"); }
+    static inline const std::string version(void) { return std::string("v8.19"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-04-2013 1229hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("23-04-2013 1957hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
