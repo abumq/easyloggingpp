@@ -2,7 +2,7 @@
     include_once "../../format.php";
     require_once "syntax_highlighter/cppToHtmlSyntaxHighlighter.php";
     global $webAddr;
-    $currentVersion = "v8.10";
+    $currentVersion = "v8.19";
     $releaseDate = "23-04-2013 1957hrs";
 ?>
 
