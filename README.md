@@ -683,6 +683,10 @@ Apart from already mentioned macros there are few that have not been mentioned y
         <td>_DISABLE_MUTEX</td>
         <td>Not recommended but you may disable mutual exclusion for single threaded applications by defining this.</td>
     </tr>
+    <tr>
+        <td>_ELPP_INTERNAL_INFO</td>
+        <td>Display internal information for EasyLogging++. Information like `cleaning log file` etc</td>
+    </tr>
 </table>
 
 ### Compatibility

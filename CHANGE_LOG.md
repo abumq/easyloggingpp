@@ -34,6 +34,7 @@ Change log was not kept before version 2.1.
      - `Configurations` constructor does not set default value internally to prevent loss of configurations. Developers are asked to use `setToDefault()` to do so.
  * 8.16: Fixed return type for log rollout
  * 8.17: Fixes issue with performance tracking from 8.16
+ * 8.18: Introduced `_ELPP_INTERNAL_INFO` to display internal information - see READ ME for details
 
 #### 7.xx
  * 7.00:
