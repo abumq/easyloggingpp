@@ -209,11 +209,11 @@ c.setAll(easyloggingpp::ConfigurationType::ELPP_RollOutSize, "2048"); // Roll ou
 easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
 ```
 
-*Note 1: Rollout size can hold values up to `unsigned long`*
+Note: Rollout size can hold values up to `unsigned long`
 
-***Note 2: This feature is currently in beta-mode so use it at your own risk***
+Since 8.15+
 
-Version: 8.15+
+Stable 8.19+
 
 #### Logging Pattern
 

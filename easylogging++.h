@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.18                                                         //
+//   EasyLogging++ v8.19                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1668,6 +1668,7 @@ private:
     std::fstream* newFileStream(const std::string& filename, bool forceNew = false) {
 #if defined(_ALWAYS_CLEAN_LOGS)
         std::fstream *fs = new std::fstream(filename.c_str(), std::fstream::out);
+        __EASYLOGGINGPP_SUPPRESS_UNSED(forceNew);
 #else
         std::fstream *fs = NULL;
         if (forceNew) {
@@ -1719,9 +1720,10 @@ private:
         if (!fs) {
             return 0;
         }
+        std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
         unsigned long size = static_cast<unsigned long>(fs->tellg());
-        fs->seekg (0, fs->beg);
+        fs->seekg (currPos);
         return size;
     }
 
@@ -2839,7 +2841,7 @@ class VersionInfo : private internal::NoInitialization {
     static inline const std::string version(void) { return std::string("v8.10"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-04-2013 1020hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("23-04-2013 1229hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
