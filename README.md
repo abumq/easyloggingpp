@@ -105,6 +105,7 @@ Always start your configuration file by starting with `ALL` level. This sets con
     TO_STANDARD_OUTPUT		=	false
     MILLISECONDS_WIDTH		=	3
     PERFORMANCE_TRACKING	=	false
+    ROLL_OUT_SIZE          =  2097152 // Throw log files away after 2MB
 
 // Following configuration only defines FORMAT for INFO, rest of the configurations are used from ALL configurations above
 * INFO:
