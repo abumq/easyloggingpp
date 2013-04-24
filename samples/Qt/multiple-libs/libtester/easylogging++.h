@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.19                                                         //
+//   EasyLogging++ v8.20                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1178,9 +1178,11 @@ public:
         if (!skipELPP_ALL) {
             set(Level::ELPP_ALL, configurationType_, value_);
         }
-        for (unsigned int i = 1; i <= 128; i <<= 1) {
+        unsigned int i = 1;
+        do {
             set(i, configurationType_, value_);
-        }
+            i = i << 1;
+        } while (i <= 128);
     }
 
     inline void clear(void) {
@@ -1492,8 +1494,21 @@ private:
                 break;
             case ConfigurationType::ELPP_RollOutSize:
                 if (conf->level() == Level::ELPP_ALL) {
+                    std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.end();
                     constants_->ROLL_OUT_SIZE = getULong(conf->value());
-                    checkRollOuts();
+                    unsigned int i = 0;
+                    do {
+                        if (fileStreamMap_[i] == NULL) {
+                            // Do not add any invalid stream
+                            fileStreamMap_.erase(i);
+                        } else {
+                            checkRollOuts(i);
+                        }
+                        i = i << 1;
+                        if (i == 0) {
+                            ++i;
+                        }
+                    } while (i <= it->first);
                 }
                 break;
             }
@@ -1727,20 +1742,15 @@ private:
         return size;
     }
 
-    void checkRollOuts(void) {
-        for (unsigned int i = 0; i < fileStreamMap_.size(); i <<= 1) {
-            std::fstream* fs = fileStreamMap_[i];
-            if (constants_->ROLL_OUT_SIZE != 0 && getSizeOfFile(fs)  >= constants_->ROLL_OUT_SIZE) {
-                std::string fname = filename(i);
+    void checkRollOuts(unsigned int level_) {
+        std::fstream* fs = fileStreamMap_[level_];
+        if (constants_->ROLL_OUT_SIZE != 0 && getSizeOfFile(fs)  >= constants_->ROLL_OUT_SIZE) {
+            std::string fname = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
-                std::cout << "Cleaning log file [" << fname << "]";
+            std::cout << "Cleaning log file [" << fname << "]\n";
 #endif // defined(_ELPP_INTERNAL_INFO)
-                removeFile(i);
-                insertFilename(i, fname, true);
-            }
-            if (i == 0) {
-                ++i;
-            }
+            removeFile(level_);
+            insertFilename(level_, fname, true);
         }
     }
 
@@ -2174,9 +2184,6 @@ public:
             logger_ = NULL; // unregister() should do this - but isnt
             proceed_ = false;
         }
-#if (defined(_ELPP_STRICT_ROLLOUT))
-        logger_->typedConfigurations_->checkRollOuts();
-#endif // (defined(_ELPP_STRICT_ROLLOUT))
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
@@ -2214,6 +2221,11 @@ public:
 #endif
                 }
             }
+        }
+        if (proceed_) {
+#if (defined(_ELPP_STRICT_ROLLOUT))
+            logger_->typedConfigurations_->checkRollOuts(severity_);
+#endif // (defined(_ELPP_STRICT_ROLLOUT))
         }
         if (proceed_ && (severity_ == Level::ELPP_VERBOSE)) {
             proceed_ = (verboseLevel_ <= constants_->CURRENT_VERBOSE_LEVEL);
@@ -2838,10 +2850,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("v8.19"); }
+    static inline const std::string version(void) { return std::string("v8.20"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-04-2013 1957hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-04-2013 1811hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

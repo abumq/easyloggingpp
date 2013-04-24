@@ -36,6 +36,9 @@ Change log was not kept before version 2.1.
  * 8.17: Fixes issue with performance tracking from 8.16
  * 8.18: Introduced `_ELPP_INTERNAL_INFO` to display internal information - see READ ME for details
  * 8.19: Fixes issue with rolling out log file
+ * 8.20:
+     - Fixes issue with rolling logs in other levels (Thanks to Les for reporting)
+     - Performance improvement when log disabled and strict rolling (Thanks to Les)
 
 #### 7.xx
  * 7.00:
