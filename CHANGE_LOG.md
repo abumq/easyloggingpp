@@ -39,6 +39,7 @@ Change log was not kept before version 2.1.
  * 8.20:
      - Fixes issue with rolling logs in other levels (Thanks to Les for reporting)
      - Performance improvement when log disabled and strict rolling (Thanks to Les)
+ * 8.21: Fixes issue with rollout if level doesnt use dedicated filename
 
 #### 7.xx
  * 7.00:

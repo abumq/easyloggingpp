@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.20                                                         //
+//   EasyLogging++ v8.21                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1743,7 +1743,7 @@ private:
     }
 
     void checkRollOuts(unsigned int level_) {
-        std::fstream* fs = fileStreamMap_[level_];
+        std::fstream* fs = fileStream(level_);
         if (constants_->ROLL_OUT_SIZE != 0 && getSizeOfFile(fs)  >= constants_->ROLL_OUT_SIZE) {
             std::string fname = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
@@ -2850,10 +2850,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("v8.20"); }
+    static inline const std::string version(void) { return std::string("v8.21"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-04-2013 1811hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-04-2013 1936hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
