@@ -97,7 +97,7 @@ Configuration can be imported using configuration files that have following form
 Always start your configuration file by starting with `ALL` level. This sets configurations for all other levels and if you do not set any other level after wards, configurations from all is used. On the other hand if you set `ALL` at the end, all the configurations are overridden for other levels. This is because EasyLogging++ parses configuration file line by line.
 
 ```C++
-* ALL: // We need to start level with star "*" and end with colon ":"
+* ALL: // We need to start level with star '*' and end with colon ':'
     FORMAT					=	"%level: %log"  // Quotes are not necessary but to make it more readable we wrap quotes around.
     FILENAME				= 	"logs/testLog.log"
     ENABLED					=	true
@@ -111,6 +111,9 @@ Always start your configuration file by starting with `ALL` level. This sets con
 * INFO:
      FORMAT			=	"%datetime %level %log"
 ```
+
+*RESTRICTION: You cannot have double-quotes anywhere in the comment!*
+
 ```C++
 #include "easylogging++.h"
 
@@ -121,7 +124,7 @@ int main(int argc, const char** argv) {
     easyloggingpp::Loggers::reconfigureAllLoggers(confFromFile); // Re-configures all the loggers to current configuration file
     easyloggingpp::Configurations defaultConf;
     defaultConf.setToDefault();
-    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Only business logger uses default configurations
     LINFO << "Log using conf from file";  // Log message:  INFO: Log using conf from file
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
 
