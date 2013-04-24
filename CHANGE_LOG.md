@@ -41,6 +41,7 @@ Change log was not kept before version 2.1.
      - Performance improvement when log disabled and strict rolling (Thanks to Les)
  * 8.21: Fixes issue with rollout if level doesnt use dedicated filename
  * 8.22: Added Qt version check
+ * 8.25: Stablized roll outs
 
 #### 7.xx
  * 7.00:

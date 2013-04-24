@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.22                                                         //
+//   EasyLogging++ v8.25                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -73,15 +73,13 @@
 #      define _CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
-#if defined(QT_CORE_LIB) && defined(QT_VERSION)
+#if defined(QT_CORE_LIB)
 #   if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #      define _ELPP_QT_5 1
 #   else
 #      define _ELPP_QT_5 0
 #   endif // (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#else
-#   define _ELPP_QT_5 0
-#endif // defined(QT_CORE_LIB) && defined(QT_VERSION)
+#endif // defined(QT_CORE_LIB)
 //
 // High-level log evaluation
 //
@@ -1705,6 +1703,20 @@ private:
         return fs;
     }
 
+    void removeFile(unsigned int level_) {
+        std::fstream* fs = fileStream(level_);
+        if (!fs) {
+            return;
+        }
+        if (fs->is_open()) {
+            fs->close();
+        }
+        delete fs;
+        fs = NULL;
+        fileStreamMap_.erase(level_);
+        filenameMap_.erase(level_);
+    }
+
     unsigned long getULong(const std::string& confValue_) {
         bool valid = true;
         std::string trimmedVal = utilities::StringUtilities::trim(confValue_);
@@ -1751,23 +1763,23 @@ private:
 #if defined(_ELPP_INTERNAL_INFO)
             std::cout << "Cleaning log file [" << fname << "]\n";
 #endif // defined(_ELPP_INTERNAL_INFO)
-            removeFile(level_);
-            insertFilename(level_, fname, true);
+            // Find and reset correct level. By correct level we mean the current
+            // available level in fileStream because this level_ could actually be using
+            // configurations from ELPP_ALL and you do not want to create a brand new
+            // stream just because we are rolling log away
+            unsigned int correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
+            removeFile(correctLevel_);
+            insertFilename(correctLevel_, fname, true);
         }
     }
 
-    void removeFile(unsigned int level_) {
-        std::fstream* fs = fileStreamMap_[level_];
-        if (!fs) {
-            return;
+    template <typename T>
+    unsigned int findAvailableLevel(std::map<unsigned int, T>& map_, unsigned int refLevel_) {
+        typename std::map<unsigned int, T>::iterator it = map_.find(refLevel_);
+        if (it == map_.end()) {
+            return Level::ELPP_ALL;
         }
-        if (fs->is_open()) {
-            fs->close();
-        }
-        delete fs;
-        fs = NULL;
-        fileStreamMap_.erase(level_);
-        filenameMap_.erase(level_);
+        return refLevel_;
     }
 };
 class Writer;  // fwd declaration
@@ -2852,10 +2864,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("v8.22"); }
+    static inline const std::string version(void) { return std::string("v8.25"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-04-2013 1958hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-04-2013 2105hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3384,7 +3396,7 @@ class Loggers : private internal::NoInitialization {
     namespace internal {                                  \
     SmartPointer<RegisteredLoggers> registeredLoggers(    \
     new RegisteredLoggers());                             \
-}                                                     \
+}                                                         \
 }
 #endif // !defined(_INITIALIZE_EASYLOGGINGPP)
 #define _START_EASYLOGGINGPP(argc, argv) easyloggingpp::Loggers::setApplicationArguments(argc, argv);
