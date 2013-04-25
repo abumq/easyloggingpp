@@ -164,11 +164,11 @@ int main(int argc, const char** argv) {
     easyloggingpp::Configurations defaultConf;
     defaultConf.setToDefault();
     defaultConf.set(easyloggingpp::Level::ELPP_INFO, easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log"); // Values are always std::string
-    easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
     // To set ALL configuraions you may use
     defaultConf.setAll(easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log");
-    easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     return 0;
 }
 ```
@@ -288,6 +288,9 @@ You can customize format of logging. Following format specifiers are currently s
 </table>
 
 <pre><a href="#easylogging">Goto Top</a></pre>
+#### Reading Configuration
+In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationReader` class that contains static members that take logger pointer and level you wish to check configuration for.
+
 ### Logging
 
 EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
