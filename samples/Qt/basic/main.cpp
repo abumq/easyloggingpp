@@ -17,6 +17,7 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv);
 
+    // Do not use default configuration, use from file instead
     easyloggingpp::Configurations c("../basic/test_conf.conf");
     easyloggingpp::Loggers::reconfigureAllLoggers(c);
 
