@@ -23,11 +23,12 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking">Performance Tracking</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rolling-log-files">Rolling Log Files</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-pattern">Logging Pattern</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reading-configurations">Reading Configurations</a>
 <a href="#logging">Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#writing-logs">Writing Logs</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#helper-functions">Helper Functions</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#registering-and-getting-existing-logger">Registering and getting existing logger</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#checking-loggers-configuration">Checking logger's configuration</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reading-configurations-1">Reading Configurations</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#setting-application-arguments">Setting application arguments</a>
 <a href="#features">Features</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#conditional-logging">Conditional Logging</a>
@@ -288,7 +289,7 @@ You can customize format of logging. Following format specifiers are currently s
 </table>
 
 <pre><a href="#easylogging">Goto Top</a></pre>
-#### Reading Configuration
+#### Reading Configurations
 In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationsReader` class that contains static members that take logger pointer and level you wish to check configuration for.
 
 ### Logging
