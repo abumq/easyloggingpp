@@ -46,6 +46,7 @@ Change log was not kept before version 2.1.
      - ROLL OUT SIZE for each level (see issue #51)
      - Sets default roll out
  * 8.27: Fix formatting
+ * 8.28: Fixes issue with format flags having same value
 
 #### 7.xx
  * 7.00:

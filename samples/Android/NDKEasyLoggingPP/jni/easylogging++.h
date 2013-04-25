@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.27                                                         //
+//   EasyLogging++ v8.28                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1269,9 +1269,9 @@ public:
             unsigned int currConfig = 0;
             std::string currConfigStr = std::string();
             std::string currValue = std::string();
+            line = ELPP_StringUtils::trim(line);
             if (isComment(line)) return true;
             ignoreComments(line);
-            line = ELPP_StringUtils::trim(line);
             if (line == "") {
                 // Comment ignored
                 return true;
@@ -1660,7 +1660,8 @@ private:
         }
         typedef typename std::map<unsigned int, T>::iterator Iterator;
         for (Iterator it = map_.begin(); it != map_.end(); ++it) {
-            if (it->second == value_) {
+            // Ignore conf if we already have same value for ELPP_ALL
+            if (it->first == Level::ELPP_ALL && it->second == value_) {
                 return;
             }
         }
@@ -2856,10 +2857,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.27"); }
+    static inline const std::string version(void) { return std::string("8.28"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1604hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1714hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
