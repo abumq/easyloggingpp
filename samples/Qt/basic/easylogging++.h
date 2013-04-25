@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.26                                                         //
+//   EasyLogging++ v8.27                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -73,15 +73,13 @@
 #      define _CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
-#if defined(QT_CORE_LIB) && defined(QT_VERSION)
-#   if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#if defined(QT_CORE_LIB)
+#   if (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #      define _ELPP_QT_5 1
 #   else
 #      define _ELPP_QT_5 0
-#   endif // (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#else
-#   define _ELPP_QT_5 0
-#endif // defined(QT_CORE_LIB) && defined(QT_VERSION)
+#   endif // (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#endif // defined(QT_CORE_LIB)
 //
 // High-level log evaluation
 //
@@ -282,11 +280,11 @@ class Constants : private internal::NoCopy {
         DEFAULT_MILLISECOND_OFFSET    (1000),
         MAX_VERBOSE_LEVEL             (9),
         CURRENT_VERBOSE_LEVEL         (0),  // Set dynamically from registeredLoggers
-    #if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX
         PATH_SLASH                    ("/"),
-    #elif _ELPP_OS_WINDOWS
+#elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
-    #endif // _ELPP_OS_UNIX
+#endif // _ELPP_OS_UNIX
         DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
@@ -726,7 +724,7 @@ class LogManipulator : private internal::NoInitialization {
 //
 class DateUtilities : private internal::NoInitialization {
     public:
-    #if _ELPP_OS_WINDOWS
+#if _ELPP_OS_WINDOWS
         static void gettimeofday(struct timeval *tv) {
         if (tv != NULL) {
 #   if defined(_MSC_EXTENSIONS)
@@ -1194,8 +1192,8 @@ public:
     }
 
     class Parser : private internal::NoInitialization {
-        public:
-            static void ignoreComments(std::string& line) {
+    public:
+        static void ignoreComments(std::string& line) {
             size_t foundAt = 0;
             size_t quotesStart = line.find("\"");
             size_t quotesEnd = std::string::npos;
@@ -1881,9 +1879,9 @@ private:
 };
 namespace internal {
 class LogCounter : private internal::NoCopy {
-    public:
-        explicit LogCounter(Constants* constants_) :
-      file_(""),
+public:
+    explicit LogCounter(Constants* constants_) :
+        file_(""),
         line_(0),
         position_(1),
         constants_(constants_) {
@@ -2167,14 +2165,14 @@ private:
 class Writer : private internal::NoCopy {
 public:
     Writer(const std::string& loggerId_,
-            unsigned int aspect_,
-            unsigned int severity_,
-            const char* func_,
-            const char* file_,
-            const unsigned long int line_,
-            bool condition_ = true,
-            int verboseLevel_ = 0,
-            int counter_ = 0) :
+           unsigned int aspect_,
+           unsigned int severity_,
+           const char* func_,
+           const char* file_,
+           const unsigned long int line_,
+           bool condition_ = true,
+           int verboseLevel_ = 0,
+           int counter_ = 0) :
         aspect_(aspect_),
         severity_(severity_),
         func_(func_),
@@ -2845,9 +2843,9 @@ private:
 } // namespace internal
 
 class VersionInfo : private internal::NoInitialization {
-    public:
-        // Minimal formatted displayable information
-        static inline const std::string formattedInfo(void) {
+public:
+    // Minimal formatted displayable information
+    static inline const std::string formattedInfo(void) {
         std::stringstream ss;
         ss << "EasyLogging++ v" << version() << " (" << releaseDate() << ")";
         ss << std::endl;
@@ -2858,10 +2856,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.26"); }
+    static inline const std::string version(void) { return std::string("8.27"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1104hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1604hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2901,8 +2899,8 @@ class VersionInfo : private internal::NoInitialization {
 }; // class VersionInfo
 
 class Loggers : private internal::NoInitialization {
-    public:
-        static inline Logger* getLogger(const std::string& identifier_) {
+public:
+    static inline Logger* getLogger(const std::string& identifier_) {
         return internal::registeredLoggers->get(identifier_);
     }
 
@@ -2998,8 +2996,8 @@ class Loggers : private internal::NoInitialization {
     }
 
     class ConfigurationsReader : private internal::NoInitialization {
-        public:
-            static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+    public:
+        static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->enabled(level_);
         }
 
