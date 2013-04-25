@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.25                                                         //
+//   EasyLogging++ v8.26                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -287,8 +287,7 @@ class Constants : private internal::NoCopy {
     #elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
     #endif // _ELPP_OS_UNIX
-        DEFAULT_LOG_FILENAME          ("myeasylog.log"),
-        ROLL_OUT_SIZE                 (0)
+        DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
         std::stringstream ss;
@@ -348,7 +347,6 @@ class Constants : private internal::NoCopy {
     const std::string     PATH_SLASH;
     const std::string     DEFAULT_LOG_FILENAME;
     std::string           DEFAULT_LOGGER_CONFIGURATION;
-    unsigned long         ROLL_OUT_SIZE;
 
     enum kFormatFlags { kDateOnly = 2,
                         kTimeOnly = 4,
@@ -1107,8 +1105,7 @@ public:
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
-                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL) ||
-                (configurationType_ == ConfigurationType::ELPP_RollOutSize && level_ != Level::ELPP_ALL)) {
+                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL)) {
             // configurationType_ not applicable for this level_
             return;
         }
@@ -1166,6 +1163,7 @@ public:
         setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
         setAll(ConfigurationType::ELPP_MillisecondsWidth, "3");
         setAll(ConfigurationType::ELPP_PerformanceTracking, "false");
+        setAll(easyloggingpp::ConfigurationType::ELPP_RollOutSize, "0");
         setAll(ConfigurationType::ELPP_Format, "%datetime %level  [%logger] %log");
         set(Level::ELPP_DEBUG, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
         // INFO and WARNING are set to default by Level::ALL
@@ -1357,6 +1355,7 @@ private:
     std::map<unsigned int, bool> performanceTrackingMap_;
     std::map<unsigned int, std::fstream*> fileStreamMap_;
     std::map<unsigned int, unsigned int> formatFlagMap_;
+    std::map<unsigned int, unsigned long> rollOutSizeMap_;
     internal::Constants* constants_;
     friend class Writer;
     friend class easyloggingpp::Loggers;
@@ -1435,6 +1434,14 @@ private:
         return it->second;
     }
 
+    unsigned long& rollOutSize(unsigned int level_) {
+        std::map<unsigned int, unsigned long>::iterator it = rollOutSizeMap_.find(level_);
+        if (it == rollOutSizeMap_.end()) {
+            return rollOutSizeMap_[Level::ELPP_ALL];
+        }
+        return it->second;
+    }
+
     int formatFlag(unsigned int level_) {
         std::map<unsigned int, unsigned int>::iterator it = formatFlagMap_.find(level_);
         if (it == formatFlagMap_.end()) {
@@ -1495,23 +1502,8 @@ private:
                 }
                 break;
             case ConfigurationType::ELPP_RollOutSize:
-                if (conf->level() == Level::ELPP_ALL) {
-                    std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.end();
-                    constants_->ROLL_OUT_SIZE = getULong(conf->value());
-                    unsigned int i = 0;
-                    do {
-                        if (fileStreamMap_[i] == NULL) {
-                            // Do not add any invalid stream
-                            fileStreamMap_.erase(i);
-                        } else {
-                            checkRollOuts(i);
-                        }
-                        i = i << 1;
-                        if (i == 0) {
-                            ++i;
-                        }
-                    } while (i <= it->first);
-                }
+                setValue(conf->level(), getULong(conf->value()), rollOutSizeMap_);
+                checkRollOuts(conf->level());
                 break;
             }
         }
@@ -1760,7 +1752,7 @@ private:
 
     void checkRollOuts(unsigned int level_) {
         std::fstream* fs = fileStream(level_);
-        if (constants_->ROLL_OUT_SIZE != 0 && getSizeOfFile(fs)  >= constants_->ROLL_OUT_SIZE) {
+        if (rollOutSize(level_) != 0 && getSizeOfFile(fs)  >= rollOutSize(level_)) {
             std::string fname = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
             std::cout << "Cleaning log file [" << fname << "]\n";
@@ -2866,10 +2858,10 @@ class VersionInfo : private internal::NoInitialization {
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("v8.25"); }
+    static inline const std::string version(void) { return std::string("8.26"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-04-2013 2112hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1104hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3035,8 +3027,8 @@ class Loggers : private internal::NoInitialization {
             return constConf(logger_)->performanceTracking(level_);
         }
 
-        static inline unsigned long logRollOutSize(void) {
-            return internal::registeredLoggers->constants_->ROLL_OUT_SIZE;
+        static inline unsigned long logRollOutSize(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            return constConf(logger_)->rollOutSize(level_);
         }
 
     private:

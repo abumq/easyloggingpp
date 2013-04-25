@@ -17,7 +17,10 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv);
 
-    easyloggingpp::Configurations c("/home/majid/projects/EasyLoggingPP/test/test_conf.conf");
+    easyloggingpp::Configurations c("../basic/test_conf.conf");
+    easyloggingpp::Loggers::reconfigureAllLoggers(c);
+
+
 
     bool runThreads = true;
 
@@ -29,10 +32,14 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    LWARNING << "Starting Qt Logging";
+
     QVector<QString> stringList;
     stringList.push_back (QString("Test"));
     stringList.push_back (QString("Test 2"));
-    LINFO << stringList;
+    int i = 0;
+    while (++i != 100)
+        LINFO << stringList;
 
     QPair<QString, int> qpair_;
     qpair_.first = "test";

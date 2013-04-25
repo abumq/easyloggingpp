@@ -42,6 +42,9 @@ Change log was not kept before version 2.1.
  * 8.21: Fixes issue with rollout if level doesnt use dedicated filename
  * 8.22: Added Qt version check
  * 8.25: Stablized roll outs
+ * 8.26:
+     - ROLL OUT SIZE for each level (see issue #51)
+     - Sets default roll out
 
 #### 7.xx
  * 7.00:
