@@ -16,12 +16,17 @@ DEINFES += _ELPP_STL_LOGGING \
            _ELPP_STRICT_ROLLOUT
 
 SOURCES += main.cc\
-        mainwindow.cc
+        mainwindow.cc \
+    aboutdialog.cc \
+    util.cc
 
 HEADERS  += mainwindow.hh \
-    easylogging++.h
+    easylogging++.h \
+    aboutdialog.hh \
+    util.hh
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    aboutdialog.ui
 
 OTHER_FILES += \
     log.conf

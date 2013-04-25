@@ -47,6 +47,7 @@ Change log was not kept before version 2.1.
      - Sets default roll out
  * 8.27: Fix formatting
  * 8.28: Fixes issue with format flags having same value
+ * 8.29: Returning const ref configurations in ConfigurationsReader for performance
 
 #### 7.xx
  * 7.00:

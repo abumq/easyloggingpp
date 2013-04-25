@@ -13,8 +13,7 @@ int main(int argc, char *argv[])
     easyloggingpp::Loggers::reconfigureAllLoggers(viewerConf);
 
     LTRACE << "Starting LogViewer";
-    LDEBUG << "Test";
-    LINFO << "Test";
+
     QApplication a(argc, argv);
 
     MainWindow w;

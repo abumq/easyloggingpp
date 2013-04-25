@@ -21,8 +21,6 @@ int main(int argc, char* argv[]) {
     easyloggingpp::Configurations c("../basic/test_conf.conf");
     easyloggingpp::Loggers::reconfigureAllLoggers(c);
 
-
-
     bool runThreads = true;
 
     if (runThreads) {

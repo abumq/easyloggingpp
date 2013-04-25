@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.28                                                         //
+//   EasyLogging++ v8.29                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1374,7 +1374,7 @@ private:
         return it->second;
     }
 
-    std::string& filename(unsigned int level_) {
+    const std::string& filename(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = filenameMap_.find(level_);
         if (it == filenameMap_.end()) {
             return filenameMap_[Level::ELPP_ALL];
@@ -1390,7 +1390,7 @@ private:
         return it->second;
     }
 
-    std::string& logFormat(unsigned int level_) {
+    const std::string& logFormat(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = logFormatMap_.find(level_);
         if (it == logFormatMap_.end()) {
             return logFormatMap_[Level::ELPP_ALL];
@@ -1398,7 +1398,7 @@ private:
         return it->second;
     }
 
-    std::string& dateFormat(unsigned int level_) {
+    const std::string& dateFormat(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = dateFormatMap_.find(level_);
         if (it == dateFormatMap_.end()) {
             return dateFormatMap_[Level::ELPP_ALL];
@@ -1406,7 +1406,7 @@ private:
         return it->second;
     }
 
-    std::string& dateFormatSpecifier(unsigned int level_) {
+    const std::string& dateFormatSpecifier(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = dateFormatSpecifierMap_.find(level_);
         if (it == dateFormatSpecifierMap_.end()) {
             return dateFormatSpecifierMap_[Level::ELPP_ALL];
@@ -1432,7 +1432,7 @@ private:
         return it->second;
     }
 
-    unsigned long& rollOutSize(unsigned int level_) {
+    const unsigned long& rollOutSize(unsigned int level_) {
         std::map<unsigned int, unsigned long>::iterator it = rollOutSizeMap_.find(level_);
         if (it == rollOutSizeMap_.end()) {
             return rollOutSizeMap_[Level::ELPP_ALL];
@@ -2857,10 +2857,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.28"); }
+    static inline const std::string version(void) { return std::string("8.29"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1714hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1851hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3006,7 +3006,7 @@ public:
             return constConf(logger_)->toFile(level_);
         }
 
-        static inline std::string filename(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& filename(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->filename(level_);
         }
 
@@ -3014,7 +3014,7 @@ public:
             return constConf(logger_)->toStandardOutput(level_);
         }
 
-        static inline std::string logFormat(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& logFormat(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->logFormat(level_);
         }
 
@@ -3026,7 +3026,7 @@ public:
             return constConf(logger_)->performanceTracking(level_);
         }
 
-        static inline unsigned long logRollOutSize(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const unsigned long& logRollOutSize(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->rollOutSize(level_);
         }
 
