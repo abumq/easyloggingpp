@@ -23,11 +23,12 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking">Performance Tracking</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rolling-log-files">Rolling Log Files</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-pattern">Logging Pattern</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reading-configurations">Reading Configurations</a>
 <a href="#logging">Logging</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#writing-logs">Writing Logs</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#helper-functions">Helper Functions</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#registering-and-getting-existing-logger">Registering and getting existing logger</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#checking-loggers-configuration">Checking logger's configuration</a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reading-configurations-1">Reading Configurations</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#setting-application-arguments">Setting application arguments</a>
 <a href="#features">Features</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#conditional-logging">Conditional Logging</a>
@@ -73,6 +74,15 @@ You can get started with EasyLogging++ in three steps;
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
 // ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
 _INITIALIZE_EASYLOGGINGPP
+```
+If you start by above three steps, easylogging++ will use default configurations. You can write your own configurations by following steps in Configurations section.
+
+Now start by writing your first info log using trivial logger
+
+```C++
+int main(void) {
+   LINFO << "This is my first log";
+}
 ```
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Configuring
@@ -155,11 +165,11 @@ int main(int argc, const char** argv) {
     easyloggingpp::Configurations defaultConf;
     defaultConf.setToDefault();
     defaultConf.set(easyloggingpp::Level::ELPP_INFO, easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log"); // Values are always std::string
-    easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
     // To set ALL configuraions you may use
     defaultConf.setAll(easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log");
-    easyloggingpp::Loggers::reConfigureLogger("business", defaultConf); // Business logger uses default configurations
+    easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     return 0;
 }
 ```
@@ -278,6 +288,8 @@ You can customize format of logging. Following format specifiers are currently s
     </tr>
 </table>
 
+#### Reading Configurations
+In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationsReader` class that contains static members that take logger pointer and level you wish to check configuration for.
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Logging
 
@@ -336,7 +348,7 @@ Of course you may define custom macro to make it easy if you like.
 
 If you wish to check list of registered loggers, you may do it by using `easyloggingpp::Loggers::getAllLogIdentifiers(std::vector<std::string>& listOfIds);` where listOfIds is the list to fill up with logger identifiers. You normally would not need to get a registered logger because all the functionalities that you can do from a logger's pointer, you can do it directly from `Loggers` class. If there is anything you can't do, there would be a reason for that; which is mostly security.
 
-###### Checking logger's configuration
+###### Reading Configurations
 
 You can use `Loggers::ConfigurationsReader` to check certain configuration for a logger. This is a static class that contains functions that take logger identifier and level you want to check. Levels are the ones defined in `easyloggingpp::Level` class which is a static struct containing enum.
 
