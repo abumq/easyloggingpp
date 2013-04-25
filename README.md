@@ -204,7 +204,9 @@ Determines whether or not performance tracking is enabled. This effects performa
 
 ###### Rolling Log Files
 
-Besides `_ALWAYS_CLEAN_LOGS`, you can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. Since this is part of configurations, it needs log reconfiguration. This happens with everytime you start your application. But if you wish for EasyLogging++ to roll out as application is running, you can do so by defining `_ELPP_STRICT_ROLLOUT`. This checks for rollout with every log you write. Remember, defining this macro is not recommended if you are concerned with performance. You 
+Besides `_ALWAYS_CLEAN_LOGS`, you can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type.
+
+Since this is part of configurations, it needs log reconfiguration. This happens with everytime you start your application. But if you wish for EasyLogging++ to roll out as application is running, you can do so by defining `_ELPP_STRICT_ROLLOUT`. This checks for rollout with every log you write. Remember, defining this macro is not recommended if you are concerned with performance. You 
 can define this in dev and QA environments though.
 
 ```C++
