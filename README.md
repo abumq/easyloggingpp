@@ -288,10 +288,9 @@ You can customize format of logging. Following format specifiers are currently s
     </tr>
 </table>
 
-<pre><a href="#easylogging">Goto Top</a></pre>
 #### Reading Configurations
 In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationsReader` class that contains static members that take logger pointer and level you wish to check configuration for.
-
+<pre><a href="#easylogging">Goto Top</a></pre>
 ### Logging
 
 EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
