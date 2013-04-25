@@ -289,7 +289,7 @@ You can customize format of logging. Following format specifiers are currently s
 
 <pre><a href="#easylogging">Goto Top</a></pre>
 #### Reading Configuration
-In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationReader` class that contains static members that take logger pointer and level you wish to check configuration for.
+In order to check configuration for a certain logger, you may use `easyloggingpp::Loggers::ConfigurationsReader` class that contains static members that take logger pointer and level you wish to check configuration for.
 
 ### Logging
 
@@ -348,7 +348,7 @@ Of course you may define custom macro to make it easy if you like.
 
 If you wish to check list of registered loggers, you may do it by using `easyloggingpp::Loggers::getAllLogIdentifiers(std::vector<std::string>& listOfIds);` where listOfIds is the list to fill up with logger identifiers. You normally would not need to get a registered logger because all the functionalities that you can do from a logger's pointer, you can do it directly from `Loggers` class. If there is anything you can't do, there would be a reason for that; which is mostly security.
 
-###### Checking logger's configuration
+###### Reading Configurations
 
 You can use `Loggers::ConfigurationsReader` to check certain configuration for a logger. This is a static class that contains functions that take logger identifier and level you want to check. Levels are the ones defined in `easyloggingpp::Level` class which is a static struct containing enum.
 
