@@ -74,6 +74,15 @@ You can get started with EasyLogging++ in three steps;
 // ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
 _INITIALIZE_EASYLOGGINGPP
 ```
+If you start by above three steps, easylogging++ will use default configurations. You can write your own configurations by following steps in Configurations section.
+
+Now start by writing your first info log using trivial logger
+
+```C++
+int main(void) {
+   LINFO << "This is my first log";
+}
+```
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Configuring
 
