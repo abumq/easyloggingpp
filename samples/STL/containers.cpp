@@ -36,9 +36,9 @@ void vectorLogs() {
 
 void listLogs() {
   std::list<std::string> stringList;
-  std::list<std::string*> stringPtrList;
+  std::vector<std::string*> stringPtrList;
   std::list<Vehicle> vehicleList;
-  std::list<Vehicle*> vehiclePtrList;
+  std::vector<Vehicle*> vehiclePtrList;
   stringList.push_back("stringList");
   stringPtrList.push_back(new std::string("stringPtrList"));
   vehicleList.push_back(Vehicle("Honda", "Accord", 2013, "vehicleList"));
@@ -47,6 +47,9 @@ void listLogs() {
   LINFO << "stringPtrList : " << stringPtrList;
   LINFO << "vehicleList : " << vehicleList;
   LINFO << "vehiclePtrList : " << vehiclePtrList;
+  
+  delete stringPtrList.at(0);
+  delete vehiclePtrList.at(0);
 }
 
 void otherContainerLogs() {
