@@ -14,6 +14,11 @@ int main(int argc, char *argv[])
 
     LTRACE << "Starting LogViewer";
 
+    easyloggingpp::Loggers::setFilename("/tmp/logs/tmp.log");
+    LINFO << "This";
+    easyloggingpp::Loggers::setFilename(easyloggingpp::Loggers::trivialLogger(), "/tmp/logs/tmptr.log");
+    LINFO << "This 2";
+
     QApplication a(argc, argv);
 
     MainWindow w;

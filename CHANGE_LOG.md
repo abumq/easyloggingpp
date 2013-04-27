@@ -49,6 +49,7 @@ Change log was not kept before version 2.1.
  * 8.28: Fixes issue with format flags having same value
  * 8.29: Returning const ref configurations in ConfigurationsReader for performance
  * 8.30: Fixes issue with _ALWAYS_CLEAN_LOGS when reconfiguring logger
+ * 8.31: Minor bug fix
 
 #### 7.xx
  * 7.00:
