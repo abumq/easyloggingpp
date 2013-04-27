@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.29                                                         //
+//   EasyLogging++ v8.30                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -209,15 +209,15 @@ private:
     NoCopy& operator=(const NoCopy&);
 };
 
-class NoInitialization {
+class StaticClass {
 private:
-    NoInitialization(void);
-    NoInitialization(const NoInitialization&);
-    NoInitialization& operator=(const NoInitialization&);
+    StaticClass(void);
+    StaticClass(const StaticClass&);
+    StaticClass& operator=(const StaticClass&);
 };
 } // namespace internal
 
-struct Level : private internal::NoInitialization {
+struct Level : private internal::StaticClass {
     public:
         enum {
         ELPP_ALL = 0, ELPP_DEBUG = 1, ELPP_INFO = 2, ELPP_WARNING = 4, ELPP_ERROR = 8,
@@ -225,7 +225,7 @@ struct Level : private internal::NoInitialization {
     };
 };
 
-struct ConfigurationType : private internal::NoInitialization {
+struct ConfigurationType : private internal::StaticClass {
     public:
         enum {
         ELPP_Enabled = 0, ELPP_ToFile = 1, ELPP_ToStandardOutput = 2, ELPP_Format = 4, ELPP_Filename = 8,
@@ -234,7 +234,7 @@ struct ConfigurationType : private internal::NoInitialization {
 };
 
 namespace internal {
-struct Aspect : private internal::NoInitialization {
+struct Aspect : private internal::StaticClass {
     public:
         enum {
         Normal = 0, Conditional = 1, Interval = 2
@@ -284,7 +284,8 @@ class Constants : private internal::NoCopy {
         PATH_SLASH                    ("/"),
 #elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
-#endif // _ELPP_OS_UNIX
+#endif // _ELPP_OS_UNIX,
+        CLEAN_FILES_ON_NEXT_PARSE      (true),
         DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
@@ -343,6 +344,7 @@ class Constants : private internal::NoCopy {
     const int             MAX_VERBOSE_LEVEL;
     int                   CURRENT_VERBOSE_LEVEL;
     const std::string     PATH_SLASH;
+    bool                  CLEAN_FILES_ON_NEXT_PARSE;
     const std::string     DEFAULT_LOG_FILENAME;
     std::string           DEFAULT_LOGGER_CONFIGURATION;
 
@@ -482,7 +484,7 @@ private:
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
-class StringUtilities : private internal::NoInitialization {
+class StringUtilities : private internal::StaticClass {
     public:
         static inline std::string trim(const std::string &str) {
         size_t s = str.find_first_not_of(" \n\r\t");
@@ -544,7 +546,7 @@ class StringUtilities : private internal::NoInitialization {
     }
 };
 #define ELPP_StringUtils internal::utilities::StringUtilities
-class OSUtilities : private internal::NoInitialization {
+class OSUtilities : private internal::StaticClass {
     public:
         // Runs command on terminal and returns the output.
         // This is applicable only on linux and mac, for all other OS, an empty string is returned.
@@ -701,7 +703,7 @@ class OSUtilities : private internal::NoInitialization {
 //
 // Contains static functions related to log manipulation
 //
-class LogManipulator : private internal::NoInitialization {
+class LogManipulator : private internal::StaticClass {
     public:
         // Updates the formatSpecifier_ for currentFormat_ to value_ provided
         static void updateFormatValue(const std::string& formatSpecifier_,
@@ -722,7 +724,7 @@ class LogManipulator : private internal::NoInitialization {
 //
 // Contains utility functions related to date/time
 //
-class DateUtilities : private internal::NoInitialization {
+class DateUtilities : private internal::StaticClass {
     public:
 #if _ELPP_OS_WINDOWS
         static void gettimeofday(struct timeval *tv) {
@@ -1100,6 +1102,20 @@ public:
         std::for_each(base_->list().begin(), base_->list().end(), std::bind1st(std::mem_fun(&Configurations::set), this));
     }
 
+    inline bool contains(unsigned int configurationType_) {
+        unsigned int i = 0;
+        do {
+            if (get(i, configurationType_) != NULL) {
+                return true;
+            }
+            i = i << 1;
+            if (i == 0) {
+                ++i;
+            }
+        } while (i <= 128);
+        return false;
+    }
+
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
@@ -1191,7 +1207,7 @@ public:
         return configurationFile_;
     }
 
-    class Parser : private internal::NoInitialization {
+    class Parser : private internal::StaticClass {
     public:
         static void ignoreComments(std::string& line) {
             size_t foundAt = 0;
@@ -1675,8 +1691,14 @@ private:
 
     std::fstream* newFileStream(const std::string& filename, bool forceNew = false) {
 #if defined(_ALWAYS_CLEAN_LOGS)
-        std::fstream *fs = new std::fstream(filename.c_str(), std::fstream::out);
         __EASYLOGGINGPP_SUPPRESS_UNSED(forceNew);
+        std::fstream *fs = NULL;
+        if (constants_->CLEAN_FILES_ON_NEXT_PARSE) {
+            fs = new std::fstream(filename.c_str(), std::fstream::out);
+        }
+        else {
+            fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
+        }
 #else
         std::fstream *fs = NULL;
         if (forceNew) {
@@ -1987,6 +2009,7 @@ public:
         confPerformance.setToDefault();
         confPerformance.setAll(ConfigurationType::ELPP_PerformanceTracking, "true");
         registerNew(new Logger("performance", constants_, confPerformance));
+        constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     virtual ~RegisteredLoggers(void) {
@@ -2843,7 +2866,7 @@ private:
 };
 } // namespace internal
 
-class VersionInfo : private internal::NoInitialization {
+class VersionInfo : private internal::StaticClass {
 public:
     // Minimal formatted displayable information
     static inline const std::string formattedInfo(void) {
@@ -2857,10 +2880,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.29"); }
+    static inline const std::string version(void) { return std::string("8.30"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-04-2013 1851hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("27-04-2013 1544hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2899,21 +2922,28 @@ public:
     }
 }; // class VersionInfo
 
-class Loggers : private internal::NoInitialization {
+//
+// A static helper class for users of library. This class contains functions related to register
+// and configure logger/s
+//
+class Loggers : private internal::StaticClass {
 public:
     static inline Logger* getLogger(const std::string& identifier_) {
         return internal::registeredLoggers->get(identifier_);
     }
 
-    static inline Logger* reconfigureLogger(const std::string& identifier_, const Configurations& configurations_) {
-        Logger* logger_ = Loggers::getLogger(identifier_);
+    static inline Logger* reconfigureLogger(Logger* logger_, Configurations& configurations_) {
+        if (!logger_) return NULL;
+        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE) {
+            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = configurations_.contains(ConfigurationType::ELPP_Filename);
+        }
         logger_->configure(configurations_);
         return logger_;
     }
 
-    static inline Logger* reconfigureLogger(Logger* logger_, const Configurations& configurations_) {
-        if (!logger_) return NULL;
-        logger_->configure(configurations_);
+    static inline Logger* reconfigureLogger(const std::string& identifier_, Configurations& configurations_) {
+        Logger* logger_ = Loggers::getLogger(identifier_);
+        Loggers::reconfigureLogger(logger_, configurations_);
         return logger_;
     }
 
@@ -2925,36 +2955,50 @@ public:
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
-    static inline void reconfigureAllLoggers(const Configurations& configurations_) {
+    static inline void reconfigureAllLoggers(Configurations& configurations_) {
+        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE) {
+            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = configurations_.contains(ConfigurationType::ELPP_Filename);
+        }
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
-            reconfigureLogger(l, configurations_);
+            Loggers::reconfigureLogger(l, configurations_);
         }
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
+        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE &&
+                configurationType_ == ConfigurationType::ELPP_Filename) {
+            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
+        }
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             l->configurations().setAll(configurationType_, value_);
             l->reconfigure();
         }
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     static inline void disableAll(void) {
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "false");
     }
 
     static inline void enableAll(void) {
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "true");
     }
 
     static inline void setFilename(const std::string& logFilename_) {
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
         reconfigureAllLoggers(ConfigurationType::ELPP_Filename, logFilename_);
     }
 
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
         if (!logger_) return;
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
         logger_->configurations().setAll(ConfigurationType::ELPP_Filename, logFilename_);
+        logger_->reconfigure();
     }
 
     static inline bool performanceTrackingEnabled(void) {
@@ -2962,12 +3006,14 @@ public:
     }
 
     static inline void disablePerformanceTracking(void) {
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         Logger* l = Loggers::performanceLogger();
         l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "false");
         l->reconfigure();
     }
 
     static inline void enablePerformanceTracking(void) {
+        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         Logger* l = Loggers::performanceLogger();
         l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "true");
         l->reconfigure();
@@ -2996,7 +3042,7 @@ public:
         return Loggers::getLogger("performance");
     }
 
-    class ConfigurationsReader : private internal::NoInitialization {
+    class ConfigurationsReader : private internal::StaticClass {
     public:
         static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
             return constConf(logger_)->enabled(level_);

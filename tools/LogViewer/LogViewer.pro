@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = LogViewer
 TEMPLATE = app
 
-DEINFES += _ELPP_STL_LOGGING \
+DEFINES += _ALWAYS_CLEAN_LOGS \
+           _ELPP_STL_LOGGING \
            _ELPP_QT_LOGGING  \
            _ELPP_STRICT_ROLLOUT
 
