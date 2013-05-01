@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.32                                                         //
+//   EasyLogging++ v8.33                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -73,7 +73,13 @@
 #      define _CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
-
+#if defined(QT_CORE_LIB)
+#   if (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#      define _ELPP_QT_5 1
+#   else
+#      define _ELPP_QT_5 0
+#   endif // (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#endif // defined(QT_CORE_LIB)
 //
 // High-level log evaluation
 //
@@ -2860,10 +2866,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.32"); }
+    static inline const std::string version(void) { return std::string("8.33"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-05-2013 2201hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("01-05-2013 2220hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

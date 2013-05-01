@@ -53,6 +53,7 @@ Change log was not kept before version 2.1.
  * 8.32:
      - Fixes race condition issue with roll out size
      - Removed support for `_ALWAYS_CLEAN_LOGS`
+  * 8.33: Added back Qt 5 check
 
 #### 7.xx
  * 7.00:
