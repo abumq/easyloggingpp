@@ -214,7 +214,7 @@ Determines whether or not performance tracking is enabled. This effects performa
 
 ###### Rolling Log Files
 
-Besides `_ALWAYS_CLEAN_LOGS`, you can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type. Remember, for every level that has roll out size configuration should have dedicated filename. Otherwise you will end up rolling out filename from `ALL` levels
+You can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type. Remember, for every level that has roll out size configuration should have dedicated filename. Otherwise you will end up rolling out filename from `ALL` levels
 
 Since this is part of configurations, it needs log reconfiguration. This happens with everytime you start your application. But if you wish for EasyLogging++ to roll out as application is running, you can do so by defining `_ELPP_STRICT_ROLLOUT`. This checks for rollout with every log you write. Remember, defining this macro is not recommended if you are concerned with performance. You 
 can define this in dev and QA environments though.
@@ -460,13 +460,6 @@ At any time if you wish to check the counter position for a line, you may do it 
 
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/interval.cpp)
 
-#### Cleaning Logs On Each Run
-If you wish to clean log each time you run your C++ application, you can do this by defining macro `_ALWAYS_CLEAN_LOGS`. This is useful when you are doing regression testing on your application and always want to start with clean logs. It is also useful where keeping older logs are not necessary for example a session of game you wrote in C++ or a small utility software. See [issue #11](https://github.com/mkhan3189/EasyLoggingPP/issues/11) for further details on initial request.
-
-As an example, you may compile your application as following if you wish to clean logs every time you execute application;
-```
-g++ main.cpp -o main-exec -D_ALWAYS_CLEAN_LOGS
-```
 #### Performance Tracking 
  ```C++
  #include "easylogging++.h"

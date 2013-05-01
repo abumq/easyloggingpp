@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.31                                                         //
+//   EasyLogging++ v8.32                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -73,13 +73,7 @@
 #      define _CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
-#if defined(QT_CORE_LIB)
-#   if (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#      define _ELPP_QT_5 1
-#   else
-#      define _ELPP_QT_5 0
-#   endif // (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-#endif // defined(QT_CORE_LIB)
+
 //
 // High-level log evaluation
 //
@@ -285,7 +279,6 @@ class Constants : private internal::NoCopy {
 #elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
 #endif // _ELPP_OS_UNIX,
-        CLEAN_FILES_ON_NEXT_PARSE      (true),
         DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
@@ -344,7 +337,6 @@ class Constants : private internal::NoCopy {
     const int             MAX_VERBOSE_LEVEL;
     int                   CURRENT_VERBOSE_LEVEL;
     const std::string     PATH_SLASH;
-    bool                  CLEAN_FILES_ON_NEXT_PARSE;
     const std::string     DEFAULT_LOG_FILENAME;
     std::string           DEFAULT_LOGGER_CONFIGURATION;
 
@@ -927,7 +919,7 @@ protected:
         }
     }
 
-    inline void unregister(Class* c_) {
+    inline void unregister(Class*& c_) {
         if (c_) {
             Iterator iter = list_.begin();
             for (; iter != list_.end(); ++iter) {
@@ -1690,23 +1682,12 @@ private:
     }
 
     std::fstream* newFileStream(const std::string& filename, bool forceNew = false) {
-#if defined(_ALWAYS_CLEAN_LOGS)
-        __EASYLOGGINGPP_SUPPRESS_UNSED(forceNew);
-        std::fstream *fs = NULL;
-        if (constants_->CLEAN_FILES_ON_NEXT_PARSE) {
-            fs = new std::fstream(filename.c_str(), std::fstream::out);
-        }
-        else {
-            fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
-        }
-#else
         std::fstream *fs = NULL;
         if (forceNew) {
             fs = new std::fstream(filename.c_str(), std::fstream::out);
         } else {
             fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
         }
-#endif // defined(_ALWAYS_CLEAN_LOGS)
         if (fs->is_open()) {
             fs->flush();
         } else {
@@ -1807,6 +1788,7 @@ public:
         typedConfigurations_(NULL),
         stream_(new std::stringstream()){
         Configurations defaultConfs;
+        defaultConfs.setToDefault();
         configure(defaultConfs);
         userConfigurations_ = defaultConfs;
         defaultConfs.clear();
@@ -2009,7 +1991,6 @@ public:
         confPerformance.setToDefault();
         confPerformance.setAll(ConfigurationType::ELPP_PerformanceTracking, "true");
         registerNew(new Logger("performance", constants_, confPerformance));
-        constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     virtual ~RegisteredLoggers(void) {
@@ -2207,11 +2188,13 @@ public:
         counter_(counter_),
         proceed_(true),
         constants_(registeredLoggers->constants()) {
+#if _ELPP_ENABLE_MUTEX
+        registeredLoggers->acquireLock();
+#endif // _ELPP_ENABLE_MUTEX
         logger_ = registeredLoggers->get(loggerId_);
         if (!logger_->configured()) {
             __EASYLOGGINGPP_ASSERT(logger_->configured(), "Logger [" << loggerId_ << "] has not been configured!");
             registeredLoggers->unregister(logger_);
-            logger_ = NULL; // unregister() should do this - but isnt
             proceed_ = false;
         }
         if (proceed_) {
@@ -2263,9 +2246,6 @@ public:
         if (proceed_ && (aspect_ == Aspect::Conditional)) {
             proceed_ = condition_;
         }
-#if _ELPP_ENABLE_MUTEX
-        registeredLoggers->acquireLock();
-#endif // _ELPP_ENABLE_MUTEX
     }
 
     virtual ~Writer(void) {
@@ -2880,10 +2860,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.31"); }
+    static inline const std::string version(void) { return std::string("8.32"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("27-04-2013 1610hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("01-05-2013 2201hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2934,9 +2914,6 @@ public:
 
     static inline Logger* reconfigureLogger(Logger* logger_, Configurations& configurations_) {
         if (!logger_) return NULL;
-        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE) {
-            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = configurations_.contains(ConfigurationType::ELPP_Filename);
-        }
         logger_->configure(configurations_);
         return logger_;
     }
@@ -2956,50 +2933,36 @@ public:
     }
 
     static inline void reconfigureAllLoggers(Configurations& configurations_) {
-        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE) {
-            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = configurations_.contains(ConfigurationType::ELPP_Filename);
-        }
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             Loggers::reconfigureLogger(l, configurations_);
         }
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
-        if (!internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE &&
-                configurationType_ == ConfigurationType::ELPP_Filename) {
-            internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
-        }
         for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             l->configurations().setAll(configurationType_, value_);
             l->reconfigure();
         }
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     static inline void disableAll(void) {
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "false");
     }
 
     static inline void enableAll(void) {
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "true");
     }
 
     static inline void setFilename(const std::string& logFilename_) {
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
         reconfigureAllLoggers(ConfigurationType::ELPP_Filename, logFilename_);
     }
 
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
         if (!logger_) return;
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = true;
         logger_->configurations().setAll(ConfigurationType::ELPP_Filename, logFilename_);
         logger_->reconfigure();
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
     }
 
     static inline bool performanceTrackingEnabled(void) {
@@ -3007,14 +2970,12 @@ public:
     }
 
     static inline void disablePerformanceTracking(void) {
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         Logger* l = Loggers::performanceLogger();
         l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "false");
         l->reconfigure();
     }
 
     static inline void enablePerformanceTracking(void) {
-        internal::registeredLoggers->constants_->CLEAN_FILES_ON_NEXT_PARSE = false;
         Logger* l = Loggers::performanceLogger();
         l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "true");
         l->reconfigure();

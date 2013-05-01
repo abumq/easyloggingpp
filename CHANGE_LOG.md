@@ -50,6 +50,9 @@ Change log was not kept before version 2.1.
  * 8.29: Returning const ref configurations in ConfigurationsReader for performance
  * 8.30: Fixes issue with _ALWAYS_CLEAN_LOGS when reconfiguring logger
  * 8.31: Minor bug fix
+ * 8.32:
+     - Fixes race condition issue with roll out size
+     - Removed support for `_ALWAYS_CLEAN_LOGS`
 
 #### 7.xx
  * 7.00:
