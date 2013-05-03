@@ -14,7 +14,7 @@ int main() {
 
     defaultConf.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, "false");
 
-    defaultConf.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_RollOutSize, "600000"); // Causes issue - beta version
+    defaultConf.set(easyloggingpp::Level::ELPP_ALL, easyloggingpp::ConfigurationType::ELPP_RollOutSize, "503065"); // Causes issue - beta version
 
     easyloggingpp::Loggers::reconfigureAllLoggers(defaultConf);
 

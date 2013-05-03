@@ -1345,6 +1345,9 @@ private:
 class Loggers;  // fwd declaration
 
 namespace internal {
+class RegisteredLoggers; // fwd declaration
+class Writer;  // fwd declaration
+
 class TypedConfigurations {
 public:
     TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
@@ -1515,7 +1518,9 @@ private:
                 break;
             case ConfigurationType::ELPP_RollOutSize:
                 setValue(conf->level(), getULong(conf->value()), rollOutSizeMap_);
-                checkRollOuts(conf->level());
+				unsigned int correctLevel_ = 0;
+				std::string rolloutFilename_ = std::string();
+                checkRollOuts(conf->level(), correctLevel_, rolloutFilename_);
                 break;
             }
         }
@@ -1749,7 +1754,7 @@ private:
 
     unsigned long getSizeOfFile(std::fstream *fs) {
         if (!fs) {
-            return 0;
+            return 0L;
         }
         std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
@@ -1758,10 +1763,10 @@ private:
         return size;
     }
 
-    void checkRollOuts(unsigned int level_) {
+	bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
         std::fstream* fs = fileStream(level_);
-        if (rollOutSize(level_) != 0 && getSizeOfFile(fs)  >= rollOutSize(level_)) {
-            std::string fname = filename(level_);
+		if (rollOutSize(level_) != 0 && getSizeOfFile(fs)  >= rollOutSize(level_)) {
+            fname_ = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
             std::cout << "Cleaning log file [" << fname << "]\n";
 #endif // defined(_ELPP_INTERNAL_INFO)
@@ -1769,10 +1774,11 @@ private:
             // available level in fileStream because this level_ could actually be using
             // configurations from ELPP_ALL and you do not want to create a brand new
             // stream just because we are rolling log away
-            unsigned int correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
-            removeFile(correctLevel_);
-            insertFilename(correctLevel_, fname, true);
+            correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
+			forceReinitiateFile(correctLevel_, fname_);
+			return true;
         }
+		return false;
     }
 
     template <typename T>
@@ -1783,8 +1789,12 @@ private:
         }
         return refLevel_;
     }
+
+	inline void forceReinitiateFile(unsigned int level_, const std::string& filename_) {
+        removeFile(level_);
+        insertFilename(level_, filename_, true);
+	}
 };
-class Writer;  // fwd declaration
 } // namespace internal
 class Logger {
 public:
@@ -1881,6 +1891,7 @@ private:
     bool configured_;
     friend class internal::Writer;
     friend class Loggers;
+	friend class internal::RegisteredLoggers;
 
     Logger(void);
 
@@ -2203,6 +2214,7 @@ public:
             registeredLoggers->unregister(logger_);
             proceed_ = false;
         }
+		
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
@@ -2243,7 +2255,7 @@ public:
         }
         if (proceed_) {
 #if (defined(_ELPP_STRICT_ROLLOUT))
-            logger_->typedConfigurations_->checkRollOuts(severity_);
+            checkRollOuts(severity_, logger_);
 #endif // (defined(_ELPP_STRICT_ROLLOUT))
         }
         if (proceed_ && (severity_ == Level::ELPP_VERBOSE)) {
@@ -2738,7 +2750,7 @@ private:
     std::stringstream tempss_;
     std::string currLine_;
     bool proceed_;
-    easyloggingpp::internal::Constants* constants_;
+    internal::Constants* constants_;
     friend class Logger;
 
     template <typename Pointer>
@@ -2836,12 +2848,53 @@ private:
         }
         log();
     }
+
+#if (defined(_ELPP_STRICT_ROLLOUT))
+	bool checkRollOuts(unsigned int level_, Logger* baseLogger_) {
+		unsigned int correctLevel_ = 0;
+		std::string rolledOutFile = std::string();
+		if (baseLogger_->typedConfigurations_->checkRollOuts(level_, correctLevel_, rolledOutFile)) {
+			Logger* currLogger_ = NULL;
+			for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
+				currLogger_ = registeredLoggers->list().at(i);
+				if (currLogger_ == baseLogger_)
+					continue;
+				std::string fname = currLogger_->typedConfigurations_->filename(correctLevel_);
+				if (fname == rolledOutFile) {
+					currLogger_->typedConfigurations_->forceReinitiateFile(correctLevel_, fname);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+#endif // (defined(_ELPP_STRICT_ROLLOUT))
+
+	inline void syncWritePointer(unsigned int level_, Logger* targetLogger_, std::fstream* baseStream_) {
+		targetLogger_->typedConfigurations_->fileStream(level_)->seekg(baseStream_->tellg());
+	}
+
+	void safeWriteToFile(unsigned int level_, Logger* logger_, const std::string& line) {		
+		std::string baseFilename_ = logger_->typedConfigurations_->filename(level_);
+		std::fstream* fstr = logger_->typedConfigurations_->fileStream(level_);
+		(*fstr) << line;
+		fstr->flush();
+		Logger* currLogger_ = NULL;
+		for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
+			currLogger_ = registeredLoggers->list().at(i);
+			if (currLogger_ == logger_)
+				continue;
+			std::string fname = currLogger_->typedConfigurations_->filename(level_);
+			if (fname == baseFilename_) {
+				syncWritePointer(level_, currLogger_, fstr);
+			}
+		}
+	}
+
     void log(void) {
         if (logger_->stream_) {
             if (logger_->typedConfigurations_->toFile(severity_)) {
-                std::fstream* fstr = logger_->typedConfigurations_->fileStream(severity_);
-                (*fstr) << currLine_;
-                fstr->flush();
+				safeWriteToFile(severity_, logger_, currLine_);
             }
             if (logger_->typedConfigurations_->toStandardOutput(severity_)) {
                 std::cout << currLine_;
