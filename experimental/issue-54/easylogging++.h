@@ -1870,6 +1870,7 @@ public:
         return configured_;
     }
 
+
     class Predicate {
     public:
         explicit Predicate(const std::string& id_) :
@@ -1889,14 +1890,23 @@ private:
     std::stringstream* stream_;
     std::string applicationName_;
     bool configured_;
+    internal::threading::Mutex mutex_;
     friend class internal::Writer;
     friend class Loggers;
-	friend class internal::RegisteredLoggers;
+    friend class internal::RegisteredLoggers;
 
     Logger(void);
 
     std::stringstream* stream(void) {
         return stream_;
+    }
+
+    inline void acquireLock(void) {
+        mutex_.lock();
+    }
+
+    inline void releaseLock(void) {
+        mutex_.unlock();
     }
 };
 namespace internal {
@@ -2205,16 +2215,16 @@ public:
         counter_(counter_),
         proceed_(true),
         constants_(registeredLoggers->constants()) {
-#if _ELPP_ENABLE_MUTEX
-        registeredLoggers->acquireLock();
-#endif // _ELPP_ENABLE_MUTEX
         logger_ = registeredLoggers->get(loggerId_);
         if (!logger_->configured()) {
             __EASYLOGGINGPP_ASSERT(logger_->configured(), "Logger [" << loggerId_ << "] has not been configured!");
             registeredLoggers->unregister(logger_);
             proceed_ = false;
         }
-		
+#if _ELPP_ENABLE_MUTEX
+	logger_->acquireLock();
+        registeredLoggers->acquireLock();
+#endif // _ELPP_ENABLE_MUTEX
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
@@ -2273,6 +2283,7 @@ public:
 
 #if _ELPP_ENABLE_MUTEX
         registeredLoggers->releaseLock();
+        logger_->releaseLock();
 #endif // _ELPP_ENABLE_MUTEX
     }
 
@@ -2871,7 +2882,9 @@ private:
 #endif // (defined(_ELPP_STRICT_ROLLOUT))
 
 	inline void syncWritePointer(unsigned int level_, Logger* targetLogger_, std::fstream* baseStream_) {
-		targetLogger_->typedConfigurations_->fileStream(level_)->seekg(baseStream_->tellg());
+            targetLogger_->acquireLock();
+            targetLogger_->typedConfigurations_->fileStream(level_)->seekg(baseStream_->tellg());
+            targetLogger_->releaseLock();
 	}
 
 	void safeWriteToFile(unsigned int level_, Logger* logger_, const std::string& line) {		
@@ -2890,6 +2903,7 @@ private:
 			}
 		}
 	}
+
 
     void log(void) {
         if (logger_->stream_) {
