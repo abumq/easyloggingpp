@@ -470,15 +470,15 @@ private:
 #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
 class ScopedLock : private internal::NoCopy {
-    public:
-        explicit ScopedLock(void) {
-        mutex_.lock();
+public:
+    ScopedLock(Mutex* m_) {
+        mutex_ = m_;
     }
     virtual ~ScopedLock(void) {
-        mutex_.unlock();
+        mutex_->unlock();
     }
 private:
-    Mutex mutex_;
+    Mutex* mutex_;
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
@@ -658,6 +658,7 @@ class OSUtilities : private internal::StaticClass {
         char pathDelim_[] = "\\";
 #endif // _ELPP_OS_UNIX
         int status = -1;
+
         char* currPath_ = const_cast<char*>(path_.c_str());
         std::string buildingPath_;
         if (path_[0] == '/') {
@@ -2280,16 +2281,15 @@ public:
         if (proceed_) {
             buildAndWriteLine();
         }
-
 #if _ELPP_ENABLE_MUTEX
-        registeredLoggers->releaseLock();
         logger_->releaseLock();
+        registeredLoggers->releaseLock();
 #endif // _ELPP_ENABLE_MUTEX
     }
 
     inline Writer& operator<<(const std::string& log_) {
-        if (!proceed_) { return *this; }
 #if _ENABLE_EASYLOGGING
+        if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
 #else
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
@@ -3037,6 +3037,7 @@ public:
         logger_->configurations().setAll(ConfigurationType::ELPP_Filename, logFilename_);
         logger_->reconfigure();
     }
+
 
     static inline bool performanceTrackingEnabled(void) {
         return performanceLogger()->typedConfigurations_->performanceTracking();

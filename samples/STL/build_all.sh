@@ -13,7 +13,9 @@
 rm -rf bin/*
 
 ## Get latest copy
-cp ../../easylogging++.h .
+if [ "$1" != "use-old" ];then
+    cp ../../easylogging++.h .
+fi
 
 find -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $1 $2 \;
 echo "Completed!"
