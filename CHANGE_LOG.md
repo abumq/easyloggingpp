@@ -62,6 +62,7 @@ Change log was not kept before version 2.1.
   * 8.37:
      - Warning fix for scoped lock
      - Renamed `SmartPointer<T>` to `ScopedPointer<T>`
+  * 8.38: Minor internal namespace fixes
 
 #### 7.xx
  * 7.00:

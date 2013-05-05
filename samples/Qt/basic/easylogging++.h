@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.37                                                         //
+//   EasyLogging++ v8.38                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -479,6 +479,7 @@ public:
     }
 private:
     Mutex* mutex_;
+    ScopedLock(void);
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
@@ -586,7 +587,7 @@ public:
             free(username);
 #endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
-            return OSUtilities::getBashOutput("whoami");
+            return internal::utilities::OSUtilities::getBashOutput("whoami");
         } else {
             std::string result = std::string(username);
 #if _ELPP_OS_WINDOWS
@@ -611,7 +612,7 @@ public:
             free(hostname);
 #endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
-            std::string hostnameStr = OSUtilities::getBashOutput("hostname");
+            std::string hostnameStr = internal::utilities::OSUtilities::getBashOutput("hostname");
             if (hostnameStr.empty()) {
                 return std::string("unknown-host");
             } else {
@@ -649,7 +650,7 @@ public:
         if (path_.empty()) {
             return false;
         }
-        if (OSUtilities::pathExists(path_.c_str())) {
+        if (internal::utilities::OSUtilities::pathExists(path_.c_str())) {
             return true;
         }
 #if _ELPP_OS_UNIX
@@ -688,7 +689,7 @@ public:
         return true;
     }
 
-    static std::string getPathFromFilename(const std::string& fullPath_, Constants* constants_) {
+    static std::string getPathFromFilename(const std::string& fullPath_, internal::Constants* constants_) {
         if (fullPath_ == "" || fullPath_.find(constants_->PATH_SLASH) == std::string::npos) {
             return fullPath_;
         }
@@ -958,13 +959,7 @@ private:
 template <typename T>
 class ScopedPointer {
 public:
-    explicit ScopedPointer(void) :
-        ptr_(0), referenceCounter_(0) {
-        referenceCounter_ = new ReferenceCounter();
-        referenceCounter_->increment();
-    }
-
-    ScopedPointer(T* ptr_) :
+    explicit ScopedPointer(T* ptr_ = 0) :
         ptr_(ptr_), referenceCounter_(0) {
         referenceCounter_ = new ReferenceCounter();
         referenceCounter_->increment();
@@ -1138,7 +1133,7 @@ public:
     bool parseFromFile(const std::string& configurationFile_, Configurations* base_ = NULL) {
         setFromBase(base_);
         std::ifstream fileStream_(configurationFile_.c_str(), std::ifstream::in);
-        __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file for parsing.");
+        __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile_ << "] for parsing.");
         bool parsedSuccessfully_ = false;
         std::string line = std::string();
         unsigned int currLevel = 0;
@@ -1642,10 +1637,10 @@ private:
         if (utilities::StringUtilities::endsWith(fnameFull, constants_->PATH_SLASH)) {
             fnameFull.append(constants_->DEFAULT_LOG_FILENAME);
         }
-        std::string path_ = utilities::OSUtilities::getPathFromFilename(fnameFull, constants_);
+        std::string path_ = internal::utilities::OSUtilities::getPathFromFilename(fnameFull, constants_);
         if (path_.size() < fnameFull.size()) {
             // Contains path - create it if it does not already exist
-            utilities::OSUtilities::createPath(path_);
+            internal::utilities::OSUtilities::createPath(path_);
         }
         if (filenameMap_.size() == 0) {
             filenameMap_.insert(std::pair<unsigned int, std::string>(Level::ELPP_ALL, fnameFull));
@@ -1920,7 +1915,7 @@ private:
 namespace internal {
 class LogCounter : private internal::NoCopy {
 public:
-    explicit LogCounter(Constants* constants_) :
+    explicit LogCounter(internal::Constants* constants_) :
         file_(""),
         line_(0),
         position_(1),
@@ -1929,7 +1924,7 @@ public:
 
     LogCounter(const char* file_,
                unsigned long int line_,
-               Constants* constants_) :
+               internal::Constants* constants_) :
         file_(file_),
         line_(line_),
         position_(1),
@@ -1995,7 +1990,7 @@ private:
 
 class RegisteredCounters : public Registry<LogCounter, LogCounter::Predicate>  {
 public:
-    bool validate(const char* file_, unsigned long int line_, unsigned int n_, Constants* constants_) {
+    bool validate(const char* file_, unsigned long int line_, unsigned int n_, internal::Constants* constants_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
         __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
@@ -2019,8 +2014,8 @@ class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
 public:
     RegisteredLoggers(void) :
         constants_(new internal::Constants()),
-        username_(utilities::OSUtilities::currentUser()),
-        hostname_(utilities::OSUtilities::currentHost()),
+        username_(internal::utilities::OSUtilities::currentUser()),
+        hostname_(internal::utilities::OSUtilities::currentHost()),
         counters_(new internal::RegisteredCounters()) {
         Configurations conf;
         conf.setToDefault();
@@ -2826,56 +2821,56 @@ private:
         if (f_ & constants_->kAppName) {
             v_ = logger_->applicationName();
             fs_ = constants_->APP_NAME_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         if (f_ & constants_->kLoggerId) {
             v_ = logger_->id();
             fs_ = constants_->LOGGER_ID_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
-            v_ = easyloggingpp::internal::utilities::DateUtilities::getDateTime(dateFormat,
-                                                                                f_, constants_, conf_->millisecondsWidth(Level::ELPP_ALL));
+            v_ = internal::utilities::DateUtilities::getDateTime(dateFormat,
+                                                                 f_, constants_, conf_->millisecondsWidth(Level::ELPP_ALL));
             fs_ = conf_->dateFormatSpecifier(severity_);
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Function
         if (f_ & constants_->kFunction) {
             v_ = std::string(func_);
             fs_ = constants_->FUNCTION_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Location
         if (f_ & constants_->kLocation) {
             tempss_ << file_ << ":" << line_;
             v_ = tempss_.str();
             fs_ = constants_->LOCATION_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
             tempss_.str("");
         }
         // User
         if (f_ & constants_->kUser) {
             v_ = rl_->username();
             fs_ = constants_->USER_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Host
         if (f_ & constants_->kHost) {
             v_ = rl_->hostname();
             fs_ = constants_->HOST_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Verbose level
         if (severity_ == Level::ELPP_VERBOSE && f_ & constants_->kVerboseLevel) {
             tempss_ << verboseLevel_;
             fs_ = constants_->VERBOSE_LEVEL_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, tempss_.str(), currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, tempss_.str(), currLine_, constants_);
         }
         // Log message
         if (f_ & constants_->kLogMessage) {
             fs_ = constants_->LOG_MESSAGE_FORMAT_SPECIFIER;
-            easyloggingpp::internal::utilities::LogManipulator::updateFormatValue(fs_, logger_->stream()->str(), currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, logger_->stream()->str(), currLine_, constants_);
         }
         log();
     }
@@ -2952,10 +2947,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.37"); }
+    static inline const std::string version(void) { return std::string("8.38"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("05-05-2013 2158hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("05-05-2013 2218hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
