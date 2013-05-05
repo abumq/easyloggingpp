@@ -218,36 +218,36 @@ private:
 } // namespace internal
 
 struct Level : private internal::StaticClass {
-    public:
-        enum {
+public:
+    enum {
         ELPP_ALL = 0, ELPP_DEBUG = 1, ELPP_INFO = 2, ELPP_WARNING = 4, ELPP_ERROR = 8,
-                ELPP_FATAL = 16, ELPP_VERBOSE = 32, ELPP_QA = 64, ELPP_TRACE = 128
+        ELPP_FATAL = 16, ELPP_VERBOSE = 32, ELPP_QA = 64, ELPP_TRACE = 128
     };
 };
 
 struct ConfigurationType : private internal::StaticClass {
-    public:
-        enum {
+public:
+    enum {
         ELPP_Enabled = 0, ELPP_ToFile = 1, ELPP_ToStandardOutput = 2, ELPP_Format = 4, ELPP_Filename = 8,
-                ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32, ELPP_RollOutSize = 64
+        ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32, ELPP_RollOutSize = 64
     };
 };
 
 namespace internal {
 struct Aspect : private internal::StaticClass {
-    public:
-        enum {
+public:
+    enum {
         Normal = 0, Conditional = 1, Interval = 2
     };
 };
 
 class Constants : private internal::NoCopy {
-    public:
-        explicit Constants (void) :
-      //
-      // Log level name outputs
-      //
-      LOG_INFO_LEVEL_VALUE   ("INFO") ,
+public:
+    explicit Constants (void) :
+        //
+        // Log level name outputs
+        //
+        LOG_INFO_LEVEL_VALUE   ("INFO") ,
         LOG_DEBUG_LEVEL_VALUE  ("DEBUG"),
         LOG_WARNING_LEVEL_VALUE("WARN"),
         LOG_ERROR_LEVEL_VALUE  ("ERROR"),
@@ -280,11 +280,11 @@ class Constants : private internal::NoCopy {
         DEFAULT_MILLISECOND_OFFSET    (1000),
         MAX_VERBOSE_LEVEL             (9),
         CURRENT_VERBOSE_LEVEL         (0),  // Set dynamically from registeredLoggers
-#if _ELPP_OS_UNIX
+    #if _ELPP_OS_UNIX
         PATH_SLASH                    ("/"),
-#elif _ELPP_OS_WINDOWS
+    #elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
-#endif // _ELPP_OS_UNIX,
+    #endif // _ELPP_OS_UNIX,
         DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
@@ -470,8 +470,8 @@ private:
 #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
 class ScopedLock : private internal::NoCopy {
-    public:
-        explicit ScopedLock(void) {
+public:
+    explicit ScopedLock(void) {
         mutex_.lock();
     }
     virtual ~ScopedLock(void) {
@@ -483,8 +483,8 @@ private:
 } // namespace threading
 namespace utilities {
 class StringUtilities : private internal::StaticClass {
-    public:
-        static inline std::string trim(const std::string &str) {
+public:
+    static inline std::string trim(const std::string &str) {
         size_t s = str.find_first_not_of(" \n\r\t");
         size_t e = str.find_last_not_of(" \n\r\t");
         if ((s == std::string::npos) || (e == std::string::npos)) {
@@ -545,10 +545,10 @@ class StringUtilities : private internal::StaticClass {
 };
 #define ELPP_StringUtils internal::utilities::StringUtilities
 class OSUtilities : private internal::StaticClass {
-    public:
-        // Runs command on terminal and returns the output.
-        // This is applicable only on linux and mac, for all other OS, an empty string is returned.
-        static const std::string getBashOutput(const char* command_) {
+public:
+    // Runs command on terminal and returns the output.
+    // This is applicable only on linux and mac, for all other OS, an empty string is returned.
+    static const std::string getBashOutput(const char* command_) {
         if (command_ == NULL) {
             return std::string();
         }
@@ -702,11 +702,11 @@ class OSUtilities : private internal::StaticClass {
 // Contains static functions related to log manipulation
 //
 class LogManipulator : private internal::StaticClass {
-    public:
-        // Updates the formatSpecifier_ for currentFormat_ to value_ provided
-        static void updateFormatValue(const std::string& formatSpecifier_,
-                                      const std::string& value_, std::string& currentFormat_,
-                                      internal::Constants* constants_) {
+public:
+    // Updates the formatSpecifier_ for currentFormat_ to value_ provided
+    static void updateFormatValue(const std::string& formatSpecifier_,
+                                  const std::string& value_, std::string& currentFormat_,
+                                  internal::Constants* constants_) {
         size_t foundAt = -1;
         while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
             if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == constants_->FORMAT_SPECIFIER_ESCAPE_CHAR) {
@@ -723,9 +723,9 @@ class LogManipulator : private internal::StaticClass {
 // Contains utility functions related to date/time
 //
 class DateUtilities : private internal::StaticClass {
-    public:
+public:
 #if _ELPP_OS_WINDOWS
-        static void gettimeofday(struct timeval *tv) {
+    static void gettimeofday(struct timeval *tv) {
         if (tv != NULL) {
 #   if defined(_MSC_EXTENSIONS)
             const unsigned __int64 delta_ = 11644473600000000Ui64;
@@ -2869,7 +2869,7 @@ public:
     static inline const std::string version(void) { return std::string("8.35"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("05-05-2013 1026hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("05-05-2013 1029hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
