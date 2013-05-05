@@ -161,7 +161,6 @@
 #      endif // (_ELPP_ASSEMBLY_SUPPORTED)
 #   endif // (_ELPP_ENABLE_MUTEX)
 #elif _ELPP_OS_WINDOWS
-#   include <cerrno>
 #   include <direct.h>
 #   include <Windows.h>
 #endif // _ELPP_OS_UNIX
@@ -471,14 +470,15 @@ private:
 }; // class Mutex
 class ScopedLock : private internal::NoCopy {
 public:
-    explicit ScopedLock(void) {
-        mutex_.lock();
+    ScopedLock(Mutex& m_) {
+        mutex_ = &m_;
+        mutex_->lock();
     }
     virtual ~ScopedLock(void) {
-        mutex_.unlock();
+        mutex_->unlock();
     }
 private:
-    Mutex mutex_;
+    Mutex* mutex_;
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
@@ -579,7 +579,7 @@ public:
 #elif _ELPP_OS_WINDOWS
         char* username = NULL;
         size_t len;
-        errno_t err = _dupenv_s(&username, &len, "USERNAME");
+        _dupenv_s(&username, &len, "USERNAME");
 #endif // _ELPP_OS_UNIX
         if ((username == NULL) || (!strcmp(username, ""))) {
 #if _ELPP_OS_WINDOWS
@@ -604,7 +604,7 @@ public:
 #elif _ELPP_OS_WINDOWS
         char* hostname = NULL;
         size_t len;
-        errno_t err = _dupenv_s(&hostname, &len, "COMPUTERNAME");
+        _dupenv_s(&hostname, &len, "COMPUTERNAME");
 #endif // _ELPP_OS_UNIX
         if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
 #if _ELPP_OS_WINDOWS
@@ -658,6 +658,7 @@ public:
         char pathDelim_[] = "\\";
 #endif // _ELPP_OS_UNIX
         int status = -1;
+
         char* currPath_ = const_cast<char*>(path_.c_str());
         std::string buildingPath_;
         if (path_[0] == '/') {
@@ -1115,6 +1116,7 @@ public:
     }
 
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
+
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
                 (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL)) {
@@ -1335,6 +1337,7 @@ public:
 private:
     std::string configurationFile_;
     bool isFromFile_;
+    internal::threading::Mutex mutex_;
 
     inline void set(internal::Configuration* conf_) {
         if (conf_ == NULL) return;
@@ -1345,6 +1348,9 @@ private:
 class Loggers;  // fwd declaration
 
 namespace internal {
+class RegisteredLoggers; // fwd declaration
+class Writer;  // fwd declaration
+
 class TypedConfigurations {
 public:
     TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
@@ -1504,6 +1510,7 @@ private:
                     }
 #elif _ELPP_OS_WINDOWS
                     msl_ = 1000;
+                    __EASYLOGGINGPP_SUPPRESS_UNSED(origVal);
 #endif // _ELPP_OS_UNIX
                     setValue(conf->level(), msl_, millisecondsWidthMap_);
                 }
@@ -1515,7 +1522,9 @@ private:
                 break;
             case ConfigurationType::ELPP_RollOutSize:
                 setValue(conf->level(), getULong(conf->value()), rollOutSizeMap_);
-                checkRollOuts(conf->level());
+                unsigned int correctLevel_ = 0;
+                std::string rolloutFilename_ = std::string();
+                checkRollOuts(conf->level(), correctLevel_, rolloutFilename_);
                 break;
             }
         }
@@ -1749,7 +1758,7 @@ private:
 
     unsigned long getSizeOfFile(std::fstream *fs) {
         if (!fs) {
-            return 0;
+            return 0L;
         }
         std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
@@ -1758,10 +1767,10 @@ private:
         return size;
     }
 
-    void checkRollOuts(unsigned int level_) {
+    bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
         std::fstream* fs = fileStream(level_);
         if (rollOutSize(level_) != 0 && getSizeOfFile(fs)  >= rollOutSize(level_)) {
-            std::string fname = filename(level_);
+            fname_ = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
             std::cout << "Cleaning log file [" << fname << "]\n";
 #endif // defined(_ELPP_INTERNAL_INFO)
@@ -1769,10 +1778,11 @@ private:
             // available level in fileStream because this level_ could actually be using
             // configurations from ELPP_ALL and you do not want to create a brand new
             // stream just because we are rolling log away
-            unsigned int correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
-            removeFile(correctLevel_);
-            insertFilename(correctLevel_, fname, true);
+            correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
+            forceReinitiateFile(correctLevel_, fname_);
+            return true;
         }
+        return false;
     }
 
     template <typename T>
@@ -1783,8 +1793,12 @@ private:
         }
         return refLevel_;
     }
+
+    inline void forceReinitiateFile(unsigned int level_, const std::string& filename_) {
+        removeFile(level_);
+        insertFilename(level_, filename_, true);
+    }
 };
-class Writer;  // fwd declaration
 } // namespace internal
 class Logger {
 public:
@@ -1824,6 +1838,9 @@ public:
     }
 
     void configure(const Configurations& configurations_) {
+#if _ELPP_ENABLE_MUTEX
+        internal::threading::ScopedLock slock_(mutex_);
+#endif // _ELPP_ENABLE_MUTEX
         // Configuring uses existing configuration as starting point
         // and then sets configurations_ as base to prevent losing any
         // previous configurations
@@ -1860,6 +1877,7 @@ public:
         return configured_;
     }
 
+
     class Predicate {
     public:
         explicit Predicate(const std::string& id_) :
@@ -1879,13 +1897,23 @@ private:
     std::stringstream* stream_;
     std::string applicationName_;
     bool configured_;
+    internal::threading::Mutex mutex_;
     friend class internal::Writer;
     friend class Loggers;
+    friend class internal::RegisteredLoggers;
 
     Logger(void);
 
     std::stringstream* stream(void) {
         return stream_;
+    }
+
+    inline void acquireLock(void) {
+        mutex_.lock();
+    }
+
+    inline void releaseLock(void) {
+        mutex_.unlock();
     }
 };
 namespace internal {
@@ -1961,12 +1989,15 @@ private:
     const char* file_;
     unsigned long int line_;
     unsigned int position_;
-    Constants* constants_;
+    internal::Constants* constants_;
 }; // class LogCounter
 
 class RegisteredCounters : public Registry<LogCounter, LogCounter::Predicate>  {
 public:
     bool validate(const char* file_, unsigned long int line_, unsigned int n_, Constants* constants_) {
+#if _ELPP_ENABLE_MUTEX
+        internal::threading::ScopedLock slock_(mutex_);
+#endif // _ELPP_ENABLE_MUTEX
         bool result_ = false;
         LogCounter* counter_ = get(file_, line_);
         if (counter_ == NULL) {
@@ -1978,6 +2009,8 @@ public:
         counter_->reset(n_);
         return result_;
     }
+private:
+    internal::threading::Mutex mutex_;
 }; // class RegisteredCounters
 
 class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
@@ -2039,6 +2072,9 @@ private:
     }
 
     Logger* get(const std::string& id_) {
+#if _ELPP_ENABLE_MUTEX
+        internal::threading::ScopedLock slock_(mutex_);
+#endif // _ELPP_ENABLE_MUTEX
         Logger* logger_ = internal::Registry<Logger, Logger::Predicate>::get(id_);
         if (logger_ == NULL) {
             logger_ = new Logger(id_, constants_);
@@ -2048,6 +2084,9 @@ private:
     }
 
     inline void unregister(Logger*& logger_) {
+#if _ELPP_ENABLE_MUTEX
+        internal::threading::ScopedLock slock_(mutex_);
+#endif // _ELPP_ENABLE_MUTEX
         internal::Registry<Logger, Logger::Predicate>::unregister(logger_);
     }
 
@@ -2194,15 +2233,16 @@ public:
         counter_(counter_),
         proceed_(true),
         constants_(registeredLoggers->constants()) {
-#if _ELPP_ENABLE_MUTEX
-        registeredLoggers->acquireLock();
-#endif // _ELPP_ENABLE_MUTEX
         logger_ = registeredLoggers->get(loggerId_);
         if (!logger_->configured()) {
             __EASYLOGGINGPP_ASSERT(logger_->configured(), "Logger [" << loggerId_ << "] has not been configured!");
             registeredLoggers->unregister(logger_);
             proceed_ = false;
         }
+#if _ELPP_ENABLE_MUTEX
+        registeredLoggers->acquireLock();
+        mutex_.lock();
+#endif // _ELPP_ENABLE_MUTEX
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
@@ -2243,7 +2283,7 @@ public:
         }
         if (proceed_) {
 #if (defined(_ELPP_STRICT_ROLLOUT))
-            logger_->typedConfigurations_->checkRollOuts(severity_);
+            checkRollOuts(severity_, logger_);
 #endif // (defined(_ELPP_STRICT_ROLLOUT))
         }
         if (proceed_ && (severity_ == Level::ELPP_VERBOSE)) {
@@ -2258,15 +2298,15 @@ public:
         if (proceed_) {
             buildAndWriteLine();
         }
-
 #if _ELPP_ENABLE_MUTEX
         registeredLoggers->releaseLock();
+        mutex_.unlock();
 #endif // _ELPP_ENABLE_MUTEX
     }
 
     inline Writer& operator<<(const std::string& log_) {
-        if (!proceed_) { return *this; }
 #if _ENABLE_EASYLOGGING
+        if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
 #else
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
@@ -2417,9 +2457,8 @@ public:
 #   elif _ELPP_OS_WINDOWS
         size_t convCount_ = 0;
         mbstate_t mbState_;
-        errno_t err;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
-        err = wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
+        wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
 #   endif // _ELPP_OS_UNIX
         _ELPP_STREAM(logger_) << buff_;
         free(buff_);
@@ -2738,7 +2777,8 @@ private:
     std::stringstream tempss_;
     std::string currLine_;
     bool proceed_;
-    easyloggingpp::internal::Constants* constants_;
+    internal::Constants* constants_;
+    internal::threading::Mutex mutex_;
     friend class Logger;
 
     template <typename Pointer>
@@ -2836,12 +2876,55 @@ private:
         }
         log();
     }
+
+#if (defined(_ELPP_STRICT_ROLLOUT))
+    bool checkRollOuts(unsigned int level_, Logger* baseLogger_) {
+        unsigned int correctLevel_ = 0;
+        std::string rolledOutFile = std::string();
+        if (baseLogger_->typedConfigurations_->checkRollOuts(level_, correctLevel_, rolledOutFile)) {
+            Logger* currLogger_ = NULL;
+            for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
+                currLogger_ = registeredLoggers->list().at(i);
+                if (currLogger_ == baseLogger_)
+                    continue;
+                std::string fname = currLogger_->typedConfigurations_->filename(correctLevel_);
+                if (fname == rolledOutFile) {
+                    currLogger_->typedConfigurations_->forceReinitiateFile(correctLevel_, fname);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+#endif // (defined(_ELPP_STRICT_ROLLOUT))
+
+    inline void syncWritePointer(unsigned int level_, Logger* targetLogger_, std::fstream* baseStream_) {
+        targetLogger_->acquireLock();
+        targetLogger_->typedConfigurations_->fileStream(level_)->seekg(baseStream_->tellg());
+        targetLogger_->releaseLock();
+    }
+
+    void safeWriteToFile(unsigned int level_, Logger* logger_, const std::string& line) {
+        std::string baseFilename_ = logger_->typedConfigurations_->filename(level_);
+        std::fstream* fstr = logger_->typedConfigurations_->fileStream(level_);
+        (*fstr) << line;
+        fstr->flush();
+        Logger* currLogger_ = NULL;
+        for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
+            currLogger_ = registeredLoggers->list().at(i);
+            if (currLogger_ == logger_)
+                continue;
+            std::string fname = currLogger_->typedConfigurations_->filename(level_);
+            if (fname == baseFilename_) {
+                syncWritePointer(level_, currLogger_, fstr);
+            }
+        }
+    }
+
     void log(void) {
         if (logger_->stream_) {
             if (logger_->typedConfigurations_->toFile(severity_)) {
-                std::fstream* fstr = logger_->typedConfigurations_->fileStream(severity_);
-                (*fstr) << currLine_;
-                fstr->flush();
+                safeWriteToFile(severity_, logger_, currLine_);
             }
             if (logger_->typedConfigurations_->toStandardOutput(severity_)) {
                 std::cout << currLine_;
@@ -2869,7 +2952,7 @@ public:
     static inline const std::string version(void) { return std::string("8.35"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("05-05-2013 1029hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("05-05-2013 1047hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2971,6 +3054,7 @@ public:
         logger_->reconfigure();
     }
 
+
     static inline bool performanceTrackingEnabled(void) {
         return performanceLogger()->typedConfigurations_->performanceTracking();
     }
@@ -3049,6 +3133,8 @@ public:
             return logger_->typedConfigurations_;
         }
     }; // class ConfigurationsReader
+private:
+    internal::threading::Mutex mutex_;
 };
 
 //
