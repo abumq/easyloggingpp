@@ -39,6 +39,20 @@ void *write(void* thrId){
 
   LINFO_IF(threadId == "2") << "This log is only for thread 2 and is ran by thread #" << threadId;
 
+  // Register 5 vague loggers
+  for (int i = 1; i <= 5; ++i) {
+     std::stringstream ss;
+     ss << "logger " << i;
+     easyloggingpp::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
+     LINFO << "Registered logger " << logger;
+  }
+  CINFO("logger1") << "Logging using new logger";
+
+  // Check for log counters positions
+  for (int i = 1; i <= 50; ++i) {
+     LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
+  }
+  LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
 }
 
 int main(int argc, char** argv)

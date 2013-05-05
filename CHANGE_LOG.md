@@ -54,6 +54,10 @@ Change log was not kept before version 2.1.
      - Fixes race condition issue with roll out size
      - Removed support for `_ALWAYS_CLEAN_LOGS`
   * 8.33: Added back Qt 5 check
+  * 8.35:
+     - Fixed issue Roll out size usage cause lose loggers (issue #54) [Thanks to les]
+     - Fixed multithreading issue for interval logs and custom loggers
+     - Fixed warnings on VC++
 
 #### 7.xx
  * 7.00:

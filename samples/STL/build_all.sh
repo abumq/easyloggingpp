@@ -13,7 +13,9 @@
 rm -rf bin/*
 
 ## Get latest copy
-if [ "$1" != "use-old" ];then
+if [ "$1" = "use-old" ];then
+    echo 'Using existing header...'
+else
     cp ../../easylogging++.h .
 fi
 
