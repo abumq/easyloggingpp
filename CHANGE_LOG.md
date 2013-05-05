@@ -58,6 +58,7 @@ Change log was not kept before version 2.1.
      - Fixed issue Roll out size usage cause lose loggers (issue #54) [Thanks to les]
      - Fixed multithreading issue for interval logs and custom loggers
      - Fixed warnings on VC++
+  * 8.36: Fix for internal info
 
 #### 7.xx
  * 7.00:
