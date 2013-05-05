@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.36                                                         //
+//   EasyLogging++ v8.37                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -956,26 +956,26 @@ private:
 }; // class Registry
 
 template <typename T>
-class SmartPointer {
+class ScopedPointer {
 public:
-    explicit SmartPointer(void) :
+    explicit ScopedPointer(void) :
         ptr_(0), referenceCounter_(0) {
         referenceCounter_ = new ReferenceCounter();
         referenceCounter_->increment();
     }
 
-    SmartPointer(T* ptr_) :
+    ScopedPointer(T* ptr_) :
         ptr_(ptr_), referenceCounter_(0) {
         referenceCounter_ = new ReferenceCounter();
         referenceCounter_->increment();
     }
 
-    SmartPointer(const SmartPointer<T>& smartPointer_) :
+    ScopedPointer(const ScopedPointer<T>& smartPointer_) :
         ptr_(smartPointer_.ptr_), referenceCounter_(smartPointer_.referenceCounter_) {
         referenceCounter_->increment();
     }
 
-    SmartPointer<T>& operator=(const SmartPointer<T>& other_) {
+    ScopedPointer<T>& operator=(const ScopedPointer<T>& other_) {
         if (this != &other_)
         {
             validate();
@@ -986,7 +986,7 @@ public:
         return *this;
     }
 
-    virtual ~SmartPointer(void) {
+    virtual ~ScopedPointer(void) {
         validate();
     }
 
@@ -1840,6 +1840,7 @@ public:
     void configure(const Configurations& configurations_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
+        __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         // Configuring uses existing configuration as starting point
         // and then sets configurations_ as base to prevent losing any
@@ -1997,6 +1998,7 @@ public:
     bool validate(const char* file_, unsigned long int line_, unsigned int n_, Constants* constants_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
+        __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         bool result_ = false;
         LogCounter* counter_ = get(file_, line_);
@@ -2074,6 +2076,7 @@ private:
     Logger* get(const std::string& id_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
+        __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         Logger* logger_ = internal::Registry<Logger, Logger::Predicate>::get(id_);
         if (logger_ == NULL) {
@@ -2126,7 +2129,7 @@ private:
     }
 };
 
-extern internal::SmartPointer<RegisteredLoggers> registeredLoggers;
+extern internal::ScopedPointer<RegisteredLoggers> registeredLoggers;
 #if defined(_ELPP_STL_LOGGING)
 namespace workarounds {
 // There is workaround needed to loop through some stl containers. In order to do that, we need iterable containers
@@ -2949,10 +2952,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.36"); }
+    static inline const std::string version(void) { return std::string("8.37"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("05-05-2013 1317hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("05-05-2013 2158hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3487,7 +3490,7 @@ private:
 #define _INITIALIZE_EASYLOGGINGPP                         \
     namespace easyloggingpp {                             \
     namespace internal {                                  \
-    SmartPointer<RegisteredLoggers> registeredLoggers(    \
+    ScopedPointer<RegisteredLoggers> registeredLoggers(   \
     new RegisteredLoggers());                             \
 }                                                         \
 }

@@ -59,6 +59,9 @@ Change log was not kept before version 2.1.
      - Fixed multithreading issue for interval logs and custom loggers
      - Fixed warnings on VC++
   * 8.36: Fix for internal info
+  * 8.37:
+     - Warning fix for scoped lock
+     - Renamed `SmartPointer<T>` to `ScopedPointer<T>`
 
 #### 7.xx
  * 7.00:
