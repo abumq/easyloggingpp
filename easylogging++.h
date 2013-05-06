@@ -517,7 +517,7 @@ public:
         if (replaceWhat == replaceWith)
             return str;
         std::string result = str;
-        size_t foundAt = -1;
+        size_t foundAt = std::string::npos;
         while ((foundAt = result.find(replaceWhat)) != std::string::npos) {
             result.replace(foundAt, replaceWhat.length(), replaceWith);
         }
@@ -709,7 +709,7 @@ public:
     static void updateFormatValue(const std::string& formatSpecifier_,
                                   const std::string& value_, std::string& currentFormat_,
                                   internal::Constants* constants_) {
-        size_t foundAt = -1;
+        size_t foundAt = std::string::npos;
         while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
             if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == constants_->FORMAT_SPECIFIER_ESCAPE_CHAR) {
                 currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
