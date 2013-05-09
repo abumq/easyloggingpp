@@ -43,6 +43,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 <a href="#important-macros">Important Macros</a>
 <a href="#compatibility">Compatibility</a>
 <a href="#tips-for-performance-improvement">Tips For Performance Improvement</a><br/>
+<a href="#donation">Donation</a><br/>
 </pre>
 
 ### Why EasyLogging++
@@ -734,6 +735,18 @@ EasyLogging++ has been tested several times a day for performances glitches. Tha
 * When you deploy your application for release and you are certain that you do not need to log standard output (terminal or command prompt), set `TO_STANDARD_OUTPUT` to false in configurations
 * Try to avoid complicated `ostream& operator<<` in your custom classes, as this gets called when you log a C++ class
 * If your application is not multi-threaded, define `_DISABLE_MUTEX` to prevent overhead of multi-threading features, make sure you do not do this if you are writing library (in binary) because this can potentially affect application using your library.
+
+<pre><a href="#easylogging">Goto Top</a></pre>
+
+#### Donation
+<pre>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="4W7YDRCXWURWG">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_AU/i/scr/pixel.gif" width="1" height="1">
+</form>
+</pre>
 
 <pre><a href="#easylogging">Goto Top</a></pre>
 [ubuntu]: http://www.icplusplus.com/tools/easylogging/icons/ubuntu.png
