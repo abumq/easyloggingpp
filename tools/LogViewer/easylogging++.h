@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.39                                                         //
+//   EasyLogging++ v8.40                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -279,11 +279,11 @@ public:
         DEFAULT_MILLISECOND_OFFSET    (1000),
         MAX_VERBOSE_LEVEL             (9),
         CURRENT_VERBOSE_LEVEL         (0),  // Set dynamically from registeredLoggers
-    #if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX
         PATH_SLASH                    ("/"),
-    #elif _ELPP_OS_WINDOWS
+#elif _ELPP_OS_WINDOWS
         PATH_SLASH                    ("\\"),
-    #endif // _ELPP_OS_UNIX,
+#endif // _ELPP_OS_UNIX,
         DEFAULT_LOG_FILENAME          ("myeasylog.log")
     {
         // Trivial logger configuration - only to set format (difference: not using %logger)
@@ -357,7 +357,6 @@ public:
                         kVerboseLevel = 1024,
                         kAppName = 2048
                       };
-private:
 }; // class Constants
 namespace threading {
 //
@@ -483,7 +482,13 @@ private:
 }; // class ScopedLock
 } // namespace threading
 namespace utilities {
-class StringUtilities : private internal::StaticClass {
+template <typename T>
+inline void safeDelete(T*& pointer, bool checkNullity = true) {
+    if (checkNullity && pointer == NULL) return;
+    delete pointer;
+    pointer = NULL;
+}
+class StringUtils : private internal::StaticClass {
 public:
     static inline std::string trim(const std::string &str) {
         size_t s = str.find_first_not_of(" \n\r\t");
@@ -544,8 +549,8 @@ public:
         return ++count;
     }
 };
-#define ELPP_StringUtils internal::utilities::StringUtilities
-class OSUtilities : private internal::StaticClass {
+#define ELPP_StringUtils internal::utilities::StringUtils
+class OSUtils : private internal::StaticClass {
 public:
     // Runs command on terminal and returns the output.
     // This is applicable only on linux and mac, for all other OS, an empty string is returned.
@@ -587,7 +592,7 @@ public:
             free(username);
 #endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
-            return internal::utilities::OSUtilities::getBashOutput("whoami");
+            return internal::utilities::OSUtils::getBashOutput("whoami");
         } else {
             std::string result = std::string(username);
 #if _ELPP_OS_WINDOWS
@@ -612,7 +617,7 @@ public:
             free(hostname);
 #endif // _ELPP_OS_WINDOWS
             // Try harder on unix-based systems
-            std::string hostnameStr = internal::utilities::OSUtilities::getBashOutput("hostname");
+            std::string hostnameStr = internal::utilities::OSUtils::getBashOutput("hostname");
             if (hostnameStr.empty()) {
                 return std::string("unknown-host");
             } else {
@@ -650,7 +655,7 @@ public:
         if (path_.empty()) {
             return false;
         }
-        if (internal::utilities::OSUtilities::pathExists(path_.c_str())) {
+        if (internal::utilities::OSUtils::pathExists(path_.c_str())) {
             return true;
         }
 #if _ELPP_OS_UNIX
@@ -661,11 +666,11 @@ public:
         int status = -1;
 
         char* currPath_ = const_cast<char*>(path_.c_str());
-        std::string buildingPath_;
+        std::string buildingPath_ = std::string();
+#if _ELPP_OS_UNIX
         if (path_[0] == '/') {
             buildingPath_ = "/";
         }
-#if _ELPP_OS_UNIX
         currPath_ = strtok(currPath_, pathDelim_);
 #elif _ELPP_OS_WINDOWS
         // Use secure functions API
@@ -699,7 +704,7 @@ public:
         }
         return fullPath_.substr(0, lastSlashAt + 1);
     }
-}; // class OSUtilities
+}; // class OSUtils
 //
 // Contains static functions related to log manipulation
 //
@@ -724,7 +729,7 @@ public:
 //
 // Contains utility functions related to date/time
 //
-class DateUtilities : private internal::StaticClass {
+class DateUtils : private internal::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
     static void gettimeofday(struct timeval *tv) {
@@ -780,7 +785,7 @@ public:
         }
         if ((type_ & constants_->kDateTime) || (type_ & constants_->kTimeOnly)) {
             if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
-                milliSeconds = (long)(GetTickCount()) % milliSecondOffset_;
+                milliSeconds = static_cast<long>(GetTickCount()) % milliSecondOffset_;
                 if (type_ & constants_->kDateTime) {
                     sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
                 } else {
@@ -815,7 +820,7 @@ public:
     static inline double getTimeDifference(const timeval& endTime_, const timeval& startTime_) {
         return static_cast<double>((((endTime_.tv_sec - startTime_.tv_sec) * 1000000) + (endTime_.tv_usec - startTime_.tv_usec)) / 1000);
     }
-}; // class DateUtilities
+}; // class DateUtils
 } // namespace utilities
 
 template<class Class, class Predicate>
@@ -896,8 +901,8 @@ public:
         return NULL;
     }
 
-    template<typename T2>
-    inline bool exist(const T2& t_) {
+    template<typename T>
+    inline bool exist(const T& t_) {
         return (get(t_) != NULL);
     }
 
@@ -937,8 +942,7 @@ protected:
             }
             if (iter != list_.end() && *iter != NULL) {
                 list_.erase(iter);
-                delete c_;
-                c_ = NULL;
+                internal::utilities::safeDelete(c_);
             }
         }
     }
@@ -948,10 +952,7 @@ protected:
     }
 private:
     inline void release(Class* c_) {
-        if (c_) {
-            delete c_;
-            c_ = NULL;
-        }
+        internal::utilities::safeDelete(c_);
     }
     std::vector<Class*> list_;
 }; // class Registry
@@ -1011,7 +1012,7 @@ public:
         }
 
         void increment(void) {
-            count_++;
+            ++count_;
         }
 
         int decrement(void) {
@@ -1026,10 +1027,8 @@ private:
     ReferenceCounter* referenceCounter_;
     void validate(void) {
         if(referenceCounter_->decrement() == 0) {
-            delete ptr_;
-            ptr_ = NULL;
-            delete referenceCounter_;
-            referenceCounter_ = NULL;
+            internal::utilities::safeDelete(ptr_, false);
+            internal::utilities::safeDelete(referenceCounter_, false);
         }
     }
 };
@@ -1166,7 +1165,7 @@ public:
 #if _ELPP_OS_UNIX
         setAll(ConfigurationType::ELPP_Filename, "/tmp/logs/myeasylog.log");
 #elif _ELPP_OS_WINDOWS
-        setAll(ConfigurationType::ELPP_Filename, "logs/myeasylog.log");
+        setAll(ConfigurationType::ELPP_Filename, "logs\\myeasylog.log");
 #endif // _ELPP_OS_UNIX
         setAll(ConfigurationType::ELPP_ToFile, "true");
         setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
@@ -1624,8 +1623,7 @@ private:
                 if (it->second->is_open()) {
                     it->second->close();
                 }
-                delete it->second;
-                it->second = NULL;
+                internal::utilities::safeDelete(it->second, false);
             }
         }
         fileStreamMap_.clear();
@@ -1634,13 +1632,13 @@ private:
     // This is different since we need unique values
     void insertFilename(unsigned int level_, const std::string& fname_, bool forceNew = false) {
         std::string fnameFull = fname_;
-        if (utilities::StringUtilities::endsWith(fnameFull, constants_->PATH_SLASH)) {
+        if (utilities::StringUtils::endsWith(fnameFull, constants_->PATH_SLASH)) {
             fnameFull.append(constants_->DEFAULT_LOG_FILENAME);
         }
-        std::string path_ = internal::utilities::OSUtilities::getPathFromFilename(fnameFull, constants_);
+        std::string path_ = internal::utilities::OSUtils::getPathFromFilename(fnameFull, constants_);
         if (path_.size() < fnameFull.size()) {
             // Contains path - create it if it does not already exist
-            internal::utilities::OSUtilities::createPath(path_);
+            internal::utilities::OSUtils::createPath(path_);
         }
         if (filenameMap_.size() == 0) {
             filenameMap_.insert(std::pair<unsigned int, std::string>(Level::ELPP_ALL, fnameFull));
@@ -1659,10 +1657,7 @@ private:
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
         std::fstream *fs = fileStreamMap_[level_];
-        if (fs != NULL) {
-            delete fs;
-            fs = NULL;
-        }
+        internal::utilities::safeDelete(fs);
         fileStreamMap_.erase(level_);
         fs = newFileStream(fnameFull, forceNew);
         if (fs != NULL) {
@@ -1701,8 +1696,7 @@ private:
         if (fs->is_open()) {
             fs->flush();
         } else {
-            delete fs;
-            fs = NULL;
+            internal::utilities::safeDelete(fs, false);
             std::cerr << "Bad file [" << filename << "]" << std::endl;
             return NULL;
         }
@@ -1717,15 +1711,14 @@ private:
         if (fs->is_open()) {
             fs->close();
         }
-        delete fs;
-        fs = NULL;
+        internal::utilities::safeDelete(fs, false);
         fileStreamMap_.erase(level_);
         filenameMap_.erase(level_);
     }
 
     unsigned long getULong(const std::string& confValue_) {
         bool valid = true;
-        std::string trimmedVal = utilities::StringUtilities::trim(confValue_);
+        std::string trimmedVal = utilities::StringUtils::trim(confValue_);
         if (trimmedVal.size() == 0) {
             valid = false;
             __EASYLOGGINGPP_SUPPRESS_UNSED(valid);
@@ -1747,7 +1740,7 @@ private:
     }
 
     inline bool getBool(const std::string& confValue_) {
-        std::string trimmedVal = utilities::StringUtilities::trim(confValue_);
+        std::string trimmedVal = utilities::StringUtils::trim(confValue_);
         return (trimmedVal == "1" || trimmedVal == "true" || trimmedVal == "TRUE");
     }
 
@@ -1764,7 +1757,8 @@ private:
 
     bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
         std::fstream* fs = fileStream(level_);
-        if (rollOutSize(level_) != 0 && getSizeOfFile(fs)  >= rollOutSize(level_)) {
+        unsigned long rollOutSize_ = rollOutSize(level_);
+        if (rollOutSize_ != 0 && getSizeOfFile(fs) >= rollOutSize_) {
             fname_ = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
             std::cout << "Cleaning log file [" << fname_ << "]\n";
@@ -1818,14 +1812,8 @@ public:
     }
 
     virtual ~Logger(void) {
-        if (typedConfigurations_) {
-            delete typedConfigurations_;
-            typedConfigurations_ = NULL;
-        }
-        if (stream_) {
-            delete stream_;
-            stream_ = NULL;
-        }
+        internal::utilities::safeDelete(typedConfigurations_);
+        internal::utilities::safeDelete(stream_);
     }
 
     inline std::string id(void) const {
@@ -1845,10 +1833,7 @@ public:
             this->userConfigurations_ = configurations_;
             base_.setFromBase(const_cast<Configurations*>(&configurations_));
         }
-        if (typedConfigurations_) {
-            delete typedConfigurations_;
-            typedConfigurations_ = NULL;
-        }
+        internal::utilities::safeDelete(typedConfigurations_);
         typedConfigurations_ = new internal::TypedConfigurations(base_, constants_);
         configured_ = true;
     }
@@ -1959,12 +1944,6 @@ public:
         return position_;
     }
 
-    inline std::string toString(void) const {
-        std::stringstream ss;
-        ss << position_;
-        return ss.str();
-    }
-
     class Predicate {
     public:
         Predicate(const char* file_, unsigned long int line_)
@@ -2014,8 +1993,8 @@ class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
 public:
     RegisteredLoggers(void) :
         constants_(new internal::Constants()),
-        username_(internal::utilities::OSUtilities::currentUser()),
-        hostname_(internal::utilities::OSUtilities::currentHost()),
+        username_(internal::utilities::OSUtils::currentUser()),
+        hostname_(internal::utilities::OSUtils::currentHost()),
         counters_(new internal::RegisteredCounters()) {
         Configurations conf;
         conf.setToDefault();
@@ -2030,14 +2009,8 @@ public:
     }
 
     virtual ~RegisteredLoggers(void) {
-        if (constants_) {
-            delete constants_;
-            constants_ = NULL;
-        }
-        if (counters_) {
-            delete counters_;
-            counters_ = NULL;
-        }
+        internal::utilities::safeDelete(constants_);
+        internal::utilities::safeDelete(counters_);
     }
 
     internal::Constants* constants(void) const {
@@ -2060,11 +2033,11 @@ private:
     friend class Writer;
     friend class easyloggingpp::Loggers;
 
-    inline std::string& username(void) {
+    inline const std::string& username(void) {
         return username_;
     }
 
-    inline std::string& hostname(void) {
+    inline const std::string& hostname(void) {
         return hostname_;
     }
 
@@ -2129,8 +2102,8 @@ extern internal::ScopedPointer<RegisteredLoggers> registeredLoggers;
 namespace workarounds {
 // There is workaround needed to loop through some stl containers. In order to do that, we need iterable containers
 // of same type and provide iterator interface and pass it on to writeIterator().
-// Remember, this is passed by value in constructor so that we dont change original queue.
-// This operation is as expensive as O(class_.size()) or O(kContainerMaxLog) which ever is smaller.
+// Remember, this is passed by value in constructor so that we dont change original containers.
+// This operation is as expensive as O(class_.size()) or O(constants->MAX_LOG_PER_COUNTER) which ever is smaller.
 
 //
 // Abstract IterableContainer template that provides interface for iterable classes of type T
@@ -2567,17 +2540,9 @@ public:
 #   endif // _ENABLE_EASYLOGGING
         return *this;
     }
-    inline Writer& operator<<(QString* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
-    }
     inline Writer& operator<<(const QStringRef& log_) {
         if (!proceed_) { return *this; }
         return operator<<(log_.toString());
-    }
-    inline Writer& operator<<(QStringRef* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
     }
     inline Writer& operator<<(qint64 log_) {
 #   if _ENABLE_EASYLOGGING
@@ -2588,10 +2553,6 @@ public:
 #   endif // _ENABLE_EASYLOGGING
         return *this;
     }
-    inline Writer& operator<<(qint64* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
-    }
     inline Writer& operator<<(quint64 log_) {
 #   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
@@ -2601,10 +2562,6 @@ public:
 #   endif // _ENABLE_EASYLOGGING
         return *this;
     }
-    inline Writer& operator<<(quint64* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
-    }
     inline Writer& operator<<(QChar log_) {
 #   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
@@ -2613,10 +2570,6 @@ public:
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #   endif // _ENABLE_EASYLOGGING
         return *this;
-    }
-    inline Writer& operator<<(QChar* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
     }
 #   if (!_ELPP_QT_5)
     inline Writer& operator<<(QBool log_) {
@@ -2628,9 +2581,6 @@ public:
 #      endif // _ENABLE_EASYLOGGING
         return *this;
     }
-    inline Writer& operator<<(QBool* log_) {
-        return writePointer(log_);
-    }
 #   endif // (!_ELPP_QT_5)
     inline Writer& operator<<(const QLatin1String& log_) {
 #   if _ENABLE_EASYLOGGING
@@ -2640,10 +2590,6 @@ public:
         __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
 #   endif // _ENABLE_EASYLOGGING
         return *this;
-    }
-    inline Writer& operator<<(QLatin1String* log_) {
-        if (!proceed_) { return *this; }
-        return writePointer(log_);
     }
     template <typename T>
     inline Writer& operator<<(const QList<T>& list_) {
@@ -2779,16 +2725,6 @@ private:
     internal::threading::Mutex mutex_;
     friend class Logger;
 
-    template <typename Pointer>
-    inline Writer& writePointer(const Pointer& pointer_) {
-#if _ENABLE_EASYLOGGING
-        return (pointer_ != NULL ? operator << (*pointer_) : operator << (constants_->NULL_POINTER));
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(pointer_);
-        return *this;
-#endif // _ENABLE_EASYLOGGING
-    }
-
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, size_t size_) {
 #if _ENABLE_EASYLOGGING
@@ -2830,7 +2766,7 @@ private:
         }
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
-            v_ = internal::utilities::DateUtilities::getDateTime(dateFormat,
+            v_ = internal::utilities::DateUtils::getDateTime(dateFormat,
                                                                  f_, constants_, conf_->millisecondsWidth(Level::ELPP_ALL));
             fs_ = conf_->dateFormatSpecifier(severity_);
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
@@ -2844,9 +2780,8 @@ private:
         // Location
         if (f_ & constants_->kLocation) {
             tempss_ << file_ << ":" << line_;
-            v_ = tempss_.str();
             fs_ = constants_->LOCATION_FORMAT_SPECIFIER;
-            internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(fs_, tempss_.str(), currLine_, constants_);
             tempss_.str("");
         }
         // User
@@ -2947,10 +2882,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.39"); }
+    static inline const std::string version(void) { return std::string("8.40"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("07-05-2013 0854hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-05-2013 2019hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3142,12 +3077,12 @@ private:
 #   if _ELPP_OS_UNIX
 #      define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
 #   elif _ELPP_OS_WINDOWS
-#      define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::utilities::DateUtilities::gettimeofday(tm);
+#      define _ELPP_GET_CURR_TIME(tm) easyloggingpp::internal::utilities::DateUtils::gettimeofday(tm);
 #   endif
 #   define START_FUNCTION_LOG "Executing [" << __func__ << "]"
 #   define TIME_OUTPUT "Executed [" << __func__ << "] in [" <<                    \
-    easyloggingpp::internal::utilities::DateUtilities::formatMilliSeconds(        \
-    easyloggingpp::internal::utilities::DateUtilities::getTimeDifference(functionEndTime, functionStartTime)) << "]"
+    easyloggingpp::internal::utilities::DateUtils::formatMilliSeconds(        \
+    easyloggingpp::internal::utilities::DateUtils::getTimeDifference(functionEndTime, functionStartTime)) << "]"
 #   define FUNC_SUB_COMMON_START { timeval functionStartTime, functionEndTime; _ELPP_GET_CURR_TIME(&functionStartTime)
 #   define WRITE_FUNC_PERFORMANCE _ELPP_GET_CURR_TIME(&functionEndTime);            \
     if (easyloggingpp::Loggers::performanceTrackingEnabled()) { PINFO << TIME_OUTPUT; }

@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv);
 
     // Do not use default configuration, use from file instead
-    easyloggingpp::Configurations c("../basic/test_conf.conf");
-    easyloggingpp::Loggers::reconfigureAllLoggers(c);
+    //easyloggingpp::Configurations c("../basic/test_conf.conf");
+    //easyloggingpp::Loggers::reconfigureAllLoggers(c);
 
     bool runThreads = true;
 
@@ -79,9 +79,7 @@ int main(int argc, char* argv[]) {
     qstack_.push ("100");
     qstack_.push ("200");
     qstack_.push ("100");
-    LINFO << "Printing qstack " << qstack_;
-
-
+    LDEBUG << "Printing qstack " << qstack_;
     return 0;
 
 }
