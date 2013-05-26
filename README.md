@@ -293,6 +293,8 @@ In order to check configuration for a certain logger, you may use `easyloggingpp
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Logging
 
+#### Levels
+
 EasyLogging++ comes with following severity levels of logging with complete control over each of the following:
 ```
   * INFO
