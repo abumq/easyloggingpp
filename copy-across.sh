@@ -14,3 +14,4 @@ cp easylogging++.h samples/VC++/VCPP2012_Win32_Multithreaded/VCPP2012_Win32/
 
 ## tools
 cp easylogging++.h tools/LogViewer/
+cp easylogging++.h tools/ConfigurationBuilder/

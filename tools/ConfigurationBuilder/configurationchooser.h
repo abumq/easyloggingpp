@@ -15,28 +15,31 @@ public:
     static QString configFromIntType(unsigned int config) {
         switch (config) {
         case easyloggingpp::ConfigurationType::ELPP_Enabled:
-            return "ENABLED";
+            return QString("ENABLED");
             break;
         case easyloggingpp::ConfigurationType::ELPP_Filename:
-            return "FILENAME";
+            return QString("FILENAME");
             break;
         case easyloggingpp::ConfigurationType::ELPP_Format:
-            return "FORMAT";
+            return QString("FORMAT");
             break;
         case easyloggingpp::ConfigurationType::ELPP_ToFile:
-            return "TO_FILE";
+            return QString("TO_FILE");
             break;
         case easyloggingpp::ConfigurationType::ELPP_ToStandardOutput:
-            return "TO_STANDARD_OUTPUT";
+            return QString("TO_STANDARD_OUTPUT");
             break;
         case easyloggingpp::ConfigurationType::ELPP_MillisecondsWidth:
-            return "MILLISECONDS_WIDTH";
+            return QString("MILLISECONDS_WIDTH");
             break;
         case easyloggingpp::ConfigurationType::ELPP_PerformanceTracking:
-            return "PERFORMANCE_TRACKING";
+            return QString("PERFORMANCE_TRACKING");
             break;
         case easyloggingpp::ConfigurationType::ELPP_RollOutSize:
-            return "ROLL_OUT_SIZE";
+            return QString("ROLL_OUT_SIZE");
+            break;
+        default:
+            return QString("UNKNOWN");
             break;
         }
     }

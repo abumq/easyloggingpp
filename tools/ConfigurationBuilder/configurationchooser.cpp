@@ -50,7 +50,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
     QStringList resultList;
     unsigned int level_ = 0;
 
-    for (unsigned int i = 0; i < ui->cboLevel->count(); ++i) {
+    for (int i = 0; i < ui->cboLevel->count(); ++i) {
         QString levelStr = ui->cboLevel->itemText(i);
         level_ = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
         easyloggingpp::Configurations c;
@@ -67,7 +67,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
         }
 
     }
-    for (unsigned int i = 0; i < resultList.size(); ++i) {
+    for (int i = 0; i < resultList.size(); ++i) {
         result.append(resultList.at(i));
     }
     return result;
@@ -81,6 +81,8 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
 
     unsigned int level = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
     easyloggingpp::Configurations c;
+    // FIXME: Do it smartly - c.set(ELPP_ALL,...) adds configuration for all the other levels as well, for configuration
+    // builder we don't want this behaviour
     c.set(level, easyloggingpp::ConfigurationType::ELPP_Enabled, QuickCast::boolToStr(ui->chkEnabled->checkState() == Qt::Checked));
     c.set(level, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, QuickCast::boolToStr(ui->chkToStandardOutput->checkState() == Qt::Checked));
     c.set(level, easyloggingpp::ConfigurationType::ELPP_ToFile, QuickCast::boolToStr(ui->chkToFile->checkState() == Qt::Checked));
