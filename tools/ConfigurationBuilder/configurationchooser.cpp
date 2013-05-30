@@ -18,8 +18,8 @@ ConfigurationChooser::~ConfigurationChooser()
 
 easyloggingpp::internal::TypedConfigurations* ConfigurationChooser::getConfiguration(const QString &levelStr)
 {
-    QMap<QString, easyloggingpp::internal::TypedConfigurations>::iterator it = levelledConfigurations.find(levelStr);
-    if (it == levelledConfigurations.end()) {
+    QMap<QString, easyloggingpp::internal::TypedConfigurations>::iterator it = levelledTypedConfigurations.find(levelStr);
+    if (it == levelledTypedConfigurations.end()) {
         return NULL;
     }
     return &*it;
@@ -47,20 +47,28 @@ void ConfigurationChooser::updateUI()
 QString ConfigurationChooser::convertConfigurationToString() const
 {
     QString result = "";
+    QStringList resultList;
     unsigned int level_ = 0;
-    unsigned int configurationType_ = 0;
 
     for (unsigned int i = 0; i < ui->cboLevel->count(); ++i) {
+        QString levelStr = ui->cboLevel->itemText(i);
+        level_ = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
+        easyloggingpp::Configurations c;
+        easyloggingpp::internal::Configuration* currConf = NULL;
+        QMap<QString, easyloggingpp::Configurations>::const_iterator it = levelledConfigurations.find(levelStr);
+        if (it == levelledConfigurations.end()) {
+            continue;
+        }
+        resultList << "*" << levelStr << ":\n";
+        c = *it;
+        for (unsigned int ci = 0; ci < c.count(); ++ci) {
+            currConf = c.at(ci);
+            resultList << QuickCast::configFromIntType(currConf->type()) << " : " << QString(currConf->value().c_str()) << "\n";
+        }
 
-        unsigned int levelFromCbo = easyloggingpp::Configurations::Parser::levelFromString(ui->cboLevel->itemText(i).toLower().toStdString());
-        easyloggingpp::internal::Configuration *c = NULL;
-        do {
-            c = configurations.get(levelFromCbo, configurationType_);
-            configurationType_ = configurationType_ << 1;
-            if (configurationType_ == 0) {
-                ++configurationType_;
-            }
-        } while (configurationType_ <= 64);
+    }
+    for (unsigned int i = 0; i < resultList.size(); ++i) {
+        result.append(resultList.at(i));
     }
     return result;
 }
@@ -77,13 +85,21 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
     c.set(level, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, QuickCast::boolToStr(ui->chkToStandardOutput->checkState() == Qt::Checked));
     c.set(level, easyloggingpp::ConfigurationType::ELPP_ToFile, QuickCast::boolToStr(ui->chkToFile->checkState() == Qt::Checked));
     easyloggingpp::internal::TypedConfigurations tc = easyloggingpp::internal::TypedConfigurations(c, easyloggingpp::internal::registeredLoggers->constants());
+
     easyloggingpp::internal::TypedConfigurations* existing = getConfiguration(levelStr);
     if (existing == NULL) {
-        levelledConfigurations.insert(levelStr, tc);
+        levelledTypedConfigurations.insert(levelStr, tc);
+    } else {
+        levelledTypedConfigurations.remove(levelStr);
+        levelledTypedConfigurations.insert(levelStr, tc);
+    }
+    if (levelledConfigurations.find(levelStr) == levelledConfigurations.end()) {
+        levelledConfigurations.insert(levelStr, c);
     } else {
         levelledConfigurations.remove(levelStr);
-        levelledConfigurations.insert(levelStr, tc);
+        levelledConfigurations.insert(levelStr, c);
     }
+
     easyloggingpp::Logger* logger = easyloggingpp::Loggers::getLogger(levelStr.append("-confChooser").toStdString());
     if (!logger->configured()) {
         logger->configure(c);

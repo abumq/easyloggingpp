@@ -12,6 +12,34 @@ class ConfigurationChooser;
 class QuickCast : private easyloggingpp::internal::StaticClass {
 public:
     static std::string boolToStr(bool b) { return b ? "true" : "false"; }
+    static QString configFromIntType(unsigned int config) {
+        switch (config) {
+        case easyloggingpp::ConfigurationType::ELPP_Enabled:
+            return "ENABLED";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_Filename:
+            return "FILENAME";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_Format:
+            return "FORMAT";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_ToFile:
+            return "TO_FILE";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_ToStandardOutput:
+            return "TO_STANDARD_OUTPUT";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_MillisecondsWidth:
+            return "MILLISECONDS_WIDTH";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_PerformanceTracking:
+            return "PERFORMANCE_TRACKING";
+            break;
+        case easyloggingpp::ConfigurationType::ELPP_RollOutSize:
+            return "ROLL_OUT_SIZE";
+            break;
+        }
+    }
 };
 
 class ConfigurationChooser : public QWidget
@@ -47,8 +75,8 @@ private slots:
     void on_chkSetExplicitly_toggled(bool checked);
 
 private:
-    easyloggingpp::Configurations configurations;
-    QMap<QString, easyloggingpp::internal::TypedConfigurations> levelledConfigurations;
+    QMap<QString, easyloggingpp::Configurations> levelledConfigurations;
+    QMap<QString, easyloggingpp::internal::TypedConfigurations> levelledTypedConfigurations;
     QMap<QString, easyloggingpp::Logger*> levelledLoggers;
     Ui::ConfigurationChooser *ui;
     easyloggingpp::internal::TypedConfigurations *getConfiguration(const QString& levelStr);
