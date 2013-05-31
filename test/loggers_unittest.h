@@ -17,7 +17,7 @@ TEST(RegisteredLoggersTest, Loggers) {
     
     TDEBUG << "First log";
     std::stringstream expectedLine;
-    expectedLine << "DEBUG " << utilities::OSUtilities::currentUser() << " " << utilities::OSUtilities::currentHost() << " First log";
+    expectedLine << "DEBUG " << internal::utilities::OSUtils::currentUser() << " " << internal::utilities::OSUtils::currentHost() << " First log";
     std::ifstream reader(Loggers::ConfigurationsReader::filename(testLogger).c_str(), std::ifstream::in);
     if (reader.is_open()) {
         std::string line;

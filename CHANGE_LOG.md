@@ -65,6 +65,9 @@ Change log was not kept before version 2.1.
   * 8.38: Minor internal namespace fixes
   * 8.39: Fixes warnings for int to size_t conversion
   * 8.40: Minor improvements + safeDelete(T*), fixed issue #55
+  * 8.41:
+     - Provides useful interfacing for external tools
+     - Rollout size is not beta anymore
 
 #### 7.xx
  * 7.00:

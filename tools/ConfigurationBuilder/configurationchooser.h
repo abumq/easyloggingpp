@@ -78,12 +78,9 @@ private slots:
     void on_chkSetExplicitly_toggled(bool checked);
 
 private:
-    QMap<QString, easyloggingpp::Configurations> levelledConfigurations;
-    QMap<QString, easyloggingpp::internal::TypedConfigurations> levelledTypedConfigurations;
-    QMap<QString, easyloggingpp::Logger*> levelledLoggers;
+    QMap<QString, easyloggingpp::internal::TypedConfigurations*> levelledTypedConfigurations;
     Ui::ConfigurationChooser *ui;
-    easyloggingpp::internal::TypedConfigurations *getConfiguration(const QString& levelStr);
-    const easyloggingpp::Logger* getLogger(const QString& levelStr) const;
+    easyloggingpp::internal::TypedConfigurations *getConfiguration(const QString& levelStr) const;
     void updateUI();
 
 signals:

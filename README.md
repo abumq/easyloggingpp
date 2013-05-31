@@ -21,7 +21,7 @@ EasyLogging++ is C++ logging library that is based on single header file. It is 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#log-filename">Log Filename</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#milliseconds-width">Milliseconds Width</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#performance-tracking">Performance Tracking</a>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rolling-log-files-beta">Rolling Log Files<sup> beta</sup></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rolling-log-files">Rolling Log Files</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#logging-pattern">Logging Pattern</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#reading-configurations">Reading Configurations</a>
 <a href="#logging">Logging</a>
@@ -212,7 +212,7 @@ Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only ap
 
 Determines whether or not performance tracking is enabled. This effects performanceLogger. Configuration type: `ELPP_PerformanceTracking`
 
-###### Rolling Log Files<sup> beta</sup>
+###### Rolling Log Files
 
 You can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type. Remember, for every level that has roll out size configuration should have dedicated filename. Otherwise you will end up rolling out filename from `ALL` levels
 

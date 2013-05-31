@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.40                                                         //
+//   EasyLogging++ v8.41                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1109,7 +1109,9 @@ public:
         return false;
     }
 
-    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_) {
+    // Sets configuration for specified level_ and configurationType_
+    // Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
+    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_ELPP_ALL_Check = false) {
 
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
@@ -1124,7 +1126,7 @@ public:
             // Configuration already there, just update the value!
             conf_->setValue(value_);
         }
-        if (level_ == Level::ELPP_ALL) {
+        if (!skip_ELPP_ALL_Check && level_ == Level::ELPP_ALL) {
             setAll(configurationType_, value_, true);
         }
     }
@@ -1349,11 +1351,16 @@ class TypedConfigurations {
 public:
     TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
         constants_(constants_) {
+        configurations_ = configurations;
         parse(configurations);
     }
 
     virtual ~TypedConfigurations(void) {
         deleteFileStreams();
+    }
+
+    const Configurations& configurations(void) const {
+        return configurations_;
     }
 private:
     std::map<unsigned int, bool> enabledMap_;
@@ -1369,6 +1376,7 @@ private:
     std::map<unsigned int, unsigned int> formatFlagMap_;
     std::map<unsigned int, unsigned long> rollOutSizeMap_;
     internal::Constants* constants_;
+    Configurations configurations_;
     friend class Writer;
     friend class easyloggingpp::Loggers;
 
@@ -2882,10 +2890,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.40"); }
+    static inline const std::string version(void) { return std::string("8.41"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("26-05-2013 2019hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("31-05-2013 1944hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3030,35 +3038,83 @@ public:
     class ConfigurationsReader : private internal::StaticClass {
     public:
         static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->enabled(level_);
         }
 
+        static inline bool enabled(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->enabled(level_);
+        }
+
         static inline bool toFile(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->toFile(level_);
         }
 
+        static inline bool toFile(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->toFile(level_);
+        }
+
         static inline const std::string& filename(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->filename(level_);
         }
 
+        static inline const std::string& filename(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->filename(level_);
+        }
+
         static inline bool toStandardOutput(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->toStandardOutput(level_);
         }
 
+        static inline bool toStandardOutput(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->toStandardOutput(level_);
+        }
+
         static inline const std::string& logFormat(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->logFormat(level_);
         }
 
+        static inline const std::string& logFormat(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->logFormat(level_);
+        }
+
         static inline int millisecondsWidth(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->millisecondsWidth(level_);
         }
 
+        static inline int millisecondsWidth(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->millisecondsWidth(level_);
+        }
+
         static inline bool performanceTracking(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->performanceTracking(level_);
         }
 
+        static inline bool performanceTracking(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->performanceTracking(level_);
+        }
+
         static inline const unsigned long& logRollOutSize(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->rollOutSize(level_);
+        }
+
+        static inline const unsigned long& logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+            __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
+            return conf_->rollOutSize(level_);
         }
 
     private:
