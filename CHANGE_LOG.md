@@ -68,6 +68,10 @@ Change log was not kept before version 2.1.
   * 8.41:
      - Provides useful interfacing for external tools
      - Rollout size is not beta anymore
+  * 8.45:
+     - Renamed easyloggingpp::Level::... from ELPP_INFO to Info, ELPP_DEBUG to Debug etc.
+     - Renamed easyloggingpp::ConfigurationType::... from ELPP_Enabled to Enabled, ELPP_ToFile to ToFile
+     - Provides conversions from and to std::string for level and configuration type for external tools
 
 #### 7.xx
  * 7.00:

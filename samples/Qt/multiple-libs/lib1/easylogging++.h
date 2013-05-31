@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.41                                                         //
+//   EasyLogging++ v8.45                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -197,9 +197,7 @@
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 namespace easyloggingpp {
-
 namespace internal {
-
 class NoCopy {
 protected:
     NoCopy(void) {}
@@ -207,7 +205,6 @@ private:
     NoCopy(const NoCopy&);
     NoCopy& operator=(const NoCopy&);
 };
-
 class StaticClass {
 private:
     StaticClass(void);
@@ -219,17 +216,87 @@ private:
 struct Level : private internal::StaticClass {
 public:
     enum {
-        ELPP_ALL = 0, ELPP_DEBUG = 1, ELPP_INFO = 2, ELPP_WARNING = 4, ELPP_ERROR = 8,
-        ELPP_FATAL = 16, ELPP_VERBOSE = 32, ELPP_QA = 64, ELPP_TRACE = 128
+        All = 0, Debug = 1, Info = 2, Warning = 4, Error = 8,
+        Fatal = 16, Verbose = 32, QA = 64, Trace = 128, Unknown = 1010
     };
+    static const unsigned int kMaxValid = Trace;
+    static std::string convertToString(unsigned int level_) {
+        switch (level_) {
+        case All:
+            return std::string("all");
+        case Debug:
+            return std::string("debug");
+        case Info:
+            return std::string("info");
+        case Warning:
+            return std::string("warning");
+        case Error:
+            return std::string("error");
+        case Fatal:
+            return std::string("fatal");
+        case QA:
+            return std::string("qa");
+        case Verbose:
+            return std::string("verbose");
+        case Trace:
+            return std::string("trace");
+        default:
+            return std::string("unknown");
+        }
+    }
+    static unsigned int convertFromString(const std::string& levelStr) {
+        if (levelStr == "all") return Level::All;
+        if (levelStr == "debug") return Level::Debug;
+        if (levelStr == "info") return Level::Info;
+        if (levelStr == "warning") return Level::Warning;
+        if (levelStr == "error") return Level::Error;
+        if (levelStr == "fatal") return Level::Fatal;
+        if (levelStr == "qa") return Level::QA;
+        if (levelStr == "verbose") return Level::Verbose;
+        if (levelStr == "trace") return Level::Trace;
+        return Level::Unknown;
+    }
 };
 
 struct ConfigurationType : private internal::StaticClass {
 public:
     enum {
-        ELPP_Enabled = 0, ELPP_ToFile = 1, ELPP_ToStandardOutput = 2, ELPP_Format = 4, ELPP_Filename = 8,
-        ELPP_MillisecondsWidth = 16, ELPP_PerformanceTracking = 32, ELPP_RollOutSize = 64
+        Enabled = 0, ToFile = 1, ToStandardOutput = 2, Format = 4, Filename = 8,
+        MillisecondsWidth = 16, PerformanceTracking = 32, RollOutSize = 64, Unknown = 1010
     };
+    static const unsigned int kMaxValid = RollOutSize;
+    static std::string convertToString(unsigned int configurationType_) {
+        switch (configurationType_) {
+        case Enabled:
+            return std::string("enabled");
+        case Filename:
+            return std::string("filename");
+        case Format:
+            return std::string("format");
+        case ToFile:
+            return std::string("to_file");
+        case ToStandardOutput:
+            return std::string("to_standard_output");
+        case MillisecondsWidth:
+            return std::string("milliseconds_width");
+        case PerformanceTracking:
+            return std::string("performance_tracking");
+        case RollOutSize:
+            return std::string("roll_out_size");
+        default: return std::string("unknown");
+        }
+    }
+    static unsigned int convertFromString(const std::string& configStr) {
+        if (configStr == "enabled") return ConfigurationType::Enabled;
+        if (configStr == "to_file") return ConfigurationType::ToFile;
+        if (configStr == "to_standard_output") return ConfigurationType::ToStandardOutput;
+        if (configStr == "format") return ConfigurationType::Format;
+        if (configStr == "filename") return ConfigurationType::Filename;
+        if (configStr == "milliseconds_width") return ConfigurationType::MillisecondsWidth;
+        if (configStr == "performance_tracking") return ConfigurationType::PerformanceTracking;
+        if (configStr == "roll_out_size") return ConfigurationType::RollOutSize;
+        return ConfigurationType::Unknown;
+    }
 };
 
 namespace internal {
@@ -345,7 +412,8 @@ public:
     const std::string     DEFAULT_LOG_FILENAME;
     std::string           DEFAULT_LOGGER_CONFIGURATION;
 
-    enum kFormatFlags { kDateOnly = 2,
+    enum kFormatFlags {
+                        kDateOnly = 2,
                         kTimeOnly = 4,
                         kDateTime = 8,
                         kLoggerId = 16,
@@ -826,7 +894,7 @@ public:
 template<class Class, class Predicate>
 class Registry {
 public:
-    explicit Registry(void) {
+    Registry(void) {
     }
 
     virtual ~Registry(void) {
@@ -857,6 +925,10 @@ public:
             }
         }
         return *this;
+    }
+
+    inline void registerNew(Class* c_) {
+        list_.push_back(c_);
     }
 
     bool operator!=(const Registry<Class, Predicate>& other_) {
@@ -920,10 +992,6 @@ public:
 
 protected:
     typedef typename std::vector<Class*>::iterator Iterator;
-
-    inline void registerNew(Class* c_) {
-        list_.push_back(c_);
-    }
 
     inline void unregisterAll(void) {
         if (!empty()) {
@@ -998,8 +1066,7 @@ public:
         return ptr_;
     }
 
-    class ReferenceCounter
-    {
+    class ReferenceCounter {
     public:
         explicit ReferenceCounter(void) : count_(0) {
         }
@@ -1105,17 +1172,17 @@ public:
             if (i == 0) {
                 ++i;
             }
-        } while (i <= 128);
+        } while (i <= ConfigurationType::kMaxValid);
         return false;
     }
 
     // Sets configuration for specified level_ and configurationType_
     // Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
-    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_ELPP_ALL_Check = false) {
+    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_LEVEL_ALL_Check = false) {
 
         if (value_ == "") return; // ignore empty values
-        if ((configurationType_ == ConfigurationType::ELPP_PerformanceTracking && level_ != Level::ELPP_ALL) ||
-                (configurationType_ == ConfigurationType::ELPP_MillisecondsWidth && level_ != Level::ELPP_ALL)) {
+        if ((configurationType_ == ConfigurationType::PerformanceTracking && level_ != Level::All) ||
+                (configurationType_ == ConfigurationType::MillisecondsWidth && level_ != Level::All)) {
             // configurationType_ not applicable for this level_
             return;
         }
@@ -1126,7 +1193,7 @@ public:
             // Configuration already there, just update the value!
             conf_->setValue(value_);
         }
-        if (!skip_ELPP_ALL_Check && level_ == Level::ELPP_ALL) {
+        if (!skip_LEVEL_ALL_Check && level_ == Level::All) {
             setAll(configurationType_, value_, true);
         }
     }
@@ -1163,36 +1230,36 @@ public:
     }
 
     void setToDefault(void) {
-        setAll(ConfigurationType::ELPP_Enabled, "true");
+        setAll(ConfigurationType::Enabled, "true");
 #if _ELPP_OS_UNIX
-        setAll(ConfigurationType::ELPP_Filename, "/tmp/logs/myeasylog.log");
+        setAll(ConfigurationType::Filename, "/tmp/logs/myeasylog.log");
 #elif _ELPP_OS_WINDOWS
-        setAll(ConfigurationType::ELPP_Filename, "logs\\myeasylog.log");
+        setAll(ConfigurationType::Filename, "logs\\myeasylog.log");
 #endif // _ELPP_OS_UNIX
-        setAll(ConfigurationType::ELPP_ToFile, "true");
-        setAll(ConfigurationType::ELPP_ToStandardOutput, "true");
-        setAll(ConfigurationType::ELPP_MillisecondsWidth, "3");
-        setAll(ConfigurationType::ELPP_PerformanceTracking, "false");
-        setAll(easyloggingpp::ConfigurationType::ELPP_RollOutSize, "0");
-        setAll(ConfigurationType::ELPP_Format, "%datetime %level  [%logger] %log");
-        set(Level::ELPP_DEBUG, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
+        setAll(ConfigurationType::ToFile, "true");
+        setAll(ConfigurationType::ToStandardOutput, "true");
+        setAll(ConfigurationType::MillisecondsWidth, "3");
+        setAll(ConfigurationType::PerformanceTracking, "false");
+        setAll(easyloggingpp::ConfigurationType::RollOutSize, "0");
+        setAll(ConfigurationType::Format, "%datetime %level  [%logger] %log");
+        set(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
         // INFO and WARNING are set to default by Level::ALL
-        set(Level::ELPP_ERROR, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
-        set(Level::ELPP_FATAL, ConfigurationType::ELPP_Format, "%datetime %level [%logger] %log");
-        set(Level::ELPP_VERBOSE, ConfigurationType::ELPP_Format, "%datetime %level-%vlevel [%logger] %log");
-        set(Level::ELPP_QA, ConfigurationType::ELPP_Format, "%datetime %level    [%logger] %log");
-        set(Level::ELPP_TRACE, ConfigurationType::ELPP_Format, "%datetime %level [%logger] [%func] [%loc] %log");
+        set(Level::Error, ConfigurationType::Format, "%datetime %level [%logger] %log");
+        set(Level::Fatal, ConfigurationType::Format, "%datetime %level [%logger] %log");
+        set(Level::Verbose, ConfigurationType::Format, "%datetime %level-%vlevel [%logger] %log");
+        set(Level::QA, ConfigurationType::Format, "%datetime %level    [%logger] %log");
+        set(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %log");
     }
 
-    inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipELPP_ALL = false) {
-        if (!skipELPP_ALL) {
-            set(Level::ELPP_ALL, configurationType_, value_);
+    inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipLEVEL_ALL = false) {
+        if (!skipLEVEL_ALL) {
+            set(Level::All, configurationType_, value_);
         }
         unsigned int i = 1;
         do {
             set(i, configurationType_, value_);
             i = i << 1;
-        } while (i <= 128);
+        } while (i <= ConfigurationType::kMaxValid);
     }
 
     inline void clear(void) {
@@ -1236,46 +1303,6 @@ public:
             return ELPP_StringUtils::startsWith(line, "//");
         }
 
-        static unsigned int levelFromString(const std::string& levelStr) {
-            if (levelStr == "all")
-                return Level::ELPP_ALL;
-            if (levelStr == "debug")
-                return Level::ELPP_DEBUG;
-            if (levelStr == "info")
-                return Level::ELPP_INFO;
-            if (levelStr == "warning")
-                return Level::ELPP_WARNING;
-            if (levelStr == "error")
-                return Level::ELPP_ERROR;
-            if (levelStr == "fatal")
-                return Level::ELPP_FATAL;
-            if (levelStr == "qa")
-                return Level::ELPP_QA;
-            if (levelStr == "verbose")
-                return Level::ELPP_VERBOSE;
-            if (levelStr == "trace")
-                return Level::ELPP_TRACE;
-            return 1010;
-        }
-        static unsigned int configFromString(const std::string& configStr) {
-            if (configStr == "enabled")
-                return ConfigurationType::ELPP_Enabled;
-            if (configStr == "to_file")
-                return ConfigurationType::ELPP_ToFile;
-            if (configStr == "to_standard_output")
-                return ConfigurationType::ELPP_ToStandardOutput;
-            if (configStr == "format")
-                return ConfigurationType::ELPP_Format;
-            if (configStr == "filename")
-                return ConfigurationType::ELPP_Filename;
-            if (configStr == "milliseconds_width")
-                return ConfigurationType::ELPP_MillisecondsWidth;
-            if (configStr == "performance_tracking")
-                return ConfigurationType::ELPP_PerformanceTracking;
-            if (configStr == "roll_out_size")
-                return ConfigurationType::ELPP_RollOutSize;
-            return 1010;
-        }
         static bool parseLine(std::string& line, unsigned int& currLevel, Configurations* conf) {
             std::string currLevelStr = std::string();
             unsigned int currConfig = 0;
@@ -1288,14 +1315,14 @@ public:
                 // Comment ignored
                 return true;
             }
-            if (Parser::isLevel(line)) {
+            if (isLevel(line)) {
                 currLevelStr = ELPP_StringUtils::stripAllWhiteSpaces(line);
                 if (currLevelStr.size() <= 2) {
                     return true;
                 }
                 currLevelStr = currLevelStr.substr(1, currLevelStr.size() - 2);
                 ELPP_StringUtils::tolower(currLevelStr);
-                currLevel = Parser::levelFromString(currLevelStr);
+                currLevel = Level::convertFromString(currLevelStr);
                 return true;
             }
             if (isConfig(line)) {
@@ -1303,7 +1330,7 @@ public:
                 currConfigStr = line.substr(0, assignment);
                 currConfigStr = ELPP_StringUtils::stripAllWhiteSpaces(currConfigStr);
                 ELPP_StringUtils::tolower(currConfigStr);
-                currConfig = Parser::configFromString(currConfigStr);
+                currConfig = ConfigurationType::convertFromString(currConfigStr);
                 currValue = line.substr(assignment + 1);
                 currValue = ELPP_StringUtils::trim(currValue);
                 size_t quotesStart = currValue.find("\"", 0);
@@ -1321,9 +1348,9 @@ public:
                     }
                 }
             }
-            __EASYLOGGINGPP_ASSERT(currLevel != 1010, "Unrecognized severity level [" << currLevelStr << "]");
-            __EASYLOGGINGPP_ASSERT(currConfig != 1010, "Unrecognized configuration [" << currConfigStr << "]");
-            if (currLevel == 1010 || currConfig == 1010) {
+            __EASYLOGGINGPP_ASSERT(currLevel != Level::Unknown, "Unrecognized severity level [" << currLevelStr << "]");
+            __EASYLOGGINGPP_ASSERT(currConfig != ConfigurationType::Unknown, "Unrecognized configuration [" << currConfigStr << "]");
+            if (currLevel == Level::Unknown || currConfig == ConfigurationType::Unknown) {
                 return false; // unrecognizable level or config
             }
             conf->set(currLevel, currConfig, currValue);
@@ -1383,7 +1410,7 @@ private:
     bool enabled(unsigned int level_) {
         std::map<unsigned int, bool>::iterator it = enabledMap_.find(level_);
         if (it == enabledMap_.end()) {
-            return enabledMap_[Level::ELPP_ALL];
+            return enabledMap_[Level::All];
         }
         return it->second;
     }
@@ -1391,7 +1418,7 @@ private:
     bool toFile(unsigned int level_) {
         std::map<unsigned int, bool>::iterator it = toFileMap_.find(level_);
         if (it == toFileMap_.end()) {
-            return toFileMap_[Level::ELPP_ALL];
+            return toFileMap_[Level::All];
         }
         return it->second;
     }
@@ -1399,7 +1426,7 @@ private:
     const std::string& filename(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = filenameMap_.find(level_);
         if (it == filenameMap_.end()) {
-            return filenameMap_[Level::ELPP_ALL];
+            return filenameMap_[Level::All];
         }
         return it->second;
     }
@@ -1407,7 +1434,7 @@ private:
     bool toStandardOutput(unsigned int level_) {
         std::map<unsigned int, bool>::iterator it = toStandardOutputMap_.find(level_);
         if (it == toStandardOutputMap_.end()) {
-            return toStandardOutputMap_[Level::ELPP_ALL];
+            return toStandardOutputMap_[Level::All];
         }
         return it->second;
     }
@@ -1415,7 +1442,7 @@ private:
     const std::string& logFormat(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = logFormatMap_.find(level_);
         if (it == logFormatMap_.end()) {
-            return logFormatMap_[Level::ELPP_ALL];
+            return logFormatMap_[Level::All];
         }
         return it->second;
     }
@@ -1423,7 +1450,7 @@ private:
     const std::string& dateFormat(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = dateFormatMap_.find(level_);
         if (it == dateFormatMap_.end()) {
-            return dateFormatMap_[Level::ELPP_ALL];
+            return dateFormatMap_[Level::All];
         }
         return it->second;
     }
@@ -1431,25 +1458,25 @@ private:
     const std::string& dateFormatSpecifier(unsigned int level_) {
         std::map<unsigned int, std::string>::iterator it = dateFormatSpecifierMap_.find(level_);
         if (it == dateFormatSpecifierMap_.end()) {
-            return dateFormatSpecifierMap_[Level::ELPP_ALL];
+            return dateFormatSpecifierMap_[Level::All];
         }
         return it->second;
     }
 
-    int millisecondsWidth(unsigned int level_ = Level::ELPP_ALL) {
+    int millisecondsWidth(unsigned int level_ = Level::All) {
         __EASYLOGGINGPP_SUPPRESS_UNSED(level_);
-        return millisecondsWidthMap_[Level::ELPP_ALL];
+        return millisecondsWidthMap_[Level::All];
     }
 
-    bool performanceTracking(unsigned int level_ = Level::ELPP_ALL) {
+    bool performanceTracking(unsigned int level_ = Level::All) {
         __EASYLOGGINGPP_SUPPRESS_UNSED(level_);
-        return performanceTrackingMap_[Level::ELPP_ALL];
+        return performanceTrackingMap_[Level::All];
     }
 
     std::fstream* fileStream(unsigned int level_) {
         std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.find(level_);
         if (it == fileStreamMap_.end()) {
-            return fileStreamMap_[Level::ELPP_ALL];
+            return fileStreamMap_[Level::All];
         }
         return it->second;
     }
@@ -1457,7 +1484,7 @@ private:
     const unsigned long& rollOutSize(unsigned int level_) {
         std::map<unsigned int, unsigned long>::iterator it = rollOutSizeMap_.find(level_);
         if (it == rollOutSizeMap_.end()) {
-            return rollOutSizeMap_[Level::ELPP_ALL];
+            return rollOutSizeMap_[Level::All];
         }
         return it->second;
     }
@@ -1465,7 +1492,7 @@ private:
     int formatFlag(unsigned int level_) {
         std::map<unsigned int, unsigned int>::iterator it = formatFlagMap_.find(level_);
         if (it == formatFlagMap_.end()) {
-            return formatFlagMap_[Level::ELPP_ALL];
+            return formatFlagMap_[Level::All];
         }
         return it->second;
     }
@@ -1474,23 +1501,23 @@ private:
         for (size_t i = 0; i < configurations_.count(); ++i) {
             Configuration* conf = configurations_.at(i);
             switch (conf->type()) {
-            case ConfigurationType::ELPP_Enabled:
+            case ConfigurationType::Enabled:
                 setValue(conf->level(), getBool(conf->value()), enabledMap_);
                 break;
-            case ConfigurationType::ELPP_ToFile:
+            case ConfigurationType::ToFile:
                 setValue(conf->level(), getBool(conf->value()), toFileMap_);
                 break;
-            case ConfigurationType::ELPP_Filename:
+            case ConfigurationType::Filename:
                 insertFilename(conf->level(), conf->value());
                 break;
-            case ConfigurationType::ELPP_ToStandardOutput:
+            case ConfigurationType::ToStandardOutput:
                 setValue(conf->level(), getBool(conf->value()), toStandardOutputMap_);
                 break;
-            case ConfigurationType::ELPP_Format:
+            case ConfigurationType::Format:
                 determineFormats(conf->level(), conf->value());
                 break;
-            case ConfigurationType::ELPP_MillisecondsWidth:
-                if (conf->level() == Level::ELPP_ALL) {
+            case ConfigurationType::MillisecondsWidth:
+                if (conf->level() == Level::All) {
                     int origVal = getInt(conf->value());
                     int msl_;
 #if _ELPP_OS_UNIX
@@ -1517,12 +1544,12 @@ private:
                     setValue(conf->level(), msl_, millisecondsWidthMap_);
                 }
                 break;
-            case ConfigurationType::ELPP_PerformanceTracking:
-                if (conf->level() == Level::ELPP_ALL) {
+            case ConfigurationType::PerformanceTracking:
+                if (conf->level() == Level::All) {
                     setValue(conf->level(), getBool(conf->value()), performanceTrackingMap_);
                 }
                 break;
-            case ConfigurationType::ELPP_RollOutSize:
+            case ConfigurationType::RollOutSize:
                 setValue(conf->level(), getULong(conf->value()), rollOutSizeMap_);
                 unsigned int correctLevel_ = 0;
                 std::string rolloutFilename_ = std::string();
@@ -1588,35 +1615,35 @@ private:
         // Update %level
         std::string origFormatCopy = originalFormat;
         switch (level_) {
-        case Level::ELPP_DEBUG:
+        case Level::Debug:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_DEBUG_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_INFO:
+        case Level::Info:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_INFO_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_WARNING:
+        case Level::Warning:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_WARNING_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_ERROR:
+        case Level::Error:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_ERROR_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_FATAL:
+        case Level::Fatal:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_FATAL_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_VERBOSE:
+        case Level::Verbose:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_VERBOSE_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_QA:
+        case Level::QA:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_QA_LEVEL_VALUE, origFormatCopy, constants_);
             break;
-        case Level::ELPP_TRACE:
+        case Level::Trace:
             utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
                                                          constants_->LOG_TRACE_LEVEL_VALUE, origFormatCopy, constants_);
             break;
@@ -1649,10 +1676,10 @@ private:
             internal::utilities::OSUtils::createPath(path_);
         }
         if (filenameMap_.size() == 0) {
-            filenameMap_.insert(std::pair<unsigned int, std::string>(Level::ELPP_ALL, fnameFull));
+            filenameMap_.insert(std::pair<unsigned int, std::string>(Level::All, fnameFull));
             std::fstream *fsAll = newFileStream(fnameFull, forceNew);
             if (fsAll != NULL) {
-                fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(Level::ELPP_ALL, fsAll));
+                fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(Level::All, fsAll));
             }
             return;
         }
@@ -1674,15 +1701,15 @@ private:
     }
 
     template <typename T>
-    void setValue(unsigned int level_, const T& value_, std::map<unsigned int, T>& map_, bool skipELPP_ALL = false) {
-        if (map_.size() == 0 && !skipELPP_ALL) {
-            map_.insert(std::pair<unsigned int, T>(Level::ELPP_ALL, value_));
+    void setValue(unsigned int level_, const T& value_, std::map<unsigned int, T>& map_, bool skipLEVEL_ALL = false) {
+        if (map_.size() == 0 && !skipLEVEL_ALL) {
+            map_.insert(std::pair<unsigned int, T>(Level::All, value_));
             return;
         }
         typedef typename std::map<unsigned int, T>::iterator Iterator;
         for (Iterator it = map_.begin(); it != map_.end(); ++it) {
-            // Ignore conf if we already have same value for ELPP_ALL
-            if (it->first == Level::ELPP_ALL && it->second == value_) {
+            // Ignore conf if we already have same value for Level::All
+            if (it->first == Level::All && it->second == value_) {
                 return;
             }
         }
@@ -1773,7 +1800,7 @@ private:
 #endif // defined(_ELPP_INTERNAL_INFO)
             // Find and reset correct level. By correct level we mean the current
             // available level in fileStream because this level_ could actually be using
-            // configurations from ELPP_ALL and you do not want to create a brand new
+            // configurations from Level::All and you do not want to create a brand new
             // stream just because we are rolling log away
             correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
             forceReinitiateFile(correctLevel_, fname_);
@@ -1786,7 +1813,7 @@ private:
     unsigned int findAvailableLevel(std::map<unsigned int, T>& map_, unsigned int refLevel_) {
         typename std::map<unsigned int, T>::iterator it = map_.find(refLevel_);
         if (it == map_.end()) {
-            return Level::ELPP_ALL;
+            return Level::All;
         }
         return refLevel_;
     }
@@ -2012,7 +2039,7 @@ public:
         registerNew(new Logger("security", constants_));
         Configurations confPerformance;
         confPerformance.setToDefault();
-        confPerformance.setAll(ConfigurationType::ELPP_PerformanceTracking, "true");
+        confPerformance.setAll(ConfigurationType::PerformanceTracking, "true");
         registerNew(new Logger("performance", constants_, confPerformance));
     }
 
@@ -2225,35 +2252,35 @@ public:
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
             if (proceed_) {
-                if (severity_ == Level::ELPP_DEBUG) {
+                if (severity_ == Level::Debug) {
 #if (!_ELPP_DEBUG_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_INFO) {
+                } else if (severity_ == Level::Info) {
 #if (!_ELPP_INFO_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_WARNING) {
+                } else if (severity_ == Level::Warning) {
 #if (!_ELPP_WARNING_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_ERROR) {
+                } else if (severity_ == Level::Error) {
 #if (!_ELPP_ERROR_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_FATAL) {
+                } else if (severity_ == Level::Fatal) {
 #if (!_ELPP_FATAL_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_QA) {
+                } else if (severity_ == Level::QA) {
 #if (!_ELPP_QA_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_VERBOSE) {
+                } else if (severity_ == Level::Verbose) {
 #if (!_ELPP_VERBOSE_LOG)
                     proceed_ = false;
 #endif
-                } else if (severity_ == Level::ELPP_TRACE) {
+                } else if (severity_ == Level::Trace) {
 #if (!_ELPP_TRACE_LOG)
                     proceed_ = false;
 #endif
@@ -2265,7 +2292,7 @@ public:
             checkRollOuts(severity_, logger_);
 #endif // (defined(_ELPP_STRICT_ROLLOUT))
         }
-        if (proceed_ && (severity_ == Level::ELPP_VERBOSE)) {
+        if (proceed_ && (severity_ == Level::Verbose)) {
             proceed_ = (verboseLevel_ <= constants_->CURRENT_VERBOSE_LEVEL);
         }
         if (proceed_ && (aspect_ == Aspect::Conditional)) {
@@ -2775,7 +2802,7 @@ private:
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
             v_ = internal::utilities::DateUtils::getDateTime(dateFormat,
-                                                                 f_, constants_, conf_->millisecondsWidth(Level::ELPP_ALL));
+                                                                 f_, constants_, conf_->millisecondsWidth(Level::All));
             fs_ = conf_->dateFormatSpecifier(severity_);
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
@@ -2805,7 +2832,7 @@ private:
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
         // Verbose level
-        if (severity_ == Level::ELPP_VERBOSE && f_ & constants_->kVerboseLevel) {
+        if (severity_ == Level::Verbose && f_ & constants_->kVerboseLevel) {
             tempss_ << verboseLevel_;
             fs_ = constants_->VERBOSE_LEVEL_FORMAT_SPECIFIER;
             internal::utilities::LogManipulator::updateFormatValue(fs_, tempss_.str(), currLine_, constants_);
@@ -2890,10 +2917,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.41"); }
+    static inline const std::string version(void) { return std::string("8.45"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("31-05-2013 1944hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("01-06-2013 0254hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -2978,20 +3005,20 @@ public:
     }
 
     static inline void disableAll(void) {
-        reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "false");
+        reconfigureAllLoggers(ConfigurationType::Enabled, "false");
     }
 
     static inline void enableAll(void) {
-        reconfigureAllLoggers(ConfigurationType::ELPP_Enabled, "true");
+        reconfigureAllLoggers(ConfigurationType::Enabled, "true");
     }
 
     static inline void setFilename(const std::string& logFilename_) {
-        reconfigureAllLoggers(ConfigurationType::ELPP_Filename, logFilename_);
+        reconfigureAllLoggers(ConfigurationType::Filename, logFilename_);
     }
 
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
         if (!logger_) return;
-        logger_->configurations().setAll(ConfigurationType::ELPP_Filename, logFilename_);
+        logger_->configurations().setAll(ConfigurationType::Filename, logFilename_);
         logger_->reconfigure();
     }
 
@@ -3002,13 +3029,13 @@ public:
 
     static inline void disablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
-        l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "false");
+        l->configurations().set(Level::All, ConfigurationType::PerformanceTracking, "false");
         l->reconfigure();
     }
 
     static inline void enablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
-        l->configurations().set(Level::ELPP_ALL, ConfigurationType::ELPP_PerformanceTracking, "true");
+        l->configurations().set(Level::All, ConfigurationType::PerformanceTracking, "true");
         l->reconfigure();
     }
 
@@ -3037,82 +3064,82 @@ public:
 
     class ConfigurationsReader : private internal::StaticClass {
     public:
-        static inline bool enabled(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool enabled(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->enabled(level_);
         }
 
-        static inline bool enabled(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool enabled(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->enabled(level_);
         }
 
-        static inline bool toFile(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool toFile(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->toFile(level_);
         }
 
-        static inline bool toFile(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool toFile(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->toFile(level_);
         }
 
-        static inline const std::string& filename(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& filename(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->filename(level_);
         }
 
-        static inline const std::string& filename(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& filename(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->filename(level_);
         }
 
-        static inline bool toStandardOutput(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool toStandardOutput(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->toStandardOutput(level_);
         }
 
-        static inline bool toStandardOutput(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool toStandardOutput(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->toStandardOutput(level_);
         }
 
-        static inline const std::string& logFormat(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& logFormat(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->logFormat(level_);
         }
 
-        static inline const std::string& logFormat(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const std::string& logFormat(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->logFormat(level_);
         }
 
-        static inline int millisecondsWidth(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline int millisecondsWidth(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->millisecondsWidth(level_);
         }
 
-        static inline int millisecondsWidth(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline int millisecondsWidth(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->millisecondsWidth(level_);
         }
 
-        static inline bool performanceTracking(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool performanceTracking(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->performanceTracking(level_);
         }
 
-        static inline bool performanceTracking(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline bool performanceTracking(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->performanceTracking(level_);
         }
 
-        static inline const unsigned long& logRollOutSize(Logger* logger_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const unsigned long& logRollOutSize(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->rollOutSize(level_);
         }
 
-        static inline const unsigned long& logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::ELPP_ALL) {
+        static inline const unsigned long& logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->rollOutSize(level_);
         }
@@ -3198,36 +3225,36 @@ private:
 #   undef CVERBOSE
 #endif
 // Normal logs
-#define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_INFO)
-#define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_WARNING)
-#define CDEBUG(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_DEBUG)
-#define CERROR(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_ERROR)
-#define CFATAL(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_FATAL)
-#define CQA(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_QA)
-#define CTRACE(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::ELPP_TRACE)
+#define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Info)
+#define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Warning)
+#define CDEBUG(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Debug)
+#define CERROR(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Error)
+#define CFATAL(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Fatal)
+#define CQA(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::QA)
+#define CTRACE(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Trace)
 #define CVERBOSE(vlevel_, loggerId) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Normal,       \
-    easyloggingpp::Level::ELPP_VERBOSE, __func__, __FILE__, __LINE__, true, vlevel_)
+    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_)
 // Conditional logs
-#define CINFO_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_INFO)
-#define CWARNING_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_WARNING)
-#define CDEBUG_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_DEBUG)
-#define CERROR_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_ERROR)
-#define CFATAL_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_FATAL)
-#define CQA_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_QA)
-#define CTRACE_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::ELPP_TRACE)
+#define CINFO_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Info)
+#define CWARNING_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Warning)
+#define CDEBUG_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Debug)
+#define CERROR_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Error)
+#define CFATAL_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Fatal)
+#define CQA_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::QA)
+#define CTRACE_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Trace)
 #define CVERBOSE_IF(condition_, vlevel_, loggerId) if (condition_) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Conditional,     \
-    easyloggingpp::Level::ELPP_VERBOSE, __func__, __FILE__, __LINE__, condition_, vlevel_)
+    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, condition_, vlevel_)
 // Interval logs
-#define CINFO_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_INFO)
-#define CWARNING_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_WARNING)
-#define CDEBUG_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_DEBUG)
-#define CERROR_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_ERROR)
-#define CFATAL_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_FATAL)
-#define CQA_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_QA)
-#define CTRACE_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::ELPP_TRACE)
+#define CINFO_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Info)
+#define CWARNING_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Warning)
+#define CDEBUG_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Debug)
+#define CERROR_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Error)
+#define CFATAL_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Fatal)
+#define CQA_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::QA)
+#define CTRACE_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Trace)
 #define CVERBOSE_EVERY_N(interval_, vlevel_, loggerId) if (easyloggingpp::internal::registeredLoggers->validateCounter(__FILE__, __LINE__, interval_)) \
     easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Interval,   \
-    easyloggingpp::Level::ELPP_VERBOSE, __func__, __FILE__, __LINE__, true, vlevel_, interval_)
+    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_, interval_)
 //
 // default Loggers
 //

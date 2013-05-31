@@ -14,28 +14,28 @@ public:
     static std::string boolToStr(bool b) { return b ? "true" : "false"; }
     static QString configFromIntType(unsigned int config) {
         switch (config) {
-        case easyloggingpp::ConfigurationType::ELPP_Enabled:
+        case easyloggingpp::ConfigurationType::Enabled:
             return QString("ENABLED");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_Filename:
+        case easyloggingpp::ConfigurationType::Filename:
             return QString("FILENAME");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_Format:
+        case easyloggingpp::ConfigurationType::Format:
             return QString("FORMAT");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_ToFile:
+        case easyloggingpp::ConfigurationType::ToFile:
             return QString("TO_FILE");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_ToStandardOutput:
+        case easyloggingpp::ConfigurationType::ToStandardOutput:
             return QString("TO_STANDARD_OUTPUT");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_MillisecondsWidth:
+        case easyloggingpp::ConfigurationType::MillisecondsWidth:
             return QString("MILLISECONDS_WIDTH");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_PerformanceTracking:
+        case easyloggingpp::ConfigurationType::PerformanceTracking:
             return QString("PERFORMANCE_TRACKING");
             break;
-        case easyloggingpp::ConfigurationType::ELPP_RollOutSize:
+        case easyloggingpp::ConfigurationType::RollOutSize:
             return QString("ROLL_OUT_SIZE");
             break;
         default:

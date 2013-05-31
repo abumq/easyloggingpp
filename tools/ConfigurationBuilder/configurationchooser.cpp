@@ -32,7 +32,7 @@ easyloggingpp::internal::TypedConfigurations* ConfigurationChooser::getConfigura
 void ConfigurationChooser::updateUI()
 {
     QString levelStr = ui->cboLevel->currentText();
-    unsigned int level = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
+    unsigned int level = easyloggingpp::Level::convertFromString(levelStr.toLower().toStdString());
     easyloggingpp::internal::TypedConfigurations* currConfig = getConfiguration(levelStr);
     if (currConfig != NULL) {
         ui->chkEnabled->setChecked(easyloggingpp::Loggers::ConfigurationsReader::enabled(currConfig, level));
@@ -50,7 +50,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
 
     for (int i = 0; i < ui->cboLevel->count(); ++i) {
         QString levelStr = ui->cboLevel->itemText(i);
-        level_ = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
+        level_ = easyloggingpp::Level::convertFromString(levelStr.toLower().toStdString());
 
         easyloggingpp::internal::TypedConfigurations* existingTypedConfigurations = getConfiguration(levelStr);
         if (existingTypedConfigurations == NULL) {
@@ -77,11 +77,11 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
     if (levelStr == "") levelStr = ui->cboLevel->currentText();
     LINFO << "Adding levelled configuration for [" << levelStr << "]";
 
-    unsigned int level = easyloggingpp::Configurations::Parser::levelFromString(levelStr.toLower().toStdString());
+    unsigned int level = easyloggingpp::Level::convertFromString(levelStr.toLower().toStdString());
     easyloggingpp::Configurations c;
-    c.set(level, easyloggingpp::ConfigurationType::ELPP_Enabled, QuickCast::boolToStr(ui->chkEnabled->checkState() == Qt::Checked), true);
-    c.set(level, easyloggingpp::ConfigurationType::ELPP_ToStandardOutput, QuickCast::boolToStr(ui->chkToStandardOutput->checkState() == Qt::Checked), true);
-    c.set(level, easyloggingpp::ConfigurationType::ELPP_ToFile, QuickCast::boolToStr(ui->chkToFile->checkState() == Qt::Checked), true);
+    c.set(level, easyloggingpp::ConfigurationType::Enabled, QuickCast::boolToStr(ui->chkEnabled->checkState() == Qt::Checked), true);
+    c.set(level, easyloggingpp::ConfigurationType::ToStandardOutput, QuickCast::boolToStr(ui->chkToStandardOutput->checkState() == Qt::Checked), true);
+    c.set(level, easyloggingpp::ConfigurationType::ToFile, QuickCast::boolToStr(ui->chkToFile->checkState() == Qt::Checked), true);
     easyloggingpp::internal::TypedConfigurations *tc = new easyloggingpp::internal::TypedConfigurations(c, easyloggingpp::internal::registeredLoggers->constants());
 
     easyloggingpp::internal::TypedConfigurations* existing = getConfiguration(levelStr);
