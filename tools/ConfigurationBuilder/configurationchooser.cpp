@@ -9,6 +9,7 @@ ConfigurationChooser::ConfigurationChooser(QWidget *parent) :
     ui->cboLevel->addItems(QStringList() << "ALL" << "DEBUG" << "INFO" << "WARNING" << "ERROR" << "FATAL" << "VERBOSE" << "QA" << "TRACE");
     ui->cboRollOutSizeUnit->addItems(QStringList() << "B" << "KB" << "MB" << "GB");
     QObject::connect(this, SIGNAL(configurationUpdated(QString)), this, SLOT(addCurrentLevelledConfiguration(QString)));
+    addCurrentLevelledConfiguration("ALL");
 }
 
 ConfigurationChooser::~ConfigurationChooser()
@@ -35,6 +36,8 @@ void ConfigurationChooser::updateUI()
     easyloggingpp::internal::TypedConfigurations* currConfig = getConfiguration(levelStr);
     if (currConfig != NULL) {
         ui->chkEnabled->setChecked(easyloggingpp::Loggers::ConfigurationsReader::enabled(currConfig, level));
+        ui->chkToStandardOutput->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toStandardOutput(currConfig, level));
+        ui->chkToFile->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toFile(currConfig, level));
     }
 }
 
@@ -94,10 +97,11 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
 void ConfigurationChooser::on_cboLevel_currentIndexChanged(const QString&)
 {
     if (ui->cboLevel->currentIndex() == 0) {
-        ui->chkSetExplicitly->setChecked(true);
         ui->chkSetExplicitly->setEnabled(false);
+        ui->chkSetExplicitly->setChecked(true);
     } else {
         ui->chkSetExplicitly->setEnabled(true);
+        ui->chkSetExplicitly->setChecked(getConfiguration(ui->cboLevel->currentText()) != NULL);
     }
     updateUI();
 }
@@ -153,5 +157,16 @@ void ConfigurationChooser::on_chkSetExplicitly_toggled(bool checked)
     ui->spnMillisecondsWidth->setEnabled(checked);
     ui->spnRollOutSizeValue->setEnabled(checked);
     ui->cboRollOutSizeUnit->setEnabled(checked);
-    emit configurationUpdated(ui->cboLevel->currentText());
+    if (!checked) {
+        // Remove all the configurations since user does not want to configure for this level
+        QString levelStr = ui->cboLevel->currentText();
+        easyloggingpp::internal::TypedConfigurations* existingTypedConfigurations = getConfiguration(levelStr);
+        if (existingTypedConfigurations != NULL) {
+            delete existingTypedConfigurations;
+            existingTypedConfigurations = NULL;
+            levelledTypedConfigurations.remove(levelStr);
+        }
+    } else {
+        emit configurationUpdated(ui->cboLevel->currentText());
+    }
 }
