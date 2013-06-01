@@ -164,11 +164,11 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, const char** argv) {
     easyloggingpp::Configurations defaultConf;
     defaultConf.setToDefault();
-    defaultConf.set(easyloggingpp::Level::ELPP_INFO, easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log"); // Values are always std::string
+    defaultConf.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Format, "%datetime %level %log"); // Values are always std::string
     easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     BINFO << "Log using default file";    // Log message:  01/01/2013 00:00:00.551 INFO Log using default file
     // To set ALL configuraions you may use
-    defaultConf.setAll(easyloggingpp::ConfigurationType::ELPP_Format, "%datetime %level %log");
+    defaultConf.setAll(easyloggingpp::ConfigurationType::Format, "%datetime %level %log");
     easyloggingpp::Loggers::reconfigureLogger("business", defaultConf); // Business logger uses default configurations
     return 0;
 }
@@ -180,7 +180,7 @@ Configuration just needs to be set once. If you are happy with default configura
 
 ###### Enable / Disable Logs
 
-To disable logs you may either set `easyloggingpp::ConfigurationType::ELPP_Enabled` to `true` or `false`. Alternatively, you may define one of following macros;
+To disable logs you may either set `easyloggingpp::ConfigurationType::Enabled` to `true` or `false`. Alternatively, you may define one of following macros;
 ```
 * _DISABLE_LOGS  (Disables all logs)
 * _DISABLE_DEBUG_LOGS
@@ -194,34 +194,34 @@ To disable logs you may either set `easyloggingpp::ConfigurationType::ELPP_Enabl
 
 ###### Log To File
 
-Determines whether or not logs need to be written to log file. Configuration type: `ELPP_ToFile`
+Determines whether or not logs need to be written to log file. Configuration type: `ToFile`
 
 ###### Log To Standard Output
 
-Determines whether or not logs need to be written to standard output (terminal, command prompt etc). Configuration type: `ELPP_ToStandardOutput`
+Determines whether or not logs need to be written to standard output (terminal, command prompt etc). Configuration type: `ToStandardOutput`
 
 ###### Log Filename
 
-Determines where to write logs (if ToFile enabled). Configuration type: `ELPP_Filename`
+Determines where to write logs (if ToFile enabled). Configuration type: `Filename`
 
 ###### Milliseconds Width
 
-Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only applicable for unix based. Configuration type: `ELPP_MillisecondsWidth`
+Determines the length of milliseconds (valid range: 3 - 6, default: 3) - only applicable for unix based. Configuration type: `MillisecondsWidth`
 
 ###### Performance tracking
 
-Determines whether or not performance tracking is enabled. This effects performanceLogger. Configuration type: `ELPP_PerformanceTracking`
+Determines whether or not performance tracking is enabled. This effects performanceLogger. Configuration type: `PerformanceTracking`
 
 ###### Rolling Log Files
 
-You can use configurations to roll out log files. You can set `ELPP_RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type. Remember, for every level that has roll out size configuration should have dedicated filename. Otherwise you will end up rolling out filename from `ALL` levels
+You can use configurations to roll out log files. You can set `RollOutSize` to file size after which you wish log file to reset. If you are using configuration file, use `ROLL_OUT_SIZE` configuration type. Remember, for every level that has roll out size configuration should have dedicated filename. Otherwise you will end up rolling out filename from `ALL` levels
 
 Since this is part of configurations, it needs log reconfiguration. This happens with everytime you start your application. But if you wish for EasyLogging++ to roll out as application is running, you can do so by defining `_ELPP_STRICT_ROLLOUT`. This checks for rollout with every log you write. Remember, defining this macro is not recommended if you are concerned with performance. You 
 can define this in dev and QA environments though.
 
 ```C++
 easyloggingpp::Configurations c; // Initialize clean configurations
-c.setAll(easyloggingpp::ConfigurationType::ELPP_RollOutSize, "2048"); // Roll out log files every 2KB
+c.setAll(easyloggingpp::ConfigurationType::RollOutSize, "2048"); // Roll out log files every 2KB
 easyloggingpp::Loggers::reconfigureAllLoggers (c); // Re configure all loggers
 ```
 
