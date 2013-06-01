@@ -61,7 +61,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
         resultList << "*" << levelStr << ":\n";
         for (unsigned int ci = 0; ci < c->count(); ++ci) {
             currConf = c->at(ci);
-            resultList << "\t" << QuickCast::configFromIntType(currConf->type()) << "    :    " << QString(currConf->value().c_str()) << "\n";
+            resultList << "    " << QString(easyloggingpp::ConfigurationType::convertToString(currConf->type()).c_str()) << "    :    " << QString(currConf->value().c_str()) << "\n";
         }
 
     }

@@ -12,37 +12,6 @@ class ConfigurationChooser;
 class QuickCast : private easyloggingpp::internal::StaticClass {
 public:
     static std::string boolToStr(bool b) { return b ? "true" : "false"; }
-    static QString configFromIntType(unsigned int config) {
-        switch (config) {
-        case easyloggingpp::ConfigurationType::Enabled:
-            return QString("ENABLED");
-            break;
-        case easyloggingpp::ConfigurationType::Filename:
-            return QString("FILENAME");
-            break;
-        case easyloggingpp::ConfigurationType::Format:
-            return QString("FORMAT");
-            break;
-        case easyloggingpp::ConfigurationType::ToFile:
-            return QString("TO_FILE");
-            break;
-        case easyloggingpp::ConfigurationType::ToStandardOutput:
-            return QString("TO_STANDARD_OUTPUT");
-            break;
-        case easyloggingpp::ConfigurationType::MillisecondsWidth:
-            return QString("MILLISECONDS_WIDTH");
-            break;
-        case easyloggingpp::ConfigurationType::PerformanceTracking:
-            return QString("PERFORMANCE_TRACKING");
-            break;
-        case easyloggingpp::ConfigurationType::RollOutSize:
-            return QString("ROLL_OUT_SIZE");
-            break;
-        default:
-            return QString("UNKNOWN");
-            break;
-        }
-    }
 };
 
 class ConfigurationChooser : public QWidget
