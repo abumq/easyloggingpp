@@ -12,6 +12,8 @@ class ConfigurationChooser;
 class QuickCast : private easyloggingpp::internal::StaticClass {
 public:
     static std::string boolToStr(bool b) { return b ? "true" : "false"; }
+    static std::string ulongToStr(unsigned long l) { return QString::number(l).toStdString(); }
+    static std::string intToStr(int i) { return QString::number(i).toStdString(); }
 };
 
 class ConfigurationChooser : public QWidget
@@ -20,8 +22,9 @@ class ConfigurationChooser : public QWidget
     
 public:
     explicit ConfigurationChooser(QWidget *parent = 0);
-    ~ConfigurationChooser();
+    virtual ~ConfigurationChooser();
     QString convertConfigurationToString() const;
+    void loadFromFile(const QString& filename_);
     
 private slots:
     void addCurrentLevelledConfiguration(const QString& levelString = "ALL");
@@ -40,18 +43,18 @@ private slots:
 
     void on_spnMillisecondsWidth_valueChanged(int);
 
-    void on_spnRollOutSizeValue_valueChanged(int);
-
     void on_cboRollOutSizeUnit_currentIndexChanged(int);
 
     void on_chkSetExplicitly_toggled(bool checked);
+
+    void on_spnRollOutSize_valueChanged(const QString &arg1);
 
 private:
     QMap<QString, easyloggingpp::internal::TypedConfigurations*> levelledTypedConfigurations;
     Ui::ConfigurationChooser *ui;
     easyloggingpp::internal::TypedConfigurations *getConfiguration(const QString& levelStr) const;
     void updateUI();
-
+    void clearLevelledTypedConfigurations(void);
 signals:
     void configurationUpdated(const QString& levelStr);
 };

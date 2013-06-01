@@ -13,18 +13,14 @@ MainDialog::MainDialog(QWidget *parent) :
     fileSelector->resize(841);
     fileSelector->move(((std::max(width(), fileSelector->width()) - std::min(width(), fileSelector->width())) / 2),
                        height() - fileSelector->height());
-    initializeTree();
+    configurationChooser->loadFromFile("/home/majid/projects/EasyLoggingPP/test/test_conf.conf");
 }
 
 MainDialog::~MainDialog()
 {
     delete ui;
     delete fileSelector;
-}
-
-void MainDialog::initializeTree(void)
-{
-
+    delete configurationChooser;
 }
 
 void MainDialog::on_pushButton_clicked()
