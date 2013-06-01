@@ -39,6 +39,7 @@ void ConfigurationChooser::updateUI()
         ui->chkToStandardOutput->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toStandardOutput(currConfig, level));
         ui->chkToFile->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toFile(currConfig, level));
         ui->txtFilename->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::filename(currConfig, level).c_str()));
+        // TODO: Replace level name value with format specifier
         ui->txtFormat->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::logFormat(currConfig, level).c_str()));
         ui->spnRollOutSize->setValue(static_cast<double>(easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(currConfig, level)));
         int msw = easyloggingpp::Loggers::ConfigurationsReader::millisecondsWidth(currConfig, level);
@@ -102,7 +103,7 @@ void ConfigurationChooser::clearLevelledTypedConfigurations()
 QString ConfigurationChooser::convertConfigurationToString() const
 {
     QString result = "";
-    QStringList resultList;
+    std::stringstream resultList;
 
     for (int i = 0; i < ui->cboLevel->count(); ++i) {
         QString levelStr = ui->cboLevel->itemText(i);
@@ -112,8 +113,10 @@ QString ConfigurationChooser::convertConfigurationToString() const
             continue;
         }
         easyloggingpp::Configurations* c = const_cast<easyloggingpp::Configurations*>(&existingTypedConfigurations->configurations());
+        easyloggingpp::Configurations* allC = const_cast<easyloggingpp::Configurations*>(&getConfiguration("ALL")->configurations());
         easyloggingpp::internal::Configuration* currConf = NULL;
-        resultList << "*" << levelStr << ":\n";
+
+        int currIterCount = 0;
         for (unsigned int ci = 0; ci < c->count(); ++ci) {
             currConf = c->at(ci);
             if (currConf->level() != level) {
@@ -123,14 +126,18 @@ QString ConfigurationChooser::convertConfigurationToString() const
                     easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(existingTypedConfigurations, level) == 0) {
                 continue;
             }
-            resultList << "    " << QString(easyloggingpp::ConfigurationType::convertToString(currConf->type()).c_str()) << "    :    " << QString(currConf->value().c_str()) << "\n";
+            easyloggingpp::internal::Configuration* confInAll = allC->get(easyloggingpp::Level::All, currConf->type());
+            if (currConf->level() != easyloggingpp::Level::All && confInAll != NULL && currConf->value() == confInAll->value()) {
+                continue;
+            }
+            if (currIterCount == 0) {
+                resultList << "*" << levelStr.toStdString() << ":\n";
+            }
+            resultList << "    " << easyloggingpp::ConfigurationType::convertToString(currConf->type()).c_str() << "    :    " << currConf->value().c_str() << "\n";
+            ++currIterCount;
         }
-
     }
-    for (int i = 0; i < resultList.size(); ++i) {
-        result.append(resultList.at(i));
-    }
-    return result;
+    return QString(resultList.str().c_str());
 }
 
 void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelString)
