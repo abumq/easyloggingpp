@@ -41,7 +41,6 @@ void ConfigurationChooser::updateUI()
         ui->txtFilename->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::filename(currConfig, level).c_str()));
         // TODO: Replace level name value with format specifier
         ui->txtFormat->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::logFormat(currConfig, level).c_str()));
-        ui->spnRollOutSize->setValue(static_cast<double>(easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(currConfig, level)));
         int msw = easyloggingpp::Loggers::ConfigurationsReader::millisecondsWidth(currConfig, level);
         switch (msw) {
         case 1:
@@ -61,6 +60,8 @@ void ConfigurationChooser::updateUI()
         }
         ui->spnMillisecondsWidth->setValue(msw);
         ui->chkPerformanceTracking->setChecked(easyloggingpp::Loggers::ConfigurationsReader::performanceTracking(currConfig, level));
+
+        ui->spnRollOutSize->setValue(static_cast<double>(easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(currConfig, level)));
     }
 }
 
@@ -133,7 +134,31 @@ QString ConfigurationChooser::convertConfigurationToString() const
             if (currIterCount == 0) {
                 resultList << "*" << levelStr.toStdString() << ":\n";
             }
-            resultList << "    " << easyloggingpp::ConfigurationType::convertToString(currConf->type()).c_str() << "    :    " << currConf->value().c_str() << "\n";
+            resultList << "    " << easyloggingpp::ConfigurationType::convertToString(currConf->type()).c_str() << "    :    ";
+            if (currConf->type() == easyloggingpp::ConfigurationType::RollOutSize) {
+                // This is applicable when log rollout is > 0 - we need to find correct size in bytes
+                double size = 0;
+                switch (ui->cboRollOutSizeUnit->currentIndex()) {
+                case 0:
+                    size = ui->spnRollOutSize->value();
+                    break;
+                case 1:
+                    size = ui->spnRollOutSize->value() * 1024;
+                    break;
+                case 2:
+                    size = ui->spnRollOutSize->value() * 1024 * 1024;
+                    break;
+                case 3:
+                    size = ui->spnRollOutSize->value() * 1024 * 1024 * 1024;
+                    break;
+                default:
+                    size = 0;
+                }
+                resultList << size;
+            } else {
+                resultList << currConf->value().c_str();
+            }
+            resultList << "\n";
             ++currIterCount;
         }
     }

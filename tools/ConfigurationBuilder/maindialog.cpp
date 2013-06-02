@@ -13,7 +13,6 @@ MainDialog::MainDialog(QWidget *parent) :
     fileSelector->resize(841);
     fileSelector->move(((std::max(width(), fileSelector->width()) - std::min(width(), fileSelector->width())) / 2),
                        height() - fileSelector->height());
-    configurationChooser->loadFromFile("/home/majid/projects/EasyLoggingPP/test/test_conf.conf");
 }
 
 MainDialog::~MainDialog()
