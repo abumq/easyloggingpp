@@ -24,7 +24,6 @@ public:
     explicit ConfigurationChooser(QWidget *parent = 0);
     virtual ~ConfigurationChooser();
     QString convertConfigurationToString() const;
-    void loadFromFile(const QString& filename_);
     
 private slots:
     void addCurrentLevelledConfiguration(const QString& levelString = "ALL");
@@ -48,7 +47,9 @@ private slots:
     void on_chkSetExplicitly_toggled(bool checked);
 
     void on_spnRollOutSize_valueChanged(const QString &arg1);
+public slots:
 
+    void loadFromFile(const QString& filename_);
 private:
     QMap<QString, easyloggingpp::internal::TypedConfigurations*> levelledTypedConfigurations;
     Ui::ConfigurationChooser *ui;

@@ -16,8 +16,15 @@ public:
     ~FileSelector();
     QString filename(void) const;
     void resize(int w);
+    void openForSaving(void);
 protected:
     static const unsigned int kDefaultHeight = 41;
+private slots:
+    void on_pushButton_2_clicked();
+
+signals:
+    void fileOpened(const QString&);
+
 private:
     Ui::FileSelector *ui;
 };

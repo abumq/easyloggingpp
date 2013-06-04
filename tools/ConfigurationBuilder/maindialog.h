@@ -20,6 +20,8 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    void on_buttonSave_clicked();
+
 private:
     Ui::MainDialog *ui;
     FileSelector* fileSelector;
