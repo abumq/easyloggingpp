@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.45                                                         //
+//   EasyLogging++ v8.46                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -47,6 +47,9 @@
 #   define __LINE__ 0
 #endif // !defined(__LINE__)
 // Appropriate function macro
+#if defined(__func__)
+#   undef(__func__)
+#endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #   define __func__ __FUNCSIG__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
@@ -120,9 +123,9 @@
 #endif
 #if (!defined(_DISABLE_ELPP_ASSERT))
 #   if (defined(_STOP_ON_FIRST_ELPP_ASSERTION))
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "EASYLOGGING++ ASSERTION FAILED [" #expr << "] with message \"" << msg << "\"" << std::endl; exit(1); }
+#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] with message \"" << msg << "\"" << std::endl; exit(1); }
 #   else
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "EASYLOGGING++ ASSERTION FAILED [" #expr << "] with message \"" << msg << "\"" << std::endl; }
+#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] with message \"" << msg << "\"" << std::endl; }
 #   endif // (defined(_STOP_ON_FIRST_ELPP_ASSERTION))
 #else
 #   define __EASYLOGGINGPP_ASSERT(x, y)
@@ -172,6 +175,9 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#if _CXX0X || _CXX11
+#   include <thread>
+#endif
 #if defined(_ELPP_STL_LOGGING)
 // For logging STL based templates
 #   include <list>
@@ -326,6 +332,7 @@ public:
         //
         APP_NAME_FORMAT_SPECIFIER      ("%app"),
         LOGGER_ID_FORMAT_SPECIFIER     ("%logger"),
+        THREAD_ID_FORMAT_SPECIFIER     ("%thread"),
         LEVEL_FORMAT_SPECIFIER         ("%level"),
         DATE_ONLY_FORMAT_SPECIFIER     ("%date"),
         TIME_ONLY_FORMAT_SPECIFIER     ("%time"),
@@ -388,6 +395,7 @@ public:
     //
     const std::string APP_NAME_FORMAT_SPECIFIER;
     const std::string LOGGER_ID_FORMAT_SPECIFIER;
+    const std::string THREAD_ID_FORMAT_SPECIFIER;
     const std::string LEVEL_FORMAT_SPECIFIER;
     const std::string DATE_ONLY_FORMAT_SPECIFIER;
     const std::string TIME_ONLY_FORMAT_SPECIFIER;
@@ -423,7 +431,8 @@ public:
                         kHost = 256,
                         kLogMessage = 512,
                         kVerboseLevel = 1024,
-                        kAppName = 2048
+                        kAppName = 2048,
+                        kThreadId = 4096
                       };
 }; // class Constants
 namespace threading {
@@ -1566,6 +1575,9 @@ private:
         }
         if (originalFormat.find(constants_->LOGGER_ID_FORMAT_SPECIFIER) != std::string::npos) {
             formatSpec |= constants_->kLoggerId;
+        }
+        if (originalFormat.find(constants_->THREAD_ID_FORMAT_SPECIFIER) != std::string::npos) {
+            formatSpec |= constants_->kThreadId;
         }
         if (originalFormat.find(constants_->LOCATION_FORMAT_SPECIFIER) != std::string::npos) {
             formatSpec |= constants_->kLocation;
@@ -2794,10 +2806,20 @@ private:
             fs_ = constants_->APP_NAME_FORMAT_SPECIFIER;
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
+        // Logger ID
         if (f_ & constants_->kLoggerId) {
             v_ = logger_->id();
             fs_ = constants_->LOGGER_ID_FORMAT_SPECIFIER;
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
+        }
+        // Thread ID
+        if (f_ & constants_->kThreadId) {
+            std::stringstream ss;
+#if _CXX0X || _CXX11
+            ss << std::this_thread::get_id();
+#endif // _CXX0X
+            fs_ = constants_->THREAD_ID_FORMAT_SPECIFIER;
+            internal::utilities::LogManipulator::updateFormatValue(fs_, ss.str(), currLine_, constants_);
         }
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
@@ -2917,10 +2939,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.45"); }
+    static inline const std::string version(void) { return std::string("8.46"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-06-2013 0254hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("04-06-2013 1319hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

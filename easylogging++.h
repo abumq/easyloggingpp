@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.45                                                         //
+//   EasyLogging++ v8.46                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2939,10 +2939,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.45"); }
+    static inline const std::string version(void) { return std::string("8.46"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("01-06-2013 0254hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("04-06-2013 1319hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

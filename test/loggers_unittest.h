@@ -1,7 +1,6 @@
 #ifndef EASYLOGGINGPP_LOGGERS_UNITTEST_H
 #define EASYLOGGINGPP_LOGGERS_UNITTEST_H
 
-#include "easylogging++.h"
 #include "test_logger.h"
 #include <gtest/gtest.h>
 

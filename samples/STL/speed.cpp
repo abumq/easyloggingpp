@@ -11,6 +11,7 @@
 _INITIALIZE_EASYLOGGINGPP
 
 SUB(write, (void))
+
   LDEBUG << "This is start of logging!";
   for (int i = 1; i <= 1000; i++) {
     LINFO << "This is a test number " << i;
@@ -25,6 +26,11 @@ SUB(write, (void))
 END_SUB
 
 int main(void) {
+  easyloggingpp::Configurations c;
+  c.setToDefault();
+  c.set(easyloggingpp::Level::All, easyloggingpp::ConfigurationType::Format, "%datetime %level [%logger] (%thread) %log");
+  c.set(easyloggingpp::Level::All, easyloggingpp::ConfigurationType::PerformanceTracking, "true");
+  easyloggingpp::Loggers::reconfigureAllLoggers(c);
   write();
   return 0;
 }
