@@ -72,6 +72,9 @@ Change log was not kept before version 2.1.
      - Renamed easyloggingpp::Level::... from ELPP_INFO to Info, ELPP_DEBUG to Debug etc.
      - Renamed easyloggingpp::ConfigurationType::... from ELPP_Enabled to Enabled, ELPP_ToFile to ToFile
      - Provides conversions from and to std::string for level and configuration type for external tools
+  * 8.46:
+     - Introduced `%thread` format specifier for logging thread ID
+     - Explicit check for `__func__` to prevent potential compilation warnings
 
 #### 7.xx
  * 7.00:

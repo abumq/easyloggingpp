@@ -243,6 +243,10 @@ You can customize format of logging. Following format specifiers are currently s
         <td>Logger identifier</td>
     </tr>
     <tr>
+        <td>%thread</td>
+        <td>Thread ID (Only applicable in C++0X and C++11 applications)</td>
+    </tr>
+    <tr>
         <td>%level</td>
         <td>Severity level (Info, Warning, Error, Debug etc.)</td>
     </tr>
