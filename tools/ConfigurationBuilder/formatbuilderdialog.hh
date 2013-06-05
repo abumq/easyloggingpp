@@ -47,6 +47,8 @@ private slots:
 
     void on_buttonOrderDown_clicked();
 
+    void on_grpDateTime_toggled(bool checked);
+
 private:
     Ui::FormatBuilderDialog *ui;
     const easyloggingpp::internal::Constants* const constants;

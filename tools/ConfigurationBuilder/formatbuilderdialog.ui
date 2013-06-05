@@ -49,6 +49,9 @@
         <property name="checkable">
          <bool>true</bool>
         </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
         <widget class="QCheckBox" name="chkTime">
          <property name="geometry">
           <rect>

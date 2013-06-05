@@ -68,11 +68,12 @@ QString FormatBuilderDialog::format() const
 
 void FormatBuilderDialog::on_chkTime_toggled(bool checked)
 {
-    // FIXME: This needs to be fixed
-    QList<QListWidgetItem*> listFormat = ui->lstOrder->findItems(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+    // FIXME: Adds multiple format specifiers - needs fix
+    QList<QListWidgetItem*> dateOnly = ui->lstOrder->findItems(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+    QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QListWidgetItem* item = NULL;
-    if (!listFormat.isEmpty()) {
-        item = listFormat.at(0);
+    if (!dateOnly.isEmpty() || !dateTime.isEmpty()) {
+        item = dateOnly.isEmpty() ? dateTime.at(0) : dateOnly.at(0);
         if (checked) {
             item->setText(qstr(constants->DATE_TIME_FORMAT_SPECIFIER));
 
@@ -82,28 +83,33 @@ void FormatBuilderDialog::on_chkTime_toggled(bool checked)
             }
         }
     } else {
-        ui->lstOrder->insertItem(ui->lstOrder->count(), qstr(constants->TIME_ONLY_FORMAT_SPECIFIER));
+        if (checked) {
+            ui->lstOrder->insertItem(ui->lstOrder->count(), qstr(constants->TIME_ONLY_FORMAT_SPECIFIER));
+        }
     }
     updateFormat();
 }
 
 void FormatBuilderDialog::on_chkDate_toggled(bool checked)
 {
-    // FIXME: This needs to be fixed
-    QList<QListWidgetItem*> listFormat = ui->lstOrder->findItems(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+    // FIXME: Adds multiple format specifiers - needs fix
+    QList<QListWidgetItem*> timeOnly = ui->lstOrder->findItems(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+    QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QListWidgetItem* item = NULL;
-    if (!listFormat.isEmpty()) {
-        item = listFormat.at(0);
+    if (!timeOnly.isEmpty() || !dateTime.isEmpty()) {
+        item = timeOnly.isEmpty() ? dateTime.at(0) : timeOnly.at(0);
         if (checked) {
             item->setText(qstr(constants->DATE_TIME_FORMAT_SPECIFIER));
 
         } else {
-            if (ui->chkDate->isChecked()) {
+            if (ui->chkTime->isChecked()) {
                 item->setText(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER));
             }
         }
     } else {
-        ui->lstOrder->insertItem(ui->lstOrder->count(), qstr(constants->DATE_ONLY_FORMAT_SPECIFIER));
+        if (checked) {
+            ui->lstOrder->insertItem(ui->lstOrder->count(), qstr(constants->DATE_ONLY_FORMAT_SPECIFIER));
+        }
     }
     updateFormat();
 }
@@ -181,4 +187,30 @@ void FormatBuilderDialog::on_buttonOrderDown_clicked()
     ui->lstOrder->insertItem(row + 1, curr);
     ui->lstOrder->setCurrentRow(row + 1);
     updateFormat();
+}
+
+void FormatBuilderDialog::on_grpDateTime_toggled(bool checked)
+{
+    if (!checked) {
+        QList<QListWidgetItem*> dateOnly = ui->lstOrder->findItems(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+        QList<QListWidgetItem*> timeOnly = ui->lstOrder->findItems(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+        QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
+        if (dateOnly.isEmpty() && timeOnly.isEmpty() && dateTime.isEmpty()) {
+            return;
+        }
+        if (!dateOnly.isEmpty()) {
+            ui->lstOrder->removeItemWidget(dateOnly.at(0));
+            delete dateOnly.at(0);
+        }
+        if (!timeOnly.isEmpty()) {
+            ui->lstOrder->removeItemWidget(timeOnly.at(0));
+            delete timeOnly.at(0);
+        }
+        if (!dateTime.isEmpty()) {
+            ui->lstOrder->removeItemWidget(dateTime.at(0));
+            delete dateTime.at(0);
+        }
+    }
+    ui->chkDate->setChecked(checked);
+    ui->chkTime->setChecked(checked);
 }
