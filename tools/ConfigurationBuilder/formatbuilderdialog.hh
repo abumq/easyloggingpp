@@ -49,6 +49,12 @@ private slots:
 
     void on_grpDateTime_toggled(bool checked);
 
+    void on_buttonTab_clicked();
+
+    void on_buttonDelTab_clicked();
+
+    void on_lstOrder_currentRowChanged(int currentRow);
+
 private:
     Ui::FormatBuilderDialog *ui;
     const easyloggingpp::internal::Constants* const constants;

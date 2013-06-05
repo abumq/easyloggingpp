@@ -41,7 +41,7 @@ void ConfigurationChooser::updateUI()
         ui->chkToStandardOutput->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toStandardOutput(currConfig, level));
         ui->chkToFile->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toFile(currConfig, level));
         ui->txtFilename->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::filename(currConfig, level).c_str()));
-        // TODO: Replace level name value with format specifier
+        // TODO: Replace level name value with format specifier %level
         ui->txtFormat->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::logFormat(currConfig, level).c_str()));
         int msw = easyloggingpp::Loggers::ConfigurationsReader::millisecondsWidth(currConfig, level);
         switch (msw) {
@@ -105,7 +105,6 @@ void ConfigurationChooser::clearLevelledTypedConfigurations()
 
 QString ConfigurationChooser::convertConfigurationToString() const
 {
-    QString result = "";
     std::stringstream resultList;
 
     for (int i = 0; i < ui->cboLevel->count(); ++i) {
@@ -129,7 +128,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
                     easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(existingTypedConfigurations, level) == 0) {
                 continue;
             }
-            easyloggingpp::internal::Configuration* confInAll = allC->get(easyloggingpp::Level::All, currConf->type());
+            easyloggingpp::internal::Configuration* confInAll = allC->get(static_cast<unsigned int>(easyloggingpp::Level::All), currConf->type());
             if (currConf->level() != easyloggingpp::Level::All && confInAll != NULL && currConf->value() == confInAll->value()) {
                 continue;
             }
@@ -171,7 +170,6 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
 {
     QString levelStr = levelString;
     if (levelStr == "") levelStr = ui->cboLevel->currentText();
-    LINFO << "Adding levelled configuration for [" << levelStr << "]";
 
     unsigned int level = easyloggingpp::Level::convertFromString(levelStr.toLower().toStdString());
     easyloggingpp::Configurations c;

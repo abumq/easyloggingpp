@@ -17,7 +17,9 @@ FormatBuilderDialog::FormatBuilderDialog(QWidget *parent, unsigned int level, co
     }
     ui->lblLevel->setText(QString("Level: <b>") + QString(easyloggingpp::Level::convertToString(level).c_str()).toUpper() + QString("</b>"));
     ui->txtFormat->setText(currentFormat);
+    ui->txtFormat->setReadOnly(true);
     updateUi();
+    ui->buttonDelTab->setVisible(false);
 }
 
 FormatBuilderDialog::~FormatBuilderDialog()
@@ -213,4 +215,33 @@ void FormatBuilderDialog::on_grpDateTime_toggled(bool checked)
     }
     ui->chkDate->setChecked(checked);
     ui->chkTime->setChecked(checked);
+}
+
+void FormatBuilderDialog::on_buttonTab_clicked()
+{
+    ui->lstOrder->insertItem(ui->lstOrder->count(), "\\t");
+    updateFormat();
+}
+
+void FormatBuilderDialog::on_buttonDelTab_clicked()
+{
+    int row = ui->lstOrder->currentRow();
+    ui->lstOrder->removeItemWidget(ui->lstOrder->selectedItems().at(0));
+    delete ui->lstOrder->selectedItems().at(0);
+    --row;
+    ui->lstOrder->setCurrentRow(row == -1 ? 0 : row);
+    updateFormat();
+}
+
+void FormatBuilderDialog::on_lstOrder_currentRowChanged(int currentRow)
+{
+    QListWidgetItem *item = ui->lstOrder->item(currentRow);
+    if (item == NULL) {
+        return;
+    }
+    if (item->text() == "\\t") {
+        ui->buttonDelTab->setVisible(true);
+    } else {
+        ui->buttonDelTab->setVisible(false);
+    }
 }

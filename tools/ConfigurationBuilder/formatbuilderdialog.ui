@@ -154,6 +154,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="buttonTab">
+        <property name="text">
+         <string>TAB</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -228,6 +235,19 @@
    </property>
    <property name="text">
     <string>Down</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonDelTab">
+   <property name="geometry">
+    <rect>
+     <x>764</x>
+     <y>180</y>
+     <width>41</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>X</string>
    </property>
   </widget>
  </widget>
