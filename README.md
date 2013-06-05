@@ -252,7 +252,7 @@ You can customize format of logging. Following format specifiers are currently s
     </tr>
     <tr>
         <td>%vlevel</td>
-        <td>Verbocity level (Only applicable to verbose logs)</td>
+        <td>Verbose level (Only applicable to verbose logs)</td>
     </tr>
     <tr>
         <td>%datetime</td>
