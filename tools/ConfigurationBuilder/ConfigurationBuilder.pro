@@ -16,13 +16,16 @@ DEFINES += _ELPP_QT_LOGGING
 SOURCES += main.cpp\
         maindialog.cpp \
     fileselector.cpp \
-    configurationchooser.cpp
+    configurationchooser.cpp \
+    formatbuilderdialog.cc
 
 HEADERS  += maindialog.h \
     fileselector.h \
     configurationchooser.h \
-    easylogging++.h
+    easylogging++.h \
+    formatbuilderdialog.hh
 
 FORMS    += maindialog.ui \
     fileselector.ui \
-    configurationchooser.ui
+    configurationchooser.ui \
+    formatbuilderdialog.ui

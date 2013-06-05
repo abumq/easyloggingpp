@@ -47,6 +47,8 @@ private slots:
     void on_chkSetExplicitly_toggled(bool checked);
 
     void on_spnRollOutSize_valueChanged(const QString &arg1);
+    void on_buttonBuildFormat_clicked();
+
 public slots:
 
     void loadFromFile(const QString& filename_);

@@ -34,11 +34,14 @@ void MainDialog::on_buttonSave_clicked()
     on_pushButton_clicked();
     QString configurationToSave = ui->txtConfigurations->toPlainText();
     fileSelector->openForSaving();
+    if (fileSelector->filename().isEmpty()) {
+        return;
+    }
     QFile f(fileSelector->filename());
     if (f.open(QIODevice::WriteOnly)) {
         f.write (QByteArray(configurationToSave.toStdString ().c_str()));
         f.close();
     } else {
-        LERROR << "Unable to write to file " << fileSelector->filename();
+        LERROR << "Unable to write to file [" << fileSelector->filename() << "]";
     }
 }

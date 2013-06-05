@@ -1,7 +1,9 @@
 #include "configurationchooser.h"
 #include "ui_configurationchooser.h"
-#include "easylogging++.h"
 #include <QFile>
+#include "easylogging++.h"
+#include "formatbuilderdialog.hh"
+
 ConfigurationChooser::ConfigurationChooser(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ConfigurationChooser)
@@ -266,4 +268,14 @@ void ConfigurationChooser::on_chkSetExplicitly_toggled(bool checked)
     } else {
         emit configurationUpdated(ui->cboLevel->currentText());
     }
+}
+
+void ConfigurationChooser::on_buttonBuildFormat_clicked()
+{
+    FormatBuilderDialog formatBuilder(this, easyloggingpp::Level::convertFromString(ui->cboLevel->currentText().toLower().toStdString()), ui->txtFormat->text());
+    formatBuilder.exec();
+    if (formatBuilder.format().isEmpty() || formatBuilder.format() == ui->txtFormat->text()) {
+        return;
+    }
+    ui->txtFormat->setText(formatBuilder.format());
 }
