@@ -75,6 +75,7 @@ Change log was not kept before version 2.1.
   * 8.46:
      - Introduced `%thread` format specifier for logging thread ID
      - Explicit check for `__func__` to prevent potential compilation warnings
+  * 8.47: Keeps OS evaluated macros defined
 
 #### 7.xx
  * 7.00:
