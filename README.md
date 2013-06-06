@@ -587,6 +587,9 @@ Quality assurance (QA) logs are supported by EasyLogging++ for application that 
 By default QA logs will not take affect and will only be logged if `_QUALITY_ASSURANCE` is defined, as an example, following program:
 ```C++
 #include "easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+
 int main(void) {
   LQA << "I am log only for QA environment";
   return 0;
