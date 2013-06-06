@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.46                                                         //
+//   EasyLogging++ v8.47                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2939,10 +2939,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.46"); }
+    static inline const std::string version(void) { return std::string("8.47"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("04-06-2013 1319hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("06-06-2013 2157hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3504,9 +3504,6 @@ private:
 #undef _ELPP_MUTEX_LOCK_GNU_ASM
 #undef _ELPP_MUTEX_UNLOCK_GNU_ASM
 #undef _ELPP_ENABLE_MUTEX
-#undef _ELPP_OS_UNIX
-#undef _ELPP_OS_WINDOWS
-#undef _ELPP_OS_LINUX
 #undef ELPP_StringUtils
 #undef _ELPP_NO_INITIALIZATION
 #undef _ELPP_NO_COPY
