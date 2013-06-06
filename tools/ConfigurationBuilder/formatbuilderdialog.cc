@@ -24,20 +24,55 @@ FormatBuilderDialog::FormatBuilderDialog(QWidget *parent, unsigned int level, co
 
 FormatBuilderDialog::~FormatBuilderDialog()
 {
+    ui->lstOrder->clear();
     delete ui;
 }
 
 void FormatBuilderDialog::updateUi() const
 {
-    QString curr = ui->txtFormat->text();
-
+    QStringList list = ui->txtFormat->text().trimmed().split(" ");
+    Q_FOREACH(QString curr, list) {
+        if (curr == qstr(constants->LEVEL_FORMAT_SPECIFIER)) {
+            ui->chkLevel->setChecked(true);
+        } else if (curr == qstr(constants->DATE_ONLY_FORMAT_SPECIFIER)) {
+            ui->grpDateTime->setChecked(true);
+            ui->chkDate->setChecked(true);
+        } else if (curr == qstr(constants->TIME_ONLY_FORMAT_SPECIFIER)) {
+            ui->grpDateTime->setChecked(true);
+            ui->chkTime->setChecked(true);
+        } else if (curr == qstr(constants->DATE_TIME_FORMAT_SPECIFIER)) {
+            ui->grpDateTime->setChecked(true);
+            ui->chkDate->setChecked(true);
+            ui->chkTime->setChecked(true);
+        } else if (curr == qstr(constants->THREAD_ID_FORMAT_SPECIFIER)) {
+            ui->chkThreadId->setChecked(true);
+        } else if (curr == qstr(constants->LOGGER_ID_FORMAT_SPECIFIER)) {
+            ui->chkLoggerId->setChecked(true);
+        } else if (curr == qstr(constants->FUNCTION_FORMAT_SPECIFIER)) {
+            ui->chkFunction->setChecked(true);
+        } else if (curr == qstr(constants->APP_NAME_FORMAT_SPECIFIER)) {
+            ui->chkApplicationName->setChecked(true);
+        } else if (curr == qstr(constants->HOST_FORMAT_SPECIFIER)) {
+            ui->chkHostname->setChecked(true);
+        } else if (curr == qstr(constants->USER_FORMAT_SPECIFIER)) {
+            ui->chkUsername->setChecked(true);
+        } else if (curr == qstr(constants->LOCATION_FORMAT_SPECIFIER)) {
+            ui->chkLocation->setChecked(true);
+        } else if (curr == qstr(constants->VERBOSE_LEVEL_FORMAT_SPECIFIER)) {
+            ui->chkVerboseLevel->setChecked(true);
+        } else if (curr == qstr(constants->LOG_MESSAGE_FORMAT_SPECIFIER)) {
+            ui->chkLogMessage->setChecked(true);
+        } else if (curr == "\\t") {
+            ui->lstOrder->insertItem(ui->lstOrder->count(), "\\t");
+        }
+    }
 }
 
 void FormatBuilderDialog::updateFormat() const
 {
     QString format;
     for (int i = 0; i < ui->lstOrder->count(); ++i) {
-        format.append(ui->lstOrder->item(i)->text() + QString(" "));
+        format.append(ui->lstOrder->item(i)->text() + ((i < ui->lstOrder->count() - 1) ? QString(" ") : QString()));
     }
     ui->txtFormat->setText(format);
 }
@@ -73,7 +108,6 @@ void FormatBuilderDialog::on_chkTime_toggled(bool checked)
     if (!checked && !ui->chkDate->isChecked()) {
         ui->grpDateTime->setChecked(false);
     }
-    // FIXME: Adds multiple format specifiers - needs fix
     QList<QListWidgetItem*> dateOnly = ui->lstOrder->findItems(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QListWidgetItem* item = NULL;
@@ -99,7 +133,6 @@ void FormatBuilderDialog::on_chkDate_toggled(bool checked)
     if (!checked && !ui->chkTime->isChecked()) {
         ui->grpDateTime->setChecked(false);
     }
-    // FIXME: Adds multiple format specifiers - needs fix
     QList<QListWidgetItem*> timeOnly = ui->lstOrder->findItems(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QListWidgetItem* item = NULL;
@@ -163,6 +196,11 @@ void FormatBuilderDialog::on_chkHostname_toggled(bool checked)
 void FormatBuilderDialog::on_chkLogMessage_toggled(bool checked)
 {
     addFormat(checked, qstr(constants->LOG_MESSAGE_FORMAT_SPECIFIER));
+}
+
+void FormatBuilderDialog::on_chkVerboseLevel_toggled(bool checked)
+{
+    addFormat(checked, qstr(constants->VERBOSE_LEVEL_FORMAT_SPECIFIER));
 }
 
 void FormatBuilderDialog::on_buttonOrderUp_clicked()

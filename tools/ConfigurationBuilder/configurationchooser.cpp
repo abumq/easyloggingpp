@@ -13,7 +13,6 @@ ConfigurationChooser::ConfigurationChooser(QWidget *parent) :
     ui->cboRollOutSizeUnit->addItems(QStringList() << "B" << "KB" << "MB" << "GB");
     QObject::connect(this, SIGNAL(configurationUpdated(QString)), this, SLOT(addCurrentLevelledConfiguration(QString)));
     addCurrentLevelledConfiguration("ALL");
-
 }
 
 ConfigurationChooser::~ConfigurationChooser()
@@ -41,8 +40,14 @@ void ConfigurationChooser::updateUI()
         ui->chkToStandardOutput->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toStandardOutput(currConfig, level));
         ui->chkToFile->setChecked(easyloggingpp::Loggers::ConfigurationsReader::toFile(currConfig, level));
         ui->txtFilename->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::filename(currConfig, level).c_str()));
-        // TODO: Replace level name value with format specifier %level
-        ui->txtFormat->setText(QString(easyloggingpp::Loggers::ConfigurationsReader::logFormat(currConfig, level).c_str()));
+
+        const easyloggingpp::internal::Constants* const constants = easyloggingpp::internal::registeredLoggers->constants();
+        std::string confVal = easyloggingpp::Loggers::ConfigurationsReader::logFormat(currConfig, level);
+        // We need to reset from level format value to level format specifier
+        confVal = easyloggingpp::internal::utilities::StringUtils::replaceAll(confVal,
+                                                                              levelStr.toUpper().toStdString(),
+                                                                              constants->LEVEL_FORMAT_SPECIFIER);
+        ui->txtFormat->setText(QString(confVal.c_str()));
         int msw = easyloggingpp::Loggers::ConfigurationsReader::millisecondsWidth(currConfig, level);
         switch (msw) {
         case 1:
@@ -61,7 +66,7 @@ void ConfigurationChooser::updateUI()
             msw = 3;
         }
         ui->spnMillisecondsWidth->setValue(msw);
-        ui->chkPerformanceTracking->setChecked(easyloggingpp::Loggers::ConfigurationsReader::performanceTracking(currConfig, level));
+        ui->chkPerformanceTracking->setChecked(easyloggingpp::Loggers::ConfigurationsReader::performanceTracking(currConfig));
 
         ui->spnRollOutSize->setValue(static_cast<double>(easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(currConfig, level)));
     }
@@ -80,7 +85,8 @@ void ConfigurationChooser::loadFromFile(const QString &filename_)
         cLevel.set(l, easyloggingpp::ConfigurationType::ToStandardOutput, QuickCast::boolToStr(easyloggingpp::Loggers::ConfigurationsReader::toStandardOutput(&tc, l)));
         cLevel.set(l, easyloggingpp::ConfigurationType::ToFile, QuickCast::boolToStr(easyloggingpp::Loggers::ConfigurationsReader::toFile(&tc, l)));
         cLevel.set(l, easyloggingpp::ConfigurationType::Filename, easyloggingpp::Loggers::ConfigurationsReader::filename(&tc, l));
-        cLevel.set(l, easyloggingpp::ConfigurationType::Format, easyloggingpp::Loggers::ConfigurationsReader::logFormat(&tc, l));
+        std::string trimmedLogFormat = easyloggingpp::internal::utilities::StringUtils::trim(easyloggingpp::Loggers::ConfigurationsReader::logFormat(&tc, l));
+        cLevel.set(l, easyloggingpp::ConfigurationType::Format, trimmedLogFormat);
         cLevel.set(l, easyloggingpp::ConfigurationType::RollOutSize, QuickCast::ulongToStr(easyloggingpp::Loggers::ConfigurationsReader::logRollOutSize(&tc, l)));
         cLevel.set(l, easyloggingpp::ConfigurationType::MillisecondsWidth, QuickCast::intToStr(easyloggingpp::Loggers::ConfigurationsReader::millisecondsWidth(&tc, l)));
         cLevel.set(l, easyloggingpp::ConfigurationType::PerformanceTracking, QuickCast::boolToStr(easyloggingpp::Loggers::ConfigurationsReader::performanceTracking(&tc, l)));
@@ -114,6 +120,7 @@ QString ConfigurationChooser::convertConfigurationToString() const
         if (existingTypedConfigurations == NULL) {
             continue;
         }
+        const easyloggingpp::internal::Constants* const constants = easyloggingpp::internal::registeredLoggers->constants();
         easyloggingpp::Configurations* c = const_cast<easyloggingpp::Configurations*>(&existingTypedConfigurations->configurations());
         easyloggingpp::Configurations* allC = const_cast<easyloggingpp::Configurations*>(&getConfiguration("ALL")->configurations());
         easyloggingpp::internal::Configuration* currConf = NULL;
@@ -129,7 +136,16 @@ QString ConfigurationChooser::convertConfigurationToString() const
                 continue;
             }
             easyloggingpp::internal::Configuration* confInAll = allC->get(static_cast<unsigned int>(easyloggingpp::Level::All), currConf->type());
-            if (currConf->level() != easyloggingpp::Level::All && confInAll != NULL && currConf->value() == confInAll->value()) {
+            std::string confVal = currConf->value();
+            confVal = easyloggingpp::internal::utilities::StringUtils::endsWith(confVal, "\n") ?
+                        confVal.substr(0, confVal.size() - 1) : confVal;
+            if (currConf->type() == easyloggingpp::ConfigurationType::Format) {
+                // We need to reset from level format value to level format specifier
+                confVal = easyloggingpp::internal::utilities::StringUtils::replaceAll(confVal,
+                                                                                      levelStr.toStdString(),
+                                                                                      constants->LEVEL_FORMAT_SPECIFIER);
+            }
+            if (currConf->level() != easyloggingpp::Level::All && confInAll != NULL && confVal == confInAll->value()) {
                 continue;
             }
             if (currIterCount == 0) {
@@ -141,27 +157,28 @@ QString ConfigurationChooser::convertConfigurationToString() const
                 double size = 0;
                 switch (ui->cboRollOutSizeUnit->currentIndex()) {
                 case 0:
-                    size = ui->spnRollOutSize->value();
+                    size = ui->spnRollOutSize->value(); // from Bytes
                     break;
                 case 1:
-                    size = ui->spnRollOutSize->value() * 1024;
+                    size = ui->spnRollOutSize->value() * 1024; // from KB
                     break;
                 case 2:
-                    size = ui->spnRollOutSize->value() * 1024 * 1024;
+                    size = ui->spnRollOutSize->value() * 1024 * 1024; // from MB
                     break;
                 case 3:
-                    size = ui->spnRollOutSize->value() * 1024 * 1024 * 1024;
+                    size = ui->spnRollOutSize->value() * 1024 * 1024 * 1024; // from GB
                     break;
                 default:
                     size = 0;
                 }
                 resultList << size;
             } else {
-                bool encloseQuotes = (currConf->type() == easyloggingpp::ConfigurationType::Filename || currConf->type() == easyloggingpp::ConfigurationType::Format);
+                bool encloseQuotes = (currConf->type() == easyloggingpp::ConfigurationType::Filename ||
+                                      currConf->type() == easyloggingpp::ConfigurationType::Format);
                 if (encloseQuotes) {
                     resultList << "\"";
                 }
-                resultList << currConf->value().c_str();
+                resultList << confVal;
                 if (encloseQuotes) {
                     resultList << "\"";
                 }
@@ -184,7 +201,10 @@ void ConfigurationChooser::addCurrentLevelledConfiguration(const QString& levelS
     c.set(level, easyloggingpp::ConfigurationType::ToStandardOutput, QuickCast::boolToStr(ui->chkToStandardOutput->checkState() == Qt::Checked), true);
     c.set(level, easyloggingpp::ConfigurationType::ToFile, QuickCast::boolToStr(ui->chkToFile->checkState() == Qt::Checked), true);
     c.set(level, easyloggingpp::ConfigurationType::Filename, ui->txtFilename->text().toStdString(), true);
-    c.set(level, easyloggingpp::ConfigurationType::Format, ui->txtFormat->text().toStdString(), true);
+    std::string confVal = ui->txtFormat->text().toStdString();
+    confVal = easyloggingpp::internal::utilities::StringUtils::endsWith(confVal, "\n") ?
+                confVal.substr(0, confVal.size() - 1) : confVal;
+    c.set(level, easyloggingpp::ConfigurationType::Format, confVal, true);
     c.set(level, easyloggingpp::ConfigurationType::PerformanceTracking, QuickCast::boolToStr(ui->chkPerformanceTracking->checkState() == Qt::Checked), true);
     c.set(level, easyloggingpp::ConfigurationType::RollOutSize, QString::number(ui->spnRollOutSize->value()).toStdString());
     c.set(level, easyloggingpp::ConfigurationType::MillisecondsWidth, QuickCast::intToStr(ui->spnMillisecondsWidth->value()));
@@ -228,6 +248,9 @@ void ConfigurationChooser::on_chkToStandardOutput_toggled(bool)
 
 void ConfigurationChooser::on_txtFormat_editingFinished()
 {
+    if (ui->txtFormat->text().endsWith ("\n")) {
+        ui->txtFormat->setText(QString(easyloggingpp::internal::utilities::StringUtils::trim(ui->txtFormat->text().toStdString()).c_str()));
+    }
     emit configurationUpdated(ui->cboLevel->currentText());
 }
 
@@ -278,9 +301,12 @@ void ConfigurationChooser::on_chkSetExplicitly_toggled(bool checked)
 void ConfigurationChooser::on_buttonBuildFormat_clicked()
 {
     FormatBuilderDialog formatBuilder(this, easyloggingpp::Level::convertFromString(ui->cboLevel->currentText().toLower().toStdString()), ui->txtFormat->text());
-    formatBuilder.exec();
-    if (formatBuilder.format().isEmpty() || formatBuilder.format() == ui->txtFormat->text()) {
+
+    int result = formatBuilder.exec();
+    if (result == QDialog::Rejected || formatBuilder.format().isEmpty() || formatBuilder.format() == ui->txtFormat->text()) {
         return;
     }
     ui->txtFormat->setText(formatBuilder.format());
+    emit configurationUpdated(ui->cboLevel->currentText());
+
 }

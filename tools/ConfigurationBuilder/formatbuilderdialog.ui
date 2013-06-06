@@ -18,7 +18,7 @@
     <rect>
      <x>50</x>
      <y>320</y>
-     <width>571</width>
+     <width>741</width>
      <height>32</height>
     </rect>
    </property>
@@ -170,7 +170,7 @@
     <rect>
      <x>10</x>
      <y>270</y>
-     <width>621</width>
+     <width>791</width>
      <height>25</height>
     </rect>
    </property>
@@ -240,7 +240,7 @@
   <widget class="QPushButton" name="buttonDelTab">
    <property name="geometry">
     <rect>
-     <x>764</x>
+     <x>765</x>
      <y>180</y>
      <width>41</width>
      <height>27</height>

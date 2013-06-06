@@ -55,6 +55,8 @@ private slots:
 
     void on_lstOrder_currentRowChanged(int currentRow);
 
+    void on_chkVerboseLevel_toggled(bool checked);
+
 private:
     Ui::FormatBuilderDialog *ui;
     const easyloggingpp::internal::Constants* const constants;
