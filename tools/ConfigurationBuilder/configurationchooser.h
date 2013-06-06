@@ -47,7 +47,10 @@ private slots:
     void on_chkSetExplicitly_toggled(bool checked);
 
     void on_spnRollOutSize_valueChanged(const QString &arg1);
+
     void on_buttonBuildFormat_clicked();
+
+    void on_chkPerformanceTracking_toggled(bool checked);
 
 public slots:
 

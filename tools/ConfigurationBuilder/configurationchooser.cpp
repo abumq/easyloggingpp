@@ -276,6 +276,11 @@ void ConfigurationChooser::on_spnRollOutSize_valueChanged(const QString&)
     emit configurationUpdated(ui->cboLevel->currentText());
 }
 
+void ConfigurationChooser::on_chkPerformanceTracking_toggled(bool)
+{
+    emit configurationUpdated("ALL");
+}
+
 void ConfigurationChooser::on_chkSetExplicitly_toggled(bool checked)
 {
     ui->chkEnabled->setEnabled(checked);
