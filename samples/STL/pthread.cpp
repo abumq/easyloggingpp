@@ -37,7 +37,7 @@ void *write(void* thrId){
   // Following line will be logged once with every thread because of interval 1 
   LINFO_EVERY_N(1) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
 
-  LINFO_IF(threadId == "2") << "This log is only for thread 2 and is ran by thread #" << threadId;
+  LINFO_IF(strcmp(threadId, "2") == 0) << "This log is only for thread 2 and is ran by thread #" << threadId;
 
   // Register 5 vague loggers
   for (int i = 1; i <= 5; ++i) {
@@ -53,6 +53,7 @@ void *write(void* thrId){
      LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
   }
   LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
+  return NULL;
 }
 
 int main(int argc, char** argv)
