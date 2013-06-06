@@ -718,11 +718,11 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![win7] Windows 7 (64-bit, Visual C++ 8.0, 9.0, 11.0)
 
-![mac] Mac OSX (clang 3.1/Apple Clang Version 4.1 (LLVM 3.1))
+![mac] Mac OSX (Clang 3.1)
 
 ![ubuntu] Ubuntu 12.04 / 12.10 (32-bit, 64-bit, g++ 4.6.3)
 
-![scientificlinux] Scientific Linux 6.2 (64-bit, g++ 4.4)
+![scientificlinux] Scientific Linux 6.2 (64-bit, g++ 4.4, CLang++ 2.8)
 
 ![linuxmint] Linux Mint 14 (64-bit, g++ 4.7.2)
 
@@ -734,7 +734,7 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![vcpp] Visual C++ (8.0, 9.0, 11.0)
 
-![llvm] LLVM (3.1, 3.2)
+![llvm] Clang++ (2.8, 3.1, 3.2)
 
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 <pre><a href="#easylogging">Goto Top</a></pre>
