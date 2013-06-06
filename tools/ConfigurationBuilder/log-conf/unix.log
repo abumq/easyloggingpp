@@ -11,3 +11,6 @@
 // Trace logs
 * TRACE: 
     FORMAT			=	"%time %level [%loc] %log"
+// Verbose logs
+* VERBOSE:
+    FORMAT                      =       "%time %level-%vlevel %log"

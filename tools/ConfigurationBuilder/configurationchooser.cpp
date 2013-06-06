@@ -32,6 +32,7 @@ easyloggingpp::internal::TypedConfigurations* ConfigurationChooser::getConfigura
 
 void ConfigurationChooser::updateUI()
 {
+    LVERBOSE(2) << "Updating UI";
     QString levelStr = ui->cboLevel->currentText();
     unsigned int level = easyloggingpp::Level::convertFromString(levelStr.toLower().toStdString());
     easyloggingpp::internal::TypedConfigurations* currConfig = getConfiguration(levelStr);
@@ -75,6 +76,7 @@ void ConfigurationChooser::updateUI()
 void ConfigurationChooser::loadFromFile(const QString &filename_)
 {
     clearLevelledTypedConfigurations();
+    LINFO << "Loading configurations from file [" << filename_ << "]";
     easyloggingpp::Configurations c(filename_.toStdString());
 
     easyloggingpp::internal::TypedConfigurations tc(c, easyloggingpp::internal::registeredLoggers->constants());
@@ -103,6 +105,7 @@ void ConfigurationChooser::loadFromFile(const QString &filename_)
 
 void ConfigurationChooser::clearLevelledTypedConfigurations()
 {
+    LWARNING << "Clearing all typed configurations!";
     Q_FOREACH(QString key, levelledTypedConfigurations.keys()) {
         delete *levelledTypedConfigurations.find(key);
     }

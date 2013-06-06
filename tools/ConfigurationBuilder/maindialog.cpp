@@ -26,6 +26,7 @@ MainDialog::~MainDialog()
 
 void MainDialog::on_pushButton_clicked()
 {
+    LINFO << "Building...";
     ui->txtConfigurations->setText(configurationChooser->convertConfigurationToString());
 }
 
@@ -37,11 +38,12 @@ void MainDialog::on_buttonSave_clicked()
     if (fileSelector->filename().isEmpty()) {
         return;
     }
+    LINFO << "Saving configuration file";
     QFile f(fileSelector->filename());
     if (f.open(QIODevice::WriteOnly)) {
         f.write (QByteArray(configurationToSave.toStdString ().c_str()));
         f.close();
     } else {
-        LERROR << "Unable to write to file [" << fileSelector->filename() << "]";
+        LERROR << "Unable to write to file [" << fileSelector->filename() << "]. Please make sure it is writable.";
     }
 }

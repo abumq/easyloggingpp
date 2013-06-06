@@ -8,6 +8,7 @@ using namespace easyloggingpp;
 
 int main(int argc, char *argv[])
 {
+    _START_EASYLOGGINGPP(argc, argv);
     Configurations c;
     c.setToDefault();
 #if _ELPP_OS_UNIX
@@ -17,9 +18,12 @@ int main(int argc, char *argv[])
 #endif // _ELPP_OS_UNIX
     Loggers::reconfigureAllLoggers(c);
 
+    LTRACE << "Starting application using arguments [" << argv[0] << "]";
+
     QApplication a(argc, argv);
     MainDialog w;
     w.show();
-    
-    return a.exec();
+    int result = a.exec();
+    LTRACE << "Exiting application";
+    return result;
 }
