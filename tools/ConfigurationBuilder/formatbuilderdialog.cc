@@ -70,6 +70,9 @@ QString FormatBuilderDialog::format() const
 
 void FormatBuilderDialog::on_chkTime_toggled(bool checked)
 {
+    if (!checked && !ui->chkDate->isChecked()) {
+        ui->grpDateTime->setChecked(false);
+    }
     // FIXME: Adds multiple format specifiers - needs fix
     QList<QListWidgetItem*> dateOnly = ui->lstOrder->findItems(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
@@ -78,7 +81,6 @@ void FormatBuilderDialog::on_chkTime_toggled(bool checked)
         item = dateOnly.isEmpty() ? dateTime.at(0) : dateOnly.at(0);
         if (checked) {
             item->setText(qstr(constants->DATE_TIME_FORMAT_SPECIFIER));
-
         } else {
             if (ui->chkDate->isChecked()) {
                 item->setText(qstr(constants->DATE_ONLY_FORMAT_SPECIFIER));
@@ -94,6 +96,9 @@ void FormatBuilderDialog::on_chkTime_toggled(bool checked)
 
 void FormatBuilderDialog::on_chkDate_toggled(bool checked)
 {
+    if (!checked && !ui->chkTime->isChecked()) {
+        ui->grpDateTime->setChecked(false);
+    }
     // FIXME: Adds multiple format specifiers - needs fix
     QList<QListWidgetItem*> timeOnly = ui->lstOrder->findItems(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
     QList<QListWidgetItem*> dateTime = ui->lstOrder->findItems(qstr(constants->DATE_TIME_FORMAT_SPECIFIER), Qt::MatchCaseSensitive);
@@ -102,7 +107,6 @@ void FormatBuilderDialog::on_chkDate_toggled(bool checked)
         item = timeOnly.isEmpty() ? dateTime.at(0) : timeOnly.at(0);
         if (checked) {
             item->setText(qstr(constants->DATE_TIME_FORMAT_SPECIFIER));
-
         } else {
             if (ui->chkTime->isChecked()) {
                 item->setText(qstr(constants->TIME_ONLY_FORMAT_SPECIFIER));

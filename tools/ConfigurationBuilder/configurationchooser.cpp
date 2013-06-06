@@ -157,7 +157,14 @@ QString ConfigurationChooser::convertConfigurationToString() const
                 }
                 resultList << size;
             } else {
+                bool encloseQuotes = (currConf->type() == easyloggingpp::ConfigurationType::Filename || currConf->type() == easyloggingpp::ConfigurationType::Format);
+                if (encloseQuotes) {
+                    resultList << "\"";
+                }
                 resultList << currConf->value().c_str();
+                if (encloseQuotes) {
+                    resultList << "\"";
+                }
             }
             resultList << "\n";
             ++currIterCount;
