@@ -79,6 +79,7 @@ Change log was not kept before version 2.1.
   * 8.48:
      - Fixes bug with configurating all loggers including TRACE level
      - Fixes std::thread issue for getting thread ID
+  * 8.49: Fixed up issue with syscall undef
 
 #### 7.xx
  * 7.00:

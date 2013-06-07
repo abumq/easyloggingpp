@@ -244,7 +244,7 @@ You can customize format of logging. Following format specifiers are currently s
     </tr>
     <tr>
         <td>%thread</td>
-        <td>Thread ID (Uses available - in order of std::thread, gettid() for *nix or GetCurrentThreadId() for Win )</td>
+        <td>Thread ID (Uses whichever available - in order of std::thread, GetCurrentThreadId() for Win )</td>
     </tr>
     <tr>
         <td>%level</td>

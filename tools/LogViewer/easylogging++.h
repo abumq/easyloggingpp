@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.48                                                         //
+//   EasyLogging++ v8.49                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -205,10 +205,6 @@
 #include <sstream>
 #if (_ELPP_STD_THREAD_AVAILABLE)
 #   include <thread>
-#else
-#   if (_ELPP_OS_UNIX)
-#   include <sys/syscall.h>
-#   endif
 #endif // _ELPP_STD_THREAD_AVAILABLE
 #if defined(_ELPP_STL_LOGGING)
 // For logging STL based templates
@@ -236,6 +232,7 @@
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 namespace easyloggingpp {
 namespace internal {
+
 class NoCopy {
 protected:
     NoCopy(void) {}
@@ -243,6 +240,7 @@ private:
     NoCopy(const NoCopy&);
     NoCopy& operator=(const NoCopy&);
 };
+
 class StaticClass {
 private:
     StaticClass(void);
@@ -257,7 +255,9 @@ public:
         All = 0, Debug = 1, Info = 2, Warning = 4, Error = 8,
         Fatal = 16, Verbose = 32, QA = 64, Trace = 128, Unknown = 1010
     };
+
     static const unsigned int kMaxValid = Trace;
+
     static std::string convertToString(unsigned int level_) {
         switch (level_) {
         case All:
@@ -282,6 +282,7 @@ public:
             return std::string("unknown");
         }
     }
+
     static unsigned int convertFromString(const std::string& levelStr) {
         if (levelStr == "all" || levelStr == "ALL") return Level::All;
         if (levelStr == "debug" || levelStr == "DEBUG") return Level::Debug;
@@ -302,7 +303,9 @@ public:
         Enabled = 0, ToFile = 1, ToStandardOutput = 2, Format = 4, Filename = 8,
         MillisecondsWidth = 16, PerformanceTracking = 32, RollOutSize = 64, Unknown = 1010
     };
+
     static const unsigned int kMaxValid = RollOutSize;
+
     static std::string convertToString(unsigned int configurationType_) {
         switch (configurationType_) {
         case Enabled:
@@ -324,6 +327,7 @@ public:
         default: return std::string("unknown");
         }
     }
+
     static unsigned int convertFromString(const std::string& configStr) {
         if (configStr == "enabled" || configStr == "ENABLED") return ConfigurationType::Enabled;
         if (configStr == "to_file" || configStr == "TO_FILE") return ConfigurationType::ToFile;
@@ -347,7 +351,7 @@ public:
 
 class Constants : private internal::NoCopy {
 public:
-    explicit Constants (void) :
+    Constants (void) :
         //
         // Log level name outputs
         //
@@ -468,6 +472,7 @@ public:
                       };
 }; // class Constants
 namespace threading {
+
 //
 // To take care of shared resources in multi-threaded application
 //
@@ -483,16 +488,17 @@ public:
     "\txchg %%eax,%0\n"                            \
     "\t" : "=m" (lf_) : : "%eax", "memory"
 #   endif // defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-    explicit Mutex(void) : lockerFlag_(0) {
+    Mutex(void) : lockerFlag_(0) {
     }
 #else
-    explicit Mutex(void) {
+    Mutex(void) {
 #   if _ELPP_OS_UNIX
         pthread_mutex_init(&underlyingMutex_, NULL);
 #   elif _ELPP_OS_WINDOWS
         InitializeCriticalSection(&underlyingMutex_);
 #   endif // _ELPP_OS_UNIX
     }
+
     virtual ~Mutex(void) {
 #   if _ELPP_OS_UNIX
         pthread_mutex_destroy(&underlyingMutex_);
@@ -501,6 +507,7 @@ public:
 #   endif // _ELPP_OS_UNIX
     }
 #endif // _ELPP_ASSEMBLY_SUPPORTED
+
     inline void lock(void) {
 #if _ELPP_ASSEMBLY_SUPPORTED
         bool locked = false;
@@ -522,6 +529,7 @@ public:
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
+
     inline bool tryLock(void) {
 #if _ELPP_ASSEMBLY_SUPPORTED
         int oldLock_;
@@ -545,6 +553,7 @@ public:
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
     }
+
     inline void unlock(void) {
 #if _ELPP_ASSEMBLY_SUPPORTED
 #   if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
@@ -580,36 +589,39 @@ class ScopedLock : private internal::NoCopy {
 public:
     ScopedLock(Mutex& m_) {
         mutex_ = &m_;
-        mutex_->lock();
+        if (mutex_ != NULL) mutex_->lock();
     }
+
     virtual ~ScopedLock(void) {
-        mutex_->unlock();
+        if (mutex_ != NULL) mutex_->unlock();
     }
 private:
     Mutex* mutex_;
     ScopedLock(void);
 }; // class ScopedLock
+
 inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
 #if (_ELPP_STD_THREAD_AVAILABLE)
     ss << std::this_thread::get_id();
 #else
-#   if (_ELPP_OS_UNIX)
-    ss << static_cast<pid_t>(syscall (SYS_gettid));
-#   elif (_ELPP_OS_WINDOWS)
+#   if (_ELPP_OS_WINDOWS)
     ss << GetCurrentThreadId();
 #   endif // (_ELPP_OS_WINDOWS)
 #endif
     return ss.str();
 }
+
 } // namespace threading
 namespace utilities {
+
 template <typename T>
 inline void safeDelete(T*& pointer, bool checkNullity = true) {
     if (checkNullity && pointer == NULL) return;
     delete pointer;
     pointer = NULL;
 }
+
 class StringUtils : private internal::StaticClass {
 public:
     static inline std::string trim(const std::string &str) {
@@ -672,6 +684,7 @@ public:
     }
 };
 #define ELPP_StringUtils internal::utilities::StringUtils
+
 class OSUtils : private internal::StaticClass {
 public:
     // Runs command on terminal and returns the output.
@@ -827,6 +840,7 @@ public:
         return fullPath_.substr(0, lastSlashAt + 1);
     }
 }; // class OSUtils
+
 //
 // Contains static functions related to log manipulation
 //
@@ -848,6 +862,7 @@ public:
         }
     }
 }; // class LogManipulator
+
 //
 // Contains utility functions related to date/time
 //
@@ -877,6 +892,7 @@ public:
         }
     }
 #endif // _ELPP_OS_WINDOWS
+
     // Gets current date and time with milliseconds.
     static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, internal::Constants* constants_, unsigned int milliSecondOffset_ = 1000) {
         long milliSeconds = 0;
@@ -1069,14 +1085,15 @@ protected:
         }
     }
 
-    std::vector<Class*>& list(void) {
+    inline std::vector<Class*>& list(void) {
         return list_;
     }
 private:
+    std::vector<Class*> list_;
+
     inline void release(Class* c_) {
         internal::utilities::safeDelete(c_);
     }
-    std::vector<Class*> list_;
 }; // class Registry
 
 template <typename T>
@@ -1122,7 +1139,7 @@ public:
 
     class ReferenceCounter {
     public:
-        explicit ReferenceCounter(void) : count_(0) {
+        ReferenceCounter(void) : count_(0) {
         }
 
         ReferenceCounter& operator=(const ReferenceCounter& other_) {
@@ -1146,6 +1163,7 @@ public:
 private:
     T* ptr_;
     ReferenceCounter* referenceCounter_;
+
     void validate(void) {
         if(referenceCounter_->decrement() == 0) {
             internal::utilities::safeDelete(ptr_, false);
@@ -1201,7 +1219,7 @@ private:
 } // namespace internal
 class Configurations : public internal::Registry<internal::Configuration, internal::Configuration::Predicate> {
 public:
-    explicit Configurations(void) :
+    Configurations(void) :
         isFromFile_(false) {
     }
 
@@ -1233,7 +1251,6 @@ public:
     // Sets configuration for specified level_ and configurationType_
     // Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
     void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_LEVEL_ALL_Check = false) {
-
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::PerformanceTracking && level_ != Level::All) ||
                 (configurationType_ == ConfigurationType::MillisecondsWidth && level_ != Level::All)) {
@@ -1425,6 +1442,7 @@ private:
 class Loggers;  // fwd declaration
 
 namespace internal {
+
 class RegisteredLoggers; // fwd declaration
 class Writer;  // fwd declaration
 
@@ -1458,6 +1476,7 @@ private:
     std::map<unsigned int, unsigned long> rollOutSizeMap_;
     internal::Constants* constants_;
     Configurations configurations_;
+
     friend class Writer;
     friend class easyloggingpp::Loggers;
 
@@ -1989,7 +2008,9 @@ private:
         mutex_.unlock();
     }
 };
+
 namespace internal {
+
 class LogCounter : private internal::NoCopy {
 public:
     explicit LogCounter(internal::Constants* constants_) :
@@ -2122,6 +2143,7 @@ private:
     std::string hostname_;
     internal::threading::Mutex mutex_;
     RegisteredCounters* counters_;
+
     friend class Writer;
     friend class easyloggingpp::Loggers;
 
@@ -2815,6 +2837,7 @@ private:
     bool proceed_;
     internal::Constants* constants_;
     internal::threading::Mutex mutex_;
+
     friend class Logger;
 
     template<class Iterator>
@@ -2982,10 +3005,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.48"); }
+    static inline const std::string version(void) { return std::string("8.49"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("07-06-2013 1501hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("07-06-2013 1744hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3559,15 +3582,16 @@ private:
 #undef _ELPP_VERBOSE_LOG
 #undef _ELPP_TRACE_LOG
 
-#if !defined(_INITIALIZE_EASYLOGGINGPP)
-#define _INITIALIZE_EASYLOGGINGPP                         \
-    namespace easyloggingpp {                             \
-    namespace internal {                                  \
-    ScopedPointer<RegisteredLoggers> registeredLoggers(   \
-    new RegisteredLoggers());                             \
-}                                                         \
-}
-#endif // !defined(_INITIALIZE_EASYLOGGINGPP)
+#if defined(_INITIALIZE_EASYLOGGINGPP)
+#   undef _INITIALIZE_EASYLOGGINGPP
+#endif // defined(_INITIALIZE_EASYLOGGINGPP)
+#define _INITIALIZE_EASYLOGGINGPP                                 \
+    namespace easyloggingpp {                                     \
+        namespace internal {                                      \
+            ScopedPointer<RegisteredLoggers> registeredLoggers(   \
+                    new RegisteredLoggers());                     \
+        }                                                         \
+    }
 #define _START_EASYLOGGINGPP(argc, argv) easyloggingpp::Loggers::setApplicationArguments(argc, argv);
 #define _ELPP_COUNTER easyloggingpp::internal::registeredLoggers->counters()->get(__FILE__, __LINE__)
 #define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
