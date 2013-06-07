@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.47                                                         //
+//   EasyLogging++ v8.48                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -54,6 +54,8 @@
 #   define __func__ __FUNCSIG__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
 #   define __func__ __PRETTY_FUNCTION__
+#elif defined(__clang__) && (__clang__ == 1)
+#   define __func__ __PRETTY_FUNCTION__
 #else
 #   if !defined(__func__)
 #      define __func__ ""
@@ -61,21 +63,47 @@
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 //
 // Compiler evaluation
+// http://isocpp.org/blog/2013/05/gcc-4.8.1-released-c11-feature-complete
 //
 // GNU
 #if defined(__GNUC__)
+#   define _ELPP_GCC_VERSION (__GNUC__ * 10000 \
+                               + __GNUC_MINOR__ * 100 \
+                               + __GNUC_PATCHLEVEL__)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#      define _CXX0X 1
+#      define _ELPP_CXX0X 1
+#   elif (_ELPP_GCC_VERSION >= 40801)
+#      define _ELPP_CXX11 1
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif // defined(__GNUC__)
 // VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
 #if defined(_MSC_VER)
 #   if (_MSC_VER == 1600)
-#      define _CXX0X 1
+#      define _ELPP_CXX0X 1
 #   elif (_MSC_VER == 1700)
-#      define _CXX11 1
+#      define _ELPP_CXX11 1
 #   endif // (_MSC_VER == 1600)
 #endif // defined(_MSC_VER)
+// Clang
+#if defined(__clang__) && (__clang__ == 1)
+#   define _ELPP_CLANG_VERSION (__clang_major__ * 10000 \
+                                + __clang_minor__ * 100 \
+                                + __clang_patchlevel__)
+#   if (_ELPP_CLANG_VERSION >= 30300)
+#      define _ELPP_CXX11 1
+#   endif // (_ELPP_CLANG_VERSION >= 30300)
+#endif // defined(__clang__) && (__clang__ == 1)
+// std::thread availablity
+#if defined(__GNUC__) && (_ELPP_CXX0X || _ELPP_CXX11)
+#   define _ELPP_STD_THREAD_AVAILABLE 1
+#elif defined(_MSC_VER) && (_ELPP_CXX11)
+#   define _ELPP_STD_THREAD_AVAILABLE 1
+#elif defined(__clang__) && (__clang__ == 1) && (_ELPP_CXX11)
+#   define _ELPP_STD_THREAD_AVAILABLE 1
+#else
+#   define _ELPP_STD_THREAD_AVAILABLE 0
+#endif // defined(__GNUC__) && (_ELPP_CXX0X || _ELPP_CXX11)
+// Qt
 #if defined(QT_CORE_LIB)
 #   if (defined(QT_VERSION) && QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #      define _ELPP_QT_5 1
@@ -175,9 +203,13 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#if _CXX0X || _CXX11
+#if (_ELPP_STD_THREAD_AVAILABLE)
 #   include <thread>
-#endif
+#else
+#   if (_ELPP_OS_UNIX)
+#   include <sys/syscall.h>
+#   endif
+#endif // _ELPP_STD_THREAD_AVAILABLE
 #if defined(_ELPP_STL_LOGGING)
 // For logging STL based templates
 #   include <list>
@@ -251,15 +283,15 @@ public:
         }
     }
     static unsigned int convertFromString(const std::string& levelStr) {
-        if (levelStr == "all") return Level::All;
-        if (levelStr == "debug") return Level::Debug;
-        if (levelStr == "info") return Level::Info;
-        if (levelStr == "warning") return Level::Warning;
-        if (levelStr == "error") return Level::Error;
-        if (levelStr == "fatal") return Level::Fatal;
-        if (levelStr == "qa") return Level::QA;
-        if (levelStr == "verbose") return Level::Verbose;
-        if (levelStr == "trace") return Level::Trace;
+        if (levelStr == "all" || levelStr == "ALL") return Level::All;
+        if (levelStr == "debug" || levelStr == "DEBUG") return Level::Debug;
+        if (levelStr == "info" || levelStr == "INFO") return Level::Info;
+        if (levelStr == "warning" || levelStr == "WARNING") return Level::Warning;
+        if (levelStr == "error" || levelStr == "ERROR") return Level::Error;
+        if (levelStr == "fatal" || levelStr == "FATAL") return Level::Fatal;
+        if (levelStr == "qa" || levelStr == "QA") return Level::QA;
+        if (levelStr == "verbose" || levelStr == "VERBOSE") return Level::Verbose;
+        if (levelStr == "trace" || levelStr == "TRACE") return Level::Trace;
         return Level::Unknown;
     }
 };
@@ -293,14 +325,14 @@ public:
         }
     }
     static unsigned int convertFromString(const std::string& configStr) {
-        if (configStr == "enabled") return ConfigurationType::Enabled;
-        if (configStr == "to_file") return ConfigurationType::ToFile;
-        if (configStr == "to_standard_output") return ConfigurationType::ToStandardOutput;
-        if (configStr == "format") return ConfigurationType::Format;
-        if (configStr == "filename") return ConfigurationType::Filename;
-        if (configStr == "milliseconds_width") return ConfigurationType::MillisecondsWidth;
-        if (configStr == "performance_tracking") return ConfigurationType::PerformanceTracking;
-        if (configStr == "roll_out_size") return ConfigurationType::RollOutSize;
+        if (configStr == "enabled" || configStr == "ENABLED") return ConfigurationType::Enabled;
+        if (configStr == "to_file" || configStr == "TO_FILE") return ConfigurationType::ToFile;
+        if (configStr == "to_standard_output" || configStr == "TO_STANDARD_OUTPUT") return ConfigurationType::ToStandardOutput;
+        if (configStr == "format" || configStr == "FORMAT") return ConfigurationType::Format;
+        if (configStr == "filename" || configStr == "FILENAME") return ConfigurationType::Filename;
+        if (configStr == "milliseconds_width" || configStr == "MILLISECONDS_WIDTH") return ConfigurationType::MillisecondsWidth;
+        if (configStr == "performance_tracking" || configStr == "PERFORMANCE_TRACKING") return ConfigurationType::PerformanceTracking;
+        if (configStr == "roll_out_size" || configStr == "ROLL_OUT_SIZE") return ConfigurationType::RollOutSize;
         return ConfigurationType::Unknown;
     }
 };
@@ -557,6 +589,19 @@ private:
     Mutex* mutex_;
     ScopedLock(void);
 }; // class ScopedLock
+inline std::string getCurrentThreadId(void) {
+    std::stringstream ss;
+#if (_ELPP_STD_THREAD_AVAILABLE)
+    ss << std::this_thread::get_id();
+#else
+#   if (_ELPP_OS_UNIX)
+    ss << static_cast<pid_t>(syscall (SYS_gettid));
+#   elif (_ELPP_OS_WINDOWS)
+    ss << GetCurrentThreadId();
+#   endif // (_ELPP_OS_WINDOWS)
+#endif
+    return ss.str();
+}
 } // namespace threading
 namespace utilities {
 template <typename T>
@@ -1268,7 +1313,7 @@ public:
         do {
             set(i, configurationType_, value_);
             i = i << 1;
-        } while (i <= ConfigurationType::kMaxValid);
+        } while (i <= Level::kMaxValid);
     }
 
     inline void clear(void) {
@@ -2815,9 +2860,7 @@ private:
         // Thread ID
         if (f_ & constants_->kThreadId) {
             std::stringstream ss;
-#if _CXX0X || _CXX11
-            ss << std::this_thread::get_id();
-#endif // _CXX0X
+            ss << threading::getCurrentThreadId();
             fs_ = constants_->THREAD_ID_FORMAT_SPECIFIER;
             internal::utilities::LogManipulator::updateFormatValue(fs_, ss.str(), currLine_, constants_);
         }
@@ -2939,10 +2982,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.47"); }
+    static inline const std::string version(void) { return std::string("8.48"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-06-2013 2157hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("07-06-2013 1501hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3505,8 +3548,6 @@ private:
 #undef _ELPP_MUTEX_UNLOCK_GNU_ASM
 #undef _ELPP_ENABLE_MUTEX
 #undef ELPP_StringUtils
-#undef _ELPP_NO_INITIALIZATION
-#undef _ELPP_NO_COPY
 #undef _ENABLE_EASYLOGGING
 #undef __EASYLOGGINGPP_SUPPRESS_UNSED
 #undef _ELPP_DEBUG_LOG

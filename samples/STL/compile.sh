@@ -21,7 +21,7 @@ macro="$macro -D_QUALITY_ASSURANCE"
 macro="$macro -D_ELPP_STL_LOGGING"
 macro="$macro -D_ELPP_QT_LOGGING"
 
-CXX_STD='-std=c++0x -pthread'
+## CXX_STD='-std=c++0x -pthread'
 
 if [ "$FILE" = "" ]; then
   echo "Please provide filename to compile"
