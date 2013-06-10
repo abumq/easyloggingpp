@@ -732,7 +732,7 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![gcc] GNU Compiler Collection (g++) (4.2, 4.4, 4.6.3, 4.7.2)
 
-![vcpp] Visual C++ (8.0, 9.0, 11.0)
+![vcpp] Visual C++ (8.0, 9.0, 10.0, 11.0)
 
 ![llvm] Clang++ (2.8, 3.1, 3.2)
 
