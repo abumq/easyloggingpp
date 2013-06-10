@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.49                                                         //
+//   EasyLogging++ v8.50                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -48,7 +48,7 @@
 #endif // !defined(__LINE__)
 // Appropriate function macro
 #if defined(__func__)
-#   undef(__func__)
+#   undef __func__
 #endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #   define __func__ __FUNCSIG__
@@ -57,13 +57,12 @@
 #elif defined(__clang__) && (__clang__ == 1)
 #   define __func__ __PRETTY_FUNCTION__
 #else
-#   if !defined(__func__)
-#      define __func__ ""
-#   endif // !defined(__func__)
+#   define __func__ ""
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 //
 // Compiler evaluation
 // http://isocpp.org/blog/2013/05/gcc-4.8.1-released-c11-feature-complete
+// http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx
 //
 // GNU
 #if defined(__GNUC__)
@@ -76,7 +75,7 @@
 #      define _ELPP_CXX11 1
 #   endif // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif // defined(__GNUC__)
-// VC++ (http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx)
+// VC++
 #if defined(_MSC_VER)
 #   if (_MSC_VER == 1600)
 #      define _ELPP_CXX0X 1
@@ -93,6 +92,22 @@
 #      define _ELPP_CXX11 1
 #   endif // (_ELPP_CLANG_VERSION >= 30300)
 #endif // defined(__clang__) && (__clang__ == 1)
+// MinGW
+#if defined(__MINGW32__) || defined(__MINGW64__)
+#   define _ELPP_MINGW 1
+#else
+#   define _ELPP_MINGW 0
+#endif // defined(__MINGW32__) || defined(__MINGW64__)
+// Some special functions that are special for VC++
+// This is to prevent CRT security warnings and to override deprecated methods but at the same time
+// MinGW does not support some functions, so we need to make sure that proper function is used.
+#if defined(_MSC_VER)
+#   define SPRINTF sprintf_s
+#   define STRTOK(a,b,c) strtok_s(a,b,c)
+#else
+#   define SPRINTF sprintf
+#   define STRTOK(a,b,c) strtok(a,b)
+#endif
 // std::thread availablity
 #if defined(__GNUC__) && (_ELPP_CXX0X || _ELPP_CXX11)
 #   define _ELPP_STD_THREAD_AVAILABLE 1
@@ -687,6 +702,17 @@ public:
 
 class OSUtils : private internal::StaticClass {
 public:
+#if _ELPP_OS_WINDOWS
+    static const char* getWindowsEnvironmentVariable(const char* variableName) {
+        const DWORD bufferLen = 50;
+        static char buffer[bufferLen];
+        if (GetEnvironmentVariableA(variableName, buffer, bufferLen)) {
+            return buffer;
+        }
+        return NULL;
+    }
+#endif // _ELPP_OS_WINDOWS
+
     // Runs command on terminal and returns the output.
     // This is applicable only on linux and mac, for all other OS, an empty string is returned.
     static const std::string getBashOutput(const char* command_) {
@@ -713,59 +739,48 @@ public:
 #endif // _ELPP_OS_UNIX
     }
 
+    static std::string getEnvironmentVariable(const char* variableName, const char* defaultVal) {
+#if _ELPP_OS_UNIX
+        const char* val = getenv(variableName);
+#elif _ELPP_OS_WINDOWS
+        const char* val = getWindowsEnvironmentVariable(variableName);
+#endif // _ELPP_OS_UNIX
+        if ((val == NULL) || ((strcmp(val, "") == 0))) {
+#if _ELPP_OS_UNIX
+            // Try harder on unix-based systems
+            std::string valBash = internal::utilities::OSUtils::getBashOutput("hostname");
+            if (valBash.empty()) {
+                return std::string(defaultVal);
+            } else {
+                return valBash;
+            }
+#elif _ELPP_OS_WINDOWS
+            return std::string(defaultVal);
+#endif // _ELPP_OS_WINDOWS
+        }
+        return std::string(val);
+    }
+
     // Gets current username.
     static const std::string currentUser(void) {
 #if _ELPP_OS_UNIX
-        const char* username = getenv("USER");
+        return getEnvironmentVariable("USER", "user");
 #elif _ELPP_OS_WINDOWS
-        char* username = NULL;
-        size_t len;
-        _dupenv_s(&username, &len, "USERNAME");
+        return getEnvironmentVariable("USERNAME", "user");
+#else
+        return std::string();
 #endif // _ELPP_OS_UNIX
-        if ((username == NULL) || (!strcmp(username, ""))) {
-#if _ELPP_OS_WINDOWS
-            free(username);
-#endif // _ELPP_OS_WINDOWS
-            // Try harder on unix-based systems
-            return internal::utilities::OSUtils::getBashOutput("whoami");
-        } else {
-            std::string result = std::string(username);
-#if _ELPP_OS_WINDOWS
-            free(username);
-            username = NULL;
-#endif // _ELPP_OS_WINDOWS
-            return result;
-        }
     }
 
     // Gets current host name or computer name.
     static const std::string currentHost(void) {
 #if _ELPP_OS_UNIX
-        const char* hostname = getenv("HOSTNAME");
+        return getEnvironmentVariable("HOSTNAME", "unknown-host");
 #elif _ELPP_OS_WINDOWS
-        char* hostname = NULL;
-        size_t len;
-        _dupenv_s(&hostname, &len, "COMPUTERNAME");
+        return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
+#else
+        return std::string();
 #endif // _ELPP_OS_UNIX
-        if ((hostname == NULL) || ((strcmp(hostname, "") == 0))) {
-#if _ELPP_OS_WINDOWS
-            free(hostname);
-#endif // _ELPP_OS_WINDOWS
-            // Try harder on unix-based systems
-            std::string hostnameStr = internal::utilities::OSUtils::getBashOutput("hostname");
-            if (hostnameStr.empty()) {
-                return std::string("unknown-host");
-            } else {
-                return hostnameStr;
-            }
-        } else {
-            std::string result = std::string(hostname);
-#if _ELPP_OS_WINDOWS
-            free(hostname);
-            hostname = NULL;
-#endif // _ELPP_OS_WINDOWS
-            return result;
-        }
     }
 
     // Determines whether or not provided path_ exist in current file system
@@ -806,21 +821,21 @@ public:
         if (path_[0] == '/') {
             buildingPath_ = "/";
         }
-        currPath_ = strtok(currPath_, pathDelim_);
+        currPath_ = STRTOK(currPath_, pathDelim_, 0);
 #elif _ELPP_OS_WINDOWS
         // Use secure functions API
         char* nextTok_;
-        currPath_ = strtok_s(currPath_, pathDelim_, &nextTok_);
+        currPath_ = STRTOK(currPath_, pathDelim_, &nextTok_);
 #endif // _ELPP_OS_UNIX
         while (currPath_ != NULL) {
             buildingPath_.append(currPath_);
             buildingPath_.append(pathDelim_);
 #if _ELPP_OS_UNIX
             status = mkdir(buildingPath_.c_str(), _LOG_PERMS);
-            currPath_ = strtok(NULL, pathDelim_);
+            currPath_ = STRTOK(NULL, pathDelim_, 0);
 #elif _ELPP_OS_WINDOWS
             status = _mkdir(buildingPath_.c_str());
-            currPath_ = strtok_s(NULL, pathDelim_, &nextTok_);
+            currPath_ = STRTOK(NULL, pathDelim_, &nextTok_);
 #endif // _ELPP_OS_UNIX
         }
         if (status == -1) {
@@ -909,25 +924,25 @@ public:
         struct tm * timeInfo = localtime(&currTime.tv_sec);
         strftime(dateBuffer_, sizeof(dateBuffer_), bufferFormat_.c_str(), timeInfo);
         if (hasTime_) {
-            sprintf(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+            SPRINTF(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
         } else {
-            sprintf(dateBufferOut_, "%s", dateBuffer_);
+            SPRINTF(dateBufferOut_, "%s", dateBuffer_);
         }
 #elif _ELPP_OS_WINDOWS
         const char* kTimeFormatLocal_ = "HH':'mm':'ss";
         const char* kDateFormatLocal_ = "dd/MM/yyyy";
         if ((type_ & constants_->kDateTime) || (type_ & constants_->kDateOnly)) {
             if (GetDateFormatA(LOCALE_USER_DEFAULT, 0, 0, kDateFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
-                sprintf_s(dateBufferOut_, "%s", dateBuffer_);
+                SPRINTF(dateBufferOut_, "%s", dateBuffer_);
             }
         }
         if ((type_ & constants_->kDateTime) || (type_ & constants_->kTimeOnly)) {
             if (GetTimeFormatA(LOCALE_USER_DEFAULT, 0, 0, kTimeFormatLocal_, dateBuffer_, kDateBuffSize_) != 0) {
                 milliSeconds = static_cast<long>(GetTickCount()) % milliSecondOffset_;
                 if (type_ & constants_->kDateTime) {
-                    sprintf_s(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
+                    SPRINTF(dateBufferOut_, "%s %s.%03ld", dateBufferOut_, dateBuffer_, milliSeconds);
                 } else {
-                    sprintf_s(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
+                    SPRINTF(dateBufferOut_, "%s.%03ld", dateBuffer_, milliSeconds);
                 }
             }
         }
@@ -2540,10 +2555,14 @@ public:
 #   if _ELPP_OS_UNIX
         std::wcstombs(buff_, log_, len_);
 #   elif _ELPP_OS_WINDOWS
+#      if defined(_MSC_VER)
         size_t convCount_ = 0;
         mbstate_t mbState_;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
         wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
+#      else
+        std::wcstombs(buff_, log_, len_);
+#      endif // defined(_MSC_VER)
 #   endif // _ELPP_OS_UNIX
         _ELPP_STREAM(logger_) << buff_;
         free(buff_);
@@ -3005,10 +3024,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.49"); }
+    static inline const std::string version(void) { return std::string("8.50"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("07-06-2013 1744hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1324hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

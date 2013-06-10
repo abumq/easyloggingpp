@@ -736,6 +736,8 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 ![llvm] Clang++ (2.8, 3.1, 3.2)
 
+MinGW (g++ 4.7.2)
+
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 <pre><a href="#easylogging">Goto Top</a></pre>
 #### Tips For Performance Improvement
