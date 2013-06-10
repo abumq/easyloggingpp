@@ -81,6 +81,7 @@ Change log was not kept before version 2.1.
      - Fixes std::thread issue for getting thread ID
   * 8.49: Fixed up issue with syscall undef
   * 8.50: Fixed issues with MinGW compile (issue #58)
+  * 8.51: Fixes bash command issue when getting env variable
 
 #### 7.xx
  * 7.00:

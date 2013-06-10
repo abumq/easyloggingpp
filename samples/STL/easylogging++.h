@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.50                                                         //
+//   EasyLogging++ v8.51                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -739,7 +739,7 @@ public:
 #endif // _ELPP_OS_UNIX
     }
 
-    static std::string getEnvironmentVariable(const char* variableName, const char* defaultVal) {
+    static std::string getEnvironmentVariable(const char* variableName, const char* defaultVal, const char* alternativeBashCommand) {
 #if _ELPP_OS_UNIX
         const char* val = getenv(variableName);
 #elif _ELPP_OS_WINDOWS
@@ -748,7 +748,7 @@ public:
         if ((val == NULL) || ((strcmp(val, "") == 0))) {
 #if _ELPP_OS_UNIX
             // Try harder on unix-based systems
-            std::string valBash = internal::utilities::OSUtils::getBashOutput("hostname");
+            std::string valBash = internal::utilities::OSUtils::getBashOutput(alternativeBashCommand);
             if (valBash.empty()) {
                 return std::string(defaultVal);
             } else {
@@ -764,9 +764,9 @@ public:
     // Gets current username.
     static const std::string currentUser(void) {
 #if _ELPP_OS_UNIX
-        return getEnvironmentVariable("USER", "user");
+        return getEnvironmentVariable("USER", "user", "whoami");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("USERNAME", "user");
+        return getEnvironmentVariable("USERNAME", "user", "");
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -775,9 +775,9 @@ public:
     // Gets current host name or computer name.
     static const std::string currentHost(void) {
 #if _ELPP_OS_UNIX
-        return getEnvironmentVariable("HOSTNAME", "unknown-host");
+        return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
+        return getEnvironmentVariable("COMPUTERNAME", "unknown-host", "");
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -3024,10 +3024,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.50"); }
+    static inline const std::string version(void) { return std::string("8.51"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1324hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1409hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
