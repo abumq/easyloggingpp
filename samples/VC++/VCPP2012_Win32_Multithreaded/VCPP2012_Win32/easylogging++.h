@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.51                                                         //
+//   EasyLogging++ v8.52                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -77,11 +77,18 @@
 #endif // defined(__GNUC__)
 // VC++
 #if defined(_MSC_VER)
+#   if (_MSC_VER >= 1400) // VC++ 8.0
+#      define _ELPP_CRT_DBG_WARNINGS 1
+#   else
+#      define _ELPP_CRT_DBG_WARNINGS 0
+#   endif // (_MSC_VER >= 1400)
 #   if (_MSC_VER == 1600)
 #      define _ELPP_CXX0X 1
 #   elif (_MSC_VER == 1700)
 #      define _ELPP_CXX11 1
 #   endif // (_MSC_VER == 1600)
+#else
+#   define _ELPP_CRT_DBG_WARNINGS 0
 #endif // defined(_MSC_VER)
 // Clang
 #if defined(__clang__) && (__clang__ == 1)
@@ -98,10 +105,15 @@
 #else
 #   define _ELPP_MINGW 0
 #endif // defined(__MINGW32__) || defined(__MINGW64__)
+#if defined(__ANDROID__)
+#   define _ELPP_NDK 1
+#else
+#   define _ELPP_NDK 0
+#endif // defined(__ANDROID__)
 // Some special functions that are special for VC++
 // This is to prevent CRT security warnings and to override deprecated methods but at the same time
 // MinGW does not support some functions, so we need to make sure that proper function is used.
-#if defined(_MSC_VER)
+#if _ELPP_CRT_DBG_WARNINGS
 #   define SPRINTF sprintf_s
 #   define STRTOK(a,b,c) strtok_s(a,b,c)
 #else
@@ -109,11 +121,11 @@
 #   define STRTOK(a,b,c) strtok(a,b)
 #endif
 // std::thread availablity
-#if defined(__GNUC__) && (_ELPP_CXX0X || _ELPP_CXX11)
+#if defined(__GNUC__) && (!_ELPP_NDK) && (_ELPP_CXX0X || _ELPP_CXX11)
 #   define _ELPP_STD_THREAD_AVAILABLE 1
-#elif defined(_MSC_VER) && (_ELPP_CXX11)
+#elif defined(_MSC_VER) && (!_ELPP_NDK) && (_ELPP_CXX11)
 #   define _ELPP_STD_THREAD_AVAILABLE 1
-#elif defined(__clang__) && (__clang__ == 1) && (_ELPP_CXX11)
+#elif defined(__clang__) && (!_ELPP_NDK) && (__clang__ == 1) && (_ELPP_CXX11)
 #   define _ELPP_STD_THREAD_AVAILABLE 1
 #else
 #   define _ELPP_STD_THREAD_AVAILABLE 0
@@ -245,6 +257,7 @@
 #   include <QMultiHash>
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+
 namespace easyloggingpp {
 namespace internal {
 
@@ -719,7 +732,7 @@ public:
         if (command_ == NULL) {
             return std::string();
         }
-#if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX && !_ELPP_NDK
         FILE* proc = NULL;
         if ((proc = popen(command_, "r")) == NULL) {
             std::cerr << "\nUnable to run command [" << command_ << "]" << std::endl;
@@ -739,7 +752,7 @@ public:
 #endif // _ELPP_OS_UNIX
     }
 
-    static std::string getEnvironmentVariable(const char* variableName, const char* defaultVal, const char* alternativeBashCommand) {
+    static std::string getEnvironmentVariable(const char* variableName, const char* defaultVal, const char* alternativeBashCommand = NULL) {
 #if _ELPP_OS_UNIX
         const char* val = getenv(variableName);
 #elif _ELPP_OS_WINDOWS
@@ -766,7 +779,7 @@ public:
 #if _ELPP_OS_UNIX
         return getEnvironmentVariable("USER", "user", "whoami");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("USERNAME", "user", "");
+        return getEnvironmentVariable("USERNAME", "user");
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -777,7 +790,7 @@ public:
 #if _ELPP_OS_UNIX
         return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("COMPUTERNAME", "unknown-host", "");
+        return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -1318,7 +1331,11 @@ public:
     void setToDefault(void) {
         setAll(ConfigurationType::Enabled, "true");
 #if _ELPP_OS_UNIX
+#   if _ELPP_NDK
+        setAll(ConfigurationType::Filename, "logs/myeasylog.log");
+#   else
         setAll(ConfigurationType::Filename, "/tmp/logs/myeasylog.log");
+#   endif // _ELPP_NDK
 #elif _ELPP_OS_WINDOWS
         setAll(ConfigurationType::Filename, "logs\\myeasylog.log");
 #endif // _ELPP_OS_UNIX
@@ -2552,17 +2569,13 @@ public:
         }
         size_t len_ = wcslen(log_) + 1;
         char* buff_ = (char*)malloc(len_ + 1);
-#   if _ELPP_OS_UNIX
+#   if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
         std::wcstombs(buff_, log_, len_);
 #   elif _ELPP_OS_WINDOWS
-#      if defined(_MSC_VER)
         size_t convCount_ = 0;
         mbstate_t mbState_;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
         wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
-#      else
-        std::wcstombs(buff_, log_, len_);
-#      endif // defined(_MSC_VER)
 #   endif // _ELPP_OS_UNIX
         _ELPP_STREAM(logger_) << buff_;
         free(buff_);
@@ -3024,10 +3037,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.51"); }
+    static inline const std::string version(void) { return std::string("8.52"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1409hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1834hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

@@ -82,6 +82,9 @@ Change log was not kept before version 2.1.
   * 8.49: Fixed up issue with syscall undef
   * 8.50: Fixed issues with MinGW compile (issue #58)
   * 8.51: Fixes bash command issue when getting env variable
+  * 8.52:
+     - environment variable function improvements
+     - NDK (android build) fixes
 
 #### 7.xx
  * 7.00:
