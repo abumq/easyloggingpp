@@ -16,5 +16,7 @@ int main() {
        h.put(i, new std::string("test"));
     test(h);
     cout << "...";
+
+    LINFO << SuperFastHash("test", 10);
     return 0;
 }
