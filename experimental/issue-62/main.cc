@@ -1,4 +1,4 @@
-#include "hashmap.h"
+#include "fastmap.h"
 #include <iostream>
 #include "../../easylogging++.h"
 
@@ -6,17 +6,16 @@ _INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
-SUB(test,(HashMap<std::string>& h))
-    LINFO << h.get(5288);
-END_SUB
 
 int main() {
-    HashMap<std::string> h;
-    for (int i = 0; i < 10000; ++i)
-       h.put(i, new std::string("test"));
-    test(h);
-    cout << "...";
 
-    LINFO << SuperFastHash("test", 10);
+    FastMap<bool> h;
+    for (int i = 0; i < 8; ++i) {
+        h.put(i, i);
+    }
+
+    LINFO << h.get(0);
+    LINFO << h.get(4);
+
     return 0;
 }
