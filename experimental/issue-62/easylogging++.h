@@ -258,6 +258,17 @@
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 
+// Helper macros
+#define FOR_EACH_LEVEL(var, initVal, perform) unsigned int var = initVal; \
+                          do { \
+                              perform   \
+                              var = var == 0 ? ++var : var << 1; \
+                          } while (var <= easyloggingpp::Level::kMaxValid)
+#define FOR_EACH_CONFIGURATION(var, initVal, perform) unsigned int var = initVal; \
+                          do { \
+                              perform   \
+                              var = var == 0 ? ++var : var << 1; \
+                          } while (var <= easyloggingpp::ConfigurationType::kMaxValid)
 namespace easyloggingpp {
 namespace internal {
 
@@ -284,6 +295,7 @@ public:
         Fatal = 16, Verbose = 32, QA = 64, Trace = 128, Unknown = 1010
     };
 
+    static const unsigned int kMinValid = All;
     static const unsigned int kMaxValid = Trace;
 
     static std::string convertToString(unsigned int level_) {
@@ -332,6 +344,7 @@ public:
         MillisecondsWidth = 16, PerformanceTracking = 32, RollOutSize = 64, Unknown = 1010
     };
 
+    static const unsigned int kMinValid = Enabled;
     static const unsigned int kMaxValid = RollOutSize;
 
     static std::string convertToString(unsigned int configurationType_) {
@@ -1263,13 +1276,11 @@ public:
     }
 
     inline bool contains(unsigned int configurationType_) {
-        unsigned int i = 0;
-        do {
-            if (get(i, configurationType_) != NULL) {
-                return true;
-            }
-            i = (i == 0 ? ++i : i << 1);
-        } while (i <= ConfigurationType::kMaxValid);
+        FOR_EACH_CONFIGURATION(i, ConfigurationType::kMinValid,
+                       if (get(i, configurationType_) != NULL) {
+                           return true;
+                       }
+                       );
         return false;
     }
 
@@ -1355,11 +1366,9 @@ public:
         if (!skipLEVEL_ALL) {
             set(Level::All, configurationType_, value_);
         }
-        unsigned int i = 1;
-        do {
-            set(i, configurationType_, value_);
-            i = i << 1;
-        } while (i <= Level::kMaxValid);
+        FOR_EACH_LEVEL(i, Level::Info,
+                       set(i, configurationType_, value_);
+                       );
     }
 
     inline void clear(void) {
@@ -1778,18 +1787,16 @@ private:
     }
 
     void deleteFileStreams(void) {
-        unsigned int i = 0;
-        do {
-            if (fileStreamMap_.exist(i)) {
-                std::fstream* fs = fileStreamMap_.get(i);
-                if (fs->is_open()) {
-                    fs->close();
-                }
-                internal::utilities::safeDelete(fs, false);
-                fileStreamMap_.set(i, NULL);
-            }
-            i = (i == 0 ? ++i : i << 1);
-        } while (i <= Level::kMaxValid);
+        FOR_EACH_LEVEL(i, Level::kMinValid,
+                       if (fileStreamMap_.exist(i)) {
+                           std::fstream* fs = fileStreamMap_.get(i);
+                           if (fs->is_open()) {
+                               fs->close();
+                           }
+                           internal::utilities::safeDelete(fs, false);
+                           fileStreamMap_.set(i, NULL);
+                       }
+                       );
         fileStreamMap_.clear();
     }
 
@@ -1812,13 +1819,11 @@ private:
             }
             return;
         }
-        unsigned int i = 0;
-        do {
-            if (filenameMap_.exist(i, fnameFull)) {
-                return;
-            }
-            i = (i == 0 ? ++i : i << 1);
-        } while (i <= Level::kMaxValid);
+        FOR_EACH_LEVEL(i, Level::kMinValid,
+                       if (filenameMap_.exist(i, fnameFull)) {
+                           return;
+                       }
+                       );
         filenameMap_.set(level_, fnameFull);
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
