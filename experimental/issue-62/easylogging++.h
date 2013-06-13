@@ -1268,10 +1268,7 @@ public:
             if (get(i, configurationType_) != NULL) {
                 return true;
             }
-            i = i << 1;
-            if (i == 0) {
-                ++i;
-            }
+            i = (i == 0 ? ++i : i << 1);
         } while (i <= ConfigurationType::kMaxValid);
         return false;
     }
@@ -1492,24 +1489,43 @@ public:
         if (table[level_] != NULL) {
             return table[level_]->second;
         }
-        return table[easyloggingpp::Level::All]->second;
+        // TODO - ISSUE 62: What if table[Level::All] not set??? - See existWithValue(..) too
+        return table[Level::All]->second;
     }
 
     void set(unsigned int level_, const T& value) {
         if (table[level_] != NULL) {
+            internal::utilities::safeDelete(table[level_], false);
             --count;
-            delete table[level_];
-            table[level_] = NULL;
         }
         table[level_] = new std::pair<unsigned int, T>(level_, value);
         ++count;
     }
 
-    virtual ~ConfigurationMap(void) {
+    void unset(unsigned int level_) {
+        if (table[level_] != NULL) {
+            internal::utilities::safeDelete(table[level_], false);
+            --count;
+        }
+    }
+
+    bool exist(unsigned int level_) {
+       return table[level_] != NULL;
+    }
+
+    bool existWithValue(unsigned int level_, const T& value) {
+       return get(level_) == value;
+    }
+
+    void clear(void) {
         for (int i = 0; i < Level::kMaxValid; ++i) {
-            delete table[i];
+            internal::utilities::safeDelete(table[i], false);
         }
         delete[] table;
+    }
+
+    virtual ~ConfigurationMap(void) {
+        clear();
     }
 
     size_t size() {
@@ -1537,112 +1553,70 @@ public:
         return configurations_;
     }
 private:
-    std::map<unsigned int, bool> enabledMap_;
-    std::map<unsigned int, bool> toFileMap_;
-    std::map<unsigned int, std::string> filenameMap_;
-    std::map<unsigned int, bool> toStandardOutputMap_;
-    std::map<unsigned int, std::string> logFormatMap_;
-    std::map<unsigned int, std::string> dateFormatMap_;
-    std::map<unsigned int, std::string> dateFormatSpecifierMap_;
-    std::map<unsigned int, int> millisecondsWidthMap_;
-    std::map<unsigned int, bool> performanceTrackingMap_;
-    std::map<unsigned int, std::fstream*> fileStreamMap_;
-    std::map<unsigned int, unsigned int> formatFlagMap_;
-    std::map<unsigned int, unsigned long> rollOutSizeMap_;
+    ConfigurationMap<bool> enabledMap_;
+    ConfigurationMap<bool> toFileMap_;
+    ConfigurationMap<std::string> filenameMap_;
+    ConfigurationMap<bool> toStandardOutputMap_;
+    ConfigurationMap<std::string> logFormatMap_;
+    ConfigurationMap<std::string> dateFormatMap_;
+    ConfigurationMap<std::string> dateFormatSpecifierMap_;
+    ConfigurationMap<int> millisecondsWidthMap_;
+    ConfigurationMap<bool> performanceTrackingMap_;
+    ConfigurationMap<std::fstream*> fileStreamMap_;
+    ConfigurationMap<unsigned int> formatFlagMap_;
+    ConfigurationMap<size_t> rollOutSizeMap_;
     internal::Constants* constants_;
     Configurations configurations_;
 
     friend class Writer;
     friend class easyloggingpp::Loggers;
 
-    bool enabled(unsigned int level_) {
-        std::map<unsigned int, bool>::iterator it = enabledMap_.find(level_);
-        if (it == enabledMap_.end()) {
-            return enabledMap_[Level::All];
-        }
-        return it->second;
+    inline bool enabled(unsigned int level_) {
+        return enabledMap_.get(level_);
     }
 
-    bool toFile(unsigned int level_) {
-        std::map<unsigned int, bool>::iterator it = toFileMap_.find(level_);
-        if (it == toFileMap_.end()) {
-            return toFileMap_[Level::All];
-        }
-        return it->second;
+    inline bool toFile(unsigned int level_) {
+        return toFileMap_.get(level_);
     }
 
-    const std::string& filename(unsigned int level_) {
-        std::map<unsigned int, std::string>::iterator it = filenameMap_.find(level_);
-        if (it == filenameMap_.end()) {
-            return filenameMap_[Level::All];
-        }
-        return it->second;
+    inline const std::string& filename(unsigned int level_) {
+        return filenameMap_.get(level_);
     }
 
-    bool toStandardOutput(unsigned int level_) {
-        std::map<unsigned int, bool>::iterator it = toStandardOutputMap_.find(level_);
-        if (it == toStandardOutputMap_.end()) {
-            return toStandardOutputMap_[Level::All];
-        }
-        return it->second;
+    inline bool toStandardOutput(unsigned int level_) {
+        return toStandardOutputMap_.get(level_);
     }
 
-    const std::string& logFormat(unsigned int level_) {
-        std::map<unsigned int, std::string>::iterator it = logFormatMap_.find(level_);
-        if (it == logFormatMap_.end()) {
-            return logFormatMap_[Level::All];
-        }
-        return it->second;
+    inline const std::string& logFormat(unsigned int level_) {
+        return logFormatMap_.get(level_);
     }
 
-    const std::string& dateFormat(unsigned int level_) {
-        std::map<unsigned int, std::string>::iterator it = dateFormatMap_.find(level_);
-        if (it == dateFormatMap_.end()) {
-            return dateFormatMap_[Level::All];
-        }
-        return it->second;
+    inline const std::string& dateFormat(unsigned int level_) {
+        return dateFormatMap_.get(level_);
     }
 
-    const std::string& dateFormatSpecifier(unsigned int level_) {
-        std::map<unsigned int, std::string>::iterator it = dateFormatSpecifierMap_.find(level_);
-        if (it == dateFormatSpecifierMap_.end()) {
-            return dateFormatSpecifierMap_[Level::All];
-        }
-        return it->second;
+    inline const std::string& dateFormatSpecifier(unsigned int level_) {
+        return dateFormatSpecifierMap_.get(level_);
     }
 
-    int millisecondsWidth(unsigned int level_ = Level::All) {
-        __EASYLOGGINGPP_SUPPRESS_UNSED(level_);
-        return millisecondsWidthMap_[Level::All];
+    inline int millisecondsWidth(unsigned int level_ = Level::All) {
+        return millisecondsWidthMap_.get(level_);
     }
 
-    bool performanceTracking(unsigned int level_ = Level::All) {
-        __EASYLOGGINGPP_SUPPRESS_UNSED(level_);
-        return performanceTrackingMap_[Level::All];
+    inline bool performanceTracking(unsigned int level_ = Level::All) {
+        return performanceTrackingMap_.get(level_);
     }
 
-    std::fstream* fileStream(unsigned int level_) {
-        std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.find(level_);
-        if (it == fileStreamMap_.end()) {
-            return fileStreamMap_[Level::All];
-        }
-        return it->second;
+    inline std::fstream* fileStream(unsigned int level_) {
+        return fileStreamMap_.get(level_);
     }
 
-    const unsigned long& rollOutSize(unsigned int level_) {
-        std::map<unsigned int, unsigned long>::iterator it = rollOutSizeMap_.find(level_);
-        if (it == rollOutSizeMap_.end()) {
-            return rollOutSizeMap_[Level::All];
-        }
-        return it->second;
+    inline size_t rollOutSize(unsigned int level_) {
+        return rollOutSizeMap_.get(level_);
     }
 
-    int formatFlag(unsigned int level_) {
-        std::map<unsigned int, unsigned int>::iterator it = formatFlagMap_.find(level_);
-        if (it == formatFlagMap_.end()) {
-            return formatFlagMap_[Level::All];
-        }
-        return it->second;
+    inline int formatFlag(unsigned int level_) {
+        return formatFlagMap_.get(level_);
     }
 
     void parse(const Configurations& configurations_) {
@@ -1698,7 +1672,7 @@ private:
                 }
                 break;
             case ConfigurationType::RollOutSize:
-                setValue(conf->level(), getULong(conf->value()), rollOutSizeMap_);
+                setValue(conf->level(), static_cast<size_t>(getULong(conf->value())), rollOutSizeMap_);
                 unsigned int correctLevel_ = 0;
                 std::string rolloutFilename_ = std::string();
                 checkRollOuts(conf->level(), correctLevel_, rolloutFilename_);
@@ -1803,15 +1777,18 @@ private:
     }
 
     void deleteFileStreams(void) {
-        for (std::map<unsigned int, std::fstream*>::iterator it = fileStreamMap_.begin();
-             it != fileStreamMap_.end(); ++it) {
-            if (it->second) {
-                if (it->second->is_open()) {
-                    it->second->close();
+        unsigned int i = 0;
+        do {
+            if (fileStreamMap_.exist(i)) {
+                std::fstream* fs = fileStreamMap_.get(i);
+                if (fs->is_open()) {
+                    fs->close();
                 }
-                internal::utilities::safeDelete(it->second, false);
+                internal::utilities::safeDelete(fs, false);
+                fileStreamMap_.set(i, NULL);
             }
-        }
+            i = (i == 0 ? ++i : i << 1);
+        } while (i <= Level::kMaxValid);
         fileStreamMap_.clear();
     }
 
@@ -1827,49 +1804,47 @@ private:
             internal::utilities::OSUtils::createPath(path_);
         }
         if (filenameMap_.size() == 0) {
-            filenameMap_.insert(std::pair<unsigned int, std::string>(Level::All, fnameFull));
+            filenameMap_.set(Level::All, fnameFull);
             std::fstream *fsAll = newFileStream(fnameFull, forceNew);
             if (fsAll != NULL) {
-                fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(Level::All, fsAll));
+                fileStreamMap_.set(Level::All, fsAll);
             }
             return;
         }
-        for (std::map<unsigned int, std::string>::iterator it = filenameMap_.begin(); it != filenameMap_.end(); ++it) {
-            if (it->second == fnameFull) {
+        unsigned int i = 0;
+        do {
+            if (filenameMap_.existWithValue(i, fnameFull)) {
                 return;
             }
-        }
-        filenameMap_.insert(std::pair<unsigned int, std::string>(level_, fnameFull));
+            i = (i == 0 ? ++i : i << 1);
+        } while (i <= Level::kMaxValid);
+        filenameMap_.set(level_, fnameFull);
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
-        std::fstream *fs = fileStreamMap_[level_];
+        std::fstream *fs = fileStreamMap_.get(level_);
         internal::utilities::safeDelete(fs);
-        fileStreamMap_.erase(level_);
+        fileStreamMap_.unset(level_);
         fs = newFileStream(fnameFull, forceNew);
         if (fs != NULL) {
-            fileStreamMap_.insert(std::pair<unsigned int, std::fstream*>(level_, fs));
+            fileStreamMap_.set(level_, fs);
         }
     }
 
     template <typename T>
-    void setValue(unsigned int level_, const T& value_, std::map<unsigned int, T>& map_, bool skipLEVEL_ALL = false) {
+    void setValue(unsigned int level_, const T& value_, ConfigurationMap<T>& map_, bool skipLEVEL_ALL = false) {
         if (map_.size() == 0 && !skipLEVEL_ALL) {
-            map_.insert(std::pair<unsigned int, T>(Level::All, value_));
+            map_.set(Level::All, value_);
             return;
         }
-        typedef typename std::map<unsigned int, T>::iterator Iterator;
-        for (Iterator it = map_.begin(); it != map_.end(); ++it) {
+        /* TODO - ISSUE 62: 
+           typedef typename std::map<unsigned int, T>::iterator Iterator;
+           for (Iterator it = map_.begin(); it != map_.end(); ++it) {
             // Ignore conf if we already have same value for Level::All
             if (it->first == Level::All && it->second == value_) {
                 return;
             }
-        }
-        Iterator it = map_.find(level_);
-        if (it == map_.end()) {
-            map_.insert(std::pair<unsigned int, T>(level_, value_));
-        } else {
-            map_[level_] = value_;
-        }
+        }*/
+        map_.set(level_, value_);
     }
 
     std::fstream* newFileStream(const std::string& filename, bool forceNew = false) {
@@ -1898,8 +1873,8 @@ private:
             fs->close();
         }
         internal::utilities::safeDelete(fs, false);
-        fileStreamMap_.erase(level_);
-        filenameMap_.erase(level_);
+        fileStreamMap_.unset(level_);
+        filenameMap_.unset(level_);
     }
 
     unsigned long getULong(const std::string& confValue_) {
@@ -1930,20 +1905,20 @@ private:
         return (trimmedVal == "1" || trimmedVal == "true" || trimmedVal == "TRUE");
     }
 
-    unsigned long getSizeOfFile(std::fstream *fs) {
+    size_t getSizeOfFile(std::fstream *fs) {
         if (!fs) {
             return 0L;
         }
         std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
-        unsigned long size = static_cast<unsigned long>(fs->tellg());
+        size_t size = static_cast<size_t>(fs->tellg());
         fs->seekg (currPos);
         return size;
     }
 
     bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
         std::fstream* fs = fileStream(level_);
-        unsigned long rollOutSize_ = rollOutSize(level_);
+        size_t rollOutSize_ = rollOutSize(level_);
         if (rollOutSize_ != 0 && getSizeOfFile(fs) >= rollOutSize_) {
             fname_ = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
@@ -1961,12 +1936,8 @@ private:
     }
 
     template <typename T>
-    unsigned int findAvailableLevel(std::map<unsigned int, T>& map_, unsigned int refLevel_) {
-        typename std::map<unsigned int, T>::iterator it = map_.find(refLevel_);
-        if (it == map_.end()) {
-            return Level::All;
-        }
-        return refLevel_;
+    inline unsigned int findAvailableLevel(ConfigurationMap<T>& map_, unsigned int refLevel_) {
+        return map_.exist(refLevel_) ? refLevel_ : Level::All;
     }
 
     inline void forceReinitiateFile(unsigned int level_, const std::string& filename_) {
@@ -3297,12 +3268,12 @@ public:
             return conf_->performanceTracking(level_);
         }
 
-        static inline const unsigned long& logRollOutSize(Logger* logger_, unsigned int level_ = Level::All) {
+        static inline size_t logRollOutSize(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->rollOutSize(level_);
         }
 
-        static inline const unsigned long& logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
+        static inline size_t logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->rollOutSize(level_);
         }

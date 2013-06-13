@@ -1,11 +1,12 @@
-#include "fastmap.h"
+//#include "fastmap.h"
 #include <iostream>
-#include "../../easylogging++.h"
+#include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
-
+using namespace easyloggingpp;
+using namespace easyloggingpp::internal;
 
 int main() {
 
