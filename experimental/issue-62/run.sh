@@ -1,3 +1,7 @@
 g++ main.cc -o prog
-./prog
+if [ "$1" = "valgrind" ];then
+    valgrind ./prog
+else
+    ./prog
+fi
 rm prog

@@ -1485,12 +1485,13 @@ public:
         count = 0;
     }
 
-    const T& get(unsigned int level_) {
+    const T& get(unsigned int level_, const T& default_ = T()) {
         if (table[level_] != NULL) {
             return table[level_]->second;
+        } else if (table[Level::All] != NULL) {
+            return table[Level::All]->second;
         }
-        // TODO - ISSUE 62: What if table[Level::All] not set??? - See existWithValue(..) too
-        return table[Level::All]->second;
+        return default_;
     }
 
     void set(unsigned int level_, const T& value) {
@@ -1513,15 +1514,15 @@ public:
        return table[level_] != NULL;
     }
 
-    bool existWithValue(unsigned int level_, const T& value) {
+    bool exist(unsigned int level_, const T& value) {
        return get(level_) == value;
     }
 
     void clear(void) {
-        for (int i = 0; i < Level::kMaxValid; ++i) {
-            internal::utilities::safeDelete(table[i], false);
-        }
-        delete[] table;
+        //FIXME for (int i = 0; i < Level::kMaxValid; ++i) {
+        //    internal::utilities::safeDelete(table[i], false);
+        //}
+        //delete[] table;
     }
 
     virtual ~ConfigurationMap(void) {
@@ -1813,7 +1814,7 @@ private:
         }
         unsigned int i = 0;
         do {
-            if (filenameMap_.existWithValue(i, fnameFull)) {
+            if (filenameMap_.exist(i, fnameFull)) {
                 return;
             }
             i = (i == 0 ? ++i : i << 1);
@@ -1836,14 +1837,9 @@ private:
             map_.set(Level::All, value_);
             return;
         }
-        /* TODO - ISSUE 62: 
-           typedef typename std::map<unsigned int, T>::iterator Iterator;
-           for (Iterator it = map_.begin(); it != map_.end(); ++it) {
-            // Ignore conf if we already have same value for Level::All
-            if (it->first == Level::All && it->second == value_) {
-                return;
-            }
-        }*/
+        if (map_.exist(static_cast<unsigned int>(Level::All), value_)) {
+            return;
+        }
         map_.set(level_, value_);
     }
 
@@ -1917,7 +1913,7 @@ private:
     }
 
     bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
-        std::fstream* fs = fileStream(level_);
+        /* FIXME std::fstream* fs = fileStream(level_);
         size_t rollOutSize_ = rollOutSize(level_);
         if (rollOutSize_ != 0 && getSizeOfFile(fs) >= rollOutSize_) {
             fname_ = filename(level_);
@@ -1931,13 +1927,13 @@ private:
             correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
             forceReinitiateFile(correctLevel_, fname_);
             return true;
-        }
+        }*/
         return false;
     }
 
     template <typename T>
     inline unsigned int findAvailableLevel(ConfigurationMap<T>& map_, unsigned int refLevel_) {
-        return map_.exist(refLevel_) ? refLevel_ : Level::All;
+        return map_.exist(refLevel_) ? refLevel_ : static_cast<unsigned int>(Level::All);
     }
 
     inline void forceReinitiateFile(unsigned int level_, const std::string& filename_) {
