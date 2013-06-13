@@ -49,7 +49,7 @@
 // Appropriate function macro
 #if defined(__func__)
 #   undef __func__
-#endif
+#endif // defined(__func__)
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #   define __func__ __FUNCSIG__
 #elif defined(__GNUC__) && (__GNUC__ >= 2)
@@ -204,14 +204,16 @@
 #define _ELPP_QA_LOG          (defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
 #define _ELPP_TRACE_LOG       (!defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
 #define ELPP_FOR_EACH(variableName, initialValue, operation, limit) unsigned int variableName = initialValue; \
-                                                             do { \
-                                                                 operation   \
-                                                                 variableName = (variableName == 0 ? ++variableName : variableName << 1); \
-                                                             } while (variableName <= limit)
+                                                                    do { \
+                                                                        operation   \
+                                                                        variableName = variableName << 1; \
+                                                                        if (variableName == 0) { ++variableName; } \
+                                                                    } while (variableName <= limit)
 #define ELPP_FOR_EACH_LEVEL(variableName, initialValue, operation) \
     ELPP_FOR_EACH(variableName, initialValue, operation, easyloggingpp::Level::kMaxValid)
 #define ELPP_FOR_EACH_CONFIGURATION(variableName, initialValue, operation) \
     ELPP_FOR_EACH(variableName, initialValue, operation, easyloggingpp::ConfigurationType::kMaxValid)
+// Includes
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -1364,9 +1366,9 @@ public:
         if (!skipLEVEL_ALL) {
             set(Level::All, configurationType_, value_);
         }
-        ELPP_FOR_EACH_LEVEL(i, Level::Info,
-                       set(i, configurationType_, value_);
-                       );
+        ELPP_FOR_EACH_LEVEL(i, Level::Debug,
+                            set(i, configurationType_, value_);
+                            );
     }
 
     inline void clear(void) {
@@ -1487,7 +1489,7 @@ class ConfigurationMap {
 public:
     ConfigurationMap(void){
         table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
-        for (int i = 0; i <= Level::kMaxValid; i++) {
+        for (unsigned int i = 0; i <= Level::kMaxValid; i++) {
             table[i] = NULL;
         }
         count = 0;

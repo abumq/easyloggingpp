@@ -7,7 +7,7 @@
 using namespace easyloggingpp;
 using namespace easyloggingpp::internal;
 
-TEST(ConfigurationTest, Parsing) {
+TEST(Configuration, ParsingTest) {
     Configurations confFile("test_conf.conf");
     Logger* testLogger = Loggers::reconfigureLogger("testLogger", confFile);
 
