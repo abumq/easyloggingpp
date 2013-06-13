@@ -7,13 +7,13 @@
 using namespace easyloggingpp;
 using namespace easyloggingpp::internal;
 
-TEST(RegisteredLoggersTest, Loggers) {
-
+TEST(Loggers, RegisteredLoggersCountTest) {
     // We have 4 default loggers and one test logger that we registered in main()
     EXPECT_EQ(registeredLoggers->count(), 5);
-    
+}
+
+TEST(Loggers, LogFormatTest) {
     Logger* testLogger = Loggers::getLogger("testLogger");
-    
     TDEBUG << "First log";
     std::stringstream expectedLine;
     expectedLine << "DEBUG " << internal::utilities::OSUtils::currentUser() << " " << internal::utilities::OSUtils::currentHost() << " First log";
