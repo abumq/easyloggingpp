@@ -13,7 +13,7 @@ int main() {
 
     ConfigurationMap<bool> h;
 
-    FOR_EACH_LEVEL(i,0,
+    ELPP_FOR_EACH_LEVEL(i,0,
                 h.set(i, i);
             );
 

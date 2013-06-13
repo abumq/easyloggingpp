@@ -1,6 +1,6 @@
 g++ main.cc -o prog
 if [ "$1" = "valgrind" ];then
-    valgrind ./prog
+    valgrind --leak-check=full ./prog
 else
     ./prog
 fi

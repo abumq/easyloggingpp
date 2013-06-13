@@ -203,6 +203,15 @@
 #define _ELPP_VERBOSE_LOG     (!defined(_DISABLE_VERBOSE_LOGS) && (_ENABLE_EASYLOGGING))
 #define _ELPP_QA_LOG          (defined(_QUALITY_ASSURANCE) && (_ENABLE_EASYLOGGING))
 #define _ELPP_TRACE_LOG       (!defined(_DISABLE_TRACE_LOGS) && (_ENABLE_EASYLOGGING))
+#define ELPP_FOR_EACH(variableName, initialValue, operation, limit) unsigned int variableName = initialValue; \
+                                                             do { \
+                                                                 operation   \
+                                                                 variableName = (variableName == 0 ? ++variableName : variableName << 1); \
+                                                             } while (variableName <= limit)
+#define ELPP_FOR_EACH_LEVEL(variableName, initialValue, operation) \
+    ELPP_FOR_EACH(variableName, initialValue, operation, easyloggingpp::Level::kMaxValid)
+#define ELPP_FOR_EACH_CONFIGURATION(variableName, initialValue, operation) \
+    ELPP_FOR_EACH(variableName, initialValue, operation, easyloggingpp::ConfigurationType::kMaxValid)
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -258,17 +267,6 @@
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
 
-// Helper macros
-#define FOR_EACH_LEVEL(var, initVal, perform) unsigned int var = initVal; \
-                          do { \
-                              perform   \
-                              var = var == 0 ? ++var : var << 1; \
-                          } while (var <= easyloggingpp::Level::kMaxValid)
-#define FOR_EACH_CONFIGURATION(var, initVal, perform) unsigned int var = initVal; \
-                          do { \
-                              perform   \
-                              var = var == 0 ? ++var : var << 1; \
-                          } while (var <= easyloggingpp::ConfigurationType::kMaxValid)
 namespace easyloggingpp {
 namespace internal {
 
@@ -1276,11 +1274,11 @@ public:
     }
 
     inline bool contains(unsigned int configurationType_) {
-        FOR_EACH_CONFIGURATION(i, ConfigurationType::kMinValid,
-                       if (get(i, configurationType_) != NULL) {
-                           return true;
-                       }
-                       );
+        ELPP_FOR_EACH_CONFIGURATION(i, ConfigurationType::kMinValid,
+                                    if (get(i, configurationType_) != NULL) {
+                                        return true;
+                                    }
+                                    );
         return false;
     }
 
@@ -1366,7 +1364,7 @@ public:
         if (!skipLEVEL_ALL) {
             set(Level::All, configurationType_, value_);
         }
-        FOR_EACH_LEVEL(i, Level::Info,
+        ELPP_FOR_EACH_LEVEL(i, Level::Info,
                        set(i, configurationType_, value_);
                        );
     }
@@ -1488,9 +1486,10 @@ template <typename T>
 class ConfigurationMap {
 public:
     ConfigurationMap(void){
-        table = new std::pair<unsigned int, T>*[Level::kMaxValid];
-        for (int i = 0; i < Level::kMaxValid; i++)
+        table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
+        for (int i = 0; i <= Level::kMaxValid; i++) {
             table[i] = NULL;
+        }
         count = 0;
     }
 
@@ -1528,10 +1527,10 @@ public:
     }
 
     void clear(void) {
-        //FIXME for (int i = 0; i < Level::kMaxValid; ++i) {
-        //    internal::utilities::safeDelete(table[i], false);
-        //}
-        //delete[] table;
+        ELPP_FOR_EACH_LEVEL(i, 0,
+                            internal::utilities::safeDelete(table[i], true);
+                            );
+        delete[] table;
     }
 
     virtual ~ConfigurationMap(void) {
@@ -1787,17 +1786,15 @@ private:
     }
 
     void deleteFileStreams(void) {
-        FOR_EACH_LEVEL(i, Level::kMinValid,
-                       if (fileStreamMap_.exist(i)) {
-                           std::fstream* fs = fileStreamMap_.get(i);
-                           if (fs->is_open()) {
-                               fs->close();
-                           }
-                           internal::utilities::safeDelete(fs, false);
-                           fileStreamMap_.set(i, NULL);
-                       }
-                       );
-        fileStreamMap_.clear();
+        ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
+                            if (fileStreamMap_.exist(i)) {
+                                std::fstream* fs = fileStreamMap_.get(i, NULL);
+                                if (fs != NULL && fs->is_open()) {
+                                    fs->close();
+                                }
+                                internal::utilities::safeDelete(fs);
+                            }
+                            );
     }
 
     // This is different since we need unique values
@@ -1819,7 +1816,7 @@ private:
             }
             return;
         }
-        FOR_EACH_LEVEL(i, Level::kMinValid,
+        ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
                        if (filenameMap_.exist(i, fnameFull)) {
                            return;
                        }
