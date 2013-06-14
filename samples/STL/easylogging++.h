@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.55                                                         //
+//   EasyLogging++ v8.56                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -219,6 +219,9 @@
 #include <cstdlib>
 #include <cctype>
 #include <cwchar>
+#if _ELPP_NDK
+#   include <sys/system_properties.h>
+#endif // _ELPP_NDK
 #if _ELPP_OS_UNIX
 #   include <sys/stat.h>
 #   include <sys/time.h>
@@ -737,7 +740,24 @@ public:
         return NULL;
     }
 #endif // _ELPP_OS_WINDOWS
+#if _ELPP_NDK
+    static std::string getProperty(const char* prop) {
+        char propVal[PROP_VALUE_MAX + 1];
+        __system_property_get(prop, propVal);
+        return std::string(propVal);
+    }
 
+    static std::string getDeviceName(void) {
+        std::stringstream ss;
+        std::string manufacturer = getProperty("ro.product.manufacturer");
+        std::string model = getProperty("ro.product.model");
+        if (manufacturer.empty() && model.empty()) {
+            return std::string();
+        }
+        ss << manufacturer << " " << model;
+        return ss.str();
+    }
+#endif // _ELPP_NDK
     // Runs command on terminal and returns the output.
     // This is applicable only on linux and mac, for all other OS, an empty string is returned.
     static const std::string getBashOutput(const char* command_) {
@@ -792,6 +812,8 @@ public:
         return getEnvironmentVariable("USER", "user", "whoami");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("USERNAME", "user");
+#elif _ELPP_NDK
+        return std::string("android");
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -803,6 +825,8 @@ public:
         return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
+#elif _ELPP_NDK
+        return getDeviceName();
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -3050,10 +3074,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.55"); }
+    static inline const std::string version(void) { return std::string("8.56"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1929hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1951hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
