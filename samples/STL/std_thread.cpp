@@ -10,9 +10,9 @@
 
 #include "easylogging++.h"
 
-#if _CXX0X || _CXX11 // defined in easylogging++.h for C++0X standard
+#if _ELPP_CXX0X || _ELPP_CXX11 // defined in easylogging++.h for C++0X standard
 #include <thread>
-#endif // _CXX0X || _CXX11
+#endif // _ELPP_CXX0X || _ELPP_CXX11
 
 _INITIALIZE_EASYLOGGINGPP
 
@@ -42,7 +42,7 @@ void writeLogFromThread(int threadId) {
 int main(int argc, char** argv) {  // Using FUNC for performance tracking
  _START_EASYLOGGINGPP(argc, argv);
 
- #if _CXX0X || _CXX11
+ #if _ELPP_CXX0X || _ELPP_CXX11
    // Create three thread and call writeLogFromThread()
    std::thread t1(writeLogFromThread, 1);
    std::thread t2(writeLogFromThread, 2);
@@ -50,6 +50,6 @@ int main(int argc, char** argv) {  // Using FUNC for performance tracking
    t1.join();
    t2.join();
    t3.join();
- #endif // _CXX0X || _CXX11
+ #endif // _ELPP_CXX0X || _ELPP_CXX11
  return 0;
 }

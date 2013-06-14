@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.52 - EXPERIMENTAL                                          //
+//   EasyLogging++ v8.55                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -219,6 +219,9 @@
 #include <cstdlib>
 #include <cctype>
 #include <cwchar>
+#if _ELPP_NDK
+#   include <sys/system_properties>
+#endif // _ELPP_NDK
 #if _ELPP_OS_UNIX
 #   include <sys/stat.h>
 #   include <sys/time.h>
@@ -268,7 +271,6 @@
 #   include <QMultiHash>
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
-
 namespace easyloggingpp {
 namespace internal {
 
@@ -301,25 +303,25 @@ public:
     static std::string convertToString(unsigned int level_) {
         switch (level_) {
         case All:
-            return std::string("all");
+            return std::string("ALL");
         case Debug:
-            return std::string("debug");
+            return std::string("DEBUG");
         case Info:
-            return std::string("info");
+            return std::string("INFO");
         case Warning:
-            return std::string("warning");
+            return std::string("WARNING");
         case Error:
-            return std::string("error");
+            return std::string("ERROR");
         case Fatal:
-            return std::string("fatal");
+            return std::string("FATAL");
         case QA:
-            return std::string("qa");
+            return std::string("QA");
         case Verbose:
-            return std::string("verbose");
+            return std::string("VERBOSE");
         case Trace:
-            return std::string("trace");
+            return std::string("TRACE");
         default:
-            return std::string("unknown");
+            return std::string("UNKNOWN");
         }
     }
 
@@ -350,22 +352,22 @@ public:
     static std::string convertToString(unsigned int configurationType_) {
         switch (configurationType_) {
         case Enabled:
-            return std::string("enabled");
+            return std::string("ENABLED");
         case Filename:
-            return std::string("filename");
+            return std::string("FILENAME");
         case Format:
-            return std::string("format");
+            return std::string("FORMAT");
         case ToFile:
-            return std::string("to_file");
+            return std::string("TO_FILE");
         case ToStandardOutput:
-            return std::string("to_standard_output");
+            return std::string("TO_STANDARD_OUTPUT");
         case MillisecondsWidth:
-            return std::string("milliseconds_width");
+            return std::string("MILLISECONDS_WIDTH");
         case PerformanceTracking:
-            return std::string("performance_tracking");
+            return std::string("PERFORMANCE_TRACKING");
         case RollOutSize:
-            return std::string("roll_out_size");
-        default: return std::string("unknown");
+            return std::string("ROLL_OUT_SIZE");
+        default: return std::string("UNKNOWN");
         }
     }
 
@@ -666,8 +668,8 @@ inline void safeDelete(T*& pointer, bool checkNullity = true) {
 class StringUtils : private internal::StaticClass {
 public:
     static inline std::string trim(const std::string &str) {
-        size_t s = str.find_first_not_of(" \n\r\t");
-        size_t e = str.find_last_not_of(" \n\r\t");
+        std::size_t s = str.find_first_not_of(" \n\r\t");
+        std::size_t e = str.find_last_not_of(" \n\r\t");
         if ((s == std::string::npos) || (e == std::string::npos)) {
             return "";
         }
@@ -697,7 +699,7 @@ public:
         if (replaceWhat == replaceWith)
             return str;
         std::string result = str;
-        size_t foundAt = std::string::npos;
+        std::size_t foundAt = std::string::npos;
         while ((foundAt = result.find(replaceWhat)) != std::string::npos) {
             result.replace(foundAt, replaceWhat.length(), replaceWith);
         }
@@ -738,6 +740,24 @@ public:
         return NULL;
     }
 #endif // _ELPP_OS_WINDOWS
+#if _ELPP_NDK
+    static std::string getProperty(const char* propertyValue) {
+        char propertyValue[PROP_VALUE_MAX + 1];
+        __system_property_get(propertyName, propertyValue);
+        return std::string(propertyValue);
+    }
+
+    static std::string getDeviceName(void) {
+        std::string manufacturer = getProperty("ro.product.manufacturer");
+        std::string model = getProperty("ro.product.model");
+        if (manufacturer.empty() && model.empty()) {
+            return std::string();
+        }
+        std::stringstream ss;
+        ss << manufacturer << "-" << model;
+        return ss.str();
+    }
+#endif // _ELPP_NDK
 
     // Runs command on terminal and returns the output.
     // This is applicable only on linux and mac, for all other OS, an empty string is returned.
@@ -804,6 +824,8 @@ public:
         return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
+#elif _ELPP_NDK
+        return getDeviceName();
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -874,7 +896,7 @@ public:
         if (fullPath_ == "" || fullPath_.find(constants_->PATH_SLASH) == std::string::npos) {
             return fullPath_;
         }
-        size_t lastSlashAt = fullPath_.find_last_of(constants_->PATH_SLASH);
+        std::size_t lastSlashAt = fullPath_.find_last_of(constants_->PATH_SLASH);
         if (lastSlashAt == 0) {
             return constants_->PATH_SLASH;
         }
@@ -891,7 +913,7 @@ public:
     static void updateFormatValue(const std::string& formatSpecifier_,
                                   const std::string& value_, std::string& currentFormat_,
                                   internal::Constants* constants_) {
-        size_t foundAt = std::string::npos;
+        std::size_t foundAt = std::string::npos;
         while ((foundAt = currentFormat_.find(formatSpecifier_, foundAt + 1)) != std::string::npos){
             if (currentFormat_[foundAt > 0 ? foundAt - 1 : 0] == constants_->FORMAT_SPECIFIER_ESCAPE_CHAR) {
                 currentFormat_.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
@@ -935,7 +957,7 @@ public:
 #endif // _ELPP_OS_WINDOWS
 
     // Gets current date and time with milliseconds.
-    static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, internal::Constants* constants_, unsigned int milliSecondOffset_ = 1000) {
+    static std::string getDateTime(const std::string& bufferFormat_, unsigned int type_, internal::Constants* constants_, std::size_t milliSecondOffset_ = 1000) {
         long milliSeconds = 0;
         const int kDateBuffSize_ = 30;
         char dateBuffer_[kDateBuffSize_] = "";
@@ -1015,7 +1037,7 @@ public:
     Registry(const Registry& other_) {
         if (this != &other_) {
             unregisterAll();
-            for (unsigned int i = 0; i < other_.list_.size(); ++i) {
+            for (std::size_t i = 0; i < other_.list_.size(); ++i) {
                 Class* curr_ = other_.list_.at(i);
                 if (curr_) {
                     list_.push_back(new Class(*curr_));
@@ -1029,7 +1051,7 @@ public:
             return *this;
         }
         unregisterAll();
-        for (unsigned int i = 0; i < other_.list_.size(); ++i) {
+        for (std::size_t i = 0; i < other_.list_.size(); ++i) {
             Class* curr_ = other_.list_.at(i);
             if (curr_) {
                 list_.push_back(new Class(*curr_));
@@ -1046,7 +1068,7 @@ public:
         if (list_.size() != other_.list_.size()) {
             return true;
         }
-        for (unsigned int i = 0; i < list_.size(); ++i) {
+        for (std::size_t i = 0; i < list_.size(); ++i) {
             if (list_.at(i) != other_.list_.at(i)) {
                 return true;
             }
@@ -1058,7 +1080,7 @@ public:
         if (list_.size() != other_.list_.size()) {
             return false;
         }
-        for (unsigned int i = 0; i < list_.size(); ++i) {
+        for (std::size_t i = 0; i < list_.size(); ++i) {
             if (list_.at(i) != other_.list_.at(i)) {
                 return false;
             }
@@ -1089,7 +1111,7 @@ public:
         return (get(t_) != NULL);
     }
 
-    inline size_t count(void) const {
+    inline std::size_t count(void) const {
         return list_.size();
     }
 
@@ -1097,7 +1119,7 @@ public:
         return list_.empty();
     }
 
-    Class* at(unsigned int i) const {
+    Class* at(std::size_t i) const {
         return list_.at(i);
     }
 
@@ -1327,7 +1349,7 @@ public:
         unsigned int currLevel = 0;
         std::vector<std::string> lines;
         ELPP_StringUtils::split(configurationsString, '\n', lines);
-        for (unsigned int i = 0; i < lines.size(); ++i) {
+        for (std::size_t i = 0; i < lines.size(); ++i) {
             line = lines.at(i);
             parsedSuccessfully_ = Parser::parseLine(line, currLevel, this);
             __EASYLOGGINGPP_ASSERT(parsedSuccessfully_, "Unable to parse configuration line: " << line);
@@ -1382,9 +1404,9 @@ public:
     class Parser : private internal::StaticClass {
     public:
         static void ignoreComments(std::string& line) {
-            size_t foundAt = 0;
-            size_t quotesStart = line.find("\"");
-            size_t quotesEnd = std::string::npos;
+            std::size_t foundAt = 0;
+            std::size_t quotesStart = line.find("\"");
+            std::size_t quotesEnd = std::string::npos;
             if (quotesStart != std::string::npos) {
                 quotesEnd = line.find("\"", quotesStart + 1);
             }
@@ -1401,7 +1423,7 @@ public:
         }
 
         static inline bool isConfig(const std::string& line) {
-            size_t assignment = line.find('=');
+            std::size_t assignment = line.find('=');
             return line != "" &&
                     (line[0] >= 65 || line[0] <= 90 || line[0] >= 97 || line[0] <= 122) &&
                     (assignment != std::string::npos) &&
@@ -1435,15 +1457,15 @@ public:
                 return true;
             }
             if (isConfig(line)) {
-                size_t assignment = line.find('=');
+                std::size_t assignment = line.find('=');
                 currConfigStr = line.substr(0, assignment);
                 currConfigStr = ELPP_StringUtils::stripAllWhiteSpaces(currConfigStr);
                 ELPP_StringUtils::tolower(currConfigStr);
                 currConfig = ConfigurationType::convertFromString(currConfigStr);
                 currValue = line.substr(assignment + 1);
                 currValue = ELPP_StringUtils::trim(currValue);
-                size_t quotesStart = currValue.find("\"", 0);
-                size_t quotesEnd = std::string::npos;
+                std::size_t quotesStart = currValue.find("\"", 0);
+                std::size_t quotesEnd = std::string::npos;
                 if (quotesStart != std::string::npos) {
                     quotesEnd = currValue.find("\"", quotesStart + 1);
                 }
@@ -1481,9 +1503,6 @@ class Loggers;  // fwd declaration
 
 namespace internal {
 
-class RegisteredLoggers; // fwd declaration
-class Writer;  // fwd declaration
-
 template <typename T>
 class ConfigurationMap {
 public:
@@ -1493,6 +1512,10 @@ public:
             table[i] = NULL;
         }
         count = 0;
+    }
+
+    virtual ~ConfigurationMap(void) {
+        clear();
     }
 
     const T& get(unsigned int level_, const T& default_ = T()) {
@@ -1535,18 +1558,17 @@ public:
         delete[] table;
     }
 
-    virtual ~ConfigurationMap(void) {
-        clear();
-    }
-
-    size_t size() {
+    std::size_t size() {
         return count;
     }
 
 private:
     std::pair<unsigned int, T>** table;
-    size_t count;
+    std::size_t count;
 };
+
+class RegisteredLoggers; // fwd declaration
+class Writer;  // fwd declaration
 
 class TypedConfigurations {
 public:
@@ -1575,7 +1597,7 @@ private:
     ConfigurationMap<bool> performanceTrackingMap_;
     ConfigurationMap<std::fstream*> fileStreamMap_;
     ConfigurationMap<unsigned int> formatFlagMap_;
-    ConfigurationMap<size_t> rollOutSizeMap_;
+    ConfigurationMap<std::size_t> rollOutSizeMap_;
     internal::Constants* constants_;
     Configurations configurations_;
 
@@ -1622,7 +1644,7 @@ private:
         return fileStreamMap_.get(level_);
     }
 
-    inline size_t rollOutSize(unsigned int level_) {
+    inline std::size_t rollOutSize(unsigned int level_) {
         return rollOutSizeMap_.get(level_);
     }
 
@@ -1631,7 +1653,7 @@ private:
     }
 
     void parse(const Configurations& configurations_) {
-        for (size_t i = 0; i < configurations_.count(); ++i) {
+        for (std::size_t i = 0; i < configurations_.count(); ++i) {
             Configuration* conf = configurations_.at(i);
             switch (conf->type()) {
             case ConfigurationType::Enabled:
@@ -1683,10 +1705,10 @@ private:
                 }
                 break;
             case ConfigurationType::RollOutSize:
-                setValue(conf->level(), static_cast<size_t>(getULong(conf->value())), rollOutSizeMap_);
-                unsigned int correctLevel_ = 0;
+                setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), rollOutSizeMap_);
+                unsigned int validLevel_ = 0;
                 std::string rolloutFilename_ = std::string();
-                checkRollOuts(conf->level(), correctLevel_, rolloutFilename_);
+                checkRollOuts(conf->level(), validLevel_, rolloutFilename_);
                 break;
             }
         }
@@ -1885,7 +1907,7 @@ private:
             __EASYLOGGINGPP_SUPPRESS_UNSED(valid);
             __EASYLOGGINGPP_ASSERT(valid, "Configuration value not a valid integer " << trimmedVal);
         }
-        for (size_t i = 0; i < trimmedVal.size(); ++i) {
+        for (std::size_t i = 0; i < trimmedVal.size(); ++i) {
             if (trimmedVal[i] < 48 || trimmedVal[i] > 57) {
                 valid = false;
                 break;
@@ -1905,20 +1927,20 @@ private:
         return (trimmedVal == "1" || trimmedVal == "true" || trimmedVal == "TRUE");
     }
 
-    size_t getSizeOfFile(std::fstream *fs) {
+    std::size_t getSizeOfFile(std::fstream *fs) {
         if (!fs) {
             return 0L;
         }
         std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
-        size_t size = static_cast<size_t>(fs->tellg());
+        std::size_t size = static_cast<std::size_t>(fs->tellg());
         fs->seekg (currPos);
         return size;
     }
 
-    bool checkRollOuts(unsigned int level_, unsigned int& correctLevel_, std::string& fname_) {
+    bool checkRollOuts(unsigned int level_, unsigned int& validLevel_, std::string& fname_) {
         std::fstream* fs = fileStream(level_);
-        size_t rollOutSize_ = rollOutSize(level_);
+        std::size_t rollOutSize_ = rollOutSize(level_);
         if (rollOutSize_ != 0 && getSizeOfFile(fs) >= rollOutSize_) {
             fname_ = filename(level_);
 #if defined(_ELPP_INTERNAL_INFO)
@@ -1928,15 +1950,15 @@ private:
             // available level in fileStream because this level_ could actually be using
             // configurations from Level::All and you do not want to create a brand new
             // stream just because we are rolling log away
-            correctLevel_ = findAvailableLevel(fileStreamMap_, level_);
-            forceReinitiateFile(correctLevel_, fname_);
+            validLevel_ = findValidLevel(fileStreamMap_, level_);
+            forceReinitiateFile(validLevel_, fname_);
             return true;
         }
         return false;
     }
 
     template <typename T>
-    inline unsigned int findAvailableLevel(ConfigurationMap<T>& map_, unsigned int refLevel_) {
+    inline unsigned int findValidLevel(ConfigurationMap<T>& map_, unsigned int refLevel_) {
         return map_.exist(refLevel_) ? refLevel_ : static_cast<unsigned int>(Level::All);
     }
 
@@ -2084,7 +2106,7 @@ public:
         this->line_ = line_;
     }
 
-    inline void reset(unsigned int n_) {
+    inline void reset(std::size_t n_) {
         if (position_ >= constants_->MAX_LOG_PER_COUNTER) {
             position_ = (n_ >= 1 ? constants_->MAX_LOG_PER_COUNTER % n_ : 0);
         }
@@ -2099,7 +2121,7 @@ public:
         return line_;
     }
 
-    inline unsigned int position(void) const {
+    inline std::size_t position(void) const {
         return position_;
     }
 
@@ -2122,13 +2144,13 @@ public:
 private:
     const char* file_;
     unsigned long int line_;
-    unsigned int position_;
+    std::size_t position_;
     internal::Constants* constants_;
 }; // class LogCounter
 
 class RegisteredCounters : public Registry<LogCounter, LogCounter::Predicate>  {
 public:
-    bool validate(const char* file_, unsigned long int line_, unsigned int n_, internal::Constants* constants_) {
+    bool validate(const char* file_, unsigned long int line_, std::size_t n_, internal::Constants* constants_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
         __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
@@ -2180,7 +2202,7 @@ public:
         return counters_;
     }
 
-    bool validateCounter(const char* file_, unsigned long int line_, unsigned int n_) {
+    bool validateCounter(const char* file_, unsigned long int line_, std::size_t n_) {
         return counters_->validate(file_, line_, n_, constants_);
     }
 private:
@@ -2289,7 +2311,7 @@ template<typename T, typename Container = std::vector<T>, typename Comparator = 
 class IterablePriorityQueue : public IterableContainer<T, Container>, public std::priority_queue<T, Container, Comparator> {
 public:
     IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
-        unsigned int count_ = 0;
+        std::size_t count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !queue_.empty()) {
             this->push(queue_.top());
             queue_.pop();
@@ -2308,7 +2330,7 @@ template<typename T, typename Container = std::deque<T> >
 class IterableQueue : public IterableContainer<T, Container>, public std::queue<T, Container> {
 public:
     IterableQueue(std::queue<T, Container> queue_) {
-        unsigned int count_ = 0;
+        std::size_t count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !queue_.empty()) {
             this->push(queue_.front());
             queue_.pop();
@@ -2327,7 +2349,7 @@ template<typename T, typename Container = std::deque<T> >
 class IterableStack : public IterableContainer<T, Container>, public std::stack<T, Container> {
 public:
     IterableStack(std::stack<T, Container> stack_) {
-        unsigned int count_ = 0;
+        std::size_t count_ = 0;
         while (++count_ < registeredLoggers->constants()->MAX_LOG_PER_CONTAINER && !stack_.empty()) {
             this->push(stack_.top());
             stack_.pop();
@@ -2581,12 +2603,12 @@ public:
             _ELPP_STREAM(logger_) << constants_->NULL_POINTER;
             return *this;
         }
-        size_t len_ = wcslen(log_) + 1;
+        std::size_t len_ = wcslen(log_) + 1;
         char* buff_ = (char*)malloc(len_ + 1);
 #   if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
         std::wcstombs(buff_, log_, len_);
 #   elif _ELPP_OS_WINDOWS
-        size_t convCount_ = 0;
+        std::size_t convCount_ = 0;
         mbstate_t mbState_;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
         wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
@@ -2669,7 +2691,7 @@ public:
 #   endif // _ENABLE_EASYLOGGING
         return *this;
     }
-    template <size_t Size>
+    template <std::size_t Size>
     inline Writer& operator<<(const std::bitset<Size>& bitset_) {
 #   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
@@ -2887,10 +2909,10 @@ private:
     friend class Logger;
 
     template<class Iterator>
-    inline Writer& writeIterator(Iterator begin_, Iterator end_, size_t size_) {
+    inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
 #if _ENABLE_EASYLOGGING
         _ELPP_STREAM(logger_) << "[";
-        for (unsigned int i = 0; begin_ != end_ && i < constants_->MAX_LOG_PER_CONTAINER; ++i, ++begin_) {
+        for (std::size_t i = 0; begin_ != end_ && i < constants_->MAX_LOG_PER_CONTAINER; ++i, ++begin_) {
             operator << (*begin_);
             _ELPP_STREAM(logger_) << ((i < size_ - 1) ? ", " : "");
         }
@@ -2981,17 +3003,17 @@ private:
 
 #if (defined(_ELPP_STRICT_ROLLOUT))
     bool checkRollOuts(unsigned int level_, Logger* baseLogger_) {
-        unsigned int correctLevel_ = 0;
+        unsigned int validLevel_ = 0;
         std::string rolledOutFile = std::string();
-        if (baseLogger_->typedConfigurations_->checkRollOuts(level_, correctLevel_, rolledOutFile)) {
+        if (baseLogger_->typedConfigurations_->checkRollOuts(level_, validLevel_, rolledOutFile)) {
             Logger* currLogger_ = NULL;
             for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
                 currLogger_ = registeredLoggers->list().at(i);
                 if (currLogger_ == baseLogger_)
                     continue;
-                std::string fname = currLogger_->typedConfigurations_->filename(correctLevel_);
+                std::string fname = currLogger_->typedConfigurations_->filename(validLevel_);
                 if (fname == rolledOutFile) {
-                    currLogger_->typedConfigurations_->forceReinitiateFile(correctLevel_, fname);
+                    currLogger_->typedConfigurations_->forceReinitiateFile(validLevel_, fname);
                 }
             }
             return true;
@@ -3012,7 +3034,7 @@ private:
         (*fstr) << line;
         fstr->flush();
         Logger* currLogger_ = NULL;
-        for (unsigned int i = 0; i < registeredLoggers->count(); ++i) {
+        for (std::size_t i = 0; i < registeredLoggers->count(); ++i) {
             currLogger_ = registeredLoggers->list().at(i);
             if (currLogger_ == logger_)
                 continue;
@@ -3051,10 +3073,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.52"); }
+    static inline const std::string version(void) { return std::string("8.55"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("10-06-2013 1834hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1543hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3124,14 +3146,14 @@ public:
     }
 
     static inline void reconfigureAllLoggers(Configurations& configurations_) {
-        for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
+        for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             Loggers::reconfigureLogger(l, configurations_);
         }
     }
 
     static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
-        for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
+        for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
             l->configurations().setAll(configurationType_, value_);
             l->reconfigure();
@@ -3175,7 +3197,7 @@ public:
 
     static inline void getAllLogIdentifiers(std::vector<std::string>& listOfIds) {
         listOfIds.clear();
-        for (unsigned int i = 0; i < internal::registeredLoggers->count(); ++i) {
+        for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             listOfIds.push_back(internal::registeredLoggers->at(i)->id());
         }
     }
@@ -3268,12 +3290,12 @@ public:
             return conf_->performanceTracking(level_);
         }
 
-        static inline size_t logRollOutSize(Logger* logger_, unsigned int level_ = Level::All) {
+        static inline std::size_t logRollOutSize(Logger* logger_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Invalid Logger provided - nullptr");
             return constConf(logger_)->rollOutSize(level_);
         }
 
-        static inline size_t logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
+        static inline std::size_t logRollOutSize(internal::TypedConfigurations* conf_, unsigned int level_ = Level::All) {
             __EASYLOGGINGPP_ASSERT(conf_ != NULL, "Invalid TypedConfigurations provided - nullptr");
             return conf_->rollOutSize(level_);
         }

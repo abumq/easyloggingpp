@@ -11,6 +11,7 @@ cp easylogging++.h samples/Qt/multiple-libs/lib1/
 cp easylogging++.h samples/Qt/multiple-libs/lib2/
 cp easylogging++.h samples/Qt/multiple-libs/libtester/
 cp easylogging++.h samples/VC++/VCPP2012_Win32_Multithreaded/VCPP2012_Win32/
+cp easylogging++.h samples/wxWidgets/
 
 ## tools
 cp easylogging++.h tools/LogViewer/

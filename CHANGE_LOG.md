@@ -85,6 +85,9 @@ Change log was not kept before version 2.1.
   * 8.52:
      - environment variable function improvements
      - NDK (android build) fixes
+  * 8.55:
+     - Android host name (issue #61)
+     - Made configuration access faster by introducing `ConfigurationMap<T>` (issue #62)
 
 #### 7.xx
  * 7.00:
