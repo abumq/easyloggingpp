@@ -219,9 +219,6 @@
 #include <cstdlib>
 #include <cctype>
 #include <cwchar>
-#if _ELPP_NDK
-#   include <sys/system_properties>
-#endif // _ELPP_NDK
 #if _ELPP_OS_UNIX
 #   include <sys/stat.h>
 #   include <sys/time.h>
@@ -352,22 +349,22 @@ public:
     static std::string convertToString(unsigned int configurationType_) {
         switch (configurationType_) {
         case Enabled:
-            return std::string("ENABLED");
+            return std::string("enabled");
         case Filename:
-            return std::string("FILENAME");
+            return std::string("filename");
         case Format:
-            return std::string("FORMAT");
+            return std::string("format");
         case ToFile:
-            return std::string("TO_FILE");
+            return std::string("to_file");
         case ToStandardOutput:
-            return std::string("TO_STANDARD_OUTPUT");
+            return std::string("to_standard_output");
         case MillisecondsWidth:
-            return std::string("MILLISECONDS_WIDTH");
+            return std::string("milliseconds_width");
         case PerformanceTracking:
-            return std::string("PERFORMANCE_TRACKING");
+            return std::string("performance_tracking");
         case RollOutSize:
-            return std::string("ROLL_OUT_SIZE");
-        default: return std::string("UNKNOWN");
+            return std::string("roll_out_size");
+        default: return std::string("unknown");
         }
     }
 
@@ -740,24 +737,6 @@ public:
         return NULL;
     }
 #endif // _ELPP_OS_WINDOWS
-#if _ELPP_NDK
-    static std::string getProperty(const char* propertyValue) {
-        char propertyValue[PROP_VALUE_MAX + 1];
-        __system_property_get(propertyName, propertyValue);
-        return std::string(propertyValue);
-    }
-
-    static std::string getDeviceName(void) {
-        std::string manufacturer = getProperty("ro.product.manufacturer");
-        std::string model = getProperty("ro.product.model");
-        if (manufacturer.empty() && model.empty()) {
-            return std::string();
-        }
-        std::stringstream ss;
-        ss << manufacturer << "-" << model;
-        return ss.str();
-    }
-#endif // _ELPP_NDK
 
     // Runs command on terminal and returns the output.
     // This is applicable only on linux and mac, for all other OS, an empty string is returned.
@@ -824,8 +803,6 @@ public:
         return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
-#elif _ELPP_NDK
-        return getDeviceName();
 #else
         return std::string();
 #endif // _ELPP_OS_UNIX
@@ -1503,6 +1480,9 @@ class Loggers;  // fwd declaration
 
 namespace internal {
 
+class RegisteredLoggers; // fwd declaration
+class Writer;  // fwd declaration
+
 template <typename T>
 class ConfigurationMap {
 public:
@@ -1512,10 +1492,6 @@ public:
             table[i] = NULL;
         }
         count = 0;
-    }
-
-    virtual ~ConfigurationMap(void) {
-        clear();
     }
 
     const T& get(unsigned int level_, const T& default_ = T()) {
@@ -1558,6 +1534,10 @@ public:
         delete[] table;
     }
 
+    virtual ~ConfigurationMap(void) {
+        clear();
+    }
+
     std::size_t size() {
         return count;
     }
@@ -1566,9 +1546,6 @@ private:
     std::pair<unsigned int, T>** table;
     std::size_t count;
 };
-
-class RegisteredLoggers; // fwd declaration
-class Writer;  // fwd declaration
 
 class TypedConfigurations {
 public:
@@ -3076,7 +3053,7 @@ public:
     static inline const std::string version(void) { return std::string("8.55"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1543hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1929hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
