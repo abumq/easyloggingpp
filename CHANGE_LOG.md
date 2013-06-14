@@ -87,6 +87,7 @@ Change log was not kept before version 2.1.
      - NDK (android build) fixes
   * 8.55: Made configuration access faster by introducing `ConfigurationMap<T>` (issue #62)
   * 8.56: Android host name (issue #61)
+  * 8.57: Issue with android host and username fixed
 
 #### 7.xx
  * 7.00:

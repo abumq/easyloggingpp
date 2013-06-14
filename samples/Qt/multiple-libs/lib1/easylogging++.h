@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.56                                                         //
+//   EasyLogging++ v8.57                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -352,22 +352,22 @@ public:
     static std::string convertToString(unsigned int configurationType_) {
         switch (configurationType_) {
         case Enabled:
-            return std::string("enabled");
+            return std::string("ENABLED");
         case Filename:
-            return std::string("filename");
+            return std::string("FILENAME");
         case Format:
-            return std::string("format");
+            return std::string("FORMAT");
         case ToFile:
-            return std::string("to_file");
+            return std::string("TO_FILE");
         case ToStandardOutput:
-            return std::string("to_standard_output");
+            return std::string("TO_STANDARD_OUTPUT");
         case MillisecondsWidth:
-            return std::string("milliseconds_width");
+            return std::string("MILLISECONDS_WIDTH");
         case PerformanceTracking:
-            return std::string("performance_tracking");
+            return std::string("PERFORMANCE_TRACKING");
         case RollOutSize:
-            return std::string("roll_out_size");
-        default: return std::string("unknown");
+            return std::string("ROLL_OUT_SIZE");
+        default: return std::string("UNKNOWN");
         }
     }
 
@@ -808,7 +808,7 @@ public:
 
     // Gets current username.
     static const std::string currentUser(void) {
-#if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX && !_ELPP_NDK
         return getEnvironmentVariable("USER", "user", "whoami");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("USERNAME", "user");
@@ -821,7 +821,7 @@ public:
 
     // Gets current host name or computer name.
     static const std::string currentHost(void) {
-#if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX && !_ELPP_NDK
         return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
@@ -3074,10 +3074,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.56"); }
+    static inline const std::string version(void) { return std::string("8.57"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1951hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1959hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
