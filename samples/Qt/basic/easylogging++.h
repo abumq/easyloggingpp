@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.57                                                         //
+//   EasyLogging++ v8.58                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -630,13 +630,13 @@ private:
 }; // class Mutex
 class ScopedLock : private internal::NoCopy {
 public:
-    ScopedLock(Mutex& m_) {
+    explicit ScopedLock(Mutex& m_) {
         mutex_ = &m_;
-        if (mutex_ != NULL) mutex_->lock();
+        mutex_->lock();
     }
 
     virtual ~ScopedLock(void) {
-        if (mutex_ != NULL) mutex_->unlock();
+        mutex_->unlock();
     }
 private:
     Mutex* mutex_;
@@ -1552,7 +1552,7 @@ public:
     }
 
     void clear(void) {
-        ELPP_FOR_EACH_LEVEL(i, 0,
+        ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
                             internal::utilities::safeDelete(table[i], true);
                             );
         delete[] table;
@@ -1919,7 +1919,7 @@ private:
         return atol(confValue_.c_str());
     }
 
-    int getInt(const std::string& confValue_) {
+    inline int getInt(const std::string& confValue_) {
         return static_cast<int>(getULong(confValue_));
     }
 
@@ -1930,7 +1930,7 @@ private:
 
     std::size_t getSizeOfFile(std::fstream *fs) {
         if (!fs) {
-            return 0L;
+            return 0;
         }
         std::streampos currPos = fs->tellg();
         fs->seekg (0, fs->end);
@@ -3074,10 +3074,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.57"); }
+    static inline const std::string version(void) { return std::string("8.58"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("14-06-2013 1959hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("16-06-2013 1028hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
