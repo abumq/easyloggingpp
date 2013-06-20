@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.59                                                         //
+//   EasyLogging++ v8.60                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2297,6 +2297,7 @@ public:
     typedef typename Container::iterator iterator;
     typedef typename Container::const_iterator const_iterator;
     IterableContainer(void){}
+    virtual ~IterableContainer(void) {}
     iterator begin(void) { return getContainer().begin(); }
     iterator end(void) { return getContainer().end(); }
     const_iterator begin(void) const { return getContainer().begin(); }
@@ -3074,10 +3075,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.59"); }
+    static inline const std::string version(void) { return std::string("8.60"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("20-06-2013 2025hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("20-06-2013 2039hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

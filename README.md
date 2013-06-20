@@ -1,7 +1,7 @@
 EasyLogging++
 -------------
 <pre>
-Current version: v8.59
+Current version: v8.60
 </pre>
 Single header based, extremely light-weight high performance logging library for C++ applications
 
