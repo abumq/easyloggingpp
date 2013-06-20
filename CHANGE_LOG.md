@@ -89,6 +89,7 @@ Change log was not kept before version 2.1.
   * 8.56: Android host name (issue #61)
   * 8.57: Issue with android host and username fixed
   * 8.58: Minor performance improvements around implicit and explicit casting
+  * 8.59: Fix warnings by eclipse
 
 #### 7.xx
  * 7.00:
