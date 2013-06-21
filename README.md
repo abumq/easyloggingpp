@@ -1,17 +1,17 @@
 EasyLogging++
 -------------
 <pre>
-Current version: v8.60
+Current stable version: v8.60
 </pre>
 Single header based, extremely light-weight high performance logging library for C++ applications
 
 EasyLogging++ is C++ logging library that is based on single header file. Why another logging library? The strengths of EasyLogging++ are its speed and its simplicity. It is extremely light-weight, robust, fast performing, thread and type safe and consists of many built-in features. It fits to small to medium sized projects, it provides ability to write logs in your own customized format and also provide support for logging your classes, third-party libraries, STL and third-party containers etc.
 
-**Please note: This read me is specific to v8.0+. For older versions please refer to [old read me](https://github.com/mkhan3189/EasyLoggingPP/blob/0f70c01323c408a8bbe187fa283334d01f90f94d/README.md) - [Download v7.68](http://icplusplus.com/tools/easylogging/releases/easyloggingpp_v7.68.zip)**
-
 <pre>
 <a href="#why-easylogging">Why EasyLogging++</a><br/>
 <a href="#getting-started">Getting Started</a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#downloading-library">Downloading Library</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#quick-3-step-start">Quick 3-step Start</a>
 <a href="#configuring">Configuring</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#configuration-file">Configuration File</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#inline-configurations">Inline Configurations</a>
@@ -65,8 +65,15 @@ EasyLogging++ is C++ logging library that is based on single header file. Why an
 ... and  list goes on! It is complete library wrapped into single header file that you can use in any C++ application.
 <pre><a href="#easylogging">Goto Top</a></pre>
 ### Getting Started
+#### Downloading Library
+Current stable URL is always http://www.icplusplus.com/tools/easylogging/easyloggingpp.zip
 
-You can get started with EasyLogging++ in three steps;
+Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.60.zip
+
+Older versions URL is `http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v[MAJOR].[MINOR (2 DIGITS)].zip`
+
+#### Quick 3-step Start
+You can get started now by following three simple steps;
  * [Download](http://icplusplus.com/tools/easylogging/easyloggingpp.zip)
  * Include and initialize
  * Off you go
