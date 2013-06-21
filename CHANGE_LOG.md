@@ -91,6 +91,7 @@ Change log was not kept before version 2.1.
   * 8.58: Minor performance improvements around implicit and explicit casting
   * 8.59: Fix warnings by eclipse
   * 8.60: More warning fixes for eclipse
+  * 8.61: Fixes issues with VC++ 2010
 
 #### 7.xx
  * 7.00:

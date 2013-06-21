@@ -34,6 +34,7 @@ if [ "$confirm" = "y" ]; then
   sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" homepage/index.php
   sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" homepage/index.php 
   sed -i "s/v$CURR_VERSION/v$NEW_VERSION/g" README.md
+  sed -i "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm releases/easyloggingpp_v$NEW_VERSION.zip
   fi
