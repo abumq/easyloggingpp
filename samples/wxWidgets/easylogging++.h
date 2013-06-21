@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.60                                                         //
+//   EasyLogging++ v8.61                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1510,15 +1510,15 @@ class Writer;  // fwd declaration
 template <typename T>
 class ConfigurationMap {
 public:
-    ConfigurationMap(void){
-        table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
-        for (unsigned int i = 0; i <= Level::kMaxValid; i++) {
-            table[i] = NULL;
-        }
-        count = 0;
+    ConfigurationMap(void) {
+        init();
     }
 
-    const T& get(unsigned int level_, const T& default_ = T()) {
+    void setDefault(const T& default_) {
+        this->default_ = default_;
+    }
+
+    const T& get(unsigned int level_) {
         if (table[level_] != NULL) {
             return table[level_]->second;
         } else if (table[Level::All] != NULL) {
@@ -1569,13 +1569,33 @@ public:
 private:
     std::pair<unsigned int, T>** table;
     std::size_t count;
+    T default_;
+    void init(void) {
+        table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
+        for (unsigned int i = 0; i <= Level::kMaxValid; i++) {
+            table[i] = NULL;
+        }
+        count = 0;
+    }
 };
 
 class TypedConfigurations {
 public:
-    TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) :
-        constants_(constants_) {
-        configurations_ = configurations;
+    TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) {
+        this->constants_ = constants_;
+        this->configurations_ = configurations;
+        enabledMap_.setDefault(false);
+        toFileMap_.setDefault(false);
+        toStandardOutputMap_.setDefault(false);
+        filenameMap_.setDefault("");
+        logFormatMap_.setDefault("");
+        dateFormatMap_.setDefault("");
+        dateFormatSpecifierMap_.setDefault("");
+        millisecondsWidthMap_.setDefault(3);
+        performanceTrackingMap_.setDefault(false);
+        fileStreamMap_.setDefault(NULL);
+        formatFlagMap_.setDefault(0x0);
+        rollOutSizeMap_.setDefault(0);
         parse(configurations);
     }
 
@@ -1813,7 +1833,7 @@ private:
     void deleteFileStreams(void) {
         ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
                             if (fileStreamMap_.exist(i)) {
-                                std::fstream* fs = fileStreamMap_.get(i, NULL);
+                                std::fstream* fs = fileStreamMap_.get(i);
                                 if (fs != NULL && fs->is_open()) {
                                     fs->close();
                                 }
@@ -3075,10 +3095,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.60"); }
+    static inline const std::string version(void) { return std::string("8.61"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("20-06-2013 2039hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("21-06-2013 2208hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
