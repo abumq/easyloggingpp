@@ -9,7 +9,7 @@ EasyLogging++ is C++ logging library that is based on single header file. Why an
 
 <pre>
 <a href="#why-easylogging">Why EasyLogging++</a><br/>
-<a href="#getting-started">Getting Started</a><br/>
+<a href="#getting-started">Getting Started</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#downloading-library">Downloading Library</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#quick-3-step-start">Quick 3-step Start</a>
 <a href="#configuring">Configuring</a>
@@ -69,8 +69,6 @@ EasyLogging++ is C++ logging library that is based on single header file. Why an
 Current stable URL is always http://www.icplusplus.com/tools/easylogging/easyloggingpp.zip
 
 Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.60.zip
-
-Older versions URL is `http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v[MAJOR].[MINOR (2 DIGITS)].zip`
 
 #### Quick 3-step Start
 You can get started now by following three simple steps;
