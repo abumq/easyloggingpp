@@ -134,7 +134,12 @@ it freely, subject to the following restrictions:
    distribution                                                          
     </pre></p>
 </td>
-</tr></table>
+</tr>
+<tr><td>
+<font color="white">
+easylogging, logging c++, logger c++, easy, logger, c++ logging library, fast logging library, thread safe logging, thread-safe logger c++, fastest c++ logging, recommended logging c++, light logging c++, light logger c++, Highly configurable logger c++, STL logging, Qt logging, hierarchical logging c++, c++ performance logger, type safe logger c++, 
+</font>
+</td></tr></table>
 
 ';
 include_once "../../foot.php";
