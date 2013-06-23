@@ -335,6 +335,17 @@ You can start writing logs by simply using one of the following macros:
 
 ######Trivial Logger
 `LINFO`, `LDEBUG`, `LWARNING`, `LERROR`, `LFATAL`, `LQA`, `LTRACE`, `LVERBOSE`
+
+Alternatively, you can use `LOG(LEVEL)` and `LOG_VERBOSE(vlevel)` that uses trivial logs as well.
+example of such loggings will be;
+```C++
+LOG(INFO) << "Info log using trivial logger";
+LOG_IF(true, INFO) << "Conditional info log";
+LOG_EVERY_N(1, INFO) << "Interval info log";
+LOG_VERBOSE(2) << "Verbose level 2 log";
+LOG_VERBOSE_IF(true, 2) << "Conditional verbose log for verose level 2";
+LOG_VERBOSE_EVERY_N(1, 2) << "Verbose every N for N=1 and vlevel = 2";
+```
 ######Business Logger
 `BINFO`, `BDEBUG`, `BWARNING`, `BERROR`, `BFATAL`, `BQA`, `BTRACE`, `BVERBOSE`
 ######Security Logger
