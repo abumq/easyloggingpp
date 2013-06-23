@@ -1,6 +1,7 @@
 #include "configurationchooser.h"
 #include "ui_configurationchooser.h"
 #include <QFile>
+
 #include "easylogging++.h"
 #include "formatbuilderdialog.hh"
 
@@ -76,7 +77,7 @@ void ConfigurationChooser::updateUI()
 void ConfigurationChooser::loadFromFile(const QString &filename_)
 {
     clearLevelledTypedConfigurations();
-    LINFO << "Loading configurations from file [" << filename_ << "]";
+    CINFO("trivial") << "Loading configurations from file [" << filename_ << "]";
     easyloggingpp::Configurations c(filename_.toStdString());
 
     easyloggingpp::internal::TypedConfigurations tc(c, easyloggingpp::internal::registeredLoggers->constants());

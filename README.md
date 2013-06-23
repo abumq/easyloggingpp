@@ -1,7 +1,7 @@
 EasyLogging++
 -------------
 <pre>
-Current stable version: v8.65
+Current stable version: v8.66
 </pre>
 Single header only, extremely light-weight high performance logging library for C++ applications
 
@@ -68,7 +68,7 @@ C++ logging library that is based on single header file. Why another logging lib
 #### Downloading Library
 Current stable URL is always http://www.icplusplus.com/tools/easylogging/easyloggingpp.zip
 
-Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.65.zip
+Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.66.zip
 
 #### Quick 3-step Start
 You can get started now by following three simple steps;
