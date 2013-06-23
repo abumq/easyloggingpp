@@ -362,13 +362,13 @@ LOG_VERBOSE_EVERY_N(1, 2) << "Verbose every N for N=1 and vlevel = 2";
 
 Normally you would not need to inject new loggers and you may use one of four existing ones but if you want to have a fully customized logger (that could be the case when you are writing a library or third-party support) you may as well do it;
 
-`easyloggingpp` has two useful classes, `Logger` and `Loggers`. `Logger` is single entity of a logger. Where as `Loggers` is a static class that provides helper functions to get and manipulate loggers. Loggers in EasyLogging++ are identified by IDs that are unique To register a logger just call `easyloggingpp::Loggers::getLogger(identifier)`. This returns pointer of `easyloggingpp::Logger`. If logger already exist in "logger container", another logger will not be registered instead it will just get existing logger. You normally would not need to use `getLogger` to write a log, but to reconfigure a logger you might want to use it. To write log using one of newly registered loggers, use custom logger macro e.g,
+Namespace `easyloggingpp` has two useful classes, `Logger` and `Loggers`. `Logger` is single entity of a logger. Where as `Loggers` is a static class that provides helper functions to get and manipulate loggers. Loggers in EasyLogging++ are identified by IDs that are unique To register a logger just call `easyloggingpp::Loggers::getLogger(identifier)`. This returns pointer of `easyloggingpp::Logger`. If logger already exist in "logger container", another logger will not be registered instead it will just get existing logger. You normally would not need to use `getLogger` to write a log, but to reconfigure a logger you might want to use it. To write log using one of newly registered loggers, use custom logger macro e.g,
 
 ```C++
 CINFO("mylogger") << "This is log from my custom log";
 ```
 
-Of course you may define custom macro to make it easy if you like.
+Of course you may define custom macro to make it easy and less error prone.
 
 If you wish to check list of registered loggers, you may do it by using `easyloggingpp::Loggers::getAllLogIdentifiers(std::vector<std::string>& listOfIds);` where listOfIds is the list to fill up with logger identifiers. You normally would not need to get a registered logger because all the functionalities that you can do from a logger's pointer, you can do it directly from `Loggers` class. If there is anything you can't do, there would be a reason for that; which is mostly security.
 
