@@ -95,6 +95,7 @@ Change log was not kept before version 2.1.
  * 8.65: Major performance improvements using pre-processors
  * 8.66: Fix level based disable logs
  * 8.70: Other logging libraries compatiable macros; e.g, `LOG(INFO) << "..."`
+ * 8.71: Fix LOG_VERBOSE_EVERY_N macro
 
 #### 7.xx
  * 7.00:
