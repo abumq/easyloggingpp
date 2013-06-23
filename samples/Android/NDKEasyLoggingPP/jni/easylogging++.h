@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.70                                                         //
+//   EasyLogging++ v8.71                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2978,10 +2978,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.70"); }
+    static inline const std::string version(void) { return std::string("8.71"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-06-2013 1425hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("23-06-2013 1508hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3442,7 +3442,7 @@ private:
 #define LOG_VERBOSE_IF(condition, vlevel) CVERBOSE_IF(condition, vlevel, "trivial")
 // Interval logs
 #define LOG_EVERY_N(n, LEVEL) C##LEVEL##_EVERY_N(n, "trivial")
-#define LOG_VERBOSE_EVERY_N(n, vlevel, LEVEL) CVERBOSE_EVERY_N(n, vlevel, "trivial")
+#define LOG_VERBOSE_EVERY_N(n, vlevel) CVERBOSE_EVERY_N(n, vlevel, "trivial")
 
 // undef any existing default logger macros
 #if defined(LINFO)
