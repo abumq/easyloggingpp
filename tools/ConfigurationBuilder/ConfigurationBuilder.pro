@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ConfigurationBuilder
 TEMPLATE = app
 
-DEFINES += _ELPP_QT_LOGGING
+DEFINES += _ELPP_QT_LOGGING \
+            _DISABLE_VERBOSE_LOGS
 
 SOURCES += main.cpp\
         maindialog.cpp \

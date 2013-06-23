@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.61                                                         //
+//   EasyLogging++ v8.65                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -141,10 +141,10 @@
 //
 // High-level log evaluation
 //
-#if (!defined(_DISABLE_LOGS))
-#   define _ENABLE_EASYLOGGING 1
-#else
+#if (defined(_DISABLE_LOGS))
 #   define _ENABLE_EASYLOGGING 0
+#else
+#   define _ENABLE_EASYLOGGING 1
 #endif // (!defined(_DISABLE_LOGS))
 //
 // OS evaluation
@@ -2387,6 +2387,16 @@ private:
 
 #define _ELPP_STREAM(l) (*(l->stream()))
 
+class NullWriter : private internal::NoCopy {
+public:
+    NullWriter(void) {}
+
+    template <typename T>
+    NullWriter& operator<<(const T&) {
+        return *this;
+    }
+};
+
 class Writer : private internal::NoCopy {
 public:
     Writer(const std::string& loggerId_,
@@ -2419,42 +2429,7 @@ public:
         mutex_.lock();
 #endif // _ELPP_ENABLE_MUTEX
         if (proceed_) {
-            proceed_ = logger_->typedConfigurations_->enabled(severity_) && (_ENABLE_EASYLOGGING);
-            if (proceed_) {
-                if (severity_ == Level::Debug) {
-#if (!_ELPP_DEBUG_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Info) {
-#if (!_ELPP_INFO_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Warning) {
-#if (!_ELPP_WARNING_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Error) {
-#if (!_ELPP_ERROR_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Fatal) {
-#if (!_ELPP_FATAL_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::QA) {
-#if (!_ELPP_QA_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Verbose) {
-#if (!_ELPP_VERBOSE_LOG)
-                    proceed_ = false;
-#endif
-                } else if (severity_ == Level::Trace) {
-#if (!_ELPP_TRACE_LOG)
-                    proceed_ = false;
-#endif
-                }
-            }
+            proceed_ = logger_->typedConfigurations_->enabled(severity_);
         }
         if (proceed_) {
 #if (defined(_ELPP_STRICT_ROLLOUT))
@@ -2480,138 +2455,78 @@ public:
     }
 
     inline Writer& operator<<(const std::string& log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(char log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(bool log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(signed short log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(unsigned short log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(signed int log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(unsigned int log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(signed long log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(unsigned long log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(float log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(double log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(char* log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(const char* log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(const void* log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(long double log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_;
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(const std::wstring& log_) {
@@ -2619,7 +2534,6 @@ public:
         return operator<<(log_.c_str());
     }
     inline Writer& operator<<(const wchar_t* log_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         if (log_ == NULL) {
             _ELPP_STREAM(logger_) << constants_->NULL_POINTER;
@@ -2637,9 +2551,6 @@ public:
 #   endif // _ELPP_OS_UNIX
         _ELPP_STREAM(logger_) << buff_;
         free(buff_);
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
 #if defined(_ELPP_STL_LOGGING)
@@ -2660,36 +2571,24 @@ public:
     }
     template <typename T, typename Container>
     inline Writer& operator<<(const std::queue<T, Container>& queue_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         workarounds::IterableQueue<T, Container> iterableQueue_ =
                 static_cast<workarounds::IterableQueue<T, Container> >(queue_);
         return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
-#   else
-        return *this;
-#   endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Container>
     inline Writer& operator<<(const std::stack<T, Container>& stack_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         workarounds::IterableStack<T, Container> iterableStack_ =
                 static_cast<workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
-#   else
-        return *this;
-#   endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Container, typename Comparator>
     inline Writer& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
                 static_cast<workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
-#   else
-        return *this;
-#   endif // _ENABLE_EASYLOGGING
     }
     template <typename T, typename Comparator, typename Container>
     inline Writer& operator<<(const std::set<T, Comparator, Container>& set_) {
@@ -2703,24 +2602,20 @@ public:
     }
     template <typename First, typename Second>
     inline Writer& operator<<(const std::pair<First, Second>& pair_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << "(";
         operator << (static_cast<First>(pair_.first));
         _ELPP_STREAM(logger_) << ", ";
         operator << (static_cast<Second>(pair_.second));
         _ELPP_STREAM(logger_) << ")";
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <std::size_t Size>
     inline Writer& operator<<(const std::bitset<Size>& bitset_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << "[";
         _ELPP_STREAM(logger_) << bitset_.to_string();
         _ELPP_STREAM(logger_) << "]";
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V, typename Comparator, typename Container>
@@ -2736,12 +2631,8 @@ public:
 #endif // defined(_ELPP_STL_LOGGING)
 #if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
     inline Writer& operator<<(const QString& log_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_.toStdString();
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(const QStringRef& log_) {
@@ -2749,50 +2640,30 @@ public:
         return operator<<(log_.toString());
     }
     inline Writer& operator<<(qint64 log_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << QString::number(log_).toStdString();
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(quint64 log_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << QString::number(log_).toStdString();
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     inline Writer& operator<<(QChar log_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_.toLatin1();
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
 #   if (!_ELPP_QT_5)
     inline Writer& operator<<(QBool log_) {
-#      if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << (bool(log_ != 0) ? "true" : "false");
-#      else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#      endif // _ENABLE_EASYLOGGING
         return *this;
     }
 #   endif // (!_ELPP_QT_5)
     inline Writer& operator<<(const QLatin1String& log_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << log_.latin1();
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(log_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename T>
@@ -2817,21 +2688,16 @@ public:
     }
     template <typename First, typename Second>
     inline Writer& operator<<(const QPair<First, Second>& pair_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << "(";
         operator << (static_cast<First>(pair_.first));
         _ELPP_STREAM(logger_) << ", ";
         operator << (static_cast<Second>(pair_.second));
         _ELPP_STREAM(logger_) << ")";
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(pair_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
     inline Writer& operator<<(const QMap<K, V>& map_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << "[";
         QList<K> keys = map_.keys();
@@ -2850,9 +2716,6 @@ public:
             _ELPP_STREAM(logger_) << " ...";
         }
         _ELPP_STREAM(logger_) << "]";
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(map_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
@@ -2863,7 +2726,6 @@ public:
     }
     template <typename K, typename V>
     inline Writer& operator<<(const QHash<K, V>& hash_) {
-#   if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << "[";
         QList<K> keys = hash_.keys();
@@ -2882,9 +2744,6 @@ public:
             _ELPP_STREAM(logger_) << " ...";
         }
         _ELPP_STREAM(logger_) << "]";
-#   else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(hash_);
-#   endif // _ENABLE_EASYLOGGING
         return *this;
     }
     template <typename K, typename V>
@@ -2906,10 +2765,8 @@ public:
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
-#if _ENABLE_EASYLOGGING
         if (!proceed_) { return *this; }
         _ELPP_STREAM(logger_) << class_;
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
 private:
@@ -2932,7 +2789,6 @@ private:
 
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
-#if _ENABLE_EASYLOGGING
         _ELPP_STREAM(logger_) << "[";
         for (std::size_t i = 0; begin_ != end_ && i < constants_->MAX_LOG_PER_CONTAINER; ++i, ++begin_) {
             operator << (*begin_);
@@ -2942,11 +2798,6 @@ private:
             _ELPP_STREAM(logger_) << " ...";
         }
         _ELPP_STREAM(logger_) << "]";
-#else
-        __EASYLOGGINGPP_SUPPRESS_UNSED(begin_);
-        __EASYLOGGINGPP_SUPPRESS_UNSED(end_);
-        __EASYLOGGINGPP_SUPPRESS_UNSED(size_);
-#endif // _ENABLE_EASYLOGGING
         return *this;
     }
 
@@ -3095,10 +2946,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.61"); }
+    static inline const std::string version(void) { return std::string("8.65"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("21-06-2013 2208hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("23-06-2013 1202hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3403,36 +3254,132 @@ private:
 #   undef CVERBOSE
 #endif
 // Normal logs
-#define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Info)
-#define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Warning)
-#define CDEBUG(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Debug)
-#define CERROR(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Error)
-#define CFATAL(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Fatal)
-#define CQA(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::QA)
-#define CTRACE(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Trace)
-#define CVERBOSE(vlevel_, loggerId) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Normal,       \
-    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_)
+#if _ELPP_INFO_LOG
+#   define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Info)
+#else
+#   define CINFO(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_INFO_LOG
+#if _ELPP_WARNING_LOG
+#   define CWARNING(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Warning)
+#else
+#   define CWARNING(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_WARNING_LOG
+#if _ELPP_DEBUG_LOG
+#   define CDEBUG(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Debug)
+#else
+#   define CDEBUG(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_DEBUG_LOG
+#if _ELPP_ERROR_LOG
+#   define CERROR(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Error)
+#else
+#   define CERROR(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
+#   define CFATAL(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Fatal)
+#else
+#   define CFATAL(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_FATAL_LOG
+#if _ELPP_QA_LOG
+#   define CQA(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::QA)
+#else
+#   define CQA(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_QA_LOG
+#if _ELPP_TRACE_LOG
+#   define CTRACE(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Trace)
+#else
+#   define CTRACE(loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_TRACE_LOG
+#if _ELPP_VERBOSE_LOG
+#   define CVERBOSE(vlevel_, loggerId) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Normal,       \
+       easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_)
+#else
+#   define CVERBOSE(vlevel_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_VERBOSE_LOG
 // Conditional logs
-#define CINFO_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Info)
-#define CWARNING_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Warning)
-#define CDEBUG_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Debug)
-#define CERROR_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Error)
-#define CFATAL_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Fatal)
-#define CQA_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::QA)
-#define CTRACE_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Trace)
-#define CVERBOSE_IF(condition_, vlevel_, loggerId) if (condition_) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Conditional,     \
-    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, condition_, vlevel_)
+#if _ELPP_INFO_LOG
+#   define CINFO_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Info)
+#else
+#   define CINFO_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_INFO_LOG
+#if _ELPP_WARNING_LOG
+#   define CWARNING_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Warning)
+#else
+#   define CWARNING_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_WARNING_LOG
+#if _ELPP_DEBUG_LOG
+#   define CDEBUG_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Debug)
+#else
+#   define CDEBUG_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_DEBUG_LOG
+#if _ELPP_ERROR_LOG
+#   define CERROR_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Error)
+#else
+#   define CERROR_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
+#   define CFATAL_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Fatal)
+#else
+#   define CFATAL_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_FATAL_LOG
+#if _ELPP_QA_LOG
+#   define CQA_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::QA)
+#else
+#   define CQA_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_QA_LOG
+#if _ELPP_TRACE_LOG
+#   define CTRACE_IF(condition_, loggerId) _ELPP_LOG_WRITER_COND(condition_, loggerId, easyloggingpp::Level::Trace)
+#else
+#   define CTRACE_IF(condition_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_TRACE_LOG
+#if _ELPP_VERBOSE_LOG
+#   define CVERBOSE_IF(condition_, vlevel_, loggerId) if (condition_) easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Conditional,     \
+       easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, condition_, vlevel_)
+#else
+#   define CVERBOSE_IF(condition_, vlevel_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_VERBOSE_LOG
 // Interval logs
-#define CINFO_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Info)
-#define CWARNING_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Warning)
-#define CDEBUG_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Debug)
-#define CERROR_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Error)
-#define CFATAL_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Fatal)
-#define CQA_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::QA)
-#define CTRACE_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Trace)
-#define CVERBOSE_EVERY_N(interval_, vlevel_, loggerId) if (easyloggingpp::internal::registeredLoggers->validateCounter(__FILE__, __LINE__, interval_)) \
-    easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Interval,   \
-    easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_, interval_)
+#if _ELPP_INFO_LOG
+#   define CINFO_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Info)
+#else
+#   define CINFO_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_INFO_LOG
+#if _ELPP_WARNING_LOG
+#   define CWARNING_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Warning)
+#else
+#   define CWARNING_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_WARNING_LOG
+#if _ELPP_DEBUG_LOG
+#   define CDEBUG_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Debug)
+#else
+#   define CDEBUG_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_DEBUG_LOG
+#if _ELPP_ERROR_LOG
+#   define CERROR_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Error)
+#else
+#   define CERROR_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
+#   define CFATAL_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Fatal)
+#else
+#   define CFATAL_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_FATAL_LOG
+#if _ELPP_QA_LOG
+#   define CQA_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::QA)
+#else
+#   define CQA_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_QA_LOG
+#if _ELPP_TRACE_LOG
+#   define CTRACE_EVERY_N(interval_, loggerId) _ELPP_LOG_WRITER_N(interval_, loggerId, easyloggingpp::Level::Trace)
+#else
+#   define CTRACE_EVERY_N(interval_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_TRACE_LOG
+#if _ELPP_VERBOSE_LOG
+#   define CVERBOSE_EVERY_N(interval_, vlevel_, loggerId) if (easyloggingpp::internal::registeredLoggers->validateCounter(__FILE__, __LINE__, interval_)) \
+       easyloggingpp::internal::Writer(loggerId, easyloggingpp::internal::Aspect::Interval,   \
+       easyloggingpp::Level::Verbose, __func__, __FILE__, __LINE__, true, vlevel_, interval_)
+#else
+#   define CVERBOSE_EVERY_N(interval_, vlevel_, loggerId) easyloggingpp::internal::NullWriter()
+#endif // _ELPP_VERBOSE_LOG
 //
 // default Loggers
 //
