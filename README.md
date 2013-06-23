@@ -353,7 +353,7 @@ LOG_VERBOSE_EVERY_N(1, 2) << "Verbose every N for N=1 and vlevel = 2";
 ######Performance Logger
 `PINFO`, `PDEBUG`, `PWARNING`, `PERROR`, `PFATAL`, `PQA`, `PTRACE`, `PVERBOSE`
 
-*All loggers (including newly registered) support all the aspects of logging, e.g, `SINFO_IF(condition) << "log if condition is true"` or `BWARNING_EVERY_N(2) << "Warning every 2nd time this line is hit"` or `CINFO_IF("mylogger") << "Log custom logger if condition is true"` etc.*
+*All loggers (including newly registered) support all the aspects of logging, e.g, `SINFO_IF(condition) << "log if condition is true"` or `BWARNING_EVERY_N(2) << "Warning every 2nd time this line is hit"` or `CINFO_IF(condition, "mylogger") << "Log custom logger if condition is true"` etc.*
 
 
 ##### Helper Functions
