@@ -87,6 +87,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argv, const char** argc) {
     LINFO << \"my trivial info log\";
+    LOG(INFO) << \"My other (alternate) way of writing trivial log\";
     BINFO << \"my business info log\";
     SINFO << \"my security info log\";
     PINFO << \"my performance info log\";
@@ -99,11 +100,13 @@ print $basicUsage;
 
 print '
 You might be wondering, what is the output we get? Well, it completely depends on your configuration, if you haven&#39;t configured your EasyLogging++, here is what you will get with default configuration for <i>INFO</i> logs;<br/>
-<pre style="border: 1px lightgrey solid;width:50">04/04/2013 20:40:19.671 INFO  [log] my trivial info log
+<pre style="border: 1px lightgrey solid;width:50">
+04/04/2013 20:40:19.671 INFO  my trivial info log
+04/04/2013 20:40:19.671 INFO  My other (alternate) way of writing trivial log
 04/04/2013 20:40:19.671 INFO  [business] my business info log
 04/04/2013 20:40:19.671 INFO  [security] my security info log
 04/04/2013 20:40:19.671 INFO  [performance] my performance info log
-04/04/2013 21:07:58.763 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
+04/04/2013 20:40:58.671 DEBUG [performance] [mak@high-perf-pc] [int main(int, const char**)] [./homepage.cpp:10] debug performance log
 </pre>
 This is very basic form of logging using EasyLogging++, there is a lot more to it. Jump to <a style="text-decoration: none; color: green; " onmousemove="this.style.color=\'lightgreen\';" onmouseout="this.style.color=\'green\';" href="https://github.com/mkhan3189/EasyLoggingPP/blob/master/README.md"><b>read me</b></a> to check out true potential of EasyLogging++.
 </p>
