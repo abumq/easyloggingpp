@@ -53,48 +53,48 @@ Change log was not kept before version 2.1.
  * 8.32:
      - Fixes race condition issue with roll out size
      - Removed support for `_ALWAYS_CLEAN_LOGS`
-  * 8.33: Added back Qt 5 check
-  * 8.35:
+ * 8.33: Added back Qt 5 check
+ * 8.35:
      - Fixed issue Roll out size usage cause lose loggers (issue #54) [Thanks to les]
      - Fixed multithreading issue for interval logs and custom loggers
      - Fixed warnings on VC++
-  * 8.36: Fix for internal info
-  * 8.37:
+ * 8.36: Fix for internal info
+ * 8.37:
      - Warning fix for scoped lock
      - Renamed `SmartPointer<T>` to `ScopedPointer<T>`
-  * 8.38: Minor internal namespace fixes
-  * 8.39: Fixes warnings for int to size_t conversion
-  * 8.40: Minor improvements + safeDelete(T*), fixed issue #55
-  * 8.41:
+ * 8.38: Minor internal namespace fixes
+ * 8.39: Fixes warnings for int to size_t conversion
+ * 8.40: Minor improvements + safeDelete(T*), fixed issue #55
+ * 8.41:
      - Provides useful interfacing for external tools
      - Rollout size is not beta anymore
-  * 8.45:
+ * 8.45:
      - Renamed easyloggingpp::Level::... from ELPP_INFO to Info, ELPP_DEBUG to Debug etc.
      - Renamed easyloggingpp::ConfigurationType::... from ELPP_Enabled to Enabled, ELPP_ToFile to ToFile
      - Provides conversions from and to std::string for level and configuration type for external tools
-  * 8.46:
+ * 8.46:
      - Introduced `%thread` format specifier for logging thread ID
      - Explicit check for `__func__` to prevent potential compilation warnings
-  * 8.47: Keeps OS evaluated macros defined
-  * 8.48:
+ * 8.47: Keeps OS evaluated macros defined
+ * 8.48:
      - Fixes bug with configurating all loggers including TRACE level
      - Fixes std::thread issue for getting thread ID
-  * 8.49: Fixed up issue with syscall undef
-  * 8.50: Fixed issues with MinGW compile (issue #58)
-  * 8.51: Fixes bash command issue when getting env variable
-  * 8.52:
+ * 8.49: Fixed up issue with syscall undef
+ * 8.50: Fixed issues with MinGW compile (issue #58)
+ * 8.51: Fixes bash command issue when getting env variable
+ * 8.52:
      - environment variable function improvements
      - NDK (android build) fixes
-  * 8.55: Made configuration access faster by introducing `ConfigurationMap<T>` (issue #62)
-  * 8.56: Android host name (issue #61)
-  * 8.57: Issue with android host and username fixed
-  * 8.58: Minor performance improvements around implicit and explicit casting
-  * 8.59: Fix warnings by eclipse
-  * 8.60: More warning fixes for eclipse
-  * 8.61: Fixes issues with VC++ 2010
-  * 8.65: Major performance improvements using pre-processors
-  * 8.66: Fix level based disable logs
-  * 8.70: Other logging libraries compatiable macros; e.g, `LOG(INFO) << "..."`
+ * 8.55: Made configuration access faster by introducing `ConfigurationMap<T>` (issue #62)
+ * 8.56: Android host name (issue #61)
+ * 8.57: Issue with android host and username fixed
+ * 8.58: Minor performance improvements around implicit and explicit casting
+ * 8.59: Fix warnings by eclipse
+ * 8.60: More warning fixes for eclipse
+ * 8.61: Fixes issues with VC++ 2010
+ * 8.65: Major performance improvements using pre-processors
+ * 8.66: Fix level based disable logs
+ * 8.70: Other logging libraries compatiable macros; e.g, `LOG(INFO) << "..."`
 
 #### 7.xx
  * 7.00:
