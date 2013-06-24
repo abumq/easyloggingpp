@@ -96,6 +96,9 @@ Change log was not kept before version 2.1.
  * 8.66: Fix level based disable logs
  * 8.70: Other logging libraries compatiable macros; e.g, `LOG(INFO) << "..."`
  * 8.71: Fix LOG_VERBOSE_EVERY_N macro
+ * 8.72:
+     - Added `CLOG(LEVEL, LoggerId)` macro for sensable name for custom loggers - these macro uses `C##LEVEL` macros
+     - `LOG(LEVEL)` now uses newly `CLOG` macros
 
 #### 7.xx
  * 7.00:

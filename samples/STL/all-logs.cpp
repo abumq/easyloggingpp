@@ -180,9 +180,67 @@ void performanceLogs(void) {
   PVERBOSE_EVERY_N(2, 1) << "Verbose every 1 level 2";
 }
 
-int main(void) {
+void trivialLogsUsingLOG() {
+   LOG(INFO) << "Using LOG(INFO)";
+   LOG(ERROR) << "Using LOG(ERROR)";
+   LOG(DEBUG) << "Using LOG(DEBUG)";
+   LOG(WARNING) << "Using LOG(WARNING)";
+   LOG(FATAL) << "Using LOG(FATAL)";
+   LOG(QA) << "Using LOG(QA)";
+   LOG_VERBOSE(1) << "Using LOG_VERBOSE(1)";
+   LOG(TRACE) << "Using LOG(TRACE)";
+   LOG_IF(true, INFO) << "Using LOG_IF(true, INFO)";
+   LOG_IF(true, ERROR) << "Using LOG_IF(true, ERROR)";
+   LOG_IF(true, DEBUG) << "Using LOG_IF(true, DEBUG)";
+   LOG_IF(true, WARNING) << "Using LOG_IF(true, WARNING)";
+   LOG_IF(true, FATAL) << "Using LOG_IF(true, FATAL)";
+   LOG_IF(true, QA) << "Using LOG_IF(true, QA)";
+   LOG_VERBOSE_IF(true, 1) << "Using LOG_VERBOSE_IF(true, 1)";
+   LOG_IF(true, TRACE) << "Using LOG_IF(true, TRACE)";
+   LOG_EVERY_N(2, INFO) << "Using LOG_EVERY_N(2, INFO)";
+   LOG_EVERY_N(2, ERROR) << "Using LOG_EVERY_N(2, ERROR)";
+   LOG_EVERY_N(2, DEBUG) << "Using LOG_EVERY_N(2, DEBUG)";
+   LOG_EVERY_N(2, WARNING) << "Using LOG_EVERY_N(2, WARNING)";
+   LOG_EVERY_N(2, FATAL) << "Using LOG_EVERY_N(2, FATAL)";
+   LOG_EVERY_N(2, QA) << "Using LOG_EVERY_N(2, QA)";
+   LOG_EVERY_N(2, TRACE) << "Using LOG_EVERY_N(2, TRACE)";
+   LOG_VERBOSE_EVERY_N(2, 1) << "Using LOG_VERBOSE_EVERY_N(2, 1)";
+}
+
+void businessLogsUsingCLOG() {
+   CLOG(INFO, "business") << "Using CLOG(INFO) (business)";
+   CLOG(ERROR, "business") << "Using CLOG(ERROR) (business)";
+   CLOG(DEBUG, "business") << "Using CLOG(DEBUG) (business)";
+   CLOG(WARNING, "business") << "Using CLOG(WARNING) (business)";
+   CLOG(FATAL, "business") << "Using CLOG(FATAL) (business)";
+   CLOG(QA, "business") << "Using CLOG(QA) (business)";
+   CLOG_VERBOSE(1, "business") << "Using CLOG_VERBOSE(1) (business)";
+   CLOG(TRACE, "business") << "Using CLOG(TRACE) (business)";
+   CLOG_IF(true, INFO, "business") << "Using CLOG_IF(true, INFO) (business)";
+   CLOG_IF(true, ERROR, "business") << "Using CLOG_IF(true, ERROR) (business)";
+   CLOG_IF(true, DEBUG, "business") << "Using CLOG_IF(true, DEBUG) (business)";
+   CLOG_IF(true, WARNING, "business") << "Using CLOG_IF(true, WARNING) (business)";
+   CLOG_IF(true, FATAL, "business") << "Using CLOG_IF(true, FATAL) (business)";
+   CLOG_IF(true, QA, "business") << "Using CLOG_IF(true, QA) (business)";
+   CLOG_VERBOSE_IF(true, 1, "business") << "Using CLOG_VERBOSE_IF(true, 1) (business)";
+   CLOG_IF(true, TRACE, "business") << "Using CLOG_IF(true, TRACE) (business)";
+   CLOG_EVERY_N(2, INFO, "business") << "Using CLOG_EVERY_N(2, INFO) (business)";
+   CLOG_EVERY_N(2, ERROR, "business") << "Using CLOG_EVERY_N(2, ERROR) (business)";
+   CLOG_EVERY_N(2, DEBUG, "business") << "Using CLOG_EVERY_N(2, DEBUG) (business)";
+   CLOG_EVERY_N(2, WARNING, "business") << "Using CLOG_EVERY_N(2, WARNING) (business)";
+   CLOG_EVERY_N(2, FATAL, "business") << "Using CLOG_EVERY_N(2, FATAL) (business)";
+   CLOG_EVERY_N(2, QA, "business") << "Using CLOG_EVERY_N(2, QA) (business)";
+   CLOG_EVERY_N(2, TRACE, "business") << "Using CLOG_EVERY_N(2, TRACE) (business)";
+   CLOG_VERBOSE_EVERY_N(2, 1, "business") << "Using CLOG_VERBOSE_EVERY_N(2, 1) (business)";
+}
+
+int main(int argc, char** argv) {
+  _START_EASYLOGGINGPP(argc, argv);
   trivialLogs();
   businessLogs();
   securityLogs();
   performanceLogs();
+  trivialLogsUsingLOG();
+  businessLogsUsingCLOG();
+  
 }

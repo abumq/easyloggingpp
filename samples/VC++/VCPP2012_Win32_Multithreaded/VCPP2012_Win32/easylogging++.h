@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.71                                                         //
+//   EasyLogging++ v8.72                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2978,10 +2978,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.71"); }
+    static inline const std::string version(void) { return std::string("8.72"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("23-06-2013 1508hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-06-2013 1038hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3258,9 +3258,9 @@ private:
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
 //
-// Custom loggers
+// Custom loggers - macro names with levels - requires loggerId
 //
-// Undef any exising custom logger macros
+// Undef existing
 #if defined(CINFO)
 #   undef CINFO
 #endif
@@ -3413,9 +3413,40 @@ private:
 #   define CVERBOSE_EVERY_N(interval_, vlevel_, loggerId) easyloggingpp::internal::NullWriter()
 #endif // _ELPP_VERBOSE_LOG
 //
-// default Loggers
+// Custom Loggers - Requires (level, loggerId)
 //
-// undef level based logging macros
+// undef existing
+#if defined(CLOG)
+#   undef CLOG
+#endif
+#if defined(CLOG_VERBOSE)
+#   undef CLOG_VERBOSE
+#endif
+#if defined(CLOG_IF)
+#   undef CLOG_IF
+#endif
+#if defined(CLOG_VERBOSE_IF)
+#   undef CLOG_VERBOSEIF
+#endif
+#if defined(CLOG_EVERY_N)
+#   undef CLOG_EVERY_N
+#endif
+#if defined(CLOG_VERBOSE_EVERY_N)
+#   undef CLOG_VERBOSE_EVERY_N
+#endif
+// Normal logs
+#define CLOG(LEVEL, loggerId) C##LEVEL(loggerId)
+#define CLOG_VERBOSE(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
+// Conditional logs
+#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId)
+#define CLOG_VERBOSE_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
+// Interval logs
+#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId)
+#define CLOG_VERBOSE_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
+//
+// Default Loggers macro using CLOG() and CLOG_VERBOSE() macros
+//
+// undef existing
 #if defined(LOG)
 #   undef LOG
 #endif
@@ -3435,16 +3466,18 @@ private:
 #   undef LOG_VERBOSE_EVERY_N
 #endif
 // Normal logs
-#define LOG(LEVEL) C##LEVEL("trivial")
-#define LOG_VERBOSE(vlevel) CVERBOSE(vlevel, "trivial")
+#define LOG(LEVEL) CLOG(LEVEL, "trivial")
+#define LOG_VERBOSE(vlevel) CLOG_VERBOSE(vlevel, "trivial")
 // Conditional logs
-#define LOG_IF(condition, LEVEL) C##LEVEL##_IF(condition, "trivial")
-#define LOG_VERBOSE_IF(condition, vlevel) CVERBOSE_IF(condition, vlevel, "trivial")
+#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, "trivial")
+#define LOG_VERBOSE_IF(condition, vlevel) CLOG_VERBOSE_IF(condition, vlevel, "trivial")
 // Interval logs
-#define LOG_EVERY_N(n, LEVEL) C##LEVEL##_EVERY_N(n, "trivial")
-#define LOG_VERBOSE_EVERY_N(n, vlevel) CVERBOSE_EVERY_N(n, vlevel, "trivial")
-
-// undef any existing default logger macros
+#define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, "trivial")
+#define LOG_VERBOSE_EVERY_N(n, vlevel) CLOG_VERBOSE_EVERY_N(n, vlevel, "trivial")
+//
+// Default Loggers macro using C##LEVEL("trivial")
+//
+// undef existing
 #if defined(LINFO)
 #   undef LINFO
 #endif
@@ -3496,7 +3529,10 @@ private:
 #define LQA_EVERY_N(n) CQA_EVERY_N(n, "trivial")
 #define LTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "trivial")
 #define LVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "trivial")
-// undef any exising business logger macros
+//
+// Default Loggers macro using C##LEVEL("business")
+//
+// undef existing
 #if defined(BINFO)
 #   undef BINFO
 #endif
@@ -3521,9 +3557,6 @@ private:
 #if defined(BVERBOSE)
 #   undef BVERBOSE
 #endif
-//
-// business Loggers
-//
 // Normal logs
 #define BINFO CINFO("business")
 #define BWARNING CWARNING("business")
@@ -3552,9 +3585,9 @@ private:
 #define BTRACE_EVERY_N(n) CTRACE_EVERY_N(n, "business")
 #define BVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "business")
 //
-// security Loggers
+// Default Loggers macro using C##LEVEL("security")
 //
-// undef any existing security logger macros
+// undef existing
 #if defined(SINFO)
 #   undef SINFO
 #endif
@@ -3607,9 +3640,9 @@ private:
 #define STRACE_EVERY_N(n) CTRACE_EVERY_N(n, "security")
 #define SVERBOSE_EVERY_N(n, level) CVERBOSE_EVERY_N(n, level, "security")
 //
-// performance Loggers
+// Default Loggers macro using C##LEVEL("performance")
 //
-// undef any existing performance logger macros
+// undef existing
 #if defined(PINFO)
 #   undef PINFO
 #endif
