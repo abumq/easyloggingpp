@@ -1201,8 +1201,8 @@ public:
         referenceCounter_->increment();
     }
 
-    ScopedPointer(const ScopedPointer<T>& smartPointer_) :
-        ptr_(smartPointer_.ptr_), referenceCounter_(smartPointer_.referenceCounter_) {
+    ScopedPointer(const ScopedPointer<T>& scopedPointer_) :
+        ptr_(scopedPointer_.ptr_), referenceCounter_(scopedPointer_.referenceCounter_) {
         referenceCounter_->increment();
     }
 
