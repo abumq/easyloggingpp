@@ -1864,13 +1864,8 @@ private:
 
     void deleteFileStreams(void) {
         ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
-                            if (fileStreamMap_.exist(i)) {
-                                std::fstream* fs = fileStreamMap_.get(i);
-                                if (fs != NULL && fs->is_open()) {
-                                    fs->close();
-                                }
-                                internal::utilities::safeDelete(fs);
-                            }
+                            std::cout << "Removing file " << i;
+                            removeFile(i);
                             );
     }
 
