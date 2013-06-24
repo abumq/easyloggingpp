@@ -187,7 +187,8 @@ Configuration just needs to be set once. If you are happy with default configura
 It is always a good idea to clear configurations after you have set everything, e.g,
 
 ```C++
-   // Clears everything because configurations uses heap so we want to retain it - otherwise it is retained by internal memory management at the end of program
+   // Clears everything because configurations uses heap so we want to retain it.
+   // otherwise it is retained by internal memory management at the end of program
    // execution
    defaultConf.clear();
 ```
