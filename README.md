@@ -1,7 +1,7 @@
 EasyLogging++
 -------------
 <pre>
-Current stable version: v8.72
+Current stable version: v8.75
 </pre>
 Single header only, extremely light-weight high performance logging library for C++ applications
 
@@ -16,6 +16,7 @@ C++ logging library that is based on single header file. Why another logging lib
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#configuration-file">Configuration File</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#inline-configurations">Inline Configurations</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#directly-using-easyloggingppconfigurations-class">Directly Using Class</a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#default-configurations-for-existing-and-future-loggers">Default Configurations for Existing and Future Loggers</a>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#configurations">Configurations</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#enable--disable-logs">Enable / Disable Logs</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#log-to-file">Log To File</a>
@@ -68,7 +69,7 @@ C++ logging library that is based on single header file. Why another logging lib
 #### Downloading Library
 Current stable URL is always http://www.icplusplus.com/tools/easylogging/easyloggingpp.zip
 
-Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.72.zip
+Current version URL is http://www.icplusplus.com/tools/easylogging/releases/easyloggingpp_v8.75.zip
 
 #### Quick 3-step Start
 You can get started now by following three simple steps;
@@ -122,7 +123,7 @@ Always start your configuration file by starting with `ALL` level. This sets con
     TO_STANDARD_OUTPUT		=	false
     MILLISECONDS_WIDTH		=	3
     PERFORMANCE_TRACKING	=	false
-    ROLL_OUT_SIZE          =  2097152 // Throw log files away after 2MB
+    ROLL_OUT_SIZE           =  2097152 // Throw log files away after 2MB
 
 // Following configuration only defines FORMAT for INFO, rest of the configurations are used from ALL configurations above
 * INFO:
@@ -182,6 +183,14 @@ int main(int argc, const char** argv) {
 ```
 
 Configuration just needs to be set once. If you are happy with default configuration, you may use it as well.
+
+#### Default Configurations for Existing and Future Loggers
+
+If you wish to have a configuration for exising and future loggers, you can use `Loggers::setDefaultConfigurations(Configurations& configurations, bool configureExistingLoggers = false)`. This is useful when you are working on fairly large scale, or using a library that is already using EasyLogging++. Any newly created logger will use default configurations. If you wish to configure existing loggers as well, you can set second argument to true (it defaults to false).
+
+[View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/default-configurations.cpp)
+
+Version: 8.75+
 
 #### Configurations
 

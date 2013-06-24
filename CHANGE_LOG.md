@@ -99,6 +99,9 @@ Change log was not kept before version 2.1.
  * 8.72:
      - Added `CLOG(LEVEL, LoggerId)` macro for sensable name for custom loggers - these macro uses `C##LEVEL` macros
      - `LOG(LEVEL)` now uses newly `CLOG` macros
+ * 8.73:
+     - Code improvements for speed
+     - Added `Loggers::setDefaultConfigurations` to configure existing and future loggers
 
 #### 7.xx
  * 7.00:

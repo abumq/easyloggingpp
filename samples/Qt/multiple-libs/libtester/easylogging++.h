@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.72                                                         //
+//   EasyLogging++ v8.75                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1201,8 +1201,8 @@ public:
         referenceCounter_->increment();
     }
 
-    ScopedPointer(const ScopedPointer<T>& smartPointer_) :
-        ptr_(smartPointer_.ptr_), referenceCounter_(smartPointer_.referenceCounter_) {
+    ScopedPointer(const ScopedPointer<T>& scopedPointer_) :
+        ptr_(scopedPointer_.ptr_), referenceCounter_(scopedPointer_.referenceCounter_) {
         referenceCounter_->increment();
     }
 
@@ -1864,13 +1864,7 @@ private:
 
     void deleteFileStreams(void) {
         ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
-                            if (fileStreamMap_.exist(i)) {
-                                std::fstream* fs = fileStreamMap_.get(i);
-                                if (fs != NULL && fs->is_open()) {
-                                    fs->close();
-                                }
-                                internal::utilities::safeDelete(fs);
-                            }
+                            removeFile(i);
                             );
     }
 
@@ -2024,10 +2018,10 @@ private:
 class Logger {
 public:
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
-        id_(uniqueIdentifier_),
-        constants_(constants_),
-        typedConfigurations_(NULL),
-        stream_(new std::stringstream()){
+            id_(uniqueIdentifier_),
+            constants_(constants_),
+            typedConfigurations_(NULL),
+            stream_(new std::stringstream()) {
         Configurations defaultConfs;
         defaultConfs.setToDefault();
         configure(defaultConfs);
@@ -2036,10 +2030,10 @@ public:
     }
 
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_, const Configurations& configurations) :
-        id_(uniqueIdentifier_),
-        constants_(constants_),
-        typedConfigurations_(NULL),
-        stream_(new std::stringstream()){
+            id_(uniqueIdentifier_),
+            constants_(constants_),
+            typedConfigurations_(NULL),
+            stream_(new std::stringstream()) {
         configure(configurations);
     }
 
@@ -2060,9 +2054,9 @@ public:
         // Configuring uses existing configuration as starting point
         // and then sets configurations_ as base to prevent losing any
         // previous configurations
-        Configurations base_ = this->userConfigurations_;
-        if (this->userConfigurations_ != configurations_) {
-            this->userConfigurations_ = configurations_;
+        Configurations base_ = userConfigurations_;
+        if (userConfigurations_ != configurations_) {
+            userConfigurations_ = configurations_;
             base_.setFromBase(const_cast<Configurations*>(&configurations_));
         }
         internal::utilities::safeDelete(typedConfigurations_);
@@ -2226,10 +2220,11 @@ private:
 class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
 public:
     RegisteredLoggers(void) :
-        constants_(new internal::Constants()),
-        username_(internal::utilities::OSUtils::currentUser()),
-        hostname_(internal::utilities::OSUtils::currentHost()),
-        counters_(new internal::RegisteredCounters()) {
+            constants_(new internal::Constants()),
+            username_(internal::utilities::OSUtils::currentUser()),
+            hostname_(internal::utilities::OSUtils::currentHost()),
+            counters_(new internal::RegisteredCounters()) {
+        defaultConfigurations_.setToDefault();
         Configurations conf;
         conf.setToDefault();
         conf.parseFromText(constants_->DEFAULT_LOGGER_CONFIGURATION);
@@ -2264,6 +2259,7 @@ private:
     std::string hostname_;
     internal::threading::Mutex mutex_;
     RegisteredCounters* counters_;
+    Configurations defaultConfigurations_;
 
     friend class Writer;
     friend class easyloggingpp::Loggers;
@@ -2276,14 +2272,18 @@ private:
         return hostname_;
     }
 
-    Logger* get(const std::string& id_) {
+    inline void setDefaultConfigurations(const Configurations& configurations) {
+        defaultConfigurations_.setFromBase(const_cast<Configurations*>(&configurations));
+    } 
+
+    Logger* get(const std::string& id_, bool forceCreation_ = true) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
         __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         Logger* logger_ = internal::Registry<Logger, Logger::Predicate>::get(id_);
-        if (logger_ == NULL) {
-            logger_ = new Logger(id_, constants_);
+        if (logger_ == NULL && forceCreation_) {
+            logger_ = new Logger(id_, constants_, defaultConfigurations_);
             registerNew(logger_);
         }
         return logger_;
@@ -2424,7 +2424,7 @@ public:
     NullWriter(void) {}
 
     template <typename T>
-    NullWriter& operator<<(const T&) {
+    inline NullWriter& operator<<(const T&) {
         return *this;
     }
 };
@@ -2448,18 +2448,18 @@ public:
         condition_(condition_),
         verboseLevel_(verboseLevel_),
         counter_(counter_),
-        proceed_(true),
-        constants_(registeredLoggers->constants()) {
-        logger_ = registeredLoggers->get(loggerId_);
-        if (!logger_->configured()) {
-            __EASYLOGGINGPP_ASSERT(logger_->configured(), "Logger [" << loggerId_ << "] has not been configured!");
-            registeredLoggers->unregister(logger_);
+        proceed_(true) {
+        constants_ = registeredLoggers->constants();
+        logger_ = registeredLoggers->get(loggerId_, false);
+        if (logger_ == NULL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Logger [" << loggerId_ << "] not registered!");
             proceed_ = false;
         }
 #if _ELPP_ENABLE_MUTEX
         registeredLoggers->acquireLock();
         mutex_.lock();
 #endif // _ELPP_ENABLE_MUTEX
+
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_);
         }
@@ -2978,10 +2978,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.72"); }
+    static inline const std::string version(void) { return std::string("8.75"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-06-2013 1038hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-06-2013 1832hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3030,7 +3030,7 @@ public:
         return internal::registeredLoggers->get(identifier_);
     }
 
-    static inline Logger* reconfigureLogger(Logger* logger_, Configurations& configurations_) {
+    static inline Logger* reconfigureLogger(Logger* logger_, const Configurations& configurations_) {
         if (!logger_) return NULL;
         logger_->configure(configurations_);
         return logger_;
@@ -3042,13 +3042,6 @@ public:
         return logger_;
     }
 
-    static inline void setApplicationArguments(int argc, char** argv) {
-        internal::registeredLoggers->setApplicationArguments(argc, argv);
-    }
-
-    static inline void setApplicationArguments(int argc, const char** argv) {
-        internal::registeredLoggers->setApplicationArguments(argc, argv);
-    }
 
     static inline void reconfigureAllLoggers(Configurations& configurations_) {
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
@@ -3063,6 +3056,21 @@ public:
             l->configurations().setAll(configurationType_, value_);
             l->reconfigure();
         }
+    }
+
+    static inline void setDefaultConfigurations(Configurations& configurations, bool configureExistingLoggers = false) {
+        internal::registeredLoggers->setDefaultConfigurations(configurations);
+        if (configureExistingLoggers) {
+            Loggers::reconfigureAllLoggers(configurations);
+        }
+    }
+
+    static inline void setApplicationArguments(int argc, char** argv) {
+        internal::registeredLoggers->setApplicationArguments(argc, argv);
+    }
+
+    static inline void setApplicationArguments(int argc, const char** argv) {
+        internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
     static inline void disableAll(void) {
@@ -3090,13 +3098,13 @@ public:
 
     static inline void disablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
-        l->configurations().set(Level::All, ConfigurationType::PerformanceTracking, "false");
+        l->configurations().setAll(ConfigurationType::PerformanceTracking, "false");
         l->reconfigure();
     }
 
     static inline void enablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
-        l->configurations().set(Level::All, ConfigurationType::PerformanceTracking, "true");
+        l->configurations().setAll(ConfigurationType::PerformanceTracking, "true");
         l->reconfigure();
     }
 
