@@ -2419,7 +2419,7 @@ public:
     NullWriter(void) {}
 
     template <typename T>
-    NullWriter& operator<<(const T&) {
+    inline NullWriter& operator<<(const T&) {
         return *this;
     }
 };
