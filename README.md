@@ -184,6 +184,14 @@ int main(int argc, const char** argv) {
 
 Configuration just needs to be set once. If you are happy with default configuration, you may use it as well.
 
+It is always a good idea to clear configurations after you have set everything, e.g,
+
+```C++
+   // Clears everything because configurations uses heap so we want to retain it - otherwise it is retained by internal memory management at the end of program
+   // execution
+   defaultConf.clear();
+```
+
 #### Default Configurations for Existing and Future Loggers
 
 If you wish to have a configuration for exising and future loggers, you can use `Loggers::setDefaultConfigurations(Configurations& configurations, bool configureExistingLoggers = false)`. This is useful when you are working on fairly large scale, or using a library that is already using EasyLogging++. Any newly created logger will use default configurations. If you wish to configure existing loggers as well, you can set second argument to true (it defaults to false).
