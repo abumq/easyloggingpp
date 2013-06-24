@@ -2271,13 +2271,13 @@ private:
         return hostname_;
     }
 
-    Logger* get(const std::string& id_) {
+    Logger* get(const std::string& id_, bool forceCreation_ = true) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
         __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         Logger* logger_ = internal::Registry<Logger, Logger::Predicate>::get(id_);
-        if (logger_ == NULL) {
+        if (logger_ == NULL && forceCreation_) {
             logger_ = new Logger(id_, constants_);
             registerNew(logger_);
         }
@@ -2443,18 +2443,17 @@ public:
         condition_(condition_),
         verboseLevel_(verboseLevel_),
         counter_(counter_),
-        proceed_(true),
-        constants_(registeredLoggers->constants()) {
-        logger_ = registeredLoggers->get(loggerId_);
-        if (!logger_->configured()) {
-            __EASYLOGGINGPP_ASSERT(logger_->configured(), "Logger [" << loggerId_ << "] has not been configured!");
-            registeredLoggers->unregister(logger_);
-            proceed_ = false;
-        }
+        proceed_(true) {
 #if _ELPP_ENABLE_MUTEX
         registeredLoggers->acquireLock();
         mutex_.lock();
 #endif // _ELPP_ENABLE_MUTEX
+        constants_ = registeredLoggers->constants();
+        logger_ = registeredLoggers->get(loggerId_, false);
+        if (logger_ == NULL) {
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Logger [" << loggerId_ << "] not registered!");
+            proceed_ = false;
+        }
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_);
         }
