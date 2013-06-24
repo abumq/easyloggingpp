@@ -1864,7 +1864,6 @@ private:
 
     void deleteFileStreams(void) {
         ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
-                            std::cout << "Removing file " << i;
                             removeFile(i);
                             );
     }
@@ -2444,16 +2443,17 @@ public:
         verboseLevel_(verboseLevel_),
         counter_(counter_),
         proceed_(true) {
-#if _ELPP_ENABLE_MUTEX
-        registeredLoggers->acquireLock();
-        mutex_.lock();
-#endif // _ELPP_ENABLE_MUTEX
         constants_ = registeredLoggers->constants();
         logger_ = registeredLoggers->get(loggerId_, false);
         if (logger_ == NULL) {
             __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Logger [" << loggerId_ << "] not registered!");
             proceed_ = false;
         }
+#if _ELPP_ENABLE_MUTEX
+        registeredLoggers->acquireLock();
+        mutex_.lock();
+#endif // _ELPP_ENABLE_MUTEX
+
         if (proceed_) {
             proceed_ = logger_->typedConfigurations_->enabled(severity_);
         }
