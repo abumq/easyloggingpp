@@ -116,7 +116,7 @@ Always start your configuration file by starting with `ALL` level. This sets con
 
 ```C++
 * ALL: // We need to start level with star '*' and end with colon ':'
-    FORMAT					=	"%level: %log"  // Quotes are not necessary but to make it more readable we wrap quotes around.
+    FORMAT   				=	"%level: %log"  // Quotes are not necessary but to make it more readable we wrap quotes around.
     FILENAME				= 	"logs/testLog.log"
     ENABLED					=	true
     TO_FILE					=	true
@@ -404,7 +404,12 @@ For some loggers e.g, verbose logging, EasyLogging++ requires to check applicati
 You can use conditional logging for logs that can have simple / complex conditions. These logs are disabled / enabled with their respective logging level.
 
 ```C++
- // Using trivial logger
+ // Using 'trivial' logger
+ // Non-level based macro
+* LOG_IF(condition, LEVEL) << log
+* VLOG_IF(condition, verboseLevel) << log // Verbose log
+
+ // Level based macros are:
 * LDEBUG_IF(condition) << log
 * LINFO_IF(condition) << log
 * LWARNING_IF(condition) << log
@@ -413,6 +418,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * LQA_IF(condition) log
 * LTRACE_IF(condition) log
 * LVERBOSE_IF(condition, verbose-level) << log
+
  // Using business logger
 * BDEBUG_IF(condition) << log
 * BINFO_IF(condition) << log
@@ -422,6 +428,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * BQA_IF(condition) log
 * BTRACE_IF(condition) log
 * BVERBOSE_IF(condition, verbose-level) << log
+
  // Using security logger
 * SDEBUG_IF(condition) << log
 * SINFO_IF(condition) << log
@@ -431,6 +438,7 @@ You can use conditional logging for logs that can have simple / complex conditio
 * SQA_IF(condition) log
 * STRACE_IF(condition) log
 * SVERBOSE_IF(condition, verbose-level) << log
+
  // Using performance logger
 * PDEBUG_IF(condition) << log
 * PINFO_IF(condition) << log
@@ -440,6 +448,12 @@ You can use conditional logging for logs that can have simple / complex conditio
 * PQA_IF(condition) log
 * PTRACE_IF(condition) log
 * PVERBOSE_IF(condition, verbose-level) << log
+
+ // Custom logger (for any level except verbose)
+* CLOG_IF(condition, LEVEL, "loggerId") << log
+ // Custom logger for verbose level
+* CVLOG_IF(condition, vlevel, "loggerId") << log
+
 ```
 A typical example is as follow (taken from samples/STL/conditional.cpp)
 ```C++
@@ -451,10 +465,15 @@ A typical example is as follow (taken from samples/STL/conditional.cpp)
 ```
  [View Sample](https://github.com/mkhan3189/EasyLoggingPP/blob/master/samples/STL/conditional.cpp)
 
-#### Interval Logging 
+#### Interval/Occasional Logging 
 You can log something every N times using `xxx_EVERY_N` where `xxx` represent different log levels. Following are the usable macros:
 ```C++
- // Using trivial logger
+ // Using 'trivial' logger
+ // Non-level based macro
+* LOG_EVERY_N(n, LEVEL) << log
+* VLOG_EVERY_N(n, verboseLevel) << log // Verbose log
+
+ // Level based macros are:
 * LDEBUG_EVERY_N(n) << log
 * LINFO_EVERY_N(n) << log
 * LWARNING_EVERY_N(n) << log
@@ -462,6 +481,7 @@ You can log something every N times using `xxx_EVERY_N` where `xxx` represent di
 * LFATAL_EVERY_N(n) << log
 * LVERBOSE_EVERY_N(n, level) << log
 * LQA_EVERY_N(n) << log
+
  // Using business logger
 * BDEBUG_EVERY_N(n) << log
 * BINFO_EVERY_N(n) << log
@@ -489,6 +509,11 @@ You can log something every N times using `xxx_EVERY_N` where `xxx` represent di
 * PQA_EVERY_N(n) << log
 * PTRACE_EVERY_N(n) << log
 * PVERBOSE_EVERY_N(n, verbose-level) << log
+
+ // Custom logger (for any level except verbose)
+* CLOG_EVERY_N(n, LEVEL, "loggerId") << log
+ // Custom logger for verbose level
+* CVLOG_EVERY_N(n, vlevel, "loggerId") << log
 ```
 
 A typical example:
@@ -572,7 +597,25 @@ int main(int argc, char** argv) {
 ```
 
 And when using verbose logging you will need to run your C++ application with argument `--v=` followed by verbose level.
-When you want to write verbose log, you will use, `LVERBOSE(level) << log`
+When you want to write verbose log, you will use one of following macros
+
+```C++
+VLOG(verboseLevel) << log // This uses 'trivial' logger
+CVLOG(verboseLevel, "loggerId") << log // This uses custom logger (you can provide any logger ID including default ones e.g, trivial)
+```
+
+You may also use one of pre-existing logger based macros
+
+```C++
+LVERBOSE(verboseLevel) << log // Trivial logger
+BVERBOSE(verboseLevel) << log // Business logger
+SVERBOSE(verboseLevel) << log // Security logger
+PVERBOSE(verboseLevel) << log // Performance logger
+```
+
+All of these macros come with all the aspects; e.g, `VLOG_IF(condition, verboseLevel)` or `CVLOG_IF(condition, verboseLevel, loggerId)` or `VLOG_EVERY_N(n, verboseLevel)` or `CVLOG_EVERY_N(n, verboseLevel, loggerId)`
+
+You can also check to see if any level of verbose logging is on by using `VLOG_IS_ON(verboseLevel)` that returns boolean.
 
 As an example
 
@@ -584,9 +627,9 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char** argv) {
   _START_EASYLOGGINGPP(argc, argv); // Alternatively you may do easyloggingpp::Loggers::setApplicationArguments(argc, argv);
   bool condition = true;
-  LVERBOSE(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
-  LVERBOSE(2) << "I will be printed when this application is run using --v=2 arguments";
-  LVERBOSE_IF(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
+  VLOG(1) << "I will be printed when this application is run using --v=1 or higher than 1 arguments";
+  VLOG(2) << "I will be printed when this application is run using --v=2 arguments";
+  VLOG_IF(condition, 1) << "I will be printed when condition is true as well as application is run using --v=1 or higher than 1 arguments";
 }
 ```
 Now compile your application normally:
