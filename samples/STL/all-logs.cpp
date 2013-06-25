@@ -188,6 +188,7 @@ void trivialLogsUsingLOG() {
    LOG(FATAL) << "Using LOG(FATAL)";
    LOG(QA) << "Using LOG(QA)";
    LOG_VERBOSE(1) << "Using LOG_VERBOSE(1)";
+   VLOG(1) << "Using VLOG(1)";
    LOG(TRACE) << "Using LOG(TRACE)";
    LOG_IF(true, INFO) << "Using LOG_IF(true, INFO)";
    LOG_IF(true, ERROR) << "Using LOG_IF(true, ERROR)";
@@ -196,6 +197,7 @@ void trivialLogsUsingLOG() {
    LOG_IF(true, FATAL) << "Using LOG_IF(true, FATAL)";
    LOG_IF(true, QA) << "Using LOG_IF(true, QA)";
    LOG_VERBOSE_IF(true, 1) << "Using LOG_VERBOSE_IF(true, 1)";
+   VLOG_IF(true, 1) << "Using VLOG_IF(true, 1)";
    LOG_IF(true, TRACE) << "Using LOG_IF(true, TRACE)";
    LOG_EVERY_N(2, INFO) << "Using LOG_EVERY_N(2, INFO)";
    LOG_EVERY_N(2, ERROR) << "Using LOG_EVERY_N(2, ERROR)";
@@ -205,6 +207,8 @@ void trivialLogsUsingLOG() {
    LOG_EVERY_N(2, QA) << "Using LOG_EVERY_N(2, QA)";
    LOG_EVERY_N(2, TRACE) << "Using LOG_EVERY_N(2, TRACE)";
    LOG_VERBOSE_EVERY_N(2, 1) << "Using LOG_VERBOSE_EVERY_N(2, 1)";
+   VLOG_EVERY_N(2, 1) << "Using VLOG_EVERY_N(2, 1)";
+
 }
 
 void businessLogsUsingCLOG() {
@@ -215,6 +219,7 @@ void businessLogsUsingCLOG() {
    CLOG(FATAL, "business") << "Using CLOG(FATAL) (business)";
    CLOG(QA, "business") << "Using CLOG(QA) (business)";
    CLOG_VERBOSE(1, "business") << "Using CLOG_VERBOSE(1) (business)";
+   CVLOG(1, "business") << "Using CVLOG(1) (business)";
    CLOG(TRACE, "business") << "Using CLOG(TRACE) (business)";
    CLOG_IF(true, INFO, "business") << "Using CLOG_IF(true, INFO) (business)";
    CLOG_IF(true, ERROR, "business") << "Using CLOG_IF(true, ERROR) (business)";
@@ -223,6 +228,7 @@ void businessLogsUsingCLOG() {
    CLOG_IF(true, FATAL, "business") << "Using CLOG_IF(true, FATAL) (business)";
    CLOG_IF(true, QA, "business") << "Using CLOG_IF(true, QA) (business)";
    CLOG_VERBOSE_IF(true, 1, "business") << "Using CLOG_VERBOSE_IF(true, 1) (business)";
+   CVLOG_IF(true, 1, "business") << "Using CVLOG_IF(true, 1)";
    CLOG_IF(true, TRACE, "business") << "Using CLOG_IF(true, TRACE) (business)";
    CLOG_EVERY_N(2, INFO, "business") << "Using CLOG_EVERY_N(2, INFO) (business)";
    CLOG_EVERY_N(2, ERROR, "business") << "Using CLOG_EVERY_N(2, ERROR) (business)";
@@ -232,6 +238,7 @@ void businessLogsUsingCLOG() {
    CLOG_EVERY_N(2, QA, "business") << "Using CLOG_EVERY_N(2, QA) (business)";
    CLOG_EVERY_N(2, TRACE, "business") << "Using CLOG_EVERY_N(2, TRACE) (business)";
    CLOG_VERBOSE_EVERY_N(2, 1, "business") << "Using CLOG_VERBOSE_EVERY_N(2, 1) (business)";
+   CVLOG_EVERY_N(2, 1, "business") << "Using CVLOG_EVERY_N";
 }
 
 int main(int argc, char** argv) {
@@ -242,5 +249,7 @@ int main(int argc, char** argv) {
   performanceLogs();
   trivialLogsUsingLOG();
   businessLogsUsingCLOG();
-  
+  if (VLOG_IS_ON(2)) {
+    std::cout << "VLOG_IS_ON(2)";
+  }  
 }

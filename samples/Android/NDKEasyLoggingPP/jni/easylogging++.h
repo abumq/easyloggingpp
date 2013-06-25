@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.75                                                         //
+//   EasyLogging++ v8.76                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2242,15 +2242,15 @@ public:
         internal::utilities::safeDelete(counters_);
     }
 
-    internal::Constants* constants(void) const {
+    inline internal::Constants* constants(void) const {
         return constants_;
     }
 
-    RegisteredCounters* counters(void) {
+    inline RegisteredCounters* counters(void) {
         return counters_;
     }
 
-    bool validateCounter(const char* file_, unsigned long int line_, std::size_t n_) {
+    inline bool validateCounter(const char* file_, unsigned long int line_, std::size_t n_) {
         return counters_->validate(file_, line_, n_, constants_);
     }
 private:
@@ -2978,10 +2978,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.75"); }
+    static inline const std::string version(void) { return std::string("8.76"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-06-2013 1832hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-06-2013 1305hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3265,6 +3265,7 @@ private:
 #define _ELPP_LOG_WRITER_N(_n, _logger, _level) if (easyloggingpp::internal::registeredLoggers->validateCounter(\
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
+#define VLOG_IS_ON(verboseLevel) verboseLevel <= easyloggingpp::internal::registeredLoggers->constants()->CURRENT_VERBOSE_LEVEL
 //
 // Custom loggers - macro names with levels - requires loggerId
 //
@@ -3430,11 +3431,17 @@ private:
 #if defined(CLOG_VERBOSE)
 #   undef CLOG_VERBOSE
 #endif
+#if defined(CVLOG)
+#   undef CVLOG
+#endif
 #if defined(CLOG_IF)
 #   undef CLOG_IF
 #endif
 #if defined(CLOG_VERBOSE_IF)
 #   undef CLOG_VERBOSEIF
+#endif
+#if defined(CVLOG_IF)
+#   undef CVLOG_IF
 #endif
 #if defined(CLOG_EVERY_N)
 #   undef CLOG_EVERY_N
@@ -3442,17 +3449,23 @@ private:
 #if defined(CLOG_VERBOSE_EVERY_N)
 #   undef CLOG_VERBOSE_EVERY_N
 #endif
+#if defined(CVLOG_EVERY_N)
+#   undef CVLOG_EVERY_N
+#endif
 // Normal logs
 #define CLOG(LEVEL, loggerId) C##LEVEL(loggerId)
 #define CLOG_VERBOSE(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
+#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
 // Conditional logs
 #define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId)
 #define CLOG_VERBOSE_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
+#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
 // Interval logs
 #define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId)
 #define CLOG_VERBOSE_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
+#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
 //
-// Default Loggers macro using CLOG() and CLOG_VERBOSE() macros
+// Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
 // undef existing
 #if defined(LOG)
@@ -3461,11 +3474,17 @@ private:
 #if defined(LOG_VERBOSE)
 #   undef LOG_VERBOSE
 #endif
+#if defined(VLOG)
+#   undef VLOG
+#endif
 #if defined(LOG_IF)
 #   undef LOG_IF
 #endif
 #if defined(LOG_VERBOSE_IF)
-#   undef LOG_VERBOSEIF
+#   undef LOG_VERBOSE_IF
+#endif
+#if defined(VLOG_IF)
+#   undef VLOG_IF
 #endif
 #if defined(LOG_EVERY_N)
 #   undef LOG_EVERY_N
@@ -3473,15 +3492,21 @@ private:
 #if defined(LOG_VERBOSE_EVERY_N)
 #   undef LOG_VERBOSE_EVERY_N
 #endif
+#if defined(VLOG_EVERY_N)
+#   undef VLOG_EVERY_N
+#endif
 // Normal logs
 #define LOG(LEVEL) CLOG(LEVEL, "trivial")
 #define LOG_VERBOSE(vlevel) CLOG_VERBOSE(vlevel, "trivial")
+#define VLOG(vlevel) CVLOG(vlevel, "trivial")
 // Conditional logs
 #define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, "trivial")
 #define LOG_VERBOSE_IF(condition, vlevel) CLOG_VERBOSE_IF(condition, vlevel, "trivial")
+#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, "trivial")
 // Interval logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, "trivial")
 #define LOG_VERBOSE_EVERY_N(n, vlevel) CLOG_VERBOSE_EVERY_N(n, vlevel, "trivial")
+#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, "trivial")
 //
 // Default Loggers macro using C##LEVEL("trivial")
 //
