@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.76                                                         //
+//   EasyLogging++ v8.80                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -424,6 +424,9 @@ public:
     };
 };
 
+//!
+//! Used internally. You should not need this class.
+//!
 class Constants : private internal::NoCopy {
 public:
     Constants (void) :
@@ -548,9 +551,9 @@ public:
 }; // class Constants
 namespace threading {
 
-//
-// To take care of shared resources in multi-threaded application
-//
+//!
+//! To take care of shared resources in multi-threaded application. Used internally, you should not need it.
+//!
 class Mutex {
 public:
 #if _ELPP_ASSEMBLY_SUPPORTED
@@ -660,6 +663,9 @@ private:
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
+//!
+//! Scoped mutex that works same as C++11 <code>std::lock_guard<std::mutex></code>. Used internally, you should not use it.
+//!
 class ScopedLock : private internal::NoCopy {
 public:
     explicit ScopedLock(Mutex& m_) {
@@ -675,6 +681,10 @@ private:
     ScopedLock(void);
 }; // class ScopedLock
 
+//!
+//! \return ID of current thread. If std::thread is available it uses get_id() otherwise if on windows it uses
+//!         GetCurrentThreadId() otherwise empty string. Used internally, you should not use it.
+//!
 inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
 #if (_ELPP_STD_THREAD_AVAILABLE)
@@ -697,6 +707,9 @@ inline void safeDelete(T*& pointer, bool checkNullity = true) {
     pointer = NULL;
 }
 
+//!
+//! String utilities class used internally. You should not use it.
+//!
 class StringUtils : private internal::StaticClass {
 public:
     static inline std::string trim(const std::string &str) {
@@ -718,7 +731,7 @@ public:
         return (str.length() >= end.length()) && (str.compare(str.length() - end.length(), end.length(), end) == 0);
     }
 
-    static inline std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string>& elems) {
+    static inline std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems) {
         std::stringstream ss(s);
         std::string item;
         while (std::getline(ss, item, delim)) {
@@ -749,17 +762,12 @@ public:
     static inline void tolower(std::string& str) {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     }
-
-    static inline unsigned int getLineCount(const std::string& str) {
-        if (str == "") {
-            return 0;
-        }
-        unsigned int count = std::count(str.begin(), str.end(), '\n');
-        return ++count;
-    }
 };
 #define ELPP_StringUtils internal::utilities::StringUtils
 
+//!
+//! Operating System utilities class used internally. You should not use it.
+//!
 class OSUtils : private internal::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
@@ -937,9 +945,9 @@ public:
     }
 }; // class OSUtils
 
-//
-// Contains static functions related to log manipulation
-//
+//!
+//! Contains static functions related to log manipulation used internally. You should not use it.
+//!
 class LogManipulator : private internal::StaticClass {
 public:
     // Updates the formatSpecifier_ for currentFormat_ to value_ provided
@@ -959,9 +967,9 @@ public:
     }
 }; // class LogManipulator
 
-//
-// Contains utility functions related to date/time
-//
+//!
+//! Contains utility functions related to date/time used internally. You should not use it.
+//!
 class DateUtils : private internal::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
@@ -1057,6 +1065,9 @@ public:
 }; // class DateUtils
 } // namespace utilities
 
+//!
+//! Internal repository base to manage memory on heap. Used internally, you should not use it.
+//!
 template<class Class, class Predicate>
 class Registry {
 public:
@@ -1192,6 +1203,9 @@ private:
     }
 }; // class Registry
 
+//!
+//! Scoped pointer used internally. You should not use it.
+//!
 template <typename T>
 class ScopedPointer {
 public:
@@ -1268,29 +1282,60 @@ private:
     }
 };
 
+//!
+//! Class that represents single configuration.
+//!
+//! Single configuration has a level (easyloggingpp::Level), type (easyloggingpp::ConfigurationType)
+//! and std::string based value. This value is later parsed into more appropriate data type depending on
+//! type
+//!
 class Configuration {
 public:
+    //!
+    //! Full constructor used to set initial value of configuration
+    //! \param level_
+    //! \param type_
+    //! \param value_
+    //!
     Configuration(unsigned int level_, unsigned int type_, const std::string& value_) :
         level_(level_),
         type_(type_),
         value_(value_) {
     }
 
+    //!
+    //! \return Level of current configuration
+    //!
     unsigned int level(void) const {
         return level_;
     }
 
+    //!
+    //! \return Configuration type of current configuration
+    //!
     unsigned int type(void) const {
         return type_;
     }
+
+    //!
+    //! \return String based configuration value
+    //!
     std::string value(void) const {
         return value_;
     }
 
+    //!
+    //! Set string based configuration value
+    //! \param value_ Value to set. Values have to be std::string; For boolean values use "true", "false", for any integral values
+    //!        use them in quotes. They will be parsed when configuring
+    //!
     void setValue(const std::string& value_) {
         this->value_ = value_;
     }
 
+    //!
+    //! Predicate used to find configuration from configuration repository. This is used internally.
+    //!
     class Predicate {
     public:
         Predicate(unsigned int level_, unsigned int type_) :
@@ -1313,23 +1358,45 @@ private:
 };
 
 } // namespace internal
+
+//!
+//! Configuration repository that represents configuration for single logger
+//!
 class Configurations : public internal::Registry<internal::Configuration, internal::Configuration::Predicate> {
 public:
+    //!
+    //! Default constructor
+    //!
     Configurations(void) :
         isFromFile_(false) {
     }
 
+    //!
+    //! Constructor used to set configurations via configuration file
+    //! \param configurationFile_ Full path to configuration file
+    //! \param base_ Configurations to base new configuration repository off. This value is used when you want to use
+    //!        existing Configurations to base all the values and then set rest of configuration via configuration file.
+    //!
     Configurations(const std::string& configurationFile_, Configurations* base_ = NULL) :
         configurationFile_(configurationFile_),
         isFromFile_(false) {
         parseFromFile(configurationFile_, base_);
     }
 
+    //!
+    //! Set configurations based on other configurations
+    //! \param base_ Pointer to existing configurations.
+    //!
     inline void setFromBase(Configurations* base_) {
         if (base_ == NULL || base_ == this) return;
         std::for_each(base_->list().begin(), base_->list().end(), std::bind1st(std::mem_fun(&Configurations::set), this));
     }
 
+    //!
+    //! Checks to see whether specified configuration type exist in this repository
+    //! \param configurationType_ Configuration type to check against. Use easyloggingpp::ConfigurationType to prevent confusions
+    //! \return True if exist, false otherwise
+    //!
     inline bool contains(unsigned int configurationType_) {
         ELPP_FOR_EACH_CONFIGURATION(i, ConfigurationType::kMinValid,
                                     if (get(i, configurationType_) != NULL) {
@@ -1339,9 +1406,17 @@ public:
         return false;
     }
 
-    // Sets configuration for specified level_ and configurationType_
-    // Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
-    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_LEVEL_ALL_Check = false) {
+    //!
+    //! Sets configuration for specified level_ and configurationType_. If configuration already exists for specified
+    //! level and configuration type, value just gets updated.
+    //! Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
+    //! \param level_ Level to set configuration for. Use easyloggingpp::Level to prevent confusion
+    //! \param configurationType_ Configuration type to set configuration against. Use easyloggingpp::ConfigurationType to prevent confusion
+    //! \param value_ String based configuration value
+    //! \param skipLEVEL_ALL Determines whether to skip 'easyloggingpp::Level::All'. This is skipped by default because setting
+    //!        'All' may override configuration. Be careful with this.
+    //!
+    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skipLEVEL_ALL = false) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::PerformanceTracking && level_ != Level::All) ||
                 (configurationType_ == ConfigurationType::MillisecondsWidth && level_ != Level::All)) {
@@ -1355,11 +1430,19 @@ public:
             // Configuration already there, just update the value!
             conf_->setValue(value_);
         }
-        if (!skip_LEVEL_ALL_Check && level_ == Level::All) {
+        if (!skipLEVEL_ALL && level_ == Level::All) {
             setAll(configurationType_, value_, true);
         }
     }
 
+    //!
+    //! Parse configuration from file.
+    //! \param configurationFile_
+    //! \param base_Configurations to base new configuration repository off. This value is used when you want to use
+    //!        existing Configurations to base all the values and then set rest of configuration via configuration file.
+    //! \return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+    //!         do not proceed without successful parse.
+    //!
     bool parseFromFile(const std::string& configurationFile_, Configurations* base_ = NULL) {
         setFromBase(base_);
         std::ifstream fileStream_(configurationFile_.c_str(), std::ifstream::in);
@@ -1376,6 +1459,13 @@ public:
         return parsedSuccessfully_;
     }
 
+    //!
+    //! Parse configurations from configuration string. This configuration string has same syntax as configuration file contents. Make
+    //! sure all the necessary new line characters are provided.
+    //! \param configurationsString
+    //! \return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+    //!         do not proceed without successful parse.
+    //!
     bool parseFromText(const std::string& configurationsString) {
         bool parsedSuccessfully_ = false;
         std::string line = std::string();
@@ -1391,6 +1481,11 @@ public:
         return parsedSuccessfully_;
     }
 
+    //!
+    //! Sets configurations to default configurations set by easylogging++.
+    //! NOTE: This has nothing to do with Loggers::setDefaultConfigurations - thats completely different thing. This is
+    //! library's own default format.
+    //!
     void setToDefault(void) {
         setAll(ConfigurationType::Enabled, "true");
 #if _ELPP_OS_UNIX
@@ -1417,6 +1512,14 @@ public:
         set(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %log");
     }
 
+    //!
+    //! Sets configuration for all levels.
+    //! Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
+    //! \param configurationType_
+    //! \param value_
+    //! \param skipLEVEL_ALL Determines whether to skip 'easyloggingpp::Level::All'. This is skipped by default because setting
+    //!        'All' may override configuration. Be careful with this.
+    //!
     inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipLEVEL_ALL = false) {
         if (!skipLEVEL_ALL) {
             set(Level::All, configurationType_, value_);
@@ -1426,14 +1529,29 @@ public:
                             );
     }
 
+    //!
+    //! Clears the repository.
+    //! All the configurations are maintained on heap for faster access so if you are sure you will not use this
+    //! repository and you have configured all the loggers against this or you have used this configuration for all the
+    //! purposes you need it for, you may retain memory by using this method. If you do not do this, internal memory management
+    //! does it itself at the end of application execution.
+    //!
     inline void clear(void) {
         unregisterAll();
     }
 
+    //!
+    //! \return Returns configuration file used in parsing this configurations. If this repository was set manually or by text
+    //!         this returns empty string.
+    //!
     std::string configurationFile(void) const {
         return configurationFile_;
     }
 
+    //!
+    //! Parser used internally to parse configurations from file or text. You should not need this unless you are working on
+    //! some tool for EasyLogging++
+    //!
     class Parser : private internal::StaticClass {
     public:
         static void ignoreComments(std::string& line) {
@@ -1539,6 +1657,9 @@ namespace internal {
 class RegisteredLoggers; // fwd declaration
 class Writer;  // fwd declaration
 
+//!
+//! Configuration map used internally for faster access of configuration while executing.
+//!
 template <typename T>
 class ConfigurationMap {
 public:
@@ -1611,6 +1732,9 @@ private:
     }
 };
 
+//!
+//! Configurations used internally that defines data type of each configuration from easyloggingpp::ConfigurationType
+//!
 class TypedConfigurations {
 public:
     TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) {
@@ -2015,8 +2139,18 @@ private:
     }
 };
 } // namespace internal
+
+//!
+//! Represents single logger used to write log.
+//!
 class Logger {
 public:
+    //!
+    //! Minimal constructor to set logger ID and constants. You should not use this constructor manually, instead use
+    //! easyloggingpp::Loggers::getLogger
+    //! \param uniqueIdentifier_ Logger ID that you will require to get logger from logger repository
+    //! \param constants_ Use <code>easyloggingpp::internal::registeredLoggers->constants()</code>
+    //!
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
             id_(uniqueIdentifier_),
             constants_(constants_),
@@ -2029,6 +2163,12 @@ public:
         defaultConfs.clear();
     }
 
+    //!
+    //! Full constructor to set logger ID, constants and configuration.
+    //! \param uniqueIdentifier_ Logger ID that you will require to get logger from logger repository
+    //! \param constants_ Use <code>easyloggingpp::internal::registeredLoggers->constants()</code>
+    //! \param configurations Configurations to set logger against
+    //!
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_, const Configurations& configurations) :
             id_(uniqueIdentifier_),
             constants_(constants_),
@@ -2042,10 +2182,17 @@ public:
         internal::utilities::safeDelete(stream_);
     }
 
+    //!
+    //! \return Logger ID
+    //!
     inline std::string id(void) const {
         return id_;
     }
 
+    //!
+    //! Configures logger against specified configurations
+    //! \param configurations_
+    //!
     void configure(const Configurations& configurations_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
@@ -2064,27 +2211,46 @@ public:
         configured_ = true;
     }
 
+    //!
+    //! Reconfigures logger
+    //!
     inline void reconfigure(void) {
         configure(this->userConfigurations_);
     }
 
+    //!
+    //! \return Application name for this logger
+    //!
     inline std::string applicationName(void) const {
         return applicationName_;
     }
 
+
+    //!
+    //! Application name can vary from logger to logger. For example for a library application name may be different.
+    //! This is whats used later when you use '%app' in log format
+    //!
     inline void setApplicationName(const std::string& applicationName_) {
         this->applicationName_ = applicationName_;
     }
 
+    //!
+    //! \return Configurations that this logger is set against
+    //!
     inline Configurations& configurations(void) {
         return userConfigurations_;
     }
 
+    //!
+    //! \return Whether or not logger is configured.
+    //!
     inline bool configured(void) const {
         return configured_;
     }
 
-
+    //!
+    //! Predicate used in logger repository to find logger. This is used internally. You should not use it.
+    //!
     class Predicate {
     public:
         explicit Predicate(const std::string& id_) :
@@ -2125,7 +2291,9 @@ private:
 };
 
 namespace internal {
-
+//!
+//! Internal log counter used for interval logging
+//!
 class LogCounter : private internal::NoCopy {
 public:
     explicit LogCounter(internal::Constants* constants_) :
@@ -2195,6 +2363,9 @@ private:
     internal::Constants* constants_;
 }; // class LogCounter
 
+//!
+//! Internal LogCounter repository
+//!
 class RegisteredCounters : public Registry<LogCounter, LogCounter::Predicate>  {
 public:
     bool validate(const char* file_, unsigned long int line_, std::size_t n_, internal::Constants* constants_) {
@@ -2217,6 +2388,9 @@ private:
     internal::threading::Mutex mutex_;
 }; // class RegisteredCounters
 
+//!
+//! Internal logger repository. You should not access functionalities directly, you should use easyloggingpp::Loggers instead
+//!
 class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
 public:
     RegisteredLoggers(void) :
@@ -2978,10 +3152,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.76"); }
+    static inline const std::string version(void) { return std::string("8.80"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-06-2013 1305hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-06-2013 1921hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3020,29 +3194,52 @@ public:
     }
 }; // class VersionInfo
 
-//
-// A static helper class for users of library. This class contains functions related to register
-// and configure logger/s
-//
+//!
+//! \brief Helper class to manage loggers and configurations
+//!
+//! A static helper class for users of library. This class contains functions related to register
+//! and configure logger/s
+//!
 class Loggers : private internal::StaticClass {
 public:
+
+    //!
+    //! Get existing logger, if logger does not exist a newly created logger is returned
+    //! \param identifier_ A unique ID for logger
+    //! \return Pointer to easyloggingpp::Logger from logger repository
+    //!
     static inline Logger* getLogger(const std::string& identifier_) {
         return internal::registeredLoggers->get(identifier_);
     }
 
+    //!
+    //! Reconfigures logger with easyloggingpp::Configurations
+    //! \param logger_ Pointer to Logger to configure. You get use getLogger() to get pointer from logger repository
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //! \return Updated pointer to Logger
+    //!
     static inline Logger* reconfigureLogger(Logger* logger_, const Configurations& configurations_) {
         if (!logger_) return NULL;
         logger_->configure(configurations_);
         return logger_;
     }
 
+    //!
+    //! Reconfigures logger with easyloggingpp::Configurations
+    //! \param identifier_ Logger ID
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //! \return Updated pointer to Logger
+    //!
     static inline Logger* reconfigureLogger(const std::string& identifier_, Configurations& configurations_) {
         Logger* logger_ = Loggers::getLogger(identifier_);
         Loggers::reconfigureLogger(logger_, configurations_);
         return logger_;
     }
 
-
+    //!
+    //! Reconfigures all loggers available in logger repository
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //!
     static inline void reconfigureAllLoggers(Configurations& configurations_) {
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
@@ -3050,6 +3247,12 @@ public:
         }
     }
 
+    //!
+    //! Reconfigures all loggers for single configuration.
+    //! \param configurationType_ Configuration type to update. Use easyloggingpp::ConfigurationType to prevent confusion
+    //! \param value_ Value to set. Values have to be std::string; For boolean values use "true", "false", for any integral values
+    //!        use them in quotes. They will be parsed when configuring
+    //!
     static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
@@ -3058,6 +3261,12 @@ public:
         }
     }
 
+    //!
+    //! Sets default configurations. This configuration is used for future loggers.
+    //! \param configurations
+    //! \param configureExistingLoggers If true, all loggers are updated against provided configuration otherwise only future loggers
+    //!        will be updated and all the existing loggers will use configurations that have been set previously.
+    //!
     static inline void setDefaultConfigurations(Configurations& configurations, bool configureExistingLoggers = false) {
         internal::registeredLoggers->setDefaultConfigurations(configurations);
         if (configureExistingLoggers) {
@@ -3065,49 +3274,91 @@ public:
         }
     }
 
+    //!
+    //! Sets application arguments and uses them where needed. Example use is when application is run with '--v=X' or '-v', verbose logging
+    //! turns on
+    //! \param argc Argument count
+    //! \param argv Argument value array pointer
+    //!
     static inline void setApplicationArguments(int argc, char** argv) {
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
+    //!
+    //! Sets application arguments and uses them where needed. Example use is when application is run with '--v=X' or '-v', verbose logging
+    //! turns on
+    //! \param argc
+    //! \param argv
+    //!
     static inline void setApplicationArguments(int argc, const char** argv) {
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
+    //!
+    //! Disables all loggers
+    //!
     static inline void disableAll(void) {
         reconfigureAllLoggers(ConfigurationType::Enabled, "false");
     }
 
+    //!
+    //! Enable all loggers
+    //!
     static inline void enableAll(void) {
         reconfigureAllLoggers(ConfigurationType::Enabled, "true");
     }
 
+    //!
+    //! Reconfigure all loggers to write to single log file
+    //! \param logFilename_ Full path to log file
+    //!
     static inline void setFilename(const std::string& logFilename_) {
         reconfigureAllLoggers(ConfigurationType::Filename, logFilename_);
     }
 
+    //!
+    //! Reconfigure specified logger to write to specified log file
+    //! \param logger_ Pointer to logger. You may use Loggers::get(id) to get pointer
+    //! \param logFilename_ Full path to log file
+    //!
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
         if (!logger_) return;
         logger_->configurations().setAll(ConfigurationType::Filename, logFilename_);
         logger_->reconfigure();
     }
 
-
+    //!
+    //! Determines whether or not performance tracking is enabled
+    //! \return True if enabled, false otherwise
+    //!
     static inline bool performanceTrackingEnabled(void) {
         return performanceLogger()->typedConfigurations_->performanceTracking();
     }
 
+    //!
+    //! Disables performance tracking.
+    //! Performance tracking is logged using 'performance' logger.
+    //!
     static inline void disablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
         l->configurations().setAll(ConfigurationType::PerformanceTracking, "false");
         l->reconfigure();
     }
 
+    //!
+    //! Enable performance tracking
+    //! Performance tracking is logged using 'performance' logger.
+    //!
     static inline void enablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
         l->configurations().setAll(ConfigurationType::PerformanceTracking, "true");
         l->reconfigure();
     }
 
+    //!
+    //! Iterates through logger repository and puts IDs into listOfIds
+    //! \param listOfIds (Passed by reference) Vector to fill up
+    //!
     static inline void getAllLogIdentifiers(std::vector<std::string>& listOfIds) {
         listOfIds.clear();
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
@@ -3115,22 +3366,37 @@ public:
         }
     }
 
+    //!
+    //! \return Returns one of default loggers 'trivial' logger
+    //!
     static inline Logger* trivialLogger(void) {
         return Loggers::getLogger("trivial");
     }
 
+    //!
+    //! \return Returns one of default loggers 'business' logger
+    //!
     static inline Logger* businessLogger(void) {
         return Loggers::getLogger("business");
     }
 
+    //!
+    //! \return Returns one of default loggers 'security' logger
+    //!
     static inline Logger* securityLogger(void) {
         return Loggers::getLogger("security");
     }
 
+    //!
+    //! \return Returns one of default loggers 'performance' logger
+    //!
     static inline Logger* performanceLogger(void) {
         return Loggers::getLogger("performance");
     }
 
+    //!
+    //! Static class that contains static helper functions used to read configurations
+    //!
     class ConfigurationsReader : private internal::StaticClass {
     public:
         static inline bool enabled(Logger* logger_, unsigned int level_ = Level::All) {
@@ -3265,6 +3531,9 @@ private:
 #define _ELPP_LOG_WRITER_N(_n, _logger, _level) if (easyloggingpp::internal::registeredLoggers->validateCounter(\
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
+#if defined(VLOG_IS_ON)
+#   undef VLOG_IS_ON
+#endif // defined(VLOG_IS_ON)
 #define VLOG_IS_ON(verboseLevel) verboseLevel <= easyloggingpp::internal::registeredLoggers->constants()->CURRENT_VERBOSE_LEVEL
 //
 // Custom loggers - macro names with levels - requires loggerId
@@ -3749,6 +4018,15 @@ private:
 #if defined(_INITIALIZE_EASYLOGGINGPP)
 #   undef _INITIALIZE_EASYLOGGINGPP
 #endif // defined(_INITIALIZE_EASYLOGGINGPP)
+#if defined(_START_EASYLOGGINGPP)
+#   undef _START_EASYLOGGINGPP
+#endif // defined(_START_EASYLOGGINGPP)
+#if defined(_ELPP_COUNTER)
+#   undef _ELPP_COUNTER
+#endif // defined(_ELPP_COUNTER)
+#if defined(_ELPP_COUNTER_POSITION)
+#   undef _ELPP_COUNTER_POSITION
+#endif // defined(_ELPP_COUNTER_POSITION)
 #define _INITIALIZE_EASYLOGGINGPP                                 \
     namespace easyloggingpp {                                     \
         namespace internal {                                      \

@@ -106,6 +106,9 @@ Change log was not kept before version 2.1.
      - Introduced `VLOG(verboseLevel)`, `CVLOG(verboseLevel, logger)`, `VLOG_IF`, `VLOG_EVERY_N`, CVLOG_IF`, `CVLOG_EVERY_N` for verbose logging to be more compatible with other major logging libraries
      - Introduced `VLOG_IS_ON(verboseLevel)` to check if specific verbose level is on
      - Some code improvements by inlining some code
+ * 8.80:
+     - Documented code that is used by user
+     - Minor bug fixes
 
 #### 7.xx
  * 7.00:
