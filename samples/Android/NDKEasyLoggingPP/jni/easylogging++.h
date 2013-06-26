@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.82                                                         //
+//   EasyLogging++ v8.83                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -2404,12 +2404,12 @@ public:
         conf.setToDefault();
         conf.parseFromText(constants_->DEFAULT_LOGGER_CONFIGURATION);
         registerNew(new Logger("trivial", constants_, conf));
-        //registerNew(new Logger("business", constants_));
-        //registerNew(new Logger("security", constants_));
-        //Configurations confPerformance;
-        //confPerformance.setToDefault();
-        //confPerformance.setAll(ConfigurationType::PerformanceTracking, "true");
-        //registerNew(new Logger("performance", constants_, confPerformance));
+        registerNew(new Logger("business", constants_));
+        registerNew(new Logger("security", constants_));
+        Configurations confPerformance;
+        confPerformance.setToDefault();
+        confPerformance.setAll(ConfigurationType::PerformanceTracking, "true");
+        registerNew(new Logger("performance", constants_, confPerformance));
     }
 
     virtual ~RegisteredLoggers(void) {
@@ -3153,10 +3153,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.82"); }
+    static inline const std::string version(void) { return std::string("8.83"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2121hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2147hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
