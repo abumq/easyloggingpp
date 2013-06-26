@@ -31,7 +31,7 @@ FormatBuilderDialog::~FormatBuilderDialog()
 void FormatBuilderDialog::updateUi() const
 {
     QStringList list = ui->txtFormat->text().trimmed().split(" ");
-    LVERBOSE(2) << "Updating UI in FormatBuilder, current elements are " << static_cast<QList<QString> >(list);
+    LOG_VERBOSE(2) << "Updating UI in FormatBuilder, current elements are " << static_cast<QList<QString> >(list);
     Q_FOREACH(QString curr, list) {
         if (curr == qstr(constants->LEVEL_FORMAT_SPECIFIER)) {
             ui->chkLevel->setChecked(true);
@@ -214,7 +214,7 @@ void FormatBuilderDialog::on_buttonOrderUp_clicked()
         return;
     }
     QListWidgetItem* curr = ui->lstOrder->takeItem(row);
-    LVERBOSE(1) << "Moving [" << curr->text() << "] up";
+    LOG_VERBOSE(1) << "Moving [" << curr->text() << "] up";
     ui->lstOrder->insertItem(row - 1, curr);
     ui->lstOrder->setCurrentRow(row - 1);
     updateFormat();
@@ -230,7 +230,7 @@ void FormatBuilderDialog::on_buttonOrderDown_clicked()
         return;
     }
     QListWidgetItem* curr = ui->lstOrder->takeItem(row);
-    LVERBOSE(1) << "Moving [" << curr->text() << "] down";
+    LOG_VERBOSE(1) << "Moving [" << curr->text() << "] down";
     ui->lstOrder->insertItem(row + 1, curr);
     ui->lstOrder->setCurrentRow(row + 1);
     updateFormat();

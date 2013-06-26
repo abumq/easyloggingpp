@@ -18,12 +18,12 @@ int main(int argc, char *argv[])
 #endif // _ELPP_OS_UNIX
     Loggers::reconfigureAllLoggers(c);
 
-    LTRACE << "Starting application using arguments [" << argv[0] << "]";
+    LOG(TRACE) << "Starting application using arguments [" << argv[0] << "]";
 
     QApplication a(argc, argv);
     MainDialog w;
     w.show();
     int result = a.exec();
-    LTRACE << "Exiting application";
+    LOG(TRACE) << "Exiting application";
     return result;
 }

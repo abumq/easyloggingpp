@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     easyloggingpp::Configurations viewerConf("../LogViewer/log.conf");
     easyloggingpp::Loggers::reconfigureAllLoggers(viewerConf);
 
-    LTRACE << "Starting LogViewer";
+    LOG(TRACE) << "Starting LogViewer";
 
     QApplication a(argc, argv);
 
