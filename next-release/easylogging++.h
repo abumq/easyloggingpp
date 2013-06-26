@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.76-RC-1                                                    //
+//   EasyLogging++ v8.90-RC                                                      //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -424,6 +424,9 @@ public:
     };
 };
 
+//!
+//! Used internally. You should not need this class.
+//!
 class Constants : private internal::NoCopy {
 public:
     Constants (void) :
@@ -548,9 +551,9 @@ public:
 }; // class Constants
 namespace threading {
 
-//
-// To take care of shared resources in multi-threaded application
-//
+//!
+//! To take care of shared resources in multi-threaded application. Used internally, you should not need it.
+//!
 class Mutex {
 public:
 #if _ELPP_ASSEMBLY_SUPPORTED
@@ -660,6 +663,9 @@ private:
 #   endif // _ELPP_OS_UNIX
 #endif // _ELPP_ASSEMBLY_SUPPORTED
 }; // class Mutex
+//!
+//! Scoped mutex that works same as C++11 <code>std::lock_guard<std::mutex></code>. Used internally, you should not use it.
+//!
 class ScopedLock : private internal::NoCopy {
 public:
     explicit ScopedLock(Mutex& m_) {
@@ -675,6 +681,10 @@ private:
     ScopedLock(void);
 }; // class ScopedLock
 
+//!
+//! \return ID of current thread. If std::thread is available it uses get_id() otherwise if on windows it uses
+//!         GetCurrentThreadId() otherwise empty string. Used internally, you should not use it.
+//!
 inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
 #if (_ELPP_STD_THREAD_AVAILABLE)
@@ -697,6 +707,9 @@ inline void safeDelete(T*& pointer, bool checkNullity = true) {
     pointer = NULL;
 }
 
+//!
+//! String utilities class used internally. You should not use it.
+//!
 class StringUtils : private internal::StaticClass {
 public:
     static inline std::string trim(const std::string &str) {
@@ -718,7 +731,7 @@ public:
         return (str.length() >= end.length()) && (str.compare(str.length() - end.length(), end.length(), end) == 0);
     }
 
-    static inline std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string>& elems) {
+    static inline std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems) {
         std::stringstream ss(s);
         std::string item;
         while (std::getline(ss, item, delim)) {
@@ -749,17 +762,11 @@ public:
     static inline void tolower(std::string& str) {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     }
-
-    static inline unsigned int getLineCount(const std::string& str) {
-        if (str == "") {
-            return 0;
-        }
-        unsigned int count = std::count(str.begin(), str.end(), '\n');
-        return ++count;
-    }
 };
-#define ELPP_StringUtils internal::utilities::StringUtils
 
+//!
+//! Operating System utilities class used internally. You should not use it.
+//!
 class OSUtils : private internal::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
@@ -937,9 +944,9 @@ public:
     }
 }; // class OSUtils
 
-//
-// Contains static functions related to log manipulation
-//
+//!
+//! Contains static functions related to log manipulation used internally. You should not use it.
+//!
 class LogManipulator : private internal::StaticClass {
 public:
     // Updates the formatSpecifier_ for currentFormat_ to value_ provided
@@ -959,9 +966,9 @@ public:
     }
 }; // class LogManipulator
 
-//
-// Contains utility functions related to date/time
-//
+//!
+//! Contains utility functions related to date/time used internally. You should not use it.
+//!
 class DateUtils : private internal::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
@@ -1057,6 +1064,9 @@ public:
 }; // class DateUtils
 } // namespace utilities
 
+//!
+//! Internal repository base to manage memory on heap. Used internally, you should not use it.
+//!
 template<class Class, class Predicate>
 class Registry {
 public:
@@ -1192,6 +1202,9 @@ private:
     }
 }; // class Registry
 
+//!
+//! Scoped pointer used internally. You should not use it.
+//!
 template <typename T>
 class ScopedPointer {
 public:
@@ -1268,29 +1281,60 @@ private:
     }
 };
 
+//!
+//! Class that represents single configuration.
+//!
+//! Single configuration has a level (easyloggingpp::Level), type (easyloggingpp::ConfigurationType)
+//! and std::string based value. This value is later parsed into more appropriate data type depending on
+//! type
+//!
 class Configuration {
 public:
+    //!
+    //! Full constructor used to set initial value of configuration
+    //! \param level_
+    //! \param type_
+    //! \param value_
+    //!
     Configuration(unsigned int level_, unsigned int type_, const std::string& value_) :
         level_(level_),
         type_(type_),
         value_(value_) {
     }
 
+    //!
+    //! \return Level of current configuration
+    //!
     unsigned int level(void) const {
         return level_;
     }
 
+    //!
+    //! \return Configuration type of current configuration
+    //!
     unsigned int type(void) const {
         return type_;
     }
+
+    //!
+    //! \return String based configuration value
+    //!
     std::string value(void) const {
         return value_;
     }
 
+    //!
+    //! Set string based configuration value
+    //! \param value_ Value to set. Values have to be std::string; For boolean values use "true", "false", for any integral values
+    //!        use them in quotes. They will be parsed when configuring
+    //!
     void setValue(const std::string& value_) {
         this->value_ = value_;
     }
 
+    //!
+    //! Predicate used to find configuration from configuration repository. This is used internally.
+    //!
     class Predicate {
     public:
         Predicate(unsigned int level_, unsigned int type_) :
@@ -1313,23 +1357,45 @@ private:
 };
 
 } // namespace internal
+
+//!
+//! Configuration repository that represents configuration for single logger
+//!
 class Configurations : public internal::Registry<internal::Configuration, internal::Configuration::Predicate> {
 public:
+    //!
+    //! Default constructor
+    //!
     Configurations(void) :
         isFromFile_(false) {
     }
 
+    //!
+    //! Constructor used to set configurations via configuration file
+    //! \param configurationFile_ Full path to configuration file
+    //! \param base_ Configurations to base new configuration repository off. This value is used when you want to use
+    //!        existing Configurations to base all the values and then set rest of configuration via configuration file.
+    //!
     Configurations(const std::string& configurationFile_, Configurations* base_ = NULL) :
         configurationFile_(configurationFile_),
         isFromFile_(false) {
         parseFromFile(configurationFile_, base_);
     }
 
+    //!
+    //! Set configurations based on other configurations
+    //! \param base_ Pointer to existing configurations.
+    //!
     inline void setFromBase(Configurations* base_) {
         if (base_ == NULL || base_ == this) return;
         std::for_each(base_->list().begin(), base_->list().end(), std::bind1st(std::mem_fun(&Configurations::set), this));
     }
 
+    //!
+    //! Checks to see whether specified configuration type exist in this repository
+    //! \param configurationType_ Configuration type to check against. Use easyloggingpp::ConfigurationType to prevent confusions
+    //! \return True if exist, false otherwise
+    //!
     inline bool contains(unsigned int configurationType_) {
         ELPP_FOR_EACH_CONFIGURATION(i, ConfigurationType::kMinValid,
                                     if (get(i, configurationType_) != NULL) {
@@ -1339,9 +1405,17 @@ public:
         return false;
     }
 
-    // Sets configuration for specified level_ and configurationType_
-    // Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
-    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skip_LEVEL_ALL_Check = false) {
+    //!
+    //! Sets configuration for specified level_ and configurationType_. If configuration already exists for specified
+    //! level and configuration type, value just gets updated.
+    //! Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
+    //! \param level_ Level to set configuration for. Use easyloggingpp::Level to prevent confusion
+    //! \param configurationType_ Configuration type to set configuration against. Use easyloggingpp::ConfigurationType to prevent confusion
+    //! \param value_ String based configuration value
+    //! \param skipLEVEL_ALL Determines whether to skip 'easyloggingpp::Level::All'. This is skipped by default because setting
+    //!        'All' may override configuration. Be careful with this.
+    //!
+    void set(unsigned int level_, unsigned int configurationType_, const std::string& value_, bool skipLEVEL_ALL = false) {
         if (value_ == "") return; // ignore empty values
         if ((configurationType_ == ConfigurationType::PerformanceTracking && level_ != Level::All) ||
                 (configurationType_ == ConfigurationType::MillisecondsWidth && level_ != Level::All)) {
@@ -1355,11 +1429,19 @@ public:
             // Configuration already there, just update the value!
             conf_->setValue(value_);
         }
-        if (!skip_LEVEL_ALL_Check && level_ == Level::All) {
+        if (!skipLEVEL_ALL && level_ == Level::All) {
             setAll(configurationType_, value_, true);
         }
     }
 
+    //!
+    //! Parse configuration from file.
+    //! \param configurationFile_
+    //! \param base_Configurations to base new configuration repository off. This value is used when you want to use
+    //!        existing Configurations to base all the values and then set rest of configuration via configuration file.
+    //! \return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+    //!         do not proceed without successful parse.
+    //!
     bool parseFromFile(const std::string& configurationFile_, Configurations* base_ = NULL) {
         setFromBase(base_);
         std::ifstream fileStream_(configurationFile_.c_str(), std::ifstream::in);
@@ -1376,12 +1458,19 @@ public:
         return parsedSuccessfully_;
     }
 
+    //!
+    //! Parse configurations from configuration string. This configuration string has same syntax as configuration file contents. Make
+    //! sure all the necessary new line characters are provided.
+    //! \param configurationsString
+    //! \return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+    //!         do not proceed without successful parse.
+    //!
     bool parseFromText(const std::string& configurationsString) {
         bool parsedSuccessfully_ = false;
         std::string line = std::string();
         unsigned int currLevel = 0;
         std::vector<std::string> lines;
-        ELPP_StringUtils::split(configurationsString, '\n', lines);
+        internal::utilities::StringUtils::split(configurationsString, '\n', lines);
         for (std::size_t i = 0; i < lines.size(); ++i) {
             line = lines.at(i);
             parsedSuccessfully_ = Parser::parseLine(line, currLevel, this);
@@ -1391,6 +1480,11 @@ public:
         return parsedSuccessfully_;
     }
 
+    //!
+    //! Sets configurations to default configurations set by easylogging++.
+    //! NOTE: This has nothing to do with Loggers::setDefaultConfigurations - thats completely different thing. This is
+    //! library's own default format.
+    //!
     void setToDefault(void) {
         setAll(ConfigurationType::Enabled, "true");
 #if _ELPP_OS_UNIX
@@ -1417,6 +1511,14 @@ public:
         set(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %log");
     }
 
+    //!
+    //! Sets configuration for all levels.
+    //! Remember, it is not recommended to set skip_ELPPALL_Check to false unless you know exactly what you are doing
+    //! \param configurationType_
+    //! \param value_
+    //! \param skipLEVEL_ALL Determines whether to skip 'easyloggingpp::Level::All'. This is skipped by default because setting
+    //!        'All' may override configuration. Be careful with this.
+    //!
     inline void setAll(unsigned int configurationType_, const std::string& value_, bool skipLEVEL_ALL = false) {
         if (!skipLEVEL_ALL) {
             set(Level::All, configurationType_, value_);
@@ -1426,14 +1528,29 @@ public:
                             );
     }
 
+    //!
+    //! Clears the repository.
+    //! All the configurations are maintained on heap for faster access so if you are sure you will not use this
+    //! repository and you have configured all the loggers against this or you have used this configuration for all the
+    //! purposes you need it for, you may retain memory by using this method. If you do not do this, internal memory management
+    //! does it itself at the end of application execution.
+    //!
     inline void clear(void) {
         unregisterAll();
     }
 
+    //!
+    //! \return Returns configuration file used in parsing this configurations. If this repository was set manually or by text
+    //!         this returns empty string.
+    //!
     std::string configurationFile(void) const {
         return configurationFile_;
     }
 
+    //!
+    //! Parser used internally to parse configurations from file or text. You should not need this unless you are working on
+    //! some tool for EasyLogging++
+    //!
     class Parser : private internal::StaticClass {
     public:
         static void ignoreComments(std::string& line) {
@@ -1452,7 +1569,7 @@ public:
         }
 
         static inline bool isLevel(const std::string& line) {
-            return ELPP_StringUtils::startsWith(line, "*");
+            return internal::utilities::StringUtils::startsWith(line, "*");
         }
 
         static inline bool isConfig(const std::string& line) {
@@ -1464,7 +1581,7 @@ public:
         }
 
         static inline bool isComment(const std::string& line) {
-            return ELPP_StringUtils::startsWith(line, "//");
+            return internal::utilities::StringUtils::startsWith(line, "//");
         }
 
         static bool parseLine(std::string& line, unsigned int& currLevel, Configurations* conf) {
@@ -1472,7 +1589,7 @@ public:
             unsigned int currConfig = 0;
             std::string currConfigStr = std::string();
             std::string currValue = std::string();
-            line = ELPP_StringUtils::trim(line);
+            line = internal::utilities::StringUtils::trim(line);
             if (isComment(line)) return true;
             ignoreComments(line);
             if (line == "") {
@@ -1480,23 +1597,23 @@ public:
                 return true;
             }
             if (isLevel(line)) {
-                currLevelStr = ELPP_StringUtils::stripAllWhiteSpaces(line);
+                currLevelStr = internal::utilities::StringUtils::stripAllWhiteSpaces(line);
                 if (currLevelStr.size() <= 2) {
                     return true;
                 }
                 currLevelStr = currLevelStr.substr(1, currLevelStr.size() - 2);
-                ELPP_StringUtils::tolower(currLevelStr);
+                internal::utilities::StringUtils::tolower(currLevelStr);
                 currLevel = Level::convertFromString(currLevelStr);
                 return true;
             }
             if (isConfig(line)) {
                 std::size_t assignment = line.find('=');
                 currConfigStr = line.substr(0, assignment);
-                currConfigStr = ELPP_StringUtils::stripAllWhiteSpaces(currConfigStr);
-                ELPP_StringUtils::tolower(currConfigStr);
+                currConfigStr = internal::utilities::StringUtils::stripAllWhiteSpaces(currConfigStr);
+                internal::utilities::StringUtils::tolower(currConfigStr);
                 currConfig = ConfigurationType::convertFromString(currConfigStr);
                 currValue = line.substr(assignment + 1);
-                currValue = ELPP_StringUtils::trim(currValue);
+                currValue = internal::utilities::StringUtils::trim(currValue);
                 std::size_t quotesStart = currValue.find("\"", 0);
                 std::size_t quotesEnd = std::string::npos;
                 if (quotesStart != std::string::npos) {
@@ -1539,19 +1656,27 @@ namespace internal {
 class RegisteredLoggers; // fwd declaration
 class Writer;  // fwd declaration
 
+//!
+//! Configuration map used internally for faster access of configuration while executing.
+//!
 template <typename T>
 class ConfigurationMap {
 public:
+    typedef typename std::pair<unsigned int, T> Entry;
+
     ConfigurationMap(void) {
-        init();
+        table = new Entry*[Level::kMaxValid + 1];
+        for (unsigned int i = 0; i < (Level::kMaxValid + 1); ++i) {
+            table[i] = NULL;
+        }
+        count = 0;
     }
 
-    void setDefault(const T& default_) {
-        this->default_ = default_;
-    }
-
-    const T& get(unsigned int level_) {
-        if (table[level_] != NULL) {
+    const T& get(unsigned int level_, bool forceGetLevel = false) {
+        if (forceGetLevel || table[level_] != NULL) {
+            if (table[level_] == NULL) {
+                return default_;
+            }
             return table[level_]->second;
         } else if (table[Level::All] != NULL) {
             return table[Level::All]->second;
@@ -1560,57 +1685,56 @@ public:
     }
 
     void set(unsigned int level_, const T& value) {
-        if (table[level_] != NULL) {
-            internal::utilities::safeDelete(table[level_], false);
-            --count;
-        }
-        table[level_] = new std::pair<unsigned int, T>(level_, value);
+        // Unset any existing value for this level
+        unset(level_);
+        table[level_] = new Entry(level_, value);
         ++count;
     }
 
     void unset(unsigned int level_) {
         if (table[level_] != NULL) {
-            internal::utilities::safeDelete(table[level_], false);
-            --count;
+            internal::utilities::safeDelete(table[level_]);
+            if (count > 0)
+                --count;
         }
     }
 
-    bool exist(unsigned int level_) {
+    inline bool exist(unsigned int level_) const {
        return table[level_] != NULL;
     }
 
-    bool exist(unsigned int level_, const T& value) {
-       return get(level_) == value;
+    inline bool exist(unsigned int level_, const T& value) {
+       return get(level_, true) == value;
     }
 
     void clear(void) {
-        ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
-                            internal::utilities::safeDelete(table[i], true);
-                            );
+        for (unsigned int i = 0; i < (Level::kMaxValid + 1); ++i) {
+            internal::utilities::safeDelete(table[i]);
+        }
         delete[] table;
+        count = 0;
     }
 
     virtual ~ConfigurationMap(void) {
         clear();
     }
 
-    std::size_t size() {
+    inline void setDefault(const T& default_) {
+        this->default_ = default_;
+    }
+
+    inline std::size_t size(void) const {
         return count;
     }
-
 private:
-    std::pair<unsigned int, T>** table;
+    Entry** table;
     std::size_t count;
     T default_;
-    void init(void) {
-        table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
-        for (unsigned int i = 0; i <= Level::kMaxValid; i++) {
-            table[i] = NULL;
-        }
-        count = 0;
-    }
 };
 
+//!
+//! Configurations used internally that defines data type of each configuration from easyloggingpp::ConfigurationType
+//!
 class TypedConfigurations {
 public:
     TypedConfigurations(const Configurations& configurations, internal::Constants* constants_) {
@@ -1639,18 +1763,18 @@ public:
         return configurations_;
     }
 private:
-    ConfigurationMap<bool> enabledMap_;
-    ConfigurationMap<bool> toFileMap_;
-    ConfigurationMap<std::string> filenameMap_;
-    ConfigurationMap<bool> toStandardOutputMap_;
-    ConfigurationMap<std::string> logFormatMap_;
-    ConfigurationMap<std::string> dateFormatMap_;
-    ConfigurationMap<std::string> dateFormatSpecifierMap_;
-    ConfigurationMap<int> millisecondsWidthMap_;
-    ConfigurationMap<bool> performanceTrackingMap_;
-    ConfigurationMap<std::fstream*> fileStreamMap_;
-    ConfigurationMap<unsigned int> formatFlagMap_;
-    ConfigurationMap<std::size_t> rollOutSizeMap_;
+    internal::ConfigurationMap<bool> enabledMap_;
+    internal::ConfigurationMap<bool> toFileMap_;
+    internal::ConfigurationMap<std::string> filenameMap_;
+    internal::ConfigurationMap<bool> toStandardOutputMap_;
+    internal::ConfigurationMap<std::string> logFormatMap_;
+    internal::ConfigurationMap<std::string> dateFormatMap_;
+    internal::ConfigurationMap<std::string> dateFormatSpecifierMap_;
+    internal::ConfigurationMap<int> millisecondsWidthMap_;
+    internal::ConfigurationMap<bool> performanceTrackingMap_;
+    internal::ConfigurationMap<std::fstream*> fileStreamMap_;
+    internal::ConfigurationMap<unsigned int> formatFlagMap_;
+    internal::ConfigurationMap<std::size_t> rollOutSizeMap_;
     internal::Constants* constants_;
     Configurations configurations_;
 
@@ -1827,36 +1951,36 @@ private:
         std::string origFormatCopy = originalFormat;
         switch (level_) {
         case Level::Debug:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_DEBUG_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_DEBUG_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Info:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_INFO_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_INFO_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Warning:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_WARNING_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_WARNING_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Error:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_ERROR_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_ERROR_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Fatal:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_FATAL_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_FATAL_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Verbose:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_VERBOSE_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_VERBOSE_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::QA:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_QA_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_QA_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         case Level::Trace:
-            utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
-                                                         constants_->LOG_TRACE_LEVEL_VALUE, origFormatCopy, constants_);
+            internal::utilities::LogManipulator::updateFormatValue(constants_->LEVEL_FORMAT_SPECIFIER,
+                                                                   constants_->LOG_TRACE_LEVEL_VALUE, origFormatCopy, constants_);
             break;
         }
         setValue(level_, origFormatCopy + "\n", logFormatMap_);
@@ -1871,7 +1995,7 @@ private:
     // This is different since we need unique values
     void insertFilename(unsigned int level_, const std::string& fname_, bool forceNew = false) {
         std::string fnameFull = fname_;
-        if (utilities::StringUtils::endsWith(fnameFull, constants_->PATH_SLASH)) {
+        if (internal::utilities::StringUtils::endsWith(fnameFull, constants_->PATH_SLASH)) {
             fnameFull.append(constants_->DEFAULT_LOG_FILENAME);
         }
         std::string path_ = internal::utilities::OSUtils::getPathFromFilename(fnameFull, constants_);
@@ -1895,7 +2019,7 @@ private:
         filenameMap_.set(level_, fnameFull);
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
-        std::fstream *fs = fileStreamMap_.get(level_);
+        std::fstream *fs = fileStreamMap_.get(level_, true);
         internal::utilities::safeDelete(fs);
         fileStreamMap_.unset(level_);
         fs = newFileStream(fnameFull, forceNew);
@@ -1905,7 +2029,7 @@ private:
     }
 
     template <typename T>
-    void setValue(unsigned int level_, const T& value_, ConfigurationMap<T>& map_, bool skipLEVEL_ALL = false) {
+    void setValue(unsigned int level_, const T& value_, internal::ConfigurationMap<T>& map_, bool skipLEVEL_ALL = false) {
         if (map_.size() == 0 && !skipLEVEL_ALL) {
             map_.set(Level::All, value_);
             return;
@@ -1948,7 +2072,7 @@ private:
 
     unsigned long getULong(const std::string& confValue_) {
         bool valid = true;
-        std::string trimmedVal = utilities::StringUtils::trim(confValue_);
+        std::string trimmedVal = internal::utilities::StringUtils::trim(confValue_);
         if (trimmedVal.size() == 0) {
             valid = false;
             __EASYLOGGINGPP_SUPPRESS_UNSED(valid);
@@ -1970,7 +2094,7 @@ private:
     }
 
     inline bool getBool(const std::string& confValue_) {
-        std::string trimmedVal = utilities::StringUtils::trim(confValue_);
+        std::string trimmedVal = internal::utilities::StringUtils::trim(confValue_);
         return (trimmedVal == "1" || trimmedVal == "true" || trimmedVal == "TRUE");
     }
 
@@ -2005,7 +2129,7 @@ private:
     }
 
     template <typename T>
-    inline unsigned int findValidLevel(ConfigurationMap<T>& map_, unsigned int refLevel_) {
+    inline unsigned int findValidLevel(internal::ConfigurationMap<T>& map_, unsigned int refLevel_) {
         return map_.exist(refLevel_) ? refLevel_ : static_cast<unsigned int>(Level::All);
     }
 
@@ -2015,8 +2139,18 @@ private:
     }
 };
 } // namespace internal
+
+//!
+//! Represents single logger used to write log.
+//!
 class Logger {
 public:
+    //!
+    //! Minimal constructor to set logger ID and constants. You should not use this constructor manually, instead use
+    //! easyloggingpp::Loggers::getLogger
+    //! \param uniqueIdentifier_ Logger ID that you will require to get logger from logger repository
+    //! \param constants_ Use <code>easyloggingpp::internal::registeredLoggers->constants()</code>
+    //!
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_) :
             id_(uniqueIdentifier_),
             constants_(constants_),
@@ -2029,6 +2163,12 @@ public:
         defaultConfs.clear();
     }
 
+    //!
+    //! Full constructor to set logger ID, constants and configuration.
+    //! \param uniqueIdentifier_ Logger ID that you will require to get logger from logger repository
+    //! \param constants_ Use <code>easyloggingpp::internal::registeredLoggers->constants()</code>
+    //! \param configurations Configurations to set logger against
+    //!
     Logger(const std::string& uniqueIdentifier_, internal::Constants* constants_, const Configurations& configurations) :
             id_(uniqueIdentifier_),
             constants_(constants_),
@@ -2042,10 +2182,17 @@ public:
         internal::utilities::safeDelete(stream_);
     }
 
+    //!
+    //! \return Logger ID
+    //!
     inline std::string id(void) const {
         return id_;
     }
 
+    //!
+    //! Configures logger against specified configurations
+    //! \param configurations_
+    //!
     void configure(const Configurations& configurations_) {
 #if _ELPP_ENABLE_MUTEX
         internal::threading::ScopedLock slock_(mutex_);
@@ -2064,27 +2211,46 @@ public:
         configured_ = true;
     }
 
+    //!
+    //! Reconfigures logger
+    //!
     inline void reconfigure(void) {
         configure(this->userConfigurations_);
     }
 
+    //!
+    //! \return Application name for this logger
+    //!
     inline std::string applicationName(void) const {
         return applicationName_;
     }
 
+
+    //!
+    //! Application name can vary from logger to logger. For example for a library application name may be different.
+    //! This is whats used later when you use '%app' in log format
+    //!
     inline void setApplicationName(const std::string& applicationName_) {
         this->applicationName_ = applicationName_;
     }
 
+    //!
+    //! \return Configurations that this logger is set against
+    //!
     inline Configurations& configurations(void) {
         return userConfigurations_;
     }
 
+    //!
+    //! \return Whether or not logger is configured.
+    //!
     inline bool configured(void) const {
         return configured_;
     }
 
-
+    //!
+    //! Predicate used in logger repository to find logger. This is used internally. You should not use it.
+    //!
     class Predicate {
     public:
         explicit Predicate(const std::string& id_) :
@@ -2125,7 +2291,9 @@ private:
 };
 
 namespace internal {
-
+//!
+//! Internal log counter used for interval logging
+//!
 class LogCounter : private internal::NoCopy {
 public:
     explicit LogCounter(internal::Constants* constants_) :
@@ -2195,7 +2363,10 @@ private:
     internal::Constants* constants_;
 }; // class LogCounter
 
-class RegisteredCounters : public Registry<LogCounter, LogCounter::Predicate>  {
+//!
+//! Internal LogCounter repository
+//!
+class RegisteredCounters : public Registry<internal::LogCounter, internal::LogCounter::Predicate>  {
 public:
     bool validate(const char* file_, unsigned long int line_, std::size_t n_, internal::Constants* constants_) {
 #if _ELPP_ENABLE_MUTEX
@@ -2203,9 +2374,9 @@ public:
         __EASYLOGGINGPP_SUPPRESS_UNSED(slock_);
 #endif // _ELPP_ENABLE_MUTEX
         bool result_ = false;
-        LogCounter* counter_ = get(file_, line_);
+        internal::LogCounter* counter_ = get(file_, line_);
         if (counter_ == NULL) {
-            registerNew(counter_ = new LogCounter(file_, line_, constants_));
+            registerNew(counter_ = new internal::LogCounter(file_, line_, constants_));
         }
         if (n_ >= 1 && counter_->position() != 0 && counter_->position() % n_ == 0) {
             result_ = true;
@@ -2217,6 +2388,9 @@ private:
     internal::threading::Mutex mutex_;
 }; // class RegisteredCounters
 
+//!
+//! Internal logger repository. You should not access functionalities directly, you should use easyloggingpp::Loggers instead
+//!
 class RegisteredLoggers : public internal::Registry<Logger, Logger::Predicate> {
 public:
     RegisteredLoggers(void) :
@@ -2242,15 +2416,15 @@ public:
         internal::utilities::safeDelete(counters_);
     }
 
-    internal::Constants* constants(void) const {
+    inline internal::Constants* constants(void) const {
         return constants_;
     }
 
-    RegisteredCounters* counters(void) {
+    inline RegisteredCounters* counters(void) {
         return counters_;
     }
 
-    bool validateCounter(const char* file_, unsigned long int line_, std::size_t n_) {
+    inline bool validateCounter(const char* file_, unsigned long int line_, std::size_t n_) {
         return counters_->validate(file_, line_, n_, constants_);
     }
 private:
@@ -2258,7 +2432,7 @@ private:
     std::string username_;
     std::string hostname_;
     internal::threading::Mutex mutex_;
-    RegisteredCounters* counters_;
+    internal::RegisteredCounters* counters_;
     Configurations defaultConfigurations_;
 
     friend class Writer;
@@ -2274,7 +2448,7 @@ private:
 
     inline void setDefaultConfigurations(const Configurations& configurations) {
         defaultConfigurations_.setFromBase(const_cast<Configurations*>(&configurations));
-    } 
+    }
 
     Logger* get(const std::string& id_, bool forceCreation_ = true) {
 #if _ELPP_ENABLE_MUTEX
@@ -2332,7 +2506,7 @@ private:
     }
 };
 
-extern internal::ScopedPointer<RegisteredLoggers> registeredLoggers;
+extern internal::ScopedPointer<internal::RegisteredLoggers> registeredLoggers;
 #if defined(_ELPP_STL_LOGGING)
 namespace workarounds {
 // There is workaround needed to loop through some stl containers. In order to do that, we need iterable containers
@@ -2604,22 +2778,22 @@ public:
     template <typename T, typename Container>
     inline Writer& operator<<(const std::queue<T, Container>& queue_) {
         if (!proceed_) { return *this; }
-        workarounds::IterableQueue<T, Container> iterableQueue_ =
-                static_cast<workarounds::IterableQueue<T, Container> >(queue_);
+        internal::workarounds::IterableQueue<T, Container> iterableQueue_ =
+                static_cast<internal::workarounds::IterableQueue<T, Container> >(queue_);
         return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
     }
     template <typename T, typename Container>
     inline Writer& operator<<(const std::stack<T, Container>& stack_) {
         if (!proceed_) { return *this; }
-        workarounds::IterableStack<T, Container> iterableStack_ =
-                static_cast<workarounds::IterableStack<T, Container> >(stack_);
+        internal::workarounds::IterableStack<T, Container> iterableStack_ =
+                static_cast<internal::workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
     }
     template <typename T, typename Container, typename Comparator>
     inline Writer& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
         if (!proceed_) { return *this; }
-        workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
-                static_cast<workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
+        internal::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
+                static_cast<internal::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
     }
     template <typename T, typename Comparator, typename Container>
@@ -2834,7 +3008,7 @@ private:
     }
 
     void buildAndWriteLine(void) {
-        RegisteredLoggers* rl_ = registeredLoggers.pointer();
+        internal::RegisteredLoggers* rl_ = registeredLoggers.pointer();
         TypedConfigurations* conf_ = logger_->typedConfigurations_;
         unsigned int f_ = conf_->formatFlag(severity_); // format spec
         currLine_ = conf_->logFormat(severity_);
@@ -2863,7 +3037,7 @@ private:
         // Date/Time
         if ((f_ & constants_->kDateOnly) || (f_ & constants_->kTimeOnly) || (f_ & constants_->kDateTime)) {
             v_ = internal::utilities::DateUtils::getDateTime(dateFormat,
-                                                                 f_, constants_, conf_->millisecondsWidth(Level::All));
+                                                             f_, constants_, conf_->millisecondsWidth(Level::All));
             fs_ = conf_->dateFormatSpecifier(severity_);
             internal::utilities::LogManipulator::updateFormatValue(fs_, v_, currLine_, constants_);
         }
@@ -2978,10 +3152,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.75"); }
+    static inline const std::string version(void) { return std::string("8.85"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-06-2013 1832hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2157hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3020,29 +3194,52 @@ public:
     }
 }; // class VersionInfo
 
-//
-// A static helper class for users of library. This class contains functions related to register
-// and configure logger/s
-//
+//!
+//! \brief Helper class to manage loggers and configurations
+//!
+//! A static helper class for users of library. This class contains functions related to register
+//! and configure logger/s
+//!
 class Loggers : private internal::StaticClass {
 public:
+
+    //!
+    //! Get existing logger, if logger does not exist a newly created logger is returned
+    //! \param identifier_ A unique ID for logger
+    //! \return Pointer to easyloggingpp::Logger from logger repository
+    //!
     static inline Logger* getLogger(const std::string& identifier_) {
         return internal::registeredLoggers->get(identifier_);
     }
 
+    //!
+    //! Reconfigures logger with easyloggingpp::Configurations
+    //! \param logger_ Pointer to Logger to configure. You get use getLogger() to get pointer from logger repository
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //! \return Updated pointer to Logger
+    //!
     static inline Logger* reconfigureLogger(Logger* logger_, const Configurations& configurations_) {
         if (!logger_) return NULL;
         logger_->configure(configurations_);
         return logger_;
     }
 
+    //!
+    //! Reconfigures logger with easyloggingpp::Configurations
+    //! \param identifier_ Logger ID
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //! \return Updated pointer to Logger
+    //!
     static inline Logger* reconfigureLogger(const std::string& identifier_, Configurations& configurations_) {
         Logger* logger_ = Loggers::getLogger(identifier_);
         Loggers::reconfigureLogger(logger_, configurations_);
         return logger_;
     }
 
-
+    //!
+    //! Reconfigures all loggers available in logger repository
+    //! \param configurations_ easyloggingpp::Configurations to configure logger against
+    //!
     static inline void reconfigureAllLoggers(Configurations& configurations_) {
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
@@ -3050,6 +3247,12 @@ public:
         }
     }
 
+    //!
+    //! Reconfigures all loggers for single configuration.
+    //! \param configurationType_ Configuration type to update. Use easyloggingpp::ConfigurationType to prevent confusion
+    //! \param value_ Value to set. Values have to be std::string; For boolean values use "true", "false", for any integral values
+    //!        use them in quotes. They will be parsed when configuring
+    //!
     static inline void reconfigureAllLoggers(unsigned int configurationType_, const std::string& value_) {
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
             Logger* l = internal::registeredLoggers->at(i);
@@ -3058,6 +3261,12 @@ public:
         }
     }
 
+    //!
+    //! Sets default configurations. This configuration is used for future loggers.
+    //! \param configurations
+    //! \param configureExistingLoggers If true, all loggers are updated against provided configuration otherwise only future loggers
+    //!        will be updated and all the existing loggers will use configurations that have been set previously.
+    //!
     static inline void setDefaultConfigurations(Configurations& configurations, bool configureExistingLoggers = false) {
         internal::registeredLoggers->setDefaultConfigurations(configurations);
         if (configureExistingLoggers) {
@@ -3065,49 +3274,91 @@ public:
         }
     }
 
+    //!
+    //! Sets application arguments and uses them where needed. Example use is when application is run with '--v=X' or '-v', verbose logging
+    //! turns on
+    //! \param argc Argument count
+    //! \param argv Argument value array pointer
+    //!
     static inline void setApplicationArguments(int argc, char** argv) {
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
+    //!
+    //! Sets application arguments and uses them where needed. Example use is when application is run with '--v=X' or '-v', verbose logging
+    //! turns on
+    //! \param argc
+    //! \param argv
+    //!
     static inline void setApplicationArguments(int argc, const char** argv) {
         internal::registeredLoggers->setApplicationArguments(argc, argv);
     }
 
+    //!
+    //! Disables all loggers
+    //!
     static inline void disableAll(void) {
         reconfigureAllLoggers(ConfigurationType::Enabled, "false");
     }
 
+    //!
+    //! Enable all loggers
+    //!
     static inline void enableAll(void) {
         reconfigureAllLoggers(ConfigurationType::Enabled, "true");
     }
 
+    //!
+    //! Reconfigure all loggers to write to single log file
+    //! \param logFilename_ Full path to log file
+    //!
     static inline void setFilename(const std::string& logFilename_) {
         reconfigureAllLoggers(ConfigurationType::Filename, logFilename_);
     }
 
+    //!
+    //! Reconfigure specified logger to write to specified log file
+    //! \param logger_ Pointer to logger. You may use Loggers::get(id) to get pointer
+    //! \param logFilename_ Full path to log file
+    //!
     static inline void setFilename(Logger* logger_, const std::string& logFilename_) {
         if (!logger_) return;
         logger_->configurations().setAll(ConfigurationType::Filename, logFilename_);
         logger_->reconfigure();
     }
 
-
+    //!
+    //! Determines whether or not performance tracking is enabled
+    //! \return True if enabled, false otherwise
+    //!
     static inline bool performanceTrackingEnabled(void) {
         return performanceLogger()->typedConfigurations_->performanceTracking();
     }
 
+    //!
+    //! Disables performance tracking.
+    //! Performance tracking is logged using 'performance' logger.
+    //!
     static inline void disablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
         l->configurations().setAll(ConfigurationType::PerformanceTracking, "false");
         l->reconfigure();
     }
 
+    //!
+    //! Enable performance tracking
+    //! Performance tracking is logged using 'performance' logger.
+    //!
     static inline void enablePerformanceTracking(void) {
         Logger* l = Loggers::performanceLogger();
         l->configurations().setAll(ConfigurationType::PerformanceTracking, "true");
         l->reconfigure();
     }
 
+    //!
+    //! Iterates through logger repository and puts IDs into listOfIds
+    //! \param listOfIds (Passed by reference) Vector to fill up
+    //!
     static inline void getAllLogIdentifiers(std::vector<std::string>& listOfIds) {
         listOfIds.clear();
         for (std::size_t i = 0; i < internal::registeredLoggers->count(); ++i) {
@@ -3115,22 +3366,37 @@ public:
         }
     }
 
+    //!
+    //! \return Returns one of default loggers 'trivial' logger
+    //!
     static inline Logger* trivialLogger(void) {
         return Loggers::getLogger("trivial");
     }
 
+    //!
+    //! \return Returns one of default loggers 'business' logger
+    //!
     static inline Logger* businessLogger(void) {
         return Loggers::getLogger("business");
     }
 
+    //!
+    //! \return Returns one of default loggers 'security' logger
+    //!
     static inline Logger* securityLogger(void) {
         return Loggers::getLogger("security");
     }
 
+    //!
+    //! \return Returns one of default loggers 'performance' logger
+    //!
     static inline Logger* performanceLogger(void) {
         return Loggers::getLogger("performance");
     }
 
+    //!
+    //! Static class that contains static helper functions used to read configurations
+    //!
     class ConfigurationsReader : private internal::StaticClass {
     public:
         static inline bool enabled(Logger* logger_, unsigned int level_ = Level::All) {
@@ -3221,10 +3487,10 @@ public:
 private:
     internal::threading::Mutex mutex_;
 };
-
+//
+// Helping Macros
 //
 // Performance tracking macros
-//
 #if ((!defined(_DISABLE_PERFORMANCE_TRACKING)) || (!defined(_DISABLE_INFO_LOGS)))
 #   if _ELPP_OS_UNIX
 #      define _ELPP_GET_CURR_TIME(tm) gettimeofday(tm, NULL);
@@ -3265,34 +3531,47 @@ private:
 #define _ELPP_LOG_WRITER_N(_n, _logger, _level) if (easyloggingpp::internal::registeredLoggers->validateCounter(\
     __FILE__, __LINE__, _n)) easyloggingpp::internal::Writer(_logger, easyloggingpp::internal::Aspect::Interval,\
     _level, __func__, __FILE__, __LINE__, true, 0, _n)
+#undef VLOG_IS_ON
+#define VLOG_IS_ON(verboseLevel) verboseLevel <= easyloggingpp::internal::registeredLoggers->constants()->CURRENT_VERBOSE_LEVEL
+// Undef levels to support LOG(LEVEL)
+#undef INFO
+#undef DEBUG
+#undef ERROR
+#undef FATAL
+#undef QA
+#undef TRACE
+#undef VERBOSE
 //
 // Custom loggers - macro names with levels - requires loggerId
 //
 // Undef existing
-#if defined(CINFO)
-#   undef CINFO
-#endif
-#if defined(CWARNING)
-#   undef CWARNING
-#endif
-#if defined(CDEBUG)
-#   undef CDEBUG
-#endif
-#if defined(CERROR)
-#   undef CERROR
-#endif
-#if defined(CFATAL)
-#   undef CFATAL
-#endif
-#if defined(CQA)
-#   undef CQA
-#endif
-#if defined(CTRACE)
-#   undef CTRACE
-#endif
-#if defined(CVERBOSE)
-#   undef CVERBOSE
-#endif
+#undef CINFO
+#undef CWARNING
+#undef CDEBUG
+#undef CERROR
+#undef CFATAL
+#undef ERROR
+#undef CQA
+#undef CTRACE
+#undef CVERBOSE
+#undef CINFO_IF
+#undef CWARNING_IF
+#undef CDEBUG_IF
+#undef CERROR_IF
+#undef CFATAL_IF
+#undef ERROR_IF
+#undef CQA_IF
+#undef CTRACE_IF
+#undef CVERBOSE_IF
+#undef CINFO_EVERY_N
+#undef CWARNING_EVERY_N
+#undef CDEBUG_EVERY_N
+#undef CERROR_EVERY_N
+#undef CFATAL_EVERY_N
+#undef ERROR_EVERY_N
+#undef CQA_EVERY_N
+#undef CTRACE_EVERY_N
+#undef CVERBOSE_EVERY_N
 // Normal logs
 #if _ELPP_INFO_LOG
 #   define CINFO(loggerId) _ELPP_LOG_WRITER(loggerId, easyloggingpp::Level::Info)
@@ -3424,92 +3703,80 @@ private:
 // Custom Loggers - Requires (level, loggerId)
 //
 // undef existing
-#if defined(CLOG)
-#   undef CLOG
-#endif
-#if defined(CLOG_VERBOSE)
-#   undef CLOG_VERBOSE
-#endif
-#if defined(CLOG_IF)
-#   undef CLOG_IF
-#endif
-#if defined(CLOG_VERBOSE_IF)
-#   undef CLOG_VERBOSEIF
-#endif
-#if defined(CLOG_EVERY_N)
-#   undef CLOG_EVERY_N
-#endif
-#if defined(CLOG_VERBOSE_EVERY_N)
-#   undef CLOG_VERBOSE_EVERY_N
-#endif
+#undef CLOG
+#undef CLOG_VERBOSE
+#undef CVLOG
+#undef CLOG_IF
+#undef CLOG_VERBOSE_IF
+#undef CVLOG_IF
+#undef CLOG_EVERY_N
+#undef CLOG_VERBOSE_EVERY_N
+#undef CVLOG_EVERY_N
 // Normal logs
 #define CLOG(LEVEL, loggerId) C##LEVEL(loggerId)
 #define CLOG_VERBOSE(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
+#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
 // Conditional logs
 #define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId)
 #define CLOG_VERBOSE_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
+#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
 // Interval logs
 #define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId)
 #define CLOG_VERBOSE_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
+#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
 //
-// Default Loggers macro using CLOG() and CLOG_VERBOSE() macros
+// Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
 // undef existing
-#if defined(LOG)
-#   undef LOG
-#endif
-#if defined(LOG_VERBOSE)
-#   undef LOG_VERBOSE
-#endif
-#if defined(LOG_IF)
-#   undef LOG_IF
-#endif
-#if defined(LOG_VERBOSE_IF)
-#   undef LOG_VERBOSEIF
-#endif
-#if defined(LOG_EVERY_N)
-#   undef LOG_EVERY_N
-#endif
-#if defined(LOG_VERBOSE_EVERY_N)
-#   undef LOG_VERBOSE_EVERY_N
-#endif
+#undef LOG
+#undef LOG_VERBOSE
+#undef VLOG
+#undef LOG_IF
+#undef LOG_VERBOSE_IF
+#undef VLOG_IF
+#undef LOG_EVERY_N
+#undef LOG_VERBOSE_EVERY_N
+#undef VLOG_EVERY_N
 // Normal logs
 #define LOG(LEVEL) CLOG(LEVEL, "trivial")
 #define LOG_VERBOSE(vlevel) CLOG_VERBOSE(vlevel, "trivial")
+#define VLOG(vlevel) CVLOG(vlevel, "trivial")
 // Conditional logs
 #define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, "trivial")
 #define LOG_VERBOSE_IF(condition, vlevel) CLOG_VERBOSE_IF(condition, vlevel, "trivial")
+#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, "trivial")
 // Interval logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, "trivial")
 #define LOG_VERBOSE_EVERY_N(n, vlevel) CLOG_VERBOSE_EVERY_N(n, vlevel, "trivial")
+#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, "trivial")
 //
 // Default Loggers macro using C##LEVEL("trivial")
 //
 // undef existing
-#if defined(LINFO)
-#   undef LINFO
-#endif
-#if defined(LWARNING)
-#   undef LWARNING
-#endif
-#if defined(LDEBUG)
-#   undef LDEBUG
-#endif
-#if defined(LERROR)
-#   undef LERROR
-#endif
-#if defined(LFATAL)
-#   undef LFATAL
-#endif
-#if defined(LQA)
-#   undef LQA
-#endif
-#if defined(LTRACE)
-#   undef LTRACE
-#endif
-#if defined(LVERBOSE)
-#   undef LVERBOSE
-#endif
+#undef LINFO
+#undef LWARNING
+#undef LDEBUG
+#undef LERROR
+#undef LFATAL
+#undef LQA
+#undef LTRACE
+#undef LVERBOSE
+#undef LINFO_IF
+#undef LWARNING_IF
+#undef LDEBUG_IF
+#undef LERROR_IF
+#undef LFATAL_IF
+#undef LQA_IF
+#undef LTRACE_IF
+#undef LVERBOSE_IF
+#undef LINFO_EVERY_N
+#undef LWARNING_EVERY_N
+#undef LDEBUG_EVERY_N
+#undef LERROR_EVERY_N
+#undef LFATAL_EVERY_N
+#undef LQA_EVERY_N
+#undef LTRACE_EVERY_N
+#undef LVERBOSE_EVERY_N
 // Normal logs
 #define LINFO CINFO("trivial")
 #define LWARNING CWARNING("trivial")
@@ -3541,30 +3808,30 @@ private:
 // Default Loggers macro using C##LEVEL("business")
 //
 // undef existing
-#if defined(BINFO)
-#   undef BINFO
-#endif
-#if defined(BWARNING)
-#   undef BWARNING
-#endif
-#if defined(BDEBUG)
-#   undef BDEBUG
-#endif
-#if defined(BERROR)
-#   undef BERROR
-#endif
-#if defined(BFATAL)
-#   undef BFATAL
-#endif
-#if defined(BQA)
-#   undef BQA
-#endif
-#if defined(BTRACE)
-#   undef BTRACE
-#endif
-#if defined(BVERBOSE)
-#   undef BVERBOSE
-#endif
+#undef BINFO
+#undef BWARNING
+#undef BDEBUG
+#undef BERROR
+#undef BFATAL
+#undef BQA
+#undef BTRACE
+#undef BVERBOSE
+#undef BINFO_IF
+#undef BWARNING_IF
+#undef BDEBUG_IF
+#undef BERROR_IF
+#undef BFATAL_IF
+#undef BQA_IF
+#undef BTRACE_IF
+#undef BVERBOSE_IF
+#undef BINFO_EVERY_N
+#undef BWARNING_EVERY_N
+#undef BDEBUG_EVERY_N
+#undef BERROR_EVERY_N
+#undef BFATAL_EVERY_N
+#undef BQA_EVERY_N
+#undef BTRACE_EVERY_N
+#undef BVERBOSE_EVERY_N
 // Normal logs
 #define BINFO CINFO("business")
 #define BWARNING CWARNING("business")
@@ -3596,30 +3863,30 @@ private:
 // Default Loggers macro using C##LEVEL("security")
 //
 // undef existing
-#if defined(SINFO)
-#   undef SINFO
-#endif
-#if defined(SWARNING)
-#   undef SWARNING
-#endif
-#if defined(SDEBUG)
-#   undef SDEBUG
-#endif
-#if defined(SERROR)
-#   undef SERROR
-#endif
-#if defined(SFATAL)
-#   undef SFATAL
-#endif
-#if defined(SQA)
-#   undef SQA
-#endif
-#if defined(STRACE)
-#   undef STRACE
-#endif
-#if defined(SVERBOSE)
-#   undef SVERBOSE
-#endif
+#undef SINFO
+#undef SWARNING
+#undef SDEBUG
+#undef SERROR
+#undef SFATAL
+#undef SQA
+#undef STRACE
+#undef SVERBOSE
+#undef SINFO_IF
+#undef SWARNING_IF
+#undef SDEBUG_IF
+#undef SERROR_IF
+#undef SFATAL_IF
+#undef SQA_IF
+#undef STRACE_IF
+#undef SVERBOSE_IF
+#undef SINFO_EVERY_N
+#undef SWARNING_EVERY_N
+#undef SDEBUG_EVERY_N
+#undef SERROR_EVERY_N
+#undef SFATAL_EVERY_N
+#undef SQA_EVERY_N
+#undef STRACE_EVERY_N
+#undef SVERBOSE_EVERY_N
 // Normal logs
 #define SINFO CINFO("security")
 #define SWARNING CWARNING("security")
@@ -3651,31 +3918,30 @@ private:
 // Default Loggers macro using C##LEVEL("performance")
 //
 // undef existing
-#if defined(PINFO)
-#   undef PINFO
-#endif
-#if defined(PWARNING)
-#   undef PWARNING
-#endif
-#if defined(PDEBUG)
-#   undef PDEBUG
-#endif
-#if defined(PERROR)
-#   undef PERROR
-#endif
-#if defined(PFATAL)
-#   undef PFATAL
-#endif
-#if defined(PQA)
-#   undef PQA
-#endif
-#if defined(PTRACE)
-#   undef PTRACE
-#endif
-#if defined(PVERBOSE)
-#   undef PVERBOSE
-#endif
-#undef NON_EXISTING_MACRO
+#undef PINFO
+#undef PWARNING
+#undef PDEBUG
+#undef PERROR
+#undef PFATAL
+#undef PQA
+#undef PTRACE
+#undef PVERBOSE
+#undef PINFO_IF
+#undef PWARNING_IF
+#undef PDEBUG_IF
+#undef PERROR_IF
+#undef PFATAL_IF
+#undef PQA_IF
+#undef PTRACE_IF
+#undef PVERBOSE_IF
+#undef PINFO_EVERY_N
+#undef PWARNING_EVERY_N
+#undef PDEBUG_EVERY_N
+#undef PERROR_EVERY_N
+#undef PFATAL_EVERY_N
+#undef PQA_EVERY_N
+#undef PTRACE_EVERY_N
+#undef PVERBOSE_EVERY_N
 // Normal logs
 #define PINFO CINFO("performance")
 #define PWARNING CWARNING("performance")
@@ -3709,7 +3975,6 @@ private:
 #undef _ELPP_MUTEX_LOCK_GNU_ASM
 #undef _ELPP_MUTEX_UNLOCK_GNU_ASM
 #undef _ELPP_ENABLE_MUTEX
-#undef ELPP_StringUtils
 #undef _ENABLE_EASYLOGGING
 #undef __EASYLOGGINGPP_SUPPRESS_UNSED
 #undef _ELPP_DEBUG_LOG
@@ -3720,10 +3985,10 @@ private:
 #undef _ELPP_QA_LOG
 #undef _ELPP_VERBOSE_LOG
 #undef _ELPP_TRACE_LOG
-
-#if defined(_INITIALIZE_EASYLOGGINGPP)
-#   undef _INITIALIZE_EASYLOGGINGPP
-#endif // defined(_INITIALIZE_EASYLOGGINGPP)
+#undef _INITIALIZE_EASYLOGGINGPP
+#undef _START_EASYLOGGINGPP
+#undef _ELPP_COUNTER
+#undef _ELPP_COUNTER_POSITION
 #define _INITIALIZE_EASYLOGGINGPP                                 \
     namespace easyloggingpp {                                     \
         namespace internal {                                      \
@@ -3734,6 +3999,5 @@ private:
 #define _START_EASYLOGGINGPP(argc, argv) easyloggingpp::Loggers::setApplicationArguments(argc, argv);
 #define _ELPP_COUNTER easyloggingpp::internal::registeredLoggers->counters()->get(__FILE__, __LINE__)
 #define _ELPP_COUNTER_POSITION (_ELPP_COUNTER == NULL ? 0 : _ELPP_COUNTER->position())
-
 } // easyloggingpp
 #endif // EASYLOGGINGPP_H
