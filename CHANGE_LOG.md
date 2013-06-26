@@ -111,6 +111,7 @@ Change log was not kept before version 2.1.
      - Minor bug fixes
  * 8.82: Fixed major issue with reconfiguring loggers
  * 8.83: Reset old loggers (business, security, performance)
+ * 8.85: Fixed LOG(ERROR) for some compilers (minGW)
 
 #### 7.xx
  * 7.00:

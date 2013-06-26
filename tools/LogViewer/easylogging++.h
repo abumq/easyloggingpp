@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.83                                                         //
+//   EasyLogging++ v8.85                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -3153,10 +3153,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.83"); }
+    static inline const std::string version(void) { return std::string("8.85"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2147hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2157hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
@@ -3536,6 +3536,27 @@ private:
 #   undef VLOG_IS_ON
 #endif // defined(VLOG_IS_ON)
 #define VLOG_IS_ON(verboseLevel) verboseLevel <= easyloggingpp::internal::registeredLoggers->constants()->CURRENT_VERBOSE_LEVEL
+#if defined(INFO)
+#   undef INFO
+#endif
+#if defined(DEBUG)
+#   undef DEBUG
+#endif
+#if defined(ERROR)
+#   undef ERROR
+#endif
+#if defined(FATAL)
+#   undef FATAL
+#endif
+#if defined(QA)
+#   undef QA
+#endif
+#if defined(TRACE)
+#   undef TRACE
+#endif
+#if defined(VERBOSE)
+#   undef VERBOSE
+#endif
 //
 // Custom loggers - macro names with levels - requires loggerId
 //
@@ -3554,6 +3575,9 @@ private:
 #endif
 #if defined(CFATAL)
 #   undef CFATAL
+#endif
+#if defined(ERROR)
+#   undef ERROR
 #endif
 #if defined(CQA)
 #   undef CQA
