@@ -109,6 +109,7 @@ Change log was not kept before version 2.1.
  * 8.80:
      - Documented code that is used by user
      - Minor bug fixes
+ * 8.82: Fixed major issue with reconfiguring loggers
 
 #### 7.xx
  * 7.00:

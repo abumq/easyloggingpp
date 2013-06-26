@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.80                                                         //
+//   EasyLogging++ v8.82                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -1663,16 +1663,21 @@ class Writer;  // fwd declaration
 template <typename T>
 class ConfigurationMap {
 public:
+    typedef typename std::pair<unsigned int, T> Entry;
+
     ConfigurationMap(void) {
-        init();
+        table = new Entry*[Level::kMaxValid + 1];
+        for (unsigned int i = 0; i < (Level::kMaxValid + 1); ++i) {
+            table[i] = NULL;
+        }
+        count = 0;
     }
 
-    void setDefault(const T& default_) {
-        this->default_ = default_;
-    }
-
-    const T& get(unsigned int level_) {
-        if (table[level_] != NULL) {
+    const T& get(unsigned int level_, bool forceGetLevel = false) {
+        if (forceGetLevel || table[level_] != NULL) {
+            if (table[level_] == NULL) {
+                return default_;
+            }
             return table[level_]->second;
         } else if (table[Level::All] != NULL) {
             return table[Level::All]->second;
@@ -1681,55 +1686,51 @@ public:
     }
 
     void set(unsigned int level_, const T& value) {
-        if (table[level_] != NULL) {
-            internal::utilities::safeDelete(table[level_], false);
-            --count;
-        }
-        table[level_] = new std::pair<unsigned int, T>(level_, value);
+        // Unset any existing value for this level
+        unset(level_);
+        table[level_] = new Entry(level_, value);
         ++count;
     }
 
     void unset(unsigned int level_) {
         if (table[level_] != NULL) {
-            internal::utilities::safeDelete(table[level_], false);
-            --count;
+            utilities::safeDelete(table[level_]);
+            if (count > 0)
+                --count;
         }
     }
 
-    bool exist(unsigned int level_) {
+    inline bool exist(unsigned int level_) const {
        return table[level_] != NULL;
     }
 
-    bool exist(unsigned int level_, const T& value) {
-       return get(level_) == value;
+    inline bool exist(unsigned int level_, const T& value) {
+       return get(level_, true) == value;
     }
 
     void clear(void) {
-        ELPP_FOR_EACH_LEVEL(i, Level::kMinValid,
-                            internal::utilities::safeDelete(table[i], true);
-                            );
+        for (unsigned int i = 0; i < (Level::kMaxValid + 1); ++i) {
+            utilities::safeDelete(table[i]);
+        }
         delete[] table;
+        count = 0;
     }
 
     virtual ~ConfigurationMap(void) {
         clear();
     }
 
-    std::size_t size() {
-        return count;
+    inline void setDefault(const T& default_) {
+        this->default_ = default_;
     }
 
+    inline std::size_t size(void) const {
+        return count;
+    }
 private:
-    std::pair<unsigned int, T>** table;
+    Entry** table;
     std::size_t count;
     T default_;
-    void init(void) {
-        table = new std::pair<unsigned int, T>*[Level::kMaxValid + 1];
-        for (unsigned int i = 0; i <= Level::kMaxValid; i++) {
-            table[i] = NULL;
-        }
-        count = 0;
-    }
 };
 
 //!
@@ -2019,7 +2020,7 @@ private:
         filenameMap_.set(level_, fnameFull);
         // Just before we proceed and create new file stream we check for existing one on same level,
         // if we have existing one, we first delete it to prevent memory leak.
-        std::fstream *fs = fileStreamMap_.get(level_);
+        std::fstream *fs = fileStreamMap_.get(level_, true);
         internal::utilities::safeDelete(fs);
         fileStreamMap_.unset(level_);
         fs = newFileStream(fnameFull, forceNew);
@@ -2403,12 +2404,12 @@ public:
         conf.setToDefault();
         conf.parseFromText(constants_->DEFAULT_LOGGER_CONFIGURATION);
         registerNew(new Logger("trivial", constants_, conf));
-        registerNew(new Logger("business", constants_));
-        registerNew(new Logger("security", constants_));
-        Configurations confPerformance;
-        confPerformance.setToDefault();
-        confPerformance.setAll(ConfigurationType::PerformanceTracking, "true");
-        registerNew(new Logger("performance", constants_, confPerformance));
+        //registerNew(new Logger("business", constants_));
+        //registerNew(new Logger("security", constants_));
+        //Configurations confPerformance;
+        //confPerformance.setToDefault();
+        //confPerformance.setAll(ConfigurationType::PerformanceTracking, "true");
+        //registerNew(new Logger("performance", constants_, confPerformance));
     }
 
     virtual ~RegisteredLoggers(void) {
@@ -2448,7 +2449,7 @@ private:
 
     inline void setDefaultConfigurations(const Configurations& configurations) {
         defaultConfigurations_.setFromBase(const_cast<Configurations*>(&configurations));
-    } 
+    }
 
     Logger* get(const std::string& id_, bool forceCreation_ = true) {
 #if _ELPP_ENABLE_MUTEX
@@ -3152,10 +3153,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.80"); }
+    static inline const std::string version(void) { return std::string("8.82"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-06-2013 1921hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("26-06-2013 2121hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }

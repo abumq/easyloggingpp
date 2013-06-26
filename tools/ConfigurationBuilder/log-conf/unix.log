@@ -8,6 +8,9 @@
     MILLISECONDS_WIDTH		=	3
     PERFORMANCE_TRACKING	=	false
     ROLL_OUT_SIZE               =       52428800 // Throw log file away every 50 MB
+* DEBUG:
+
+    FILENAME			=       "/tmp/log/easylogging++-config-builder-debug.log"
 // Trace logs
 * TRACE: 
     FORMAT			=	"%time %level [%loc] %log"
