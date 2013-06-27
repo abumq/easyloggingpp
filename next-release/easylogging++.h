@@ -2626,7 +2626,7 @@ public:
         constants_ = registeredLoggers->constants();
         logger_ = registeredLoggers->get(loggerId_, false);
         if (logger_ == NULL) {
-            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Logger [" << loggerId_ << "] not registered!");
+            __EASYLOGGINGPP_ASSERT(logger_ != NULL, "Logger [" << loggerId_ << "] not registered or configured yet!");
             proceed_ = false;
         }
 #if _ELPP_ENABLE_MUTEX
