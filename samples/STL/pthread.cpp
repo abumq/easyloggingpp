@@ -42,11 +42,12 @@ void *write(void* thrId){
   // Register 5 vague loggers
   for (int i = 1; i <= 5; ++i) {
      std::stringstream ss;
-     ss << "logger " << i;
+     ss << "logger" << i;
      easyloggingpp::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
      LINFO << "Registered logger " << logger;
   }
   CINFO("logger1") << "Logging using new logger";
+  CINFO("no-logger") << "THIS SHOULD HAVE ASSERT FAILURE";
 
   // Check for log counters positions
   for (int i = 1; i <= 50; ++i) {
