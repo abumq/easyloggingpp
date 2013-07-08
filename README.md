@@ -817,6 +817,8 @@ EasyLogging++ has been tested on following platforms (OS and compilers)
 
 MinGW (g++ 4.7.2)
 
+![intel] Intel C++ (icpc 13.1.3 (may also work in lower versions))
+
 *EasyLogging++ is expected to be compatible with other linux distros and other compilers, but not listed here because it is not verified. Please feel free to contribute if you successfully compile it on any platform.*
 <pre><a href="#easylogging">Goto Top</a></pre>
 #### Tips For Performance Improvement
@@ -845,3 +847,4 @@ EasyLogging++ has been tested several times a day for performances glitches. Tha
 [vcpp]: http://www.icplusplus.com/tools/easylogging/icons/vcpp.png
 [android]: http://www.icplusplus.com/tools/easylogging/icons/android.png
 [llvm]: http://www.icplusplus.com/tools/easylogging/icons/llvm.png
+[intel]: http://www.icplusplus.com/tools/easylogging/icons/intel.png
