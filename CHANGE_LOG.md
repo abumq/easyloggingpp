@@ -117,6 +117,9 @@ Change log was not kept before version 2.1.
      - Removed unnecessary macro checks while undefining macros
      - Added `#undef`s for conditional and interval level based macros
      - Updated message when logger is not configured
+ * 8.91:
+     - Fixed up issues with 64-bit platforms ASM (issue #70)
+     - Fixed issue with creating log file on new android devices (NDK)
 
 #### 7.xx
  * 7.00:

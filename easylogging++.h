@@ -2,7 +2,7 @@
 //                                                                               //
 //   easylogging++.h - Core of EasyLogging++                                     //
 //                                                                               //
-//   EasyLogging++ v8.90                                                         //
+//   EasyLogging++ v8.91                                                         //
 //   Cross platform logging made easy for C++ applications                       //
 //   Author Majid Khan <mkhan3189@gmail.com>                                     //
 //   http://www.icplusplus.com/tools/easylogging                                 //
@@ -171,7 +171,7 @@
 #define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC) && (!_ELPP_OS_WINDOWS))
 // Assembly
 #if (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) ||     \
-    (defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64)))
+    (defined(_MSC_VER) && (defined(_M_IX86)))
 #   define _ELPP_ASSEMBLY_SUPPORTED 1
 #else
 #   define _ELPP_ASSEMBLY_SUPPORTED 0
@@ -1489,7 +1489,7 @@ public:
         setAll(ConfigurationType::Enabled, "true");
 #if _ELPP_OS_UNIX
 #   if _ELPP_NDK
-        setAll(ConfigurationType::Filename, "logs/myeasylog.log");
+        setAll(ConfigurationType::Filename, "/data/local/tmp/myeasylog.txt");
 #   else
         setAll(ConfigurationType::Filename, "/tmp/logs/myeasylog.log");
 #   endif // _ELPP_NDK
@@ -3152,10 +3152,10 @@ public:
     }
 
     // Current version number
-    static inline const std::string version(void) { return std::string("8.90"); }
+    static inline const std::string version(void) { return std::string("8.91"); }
 
     // Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("27-06-2013 1622hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("12-07-2013 1243hrs"); }
 
     // Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan <mkhan3189@gmail.com>"); }
