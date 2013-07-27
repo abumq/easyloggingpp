@@ -7,6 +7,10 @@ Single header only, extremely light-weight high performance logging library for 
 
 C++ logging library that is based on single header file. Why another logging library? The strengths of EasyLogging++ are its speed and its simplicity. It is extremely light-weight, robust, fast performing, thread and type safe and consists of many built-in features. It fits to small to medium sized projects, it provides ability to write logs in your own customized format and also provide support for logging your classes, third-party libraries, STL and third-party containers etc.
 
+
+#### IMPORTANT NOTE
+This project has been moved to [dedicated github account](https://github.com/easylogging/) as of v9.0 and will be developed on this new account. This repository will not be updated anymore.
+
 <pre>
 <a href="#why-easylogging">Why EasyLogging++</a><br/>
 <a href="#getting-started">Getting Started</a>
