@@ -1,6 +1,5 @@
 #!/bin/bash
 
-## Bash script that copies easylogging++.h to samples where needed
 
 ## samples
 cp easylogging++.h samples/Qt/basic/
