@@ -1,0 +1,13 @@
+*.swp
+*.pro.user
+easyloggingpp.zip
+releases/*
+
+/samples/Qt/*-buildqt
+/samples/STL/bin/*
+/samples/Qt/build-qt*
+
+/samples/Qt/*/logs/*
+/samples/STL/logs/*
+
+/tools/build-*

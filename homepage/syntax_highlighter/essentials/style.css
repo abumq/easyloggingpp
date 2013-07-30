@@ -1,0 +1,69 @@
+
+    <style type='text/css'>
+        .Code{
+            font-family: courier new, courier;
+            color:black;
+            background-color: #F8F8F8 ;
+            border-top:1 green solid;
+            border-left:1 green solid;
+            border-right:1 green solid;
+            border-bottom:1 green solid;
+            padding: 10pt;
+        }
+        .Line{
+            color:green;
+            background-color: none;
+            font-weight:bold;
+        }
+        .Line-TD {
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none; 
+            background:lightGrey;
+            border-left:1px green solid;
+            border-right:1px green solid;
+        }
+        .Comment{
+            color:green;
+        }
+        .Keyword{
+            color:blue;
+        }
+        .Number{
+            color: purple;
+        }
+        .String{
+            color: grey;
+        }
+        .SpecialClass{
+            color:#660099;
+        }
+        .Bracetrace{
+            background:darkgreen;
+            color:white;
+        }
+        .Title{
+            background:lightgrey;
+            font-family:arial;
+            font-weight:bold;
+            width:100%;
+            border:1 green dashed;
+            color:darkgreen;
+            font-size:10pt;
+        }
+        .HighlightedLine{
+            background:lightblue;
+        }
+        span.AccessibleLineNumber{
+             background:lightgrey;
+        }
+        a.AccessibleLineNumber:link,:visited{
+              color:black;
+              text-decoration:none;
+        }
+        a.AccessibleLineNumber:hover{
+              color:darkgreen;
+        }
+</style>

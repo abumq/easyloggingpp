@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormatBuilderDialog</class>
+ <widget class="QDialog" name="FormatBuilderDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>811</width>
+    <height>371</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Format Builder</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>320</y>
+     <width>741</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>621</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGroupBox" name="grpDateTime">
+        <property name="title">
+         <string>Date/Time</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <widget class="QCheckBox" name="chkTime">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>50</y>
+           <width>90</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Time</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chkDate">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>30</y>
+           <width>90</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Date</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkLevel">
+        <property name="text">
+         <string>Severity Level</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkVerboseLevel">
+        <property name="text">
+         <string>Verbose Level</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkLoggerId">
+        <property name="text">
+         <string>Logger ID</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkThreadId">
+        <property name="text">
+         <string>Thread ID (for C++0X and C++11 only)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkApplicationName">
+        <property name="text">
+         <string>Application Name</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="chkLocation">
+        <property name="text">
+         <string>Log Location (Filename and Line number)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkFunction">
+        <property name="text">
+         <string>Function</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkUsername">
+        <property name="text">
+         <string>Username</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkHostname">
+        <property name="text">
+         <string>Hostname / Computer name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chkLogMessage">
+        <property name="text">
+         <string>Log message</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="buttonTab">
+        <property name="text">
+         <string>TAB</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLineEdit" name="txtFormat">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>270</y>
+     <width>791</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblLevel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>621</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Level: </string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lstOrder">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>50</y>
+     <width>121</width>
+     <height>211</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>30</y>
+     <width>57</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Order</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonOrderUp">
+   <property name="geometry">
+    <rect>
+     <x>761</x>
+     <y>120</y>
+     <width>50</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Up</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonOrderDown">
+   <property name="geometry">
+    <rect>
+     <x>760</x>
+     <y>150</y>
+     <width>51</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Down</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="buttonDelTab">
+   <property name="geometry">
+    <rect>
+     <x>765</x>
+     <y>180</y>
+     <width>41</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>FormatBuilderDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>FormatBuilderDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

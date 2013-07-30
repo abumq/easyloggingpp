@@ -1,0 +1,15 @@
+
+ * Blocks with color and unique name initial
+ * Board should be a pure board and move all the business logics to engine
+ * Memory leak tests
+ * Block counter by player
+ * Save / load board
+ * Prevent lines over lines
+ * Drag to create line
+ * Play over network using QSocket and QThread (re-consider about QtCore modules)
+ * Reset enables to select:
+    - Players' names
+    - Colors
+    - Board
+ * Changing color changes points / lines / blocks colors for corresponding players
+ * fix adjustPoints when frame resized

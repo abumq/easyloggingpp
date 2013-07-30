@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>726</width>
+    <height>539</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>EasyLogging++ LogViewer</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTabWidget" name="viewer">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>701</width>
+      <height>461</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="tabAnalyze">
+     <attribute name="title">
+      <string>Analyze</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="tabRaw">
+     <attribute name="title">
+      <string>Raw</string>
+     </attribute>
+     <widget class="QTextBrowser" name="txtLogs">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>671</width>
+        <height>401</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>726</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="menuSelectLogFile"/>
+    <addaction name="separator"/>
+    <addaction name="menuExit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="menuAbout"/>
+    <addaction name="menuAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QToolBar" name="toolbar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="menuSelectHeader">
+   <property name="text">
+    <string>Select &amp;Header</string>
+   </property>
+  </action>
+  <action name="menuSelectLogFile">
+   <property name="text">
+    <string>Select &amp;Log File</string>
+   </property>
+  </action>
+  <action name="menuExit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="menuAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="menuAboutQt">
+   <property name="text">
+    <string>&amp;About Qt</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
