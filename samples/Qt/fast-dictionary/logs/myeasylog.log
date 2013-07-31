@@ -1,0 +1,58 @@
+.411 INFO  [log] Still loading dictionary, this is iteration #10000
+.455 INFO  [log] Still loading dictionary, this is iteration #20000
+.481 INFO  [log] Still loading dictionary, this is iteration #30000
+.506 INFO  [log] Still loading dictionary, this is iteration #40000
+.532 INFO  [log] Still loading dictionary, this is iteration #50000
+.557 INFO  [log] Still loading dictionary, this is iteration #60000
+.582 INFO  [log] Still loading dictionary, this is iteration #70000
+.604 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [215 ms]
+.900 INFO  [log] Still loading dictionary, this is iteration #10000
+.924 INFO  [log] Still loading dictionary, this is iteration #20000
+.950 INFO  [log] Still loading dictionary, this is iteration #30000
+.975 INFO  [log] Still loading dictionary, this is iteration #40000
+.000 INFO  [log] Still loading dictionary, this is iteration #50000
+.025 INFO  [log] Still loading dictionary, this is iteration #60000
+.050 INFO  [log] Still loading dictionary, this is iteration #70000
+.071 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [194 ms]
+.899 INFO  [log] Still loading dictionary, this is iteration #10000
+.923 INFO  [log] Still loading dictionary, this is iteration #20000
+.950 INFO  [log] Still loading dictionary, this is iteration #30000
+.977 INFO  [log] Still loading dictionary, this is iteration #40000
+.003 INFO  [log] Still loading dictionary, this is iteration #50000
+.028 INFO  [log] Still loading dictionary, this is iteration #60000
+.053 INFO  [log] Still loading dictionary, this is iteration #70000
+.075 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [198 ms]
+.999 TRACE [log] [virtual ListWithSearch::~ListWithSearch()] [listwithsearch.cc:46] Cleaning memory
+.048 TRACE [log] [virtual ListWithSearch::~ListWithSearch()] [listwithsearch.cc:54] Memory cleaned from list
+.100 INFO  [log] Still loading dictionary, this is iteration #10000
+.124 INFO  [log] Still loading dictionary, this is iteration #20000
+.149 INFO  [log] Still loading dictionary, this is iteration #30000
+.173 INFO  [log] Still loading dictionary, this is iteration #40000
+.198 INFO  [log] Still loading dictionary, this is iteration #50000
+.222 INFO  [log] Still loading dictionary, this is iteration #60000
+.245 INFO  [log] Still loading dictionary, this is iteration #70000
+.268 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [190 ms]
+20/03/2013 10:55:06.081 INFO  [log] Still loading dictionary, this is iteration #10000
+20/03/2013 10:55:06.105 INFO  [log] Still loading dictionary, this is iteration #20000
+20/03/2013 10:55:06.131 INFO  [log] Still loading dictionary, this is iteration #30000
+20/03/2013 10:55:06.156 INFO  [log] Still loading dictionary, this is iteration #40000
+20/03/2013 10:55:06.181 INFO  [log] Still loading dictionary, this is iteration #50000
+20/03/2013 10:55:06.206 INFO  [log] Still loading dictionary, this is iteration #60000
+20/03/2013 10:55:06.231 INFO  [log] Still loading dictionary, this is iteration #70000
+20/03/2013 10:55:06.253 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [194 ms]
+20/03/2013 10:59:33.262 INFO  [log] Still loading dictionary, this is iteration #10000
+20/03/2013 10:59:33.286 INFO  [log] Still loading dictionary, this is iteration #20000
+20/03/2013 10:59:33.312 INFO  [log] Still loading dictionary, this is iteration #30000
+20/03/2013 10:59:33.337 INFO  [log] Still loading dictionary, this is iteration #40000
+20/03/2013 10:59:33.363 INFO  [log] Still loading dictionary, this is iteration #50000
+20/03/2013 10:59:33.388 INFO  [log] Still loading dictionary, this is iteration #60000
+20/03/2013 10:59:33.413 INFO  [log] Still loading dictionary, this is iteration #70000
+20/03/2013 10:59:33.434 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [194 ms]
+31/07/2013 09:58:01.044 INFO  [log] Still loading dictionary, this is iteration #10000
+31/07/2013 09:58:01.100 INFO  [log] Still loading dictionary, this is iteration #20000
+31/07/2013 09:58:01.124 INFO  [log] Still loading dictionary, this is iteration #30000
+31/07/2013 09:58:01.148 INFO  [log] Still loading dictionary, this is iteration #40000
+31/07/2013 09:58:01.172 INFO  [log] Still loading dictionary, this is iteration #50000
+31/07/2013 09:58:01.196 INFO  [log] Still loading dictionary, this is iteration #60000
+31/07/2013 09:58:01.220 INFO  [log] Still loading dictionary, this is iteration #70000
+31/07/2013 09:58:01.243 DEBUG [performance] [mkhan@localhost.localdomain] [void MainWindow::initializeDictionary(const QString&)] [mainwindow.cc:56] Executed [void MainWindow::initializeDictionary(const QString&)] in [222 ms]
