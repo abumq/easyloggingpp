@@ -1,59 +1,57 @@
 /**
- * This file is part of EasyLogging++ samples
- * Demonstration of multithreaded application using pthread and C++0X
+ * This file is part of Easylogging++ samples
+ * Demonstration of multithreaded application using pthread
  * 
  * Compile this program using (if using gcc-c++):
- *     g++ -o bin/multithread_test.cpp.bin multithread_test.cpp -std=c++0x -pthread
+ *     [icpc | g++] ./pthread.cpp -o bin/./pthread.cpp.bin  -D_ELPP_THREAD_SAFE -D_ELPP_STL_LOGGING -D_ELPP_QT_LOGGING -D_ELPP_STACKTRACE_ON_CRASH -std=c++0x -pthread -Wall -Wextra
  * 
- * Revision: 1.0
+ * Revision: 1.1
  * @author mkhan3189
  */
 
 #include <pthread.h>
-#include <string>
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
-
 void *write(void* thrId){
   char* threadId = (char*)thrId;
   // Following line will be logged with every thread
-  LINFO << "This standard log is written by thread #" << threadId;
+  LOG(INFO) << "This standard log is written by thread #" << threadId;
 
   // Following line will be logged with every thread only when --v=2 argument 
   // is provided, i.e, ./bin/multithread_test.cpp.bin --v=2
-  LVERBOSE(2) << "This is verbose level 2 logging from thread #" << threadId;
+  VLOG(2) << "This is verbose level 2 logging from thread #" << threadId;
 
   // Following line will be logged only once from second running thread (which every runs second into 
   // this line because of interval 2)
-  LWARNING_EVERY_N(2) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
+  LOG_EVERY_N(2, WARNING) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
 
   for (int i = 1; i <= 10; ++i) {
-     LVERBOSE_IF(true, 2) << "Verbose condition";
-     LVERBOSE_EVERY_N(2, 3) << "Verbose level 3 log every 4th time. This is at " << i << " from thread #" << threadId;
+     VLOG_IF(true, 2) << "Verbose condition";
+     VLOG_EVERY_N(2, 3) << "Verbose level 3 log every 4th time. This is at " << i << " from thread #" << threadId;
   }
 
   // Following line will be logged once with every thread because of interval 1 
-  LINFO_EVERY_N(1) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
+  LOG_EVERY_N(1, INFO) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
 
-  LINFO_IF(strcmp(threadId, "2") == 0) << "This log is only for thread 2 and is ran by thread #" << threadId;
+  LOG_IF(strcmp(threadId, "2") == 0, INFO) << "This log is only for thread 2 and is ran by thread #" << threadId;
 
   // Register 5 vague loggers
   for (int i = 1; i <= 5; ++i) {
      std::stringstream ss;
      ss << "logger" << i;
      easyloggingpp::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
-     LINFO << "Registered logger " << logger;
+     LOG(INFO) << "Registered logger " << logger;
   }
-  CINFO("logger1") << "Logging using new logger";
-  CINFO("no-logger") << "THIS SHOULD HAVE ASSERT FAILURE";
+  CLOG(INFO, "logger1") << "Logging using new logger";
+  CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET"; // << -- NOTE THIS!
 
   // Check for log counters positions
   for (int i = 1; i <= 50; ++i) {
-     LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
+     LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS;
   }
-  LINFO_EVERY_N(2) << "Counter pos: " << _ELPP_COUNTER_POSITION;
+  LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS;
   return NULL;
 }
 

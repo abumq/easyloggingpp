@@ -1,16 +1,21 @@
-#include "easylogging++.h"
-#include "configurations_unittest.h"
-#include "loggers_unittest.h"
-#include <gtest/gtest.h>
+#include "test-helpers.h"
+#include "enum-helper-tests.h"
+#include "utilities-test.h"
+#include "registry-test.h"
+#include "configurations-test.h"
+#include "global-configurations-test.h"
+#include "typed-configurations-test.h"
+#include "hit-counter-test.h"
+#include "vmodule-tests.h"
+#include "write-all-test.h"
+#include "loggers-test.h"
 
-_INITIALIZE_EASYLOGGINGPP
-
+TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");
 int main(int argc, char** argv) {
-  
-    Loggers::getLogger("testLogger"); // Register test logger
-
     testing::InitGoogleTest(&argc, argv);
-    RUN_ALL_TESTS();
+    reconfigureLoggersForTest();
 
-    return 0;
+    std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;
+
+    return ::testing::UnitTest::GetInstance()->Run();
 }

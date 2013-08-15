@@ -30,8 +30,8 @@ void vectorLogs() {
   std::vector<Vehicle> vehicleVec;
   stringVec.push_back("stringVec");
   vehicleVec.push_back(Vehicle("Honda", "Accord", 2013, "vehicleVec")); 
-  LINFO << "stringVec : " << stringVec; 
-  LINFO << "vehicleVec : " << vehicleVec; 
+  LOG(INFO) << "stringVec : " << stringVec; 
+  LOG(INFO) << "vehicleVec : " << vehicleVec; 
 }
 
 void listLogs() {
@@ -43,10 +43,10 @@ void listLogs() {
   stringPtrList.push_back(new std::string("stringPtrList"));
   vehicleList.push_back(Vehicle("Honda", "Accord", 2013, "vehicleList"));
   vehiclePtrList.push_back(new Vehicle("Honda", "Accord", 2013, "vehiclePtrList"));
-  LINFO << "stringList : " << stringList;
-  LINFO << "stringPtrList : " << stringPtrList;
-  LINFO << "vehicleList : " << vehicleList;
-  LINFO << "vehiclePtrList : " << vehiclePtrList;
+  LOG(INFO) << "stringList : " << stringList;
+  LOG(INFO) << "stringPtrList : " << stringPtrList;
+  LOG(INFO) << "vehicleList : " << vehicleList;
+  LOG(INFO) << "vehiclePtrList : " << vehiclePtrList;
   
   delete stringPtrList.at(0);
   delete vehiclePtrList.at(0);
@@ -56,29 +56,29 @@ void otherContainerLogs() {
     std::map<int, std::string> map_;
     map_.insert (std::pair<int, std::string>(1, "one"));
     map_.insert (std::pair<int, std::string>(2, "two"));
-    LINFO << "Map: " << map_;
+    LOG(INFO) << "Map: " << map_;
 
     std::queue<int> queue_;
     queue_.push(77);
     queue_.push(16);
-    LINFO << queue_;
+    LOG(INFO) << queue_;
 
     std::bitset<10> bitset_ (std::string("10110"));
-    LINFO << bitset_;
+    LOG(INFO) << bitset_;
 
     int pqueueArr_[]= { 10, 60, 50, 20 };
     std::priority_queue< int, std::vector<int>, std::greater<int> > pqueue (pqueueArr_, pqueueArr_ + 4);
-    LINFO << pqueue;
+    LOG(INFO) << pqueue;
 
     std::deque<int> mydeque_ (3,100);
     mydeque_.at(1) = 200;
 
     std::stack<int> stack_ (mydeque_);
-    LINFO << stack_;
+    LOG(INFO) << stack_;
 
     std::stack<std::string*> stackStr_;
     stackStr_.push (new std::string("test"));
-    LINFO << stackStr_;
+    LOG(INFO) << stackStr_;
     delete stackStr_.top();
 }
 

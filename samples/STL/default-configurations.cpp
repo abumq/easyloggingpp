@@ -4,12 +4,12 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-using namespace easyloggingpp;
+using namespace el;
 
 void run(void) {
     Configurations c;
-    c.setAll(ConfigurationType::Format, "[%logger] %level: %log");
-    c.setAll(ConfigurationType::Filename, "/tmp/logs/custom.log");
+    c.setGlobally(ConfigurationType::Format, "[%logger] %level: %log");
+    c.setGlobally(ConfigurationType::Filename, "/tmp/logs/custom.log");
     // Set default configuration for any future logger - existing logger will not use this configuration unless
     // either true is passed in second argument or set explicitly using Loggers::reconfigureAllLoggers(c);
     Loggers::setDefaultConfigurations(c);

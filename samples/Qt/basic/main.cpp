@@ -31,55 +31,55 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    LWARNING << "Starting Qt Logging";
+    LOG(WARNING) << "Starting Qt Logging";
 
     QVector<QString> stringList;
     stringList.push_back (QString("Test"));
     stringList.push_back (QString("Test 2"));
     int i = 0;
     while (++i != 100)
-        LINFO << stringList;
+        LOG(INFO) << stringList;
 
     QPair<QString, int> qpair_;
     qpair_.first = "test";
     qpair_.second = 2;
-    LINFO << qpair_;
+    LOG(INFO) << qpair_;
 
     QMap<QString, int> qmap_;
     qmap_.insert ("john", 100);
     qmap_.insert ("michael", 101);
-    LINFO << qmap_;
+    LOG(INFO) << qmap_;
 
     QMultiMap<QString, int> qmmap_;
     qmmap_.insert ("john", 100);
     qmmap_.insert ("michael", 101);
-    LINFO << qmmap_;
+    LOG(INFO) << qmmap_;
 
     QSet<QString> qset_;
     qset_.insert ("test");
     qset_.insert ("second");
-    LINFO << qset_;
+    LOG(INFO) << qset_;
 
     QVector<QString*> ptrList;
     ptrList.push_back (new QString("Test"));
-    LINFO << ptrList;
+    LOG(INFO) << ptrList;
     qDeleteAll(ptrList);
 
     QHash<QString, QString> qhash_;
     qhash_.insert ("john", "101fa");
     qhash_.insert ("michael", "102mf");
-    LINFO << qhash_;
+    LOG(INFO) << qhash_;
 
     QLinkedList<QString> qllist_;
     qllist_.push_back ("test");
     qllist_.push_back ("test 2");
-    LINFO << qllist_ ;
+    LOG(INFO) << qllist_ ;
 
     QStack<QString> qstack_;
     qstack_.push ("100");
     qstack_.push ("200");
     qstack_.push ("100");
-    LDEBUG << "Printing qstack " << qstack_;
+    LOG(DEBUG) << "Printing qstack " << qstack_;
     return 0;
 
 }

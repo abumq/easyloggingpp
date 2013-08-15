@@ -10,27 +10,21 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-SUB(write, (void))
-
-  LDEBUG << "This is start of logging!";
+void write(void) {
+  TIMED_FUNC(writeTimer);
+  LOG(DEBUG) << "This is start of logging!";
   for (int i = 1; i <= 1000; i++) {
-    LINFO << "This is a test number " << i;
+    LOG(INFO) << "This is a test number " << i;
   }
-  LINFO << "Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default";
+  LOG(INFO) << "Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default";
   for (int i = 1; i <= 10; i++) {
-    LDEBUG << "Some more logs [" << i << "]";
-    LINFO_EVERY_N(2) << "Every second iter [" << i << "]";
+    LOG(DEBUG) << "Some more logs [" << i << "]";
+    LOG_EVERY_N(2, INFO) << "Every second iter [" << i << "]";
   }
-  LDEBUG << "This is end of logging!";
-
-END_SUB
+  LOG(DEBUG) << "This is end of logging!";
+}
 
 int main(void) {
-  easyloggingpp::Configurations c;
-  c.setToDefault();
-  c.set(easyloggingpp::Level::All, easyloggingpp::ConfigurationType::Format, "%datetime %level [%logger] (%thread) %log");
-  c.set(easyloggingpp::Level::All, easyloggingpp::ConfigurationType::PerformanceTracking, "true");
-  easyloggingpp::Loggers::reconfigureAllLoggers(c);
   write();
   return 0;
 }

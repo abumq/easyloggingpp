@@ -1,4 +1,4 @@
-###### EasyLogging++ Samples
+###### Easylogging++ Qt Samples
 
 This sample contains:
  * Qt containers
