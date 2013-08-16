@@ -1,5 +1,0 @@
-
-Easylogging++ v8.91 RELEASE NOTES
----------------------------------
-
-Release notes are not available for this version

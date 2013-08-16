@@ -5,17 +5,17 @@
 # @author mkhan3189
 #
 # Usage:
-#        ./release.sh [repo-root] [new-version] [do-not-ask]
+#        ./release.sh [repo-root] [homepage-repo-root] [new-version] [do-not-ask]
 
 if [ "$1" = "" ];then
   echo
-  echo "Usage: $0 [repository-root] [new-version] [do-not-ask]"
+  echo "Usage: $0 [repository-root] [homepage-root] [new-version] [do-not-ask]"
   echo
   exit 1
 fi
 
-if [ -d "$1/tools/homepage" ];then
-  [ -d "$1/tools/homepage/releases/" ] || mkdir $1/tools/homepage/releases/
+if [ -f "$1/tools/release.sh" ];then
+  [ -d "$2/releases/" ] || mkdir $2/releases/
 else
   echo "Invalid repository root"
   exit 1
@@ -24,8 +24,8 @@ fi
 CURR_VERSION=$(grep 'Easylogging++ v' $1/src/easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
 CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.h)
 NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
-NEW_VERSION=$2
-DO_NOT_CONFIRM=$3
+NEW_VERSION=$3
+DO_NOT_CONFIRM=$4
 if [ "$NEW_VERSION" = "" ]; then
   echo 'Current Version  ' $CURR_VERSION
   echo '** No version provided **'
@@ -45,9 +45,9 @@ if [ "$confirm" = "y" ]; then
   sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
   sed -i "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
   sed -i "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
-  sed -i "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $1/tools/homepage/version.php
-  sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $1/tools/homepage/version.php
-  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $1/tools/homepage/version.php
+  sed -i "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
+  sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
+  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
   sed -i "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
   sed -i "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
@@ -59,8 +59,8 @@ if [ "$confirm" = "y" ]; then
   cp $1/src/easylogging++.h .
   zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h
   zip latest.zip easylogging++.h
-  mv latest.zip $1/tools/homepage/
-  mv easyloggingpp_v$NEW_VERSION.zip $1/tools/homepage/releases/
+  mv latest.zip $2/
+  mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $1/tools/homepage/release-notes-latest.txt
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $1/tools/homepage/releases/release-notes-v$NEW_VERSION.txt
   rm easylogging++.h
