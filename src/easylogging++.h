@@ -365,7 +365,7 @@ private:
 
 /// @brief Internal helper class that makes all default constructors private.
 ///
-/// @detail This prevents initializing class making it static unless an explicit constructor is declared. 
+/// @detail This prevents initializing class making it static unless an explicit constructor is declared.
 /// When using this class simply inherit it privately
 class StaticClass {
 private:
@@ -519,7 +519,7 @@ enum class ConfigurationType : unsigned short {
     PerformanceTracking = 64,
     /// @brief Specifies log file max size.
     ///
-    /// @detail If file size of corresponding log file (for corresponding level) is >= specified size, log file will be truncated 
+    /// @detail If file size of corresponding log file (for corresponding level) is >= specified size, log file will be truncated
     /// and re-initiated.
     MaxLogFileSize = 128,
     /// @brief Represents unknown configuration
@@ -638,17 +638,17 @@ namespace consts {
     static const char* kTraceLevelLogValue    =   "TRACE";
 
     // Format specifiers - These are used to define log format
-    static std::string kAppNameFormatSpecifier          =      "%app";
-    static std::string kLoggerIdFormatSpecifier         =      "%logger";
-    static std::string kThreadIdFormatSpecifier         =      "%thread";
-    static std::string kSeverityLevelFormatSpecifier    =      "%level";
-    static std::string kDateTimeFormatSpecifier         =      "%datetime";
-    static std::string kLogLocationFormatSpecifier      =      "%loc";
-    static std::string kLogFunctionFormatSpecifier      =      "%func";
-    static std::string kCurrentUserFormatSpecifier      =      "%user";
-    static std::string kCurrentHostFormatSpecifier      =      "%host";
-    static std::string kMessageFormatSpecifier          =      "%log";
-    static std::string kVerboseLevelFormatSpecifier     =      "%vlevel";
+    static const char* kAppNameFormatSpecifier          =      "%app";
+    static const char* kLoggerIdFormatSpecifier         =      "%logger";
+    static const char* kThreadIdFormatSpecifier         =      "%thread";
+    static const char* kSeverityLevelFormatSpecifier    =      "%level";
+    static const char* kDateTimeFormatSpecifier         =      "%datetime";
+    static const char* kLogLocationFormatSpecifier      =      "%loc";
+    static const char* kLogFunctionFormatSpecifier      =      "%func";
+    static const char* kCurrentUserFormatSpecifier      =      "%user";
+    static const char* kCurrentHostFormatSpecifier      =      "%host";
+    static const char* kMessageFormatSpecifier          =      "%log";
+    static const char* kVerboseLevelFormatSpecifier     =      "%vlevel";
 
     // Date/time
     static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -688,9 +688,9 @@ namespace consts {
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
 
-    static std::string kConfigurationComment                   =      "##";
-    static std::string kConfigurationLevel                     =      "*";
-    static std::string kConfigurationLoggerId                  =      "--";
+    static const char* kConfigurationComment                   =      "##";
+    static const char* kConfigurationLevel                     =      "*";
+    static const char* kConfigurationLoggerId                  =      "--";
 
     static const int kMaxTimeFormats = 6;
 
@@ -1835,7 +1835,7 @@ public:
         // i.e, removing user provided date format from original format
         // and then storing it.
         std::string formatCopy = userFormat;
-        auto conditionalAddFlag = [&](const std::string& specifier, const base::FormatFlags& flag) {
+        auto conditionalAddFlag = [&](const char* specifier, const base::FormatFlags& flag) {
             if (formatCopy.find(specifier) != std::string::npos) {
                 addFlag(flag);
             }
@@ -1897,7 +1897,7 @@ protected:
     /// @param [in,out] currFormat current format that is being used to format
     virtual void updateDateFormat(std::size_t index, std::string& currFormat) FINAL {
         if (hasFlag(base::FormatFlags::DateTime)) {
-            index += base::consts::kDateTimeFormatSpecifier.size();
+            index += strlen(base::consts::kDateTimeFormatSpecifier);
         }
         const char* ptr = currFormat.c_str() + index;
         if ((currFormat.size() > index) && (ptr[0] == '{')) {
@@ -3335,7 +3335,7 @@ public:
 /// @brief Main entry point of each logging
 class Writer : private base::NoCopy {
 public:
-    Writer(const std::string& loggerId, Level level, const char* file, unsigned long int line, 
+    Writer(const std::string& loggerId, Level level, const char* file, unsigned long int line,
                const char* func, VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel), m_proceed(true) {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);

@@ -53,6 +53,6 @@ Easylogging++ v9.00 RELEASE NOTES
 =         NOTES          =
 ==========================
 
- - If you have any confusions refer to pdf manual (easylogging.org/manual.pdf)
+ - If you have any confusions refer to reference manual (github readme)
  - If you still have confusions please feel free to email 
  - There is very less backward compatibility because of major design improvements - since now library is on better track future versions will be made backward compatible (with minimum v9.00 compatible).
