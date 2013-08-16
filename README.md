@@ -3,7 +3,7 @@
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
 
-> **Current stable version: v9.01**
+> **Current stable version: v9.02**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,7 +11,7 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.01)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.02)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
