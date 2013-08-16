@@ -62,6 +62,6 @@ if [ "$confirm" = "y" ]; then
   mv latest.zip $2/
   mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-latest.txt
-  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-v$NEW_VERSION.txt
+  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/releases/release-notes-v$NEW_VERSION.txt
   rm easylogging++.h
 fi
