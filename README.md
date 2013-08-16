@@ -880,7 +880,7 @@ But please be sure the donation money is halaal in islam in every aspect, meanin
 
 This library is designed to be compatible with as many compilers as possible. Unfortunately it was not possible for me to test it in all the C++ compilers out there, hence I will only mention the compilers that I have tested it against. Following table only shows compatibility for v9.0+, for older versions please refer to readme on corresponding release at github
 
-| *****   |  Compiler / Platform      |      Notes                                                                                                                                               |
+| *****   |         Compiler          |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 |![gcc]   | GCC 4.7+                  | Stack trace logging. Very close to support GCC 4.6 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
 |![llvm]  | Clang++ 3.1+              | Stack trace logging only with gcc compliant.                                                                                                             |
