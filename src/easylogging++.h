@@ -4576,23 +4576,23 @@ public:
 #undef CHECK_NOTNULL
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
-#define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: " << #condition << " "
-#define CHECK_EQ(a, b) LOG_IF(!(a == b), FATAL) << "Check failed: " << #a << " == " << #b << " "
-#define CHECK_NE(a, b) LOG_IF(a == b, FATAL) << "Check failed: " << #a << " != " << #b << " "
+#define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
+#define CHECK_EQ(a, b) LOG_IF(!(a == b), FATAL) << "Check failed: [" << #a << " == " << #b << "] "
+#define CHECK_NE(a, b) LOG_IF(a == b, FATAL) << "Check failed: [" << #a << " != " << #b << "] "
 template <typename T>
 static T* CheckNotNull(T* ptr, const char* name) {
-    LOG_IF(ptr == nullptr, FATAL) << "Check failed: " << name << " != nullptr";
+    LOG_IF(ptr == nullptr, FATAL) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
 #define CHECK_NOTNULL(ptr) CheckNotNull(ptr, #ptr)
 #define CHECK_STREQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL) \
-                        << "Check failed: " << #str1 << " == " << #str2 << " "
+                        << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CHECK_STRNE(str1, str2) LOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL) \
-                        << "Check failed: " << #str1 << " != " << #str2 << " "
+                        << "Check failed: [" << #str1 << " != " << #str2 << "] "
 #define CHECK_STRCASEEQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringCaseEq(str1, str2), FATAL) \
-                        << "Check failed: " << #str1 << " == " << #str2 << " "
+                        << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CHECK_STRCASENE(str1, str2) LOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL) \
-                        << "Check failed: " << #str1 << " != " << #str2 << " "
+                        << "Check failed: [" << #str1 << " != " << #str2 << "] "
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
