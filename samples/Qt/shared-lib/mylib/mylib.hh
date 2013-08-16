@@ -1,9 +1,3 @@
-// A very simple sample demonstrating an app and shared-lib usage that both uses
-// easylogging++ as their logging library.
-//
-// @since v9.01
-// @author mkhan3189
-
 #ifndef MYLIB_HH
 #define MYLIB_HH
 

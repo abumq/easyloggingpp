@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.00
+//  Easylogging++ v9.01
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -668,19 +668,19 @@ namespace consts {
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsOffset      =      1000;
     static const short kMaxVerboseLevel                        =      9;
-#if _ELPP_OS_UNIX
-#   if _ELPP_OS_ANDROID
-#      if defined(_ELPP_DEFAULT_LOG_FILE)
+#if defined(_ELPP_DEFAULT_LOG_FILE)
     static const char* kDefaultLogFile                         =      _ELPP_DEFAULT_LOG_FILE;
-#      else
+#else
+#   if _ELPP_OS_UNIX
+#      if _ELPP_OS_ANDROID
     static const char* kDefaultLogFile                         =      "/data/local/tmp/myeasylog.log";
-#      endif // defined(_ELPP_DEFAULT_LOG_FILE)
-#   else
-    static const char* kDefaultLogFile                         =      "/tmp/logs/myeasylog.log";
-#   endif // _ELPP_OS_ANDROID
-#elif _ELPP_OS_WINDOWS
-    static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
-#endif // _ELPP_OS_UNIX
+#      else
+    static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
+#      endif // _ELPP_OS_ANDROID
+#   elif _ELPP_OS_WINDOWS
+       static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
+#   endif // _ELPP_OS_UNIX
+#endif // defined(_ELPP_DEFAULT_LOG_FILE)
 
 #if _ELPP_OS_WINDOWS
     static const char* kFilePathSeperator                      =      "\\";
@@ -1261,7 +1261,7 @@ public:
         return std::string("android");
 #else
         return std::string();
-#endif // _ELPP_OS_UNIX
+#endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
     }
 
     /// @brief Gets current host name or computer name.
@@ -4279,10 +4279,10 @@ public:
     }
 
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.00"); }
+    static inline const std::string version(void) { return std::string("9.01"); }
 
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("15-08-2013 2332hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("17-08-2013 0125hrs"); }
 
     /// @brief Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan"); }
@@ -4297,11 +4297,14 @@ public:
     static inline const std::string sourceCodeLink(void) { return std::string("https://github.com/easylogging/easyloggingpp"); }
 
     /// @brief Copyright information
-    static inline const std::string copyright(void) { return std::string("Copyright 2013 Majid Khan"); }
+    static inline const std::string copyright(void) { return std::string("Copyright (c) 2013 Majid Khan"); }
 
     /// @brief Full licence
     static const std::string licence(void) {
         std::stringstream ss;
+        ss << "The MIT License (MIT)" << std::endl;
+        ss << copyright() << std::endl;
+        ss << website << std::endl;
         ss << "   Permission is hereby granted, free of charge, to any person obtaining" << std::endl;
         ss << "   a copy of this software and associated documentation files (the" << std::endl;
         ss << "   \"Software\"), to deal in the Software without restriction, including" << std::endl;

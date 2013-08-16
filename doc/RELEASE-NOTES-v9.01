@@ -2,17 +2,12 @@
 Easylogging++ v9.01 RELEASE NOTES
 ---------------------------------
 
-==========================
-=  DEPRECATED COMPONENTS =
-==========================
-
 ===========================
 =       NEW FEATURES      =
 ===========================
-
-============================
-=      DROPPED SUPPORT     =
-============================
+ 
+ - Failed check should be embedded in square brackets (issue #86)
+ - Default log file using macro `_ELPP_DEFAULT_LOG_FILE` (if available)
 
 ============================
 =       BUG FIXES          = 
@@ -24,3 +19,4 @@ Easylogging++ v9.01 RELEASE NOTES
 =         NOTES          =
 ==========================
 
+ - Default log location for *nix is in project location logs/ directory

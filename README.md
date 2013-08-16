@@ -3,7 +3,7 @@
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
 
-> **Current stable version: v9.00**
+> **Current stable version: v9.01**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,7 +11,7 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.00)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.01)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
@@ -589,7 +589,7 @@ Easylogging++ is feature-rich logging library. Apart from features already menti
 
 ### Performance Tracking
 One of the most notable features of Easylogging++ is its ability to track performance of your function or block of function. 
-Please note, this is not backward compatible as previously we had bad macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v9.00 ReadMe for older way of doing it)
+Please note, this is not backward compatible as previously we had bad macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v9.01 ReadMe for older way of doing it)
 The new way of tracking performance is much easier and reliable. All you need to do is use one of two macros from where you want to start tracking.
 * `TIMED_FUNC(obj-name)`
 * `TIMED_BLOCK(obj-name, block-name)`
