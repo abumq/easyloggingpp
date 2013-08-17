@@ -1235,7 +1235,7 @@ public:
         const char* val = getWindowsEnvironmentVariable(variableName);
 #endif // _ELPP_OS_UNIX
         if ((val == nullptr) || ((strcmp(val, "") == 0))) {
-#if _ELPP_OS_UNIX
+#if _ELPP_OS_UNIX && defined(_ELPP_FORCE_ENV_VAR_FROM_BASH)
             /// Try harder on unix-based systems
             std::string valBash = base::utils::OS::getBashOutput(alternativeBashCommand);
             if (valBash.empty()) {
@@ -1243,6 +1243,10 @@ public:
             } else {
                 return valBash;
             }
+#elif _ELPP_OS_UNIX
+            _ELPP_UNUSED(alternativeBashCommand);
+            _ELPP_UNUSED(defaultVal);
+            return std::string();
 #elif _ELPP_OS_WINDOWS
             _ELPP_UNUSED(alternativeBashCommand);
             return std::string(defaultVal);
