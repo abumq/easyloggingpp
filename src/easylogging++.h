@@ -668,6 +668,8 @@ namespace consts {
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsOffset      =      1000;
     static const short kMaxVerboseLevel                        =      9;
+    static const char* kUnknownUser                            =      "user";
+    static const char* kUnknownHost                            =      "unknown-host";
 #if defined(_ELPP_DEFAULT_LOG_FILE)
     static const char* kDefaultLogFile                         =      _ELPP_DEFAULT_LOG_FILE;
 #else
@@ -1243,13 +1245,10 @@ public:
             } else {
                 return valBash;
             }
-#elif _ELPP_OS_UNIX
+#elif _ELPP_OS_WINDOWS || _ELPP_OS_UNIX
             _ELPP_UNUSED(alternativeBashCommand);
             return std::string(defaultVal);
-#elif _ELPP_OS_WINDOWS
-            _ELPP_UNUSED(alternativeBashCommand);
-            return std::string(defaultVal);
-#endif // _ELPP_OS_WINDOWS
+#endif // _ELPP_OS_UNIX && defined(_ELPP_FORCE_ENV_VAR_FROM_BASH)
         }
         return std::string(val);
     }
@@ -1257,9 +1256,9 @@ public:
     /// @brief Gets current username.
     static inline const std::string currentUser(void) {
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        return getEnvironmentVariable("USER", "user", "whoami");
+        return getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("USERNAME", "user");
+        return getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
         return std::string("android");
 #else
@@ -1272,9 +1271,9 @@ public:
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
     static inline const std::string currentHost(void) {
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        return getEnvironmentVariable("HOSTNAME", "unknown-host", "hostname");
+        return getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("COMPUTERNAME", "unknown-host");
+        return getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
         return getDeviceName();
 #else
