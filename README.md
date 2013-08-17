@@ -892,13 +892,21 @@ This library is designed to be compatible with as many compilers as possible. Un
 
 Operating systems that have been tested. Easylogging++ should work on other major operating systems as well but since not all of them could be tested so they are not in the following list. Feel free to contact me if you have successfully compiled library on other operating systems.
 
-| *****   | Operating System       |Notes                                                                                |
+| *****   | Operating System       |   Notes                                                                             |
 |---------|------------------------|-------------------------------------------------------------------------------------|
 |![win8]  | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]  | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
 |![mac]   | Mac OSX                | Clang++ 3.1 (Tested by contributor)                                                 |
 |![sl]    | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]  | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
+|![fedora]| Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
+
+Easylogging++ has also been tested with following libraries, hence is compatible;
+
+| *****   | Library                |    Notes                                                                            |
+|---------|------------------------|-------------------------------------------------------------------------------------|
+|![qt]    | Qt                     | Tested with Qt 5 (with C++0x and C++11)                                             |
+|![boost] | Boost                  | Tested with boost 1.51                                                              |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -941,10 +949,13 @@ Icons used in this manual (in compatibility section) are solely for information 
   [ubuntu]: http://www.easylogging.org/images/icons/ubuntu.png?v=2
   [mint]: http://www.easylogging.org/images/icons/linux-mint.png?v=2
   [sl]: http://www.easylogging.org/images/icons/scientific-linux.png?v=2
+  [fedora]: http://www.easylogging.org/images/icons/fedora.png?v=3
   [mac]: http://www.easylogging.org/images/icons/mac-osx.png?v=2
   [win7]: http://www.easylogging.org/images/icons/windows7.png?v=2
   [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
-  [qt]: http://www.easylogging.org/images/icons/qt.png?v=2
+  [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
+  [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
+
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
   [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
   [vcpp]: http://www.easylogging.org/images/icons/vcpp.png?v=2
