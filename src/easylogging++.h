@@ -1245,8 +1245,7 @@ public:
             }
 #elif _ELPP_OS_UNIX
             _ELPP_UNUSED(alternativeBashCommand);
-            _ELPP_UNUSED(defaultVal);
-            return std::string();
+            return std::string(defaultVal);
 #elif _ELPP_OS_WINDOWS
             _ELPP_UNUSED(alternativeBashCommand);
             return std::string(defaultVal);
