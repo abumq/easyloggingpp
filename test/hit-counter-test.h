@@ -14,7 +14,7 @@ TEST(RegisteredHitCountersTest, Validation) {
     r.validate(__FILE__, line, 2);
 
     // Confirm size
-    EXPECT_EQ(1, r.size());
+    EXPECT_EQ(2, r.size());
 
     // Confirm hit count
     EXPECT_EQ(1, r.getCounter(__FILE__, line)->hitCounts());

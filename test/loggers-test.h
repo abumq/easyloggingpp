@@ -6,6 +6,7 @@
 
 TEST(LoggersTest, RegisterHundredThousandLoggers) {
     cleanLogFile();
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");
     TIMED_BLOCK(timer, "HundredThousandLoggersTest");
     for (unsigned int i = 1; i <= 100000; ++i) {
         std::stringstream ss;
@@ -16,6 +17,7 @@ TEST(LoggersTest, RegisterHundredThousandLoggers) {
     PERFORMANCE_CHECKPOINT_WITH_ID(timer, "100,000 loggers registered");
     CLOG(INFO, "logger84785") << "Writing using logger 'logger84785'";
     PERFORMANCE_CHECKPOINT_WITH_ID(timer, "Log written using logger84785");
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");
     // We have 4 unique log streams registered at this point!
     //       1.      /tmp/logs/el.gtest.log
     //       2.      /tmp/logs/myeasylog.log
