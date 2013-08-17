@@ -696,7 +696,7 @@ namespace consts {
 
     const struct {
         double value;
-        std::string unit;
+        const char* unit;
     } kTimeFormats[kMaxTimeFormats] = {
        { 1000.0f, "mis" },
        { 1000.0f, "ms" },
@@ -706,14 +706,14 @@ namespace consts {
        { 7.0f, "days" }
     };
 
-    static const int kTotalSignals = 5;
+    static const int kMaxCrashSignals = 5;
 
     const struct {
         int numb;
         const char* name;
         const char* brief;
         const char* detail;
-    } kCrashSignals[kTotalSignals] = {
+    } kCrashSignals[kMaxCrashSignals] = {
         // NOTE: Do not re-order, if you do please check CrashHandler(bool) constructor and CrashHandler::setHandler(..)
         { SIGABRT, "SIGABRT", "Abnormal termination",
                 "Program was abnormally terminated." },
@@ -1433,7 +1433,7 @@ public:
     static std::string formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {
         double result = static_cast<double>(time);
         unsigned short start = static_cast<unsigned short>(timestampUnit);
-        std::string unit = base::consts::kTimeFormats[start].unit;
+        const char* unit = base::consts::kTimeFormats[start].unit;
         std::stringstream stream_;
         for (unsigned short i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
             if (result > base::consts::kTimeFormats[i].value) {
@@ -4054,7 +4054,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
     std::stringstream ss;
     ss << "CRASH HANDLED; ";
     bool foundReason = false;
-    for (int i = 0; i < base::consts::kTotalSignals; ++i) {
+    for (int i = 0; i < base::consts::kMaxCrashSignals; ++i) {
         if (base::consts::kCrashSignals[i].numb == sig) {
             ss << "Application has crashed due to [" <<
                   base::consts::kCrashSignals[i].name <<
@@ -4113,7 +4113,7 @@ public:
 #else
             int i = 1;
 #endif // defined(_ELPP_HANDLE_SIGABRT)
-        for (; i < base::consts::kTotalSignals; ++i) {
+        for (; i < base::consts::kMaxCrashSignals; ++i) {
             m_handler = signal(base::consts::kCrashSignals[i].numb, cHandler);
         }
     }
