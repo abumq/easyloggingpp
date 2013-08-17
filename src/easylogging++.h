@@ -472,7 +472,7 @@ public:
     /// @detail The bool return type of lambda expression represents whether or not to skip rest of levels. Consider following example;
     /// <pre>unsigned short currLevel = LevelHelper::kMinValid;
     ///    bool result = false;
-    ///    forEachLevel(min, [&](bool) {
+    ///    forEachLevel(min, [&]() -> bool {
     ///       if (hasConfiguration(currLevel)) {
     ///          result = true;
     ///       }
@@ -620,7 +620,7 @@ enum class LoggingFlag : unsigned short {
     /// @detail Say param was -vmodule=main*=3 and a verbose log is being written from a file
     /// called something.cpp then if this flag is enabled, log will be written otherwise
     /// it will be disallowed.
-    AllowVerboseIfModuleNotSpecified = 2,
+    AllowVerboseIfModuleNotSpecified = 2
 };
 
 namespace base {
