@@ -880,7 +880,7 @@ But please be sure the donation money is halaal in islam in every aspect, meanin
 
 # Compatibility
 
-This library is designed to be compatible with as many compilers as possible. Unfortunately it was not possible for me to test it in all the C++ compilers out there, hence I will only mention the compilers that I have tested it against. Following table only shows compatibility for v9.0+, for older versions please refer to readme on corresponding release at github
+Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
 
 | *****   |         Compiler          |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -890,7 +890,7 @@ This library is designed to be compatible with as many compilers as possible. Un
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013-Preview; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
 |![mingw] | MinGW                     | (gcc version 4.7+) Workarounds to support: Mutex wrapper, no stack trace logging. No thread ID on windows                                                |
 
-Operating systems that have been tested. Easylogging++ should work on other major operating systems as well but since not all of them could be tested so they are not in the following list. Feel free to contact me if you have successfully compiled library on other operating systems.
+Operating systems that have been tested are shown in table below. Easylogging++ should work on other major operating systems that are not in the list.
 
 | *****   | Operating System       |   Notes                                                                             |
 |---------|------------------------|-------------------------------------------------------------------------------------|
@@ -901,7 +901,7 @@ Operating systems that have been tested. Easylogging++ should work on other majo
 |![mint]  | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
 |![fedora]| Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
 
-Easylogging++ has also been tested with following libraries, hence is compatible;
+Easylogging++ has also been tested with following C++ libraries;
 
 | *****   | Library                |    Notes                                                                            |
 |---------|------------------------|-------------------------------------------------------------------------------------|
