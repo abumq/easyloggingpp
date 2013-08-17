@@ -900,6 +900,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![sl]    | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]  | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
 |![fedora]| Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
+|![ubuntu]| Ubuntu 13.04           | 64-bit, using g++ 4.7.3 (libstdc++6-4.7-dev)                                        |
 
 Easylogging++ has also been tested with following C++ libraries;
 
