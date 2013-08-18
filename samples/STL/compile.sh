@@ -8,7 +8,7 @@ macro="$macro -D_ELPP_QT_LOGGING"
 macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
-  COMPILER=icpc
+  COMPILER=g++
 else
   COMPILER=$2
 fi
