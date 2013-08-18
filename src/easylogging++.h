@@ -3131,7 +3131,6 @@ public:
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
-        addFlag(LoggingFlag::LogDetailedCrashReason);
     }
 
     virtual ~Storage(void) {
