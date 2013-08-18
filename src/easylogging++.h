@@ -58,7 +58,7 @@
 //  * _ELPP_CXX11
 //////////////////////////////////////////////////////////////////////
 #if defined(__GNUC__)
-#define _ELPP_COMPILER_GCC 1
+#   define _ELPP_COMPILER_GCC 1
 #   define _ELPP_GCC_VERSION (__GNUC__ * 10000 \
                                + __GNUC_MINOR__ * 100 \
                                + __GNUC_PATCHLEVEL__)
@@ -70,7 +70,7 @@
 #endif // defined(__GNUC__)
 // Visual C++
 #if defined(_MSC_VER)
-#define _ELPP_COMPILER_MSVC 1
+#   define _ELPP_COMPILER_MSVC 1
 #   define _ELPP_CRT_DBG_WARNINGS 1
 #   if (_MSC_VER == 1600)
 #      define _ELPP_CXX0X 1
@@ -3479,8 +3479,11 @@ public:
         m_logger->stream() << ss.str();
         return *this;
     }
-#if (!_ELPP_COMPILER_MSVC || (_ELPP_COMPILER_MSVC && _MSC_VER <= 1700))
-    // VC++ 2013 does not have implementation for stringstream::operator<<(std::ostream&)
+#if (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || _ELPP_COMPILER_MINGW \
+        || (_ELPP_COMPILER_MSVC && _MSC_VER <= 1700))
+    // We only implement this signature for selected compilers, who knows which compiler has not implemented
+    // this.
+    // VC++ 2013 (preview) does not have this implementation for stringstream::operator<<(std::ostream&)
     //     so we exclude that compiler
     inline Writer& operator<<(std::ostream& ss) {
         if (!m_proceed) { return *this; }
@@ -3973,8 +3976,8 @@ public:
         StackTraceEntry(void);
     };
 
-    StackTrace(int max = kMaxStack) {
-        generateNew(max);
+    StackTrace(void) {
+        generateNew();
     }
 
     ~StackTrace(void) {
@@ -3994,12 +3997,11 @@ public:
 private:
     std::vector<StackTraceEntry> m_stack;
 
-    void generateNew(int max) {
+    void generateNew(void) {
 #if _ELPP_STACKTRACE
         m_stack.clear();
-        void** stack = (void**)malloc(max);
-        std::size_t size;
-        size = backtrace(stack, max);
+        void* stack[kMaxStack];
+        std::size_t size = backtrace(stack, kMaxStack);
         char** strings = backtrace_symbols (stack, size);
         if (size > kStackStart) { // Skip StackTrace c'tor and generateNew
             for (std::size_t i = kStackStart; i < size; ++i) {
@@ -4045,9 +4047,8 @@ private:
             }
         }
         free(strings);
-        free(stack);
 #else
-        _ELPP_UNUSED(max);
+        ELPP_INTERNAL_INFO("Stacktrace generation not supported for selected compiler");
 #endif // _ELPP_STACKTRACE
     }
 };
