@@ -325,7 +325,7 @@
 #   if defined(_ELPP_LOG_UNORDERED_MAP)
 #      include <unordered_map>
 #   endif // defined(_ELPP_LOG_UNORDERED_MAP)
-#   if defined(_ELPP_UNORDERED_SET)
+#   if defined(_ELPP_LOG_UNORDERED_SET)
 #      include <unordered_set>
 #   endif // defined(_ELPP_UNORDERED_SET)
 #endif // defined(_ELPP_STL_LOGGING)
@@ -344,7 +344,11 @@
 #   include <QMultiHash>
 #   include <QStack>
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
-
+#if defined(_ELPP_BOOST_LOGGING)
+#   include <boost/container/vector.hpp>
+#   include <boost/container/stable_vector.hpp>
+#   include <boost/container/list.hpp>
+#endif // defined(_ELPP_BOOST_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
 namespace el {
@@ -3497,22 +3501,46 @@ public:
         m_logger->stream() << OStreamMani;
         return *this;
     }
+
+#define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp) \
+    template <typename T> \
+    inline Writer& operator<<(const temp<T>& template_inst) { \
+        if (!m_proceed) { return *this; } \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+    }
+#define ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(temp) \
+    template <typename T1, typename T2> \
+    inline Writer& operator<<(const temp<T1, T2>& template_inst) { \
+        if (!m_proceed) { return *this; } \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+    }
+#define ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(temp) \
+    template <typename T1, typename T2, typename T3> \
+    inline Writer& operator<<(const temp<T1, T2, T3>& template_inst) { \
+        if (!m_proceed) { return *this; } \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+    }
+#define ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(temp) \
+    template <typename T1, typename T2, typename T3, typename T4> \
+    inline Writer& operator<<(const temp<T1, T2, T3, T4>& template_inst) { \
+        if (!m_proceed) { return *this; } \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+    }
+#define ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(temp) \
+    template <typename T1, typename T2, typename T3, typename T4, typename T5> \
+    inline Writer& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) { \
+        if (!m_proceed) { return *this; } \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+    }
+
 #if defined(_ELPP_STL_LOGGING)
-    template <class T, class Container>
-    inline Writer& operator<<(const std::vector<T, Container>& vec_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(vec_.begin(), vec_.end(), vec_.size());
-    }
-    template <class T, class Container>
-    inline Writer& operator<<(const std::list<T, Container>& list_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(list_.begin(), list_.end(), list_.size());
-    }
-    template <class T, class Container>
-    inline Writer& operator<<(const std::deque<T, Container>& deque_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(deque_.begin(), deque_.end(), deque_.size());
-    }
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(std::vector)
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(std::list)
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(std::deque)
+    ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(std::set)
+    ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(std::multiset)
+    ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::map)
+    ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::multimap)
     template <class T, class Container>
     inline Writer& operator<<(const std::queue<T, Container>& queue_) {
         if (!m_proceed) { return *this; }
@@ -3533,16 +3561,6 @@ public:
         base::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
                 static_cast<base::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
-    }
-    template <class T, class Comparator, class Container>
-    inline Writer& operator<<(const std::set<T, Comparator, Container>& set_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(set_.begin(), set_.end(), set_.size());
-    }
-    template <class T, class Comparator, class Container>
-    inline Writer& operator<<(const std::multiset<T, Comparator, Comparator>& set_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(set_.begin(), set_.end(), set_.size());
     }
     template <class First, class Second>
     inline Writer& operator<<(const std::pair<First, Second>& pair_) {
@@ -3569,39 +3587,13 @@ public:
         return writeIterator(array.begin(), array.end(), array.size());
     }
 #   endif // defined(_ELPP_LOG_STD_ARRAY)
-    template <class K, class V, class Comparator, class Container>
-    inline Writer& operator<<(const std::map<K, V, Comparator, Container>& map_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(map_.begin(), map_.end(), map_.size());
-    }
-    template <class K, class V, class Comparator, class Container>
-    inline Writer& operator<<(const std::multimap<K, V, Comparator, Container>& map_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(map_.begin(), map_.end(), map_.size());
-    }
 #   if defined(_ELPP_LOG_UNORDERED_MAP)
-    template <class K, class V, class Hash, class Pred, class Alloc>
-    inline Writer& operator<<(const std::unordered_map<K, V, Hash, Pred, Alloc>& map_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(map_.begin(), map_.end(), map_.size());
-    }
-    template <class K, class V, class Hash, class Pred, class Alloc>
-    inline Writer& operator<<(const std::unordered_multimap<K, V, Hash, Pred, Alloc>& map_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(map_.begin(), map_.end(), map_.size());
-    }
+    ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(std::unordered_map)
+    ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(std::unordered_multimap)
 #   endif // defined(_ELPP_LOG_UNORDERED_MAP)
 #   if defined(_ELPP_LOG_UNORDERED_SET)
-    template <class K, class Hash, class Pred, class Alloc>
-    inline Writer& operator<<(const std::unordered_set<K, Hash, Pred, Alloc>& set) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(set.begin(), set.end(), set.size());
-    }
-    template <class K, class Hash, class Pred, class Alloc>
-    inline Writer& operator<<(const std::unordered_multiset<K, Hash, Pred, Alloc>& set) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(set.begin(), set.end(), set.size());
-    }
+    ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::unordered_set)
+    ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::unordered_multiset)
 #   endif // defined(_ELPP_LOG_UNORDERED_SET)
 #endif // defined(_ELPP_STL_LOGGING)
 #if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
@@ -3638,26 +3630,12 @@ public:
         m_logger->stream() << log_.latin1();
         return *this;
     }
-    template <typename T>
-    inline Writer& operator<<(const QList<T>& list_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(list_.begin(), list_.end(), list_.size());
-    }
-    template <typename T>
-    inline Writer& operator<<(const QVector<T>& vec_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(vec_.begin(), vec_.end(), vec_.size());
-    }
-    template <typename T>
-    inline Writer& operator<<(const QQueue<T>& queue_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(queue_.begin(), queue_.end(), queue_.size());
-    }
-    template <typename T>
-    inline Writer& operator<<(const QSet<T>& set_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(set_.begin(), set_.end(), set_.size());
-    }
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QList)
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QVector)
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QQueue)
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QSet)
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QLinkedList)
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QStack)
     template <typename First, typename Second>
     inline Writer& operator<<(const QPair<First, Second>& pair_) {
         if (!m_proceed) { return *this; }
@@ -3693,7 +3671,7 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMultiMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
-        operator << (static_cast<QMap<K, V> >(map_));
+        operator << (static_cast<QMap<K, V>>(map_));
         return *this;
     }
     template <typename K, typename V>
@@ -3721,26 +3699,25 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMultiHash<K, V>& multiHash_) {
         if (!m_proceed) { return *this; }
-        operator << (static_cast<QHash<K, V> >(multiHash_));
+        operator << (static_cast<QHash<K, V>>(multiHash_));
         return *this;
     }
-    template <typename T>
-    inline Writer& operator<<(const QLinkedList<T>& linkedList_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(linkedList_.begin(), linkedList_.end(), linkedList_.size());
-    }
-    template <typename T>
-    inline Writer& operator<<(const QStack<T>& stack_) {
-        if (!m_proceed) { return *this; }
-        return writeIterator(stack_.begin(), stack_.end(), stack_.size());
-    }
 #endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+#if defined(_ELPP_BOOST_LOGGING)
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::vector)
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::stable_vector)
+#endif // defined(_ELPP_BOOST_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << class_;
         return *this;
     }
+#undef ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG
+#undef ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG
+#undef ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG
+#undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
+#undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
 private:
     Level m_level;
     const char* m_file;
