@@ -3502,35 +3502,35 @@ public:
         return *this;
     }
 
-#define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp) \
-    template <typename T> \
-    inline Writer& operator<<(const temp<T>& template_inst) { \
-        if (!m_proceed) { return *this; } \
-        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+#define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp)                                                    \
+    template <typename T>                                                                            \
+    inline Writer& operator<<(const temp<T>& template_inst) {                                        \
+        if (!m_proceed) { return *this; }                                                            \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
-#define ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(temp) \
-    template <typename T1, typename T2> \
-    inline Writer& operator<<(const temp<T1, T2>& template_inst) { \
-        if (!m_proceed) { return *this; } \
-        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+#define ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(temp)                                                    \
+    template <typename T1, typename T2>                                                              \
+    inline Writer& operator<<(const temp<T1, T2>& template_inst) {                                   \
+        if (!m_proceed) { return *this; }                                                            \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
-#define ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(temp) \
-    template <typename T1, typename T2, typename T3> \
-    inline Writer& operator<<(const temp<T1, T2, T3>& template_inst) { \
-        if (!m_proceed) { return *this; } \
-        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+#define ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(temp)                                                  \
+    template <typename T1, typename T2, typename T3>                                                 \
+    inline Writer& operator<<(const temp<T1, T2, T3>& template_inst) {                               \
+        if (!m_proceed) { return *this; }                                                            \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
-#define ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(temp) \
-    template <typename T1, typename T2, typename T3, typename T4> \
-    inline Writer& operator<<(const temp<T1, T2, T3, T4>& template_inst) { \
-        if (!m_proceed) { return *this; } \
-        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+#define ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(temp)                                                   \
+    template <typename T1, typename T2, typename T3, typename T4>                                    \
+    inline Writer& operator<<(const temp<T1, T2, T3, T4>& template_inst) {                           \
+        if (!m_proceed) { return *this; }                                                            \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
-#define ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(temp) \
-    template <typename T1, typename T2, typename T3, typename T4, typename T5> \
-    inline Writer& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) { \
-        if (!m_proceed) { return *this; } \
-        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size()); \
+#define ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(temp)                                                   \
+    template <typename T1, typename T2, typename T3, typename T4, typename T5>                       \
+    inline Writer& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) {                       \
+        if (!m_proceed) { return *this; }                                                            \
+        return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 
 #if defined(_ELPP_STL_LOGGING)
