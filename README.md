@@ -68,6 +68,7 @@
     <a href="#multi-threading">Multi-threading</a>
     <a href="#check-macros">CHECK Macros</a>
     <a href="#qt-logging">Qt Logging</a>
+    <a href="#boost-logging">Boost Logging</a>
     <a href="#extending-library-logging-your-own-class">Extending Library (Logging your own class)</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
@@ -798,8 +799,11 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
-Easylogging++ has complete logging support for Qt core library. In order to activate it, first of all make sure you are using Qt. When using Qt, you will automatically have macro QT_CORE_LIB (which is defined by library core). Now if you want to activate logging your Qt classes and containers, define _ELPP_QT_LOGGING macro. This will enable all the headers and methods required to log Qt. Once you did that, you should be good to go.
-Following Qt classes and containers are supported by Easylogging++ v9.0
+Easylogging++ has complete logging support for Qt core library. In order to activate it, first of all make sure you are using Qt. When using Qt, you will automatically have macro `QT_CORE_LIB` (which is defined by library core). 
+
+Now if you want to activate logging your Qt classes and containers, define `_ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
+
+Following Qt classes and containers are supported by Easylogging++ v9.0+
 
 |     *       |          *              |       *          |       *          |       *          |       *          |
 |-------------|-------------------------|------------------|------------------|------------------|------------------|
@@ -814,7 +818,24 @@ Similar to STL logging, Qt containers are also limit to log 100 entries per log,
 Also note, if you are logging a container that contains custom class, make sure you have read Extending Library section below.
 
  [![top] Goto Top](#table-of-contents)
- 
+
+### Boost Logging
+Easylogging++ supports some of boost templates. In order to enable boost logging, define macro `_ELPP_BOOST_LOGGING`
+
+Following table shows the templates supported.
+
+|     *                               |          *                               |
+|-------------------------------------|------------------------------------------|
+| `boost::container::vector`          |  `boost::container::stable_vector`       |
+| `boost::container::map`             |  `boost::container::flat_map`            |
+| `boost::container::set`             |  `boost::container::flat_set`            |
+| `boost::container::deque`           |  `boost::container::list`                |
+| `boost::container::string`          |                                          |
+
+> Since version 9.06
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Extending Library (Logging your own class)
 You can log your own classes by having `std::ostream& operator<<` in your class. Note, as long as you are able to use std::cout on your class, you should be good with logging it too. A good example of extension is as following;
 ```c++
