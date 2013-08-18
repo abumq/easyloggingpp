@@ -2,7 +2,7 @@
 
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
-** THIS IS DEVELOPMENT BRANCH AND MAY NOT BE STABLE - PLEASE GOTO [MASTER BRANCH](https://github.com/easylogging/easyloggingpp) FOR STABILITY **
+##### NOTE: THIS IS DEVELOPMENT BRANCH AND MAY NOT BE STABLE - PLEASE GOTO [MASTER BRANCH](https://github.com/easylogging/easyloggingpp) FOR STABILITY
 
 > **Current stable version: v9.05**
 >
