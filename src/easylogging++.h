@@ -624,7 +624,7 @@ enum class LoggingFlag : unsigned short {
     AllowVerboseIfModuleNotSpecified = 2,
 
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
-    LogDetailedCrashReason
+    LogDetailedCrashReason = 4
 };
 
 namespace base {
