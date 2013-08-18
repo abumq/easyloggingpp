@@ -349,6 +349,7 @@
 #   include <boost/container/stable_vector.hpp>
 #   include <boost/container/list.hpp>
 #   include <boost/container/map.hpp>
+#   include <boost/container/deque.hpp>
 #endif // defined(_ELPP_BOOST_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
@@ -3709,6 +3710,7 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::stable_vector)
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::list)
     ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(boost::container::map)
+    ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::deque)
 #endif // defined(_ELPP_BOOST_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
