@@ -816,7 +816,7 @@ Also note, if you are logging a container that contains custom class, make sure 
  [![top] Goto Top](#table-of-contents)
  
 ### Extending Library (Logging your own class)
-You can log your own classes by having `std::ofstream& operator<` in your class. Note, as long as you are able to use std::cout on your class, you should be good with logging it too. A good example of extension is as following;
+You can log your own classes by having `std::ostream& operator<<` in your class. Note, as long as you are able to use std::cout on your class, you should be good with logging it too. A good example of extension is as following;
 ```c++
 friend std::ostream& operator<<(std::ostream& os, const MyClass& c) {
    os << c.getMember1() << " " << c.getMember2();
@@ -842,7 +842,7 @@ LOG(INFO) << c;
 
 ```
 
-Just be careful with this as having a time-consuming overloading of operator<< can take longer in logging class as well, as this "overloaded method / operator" gets called every time you log your class.
+Just be careful with this as having a time-consuming overloading of `operator<<` can take longer in logging class as well, as this "overloaded method / operator" gets called every time you log your class.
 
  [![top] Goto Top](#table-of-contents)
  

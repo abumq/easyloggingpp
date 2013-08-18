@@ -3707,6 +3707,7 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::vector)
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::stable_vector)
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::list)
+    ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(boost::container::map)
 #endif // defined(_ELPP_BOOST_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
