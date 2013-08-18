@@ -348,6 +348,7 @@
 #   include <boost/container/vector.hpp>
 #   include <boost/container/stable_vector.hpp>
 #   include <boost/container/list.hpp>
+#   include <boost/container/map.hpp>
 #endif // defined(_ELPP_BOOST_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
