@@ -8,7 +8,8 @@ macro="$macro -D_ELPP_QT_LOGGING"
 macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
-  COMPILER=icpc
+  sed -i "s/\*\*THIS IS DEVELOPMENT BRANCH AND MAY NOT BE STABLE - PLEASE GOTO [MASTER BRANCH](https://github.com/easylogging/easyloggingpp) FOR STABILITY\*\*\n//g" $1/README.md
+  COMPILER=g++
 else
   COMPILER=$2
 fi
