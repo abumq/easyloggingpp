@@ -2,9 +2,7 @@
 
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
-##### NOTE: THIS IS DEVELOPMENT BRANCH AND MAY NOT BE STABLE - PLEASE GOTO [MASTER BRANCH](https://github.com/easylogging/easyloggingpp) FOR STABILITY
-
-> **Current stable version: v9.05**
+> **Current stable version: v9.06**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -12,7 +10,7 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.05)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.06)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
@@ -446,6 +444,7 @@ Helper macros end with _IF;
 #### Some examples:
 ```c++
 LOG_IF(condition, INFO) << "Logged if condition is true";
+
 LOG_IF(false, WARNING) << "Never logged";
 CLOG_IF(true, INFO, "performance") << "Always logged (performance logger)"
 ```
