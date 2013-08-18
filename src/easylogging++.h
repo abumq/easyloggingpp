@@ -614,13 +614,17 @@ public:
 enum class LoggingFlag : unsigned short {
     /// @brief Makes sure we have new line for each container log entry
     NewLineForContainer = 1,
+
     /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
     /// logging is allowed via that module.
     ///
     /// @detail Say param was -vmodule=main*=3 and a verbose log is being written from a file
     /// called something.cpp then if this flag is enabled, log will be written otherwise
     /// it will be disallowed.
-    AllowVerboseIfModuleNotSpecified = 2
+    AllowVerboseIfModuleNotSpecified = 2,
+
+    /// @brief When handling crashes by default, detailed crash reason will be logged as well
+    LogDetailedCrashReason
 };
 
 namespace base {
@@ -3127,6 +3131,7 @@ public:
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+        addFlag(LoggingFlag::LogDetailedCrashReason);
     }
 
     virtual ~Storage(void) {
@@ -4056,9 +4061,12 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
         if (base::consts::kCrashSignals[i].numb == sig) {
             ss << "Application has crashed due to [" <<
                   base::consts::kCrashSignals[i].name <<
-                  "] signal" << std::endl <<
-                  "    " << base::consts::kCrashSignals[i].brief << std::endl <<
-                  "    " << base::consts::kCrashSignals[i].detail;
+                  "] signal";
+            if (base::elStorage->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
+                ss << std::endl <<
+                      "    " << base::consts::kCrashSignals[i].brief << std::endl <<
+                      "    " << base::consts::kCrashSignals[i].detail;
+                }
             foundReason = true;
         }
     }
