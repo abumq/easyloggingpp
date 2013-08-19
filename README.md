@@ -928,7 +928,7 @@ Easylogging++ has also been tested with following C++ libraries;
 
 | *****   | Library                |    Notes                                                                            |
 |---------|------------------------|-------------------------------------------------------------------------------------|
-|![qt]    | Qt                     | Tested with Qt 5 (with C++0x and C++11)                                             |
+|![qt]    | Qt                     | Tested with Qt 4.6.2 and Qt 5 (with C++0x and C++11)                                |
 |![boost] | Boost                  | Tested with boost 1.51                                                              |
 
  [![top] Goto Top](#table-of-contents)

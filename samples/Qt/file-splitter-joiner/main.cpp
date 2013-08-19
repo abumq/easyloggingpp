@@ -15,6 +15,13 @@ void merge(int argc, char** argv);
 int main(int argc, char** argv) {
     _START_EASYLOGGINGPP(argc, argv);
 
+    // TODO: Use getopt with following params
+    //         -p : process_type
+    //         -s : source_file (for split only)
+    //         -d : destination_dir / destination_file (depending on process_type)
+    //         -t : total_parts (for split only)
+    //       For [parts...] in join we just force user to have last arguments to be all parts
+
     if (argc > 2) {
         int status = -1;
         if (strcmp(argv[1], "split") == 0) {
@@ -37,7 +44,7 @@ int main(int argc, char** argv) {
 
 void help(PartProcessor::kProcessType type) {
     if (type == PartProcessor::kSplit) {
-        LOG(INFO) << "split [source_file] [total_parts] destination_dir]";
+        LOG(INFO) << "split [source_file] [total_parts] [destination_dir]";
     } else {
         LOG(INFO) << "join [destination_file] [parts...]";
     }
