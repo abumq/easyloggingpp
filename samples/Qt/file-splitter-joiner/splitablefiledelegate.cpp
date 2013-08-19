@@ -28,8 +28,8 @@ void SplitableFileDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     }
 }
 
-QWidget *SplitableFileDelegate::createEditor(QWidget *parent,
-                                             const QStyleOptionViewItem& option,
+QWidget* SplitableFileDelegate::createEditor(QWidget *parent,
+                                             const QStyleOptionViewItem&,
                                              const QModelIndex& index ) const {
     if (index.column() == 3) {
         QSpinBox *editor = new QSpinBox(parent);
@@ -37,6 +37,7 @@ QWidget *SplitableFileDelegate::createEditor(QWidget *parent,
         editor->setMaximum(SplitterWidget::kMaxSplitPossible);
         return editor;
     }
+    return nullptr;
 }
 
 void SplitableFileDelegate::setEditorData(QWidget *editor,

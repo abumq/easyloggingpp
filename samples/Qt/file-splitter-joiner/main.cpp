@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QStandardItemModel>
 #include <QFileInfo>
 #include "mainwindow.h"
@@ -81,7 +81,7 @@ void merge(int argc, char** argv) {
     if (argc >= 2) {
         QString destinationFile(argv[0]);
         argc--;
-        *argv++;
+        ++*argv;
         QList<QString> parts;
         int index = 0;
         while (index != argc) {
