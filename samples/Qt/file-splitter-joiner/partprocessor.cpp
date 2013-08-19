@@ -98,7 +98,7 @@ int PartProcessor::split(void) {
         this->destinationFile_.write(data, dataBytes);
         this->destinationFile_.flush();
         progress_ += nextBuffLength;
-        LOG(INFO) << "Progress (split) = " << progress_ << " bytes";
+        VLOG(2) << "Progress (split) = " << progress_ << " bytes";
         if (progress() % (PartProcessor::kBufferSize * PartProcessor::kUpdateFrequencyBytes) == 0) {
             emit updated(this);
         }
@@ -145,7 +145,7 @@ int PartProcessor::merge(void) {
             //TODO: check for destination file writable permissions beforehand
             dataBytes = this->sourceFile_->read(data, PartProcessor::kBufferSize);
             progBytes += static_cast<int>(dataBytes);
-            LOG(INFO) << "Progress (merge) = " << progBytes << " bytes";
+            VLOG(2) << "Progress (merge) = " << progBytes << " bytes";
             this->destinationFile_.write(data, dataBytes);
             this->destinationFile_.flush();
         }

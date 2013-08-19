@@ -5,7 +5,7 @@
 
 JoinerCore::JoinerCore(QTreeWidget* widget) {
     this->widget = widget;
-    core = NULL;
+    core = nullptr;
 }
 
 void JoinerCore::startJoining(void) {
@@ -14,7 +14,7 @@ void JoinerCore::startJoining(void) {
     for (int i = 0; i < widget->topLevelItemCount(); i++) {
         if (core) {
             delete core;
-            core = NULL;
+            core = nullptr;
         }
         QTreeWidgetItem* currentFile = widget->topLevelItem(i);
         parts.clear();
