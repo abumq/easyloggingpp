@@ -58,14 +58,14 @@ void PartProcessor::openFiles(void) {
     filesOpened = false;
     if(processType == kSplit && !sourceFile_->open(QIODevice::ReadOnly)) {
         errors_.push_back(new Error("Error opening source file", kOpenFileError));
-        LERROR << "Error opening source file";
+        LOG(ERROR) << "Error opening source file";
         return;
     }
     destinationFile_.setFileName(this->destinationFilename_ + (processType == kSplit ?
                                                                    (QString(PartProcessor::kPartSuffix) + QString::number(partIndex())) : ""));
     if(!destinationFile_.open(QIODevice::WriteOnly)) {
         errors_.push_back(new Error("Error opening source file", kOpenFileError));
-        LERROR << "Error opening destination file";
+        LOG(ERROR) << "Error opening destination file";
         return;
     }
     filesOpened = true;
@@ -73,7 +73,7 @@ void PartProcessor::openFiles(void) {
 
 int PartProcessor::split(void) {
     mutex_.lock();
-    LDEBUG << "Splitting " << this->sourceFilename_.toStdString() << " to " << this->destinationFilename_.toStdString();
+    LOG(DEBUG) << "Splitting " << this->sourceFilename_.toStdString() << " to " << this->destinationFilename_.toStdString();
     int nextBuffLength = PartProcessor::kBufferSize;
     char *data = new char[nextBuffLength];
     qint32 dataBytes;
@@ -98,7 +98,7 @@ int PartProcessor::split(void) {
         this->destinationFile_.write(data, dataBytes);
         this->destinationFile_.flush();
         progress_ += nextBuffLength;
-
+        LOG(INFO) << "Progress (split) = " << progress_ << " bytes";
         if (progress() % (PartProcessor::kBufferSize * PartProcessor::kUpdateFrequencyBytes) == 0) {
             emit updated(this);
         }
@@ -121,15 +121,16 @@ int PartProcessor::merge(void) {
     int status = -1;
     this->progress_ = 0;
     this->partIndex_ = 0;
+    int progBytes = 0;
     mutex_.lock();
     for (int i = 0; i < this->parts_.size(); i++) {
         this->partIndex_ = i;
         this->progress_ = i;
-        LINFO << "Merging data from: " << this->parts_.at(i).toStdString();
+        LOG(INFO) << "Merging data from: " << this->parts_.at(i).toStdString();
         //TODO: check for source file availability
         this->sourceFile_ = new QFile(this->parts_.at(i));
         if (!this->sourceFile_->open(QFile::ReadOnly)) {
-            LERROR << "Error opening files!";
+            LOG(ERROR) << "Error opening files!";
             return status;
         }
         char* data = new char[PartProcessor::kBufferSize];
@@ -143,6 +144,8 @@ int PartProcessor::merge(void) {
             }
             //TODO: check for destination file writable permissions beforehand
             dataBytes = this->sourceFile_->read(data, PartProcessor::kBufferSize);
+            progBytes += static_cast<int>(dataBytes);
+            LOG(INFO) << "Progress (merge) = " << progBytes << " bytes";
             this->destinationFile_.write(data, dataBytes);
             this->destinationFile_.flush();
         }
@@ -197,7 +200,7 @@ void PartProcessor::resume() {
 
 void PartProcessor::run(void) {
     if (!filesOpened) {
-        LERROR << "Files were not successfully opened. Cannot start " << (processType == kSplit ? "splitting" : "merging");
+        LOG(ERROR) << "Files were not successfully opened. Cannot start " << (processType == kSplit ? "splitting" : "merging");
                 return;
     }
     emit started(this);
@@ -205,18 +208,18 @@ void PartProcessor::run(void) {
     int status = -1;
     if (processType == kSplit) {
         if (this->sourceFilename_ == "") {
-            LERROR << "Source file not specified";
+            LOG(ERROR) << "Source file not specified";
             return;
         }
         status = split();
     } else if (processType == kMerge) {
         if (this->parts_.size() == 0) {
-            LERROR << "Parts not specified";
+            LOG(ERROR) << "Parts not specified";
             return;
         }
         status = merge();
     }
     if (status == -1) {
-        LERROR << "Error occured while " << (processType == kSplit ? "splitting" : "merging");
+        LOG(ERROR) << "Error occured while " << (processType == kSplit ? "splitting" : "merging");
     }
 }

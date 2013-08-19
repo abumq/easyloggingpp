@@ -33,7 +33,7 @@ void SplitterCore::run(void) {
             destinationDir =  fileModel->data(fileModel->index(i,1)).toString() + "/" + fileInfo.fileName();
             parts = fileModel->data(fileModel->index(i, 3)).toInt();
             offset = 0;
-            LINFO << "Splitting " << sourceFilename.toStdString() << " into " << parts << " parts to " << destinationDir.toStdString();
+            LOG(INFO) << "Splitting " << sourceFilename.toStdString() << " into " << parts << " parts to " << destinationDir.toStdString();
 
             fileSize = fileModel->index(i, 4).data().toDouble();
             sizeOfFilePart = fileSize / parts;
@@ -65,7 +65,7 @@ void SplitterCore::run(void) {
             this->splitJoinCores.clear();
         }
     }
-    LINFO << "Finished splitting all files!";
+    LOG(INFO) << "Finished splitting all files!";
 }
 
 void SplitterCore::pause(void) {

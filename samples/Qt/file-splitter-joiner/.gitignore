@@ -17,5 +17,9 @@
 moc_*.cpp
 qrc_*.cpp
 *-build-*
+ui_*.h
 
+# logs
 logs/*
+# binary
+file-splitter-and-joiner

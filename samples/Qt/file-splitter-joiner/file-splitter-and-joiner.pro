@@ -9,6 +9,14 @@ QT       += core gui
 TARGET = file-splitter-and-joiner
 TEMPLATE = app
 
+DEFINES += _ELPP_QT_LOGGING    \
+          _ELPP_STL_LOGGING   \
+          _ELPP_STRICT_SIZE_CHECK \
+          _ELPP_STACKTRACE_ON_CRASH \
+          _ELPP_THREAD_SAFE
+
+QMAKE_CXXFLAGS += -std=c++11
+
 
 SOURCES += main.cpp\
         mainwindow.cpp \

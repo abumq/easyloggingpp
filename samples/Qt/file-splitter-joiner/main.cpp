@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
             //use merger core
             merge(argc - 2, argv + 2);
         } else {
-            LERROR << "Invalid process type!";
+            LOG(ERROR) << "Invalid process type!";
         }
         return status;
     } else {
@@ -37,9 +37,9 @@ int main(int argc, char** argv) {
 
 void help(PartProcessor::kProcessType type) {
     if (type == PartProcessor::kSplit) {
-        LINFO << "split [source_file] [total_parts] destination_dir]";
+        LOG(INFO) << "split [source_file] [total_parts] destination_dir]";
     } else {
-        LINFO << "join [destination_file] [parts...]";
+        LOG(INFO) << "join [destination_file] [parts...]";
     }
 }
 
