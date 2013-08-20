@@ -17,8 +17,13 @@ DEFINES += _ELPP_QT_LOGGING    \
           _ELPP_STACKTRACE_ON_CRASH \
           _ELPP_THREAD_SAFE
 
-QMAKE_CXXFLAGS += -std=c++11
 
+    QMAKE_CC = icpc
+    QMAKE_CXX = icpc
+    QMAKE_LINK = icpc
+
+
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
