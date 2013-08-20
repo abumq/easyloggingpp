@@ -6,14 +6,20 @@ This is multi-threaded application that uses threads in order to split/merge par
 
 **Usage**
 
-Once you successfully compile the project using minimum of Qt 4.6.2, you can use this in three ways;
+Once you successfully compile the project using minimum of Qt 4.6.2, you can use this in two ways;
 
  * Using command-line
 
-        **Split**: `./file-splitter-joiner split [source_file] [total_parts] [destination_dir]`
-        **Join**:  `./file-splitter-joiner join [destination_file] [parts...]`
+   **Split**: `./file-splitter-joiner split [source_file] [total_parts] [destination_dir]`
+
+   **Join**:  `./file-splitter-joiner join [destination_file] [parts...]`
 
  * Using GUI
 
         When you don't provide enough parameters, a GUI based program will be launched
 
+**Screen Shots**
+
+   [![Splitter](http://easylogging.org/images/screenshots/splitter.png)](http://easylogging.org/images/screenshots/splitter.png)
+
+   [![Joiner](http://easylogging.org/images/screenshots/joiner.png)](http://easylogging.org/images/screenshots/joiner.png)
