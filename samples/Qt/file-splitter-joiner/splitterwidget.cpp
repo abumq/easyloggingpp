@@ -83,7 +83,8 @@ void SplitterWidget::on_buttonChooseFiles_clicked() {
                 fileModel->setData(fileModel->index(r, 3), SplitterWidget::kDefaultMaxParts);
                 fileModel->setData(fileModel->index(r, 4), fileSize);
                 this->updateSplitInfo(fileModel->index(r, 0));
-                r++;
+                ++r;
+                VLOG(1) << "Added file to split [" << filePath << "]";
             }
         }
     }

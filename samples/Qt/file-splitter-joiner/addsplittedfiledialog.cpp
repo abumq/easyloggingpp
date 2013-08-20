@@ -61,6 +61,7 @@ void AddSplittedFileDialog::on_buttonAddPart_clicked() {
         fileInfo.setFile(filename);
         fileSize = QString::number(fileInfo.size());
         filePartsPointers = new QTreeWidgetItem(ui->treeParts, QStringList() << filename << fileSize << "Queued");
+        VLOG(1) << "Added part [" << filename << "]";
     }
 }
 
