@@ -92,8 +92,12 @@
 #endif // defined(__clang__) && (__clang__ == 1)
 // MinGW
 #if defined(__MINGW32__) || defined(__MINGW64__)
-#   define _ELPP_COMPILER_MINGW 1
+#   define _ELPP_MINGW 1
 #endif // defined(__MINGW32__) || defined(__MINGW64__)
+// Cygwin
+#if defined(__CYGWIN__) && (__CYGWIN__ == 1)
+#   define _ELPP_CYGWIN 1
+#endif // defined(__CYGWIN__) && (__CYGWIN__ == 1)
 // Intel C++
 #if defined(__INTEL_COMPILER)
 #   define _ELPP_COMPILER_INTEL 1
@@ -132,6 +136,13 @@
 #else
 #   define _ELPP_OS_ANDROID 0
 #endif // defined(__ANDROID__)
+// Evaluating Cygwin as unix OS
+#if (!_ELPP_OS_UNIX && !_ELPP_OS_WINDOWS && _ELPP_CYGWIN)
+#   undef _ELPP_OS_UNIX 
+#   undef _ELPP_OS_LINUX
+#   define _ELPP_OS_UNIX 1
+#   define _ELPP_OS_LINUX 1
+#endif
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Internal Assertions and errors
 // Depending on users definition of several macros, we define assertion macros used internally to notify developer
@@ -164,7 +175,7 @@
 #   define ELPP_INTERNAL_INFO(msg)
 #endif // (defined(_ELPP_ENABLE_INFO))
 #if defined(_ELPP_STACKTRACE_ON_CRASH)
-#   if (_ELPP_COMPILER_GCC && !_ELPP_COMPILER_MINGW)
+#   if (_ELPP_COMPILER_GCC && !_ELPP_MINGW)
 #      define _ELPP_STACKTRACE 1
 #   else
 #      if _ELPP_COMPILER_MSVC
@@ -197,11 +208,11 @@
 ////////////////////////////////////////////////
 // Some compiler specific support evaluations
 ////////////////////////////////////////////////
-#if _ELPP_COMPILER_MINGW || _ELPP_COMPILER_CLANG
+#if _ELPP_MINGW || _ELPP_COMPILER_CLANG
 #   define _ELPP_USE_STD_THREADING 0
 #else
 #   define _ELPP_USE_STD_THREADING 1
-#endif // _ELPP_COMPILER_MINGW || _ELPP_COMPILER_CLANG
+#endif // _ELPP_MINGW || _ELPP_COMPILER_CLANG
 #undef FINAL
 #if _ELPP_COMPILER_INTEL || (_ELPP_GCC_VERSION < 40702)
 #   define FINAL
@@ -1214,7 +1225,7 @@ public:
     /// @param command Bash command
     /// @return Result of bash output or empty string if no result found.
     static const std::string getBashOutput(const char* command) {
-#if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
+#if (_ELPP_OS_UNIX && !_ELPP_OS_ANDROID && !_ELPP_CYGWIN)
         if (command == nullptr) {
             return std::string();
         }
@@ -1235,7 +1246,7 @@ public:
 #else
         _ELPP_UNUSED(command);
         return std::string();
-#endif // _ELPP_OS_UNIX
+#endif // (_ELPP_OS_UNIX && !_ELPP_OS_ANDROID && !_ELPP_CYGWIN)
     }
 
     /// @brief Gets environment variable. This is cross-platform and CRT safe (for VC++)
@@ -3488,7 +3499,7 @@ public:
         m_logger->stream() << ss.str();
         return *this;
     }
-#if (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || _ELPP_COMPILER_MINGW \
+#if (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || _ELPP_MINGW \
         || (_ELPP_COMPILER_MSVC && _MSC_VER <= 1700))
     // We only implement this signature for selected compilers, who knows which compiler has not implemented
     // this.
