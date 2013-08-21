@@ -904,13 +904,14 @@ But please be sure the donation money is halaal in islam in every aspect, meanin
 
 Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
 
-| *****   |         Compiler          |      Notes                                                                                                                                               |
+| *****   |     Compiler/Platform     |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 |![gcc]   | GCC 4.7+                  | Stack trace logging. Very close to support GCC 4.6 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
 |![llvm]  | Clang++ 3.1+              | Stack trace logging only with gcc compliant.                                                                                                             |
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013-Preview; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
 |![mingw] | MinGW                     | (gcc version 4.7+) Workarounds to support: Mutex wrapper, no stack trace logging. No thread ID on windows                                                |
+|![cygwin]| Cygwin                    | Tested with gcc version 4.8+                                                                                                                             |
 
 Operating systems that have been tested are shown in table below. Easylogging++ should work on other major operating systems that are not in the list.
 
@@ -981,6 +982,7 @@ Icons used in this manual (in compatibility section) are solely for information 
 
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
   [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
+  [cygwin]: http://www.easylogging.org/images/icons/cygwin.png?v=2
   [vcpp]: http://www.easylogging.org/images/icons/vcpp.png?v=2
   [llvm]: http://www.easylogging.org/images/icons/llvm.png?v=2
   [intel]: http://www.easylogging.org/images/icons/intel.png?v=2
