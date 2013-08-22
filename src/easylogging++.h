@@ -3141,11 +3141,9 @@ private:
 class Log {
 public:
     Log(const Level& level, const char* file, unsigned long int line, const char* func,
-                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& logMessage,
-                          const std::string& originalThreadId) :
+                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& logMessage) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
-                  m_verboseLevel(verboseLevel), m_logger(logger), m_logMessage(logMessage),
-                  m_originalThreadId(originalThreadId) {
+                  m_verboseLevel(verboseLevel), m_logger(logger), m_logMessage(logMessage) {
     }
     Level& level(void) { return m_level; }
     const char* file(void) { return m_file; }
@@ -3154,7 +3152,6 @@ public:
     VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
     Logger* logger(void) { return m_logger; }
     std::string& logMessage(void) { return m_logMessage; }
-    std::string& originalThreadId(void) { return m_originalThreadId; }
 private:
     Level m_level;
     const char* m_file;
@@ -3163,7 +3160,6 @@ private:
     VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     std::string m_logMessage;
-    std::string m_originalThreadId;
 };
 /// @brief Contains all the storages that is needed by writer
 ///
@@ -3264,6 +3260,7 @@ private:
     base::utils::threading::mutex m_mutex;
 
     friend class base::LogDispatcher;
+    friend class base::Writer;
     friend class el::Helpers;
 
     inline const std::string& username(void) const {
@@ -3316,6 +3313,7 @@ class LogDispatcher : private base::NoCopy {
 public:
     LogDispatcher(bool proceed, const base::Log& log) : m_proceed(proceed), m_log(log) {
     }
+
     void dispatch(bool needToLockLogger) {
         if (!m_proceed) {
             return;
@@ -3328,6 +3326,7 @@ public:
 #if (defined(_ELPP_STRICT_SIZE_CHECK))
         m_log.logger()->m_typedConfigurations->validateFileRolling(m_log.level(), base::elStorage->preRollOutHandler());
 #endif // (defined(_ELPP_STRICT_SIZE_CHECK))
+
         base::TypedConfigurations* tc = m_log.logger()->m_typedConfigurations;
         base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_log.level()));
         std::string logLine = logFormat->format();
@@ -3514,11 +3513,11 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed) {
-            base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).dispatch(false);
-            m_logger->stream().str("");
+        base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
+                          m_logger, m_logger->stream().str())).dispatch(false);
         }
         if (m_logger != nullptr) {
+            m_logger->stream().str("");
             m_logger->unlock();
         }
 #if !defined(_ELPP_PREVENT_FATAL_ABORT)
