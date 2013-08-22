@@ -13,6 +13,7 @@ ELPP_WX_ENABLED(MyList)
 
 int main() {
     MyList list;
-    list.Append(new int (17));
+    for (int i = 1; i < 110; ++i)
+        list.Append(new int (i));
     LOG(INFO) << list;
 }
