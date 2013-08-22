@@ -2487,6 +2487,7 @@ private:
 namespace base {
 typedef std::map<std::string, std::shared_ptr<std::fstream>> LogStreamsReferenceMap;
 class Writer;
+class LogDispatcher;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
@@ -2561,6 +2562,7 @@ private:
     base::utils::threading::mutex m_mutex;
     base::LogStreamsReferenceMap* m_logStreamsReference;
     friend class Writer;
+    friend class LogDispatcher;
 
     template <typename Conf_T>
     inline Conf_T getConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
@@ -3192,14 +3194,15 @@ public:
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
 #if defined(_ELPP_ASYNC)
-        asyncLoggingThread = std::thread(asyncDispatch);
-        asyncLoggingThread.join();
+        m_asyncLoggingThread = nullptr;
+        m_asyncLoggingStarted = false;
 #endif // defined(_ELPP_ASYNC)
     }
 
     virtual ~Storage(void) {
 #if defined(_ELPP_ASYNC)
-        asyncLoggingThread.detach();
+        m_asyncLoggingThread->detach();
+        base::utils::safeDelete(m_asyncLoggingThread);
 #endif // defined(_ELPP_ASYNC)
         base::utils::safeDelete(m_registeredHitCounters);
         base::utils::safeDelete(m_registeredLoggers);
@@ -3266,9 +3269,20 @@ public:
         return m_preRollOutHandler;
     }
 #if defined(_ELPP_ASYNC)
-    std::queue<Log>& logQueue(void) {
-        return m_logQueue;
+    base::Log& logFromQueue(void) {
+        base::utils::threading::lock_guard lock(m_queueMutex);
+        m_queueMutex.lock();
+        base::Log& l = m_logQueue.front();
+        m_logQueue.pop();
+        return l;
     }
+    void startAsyncLoggingIfStopped(void) {
+        if (!m_asyncLoggingStarted) {
+            m_asyncLoggingThread = new std::thread(asyncDispatch);
+            m_asyncLoggingStarted = true;
+        }
+    }
+
 #endif // defined(_ELPP_ASYNC)
 private:
     std::string m_username;
@@ -3281,8 +3295,10 @@ private:
     std::stringstream m_tempStream;
     base::utils::threading::mutex m_mutex;
 #if defined(_ELPP_ASYNC)
-    std::thread asyncLoggingThread;
-    std::queue<Log> m_logQueue;
+    bool m_asyncLoggingStarted;
+    std::thread* m_asyncLoggingThread;
+    base::utils::threading::mutex m_queueMutex;
+    std::queue<base::Log> m_logQueue;
 #endif // defined(_ELPP_ASYNC)
 
     friend class base::LogDispatcher;
@@ -3336,16 +3352,26 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(const Log& log) : m_log(log) {
+    LogDispatcher(bool proceed, const base::Log& log) : m_proceed(proceed), m_log(log) {
     }
 #if defined(_ELPP_ASYNC)
     void queue(void) {
-        base::elStorage->m_logQueue.emplace(m_log);
+        if (m_proceed) {
+            base::elStorage->m_logQueue.emplace(m_log);
+            base::elStorage->startAsyncLoggingIfStopped();
+        }
     }
 #endif // defined(_ELPP_ASYNC)
     void dispatch(void) {
+        if (!m_proceed) {
+            return;
+        }
         // We minimize the time of elStorage's lock - this lock is released after log is written
         base::elStorage->lock();
+        m_log.logger()->lock();
+#if (defined(_ELPP_STRICT_SIZE_CHECK))
+        m_log.logger()->m_typedConfigurations->validateFileRolling(m_log.level(), base::elStorage->preRollOutHandler());
+#endif // (defined(_ELPP_STRICT_SIZE_CHECK))
         base::TypedConfigurations* tc = m_log.logger()->m_typedConfigurations;
         base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_log.level()));
         std::string logLine = logFormat->format();
@@ -3400,7 +3426,8 @@ public:
         dispatch(logLine);
     }
 private:
-    Log m_log;
+    bool m_proceed;
+    base::Log m_log;
 
     void dispatch(const std::string& logLine) {
         if (m_log.logger()->m_typedConfigurations->toFile(m_log.level())) {
@@ -3430,10 +3457,8 @@ private:
 #if defined(_ELPP_ASYNC)
     static void asyncDispatch(void) {
         while (1) {
-            if (base::elStorage.get() == nullptr) continue;
-            Log* log = &base::elStorage->logQueue().front();
-            LogDispatcher(*log).dispatch();
-            elStorage->logQueue().pop();
+            // Always true because if it was false this log item would not be in the queue
+            base::LogDispatcher(true, base::elStorage->logFromQueue()).dispatch();
             sleep(1);
         }
     }
@@ -3535,19 +3560,16 @@ public:
                               // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
         }
-#if (defined(_ELPP_STRICT_SIZE_CHECK))
-        if (m_proceed) {
-            m_logger->m_typedConfigurations->validateFileRolling(level, elStorage->preRollOutHandler());
-        }
-#endif // (defined(_ELPP_STRICT_SIZE_CHECK))
     }
 
     virtual ~Writer(void) {
         if (m_proceed) {
 #if defined(_ELPP_ASYNC)
-            LogDispatcher(Log(m_level, m_file, m_line, m_func, m_verboseLevel, m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).queue();
+            base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
+                          m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).queue();
 #else
-            LogDispatcher(Log(m_level, m_file, m_line, m_func, m_verboseLevel, m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).dispatch();
+            base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
+                          m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).dispatch();
 #endif
             m_logger->stream().str("");
         }
