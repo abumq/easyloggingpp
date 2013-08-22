@@ -312,6 +312,14 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
+#if defined(_ELPP_ASYNC) && _ELPP_USE_STD_THREADING
+#   include <thread>
+#else
+#   if defined(_ELPP_ASYNC)
+#      warning "std::thread not available for asynchronous logging"
+#      undef _ELPP_ASYNC
+#   endif // defined(_ELPP_ASYNC)
+#endif //  && !_ELPP_USE_STD_THREADING
 #if _ELPP_THREADING_ENABLED
 #   if _ELPP_USE_STD_THREADING
 #      include <mutex>
@@ -2837,6 +2845,7 @@ public:
 };
 class Storage;
 class Trackable;
+class LogDispatcher;
 } // namespace base
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
@@ -2933,6 +2942,7 @@ private:
     base::LogStreamsReferenceMap* m_logStreamsReference;
     base::utils::threading::mutex m_mutex;
 
+    friend class base::LogDispatcher;
     friend class base::Writer;
     friend class el::Loggers;
     friend class base::Storage;
@@ -3131,6 +3141,36 @@ private:
     std::map<std::string, VLevel> m_modules;
     base::utils::threading::mutex m_mutex;
 };
+class Log {
+public:
+    Log(const Level& level, const char* file, unsigned long int line, const char* func,
+                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& logMessage,
+                          const std::string& originalThreadId) :
+                  m_level(level), m_file(file), m_line(line), m_func(func),
+                  m_verboseLevel(verboseLevel), m_logger(logger), m_logMessage(logMessage),
+                  m_originalThreadId(originalThreadId) {
+    }
+    Level& level(void) { return m_level; }
+    const char* file(void) { return m_file; }
+    unsigned long int line(void) { return m_line; }
+    const char* func(void) { return m_func; }
+    VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
+    Logger* logger(void) { return m_logger; }
+    std::string& logMessage(void) { return m_logMessage; }
+    std::string& originalThreadId(void) { return m_originalThreadId; }
+private:
+    Level m_level;
+    const char* m_file;
+    unsigned long int m_line;
+    const char* m_func;
+    VRegistry::VLevel m_verboseLevel;
+    Logger* m_logger;
+    std::string m_logMessage;
+    std::string m_originalThreadId;
+};
+#if defined(_ELPP_ASYNC)
+static void asyncDispatch();
+#endif // defined(_ELPP_ASYNC)
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
@@ -3151,9 +3191,16 @@ public:
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+#if defined(_ELPP_ASYNC)
+        asyncLoggingThread = std::thread(asyncDispatch);
+        asyncLoggingThread.join();
+#endif // defined(_ELPP_ASYNC)
     }
 
     virtual ~Storage(void) {
+#if defined(_ELPP_ASYNC)
+        asyncLoggingThread.detach();
+#endif // defined(_ELPP_ASYNC)
         base::utils::safeDelete(m_registeredHitCounters);
         base::utils::safeDelete(m_registeredLoggers);
         base::utils::safeDelete(m_vRegistry);
@@ -3218,6 +3265,11 @@ public:
     inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
+#if defined(_ELPP_ASYNC)
+    std::queue<Log>& logQueue(void) {
+        return m_logQueue;
+    }
+#endif // defined(_ELPP_ASYNC)
 private:
     std::string m_username;
     std::string m_hostname;
@@ -3228,8 +3280,12 @@ private:
     PreRollOutHandler m_preRollOutHandler;
     std::stringstream m_tempStream;
     base::utils::threading::mutex m_mutex;
+#if defined(_ELPP_ASYNC)
+    std::thread asyncLoggingThread;
+    std::queue<Log> m_logQueue;
+#endif // defined(_ELPP_ASYNC)
 
-    friend class base::Writer;
+    friend class base::LogDispatcher;
     friend class el::Helpers;
 
     inline const std::string& username(void) const {
@@ -3277,6 +3333,111 @@ private:
     }
 };
 extern std::unique_ptr<base::Storage> elStorage;
+/// @brief Dispatches log messages
+class LogDispatcher : private base::NoCopy {
+public:
+    LogDispatcher(const Log& log) : m_log(log) {
+    }
+#if defined(_ELPP_ASYNC)
+    void queue(void) {
+        base::elStorage->m_logQueue.emplace(m_log);
+    }
+#endif // defined(_ELPP_ASYNC)
+    void dispatch(void) {
+        // We minimize the time of elStorage's lock - this lock is released after log is written
+        base::elStorage->lock();
+        base::TypedConfigurations* tc = m_log.logger()->m_typedConfigurations;
+        base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_log.level()));
+        std::string logLine = logFormat->format();
+        if (logFormat->hasFlag(base::FormatFlags::AppName)) {
+          // App name
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
+                   m_log.logger()->parentApplicationName());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
+          // Logger ID
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_log.logger()->id());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
+          // Thread ID
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
+                  base::utils::threading::getCurrentThreadId());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
+          // DateTime
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
+                  base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_log.level())));
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Function)) {
+          // Function
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_log.func()));
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Location)) {
+          // Location
+          base::elStorage->tempStream() << m_log.file() << ":" << m_log.line();
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, base::elStorage->tempStream().str());
+          base::elStorage->tempStream().str("");
+        }
+        if (logFormat->hasFlag(base::FormatFlags::User)) {
+          // User
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentUserFormatSpecifier, elStorage->username());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Host)) {
+          // Host
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
+        }
+        if (m_log.level() == Level::Verbose &&
+              logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
+          // Verbose level
+          base::elStorage->tempStream() << m_log.verboseLevel();
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, base::elStorage->tempStream().str());
+          base::elStorage->tempStream().str("");
+        }
+        if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
+          // Log message
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.logMessage());
+        }
+        dispatch(logLine);
+    }
+private:
+    Log m_log;
+
+    void dispatch(const std::string& logLine) {
+        if (m_log.logger()->m_typedConfigurations->toFile(m_log.level())) {
+            std::fstream* fs = m_log.logger()->m_typedConfigurations->fileStream(m_log.level());
+            if (fs != nullptr) {
+                *fs << logLine << std::endl;
+            }
+            if (fs->fail()) {
+                ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
+                        << "Few possible reasons (could be something else):\n"
+                        << "      * Permission denied\n"
+                        << "      * Disk full\n"
+                        << "      * Disk is not writable"
+                        , true);
+            }
+        }
+        base::elStorage->unlock();
+        if (m_log.logger()->m_typedConfigurations->toStandardOutput(m_log.level())) {
+            if (m_log.level() == Level::Error || m_log.level() == Level::Fatal) {
+                std::cerr << logLine << std::endl;
+            } else {
+                std::cout << logLine << std::endl;
+            }
+        }
+    }
+};
+#if defined(_ELPP_ASYNC)
+    static void asyncDispatch(void) {
+        while (1) {
+            if (base::elStorage.get() == nullptr) continue;
+            Log* log = &base::elStorage->logQueue().front();
+            LogDispatcher(*log).dispatch();
+            elStorage->logQueue().pop();
+            sleep(1);
+        }
+    }
+#endif // defined(_ELPP_ASYNC)
 #if defined(_ELPP_STL_LOGGING)
 /// @brief Workarounds to write some STL logs
 ///
@@ -3361,7 +3522,7 @@ public:
 /// @brief Main entry point of each logging
 class Writer : private base::NoCopy {
 public:
-    Writer(const std::string& loggerId, Level level, const char* file, unsigned long int line,
+    Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
                const char* func, VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel), m_proceed(true) {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
@@ -3383,7 +3544,12 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed) {
-            buildAndWrite();
+#if defined(_ELPP_ASYNC)
+            LogDispatcher(Log(m_level, m_file, m_line, m_func, m_verboseLevel, m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).queue();
+#else
+            LogDispatcher(Log(m_level, m_file, m_line, m_func, m_verboseLevel, m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).dispatch();
+#endif
+            m_logger->stream().str("");
         }
         if (m_logger != nullptr) {
             m_logger->unlock();
@@ -3762,89 +3928,6 @@ private:
         }
         m_logger->stream() << "]";
         return *this;
-    }
-
-    void buildAndWrite(void) {
-        // We minimize the time of elStorage's lock - this lock is released after log is written
-        base::elStorage->lock();
-        base::TypedConfigurations* tc = m_logger->m_typedConfigurations;
-        base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_level));
-        std::string logLine = logFormat->format();
-        if (logFormat->hasFlag(base::FormatFlags::AppName)) {
-            // App name
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
-                    m_logger->parentApplicationName());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
-            // Logger ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier,  m_logger->id());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
-            // Thread ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-                    base::utils::threading::getCurrentThreadId());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
-            // DateTime
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
-                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_level)));
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Function)) {
-            // Function
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_func));
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Location)) {
-            // Location
-            base::elStorage->tempStream() << m_file << ":" << m_line;
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, base::elStorage->tempStream().str());
-            base::elStorage->tempStream().str("");
-        }
-        if (logFormat->hasFlag(base::FormatFlags::User)) {
-            // User
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentUserFormatSpecifier, elStorage->username());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Host)) {
-            // Host
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
-        }
-        if (m_level == Level::Verbose &&
-                logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
-            // Verbose level
-            base::elStorage->tempStream() << m_verboseLevel;
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, base::elStorage->tempStream().str());
-            base::elStorage->tempStream().str("");
-        }
-        if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
-            // Log message
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_logger->stream().str());
-        }
-        writeLog(logLine);
-    }
-
-    void writeLog(const std::string& logLine) {
-        if (m_logger->m_typedConfigurations->toFile(m_level)) {
-            std::fstream* fs = m_logger->m_typedConfigurations->fileStream(m_level);
-            if (fs != nullptr) {
-                *fs << logLine << std::endl;
-            }
-            if (fs->fail()) {
-                ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_logger->m_typedConfigurations->filename(m_level) << "].\n"
-                        << "Few possible reasons (could be something else):\n"
-                        << "      * Permission denied\n"
-                        << "      * Disk full\n"
-                        << "      * Disk is not writable"
-                        , true);
-            }
-        }
-        base::elStorage->unlock();
-        if (m_logger->m_typedConfigurations->toStandardOutput(m_level)) {
-            if (m_level == Level::Error || m_level == Level::Fatal) {
-                std::cerr << logLine << std::endl;
-            } else {
-                std::cout << logLine << std::endl;
-            }
-        }
-        m_logger->stream().str("");
     }
 };
 #define _ELPP_WRITE_LOG(loggerId, level) el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC)

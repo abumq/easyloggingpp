@@ -17,7 +17,7 @@ void write(void) {
     LOG(INFO) << "This is a test number " << i;
   }
   LOG(INFO) << "Now EasyLogging++ is logging DEBUG logs that are stored in logs/myeasylog.log by default";
-  for (int i = 1; i <= 10; i++) {
+  for (int i = 1; i <= 10000; i++) {
     LOG(DEBUG) << "Some more logs [" << i << "]";
     LOG_EVERY_N(2, INFO) << "Every second iter [" << i << "]";
   }
@@ -25,6 +25,7 @@ void write(void) {
 }
 
 int main(void) {
+  el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "false");
   write();
   return 0;
 }
