@@ -3389,7 +3389,7 @@ public:
             m_logger->unlock();
         }
 #if !defined(_ELPP_PREVENT_FATAL_ABORT)
-        if (m_level == Level::Fatal) {
+        if (m_proceed && m_level == Level::Fatal) {
             exit(1);
         }
 #endif // !defined(_ELPP_PREVENT_FATAL_ABORT)

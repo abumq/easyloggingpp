@@ -17,8 +17,9 @@ int main(void) {
     el::Configurations confFromFile("../default-logger.conf");
  
     el::Loggers::reconfigureAllLoggers(confFromFile); 
-    
+     
     LOG(INFO) << "Info log after manually configuring 'default' logger";
+    LOG(FATAL) << "Fatal logging is off";
     LOG(ERROR) << "Error log";
     LOG(WARNING) << "WARNING! log";
     VLOG(1) << "Verbose log 1";
