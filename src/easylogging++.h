@@ -3513,7 +3513,7 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed) {
-        base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
+            base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
         }
         if (m_logger != nullptr) {
