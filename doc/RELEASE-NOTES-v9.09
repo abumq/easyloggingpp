@@ -3,6 +3,12 @@ Easylogging++ v9.08 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=       NEW FEATURES     =
+==========================
+
+ - Support for wxWidgets containers (issue #60)
+
+==========================
 =       REFACTORING      =
 ==========================
 

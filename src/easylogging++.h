@@ -3889,9 +3889,9 @@ public:
     }
 
 #if defined(_ELPP_WXWIDGETS_LOGGING)
-#define WX_ELPP_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
+#define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
 #else
-#define WX_ELPP_ENABLED(ContainerType)
+#define ELPP_WX_ENABLED(ContainerType)
 #endif // defined(_ELPP_WXWIDGETS_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {

@@ -9,7 +9,7 @@ WX_DECLARE_LIST(int, MyList);
 
 WX_DEFINE_LIST(MyList);
 
-WX_ELPP_ENABLED(MyList)
+ELPP_WX_ENABLED(MyList)
 
 
 int main() {
