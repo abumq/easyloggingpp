@@ -312,6 +312,7 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <queue>
 #if defined(_ELPP_ASYNC) && _ELPP_USE_STD_THREADING
 #   include <thread>
 #else
@@ -333,7 +334,6 @@
 #if defined(_ELPP_STL_LOGGING)
 // For logging STL based templates
 #   include <list>
-#   include <queue>
 #   include <deque>
 #   include <set>
 #   include <bitset>
@@ -3271,7 +3271,6 @@ public:
 #if defined(_ELPP_ASYNC)
     base::Log& logFromQueue(void) {
         base::utils::threading::lock_guard lock(m_queueMutex);
-        m_queueMutex.lock();
         base::Log& l = m_logQueue.front();
         m_logQueue.pop();
         return l;
@@ -3355,7 +3354,7 @@ public:
     LogDispatcher(bool proceed, const base::Log& log) : m_proceed(proceed), m_log(log) {
     }
 #if defined(_ELPP_ASYNC)
-    void queue(void) {
+    inline void queue(void) {
         if (m_proceed) {
             base::elStorage->m_logQueue.emplace(m_log);
             base::elStorage->startAsyncLoggingIfStopped();
