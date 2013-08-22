@@ -3452,6 +3452,7 @@ private:
                 std::cout << logLine << std::endl;
             }
         }
+        m_log.logger()->unlock();
     }
 };
 #if defined(_ELPP_ASYNC)
@@ -3563,6 +3564,9 @@ public:
     }
 
     virtual ~Writer(void) {
+        if (m_logger != nullptr) {
+            m_logger->unlock();
+        }
         if (m_proceed) {
 #if defined(_ELPP_ASYNC)
             base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
@@ -3572,9 +3576,6 @@ public:
                           m_logger, m_logger->stream().str(), base::utils::threading::getCurrentThreadId())).dispatch();
 #endif
             m_logger->stream().str("");
-        }
-        if (m_logger != nullptr) {
-            m_logger->unlock();
         }
 #if !defined(_ELPP_PREVENT_FATAL_ABORT)
         if (m_proceed && m_level == Level::Fatal) {
