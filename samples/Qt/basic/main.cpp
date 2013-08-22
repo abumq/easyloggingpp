@@ -81,5 +81,4 @@ int main(int argc, char* argv[]) {
     qstack_.push ("100");
     LOG(DEBUG) << "Printing qstack " << qstack_;
     return 0;
-
 }

@@ -365,6 +365,9 @@
 #   include <boost/container/set.hpp>
 #   include <boost/container/flat_set.hpp>
 #endif // defined(_ELPP_BOOST_LOGGING)
+#if defined(_ELPP_WXWIDGETS_LOGGING)
+#   include <wx/list.h>
+#endif // defined(_ELPP_WXWIDGETS_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
 namespace el {
@@ -3647,7 +3650,6 @@ public:
         m_logger->stream() << OStreamMani;
         return *this;
     }
-
 #define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp)                                                    \
     template <typename T>                                                                            \
     inline Writer& operator<<(const temp<T>& template_inst) {                                        \
@@ -3859,6 +3861,38 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(boost::container::set)
     ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(boost::container::flat_set)
 #endif // defined(_ELPP_BOOST_LOGGING)
+
+/// @brief Macro used internally that can be used externally to make containers easylogging++ friendly
+///
+/// @detail This macro expands to write an ostream& operator<< for container. This container is expected to
+///         have begin() and end() methods that return respective iterators
+/// @param ContainerType Type of container e.g, MyList from WX_DECLARE_LIST(int, MyList); in wxwidgets
+/// @param SizeMethod Method used to get size of container.
+/// @param ElementInstance Instance of element to be fed out. Insance name is "elem". See WX_ELPP_ENABLED macro
+///        for an example usage
+#define MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
+    std::ostream& operator<<(std::ostream& ss, const ContainerType& container) {\
+        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";\
+        ContainerType::const_iterator elem = container.begin();\
+        ContainerType::const_iterator endElem = container.end();\
+        std::size_t size_ = container.SizeMethod; \
+        ss << "[";\
+        for (std::size_t i = 0; elem != endElem && i < el::base::consts::kMaxLogPerContainer; ++i, ++elem) {\
+            ss << ElementInstance;\
+            ss << ((i < size_ - 1) ? sep : "");\
+        }\
+        if (elem != endElem) {\
+            ss << " ...";\
+        }\
+        ss << "]";\
+        return ss;\
+    }
+
+#if defined(_ELPP_WXWIDGETS_LOGGING)
+#define WX_ELPP_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
+#else
+#define WX_ELPP_ENABLED(ContainerType)
+#endif // defined(_ELPP_WXWIDGETS_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
         if (!m_proceed) { return *this; }
