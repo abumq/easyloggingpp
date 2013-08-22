@@ -366,7 +366,7 @@
 #   include <boost/container/flat_set.hpp>
 #endif // defined(_ELPP_BOOST_LOGGING)
 #if defined(_ELPP_WXWIDGETS_LOGGING)
-#   include <wx/list.h>
+#   include <wx/vector.h>
 #endif // defined(_ELPP_WXWIDGETS_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
@@ -3886,11 +3886,12 @@ public:
         ss << "]";\
         return ss;\
     }
-
+//#define _ELPP_WXWIDGETS_LOGGING
 #if defined(_ELPP_WXWIDGETS_LOGGING)
-#define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
+    ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(wxVector)
+#   define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
 #else
-#define ELPP_WX_ENABLED(ContainerType)
+#   define ELPP_WX_ENABLED(ContainerType)
 #endif // defined(_ELPP_WXWIDGETS_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {
