@@ -3515,9 +3515,9 @@ public:
         if (m_proceed) {
             base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
+            m_logger->stream().str("");
         }
         if (m_logger != nullptr) {
-            m_logger->stream().str("");
             m_logger->unlock();
         }
 #if !defined(_ELPP_PREVENT_FATAL_ABORT)
@@ -3886,7 +3886,6 @@ public:
         ss << "]";\
         return ss;\
     }
-//#define _ELPP_WXWIDGETS_LOGGING
 #if defined(_ELPP_WXWIDGETS_LOGGING)
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(wxVector)
 #   define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
@@ -3922,7 +3921,7 @@ private:
             m_logger->stream() << ((i < size_ - 1) ? sep : "");
          }
         if (begin_ != end_) {
-            m_logger->stream() << " ...";
+            m_logger->stream() << "...";
         }
         m_logger->stream() << "]";
         return *this;

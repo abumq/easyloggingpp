@@ -12,7 +12,6 @@ _INITIALIZE_EASYLOGGINGPP
 
 void write(void) {
   TIMED_FUNC(writeTimer);
-  LOG(DEBUG) << "This is start of logging!";
   for (int i = 1; i <= 100; i++) {
     LOG(INFO) << "This is a test number " << i;
   }
