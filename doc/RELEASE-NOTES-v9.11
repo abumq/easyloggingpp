@@ -1,0 +1,16 @@
+
+Easylogging++ v9.11 RELEASE NOTES
+---------------------------------
+
+==========================
+=      NEW FEATURES      =
+==========================
+
+ - Logger not registered error now uses 'default' logger
+
+==========================
+=         NOTES          =
+==========================
+
+ - See https://github.com/easylogging/easyloggingpp/tree/master/doc for other release notes
+ - Closed issues: https://github.com/easylogging/easyloggingpp/issues?page=1&state=closed

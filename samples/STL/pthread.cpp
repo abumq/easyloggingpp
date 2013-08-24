@@ -59,12 +59,10 @@ int main(int argc, char** argv)
 {
      _START_EASYLOGGINGPP(argc, argv);
      pthread_t thread1, thread2, thread3;
-     int r1, r2, r3;
     /* Create independent threads each of which will execute function */
-
-     r1 = pthread_create( &thread1, NULL, write, (void*)"1");
-     r2 = pthread_create( &thread2, NULL, write, (void*)"2");
-     r3 = pthread_create( &thread3, NULL, write, (void*)"3");
+     pthread_create( &thread1, NULL, write, (void*)"1");
+     pthread_create( &thread2, NULL, write, (void*)"2");
+     pthread_create( &thread3, NULL, write, (void*)"3");
 
      pthread_join(thread1, NULL);
      pthread_join(thread2, NULL); 

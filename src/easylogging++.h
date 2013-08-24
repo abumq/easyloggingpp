@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.10
+//  Easylogging++ v9.10 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -689,6 +689,8 @@ namespace consts {
     static const char* kPm                              =      "PM";
 
     // Miscellaneous constants
+    static const char* kDefaultLoggerId                        =      "default";
+    static const char* kPerformanceLoggerId                    =      "performance";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;
@@ -702,12 +704,12 @@ namespace consts {
 #else
 #   if _ELPP_OS_UNIX
 #      if _ELPP_OS_ANDROID
-    static const char* kDefaultLogFile                         =      "/data/local/tmp/myeasylog.log";
+    static const char* kDefaultLogFile                         =      "/data/log/myeasylog.log";
 #      else
     static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      endif // _ELPP_OS_ANDROID
 #   elif _ELPP_OS_WINDOWS
-       static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
+       static const char* kDefaultLogFile                      =      "logs\\myeasylog.log";
 #   endif // _ELPP_OS_UNIX
 #endif // defined(_ELPP_DEFAULT_LOG_FILE)
 
@@ -3175,9 +3177,9 @@ public:
         m_flags(0x0),
         m_preRollOutHandler(base::defaultPreRollOutHandler) {
         // Register default logger
-        m_registeredLoggers->get("default");
+        m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
         // Register performance logger and reconfigure format
-        Logger* performanceLogger = m_registeredLoggers->get("performance");
+        Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
@@ -3502,7 +3504,12 @@ public:
                    m_proceed(true), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
-            ELPP_INTERNAL_ERROR("Logger [" << loggerId << "] is not registered yet!", false);
+            if (elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId), false) != nullptr) {
+                // Somehow default logger has been unregistered. Not good! Register again
+                elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
+            }
+            Writer(el::base::consts::kDefaultLoggerId, el::Level::Error, file, line, func)
+                    << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         }
         if (m_proceed) {
@@ -4182,7 +4189,7 @@ static void crashAbort(int sig) {
 ///
 /// @detail This function writes log using 'default' logger, prints stack trace for GCC based compilers and exits program.
 static void defaultCrashHandler(int sig) {
-    logCrashReason(sig, true, Level::Fatal, "default");
+    logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
     crashAbort(sig);
 }
 /// @brief Handles unexpected crashes
@@ -4257,7 +4264,7 @@ public:
     /// @param stackTraceIfAvailable Includes stack trace if available
     /// @param level Logging level
     /// @param logger Logger to use for logging
-    static void logCrashReason(int sig, bool stackTraceIfAvailable = false, const Level& level = Level::Fatal, const char* logger = "default") {
+    static void logCrashReason(int sig, bool stackTraceIfAvailable = false, const Level& level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out (can be useful for backing up)
@@ -4660,14 +4667,14 @@ public:
 #undef LOG_VERBOSE_EVERY_N
 #undef VLOG_EVERY_N
 // Normal logs
-#define LOG(LEVEL) CLOG(LEVEL, "default")
-#define VLOG(vlevel) CVLOG(vlevel, "default")
+#define LOG(LEVEL) CLOG(LEVEL, el::base::consts::kDefaultLoggerId)
+#define VLOG(vlevel) CVLOG(vlevel, el::base::consts::kDefaultLoggerId)
 // Conditional logs
-#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, "default")
-#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, "default")
+#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
+#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, el::base::consts::kDefaultLoggerId)
 // Interval logs
-#define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, "default")
-#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, "default")
+#define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
+#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
 // Check macros
 #undef CHECK
 #undef CHECK_EQ
