@@ -273,7 +273,7 @@
 #if (!(_ELPP_CXX0X || _ELPP_CXX11))
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
 #endif // (!(_ELPP_CXX0X || _ELPP_CXX11))
-////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // Headers inclusion
 // We include in following order:
 //  * C-headers
@@ -281,8 +281,8 @@
 //  * C++ Headers
 //  * C++11 Headers
 //  * Headers supported by STL Logging
-//  * Headers supported by Qt Logging
-//////////////////////////////////////////
+//  * Headers supported by third party libraries logging e.g, Qt, boost etc
+///////////////////////////////////////////////////////////////////////////
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
