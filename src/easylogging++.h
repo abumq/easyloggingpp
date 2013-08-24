@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.09
+//  Easylogging++ v9.10
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -1351,7 +1351,7 @@ public:
     /// @param tVal underlying timeval pointer in order to determine milliseconds
     /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
     /// @return Parsed buffer
-    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, const timeval* tVal, std::size_t millisecondsOffset = 1000) {
+    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, const struct timeval* tVal, std::size_t millisecondsOffset = 1000) {
         if (buf == nullptr || tInfo == nullptr || format == nullptr) {
             ELPP_INTERNAL_ERROR("Cannot parse format; buf: '" << base::utils::charPtrVal(buf) << "'; bufSz: " << bufSz << "; "
                     "format '" << base::utils::charPtrVal(format) << "';", false);
@@ -1431,7 +1431,7 @@ public:
     static std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        timeval currTime;
+        struct timeval currTime;
         gettimeofday(&currTime);
         struct tm* timeInfo = nullptr;
 #if _ELPP_OS_UNIX
@@ -1474,7 +1474,7 @@ public:
     }
 
     /// @brief Gets time difference in milli/micro second depending on timestampUnit
-    static inline unsigned long long getTimeDifference(const timeval& endTime, const timeval& startTime, const base::TimestampUnit& timestampUnit) {
+    static inline unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime, const base::TimestampUnit& timestampUnit) {
         if (timestampUnit == base::TimestampUnit::Microsecond) {
             return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
                     static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
@@ -4016,7 +4016,7 @@ private:
     const char* m_loggerId;
     bool m_scopedLog;
     el::Level m_level;
-    timeval startTime, endTime, lastCheckpointTime;
+    struct timeval startTime, endTime, lastCheckpointTime;
     bool m_hasChecked;
     const char* m_lastCheckpointId;
     base::utils::threading::mutex m_mutex;
@@ -4375,10 +4375,10 @@ public:
     }
 
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.09"); }
+    static inline const std::string version(void) { return std::string("9.10"); }
 
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("24-08-2013 1742hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("24-08-2013 1759hrs"); }
 
     /// @brief Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan"); }
