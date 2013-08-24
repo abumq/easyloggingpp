@@ -842,7 +842,7 @@ Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets
 Following table shows the templates supported.
 
 |     *               |          *        |      *                    |
-|-----------------------------------------|---------------------------|
+|---------------------|-------------------|---------------------------|
 | `wxString`          |  `wxVector`       |  `wxList`                 |
 
 In order to setup `wxList` to start logging, you can use `ELPP_WX_ENABLED`. For example 
