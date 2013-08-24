@@ -3888,9 +3888,14 @@ public:
     }
 #if defined(_ELPP_WXWIDGETS_LOGGING)
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(wxVector)
-#   define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
+#   define ELPP_WX_PTR_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
+#   define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), (*elem))
+#   define ELPP_WX_HASH_MAP_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), \
+        "(" << elem->first << ", " << elem->second << ")")
 #else
+#   define ELPP_WX_PTR_ENABLED(ContainerType)
 #   define ELPP_WX_ENABLED(ContainerType)
+#   define ELPP_WX_HASH_MAP_ENABLED(ContainerType)
 #endif // defined(_ELPP_WXWIDGETS_LOGGING)
     template <class Class>
     inline Writer& operator<<(const Class& class_) {

@@ -841,19 +841,33 @@ Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets
 
 Following table shows the templates supported.
 
-|     *               |          *        |      *                    |
-|---------------------|-------------------|---------------------------|
-| `wxString`          |  `wxVector`       |  `wxList`                 |
+|     *               |          *        |      *                    |      *                    |
+|---------------------|-------------------|---------------------------|---------------------------|
+| `wxString`          |  `wxVector`       |  `wxList`                 |  `wxString`               |
+| `wxHashSet`         |  `wxHashMap`      |                           |                           |
 
-In order to setup `wxList` to start logging, you can use `ELPP_WX_ENABLED`. For example 
+wxWidgets has its own way of declaring and defining some templates e.g, `wxList` where  you use `WX_DECLARE_LIST` macro to declare a list.
+
+In order to setup a container for logging that holds pointers to object, use `ELPP_WX_PTR_ENABLED`, otherwise if container holds actual object e.g, wxHashSet use `ELPP_WX_ENABLED`. For containers like `wxHashMap` because it contains value and pair, use `ELPP_WX_HASH_MAP_ENABLED` macro.
 
 ```c++
+// wxList example
 WX_DECLARE_LIST(int, MyList);
 
 WX_DEFINE_LIST(MyList);
 
 // Following line does the trick
-ELPP_WX_ENABLED(MyList);
+ELPP_WX_PTR_ENABLED(MyList);
+
+// wxHashSet example
+WX_DECLARE_HASH_SET(int, wxIntegerHash, wxIntegerEqual, IntHashSet);
+// Following line does the trick!
+ELPP_WX_ENABLED(IntHashSet)
+
+// wxHashMap example
+WX_DECLARE_STRING_HASH_MAP( wxString, MyHashMap);
+// Following line does the trick
+ELPP_WX_HASH_MAP_ENABLED(MyHashMap)
 ```
 You may also want to have a look at wxWidgets sample
 
@@ -953,10 +967,11 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 
 Easylogging++ has also been tested with following C++ libraries;
 
-| *****   | Library                |    Notes                                                                            |
-|---------|------------------------|-------------------------------------------------------------------------------------|
-|![qt]    | Qt                     | Tested with Qt 4.6.2 and Qt 5 (with C++0x and C++11)                                |
-|![boost] | Boost                  | Tested with boost 1.51                                                              |
+| *****       | Library                |    Notes                                                                            |
+|-------------|------------------------|-------------------------------------------------------------------------------------|
+|![qt]        | Qt                     | Tested with Qt 4.6.2 and Qt 5 (with C++0x and C++11)                                |
+|![boost]     | Boost                  | Tested with boost 1.51                                                              |
+|![wxwidgets] | wxWidgets              | Tested with wxWidgets 2.9.4                                                         |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1005,6 +1020,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
   [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
   [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
+  [wxwidgets]: http://www.easylogging.org/images/icons/wxwidgets.png?v=3
 
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
   [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2

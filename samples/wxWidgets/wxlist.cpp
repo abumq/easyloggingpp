@@ -9,7 +9,7 @@ WX_DECLARE_LIST(int, MyList);
 WX_DEFINE_LIST(MyList);
 
 // Following enables MyList to be log-friendly
-ELPP_WX_ENABLED(MyList)
+ELPP_WX_PTR_ENABLED(MyList)
 
 int main() {
     MyList list;
