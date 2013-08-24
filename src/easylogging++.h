@@ -704,7 +704,7 @@ namespace consts {
 #else
 #   if _ELPP_OS_UNIX
 #      if _ELPP_OS_ANDROID
-    static const char* kDefaultLogFile                         =      "/data/log/myeasylog.log";
+    static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      else
     static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      endif // _ELPP_OS_ANDROID
