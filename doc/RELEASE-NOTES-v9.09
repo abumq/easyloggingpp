@@ -9,6 +9,12 @@ Easylogging++ v9.08 RELEASE NOTES
  - Support for wxWidgets containers (issue #60)
 
 ==========================
+=        BUG FIXES       =
+==========================
+
+ - NewLineForContainer does not work for Qt containers that dont use writeIterator (isue #96)
+
+==========================
 =       REFACTORING      =
 ==========================
 

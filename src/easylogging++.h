@@ -3796,6 +3796,7 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
+        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         m_logger->stream() << "[";
         QList<K> keys = map_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -3807,10 +3808,10 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(map_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? ", " : "");
+            m_logger->stream() << ((index_ < keys.size() -1) ? sep : "");
         }
         if (begin != end) {
-            m_logger->stream() << " ...";
+            m_logger->stream() << "...";
         }
         m_logger->stream() << "]";
         return *this;
@@ -3824,6 +3825,7 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QHash<K, V>& hash_) {
         if (!m_proceed) { return *this; }
+        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         m_logger->stream() << "[";
         QList<K> keys = hash_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -3835,10 +3837,10 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(hash_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? ", " : "");
+            m_logger->stream() << ((index_ < keys.size() -1) ? sep : "");
         }
         if (begin != end) {
-            m_logger->stream() << " ...";
+            m_logger->stream() << "...";
         }
         m_logger->stream() << "]";
         return *this;
@@ -3881,7 +3883,7 @@ public:
             ss << ((i < size_ - 1) ? sep : "");\
         }\
         if (elem != endElem) {\
-            ss << " ...";\
+            ss << "...";\
         }\
         ss << "]";\
         return ss;\
