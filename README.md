@@ -805,11 +805,11 @@ Now if you want to activate logging your Qt classes and containers, define `_ELP
 
 Following Qt classes and containers are supported by Easylogging++ v9.0+
 
-|     *       |          *              |       *          |       *          |       *          |       *          |
-|-------------|-------------------------|------------------|------------------|------------------|------------------|
-| QString     |  QByteArray             |  QLatin          |    QList         |    QVector       |    QQueue        |
-| QSet        |  QPair                  |  QMap            |    QMultiMap     |    QHash         |    QMultiHash    |
-| QLinkedList |  QStack                 |  QChar           |    q[u]int[64]   |                  |                  |
+|     *         |          *                |       *            |         *          |         *          |         *          |
+|---------------|---------------------------|--------------------|--------------------|--------------------|--------------------|
+| `QString`     |  `QByteArray`             |  `QLatin`          |    `QList`         |    `QVector`       |    `QQueue`        |
+| `QSet`        |  `QPair`                  |  `QMap`            |    `QMultiMap`     |    `QHash`         |    `QMultiHash`    |
+| `QLinkedList` |  `QStack`                 |  `QChar`           |    `q[u]int[64]`   |                    |                    |
 
 `QBool` is not supported since it's been dropped from Qt 5+
 
@@ -841,10 +841,9 @@ Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets
 
 Following table shows the templates supported.
 
-|     *               |          *        |      *                    |      *                    |
-|---------------------|-------------------|---------------------------|---------------------------|
-| `wxString`          |  `wxVector`       |  `wxList`                 |  `wxString`               |
-| `wxHashSet`         |  `wxHashMap`      |                           |                           |
+|     *               |          *        |      *                    |      *                    |      *              |      *               |
+|---------------------|-------------------|---------------------------|---------------------------|---------------------|----------------------|
+| `wxString`          |  `wxVector`       |  `wxList`                 |  `wxString`               | `wxHashSet`         |  `wxHashMap`         |
 
 wxWidgets has its own way of declaring and defining some templates e.g, `wxList` where  you use `WX_DECLARE_LIST` macro to declare a list.
 
@@ -853,9 +852,7 @@ In order to setup a container for logging that holds pointers to object, use `EL
 ```c++
 // wxList example
 WX_DECLARE_LIST(int, MyList);
-
 WX_DEFINE_LIST(MyList);
-
 // Following line does the trick
 ELPP_WX_PTR_ENABLED(MyList);
 
@@ -865,11 +862,11 @@ WX_DECLARE_HASH_SET(int, wxIntegerHash, wxIntegerEqual, IntHashSet);
 ELPP_WX_ENABLED(IntHashSet)
 
 // wxHashMap example
-WX_DECLARE_STRING_HASH_MAP( wxString, MyHashMap);
+WX_DECLARE_STRING_HASH_MAP(wxString, MyHashMap);
 // Following line does the trick
 ELPP_WX_HASH_MAP_ENABLED(MyHashMap)
 ```
-You may also want to have a look at wxWidgets sample
+You may also have a look at wxWidgets sample
 
 > Since version 9.09
 
