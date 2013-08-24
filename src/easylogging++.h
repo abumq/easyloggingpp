@@ -3953,7 +3953,7 @@ class Trackable : private base::NoCopy {
 public:
     Trackable(const char* blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
-            const char* logger = "performance", bool scopedLog = true, const el::Level& level = el::Level::Info) :
+            const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const el::Level& level = el::Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
