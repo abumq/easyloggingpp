@@ -837,11 +837,11 @@ Following table shows the templates supported.
  [![top] Goto Top](#table-of-contents)
 
 ### wxWidgets Logging
-Easylogging++ supports some of wxWidgets templates. In order to enable boost logging, define macro `_ELPP_BOOST_LOGGING`
+Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets logging, define macro `_ELPP_WXWIDGETS_LOGGING`
 
 Following table shows the templates supported.
 
-|     *               |          *                                    |
+|     *               |          *        |      *                    |
 |-----------------------------------------|---------------------------|
 | `wxString`          |  `wxVector`       |  `wxList`                 |
 
