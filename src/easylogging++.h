@@ -3498,7 +3498,8 @@ class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
                const char* func, VRegistry::VLevel verboseLevel = 0) :
-                   m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel), m_proceed(true) {
+                   m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
+                   m_proceed(true), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             ELPP_INTERNAL_ERROR("Logger [" << loggerId << "] is not registered yet!", false);
@@ -3508,6 +3509,7 @@ public:
             m_logger->lock(); // This should not be unlocked by checking m_proceed because
                               // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
+            m_containerLogSeperator = base::elStorage->hasFlag(LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         }
     }
 
@@ -3796,7 +3798,6 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
-        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         m_logger->stream() << "[";
         QList<K> keys = map_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -3808,7 +3809,7 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(map_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? sep : "");
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : "");
         }
         if (begin != end) {
             m_logger->stream() << "...";
@@ -3825,7 +3826,6 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QHash<K, V>& hash_) {
         if (!m_proceed) { return *this; }
-        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         m_logger->stream() << "[";
         QList<K> keys = hash_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -3837,7 +3837,7 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(hash_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? sep : "");
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : "");
         }
         if (begin != end) {
             m_logger->stream() << "...";
@@ -3918,14 +3918,14 @@ private:
     VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
+    const char* m_containerLogSeperator;
 
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
         m_logger->stream() << "[";
-        const char* sep = base::elStorage->hasFlag(LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
             operator << (*begin_);
-            m_logger->stream() << ((i < size_ - 1) ? sep : "");
+            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : "");
          }
         if (begin_ != end_) {
             m_logger->stream() << "...";
