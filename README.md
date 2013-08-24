@@ -67,6 +67,7 @@
     <a href="#check-macros">CHECK Macros</a>
     <a href="#qt-logging">Qt Logging</a>
     <a href="#boost-logging">Boost Logging</a>
+    <a href="#wxwidgets-logging">wxWidgets Logging</a>
     <a href="#extending-library-logging-your-own-class">Extending Library (Logging your own class)</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
@@ -832,6 +833,31 @@ Following table shows the templates supported.
 | `boost::container::string`          |                                          |
 
 > Since version 9.06
+
+ [![top] Goto Top](#table-of-contents)
+
+### wxWidgets Logging
+Easylogging++ supports some of wxWidgets templates. In order to enable boost logging, define macro `_ELPP_BOOST_LOGGING`
+
+Following table shows the templates supported.
+
+|     *               |          *                                    |
+|-----------------------------------------|---------------------------|
+| `wxString`          |  `wxVector`       |  `wxList`                 |
+
+In order to setup `wxList` to start logging, you can use `ELPP_WX_ENABLED`. For example 
+
+```c++
+WX_DECLARE_LIST(int, MyList);
+
+WX_DEFINE_LIST(MyList);
+
+// Following line does the trick
+ELPP_WX_ENABLED(MyList);
+```
+You may also want to have a look at wxWidgets sample
+
+> Since version 9.09
 
  [![top] Goto Top](#table-of-contents)
 
