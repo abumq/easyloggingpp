@@ -8,6 +8,7 @@ Easylogging++ v9.11 RELEASE NOTES
 
  - Logger not registered error now uses 'default' logger
  - Android support added
+ - Fix for TDM GCC date/time issue
 
 ==========================
 =         NOTES          =

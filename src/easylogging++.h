@@ -1447,9 +1447,9 @@ public:
         localtime_s(&localTime, &t);
         timeInfo = &localTime;
 #   else
-        // For any other compilers that don't have CRT warnings - we use different method
-        time_t rTime = time(nullptr);
-        struct tm* localTime = localtime(&rTime);//localtime(&currTime.tv_sec);
+        // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
+        time_t rawTime = time(nullptr);
+        struct tm* localTime = localtime(&rawTime);
         timeInfo = localTime;
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
