@@ -340,7 +340,7 @@
 #      include <unordered_set>
 #   endif // defined(_ELPP_UNORDERED_SET)
 #endif // defined(_ELPP_STL_LOGGING)
-#if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+#if defined(_ELPP_QT_LOGGING)
 // For logging Qt based classes & templates
 #   include <QString>
 #   include <QByteArray>
@@ -354,7 +354,7 @@
 #   include <QHash>
 #   include <QMultiHash>
 #   include <QStack>
-#endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+#endif // defined(_ELPP_QT_LOGGING)
 #if defined(_ELPP_BOOST_LOGGING)
 #   include <boost/container/vector.hpp>
 #   include <boost/container/stable_vector.hpp>
@@ -3753,7 +3753,7 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::unordered_multiset)
 #   endif // defined(_ELPP_LOG_UNORDERED_SET)
 #endif // defined(_ELPP_STL_LOGGING)
-#if defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+#if defined(_ELPP_QT_LOGGING)
     inline Writer& operator<<(const QString& log_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << log_.toStdString();
@@ -3859,7 +3859,7 @@ public:
         operator << (static_cast<QHash<K, V>>(multiHash_));
         return *this;
     }
-#endif // defined(QT_CORE_LIB) && defined(_ELPP_QT_LOGGING)
+#endif // defined(_ELPP_QT_LOGGING)
 #if defined(_ELPP_BOOST_LOGGING)
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::vector)
     ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(boost::container::stable_vector)
@@ -4386,7 +4386,7 @@ public:
     static inline const std::string version(void) { return std::string("9.11"); }
 
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("25-08-2013 2043hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("25-08-2013 2051hrs"); }
 
     /// @brief Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan"); }

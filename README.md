@@ -948,7 +948,9 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013-Preview; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
 |![mingw] | MinGW                     | (gcc version 4.7+) Workarounds to support: Mutex wrapper, no stack trace logging. No thread ID on windows                                                |
+|![devcpp]| TDM-GCC 4.7.1             | Tested with TDM-GCC 4.7.1 32 and 64 bit compilers                                                                                                        |
 |![cygwin]| Cygwin                    | Tested with gcc version 4.8+                                                                                                                             |
+|![devcpp]| Dev C++ 5.4+              | Tested with Dev-C++ 5.4.2 using TDM-GCC 4.7.1 32 & 64-bit compilers                                                                                      |
 
 Operating systems that have been tested are shown in table below. Easylogging++ should work on other major operating systems that are not in the list.
 

@@ -3,12 +3,19 @@ Easylogging++ v9.11 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=      BUG FIXES         =
+==========================
+
+ - Fix for TDM GCC date/time issue
+
+==========================
 =      NEW FEATURES      =
 ==========================
 
  - Logger not registered error now uses 'default' logger
  - Android support added
- - Fix for TDM GCC date/time issue
+ - Support for TDM GCC compilers
+ - Qt logging does not need QT_CORE_LIB macro anymore for necessities support
 
 ==========================
 =         NOTES          =
