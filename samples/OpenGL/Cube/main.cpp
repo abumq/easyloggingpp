@@ -3,16 +3,17 @@
 #include <stdlib.h>
 
 #ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-#include <GLUT/glut.h>
+#   include <OpenGL/OpenGL.h>
+#   include <GLUT/glut.h>
 #else
-#include <GL/glut.h>
+#   include <GL/glut.h>
 #endif
 #include "../easylogging++.h"
 
 #include "imageloader.h"
 
 _INITIALIZE_EASYLOGGINGPP
+
 using namespace std;
 
 const float BOX_SIZE = 7.0f; //The length of each side of the cube
@@ -28,6 +29,7 @@ void handleKeypress(unsigned char key, int x, int y) {
 
 //Makes the image into a texture, and returns the id of the texture
 GLuint loadTexture(Image* image) {
+    VLOG(1) << "Loading texture from image...";
     GLuint textureId;
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
@@ -43,6 +45,7 @@ GLuint loadTexture(Image* image) {
 }
 
 void initRendering() {
+    VLOG(1) << "Initializing rendering";
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -55,6 +58,7 @@ void initRendering() {
 }
 
 void handleResize(int w, int h) {
+    VLOG(1) << "Resizing to [" << w << " x " << h << "]";
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -62,6 +66,7 @@ void handleResize(int w, int h) {
 }
 
 void drawScene() {
+    VLOG(3) << "Drawing scene...";
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glMatrixMode(GL_MODELVIEW);
@@ -164,9 +169,10 @@ void update(int value) {
 }
 
 int main(int argc, char** argv) {
+
     _START_EASYLOGGINGPP(argc, argv);
+
     LOG(INFO) << "Source base taken from http://www.videotutorialsrock.com";
-    LOG(INFO) << "Starting cube...";
 
     LOG_IF(!VLOG_IS_ON(1), INFO) << "Try using --v=1 or --v=2 or --verbose command line arguments as well";
 
@@ -174,7 +180,7 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(400, 400);
     
-    glutCreateWindow("Putting It All Together - videotutorialsrock.com");
+    glutCreateWindow("Great Cube Sample");
     initRendering();
     
     glutDisplayFunc(drawScene);

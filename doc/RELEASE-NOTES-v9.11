@@ -7,6 +7,7 @@ Easylogging++ v9.11 RELEASE NOTES
 ==========================
 
  - Logger not registered error now uses 'default' logger
+ - Android support added
 
 ==========================
 =         NOTES          =

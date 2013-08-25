@@ -121,10 +121,10 @@ Image* loadBMP(const char* filename) {
     VLOG(1) << "Loading bitmap [" << filename << "]";
     ifstream input;
     input.open(filename, ifstream::binary);
-    assert(!input.fail() || !"Could not find file");
+    CHECK(!input.fail()) << "Could not find file";
     char buffer[2];
     input.read(buffer, 2);
-    assert((buffer[0] == 'B' && buffer[1] == 'M') || !"Not a bitmap file");
+    CHECK(buffer[0] == 'B' && buffer[1] == 'M') << "Not a bitmap file";
     input.ignore(8);
     int dataOffset = readInt(input);
     
@@ -138,35 +138,36 @@ Image* loadBMP(const char* filename) {
             width = readInt(input);
             height = readInt(input);
             input.ignore(2);
-            assert(readShort(input) == 24 || !"Image is not 24 bits per pixel");
-            assert(readShort(input) == 0 || !"Image is compressed");
+            CHECK_EQ(readShort(input), 24) << "Image is not 24 bits per pixel";
+            CHECK_EQ(readShort(input), 0) << "Image is compressed";
             break;
         case 12:
             //OS/2 V1
             width = readShort(input);
             height = readShort(input);
             input.ignore(2);
-            assert(readShort(input) == 24 || !"Image is not 24 bits per pixel");
+            CHECK_EQ(readShort(input), 24) << "Image is not 24 bits per pixel";
             break;
         case 64:
             //OS/2 V2
-            assert(!"Can't load OS/2 V2 bitmaps");
+            LOG(FATAL) << "Can't load OS/2 V2 bitmaps";
             break;
         case 108:
             //Windows V4
-            assert(!"Can't load Windows V4 bitmaps");
+            LOG(FATAL) << "Can't load Windows V4 bitmaps";
             break;
         case 124:
             //Windows V5
-            assert(!"Can't load Windows V5 bitmaps");
+            LOG(FATAL) << "Can't load Windows V5 bitmaps";
             break;
         default:
-            assert(!"Unknown bitmap format");
+            LOG(FATAL) << "Unknown bitmap format";
     }
-    
     //Read the data
+    VLOG(1) << "Reading bitmap data";
     int bytesPerRow = ((width * 3 + 3) / 4) * 4 - (width * 3 % 4);
     int size = bytesPerRow * height;
+    VLOG(1) << "Size of bitmap is [" << bytesPerRow << " x " << height << " = " << size;
     auto_array<char> pixels(new char[size]);
     input.seekg(dataOffset, ios_base::beg);
     input.read(pixels.get(), size);

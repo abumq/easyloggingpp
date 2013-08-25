@@ -7,7 +7,6 @@ macro="$macro -D_ELPP_STL_LOGGING"
 macro="$macro -D_ELPP_LOG_STD_ARRAY"
 macro="$macro -D_ELPP_LOG_UNORDERED_SET"
 macro="$macro -D_ELPP_LOG_UNORDERED_MAP"
-macro="$macro -D_ELPP_QT_LOGGING"
 macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
@@ -25,7 +24,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
+COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -lglut -lGLU -lGL"
 
 echo "    $COMPILE_LINE"
 
