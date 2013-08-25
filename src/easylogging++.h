@@ -4710,7 +4710,7 @@ static T* CheckNotNull(T* ptr, const char* name) {
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
-#endif // _ELPP_USE_DEF_CRASH_HANDLER true
+#endif // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
