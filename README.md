@@ -799,9 +799,7 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
-Easylogging++ has complete logging support for Qt core library. In order to activate it, first of all make sure you are using Qt. When using Qt, you will automatically have macro `QT_CORE_LIB` (which is defined by library core). 
-
-Now if you want to activate logging your Qt classes and containers, define `_ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
+Easylogging++ has complete logging support for Qt core library. define `_ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
 
 Following Qt classes and containers are supported by Easylogging++ v9.0+
 
@@ -948,7 +946,7 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013-Preview; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
 |![mingw] | MinGW                     | (gcc version 4.7+) Workarounds to support: Mutex wrapper, no stack trace logging. No thread ID on windows                                                |
-|![devcpp]| TDM-GCC 4.7.1             | Tested with TDM-GCC 4.7.1 32 and 64 bit compilers                                                                                                        |
+|![tdm]   | TDM-GCC 4.7.1             | Tested with TDM-GCC 4.7.1 32 and 64 bit compilers                                                                                                        |
 |![cygwin]| Cygwin                    | Tested with gcc version 4.8+                                                                                                                             |
 |![devcpp]| Dev C++ 5.4+              | Tested with Dev-C++ 5.4.2 using TDM-GCC 4.7.1 32 & 64-bit compilers                                                                                      |
 
