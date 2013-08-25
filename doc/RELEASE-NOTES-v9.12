@@ -1,0 +1,17 @@
+
+Easylogging++ v9.12 RELEASE NOTES
+---------------------------------
+
+==========================
+=     IMPROVEMENTS       =
+==========================
+
+ - CHECK_NOTNULL() to expand to fully qualified function name
+ - CHECK_EQ and CHECK_NE expands to use CHECK
+
+==========================
+=         NOTES          =
+==========================
+
+ - See https://github.com/easylogging/easyloggingpp/tree/master/doc for other release notes
+ - Closed issues: https://github.com/easylogging/easyloggingpp/issues?page=1&state=closed

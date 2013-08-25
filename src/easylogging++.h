@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.11
+//  Easylogging++ v9.11 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -4582,7 +4582,7 @@ public:
 #   define CTRACE_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_IF(condition_, vlevel, loggerId) if (VLOG_IS_ON(vlevel) && condition_) el::base::Writer(loggerId, \
+#   define CVERBOSE_IF(condition_, vlevel, loggerId) if (condition_ && VLOG_IS_ON(vlevel)) el::base::Writer(loggerId, \
        el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, vlevel)
 #else
 #   define CVERBOSE_IF(condition_, vlevel, loggerId) el::base::NullWriter()
@@ -4684,14 +4684,20 @@ public:
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
 #define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
-#define CHECK_EQ(a, b) LOG_IF(!(a == b), FATAL) << "Check failed: [" << #a << " == " << #b << "] "
-#define CHECK_NE(a, b) LOG_IF(a == b, FATAL) << "Check failed: [" << #a << " != " << #b << "] "
+#define CHECK_EQ(a, b) CHECK(a == b)
+#define CHECK_NE(a, b) CHECK(a != b)
+namespace el {
+namespace base { 
+namespace utils {
 template <typename T>
 static T* CheckNotNull(T* ptr, const char* name) {
     LOG_IF(ptr == nullptr, FATAL) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
-#define CHECK_NOTNULL(ptr) CheckNotNull(ptr, #ptr)
+} // namespace utils
+} // namespace base
+} // namespace el
+#define CHECK_NOTNULL(ptr) el::base::utils::CheckNotNull(ptr, #ptr)
 #define CHECK_STREQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CHECK_STRNE(str1, str2) LOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL) \

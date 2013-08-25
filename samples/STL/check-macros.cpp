@@ -22,6 +22,10 @@ int main(void) {
     CHECK_STRNE("abc", "abc") << " :(";
     CHECK_STRCASEEQ("abc", "ABCD") << " :p";
     CHECK_STRCASENE("abc", "ABC") << " B)";
+    int* f = new int;
+    int* toF = CHECK_NOTNULL(f);
+    delete f;
+    f = nullptr;
     // These checks should pass 
     LOG(WARNING) << "----- START WORRYING ABOUT CHECKS NOW";
     CHECK(1 < 2) << " snap -- lib has bug!";
