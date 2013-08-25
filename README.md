@@ -1019,6 +1019,8 @@ Icons used in this manual (in compatibility section) are solely for information 
   [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
   [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
   [wxwidgets]: http://www.easylogging.org/images/icons/wxwidgets.png?v=3
+  [devcpp]: http://www.easylogging.org/images/icons/devcpp.png?v=3
+  [tdm]: http://www.easylogging.org/images/icons/tdm.png?v=3
 
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
   [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
