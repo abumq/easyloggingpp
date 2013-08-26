@@ -17,6 +17,7 @@ public:
     Integer& operator=(const Integer& integer) { m_underlyingInt = integer.m_underlyingInt; return *this; }
     virtual ~Integer(void) { m_underlyingInt = -1; }
     int getInt(void) const { return m_underlyingInt; }
+    inline operator int() const { return m_underlyingInt; }
 private:
     int m_underlyingInt;
 };
@@ -33,6 +34,8 @@ inline MAKE_LOGGABLE(Integer, integer, os) {
 int main(void) {
     
     Integer count = 5;
-    LOG(INFO) << count;
+    LOG(INFO) << "Integer count = " << count;
+    int reverse = count;
+    LOG(INFO) << "int reverse = " << reverse;
     return 0;
 }
