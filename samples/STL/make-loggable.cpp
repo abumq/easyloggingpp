@@ -24,7 +24,7 @@ private:
 // Lets say Integer class is in some third party library
 
 // We use MAKE_LOGGABLE(class, instance, outputStream) to make it loggable
-MAKE_LOGGABLE(Integer, integer, os) {
+inline MAKE_LOGGABLE(Integer, integer, os) {
     os << integer.getInt();
     return os;
 }

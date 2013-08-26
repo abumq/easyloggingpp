@@ -933,7 +933,7 @@ private:
 };
 
 // Following line does the trick!
-MAKE_LOGGABLE(Integer, integer, os) {
+inline MAKE_LOGGABLE(Integer, integer, os) {
     os << integer.getInt();
     return os;
 }
