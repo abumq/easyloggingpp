@@ -970,6 +970,7 @@ Easylogging++ has also been tested with following C++ libraries;
 |![qt]        | Qt                     | Tested with Qt 4.6.2 and Qt 5 (with C++0x and C++11)                                |
 |![boost]     | Boost                  | Tested with boost 1.51                                                              |
 |![wxwidgets] | wxWidgets              | Tested with wxWidgets 2.9.4                                                         |
+|![gtkmm]     | gtkmm                  | Tested with gtkmm 2.4                                                               |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1020,6 +1021,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
   [wxwidgets]: http://www.easylogging.org/images/icons/wxwidgets.png?v=3
   [devcpp]: http://www.easylogging.org/images/icons/devcpp.png?v=3
+  [gtkmm]: http://www.easylogging.org/images/icons/gtkmm.png?v=3
   [tdm]: http://www.easylogging.org/images/icons/tdm.png?v=3
 
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
