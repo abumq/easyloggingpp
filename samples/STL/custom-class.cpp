@@ -26,7 +26,7 @@ class Vehicle : public el::Loggable {
         std::string version_;
 };
 
-void Vehicle::log(std::ostream& os) const {
+inline void Vehicle::log(std::ostream& os) const {
     os << "(" << make_ << " " << model_ << " " << year_ << (version_.size() > 0 ? " " : "") << version_ << ")";
 }
 

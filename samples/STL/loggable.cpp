@@ -14,7 +14,7 @@ class MyClass : public el::Loggable {
 public:
     MyClass(const char* name) : m_name(name) {}
 
-    virtual void log(std::ostream& os) const {
+    virtual inline void log(std::ostream& os) const {
         os << m_name;
     }
 
