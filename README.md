@@ -448,6 +448,7 @@ Helper macros end with _IF;
 ```c++
 LOG_IF(condition, INFO) << "Logged if condition is true";
 
+
 LOG_IF(false, WARNING) << "Never logged";
 CLOG_IF(true, INFO, "performance") << "Always logged (performance logger)"
 ```
@@ -905,6 +906,8 @@ int main(void) {
     return 0;
 }
 ```
+
+ [![top] Goto Top](#table-of-contents)
 
 #### Logging Third-party Class
 Let's say you have third-party class that you don't have access to make changes to, and it's not yet loggable. In order to make it loggable, you can use `MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance)` to make it Easylogging++ friendly.
