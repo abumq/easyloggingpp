@@ -15,6 +15,7 @@ Easylogging++ v9.12 RELEASE NOTES
 
  - CHECK_NOTNULL() to expand to fully qualified function name
  - CHECK_EQ and CHECK_NE expands to use CHECK
+ - Inlined some methods for performance improvements
 
 ==========================
 =         NOTES          =

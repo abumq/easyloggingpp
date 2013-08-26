@@ -371,7 +371,6 @@
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
 /// developer. Any other class is for internal use only.
 namespace el {
-
 /// @brief Namespace containing base/internal functionality used by easylogging++
 namespace base {
 
@@ -649,7 +648,16 @@ enum class LoggingFlag : unsigned short {
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
     LogDetailedCrashReason = 4
 };
-
+/// @brief Base of Easylogging++ friendly class
+///
+/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
+class Loggable {
+public:
+    virtual void log(std::ostream&) const = 0;
+    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) {
+        loggable.log(os); return os;
+    }
+};
 namespace base {
 ///
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
@@ -1813,7 +1821,7 @@ private:
 
 } // namespace utils
 /// @brief Represents log format containing flags and date format. This is used internally to start initial log
-class LogFormat {
+class LogFormat : public el::Loggable {
 public:
     LogFormat(void) :
         m_level(Level::Unknown),
@@ -1923,6 +1931,10 @@ public:
     inline bool hasFlag(const base::FormatFlags& flag) {
         return base::utils::hasFlag(flag, m_flags) > 0;
     }
+
+    virtual inline void log(std::ostream& os) const {
+        os << m_format;
+    }
 protected:
     /// @brief Updates date time format if available in currFormat.
     /// @param index Index where %datetime, %date or %time was found
@@ -2020,7 +2032,7 @@ class Loggers;
 ///   <li>  el::Configuration confMaxLogFileSizeInfo(el::Level::Info, el::ConfigurationType::MaxLogFileSize, "2048");  </li>
 ///   <li>  el::Configuration confFilenameInfo(el::Level::Info, el::ConfigurationType::Filename, "/var/log/my.log");  </li>
 /// </ul>
-class Configuration {
+class Configuration : public el::Loggable {
 public:
     Configuration(const Configuration& c) :
             m_level(c.m_level),
@@ -2067,11 +2079,10 @@ public:
         m_value = value;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Configuration& conf) {
-        os << LevelHelper::convertToString(conf.m_level)
-            << " " << ConfigurationTypeHelper::convertToString(conf.m_configurationType)
-            << " = " << conf.m_value;
-        return os;
+    virtual inline void log(std::ostream& os) const {
+        os << LevelHelper::convertToString(m_level)
+            << " " << ConfigurationTypeHelper::convertToString(m_configurationType)
+            << " = " << m_value;
     }
 
     /// @brief Used to find configuration from configuration (pointers) repository. Avoid using it.
@@ -2171,7 +2182,7 @@ public:
     bool hasConfiguration(const ConfigurationType& configurationType) {
         unsigned short lIndex = LevelHelper::kMinValid;
         bool result = false;
-        LevelHelper::forEachLevel(lIndex, [&]() -> bool {
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             if (hasConfiguration(LevelHelper::castFromInt(lIndex), configurationType)) {
                 result = true;
             }
@@ -2462,7 +2473,7 @@ private:
             set(Level::Global, configurationType, value);
         }
         unsigned short lIndex = LevelHelper::kMinValid;
-        LevelHelper::forEachLevel(lIndex, [&]() -> bool {
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             set(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
         });
@@ -2475,7 +2486,7 @@ private:
             unsafeSet(Level::Global, configurationType, value);
         }
         unsigned short lIndex = LevelHelper::kMinValid;
-        LevelHelper::forEachLevel(lIndex, [&]() -> bool  {
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool  {
             unsafeSet(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
         });
@@ -2821,7 +2832,7 @@ private:
     std::size_t m_hitCounts;
 };
 /// @brief Repository for hit counters used across the application
-class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCounter, base::HitCounter::Predicate>  {
+class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCounter, base::HitCounter::Predicate> {
 public:
     /// @brief Validates counter, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs will be written everytime true is returned
@@ -2850,7 +2861,7 @@ class LogDispatcher;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
-class Logger {
+class Logger : public el::Loggable {
 public:
     explicit Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
@@ -2892,6 +2903,10 @@ public:
 
     virtual ~Logger(void) {
         base::utils::safeDelete(m_typedConfigurations);
+    }
+
+    virtual inline void log(std::ostream& os) const {
+        os << m_id;
     }
 
     /// @brief Configures the logger using specified configurations.
@@ -3148,13 +3163,13 @@ public:
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_logMessage(logMessage) {
     }
-    Level& level(void) { return m_level; }
-    const char* file(void) { return m_file; }
-    unsigned long int line(void) { return m_line; }
-    const char* func(void) { return m_func; }
-    VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
-    Logger* logger(void) { return m_logger; }
-    std::string& logMessage(void) { return m_logMessage; }
+    inline Level& level(void) { return m_level; }
+    inline const char* file(void) { return m_file; }
+    inline unsigned long int line(void) { return m_line; }
+    inline const char* func(void) { return m_func; }
+    inline VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
+    inline Logger* logger(void) { return m_logger; }
+    inline std::string& logMessage(void) { return m_logMessage; }
 private:
     Level m_level;
     const char* m_file;
@@ -3184,6 +3199,7 @@ public:
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+        ELPP_INTERNAL_INFO("Easylogging++ has been initialized");
     }
 
     virtual ~Storage(void) {
@@ -3485,7 +3501,7 @@ private:
     }
 };
 } // namespace workarounds
-#endif //defined(_ELPP_STL_LOGGING)
+#endif // defined(_ELPP_STL_LOGGING)
 /// @brief Writes nothing - Used when certain log is disabled
 class NullWriter : private base::NoCopy {
 public:
@@ -4039,7 +4055,7 @@ private:
 };
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
-class StackTrace : private base::NoCopy {
+class StackTrace : private base::NoCopy, public el::Loggable {
 public:
     static const std::size_t kMaxStack = 64;
     static const std::size_t kStackStart = 2; // We want to skip c'tor and StackTrace::generateNew()
@@ -4081,12 +4097,11 @@ public:
         return m_stack;
     }
 
-    friend std::ostream& operator<<(std::ostream& ss, const StackTrace& st) {
-       std::vector<StackTraceEntry>::const_iterator it = st.m_stack.begin();
-       while (it != st.m_stack.end()) {
-           ss << "    " << *it++ << "\n";
+    inline void log(std::ostream& os) const {
+       std::vector<StackTraceEntry>::const_iterator it = m_stack.begin();
+       while (it != m_stack.end()) {
+           os << "    " << *it++ << "\n";
        }
-       return ss;
     }
 private:
     std::vector<StackTraceEntry> m_stack;
@@ -4225,14 +4240,6 @@ private:
 extern base::debug::CrashHandler elCrashHandler;
 #define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
     std::ostream& operator<<(std::ostream& OutputStreamInstance, const ClassType& ClassInstance)
-/// @brief Base of Easylogging++ friendly class
-///
-/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
-class Loggable {
-public:
-    virtual void log(std::ostream&) const = 0;
-    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) { loggable.log(os); return os; }
-};
 /// @brief Static helpers for developers
 class Helpers : private base::StaticClass {
 public:
@@ -4344,7 +4351,7 @@ public:
         std::string line = std::string();
         std::stringstream ss;
         Logger* logger = nullptr;
-        auto configure = [&]() {
+        auto configure = [&](void) {
             ELPP_INTERNAL_INFO("Configuring logger: '" << logger->id() << "' with configurations \n" << ss.str() << "\n--------------");
             Configurations c;
             c.parseFromText(ss.str());
