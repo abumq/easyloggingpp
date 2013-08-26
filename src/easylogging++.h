@@ -648,16 +648,6 @@ enum class LoggingFlag : unsigned short {
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
     LogDetailedCrashReason = 4
 };
-/// @brief Base of Easylogging++ friendly class
-///
-/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
-class Loggable {
-public:
-    virtual void log(std::ostream&) const = 0;
-    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) {
-        loggable.log(os); return os;
-    }
-};
 namespace base {
 ///
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
@@ -1755,7 +1745,7 @@ public:
         return *this;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const RegistryWithPred& sr) {
+    friend inline std::ostream& operator<<(std::ostream& os, const RegistryWithPred& sr) {
         for (const_iterator it = sr.list().begin(); it != sr.list().end(); ++it) {
             os << "    " << **it << "\n";
         }
@@ -1821,7 +1811,7 @@ private:
 
 } // namespace utils
 /// @brief Represents log format containing flags and date format. This is used internally to start initial log
-class LogFormat : public el::Loggable {
+class LogFormat {
 public:
     LogFormat(void) :
         m_level(Level::Unknown),
@@ -1932,8 +1922,9 @@ public:
         return base::utils::hasFlag(flag, m_flags) > 0;
     }
 
-    virtual inline void log(std::ostream& os) const {
-        os << m_format;
+    friend inline std::ostream& operator<<(std::ostream& os, const LogFormat& format) {
+        os << format.m_format;
+        return os;
     }
 protected:
     /// @brief Updates date time format if available in currFormat.
@@ -2032,7 +2023,7 @@ class Loggers;
 ///   <li>  el::Configuration confMaxLogFileSizeInfo(el::Level::Info, el::ConfigurationType::MaxLogFileSize, "2048");  </li>
 ///   <li>  el::Configuration confFilenameInfo(el::Level::Info, el::ConfigurationType::Filename, "/var/log/my.log");  </li>
 /// </ul>
-class Configuration : public el::Loggable {
+class Configuration {
 public:
     Configuration(const Configuration& c) :
             m_level(c.m_level),
@@ -2079,10 +2070,11 @@ public:
         m_value = value;
     }
 
-    virtual inline void log(std::ostream& os) const {
-        os << LevelHelper::convertToString(m_level)
-            << " " << ConfigurationTypeHelper::convertToString(m_configurationType)
-            << " = " << m_value;
+    friend std::ostream& operator<<(std::ostream& os, const Configuration& c) {
+        os << LevelHelper::convertToString(c.m_level)
+            << " " << ConfigurationTypeHelper::convertToString(c.m_configurationType)
+            << " = " << c.m_value;
+        return os;
     }
 
     /// @brief Used to find configuration from configuration (pointers) repository. Avoid using it.
@@ -2861,7 +2853,7 @@ class LogDispatcher;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
-class Logger : public el::Loggable {
+class Logger {
 public:
     explicit Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
@@ -2905,8 +2897,9 @@ public:
         base::utils::safeDelete(m_typedConfigurations);
     }
 
-    virtual inline void log(std::ostream& os) const {
-        os << m_id;
+    friend std::ostream& operator<<(std::ostream& os, const Logger& logger) {
+        os << logger.m_id;
+        return os;
     }
 
     /// @brief Configures the logger using specified configurations.
@@ -4055,7 +4048,7 @@ private:
 };
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
-class StackTrace : private base::NoCopy, public el::Loggable {
+class StackTrace : private base::NoCopy {
 public:
     static const std::size_t kMaxStack = 64;
     static const std::size_t kStackStart = 2; // We want to skip c'tor and StackTrace::generateNew()
@@ -4097,11 +4090,12 @@ public:
         return m_stack;
     }
 
-    inline void log(std::ostream& os) const {
-       std::vector<StackTraceEntry>::const_iterator it = m_stack.begin();
-       while (it != m_stack.end()) {
+    friend inline std::ostream& operator<<(std::ostream& os, const StackTrace& st) {
+       std::vector<StackTraceEntry>::const_iterator it = st.m_stack.begin();
+       while (it != st.m_stack.end()) {
            os << "    " << *it++ << "\n";
        }
+       return os;
     }
 private:
     std::vector<StackTraceEntry> m_stack;
@@ -4240,6 +4234,19 @@ private:
 extern base::debug::CrashHandler elCrashHandler;
 #define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
     std::ostream& operator<<(std::ostream& OutputStreamInstance, const ClassType& ClassInstance)
+
+/// @brief Base of Easylogging++ friendly class
+///
+/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
+class Loggable {
+public:
+    virtual void log(std::ostream&) const = 0;
+private:
+    friend inline std::ostream& operator<<(std::ostream& os, const Loggable& loggable) {
+        loggable.log(os);
+        return os;
+    }
+};
 /// @brief Static helpers for developers
 class Helpers : private base::StaticClass {
 public:
