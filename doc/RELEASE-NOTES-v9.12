@@ -6,8 +6,8 @@ Easylogging++ v9.12 RELEASE NOTES
 =     NEW FEATURES       =
 ==========================
 
- - Introduced `el::Loggable` class to make custom classes loggable
- - Ability to make third-party classes loggable
+ - Ability to log third-party classes (issue #97)
+ - Class to extend to make class loggable (issue #98)
 
 ==========================
 =     IMPROVEMENTS       =

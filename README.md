@@ -2,7 +2,7 @@
 
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
-> **Current stable version: v9.11**
+> **Manual For v9.11**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -447,6 +447,7 @@ Helper macros end with _IF;
 #### Some examples:
 ```c++
 LOG_IF(condition, INFO) << "Logged if condition is true";
+
 
 
 LOG_IF(false, WARNING) << "Never logged";
@@ -943,9 +944,9 @@ int main(void) {
 }
 ```
 
-Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
-
  [![top] Goto Top](#table-of-contents)
+
+Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
  
 # Contribution
 ### Submitting Patches
