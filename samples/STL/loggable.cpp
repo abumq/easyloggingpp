@@ -14,10 +14,10 @@ class MyClass : public el::Loggable {
 public:
     MyClass(const char* name) : m_name(name) {}
 
-    friend std::ostream& operator<<(std::ostream& os, const MyClass& myclass) {
-        os << myclass.m_name;
-        return os;    
+    virtual void log(std::ostream& os) const {
+        os << m_name;
     }
+
 
 private:
     const char* m_name;

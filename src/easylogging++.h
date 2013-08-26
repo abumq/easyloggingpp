@@ -718,7 +718,6 @@ namespace consts {
 #else
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
-    static const char* kDefaultLoggableLog                     =      "(el::Loggable instance)";
 
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
@@ -4225,9 +4224,12 @@ private:
 } // namespace base
 extern base::debug::CrashHandler elCrashHandler;
 /// @brief Base of Easylogging++ friendly class
+///
+/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
 class Loggable {
 public:
-    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) { os << el::base::consts::kDefaultLoggableLog; return os; }
+    virtual void log(std::ostream&) const = 0;
+    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) { loggable.log(os); return os; }
 };
 /// @brief Static helpers for developers
 class Helpers : private base::StaticClass {
