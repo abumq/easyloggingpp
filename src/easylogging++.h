@@ -718,6 +718,7 @@ namespace consts {
 #else
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
+    static const char* kDefaultLoggableLog                     =      "-Loggable-";
 
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
@@ -4223,6 +4224,11 @@ private:
 } // namespace debug
 } // namespace base
 extern base::debug::CrashHandler elCrashHandler;
+/// @brief Base of Easylogging++ friendly class
+class Loggable {
+public:
+    friend std::ostream& operator<<(std::ostream& os, const Loggable& loggable) { os << el::base::consts::kDefaultLoggableLog; return os; }
+};
 /// @brief Static helpers for developers
 class Helpers : private base::StaticClass {
 public:

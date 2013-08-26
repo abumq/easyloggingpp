@@ -896,6 +896,7 @@ Class c(1, 2);
 LOG(INFO) << c;
 
 ```
+> From version 9.12, you can also inherit `el::Loggable` class to make your class loggable. See STL/loggable.cpp sample for details.
 
 Just be careful with this as having a time-consuming overloading of `operator<<` can take longer in logging class as well, as this "overloaded method / operator" gets called every time you log your class.
 
