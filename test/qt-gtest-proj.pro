@@ -31,4 +31,5 @@ HEADERS  += \
     vmodule-tests.h \
     write-all-test.h \
     easylogging++.h \
-    global-configurations-test.h
+    global-configurations-test.h \
+    loggable-test.h
