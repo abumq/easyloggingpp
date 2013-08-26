@@ -4,7 +4,6 @@ FILE=$1
 
 macro="$macro -D_ELPP_THREAD_SAFE"
 macro="$macro -D_ELPP_STL_LOGGING"
-macro="$macro -D_ELPP_QT_LOGGING"
 macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
@@ -22,7 +21,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE `pkg-config --libs --cflags gtkmm-2.4` -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
+COMPILE_LINE="$COMPILER $FILE `pkg-config --libs --cflags gtkmm-2.4 sigc++-2.0` -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
 echo "    $COMPILE_LINE"
 
 $($COMPILE_LINE)
