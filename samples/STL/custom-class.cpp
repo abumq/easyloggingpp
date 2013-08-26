@@ -11,6 +11,9 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
+// NOTE: You may also want to check out loggable.cpp sample
+// https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/loggable.cpp
+
 class Vehicle {
     public:
         Vehicle(const std::string& make_, const std::string& model_, unsigned int year_ = 2013,
