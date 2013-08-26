@@ -18,6 +18,7 @@ public:
         os << myclass.m_name;
         return os;    
     }
+
 private:
     const char* m_name;
 };
@@ -25,6 +26,6 @@ private:
 int main(void) {
     MyClass c("c"); 
     MyClass c2("c2"); 
-    LOG(INFO) << c << " " << c2;
+    LOG(INFO) << "I am " << c << "; and I am " << c2;
     return 0;
 }
