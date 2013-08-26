@@ -506,7 +506,7 @@ Verbose level will not be active unless you either set application arguments for
 | `-v`                    | Activates maximum verbosity                                                             |
 | `--v=2`                 | Activates verbosity upto verbose level 2                                                |
 | `--verbose`             | Activates maximum verbosity                                                             |
-| `-vmodule=main*=1`      | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag AllowVerboseIfModuleNotSpecified Please see Logging Flags section above. Two modules can be separated by comma.                                                                                                 |
+| `-vmodule=main*=1`      | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma.                                                                                                 |
 
 Please note vmodules are last in order of precedence of checking arguments, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.
 
@@ -542,7 +542,7 @@ Example with no `AllowVerboseIfModuleNotSpecified` flag;
  [![top] Goto Top](#table-of-contents)
  
 ### STL Logging
-As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define _ELPP_STL_LOGGING macro. This enables including all the necessary headers and defines all necessary functions.
+As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `_ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
 For performance, containers are limited to log maximum of 100 entries. This behaviour can be changed by changed header file (base::consts::kMaxLogPerContainer) but not recommended as in order to log, writer has to go through each entry causing potential delays. But if you are not really concerned with performance, you may change this value.
 
  [![top] Goto Top](#table-of-contents)
