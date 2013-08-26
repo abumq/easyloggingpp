@@ -718,7 +718,7 @@ namespace consts {
 #else
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
-    static const char* kDefaultLoggableLog                     =      "-Loggable-";
+    static const char* kDefaultLoggableLog                     =      "(el::Loggable instance)";
 
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
