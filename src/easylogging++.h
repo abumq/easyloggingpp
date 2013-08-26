@@ -4223,6 +4223,8 @@ private:
 } // namespace debug
 } // namespace base
 extern base::debug::CrashHandler elCrashHandler;
+#define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
+    std::ostream& operator<<(std::ostream& OutputStreamInstance, const ClassType& ClassInstance)
 /// @brief Base of Easylogging++ friendly class
 ///
 /// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`

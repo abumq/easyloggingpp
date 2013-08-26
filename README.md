@@ -68,7 +68,9 @@
     <a href="#qt-logging">Qt Logging</a>
     <a href="#boost-logging">Boost Logging</a>
     <a href="#wxwidgets-logging">wxWidgets Logging</a>
-    <a href="#extending-library-logging-your-own-class">Extending Library (Logging your own class)</a>
+    <a href="#extending-library">Extending Library</a>
+        <a href="#logging-your-own-class">Logging Your Own Class</a>
+        <a href="#logging-third-party-class">Logging Third-party Class</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -870,35 +872,75 @@ You may also have a look at wxWidgets sample
 
  [![top] Goto Top](#table-of-contents)
 
-### Extending Library (Logging your own class)
-You can log your own classes by having `std::ostream& operator<<` in your class. Note, as long as you are able to use std::cout on your class, you should be good with logging it too. A good example of extension is as following;
+### Extending Library
+
+> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.11/README.md)
+
+#### Logging Your Own Class
+
+You can log your own classes by extending `el::Loggable` class and implementing pure-virtual function `void log(std::ostream& os) const`. Following example shows a good way to extend a class.
 ```c++
-friend std::ostream& operator<<(std::ostream& os, const MyClass& c) {
-   os << c.getMember1() << " " << c.getMember2();
-   return os;
+#include "easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+class Integer : public el::Loggable {
+public:
+    Integer(int i) : m_underlyingInt(i) {
+    }
+    Integer& operator=(const Integer& integer) {
+        m_underlyingInt = integer.m_underlyingInt;
+        return *this;
+    }
+    // Following line does the trick!
+    virtual void log(std::ostream& os) const {
+        os << m_underlyingInt;
+    }
+private:
+    int m_underlyingInt;
+};
+
+int main(void) {
+    Integer count = 5;
+    LOG(INFO) << count;
+    return 0;
 }
 ```
 
-or alternatively;
+#### Logging Third-party Class
+Let's say you have third-party class that you don't have access to make changes to, and it's not yet loggable. In order to make it loggable, you can use `MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance)` to make it Easylogging++ friendly.
 
+Following sample shows a good usage:
 ```c++
-// In your header
-std::ostream& operator<<(std::ostream& os, const MyClass& c);
+#include "easylogging++.h"
 
-// In source file
-std::ostream& operator<<(std::ostream& os, const MyClass& c) {
-   os << c.getMember1() << " " << c.getMember2();
-   return os;
+_INITIALIZE_EASYLOGGINGPP
+
+class Integer {
+public:
+    Integer(int i) : m_underlyingInt(i) {
+    }
+    Integer& operator=(const Integer& integer) {
+        m_underlyingInt = integer.m_underlyingInt;
+        return *this;
+    }
+    int getInt(void) const { return m_underlyingInt; }
+private:
+    int m_underlyingInt;
+};
+
+// Following line does the trick!
+MAKE_LOGGABLE(Integer, integer, os) {
+    os << integer.getInt();
+    return os;
 }
-
-// Logging
-Class c(1, 2);
-LOG(INFO) << c;
-
+int main(void) {
+    Integer count = 5;
+    LOG(INFO) << count;
+    return 0;
+}
 ```
-> From version 9.12, you can also inherit `el::Loggable` class to make your class loggable. See STL/loggable.cpp sample for details.
 
-Just be careful with this as having a time-consuming overloading of `operator<<` can take longer in logging class as well, as this "overloaded method / operator" gets called every time you log your class.
+Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
 
  [![top] Goto Top](#table-of-contents)
  
