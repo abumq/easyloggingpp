@@ -153,22 +153,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if (!defined(_ELPP_DISABLE_ASSERT))
 #   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { \
+#      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
           std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
               << msg << "\"" << std::endl; exit(1); }
 #   else
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
+#      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
         __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
 #   endif // (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
 #else
-#   define __EASYLOGGINGPP_ASSERT(x, y)
+#   define ELPP_ASSERT(x, y)
 #endif // (!defined(_ELPP_DISABLE_ASSERT))
-#if (!defined(_ELPP_DISABLE_ERRORS))
+#if (defined(_ELPP_ENABLE_ERRORS))
 #   define ELPP_INTERNAL_ERROR(msg, pe) std::cerr << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " << \
     msg << std::endl; if (pe) { std::cerr << "    "; perror(""); }
 #else
-#   define ELPP_INTERNAL_ERROR(msg)
-#endif // (!defined(_ELPP_DISABLE_ERRORS))
+#   define ELPP_INTERNAL_ERROR(msg, pe)
+#endif // (defined(_ELPP_ENABLE_ERRORS))
 #if (defined(_ELPP_ENABLE_INFO))
 #   define ELPP_INTERNAL_INFO(msg) std::cout << msg << std::endl;
 #else
@@ -2316,7 +2316,7 @@ public:
         static bool parseFromFile(const std::string& configurationFile, Configurations* sender, Configurations* base = nullptr) {
             sender->setFromBase(base);
             std::ifstream fileStream_(configurationFile.c_str(), std::ifstream::in);
-            __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile << "] for parsing.");
+            ELPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile << "] for parsing.");
             bool parsedSuccessfully = false;
             std::string line = std::string();
             Level currLevel = Level::Unknown;
@@ -2325,7 +2325,7 @@ public:
             while (fileStream_.good()) {
                 std::getline(fileStream_, line);
                 parsedSuccessfully = parseLine(line, currConfigStr, currLevelStr, currLevel, sender);
-                __EASYLOGGINGPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
+                ELPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
             }
             return parsedSuccessfully;
         }
@@ -2347,7 +2347,7 @@ public:
             std::string currLevelStr = std::string();
             while (std::getline(ss, line)) {
                 parsedSuccessfully = parseLine(line, currConfigStr, currLevelStr, currLevel, sender);
-                __EASYLOGGINGPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
+                ELPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
             }
             return parsedSuccessfully;
         }
@@ -2419,16 +2419,16 @@ public:
                 }
                 if (quotesStart != std::string::npos && quotesEnd != std::string::npos) {
                     // Quote provided - check and strip if valid
-                    __EASYLOGGINGPP_ASSERT((quotesStart < quotesEnd), "Configuration error - No ending quote found in [" << currConfigStr << "]");
-                    __EASYLOGGINGPP_ASSERT((quotesStart + 1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
+                    ELPP_ASSERT((quotesStart < quotesEnd), "Configuration error - No ending quote found in [" << currConfigStr << "]");
+                    ELPP_ASSERT((quotesStart + 1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
                     if ((quotesStart != quotesEnd) && (quotesStart + 1 != quotesEnd)) {
                         // Explicit check in case if assertion is disabled
                         currValue = currValue.substr(quotesStart + 1, quotesEnd - 1);
                     }
                 }
             }
-            __EASYLOGGINGPP_ASSERT(currLevel != Level::Unknown, "Unrecognized severity level [" << currLevelStr << "]");
-            __EASYLOGGINGPP_ASSERT(currConfig != ConfigurationType::Unknown, "Unrecognized configuration [" << currConfigStr << "]");
+            ELPP_ASSERT(currLevel != Level::Unknown, "Unrecognized severity level [" << currLevelStr << "]");
+            ELPP_ASSERT(currConfig != ConfigurationType::Unknown, "Unrecognized configuration [" << currConfigStr << "]");
             if (currLevel == Level::Unknown || currConfig == ConfigurationType::Unknown) {
                 return false; // unrecognizable level or config
             }
@@ -2688,7 +2688,7 @@ private:
                 [](char c) { return !base::utils::Str::isDigit(c); }) == confVal.end();
         if (!valid) {
             valid = false;
-            __EASYLOGGINGPP_ASSERT(valid, "Configuration value not a valid integer [" << confVal << "]");
+            ELPP_ASSERT(valid, "Configuration value not a valid integer [" << confVal << "]");
             return 0;
         }
         return atol(confVal.c_str());
@@ -4362,7 +4362,7 @@ public:
     /// @brief Sets configurations from global configuration file.
     static void configureFromGlobal(const char* globalConfigurationFilePath) {
         std::ifstream gcfStream(globalConfigurationFilePath, std::ifstream::in);
-        __EASYLOGGINGPP_ASSERT(gcfStream.is_open(), "Unable to open global configuration file [" << globalConfigurationFilePath << "] for parsing.");
+        ELPP_ASSERT(gcfStream.is_open(), "Unable to open global configuration file [" << globalConfigurationFilePath << "] for parsing.");
         std::string line = std::string();
         std::stringstream ss;
         Logger* logger = nullptr;
