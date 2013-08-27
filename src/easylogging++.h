@@ -312,19 +312,6 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
-#if defined(_ELPP_ASYNC_LOGGING)
-#      if _ELPP_USE_STD_THREADING
-#         include <thread>
-#         define _ELPP_ASYNC 1
-#      else
-#         if _ELPP_COMPILER_MSVC
-#            pragma message("std::thread not available - logging synchronously")
-#         else
-#            warning "std::thread not available - logging synchronously";
-#         endif // _ELPP_COMPILER_MSVC
-#         define _ELPP_ASYNC 0
-#      endif // _ELPP_USE_STD_THREADING
-#endif //
 #if _ELPP_THREADING_ENABLED
 #   if _ELPP_USE_STD_THREADING
 #      include <mutex>
@@ -3185,30 +3172,6 @@ private:
     Logger* m_logger;
     std::string m_message;
 };
-#if _ELPP_ASYNC
-/// @brief Thread safe log queue
-class LogMessageQueue {
-public:
-    inline void push(base::LogMessage&& logMessage) {
-        base::utils::threading::lock_guard lock(m_mutex);
-        m_queue.push(logMessage);
-    }
-
-    inline void pop(void) {
-        base::utils::threading::lock_guard lock(m_mutex);
-        m_queue.pop();
-    }
-
-    inline base::LogMessage* next(void) {
-        base::utils::threading::lock_guard lock(m_mutex);
-        if (m_queue.empty()) return nullptr;
-        return &m_queue.front();
-    }
-private:
-    base::utils::threading::mutex m_mutex;
-    std::queue<base::LogMessage> m_queue;
-};
-#endif // _ELPP_ASYNC
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
@@ -3297,12 +3260,6 @@ public:
     inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
-
-#if _ELPP_ASYNC
-    inline base::LogMessageQueue& logMessageQueue(void) {
-        return m_logMessageQueue;
-    }
-#endif // _ELPP_ASYNC
 private:
     std::string m_username;
     std::string m_hostname;
@@ -3313,9 +3270,6 @@ private:
     PreRollOutHandler m_preRollOutHandler;
     std::stringstream m_tempStream;
     base::utils::threading::mutex m_mutex;
-#if _ELPP_ASYNC
-    base::LogMessageQueue m_logMessageQueue;
-#endif // _ELPP_ASYNC
 
     friend class base::LogDispatcher;
     friend class base::Writer;
@@ -3373,13 +3327,6 @@ public:
         m_proceed(proceed),
         m_log(std::move(log)) {
     }
-
-#if _ELPP_ASYNC
-    inline void queueForDispatch(void) {
-        base::utils::threading::lock_guard lock(base::elStorage->mutex());
-        base::elStorage->logMessageQueue().push(std::move(m_log));
-    }
-#endif // _ELPP_ASYNC
 
     void dispatch(bool needToLockLogger) {
         if (!m_proceed) {
@@ -3479,39 +3426,6 @@ private:
         }
     }
 };
-#if _ELPP_ASYNC
-class AsyncDispatcher : private base::NoCopy {
-public:
-    AsyncDispatcher(void) {
-        ELPP_INTERNAL_INFO("Initializing async dispatcher");
-        m_thread = new std::thread(&AsyncDispatcher::dispatch, this);
-        m_thread->join();
-    }
-
-    virtual ~AsyncDispatcher(void) {
-        ELPP_INTERNAL_INFO("Detaching async dispatcher");
-        m_thread->detach();
-        delete m_thread;
-        m_stayAlive = false;
-        dispatch();
-    }
-
-private:
-    std::thread* m_thread;
-    volatile bool m_stayAlive;
-
-    void dispatch() {
-        base::LogMessage* logMessage = el::base::elStorage->logMessageQueue().next();
-        while (logMessage != nullptr || m_stayAlive) {
-            if (logMessage != nullptr) {
-                LogDispatcher(true, std::move(*logMessage)).dispatch(true);
-                el::base::elStorage->logMessageQueue().pop();
-                logMessage = el::base::elStorage->logMessageQueue().next();
-            }
-        }
-    }
-};
-#endif // _ELPP_ASYNC
 #if defined(_ELPP_STL_LOGGING)
 /// @brief Workarounds to write some STL logs
 ///
@@ -3620,13 +3534,8 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed) {
-#if _ELPP_ASYNC
-            base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger, m_logger->stream().str())).queueForDispatch();
-#else
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
-#endif // _ELPP_ASYNC
             m_logger->stream().str("");
         }
         if (m_logger != nullptr) {
@@ -4828,16 +4737,10 @@ static T* CheckNotNull(T* ptr, const char* name) {
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
-#if _ELPP_ASYNC
-#   define INITIALIZE_ASYNC_DISPATCHER AsyncDispatcher asyncDispatcher;
-#else
-#   define INITIALIZE_ASYNC_DISPATCHER
-#endif // _ELPP_ASYNC
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
             std::unique_ptr<base::Storage> elStorage(new base::Storage());       \
-            INITIALIZE_ASYNC_DISPATCHER                                          \
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
