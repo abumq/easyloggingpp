@@ -138,7 +138,7 @@
 #endif // defined(__ANDROID__)
 // Evaluating Cygwin as unix OS
 #if (!_ELPP_OS_UNIX && !_ELPP_OS_WINDOWS && _ELPP_CYGWIN)
-#   undef _ELPP_OS_UNIX 
+#   undef _ELPP_OS_UNIX
 #   undef _ELPP_OS_LINUX
 #   define _ELPP_OS_UNIX 1
 #   define _ELPP_OS_LINUX 1
@@ -312,6 +312,19 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
+#if defined(_ELPP_ASYNC_LOGGING)
+#      if _ELPP_USE_STD_THREADING
+#         include <thread>
+#         define _ELPP_ASYNC 1
+#      else
+#         if _ELPP_COMPILER_MSVC
+#            pragma message("std::thread not available - logging synchronously")
+#         else
+#            warning "std::thread not available - logging synchronously";
+#         endif // _ELPP_COMPILER_MSVC
+#         define _ELPP_ASYNC 0
+#      endif // _ELPP_USE_STD_THREADING
+#endif //
 #if _ELPP_THREADING_ENABLED
 #   if _ELPP_USE_STD_THREADING
 #      include <mutex>
@@ -3149,12 +3162,12 @@ private:
     std::map<std::string, VLevel> m_modules;
     base::utils::threading::mutex m_mutex;
 };
-class Log {
+class LogMessage {
 public:
-    Log(const Level& level, const char* file, unsigned long int line, const char* func,
-                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& logMessage) :
+    LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,
+                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& message) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
-                  m_verboseLevel(verboseLevel), m_logger(logger), m_logMessage(logMessage) {
+                  m_verboseLevel(verboseLevel), m_logger(logger), m_message(message) {
     }
     inline Level& level(void) { return m_level; }
     inline const char* file(void) { return m_file; }
@@ -3162,7 +3175,7 @@ public:
     inline const char* func(void) { return m_func; }
     inline VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
     inline Logger* logger(void) { return m_logger; }
-    inline std::string& logMessage(void) { return m_logMessage; }
+    inline std::string& message(void) { return m_message; }
 private:
     Level m_level;
     const char* m_file;
@@ -3170,8 +3183,32 @@ private:
     const char* m_func;
     VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
-    std::string m_logMessage;
+    std::string m_message;
 };
+#if _ELPP_ASYNC
+/// @brief Thread safe log queue
+class LogMessageQueue {
+public:
+    inline void push(base::LogMessage&& logMessage) {
+        base::utils::threading::lock_guard lock(m_mutex);
+        m_queue.push(logMessage);
+    }
+
+    inline void pop(void) {
+        base::utils::threading::lock_guard lock(m_mutex);
+        m_queue.pop();
+    }
+
+    inline base::LogMessage* next(void) {
+        base::utils::threading::lock_guard lock(m_mutex);
+        if (m_queue.empty()) return nullptr;
+        return &m_queue.front();
+    }
+private:
+    base::utils::threading::mutex m_mutex;
+    std::queue<base::LogMessage> m_queue;
+};
+#endif // _ELPP_ASYNC
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
@@ -3260,6 +3297,12 @@ public:
     inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
+
+#if _ELPP_ASYNC
+    inline base::LogMessageQueue& logMessageQueue(void) {
+        return m_logMessageQueue;
+    }
+#endif // _ELPP_ASYNC
 private:
     std::string m_username;
     std::string m_hostname;
@@ -3270,6 +3313,9 @@ private:
     PreRollOutHandler m_preRollOutHandler;
     std::stringstream m_tempStream;
     base::utils::threading::mutex m_mutex;
+#if _ELPP_ASYNC
+    base::LogMessageQueue m_logMessageQueue;
+#endif // _ELPP_ASYNC
 
     friend class base::LogDispatcher;
     friend class base::Writer;
@@ -3323,8 +3369,17 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, const base::Log& log) : m_proceed(proceed), m_log(log) {
+    LogDispatcher(bool proceed, base::LogMessage&& log) :
+        m_proceed(proceed),
+        m_log(std::move(log)) {
     }
+
+#if _ELPP_ASYNC
+    inline void queueForDispatch(void) {
+        base::utils::threading::lock_guard lock(base::elStorage->mutex());
+        base::elStorage->logMessageQueue().push(std::move(m_log));
+    }
+#endif // _ELPP_ASYNC
 
     void dispatch(bool needToLockLogger) {
         if (!m_proceed) {
@@ -3388,13 +3443,13 @@ public:
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
           // Log message
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.logMessage());
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
         }
         dispatch(logLine, needToLockLogger);
     }
 private:
     bool m_proceed;
-    base::Log m_log;
+    base::LogMessage m_log;
 
     void dispatch(const std::string& logLine, bool needToUnlockLogger) {
         if (m_log.logger()->m_typedConfigurations->toFile(m_log.level())) {
@@ -3424,6 +3479,39 @@ private:
         }
     }
 };
+#if _ELPP_ASYNC
+class AsyncDispatcher : private base::NoCopy {
+public:
+    AsyncDispatcher(void) {
+        ELPP_INTERNAL_INFO("Initializing async dispatcher");
+        m_thread = new std::thread(&AsyncDispatcher::dispatch, this);
+        m_thread->join();
+    }
+
+    virtual ~AsyncDispatcher(void) {
+        ELPP_INTERNAL_INFO("Detaching async dispatcher");
+        m_thread->detach();
+        delete m_thread;
+        m_stayAlive = false;
+        dispatch();
+    }
+
+private:
+    std::thread* m_thread;
+    volatile bool m_stayAlive;
+
+    void dispatch() {
+        base::LogMessage* logMessage = el::base::elStorage->logMessageQueue().next();
+        while (logMessage != nullptr || m_stayAlive) {
+            if (logMessage != nullptr) {
+                LogDispatcher(true, std::move(*logMessage)).dispatch(true);
+                el::base::elStorage->logMessageQueue().pop();
+                logMessage = el::base::elStorage->logMessageQueue().next();
+            }
+        }
+    }
+};
+#endif // _ELPP_ASYNC
 #if defined(_ELPP_STL_LOGGING)
 /// @brief Workarounds to write some STL logs
 ///
@@ -3532,8 +3620,13 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed) {
-            base::LogDispatcher(m_proceed, base::Log(m_level, m_file, m_line, m_func, m_verboseLevel,
+#if _ELPP_ASYNC
+            base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
+                          m_logger, m_logger->stream().str())).queueForDispatch();
+#else
+            base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
+#endif // _ELPP_ASYNC
             m_logger->stream().str("");
         }
         if (m_logger != nullptr) {
@@ -4711,7 +4804,7 @@ public:
 #define CHECK_EQ(a, b) CHECK(a == b)
 #define CHECK_NE(a, b) CHECK(a != b)
 namespace el {
-namespace base { 
+namespace base {
 namespace utils {
 template <typename T>
 static T* CheckNotNull(T* ptr, const char* name) {
@@ -4735,10 +4828,16 @@ static T* CheckNotNull(T* ptr, const char* name) {
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
+#if _ELPP_ASYNC
+#   define INITIALIZE_ASYNC_DISPATCHER AsyncDispatcher asyncDispatcher;
+#else
+#   define INITIALIZE_ASYNC_DISPATCHER
+#endif // _ELPP_ASYNC
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
             std::unique_ptr<base::Storage> elStorage(new base::Storage());       \
+            INITIALIZE_ASYNC_DISPATCHER                                          \
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
