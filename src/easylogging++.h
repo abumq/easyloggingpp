@@ -2676,7 +2676,9 @@ private:
                 setValue(Level::Global, getBool(conf->value()), m_performanceTrackingMap);
             } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), m_maxLogFileSizeMap);
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
                 unsafeValidateFileRolling(conf->level(), base::defaultPreRollOutHandler); // This is not unsafe as mutex is locked in currect scope
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             }
         }
     }
@@ -2731,6 +2733,9 @@ private:
 
     bool unsafeValidateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
         std::fstream* fs = unsafeGetConfigByRef(level, m_fileStreamMap, "fileStream").get();
+        if (fs == nullptr) {
+            return true;
+        }
         std::size_t maxLogFileSize = unsafeGetConfigByVal(level, m_maxLogFileSizeMap, "maxLogFileSize");
         std::size_t currFileSize = base::utils::File::getSizeOfFile(fs);
         if (maxLogFileSize != 0 && currFileSize >= maxLogFileSize) {
