@@ -5,7 +5,6 @@
 #include "test-helpers.h"
 
 TEST(LoggersTest, RegisterHundredThousandLoggers) {
-    cleanLogFile();
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");
     TIMED_BLOCK(timer, "HundredThousandLoggersTest");
     for (unsigned int i = 1; i <= 100000; ++i) {

@@ -6,7 +6,6 @@
 
 TEST(WriteAllTests, Entry) {
     reconfigureLoggersForTest();
-    cleanLogFile();
 }
 
 #define TEST_LEVEL(l, name) \

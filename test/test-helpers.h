@@ -27,7 +27,7 @@ static void reconfigureLoggersForTest(void) {
     c.setFromBase(const_cast<el::Configurations*>(Loggers::getLogger("default")->configurations()));
     c.setGlobally(el::ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %log");
     c.setGlobally(el::ConfigurationType::Filename, "/tmp/logs/el.gtest.log");
-    c.setGlobally(el::ConfigurationType::MaxLogFileSize, "2048");
+    c.setGlobally(el::ConfigurationType::MaxLogFileSize, "2097152"); // 2MB
     c.setGlobally(el::ConfigurationType::ToStandardOutput, "false");
     c.setGlobally(el::ConfigurationType::PerformanceTracking, "true");
     Loggers::setDefaultConfigurations(c, true);
@@ -66,6 +66,7 @@ static std::string getDate() {
 }
 
 static void cleanLogFile(const char* filename = logfile) {
+    std::cout << "Cleaning out log file...[" << logfile << "]\n";
     std::ofstream fstr(filename, std::ofstream::trunc);
 }
 

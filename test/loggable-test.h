@@ -34,7 +34,6 @@ private:
 
 
 TEST(LoggableTest, TestValidLog) {
-    cleanLogFile();
     Integer myint = 5;
     LOG(INFO) << "My integer = " << myint;
     std::string expected = BUILD_STR(getDate() << " My integer = 5\n");
