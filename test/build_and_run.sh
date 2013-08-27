@@ -2,7 +2,6 @@
 # Builds all tests into bin/ and runs
 
 [ -d "bin" ] || mkdir "bin"
-rm -rf bin/*
 
 cd bin
 echo "Building..."
