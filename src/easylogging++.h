@@ -2255,7 +2255,9 @@ public:
     /// @brief Sets configurations to "factory based" configurations.
     void setToDefault(void) {
         setGlobally(ConfigurationType::Enabled, "true", true);
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile), true);
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::ToFile, "true", true);
         setGlobally(ConfigurationType::ToStandardOutput, "true", true);
         setGlobally(ConfigurationType::MillisecondsWidth, "3", true);
@@ -2281,7 +2283,9 @@ public:
     void setRemainingToDefault(void) {
         base::utils::threading::lock_guard lock(mutex());
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Enabled, "true");
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, "true");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, "true");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, "3");
@@ -3403,14 +3407,16 @@ private:
             std::fstream* fs = m_log.logger()->m_typedConfigurations->fileStream(m_log.level());
             if (fs != nullptr) {
                 *fs << logLine << std::endl;
-            }
-            if (fs->fail()) {
-                ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
-                        << "Few possible reasons (could be something else):\n"
-                        << "      * Permission denied\n"
-                        << "      * Disk full\n"
-                        << "      * Disk is not writable"
-                        , true);
+                 if (fs->fail()) {
+                    ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
+                            << "Few possible reasons (could be something else):\n"
+                            << "      * Permission denied\n"
+                            << "      * Disk full\n"
+                            << "      * Disk is not writable"
+                            , true);
+                }
+            } else {
+                ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
             }
         }
         base::elStorage->unlock();
