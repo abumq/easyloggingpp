@@ -3,7 +3,7 @@
  * Demonstration of multithreaded application using pthread
  * 
  * Compile this program using (if using gcc-c++):
- *     [icpc | g++] ./pthread.cpp -o bin/./pthread.cpp.bin  -D_ELPP_THREAD_SAFE -D_ELPP_STL_LOGGING -D_ELPP_QT_LOGGING -D_ELPP_STACKTRACE_ON_CRASH -std=c++0x -pthread -Wall -Wextra
+ *     [icpc | g++] ./pthread.cpp -o bin/./pthread.cpp.bin -D_ELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
  * 
  * Revision: 1.1
  * @author mkhan3189
@@ -41,8 +41,8 @@ void *write(void* thrId){
   for (int i = 1; i <= 5; ++i) {
      std::stringstream ss;
      ss << "logger" << i;
-     easyloggingpp::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
-     LOG(INFO) << "Registered logger " << logger;
+     el::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
+     LOG(INFO) << "Registered logger [" << *logger << "]";
   }
   CLOG(INFO, "logger1") << "Logging using new logger";
   CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET"; // << -- NOTE THIS!
