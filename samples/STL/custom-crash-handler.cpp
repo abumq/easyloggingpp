@@ -24,8 +24,9 @@ int main(void) {
     
     LOG(INFO) << "My crash handler!";
 
-    int* i;
-    *i = 0; // Crash!
+    std::string* s = new std::string();
+    delete s;
+    s->clear();; // Crash!
 
     return 0;
 }

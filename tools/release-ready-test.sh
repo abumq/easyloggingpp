@@ -10,11 +10,11 @@ fi
 ## ------ STL ------- ##
 cd $1/samples/STL/
 echo "Building STL..."
-    echo "Using Intel C++ compiler"
-        sh build_all.sh icpc
-        sh run_all.sh
     echo "Using clang++ compiler"
         sh build_all.sh clang++
+        sh run_all.sh
+    echo "Using Intel C++ compiler"
+        sh build_all.sh icpc
         sh run_all.sh
     echo "Using g++ compiler"
         sh build_all.sh g++
@@ -25,11 +25,11 @@ echo "Building STL..."
 cd ../../
 cd $1/samples/boost
 echo "Building boost..."
-    echo "Using Intel C++ compiler"
-        sh build_all.sh icpc
-        sh run_all.sh
     echo "Using clang++ compiler"
         sh build_all.sh clang++
+        sh run_all.sh
+    echo "Using Intel C++ compiler"
+        sh build_all.sh icpc
         sh run_all.sh
     echo "Using g++ compiler"
         sh build_all.sh g++
@@ -40,11 +40,11 @@ echo "Building boost..."
 cd ../../
 cd $1/samples/gtkmm
 echo "Building gtkmm..."
-    echo "Using Intel C++ compiler"
-        sh build_all.sh icpc
-        sh run_all.sh
     echo "Using clang++ compiler"
         sh build_all.sh clang++
+        sh run_all.sh
+    echo "Using Intel C++ compiler"
+        sh build_all.sh icpc
         sh run_all.sh
     echo "Using g++ compiler"
         sh build_all.sh g++
@@ -54,11 +54,11 @@ echo "Building gtkmm..."
 cd ../../
 cd $1/samples/wxWidgets
 echo "Building wxWidgets..."
-    echo "Using Intel C++ compiler"
-        sh build_all.sh icpc
-        sh run_all.sh
     echo "Using clang++ compiler"
         sh build_all.sh clang++
+        sh run_all.sh
+    echo "Using Intel C++ compiler"
+        sh build_all.sh icpc
         sh run_all.sh
     echo "Using g++ compiler"
         sh build_all.sh g++
@@ -68,11 +68,11 @@ echo "Building wxWidgets..."
 cd ../../
 cd $1/samples/OpenGL
 echo "Building OpenGL..."
-    echo "Using Intel C++ compiler"
-        sh build_all.sh icpc
-        sh run_all.sh
     echo "Using clang++ compiler"
         sh build_all.sh clang++
+        sh run_all.sh
+    echo "Using Intel C++ compiler"
+        sh build_all.sh icpc
         sh run_all.sh
     echo "Using g++ compiler"
         sh build_all.sh g++

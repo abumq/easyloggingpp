@@ -24,7 +24,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
+COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -Werror"
 
 echo "    $COMPILE_LINE"
 
