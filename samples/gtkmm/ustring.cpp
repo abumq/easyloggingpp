@@ -3,7 +3,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
  
-int main(int argc,char* argv[]){
+int main(int, char**){
 
     Glib::ustring s("My GTK");
     LOG(INFO) << s; 

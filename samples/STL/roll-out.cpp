@@ -23,7 +23,7 @@ void rolloutHandler(const char* filename, std::size_t size) {
    system(ss.str().c_str());
 }
 
-int main(int argc, char** argv) {
+int main(int, char**) {
    idx = 0;
 
    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Filename, "/tmp/logs/max-size.log");

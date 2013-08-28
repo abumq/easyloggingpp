@@ -2,6 +2,7 @@
 // @author mkhan3189
 // @rev 1.0
 
+#include <unistd.h>
 #include <sigc++/sigc++.h>
 #include "easylogging++.h"
 

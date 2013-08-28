@@ -24,6 +24,9 @@ int main(void) {
     CHECK_STRCASENE("abc", "ABC") << " B)";
     int* f = new int;
     int* toF = CHECK_NOTNULL(f);
+
+    (void)toF; // Unused warning suppression
+
     delete f;
     f = nullptr;
     // These checks should pass 
