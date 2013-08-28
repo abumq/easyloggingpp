@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.15
+//  Easylogging++ v9.15 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -2257,6 +2257,8 @@ public:
         setGlobally(ConfigurationType::Enabled, "true", true);
 #if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile), true);
+#else
+        _ELPP_UNUSED(base::consts::kDefaultLogFile);
 #endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::ToFile, "true", true);
         setGlobally(ConfigurationType::ToStandardOutput, "true", true);
