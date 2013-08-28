@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.12 (development / unreleased version)
+//  Easylogging++ v9.15
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -153,22 +153,22 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if (!defined(_ELPP_DISABLE_ASSERT))
 #   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { \
+#      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
           std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
               << msg << "\"" << std::endl; exit(1); }
 #   else
-#      define __EASYLOGGINGPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
+#      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
         __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
 #   endif // (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
 #else
-#   define __EASYLOGGINGPP_ASSERT(x, y)
+#   define ELPP_ASSERT(x, y)
 #endif // (!defined(_ELPP_DISABLE_ASSERT))
-#if (!defined(_ELPP_DISABLE_ERRORS))
+#if (defined(_ELPP_ENABLE_ERRORS))
 #   define ELPP_INTERNAL_ERROR(msg, pe) std::cerr << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " << \
     msg << std::endl; if (pe) { std::cerr << "    "; perror(""); }
 #else
-#   define ELPP_INTERNAL_ERROR(msg)
-#endif // (!defined(_ELPP_DISABLE_ERRORS))
+#   define ELPP_INTERNAL_ERROR(msg, pe)
+#endif // (defined(_ELPP_ENABLE_ERRORS))
 #if (defined(_ELPP_ENABLE_INFO))
 #   define ELPP_INTERNAL_INFO(msg) std::cout << msg << std::endl;
 #else
@@ -2255,7 +2255,9 @@ public:
     /// @brief Sets configurations to "factory based" configurations.
     void setToDefault(void) {
         setGlobally(ConfigurationType::Enabled, "true", true);
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile), true);
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::ToFile, "true", true);
         setGlobally(ConfigurationType::ToStandardOutput, "true", true);
         setGlobally(ConfigurationType::MillisecondsWidth, "3", true);
@@ -2281,7 +2283,9 @@ public:
     void setRemainingToDefault(void) {
         base::utils::threading::lock_guard lock(mutex());
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Enabled, "true");
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, "true");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, "true");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, "3");
@@ -2312,7 +2316,7 @@ public:
         static bool parseFromFile(const std::string& configurationFile, Configurations* sender, Configurations* base = nullptr) {
             sender->setFromBase(base);
             std::ifstream fileStream_(configurationFile.c_str(), std::ifstream::in);
-            __EASYLOGGINGPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile << "] for parsing.");
+            ELPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile << "] for parsing.");
             bool parsedSuccessfully = false;
             std::string line = std::string();
             Level currLevel = Level::Unknown;
@@ -2321,7 +2325,7 @@ public:
             while (fileStream_.good()) {
                 std::getline(fileStream_, line);
                 parsedSuccessfully = parseLine(line, currConfigStr, currLevelStr, currLevel, sender);
-                __EASYLOGGINGPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
+                ELPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
             }
             return parsedSuccessfully;
         }
@@ -2343,7 +2347,7 @@ public:
             std::string currLevelStr = std::string();
             while (std::getline(ss, line)) {
                 parsedSuccessfully = parseLine(line, currConfigStr, currLevelStr, currLevel, sender);
-                __EASYLOGGINGPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
+                ELPP_ASSERT(parsedSuccessfully, "Unable to parse configuration line: " << line);
             }
             return parsedSuccessfully;
         }
@@ -2415,16 +2419,16 @@ public:
                 }
                 if (quotesStart != std::string::npos && quotesEnd != std::string::npos) {
                     // Quote provided - check and strip if valid
-                    __EASYLOGGINGPP_ASSERT((quotesStart < quotesEnd), "Configuration error - No ending quote found in [" << currConfigStr << "]");
-                    __EASYLOGGINGPP_ASSERT((quotesStart + 1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
+                    ELPP_ASSERT((quotesStart < quotesEnd), "Configuration error - No ending quote found in [" << currConfigStr << "]");
+                    ELPP_ASSERT((quotesStart + 1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
                     if ((quotesStart != quotesEnd) && (quotesStart + 1 != quotesEnd)) {
                         // Explicit check in case if assertion is disabled
                         currValue = currValue.substr(quotesStart + 1, quotesEnd - 1);
                     }
                 }
             }
-            __EASYLOGGINGPP_ASSERT(currLevel != Level::Unknown, "Unrecognized severity level [" << currLevelStr << "]");
-            __EASYLOGGINGPP_ASSERT(currConfig != ConfigurationType::Unknown, "Unrecognized configuration [" << currConfigStr << "]");
+            ELPP_ASSERT(currLevel != Level::Unknown, "Unrecognized severity level [" << currLevelStr << "]");
+            ELPP_ASSERT(currConfig != ConfigurationType::Unknown, "Unrecognized configuration [" << currConfigStr << "]");
             if (currLevel == Level::Unknown || currConfig == ConfigurationType::Unknown) {
                 return false; // unrecognizable level or config
             }
@@ -2579,6 +2583,7 @@ private:
 
     template <typename Conf_T>
     inline Conf_T unsafeGetConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
+        _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::const_iterator it = confMap.find(level);
         if (it == confMap.end()) {
             try {
@@ -2594,6 +2599,7 @@ private:
 
     template <typename Conf_T>
     inline Conf_T& unsafeGetConfigByRef(const Level& level, std::map<Level, Conf_T>& confMap, const char* confName) {
+        _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::iterator it = confMap.find(level);
         if (it == confMap.end()) {
             try {
@@ -2672,7 +2678,9 @@ private:
                 setValue(Level::Global, getBool(conf->value()), m_performanceTrackingMap);
             } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), m_maxLogFileSizeMap);
+#if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
                 unsafeValidateFileRolling(conf->level(), base::defaultPreRollOutHandler); // This is not unsafe as mutex is locked in currect scope
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             }
         }
     }
@@ -2684,7 +2692,7 @@ private:
                 [](char c) { return !base::utils::Str::isDigit(c); }) == confVal.end();
         if (!valid) {
             valid = false;
-            __EASYLOGGINGPP_ASSERT(valid, "Configuration value not a valid integer [" << confVal << "]");
+            ELPP_ASSERT(valid, "Configuration value not a valid integer [" << confVal << "]");
             return 0;
         }
         return atol(confVal.c_str());
@@ -2727,6 +2735,9 @@ private:
 
     bool unsafeValidateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
         std::fstream* fs = unsafeGetConfigByRef(level, m_fileStreamMap, "fileStream").get();
+        if (fs == nullptr) {
+            return true;
+        }
         std::size_t maxLogFileSize = unsafeGetConfigByVal(level, m_maxLogFileSizeMap, "maxLogFileSize");
         std::size_t currFileSize = base::utils::File::getSizeOfFile(fs);
         if (maxLogFileSize != 0 && currFileSize >= maxLogFileSize) {
@@ -3403,14 +3414,16 @@ private:
             std::fstream* fs = m_log.logger()->m_typedConfigurations->fileStream(m_log.level());
             if (fs != nullptr) {
                 *fs << logLine << std::endl;
-            }
-            if (fs->fail()) {
-                ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
-                        << "Few possible reasons (could be something else):\n"
-                        << "      * Permission denied\n"
-                        << "      * Disk full\n"
-                        << "      * Disk is not writable"
-                        , true);
+                 if (fs->fail()) {
+                    ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
+                            << "Few possible reasons (could be something else):\n"
+                            << "      * Permission denied\n"
+                            << "      * Disk full\n"
+                            << "      * Disk is not writable"
+                            , true);
+                }
+            } else {
+                ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
             }
         }
         base::elStorage->unlock();
@@ -4356,7 +4369,7 @@ public:
     /// @brief Sets configurations from global configuration file.
     static void configureFromGlobal(const char* globalConfigurationFilePath) {
         std::ifstream gcfStream(globalConfigurationFilePath, std::ifstream::in);
-        __EASYLOGGINGPP_ASSERT(gcfStream.is_open(), "Unable to open global configuration file [" << globalConfigurationFilePath << "] for parsing.");
+        ELPP_ASSERT(gcfStream.is_open(), "Unable to open global configuration file [" << globalConfigurationFilePath << "] for parsing.");
         std::string line = std::string();
         std::stringstream ss;
         Logger* logger = nullptr;
@@ -4409,10 +4422,10 @@ public:
     }
 
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.12"); }
+    static inline const std::string version(void) { return std::string("9.15"); }
 
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("27-08-2013 1935hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("28-08-2013 1037hrs"); }
 
     /// @brief Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan"); }

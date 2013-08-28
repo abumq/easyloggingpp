@@ -1,18 +1,12 @@
 
-Easylogging++ v9.13 RELEASE NOTES
+Easylogging++ v9.14 RELEASE NOTES
 ---------------------------------
 
-=====================
-=    NEW FEATURES   =
-=====================
-
- - 'logs' directory is made automatically (issue #99)
-
 ==========================
-=       INTERNALS        =
+=     BUG FIXES          =
 ==========================
 
- - Easylogging++ internal errors are enabled on defining macro `_ELPP_ENABLE_ERRORS`
+ - Fixes issues with valgrind when no default file is used (issue #100)
 
 ==========================
 =         NOTES          =
