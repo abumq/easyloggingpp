@@ -6,7 +6,7 @@ Easylogging++ v9.14 RELEASE NOTES
 =     BUG FIXES          =
 ==========================
 
- - Fixes issues with valgrind when no default file is used
+ - Fixes issues with valgrind when no default file is used (issue #100)
 
 ==========================
 =         NOTES          =
