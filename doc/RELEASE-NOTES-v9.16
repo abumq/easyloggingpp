@@ -7,6 +7,7 @@ Easylogging++ v9.16 RELEASE NOTES
 =============================
 
  - Suppressed unused warning for default filename constant (only clang)
+ - Some serious steps taken for future release to have less warnings - made all samples -pedantic-errors + -Wfatal-errors (note: samples are part of build-tests) 
 
 ==========================
 =         NOTES          =
