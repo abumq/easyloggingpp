@@ -2138,7 +2138,7 @@ public:
     ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
         bool assertionPassed = false;
-        ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str())),
+        ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
                 "Configuration file [" << configurationFile << "] does not exist!");
         if (!assertionPassed) {
             return false;
