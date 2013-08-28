@@ -6,7 +6,7 @@ Easylogging++ v9.15 RELEASE NOTES
 =     IMPROVEMENTS          =
 =============================
 
- - Safe to use _ELPP_NO_DEFAULT_LOG_FILE in any case
+ - Warnings fixes (issue #101)
 
 ==========================
 =         NOTES          =
