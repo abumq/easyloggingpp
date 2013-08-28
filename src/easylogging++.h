@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.16
+//  Easylogging++ v9.16 (development / unreleased version)/
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -966,11 +966,12 @@ public:
     }
     /// @brief Determines whether or not provided path exist in current file system
     /// @param path Path to check
-    static inline bool pathExists(const char* path) {
+    static inline bool pathExists(const char* path, bool considerFile = false) {
         if (path == nullptr) {
             return false;
         }
 #if _ELPP_OS_UNIX
+        _ELPP_UNUSED(considerFile);
         struct stat st;
         return (stat(path, &st) == 0);
 #elif _ELPP_OS_WINDOWS
@@ -978,7 +979,7 @@ public:
         if (fileType == INVALID_FILE_ATTRIBUTES) {
             return false;
         }
-        return (fileType & FILE_ATTRIBUTE_DIRECTORY) == 0 ? false : true;
+        return considerFile ? true : ((fileType & FILE_ATTRIBUTE_DIRECTORY) == 0 ? false : true);
 #endif // _ELPP_OS_UNIX
     }
 
@@ -2123,6 +2124,7 @@ public:
         if (useDefaultsForRemaining) {
             setRemainingToDefault();
         }
+
     }
 
     virtual ~Configurations(void) {
@@ -2135,6 +2137,12 @@ public:
     /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
     ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
+        bool assertionPassed = false;
+        ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str())),
+                "Configuration file [" << configurationFile << "] does not exist!");
+        if (!assertionPassed) {
+            return false;
+        }
         bool success = Parser::parseFromFile(configurationFile, this, base);
         m_isFromFile = success;
         return success;
