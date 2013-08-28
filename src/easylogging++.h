@@ -2583,6 +2583,7 @@ private:
 
     template <typename Conf_T>
     inline Conf_T unsafeGetConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
+        _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::const_iterator it = confMap.find(level);
         if (it == confMap.end()) {
             try {
@@ -2598,6 +2599,7 @@ private:
 
     template <typename Conf_T>
     inline Conf_T& unsafeGetConfigByRef(const Level& level, std::map<Level, Conf_T>& confMap, const char* confName) {
+        _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::iterator it = confMap.find(level);
         if (it == confMap.end()) {
             try {
