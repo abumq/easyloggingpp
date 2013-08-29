@@ -668,6 +668,8 @@ namespace consts {
     static const char* kThreadIdFormatSpecifier         =      "%thread";
     static const char* kSeverityLevelFormatSpecifier    =      "%level";
     static const char* kDateTimeFormatSpecifier         =      "%datetime";
+    static const char* kLogFileFormatSpecifier          =      "%file";
+    static const char* kLogLineFormatSpecifier          =      "%line";
     static const char* kLogLocationFormatSpecifier      =      "%loc";
     static const char* kLogFunctionFormatSpecifier      =      "%func";
     static const char* kCurrentUserFormatSpecifier      =      "%user";
@@ -764,9 +766,9 @@ enum class TimestampUnit : unsigned short {
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
 enum class FormatFlags : unsigned short {
-    DateTime = 2, LoggerId = 4, Location = 8, Function = 16,
-    User = 32, Host = 64, LogMessage = 128, VerboseLevel = 256, AppName = 512, ThreadId = 1024,
-    Level = 2048
+    DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
+    User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
+    Level = 8192
 };
 /// @brief Namespace containing utility functions/static classes used internally
 namespace utils {
@@ -1876,14 +1878,14 @@ public:
         conditionalAddFlag(base::consts::kSeverityLevelFormatSpecifier, base::FormatFlags::Level);
         conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
         conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
+        conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
+        conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
         conditionalAddFlag(base::consts::kLogLocationFormatSpecifier, base::FormatFlags::Location);
         conditionalAddFlag(base::consts::kLogFunctionFormatSpecifier, base::FormatFlags::Function);
         conditionalAddFlag(base::consts::kCurrentUserFormatSpecifier, base::FormatFlags::User);
         conditionalAddFlag(base::consts::kCurrentHostFormatSpecifier, base::FormatFlags::Host);
         conditionalAddFlag(base::consts::kMessageFormatSpecifier, base::FormatFlags::LogMessage);
         conditionalAddFlag(base::consts::kVerboseLevelFormatSpecifier, base::FormatFlags::VerboseLevel);
-        conditionalAddFlag(base::consts::kAppNameFormatSpecifier, base::FormatFlags::AppName);
-        conditionalAddFlag(base::consts::kAppNameFormatSpecifier, base::FormatFlags::AppName);
         // For date/time we need to extract user's date format first
         std::size_t dateIndex = std::string::npos;
         if ((dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
@@ -3387,6 +3389,16 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
           // Function
           base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_log.func()));
+        }
+        if (logFormat->hasFlag(base::FormatFlags::File)) {
+          // File
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_log.file()));
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Line)) {
+          // Line
+          base::elStorage->tempStream() << m_log.line();
+          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, base::elStorage->tempStream().str());
+          base::elStorage->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
           // Location

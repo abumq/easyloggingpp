@@ -3,6 +3,12 @@ Easylogging++ v9.17 RELEASE NOTES
 ---------------------------------
 
 =============================
+=     NEW FEATURES          =
+=============================
+
+ - Add a format specifier to log filename and line number (issue #103)
+
+=============================
 =     IMPROVEMENTS          =
 =============================
 
