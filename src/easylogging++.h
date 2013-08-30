@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.16 (development / unreleased version)
+//  Easylogging++ v9.17
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -4444,10 +4444,10 @@ public:
     }
 
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.16"); }
+    static inline const std::string version(void) { return std::string("9.17"); }
 
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("28-08-2013 1901hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("30-08-2013 1624hrs"); }
 
     /// @brief Original author and maintainer
     static inline const std::string author(void) { return std::string("Majid Khan"); }
