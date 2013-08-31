@@ -1,3 +1,5 @@
+// gtest based unit tests
+
 #include "test-helpers.h"
 #include "enum-helper-tests.h"
 #include "utilities-test.h"
