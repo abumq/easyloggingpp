@@ -3,6 +3,13 @@ Easylogging++ v9.18 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=       NEW FEATURES     =
+==========================
+
+ - Only allow aplha-numeric (+ some symbols) for logger names (issue #105)
+ - Case insensitive app args (issue #106)
+
+==========================
 =         NOTES          =
 ==========================
 

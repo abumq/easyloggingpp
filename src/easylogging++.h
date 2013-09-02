@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.17
+//  Easylogging++ v9.17 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -718,6 +718,7 @@ namespace consts {
 #else
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
+    static const char* kValidLoggerIdSymbols                   =      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
 
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
@@ -1183,6 +1184,15 @@ public:
             }
         }
         return true;
+    }
+
+    /// @brief Returns true if c exist in str
+    static bool contains(const char* str, char c) {
+        for (; *str; ++str) {
+            if (*str == c)
+                return true;
+        }
+        return false;
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
@@ -2963,6 +2973,16 @@ public:
     inline base::TypedConfigurations* typedConfigurations(void) {
         return m_typedConfigurations;
     }
+
+    inline static bool isValidId(const std::string& id) {
+        for (std::string::const_iterator it = id.cbegin(); it != id.cend(); ++it) {
+            if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3020,6 +3040,11 @@ public:
         base::utils::threading::lock_guard lock(mutex());
         Logger* logger_ = base::utils::Registry<Logger, std::string>::get(id);
         if (logger_ == nullptr && forceCreation) {
+            bool validId = Logger::isValidId(id);
+            if (!validId) {
+                ELPP_ASSERT(validId, "Invalid logger ID [" << id << "]. Not registering this logger.");
+                return nullptr;
+            }
             logger_ = new Logger(id, m_defaultConfigurations, &m_logStreamsReference);
             registerNew(id, logger_);
         }
@@ -3310,27 +3335,26 @@ private:
         while (argc-- > 0) {
             // Look for --v=X argument
             if ((strlen(argv[argc]) >= 5) && (argv[argc][0] == '-') && (argv[argc][1] == '-') &&
-                    (argv[argc][2] == 'v') && (argv[argc][3] == '=') && (isdigit(argv[argc][4]))) {
+                    (argv[argc][2] == 'v' || argv[argc][2] == 'V') && (argv[argc][3] == '=') &&
+                    (isdigit(argv[argc][4]))) {
                 // Current argument is --v=X
                 // where X is a digit between 0-9
                 m_vRegistry->setLevel(atoi(argv[argc] + 4));
             }
             // Look for -v argument
-            else if ((strlen(argv[argc]) == 2) && (argv[argc][0] == '-') && (argv[argc][1] == 'v')) {
+            else if ((strlen(argv[argc]) == 2) && (base::utils::Str::cStringCaseEq(argv[argc], "-v"))) {
                 m_vRegistry->setLevel(base::consts::kMaxVerboseLevel);
             }
             // Look for --verbose argument
-            else if ((strlen(argv[argc]) == 9) && (argv[argc][0] == '-') && (argv[argc][1] == '-') &&
-                     (argv[argc][2] == 'v') && (argv[argc][3] == 'e') && (argv[argc][4] == 'r') &&
-                     (argv[argc][5] == 'b') && (argv[argc][6] == 'o') && (argv[argc][7] == 's') &&
-                     (argv[argc][8] == 'e')) {
+            else if ((strlen(argv[argc]) == 9) && (base::utils::Str::cStringCaseEq(argv[argc], "--verbose"))) {
                 m_vRegistry->setLevel(base::consts::kMaxVerboseLevel);
             }
 #if (!defined(_ELPP_DISABLE_VMODULES))
             // Look for -vmodule=
-            else if ((strlen(argv[argc]) >= 9) && (argv[argc][0] == '-') && (argv[argc][1] == 'v') &&
-                     (argv[argc][2] == 'm') && (argv[argc][3] == 'o') && (argv[argc][4] == 'd') &&
-                     (argv[argc][5] == 'u') && (argv[argc][6] == 'l') && (argv[argc][7] == 'e') &&
+            else if ((strlen(argv[argc]) >= 9) && (argv[argc][0] == '-') && (argv[argc][1] == 'v' || argv[argc][1] == 'V') &&
+                     (argv[argc][2] == 'm' || argv[argc][2] == 'M') && (argv[argc][3] == 'o' || argv[argc][3] == 'O') &&
+                     (argv[argc][4] == 'd' || argv[argc][4] == 'D') && (argv[argc][5] == 'u' || argv[argc][5] == 'U') &&
+                     (argv[argc][6] == 'l' || argv[argc][6] == 'L') && (argv[argc][7] == 'e' || argv[argc][7] == 'E') &&
                      (argv[argc][8] == '=')) {
                 m_vRegistry->setModules(argv[argc] + 9);
             }
