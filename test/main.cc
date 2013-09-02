@@ -10,7 +10,7 @@
 #include "hit-counter-test.h"
 #include "vmodule-tests.h"
 #include "write-all-test.h"
-#include "loggers-test.h"
+#include "logger-test.h"
 #include "loggable-test.h"
 
 TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");

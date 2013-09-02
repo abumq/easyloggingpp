@@ -69,6 +69,11 @@ TEST(StringUtilsTest, CStringCaseEq) {
     EXPECT_FALSE(Str::cStringCaseEq(nullptr, "nope"));
 }
 
+TEST(StringUtilsTest, Contains) {
+    EXPECT_TRUE(Str::contains("the quick brown fox jumped over the lazy dog", 'a'));
+    EXPECT_FALSE(Str::contains("the quick brown fox jumped over the lazy dog", '9'));
+}
+
 TEST(StringUtilsTest, ReplaceFirstWithEscape) {
     std::string str = "Rolling in the deep";
     Str::replaceFirstWithEscape(str, "Rolling", "Swimming");

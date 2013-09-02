@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.17
+//  Easylogging++ v9.17 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -718,6 +718,7 @@ namespace consts {
 #else
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
+    static const char* kValidLoggerIdSymbols                   =      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
 
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
@@ -1183,6 +1184,15 @@ public:
             }
         }
         return true;
+    }
+
+    /// @brief Returns true if c exist in str
+    static bool contains(const char* str, char c) {
+        for (; *str; ++str) {
+            if (*str == c)
+                return true;
+        }
+        return false;
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
@@ -2963,6 +2973,16 @@ public:
     inline base::TypedConfigurations* typedConfigurations(void) {
         return m_typedConfigurations;
     }
+
+    inline static bool isValidId(const std::string& id) {
+        for (std::string::const_iterator it = id.cbegin(); it != id.cend(); ++it) {
+            if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3020,6 +3040,11 @@ public:
         base::utils::threading::lock_guard lock(mutex());
         Logger* logger_ = base::utils::Registry<Logger, std::string>::get(id);
         if (logger_ == nullptr && forceCreation) {
+            bool validId = Logger::isValidId(id);
+            if (!validId) {
+                ELPP_ASSERT(validId, "Invalid logger ID [" << id << "]. Not registering this logger.");
+                return nullptr;
+            }
             logger_ = new Logger(id, m_defaultConfigurations, &m_logStreamsReference);
             registerNew(id, logger_);
         }

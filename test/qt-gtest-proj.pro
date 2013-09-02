@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2013-07-30T19:58:11
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -23,7 +17,6 @@ HEADERS  += \
     configurations-test.h \
     enum-helper-tests.h \
     hit-counter-test.h \
-    loggers-test.h \
     registry-test.h \
     test-helpers.h \
     typed-configurations-test.h \
@@ -32,4 +25,5 @@ HEADERS  += \
     write-all-test.h \
     easylogging++.h \
     global-configurations-test.h \
-    loggable-test.h
+    loggable-test.h \
+    logger-test.h
