@@ -2975,7 +2975,7 @@ public:
     }
 
     inline static bool isValidId(const std::string& id) {
-        for (std::string::const_iterator it = id.cbegin(); it != id.cend(); ++it) {
+        for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
             if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
                 return false;
             }
@@ -4384,12 +4384,16 @@ public:
             Loggers::reconfigureLogger(it->second, configurations);
         }
     }
-    /// @brief Reconfigures single configure for all the loggers
+    /// @brief Reconfigures single configuration for all the loggers
     static inline void reconfigureAllLoggers(const ConfigurationType& configurationType, const std::string& value) {
+        reconfigureAllLoggers(Level::Global, configurationType, value);
+    }
+    ///@brief Reconfigures single configuration for all the loggers for specified level
+    static inline void reconfigureAllLoggers(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
         for (base::RegisteredLoggers::iterator it = base::elStorage->registeredLoggers()->begin();
                 it != base::elStorage->registeredLoggers()->end(); ++it) {
             Logger* logger = it->second;
-            logger->refConfigurations().setGlobally(configurationType, value);
+            logger->refConfigurations().set(level, configurationType, value);
             logger->reconfigure();
         }
     }
@@ -4400,7 +4404,6 @@ public:
             Loggers::reconfigureAllLoggers(configurations);
         }
     }
-
     /// @brief Populates all logger IDs in current repository.
     /// @param [out] targetList List of fill up.
     static inline std::vector<std::string>& populateAllLoggerIds(std::vector<std::string>& targetList) {
@@ -4411,7 +4414,6 @@ public:
         }
         return targetList;
     }
-
     /// @brief Sets configurations from global configuration file.
     static void configureFromGlobal(const char* globalConfigurationFilePath) {
         std::ifstream gcfStream(globalConfigurationFilePath, std::ifstream::in);
