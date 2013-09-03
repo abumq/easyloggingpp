@@ -39,5 +39,14 @@ int main(void) {
     CHECK_STRCASEEQ("abc", "ABC") << " snap -- lib has bug!";
     CHECK_STRCASENE("abc", "ABE") << " snap -- lib has bug!";
     LOG(INFO) << "----- HOPEFULLY NO CHECK FAILED SINCE YOU STARTED WORRYING!";
+
+    // DCHECKs
+    DCHECK(1 > 2) << "1 is not greater than 2";
+    DCHECK_EQ(1, 2) << "1 is not equal to 2";
+    DCHECK_NE(1, 1) << "Wow, I did not know 1 == 1";
+    DCHECK_STREQ("abc", "def") << " :)";
+    DCHECK_STRNE("abc", "abc") << " :(";
+    DCHECK_STRCASEEQ("abc", "ABCD") << " :p";
+    DCHECK_STRCASENE("abc", "ABC") << " B)";
     return 0;
 }

@@ -4556,20 +4556,18 @@ public:
 #define ELPP_COUNTER_POS (ELPP_COUNTER == nullptr ? -1 : ELPP_COUNTER->hitCounts())
 // Undef levels to support LOG(LEVEL)
 #undef INFO
+#undef WARNING
 #undef DEBUG
 #undef ERROR
 #undef FATAL
-#undef QA
 #undef TRACE
 #undef VERBOSE
 // Undef existing
 #undef CINFO
 #undef CWARNING
 #undef CDEBUG
-#undef CERROR
 #undef CFATAL
-#undef ERROR
-#undef CQA
+#undef CERROR
 #undef CTRACE
 #undef CVERBOSE
 #undef CINFO_IF
@@ -4577,8 +4575,6 @@ public:
 #undef CDEBUG_IF
 #undef CERROR_IF
 #undef CFATAL_IF
-#undef ERROR_IF
-#undef CQA_IF
 #undef CTRACE_IF
 #undef CVERBOSE_IF
 #undef CINFO_EVERY_N
@@ -4586,8 +4582,6 @@ public:
 #undef CDEBUG_EVERY_N
 #undef CERROR_EVERY_N
 #undef CFATAL_EVERY_N
-#undef ERROR_EVERY_N
-#undef CQA_EVERY_N
 #undef CTRACE_EVERY_N
 #undef CVERBOSE_EVERY_N
 // Normal logs
@@ -4616,11 +4610,6 @@ public:
 #else
 #   define CFATAL(loggerId) el::base::NullWriter()
 #endif // _ELPP_FATAL_LOG
-#if _ELPP_QA_LOG
-#   define CQA(loggerId) _ELPP_WRITE_LOG(loggerId, el::Level::QA)
-#else
-#   define CQA(loggerId) el::base::NullWriter()
-#endif // _ELPP_QA_LOG
 #if _ELPP_TRACE_LOG
 #   define CTRACE(loggerId) _ELPP_WRITE_LOG(loggerId, el::Level::Trace)
 #else
@@ -4658,11 +4647,6 @@ public:
 #else
 #   define CFATAL_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_FATAL_LOG
-#if _ELPP_QA_LOG
-#   define CQA_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::QA)
-#else
-#   define CQA_IF(condition_, loggerId) el::base::NullWriter()
-#endif // _ELPP_QA_LOG
 #if _ELPP_TRACE_LOG
 #   define CTRACE_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Trace)
 #else
@@ -4700,11 +4684,6 @@ public:
 #else
 #   define CFATAL_EVERY_N(occasion, loggerId) el::base::NullWriter()
 #endif // _ELPP_FATAL_LOG
-#if _ELPP_QA_LOG
-#   define CQA_EVERY_N(occasion, loggerId) _ELPP_WRITE_LOG_EVERY_N(occasion, loggerId, el::Level::QA)
-#else
-#   define CQA_EVERY_N(occasion, loggerId) el::base::NullWriter()
-#endif // _ELPP_QA_LOG
 #if _ELPP_TRACE_LOG
 #   define CTRACE_EVERY_N(occasion, loggerId) _ELPP_WRITE_LOG_EVERY_N(occasion, loggerId, el::Level::Trace)
 #else
@@ -4731,28 +4710,22 @@ public:
 #undef CVLOG_EVERY_N
 // Normal logs
 #define CLOG(LEVEL, loggerId) C##LEVEL(loggerId)
-#define CLOG_VERBOSE(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
 #define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId)
 // Conditional logs
 #define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId)
-#define CLOG_VERBOSE_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
 #define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId)
 // Interval logs
 #define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId)
-#define CLOG_VERBOSE_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
 #define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId)
 //
 // Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
 // undef existing
 #undef LOG
-#undef LOG_VERBOSE
 #undef VLOG
 #undef LOG_IF
-#undef LOG_VERBOSE_IF
 #undef VLOG_IF
 #undef LOG_EVERY_N
-#undef LOG_VERBOSE_EVERY_N
 #undef VLOG_EVERY_N
 // Normal logs
 #define LOG(LEVEL) CLOG(LEVEL, el::base::consts::kDefaultLoggerId)
@@ -4763,6 +4736,45 @@ public:
 // Interval logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
 #define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
+//
+// Custom Debug Only Loggers - Requires (level, loggerId)
+//
+// undef existing
+#undef DCLOG
+#undef DCVLOG
+#undef DCLOG_IF
+#undef DCVLOG_IF
+#undef DCLOG_EVERY_N
+#undef DCVLOG_EVERY_N
+// Normal logs
+#define DCLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG(LEVEL, loggerId)
+#define DCLOG_VERBOSE(vlevel, loggerId) if (_ELPP_DEBUG_LOG) CLOG_VERBOSE(vlevel, loggerId)
+#define DCVLOG(vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG(vlevel, loggerId)
+// Conditional logs
+#define DCLOG_IF(condition, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_IF(condition, LEVEL, loggerId)
+#define DCVLOG_IF(condition, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_IF(condition, vlevel, loggerId)
+// Interval logs
+#define DCLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_EVERY_N(n, LEVEL, loggerId)
+#define DCVLOG_EVERY_N(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_EVERY_N(n, vlevel, loggerId)
+//
+// Default Debug Only Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
+//
+// undef existing
+#undef DLOG
+#undef DVLOG
+#undef DLOG_IF
+#undef DVLOG_IF
+#undef DLOG_EVERY_N
+#undef DVLOG_EVERY_N
+// Normal logs
+#define DLOG(LEVEL) DCLOG(LEVEL, el::base::consts::kDefaultLoggerId)
+#define DVLOG(vlevel) DCVLOG(vlevel, el::base::consts::kDefaultLoggerId)
+// Conditional logs
+#define DLOG_IF(condition, LEVEL) DCLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
+#define DVLOG_IF(condition, vlevel) DCVLOG_IF(condition, vlevel, el::base::consts::kDefaultLoggerId)
+// Interval logs
+#define DLOG_EVERY_N(n, LEVEL) DCLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
+#define DVLOG_EVERY_N(n, vlevel) DCVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
 // Check macros
 #undef CHECK
 #undef CHECK_EQ
@@ -4793,6 +4805,20 @@ static T* CheckNotNull(T* ptr, const char* name) {
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CHECK_STRCASENE(str1, str2) LOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL) \
                         << "Check failed: [" << #str1 << " != " << #str2 << "] "
+#undef DCHECK
+#undef DCHECK_EQ
+#undef DCHECK_NE
+#undef DCHECK_NOTNULL
+#undef DCHECK_STRCASEEQ
+#undef DCHECK_STRCASENE
+#define DCHECK(condition) if (_ELPP_DEBUG_LOG) CHECK(condition)
+#define DCHECK_EQ(a, b) if (_ELPP_DEBUG_LOG) CHECK_EQ(a, b)
+#define DCHECK_NE(a, b) if (_ELPP_DEBUG_LOG) CHECK_NE(a, b)
+#define DCHECK_NULLPTR(ptr) if (_ELPP_DEBUG_LOG) CHECK_NOTNULL(ptr)
+#define DCHECK_STREQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STREQ(str1, str2)
+#define DCHECK_STRNE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRNE(str1, str2)
+#define DCHECK_STRCASEEQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASEEQ(str1, str2)
+#define DCHECK_STRCASENE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASENE(str1, str2)
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else

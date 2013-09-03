@@ -9,6 +9,7 @@ Easylogging++ v9.18 RELEASE NOTES
  - Only allow aplha-numeric (+ some symbols) for logger names (issue #105)
  - Case insensitive app args (issue #106)
  - Helper to reconfigure specific level for all loggers (issue #107)
+ - DCHECK macros for debug mode checks (issue #108)
 
 ==========================
 =         NOTES          =
