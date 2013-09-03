@@ -427,8 +427,8 @@ Logging in easylogging++ is done using collection of macros. This is to make it 
 
 ### Basic
 You are provided with two basic macros that you can use in order to write logs:
-* LOG(LEVEL)
-* CLOG(LEVEL, logger ID)
+* `LOG(LEVEL)`
+* `CLOG(LEVEL, logger ID)`
 
 `LOG` uses 'default' logger while in CLOG (Custom LOG) you specify the logger ID. For LEVELs please refer to Configurations - Levels section above. Different loggers might have different configurations depending on your need, you may as well write custom macro to access custom logger. You also have different macros for verbose logging that is explained in section below.
 Here is very simple example of using these macros after you have initialized easylogging++.
@@ -442,29 +442,27 @@ CLOG(ERROR, "performance") << "This is info log using performance logger";
 ### Conditional Logging
 Easylogging++ provides certain aspects of logging, one these aspects is conditional logging, i.e, log will be written only if certain condition fulfils. This comes very handy in some situations. 
 Helper macros end with _IF;
-* LOG_IF(condition, LEVEL)
-* CLOG_IF(condition, LEVEL, logger ID)
+* `LOG_IF(condition, LEVEL)`
+* `CLOG_IF(condition, LEVEL, logger ID)`
 
 
 #### Some examples:
 ```c++
 LOG_IF(condition, INFO) << "Logged if condition is true";
 
-
-
 LOG_IF(false, WARNING) << "Never logged";
 CLOG_IF(true, INFO, "performance") << "Always logged (performance logger)"
 ```
 
-Same macros are available for verbose logging with V in the beginning, i.e, VLOG_IF and CVLOG_IF. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
+Same macros are available for verbose logging with V in the beginning, i.e, `VLOG_IF` and `CVLOG_IF`. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Occasional Logging
 Occasional logging is another useful aspect of logging with Easylogging++. This means a log will be written if it's hit certain times or part of certain times, e.g, every 10th hit or 100th hit or 2nd hit.
-Helper macros end with _EVERY_N;
-* LOG_EVERY_N(n, LEVEL)
-* CLOG_EVERY_N(n, LEVEL, logger ID)
+Helper macros end with `_EVERY_N`;
+* `LOG_EVERY_N(n, LEVEL)`
+* `CLOG_EVERY_N(n, LEVEL, logger ID)`
 
 #### Some examples:
 ```c++
@@ -474,6 +472,8 @@ for (int i = 1; i <= 10; ++i) {
 
 // 5 logs written; 2, 4, 6, 7, 10
 ```
+
+> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 
  [![top] Goto Top](#table-of-contents)
  
@@ -801,6 +801,8 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_STRNE(str1, str2)`                   | C-string inequality (case-sensitive) e.g, `CHECK_STRNE(username1, username2) << "Usernames cannot be same";`                    |
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
 | `CHECK_STRCASENE(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_STRCASENE(username1, username2) << "Same username not allowed";`           |
+
+> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 
  [![top] Goto Top](#table-of-contents)
  
