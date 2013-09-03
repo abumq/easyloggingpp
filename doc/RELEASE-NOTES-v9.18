@@ -3,6 +3,13 @@ Easylogging++ v9.18 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=           FIXES        =
+==========================
+
+ - Completely dithced away QA logging even macros unusable
+ - Fixed some of verbose logging macro expansions
+
+==========================
 =       NEW FEATURES     =
 ==========================
 

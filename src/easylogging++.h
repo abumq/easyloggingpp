@@ -4623,37 +4623,37 @@ public:
 #endif // _ELPP_VERBOSE_LOG
 // Conditional logs
 #if _ELPP_INFO_LOG
-#   define CINFO_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Info)
+#   define CINFO_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Info)
 #else
 #   define CINFO_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Warning)
+#   define CWARNING_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Warning)
 #else
 #   define CWARNING_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Debug)
+#   define CDEBUG_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Debug)
 #else
 #   define CDEBUG_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Error)
+#   define CERROR_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Error)
 #else
 #   define CERROR_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Fatal)
+#   define CFATAL_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Fatal)
 #else
 #   define CFATAL_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF(condition_, loggerId, el::Level::Trace)
+#   define CTRACE_IF(condition_, loggerId) _ELPP_WRITE_LOG_IF((condition_), loggerId, el::Level::Trace)
 #else
 #   define CTRACE_IF(condition_, loggerId) el::base::NullWriter()
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_IF(condition_, vlevel, loggerId) if (condition_ && VLOG_IS_ON(vlevel)) el::base::Writer(loggerId, \
+#   define CVERBOSE_IF(condition_, vlevel, loggerId) if (VLOG_IS_ON(vlevel) && (condition_)) el::base::Writer(loggerId, \
        el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, vlevel)
 #else
 #   define CVERBOSE_IF(condition_, vlevel, loggerId) el::base::NullWriter()
@@ -4690,8 +4690,7 @@ public:
 #   define CTRACE_EVERY_N(occasion, loggerId) el::base::NullWriter()
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) if (VLOG_IS_ON(vlevel) && el::base::elStorage->validateCounter(__FILE__, __LINE__, occasion)) \
-       el::base::Writer(loggerId, el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, vlevel)
+#   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) VLOG_IF(el::base::elStorage->validateCounter(__FILE__, __LINE__, occasion), vlevel)
 #else
 #   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) el::base::NullWriter()
 #endif // _ELPP_VERBOSE_LOG
