@@ -3051,6 +3051,10 @@ public:
         return logger_;
     }
 
+    inline bool has(const std::string& id) {
+        return get(id, false) != nullptr;
+    }
+
     inline void unregister(Logger*& logger) {
         base::utils::threading::lock_guard lock(mutex());
         base::utils::Registry<Logger, std::string>::unregister(logger->id());
@@ -3575,7 +3579,7 @@ public:
                    m_proceed(true), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
-            if (elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId), false) != nullptr) {
+            if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
@@ -4364,6 +4368,10 @@ public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
         return base::elStorage->registeredLoggers()->get(identity, registerIfNotAvailable);
+    }
+    /// @brief Whether or not logger with id is registered
+    static inline bool hasLogger(const std::string& identity) {
+        return base::elStorage->registeredLoggers()->has(identity);
     }
     /// @brief Reconfigures specified logger with new configurations
     static inline Logger* reconfigureLogger(Logger* logger, const Configurations& configurations) {

@@ -17,6 +17,7 @@ Easylogging++ v9.18 RELEASE NOTES
  - Case insensitive app args (issue #106)
  - Helper to reconfigure specific level for all loggers (issue #107)
  - DCHECK macros for debug mode checks (issue #108)
+ - Added `bool Loggers::hasLogger(const std::string&)`
 
 ==========================
 =         NOTES          =
