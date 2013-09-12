@@ -4014,7 +4014,7 @@ public:
 #   if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             if (m_hasChecked) {
                 ss << " (["
-                   << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime, lastCheckpointTime,
+                   << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime,
                                   m_timestampUnit), m_timestampUnit) << "]"
                     << " from ";
                 if (m_lastCheckpointId == nullptr) {
