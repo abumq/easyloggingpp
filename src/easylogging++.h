@@ -2763,7 +2763,7 @@ private:
     }
 
     bool validateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
-        base::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         return unsafeValidateFileRolling(level, preRollOutHandler);
     }
 };
