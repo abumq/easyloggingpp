@@ -2962,7 +2962,7 @@ public:
         return m_typedConfigurations;
     }
 
-    inline static bool isValidId(const std::string& id) const {
+    inline static bool isValidId(const std::string& id) {
         for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
             if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
                 return false;
@@ -3053,7 +3053,7 @@ public:
 
     /// @brief Sets verbose level. Accepted range is 0-9
     inline void setLevel(VLevel level) {
-        base::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         if (level < 0)
             m_level = 0;
         else if (level > 9)
@@ -3067,7 +3067,7 @@ public:
     }
 
     void setModules(const char* modules) {
-        base::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
 #if !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
         auto addSuffix = [](std::stringstream& ss, const char* sfx, const char* prev) {
             if (prev != nullptr && base::utils::Str::endsWith(ss.str(), prev)) {
@@ -3139,7 +3139,7 @@ public:
     }
 
     bool allowed(VLevel vlevel, const char* file, unsigned int flags = 0x0) {
-        base::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         if (m_modules.empty() || file == nullptr) {
             return vlevel <= m_level;
         } else {
@@ -4051,8 +4051,8 @@ private:
     Trackable(void);
 
     friend std::ostream& operator<<(std::ostream& os, const Trackable& trackable) {
-        os << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(trackable.endTime,
-                trackable.startTime, trackable.m_timestampUnit), trackable.m_timestampUnit);
+        os << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(trackable.m_endTime,
+                trackable.m_startTime, trackable.m_timestampUnit), trackable.m_timestampUnit);
         return os;
     }
 };
