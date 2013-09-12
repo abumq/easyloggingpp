@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.18
+//  Easylogging++ v9.18 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -724,8 +724,7 @@ namespace consts {
     static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLoggerId                  =      "--";
 
-    static const int kMaxTimeFormats = 6;
-
+    static const int kMaxTimeFormats                           =      6;
     const struct {
         double value;
         const char* unit;
@@ -738,8 +737,7 @@ namespace consts {
        { 7.0f, "days" }
     };
 
-    static const int kMaxCrashSignals = 5;
-
+    static const int kMaxCrashSignals                          =      5;
     const struct {
         int numb;
         const char* name;
@@ -824,6 +822,7 @@ template <typename EnumType>
 inline static unsigned short hasFlag(EnumType e, unsigned short flag) {
     return base::utils::bitwise::And<EnumType>(e, flag);
 }
+} // namespace utils
 namespace threading {
 #if _ELPP_THREADING_ENABLED
 #   if !_ELPP_USE_STD_THREADING
@@ -856,9 +855,9 @@ public:
 
     inline bool try_lock(void) {
 #   if _ELPP_OS_UNIX
-        return (pthread_mutex_trylock(&m_underlyingMutex) == 0) ? true : false;
+        return (pthread_mutex_trylock(&m_underlyingMutex) == 0);
 #   elif _ELPP_OS_WINDOWS
-        return TryEnterCriticalSection(&m_underlyingMutex) ? true : false;
+        return TryEnterCriticalSection(&m_underlyingMutex);
 #   endif // _ELPP_OS_UNIX
     }
 
@@ -895,13 +894,13 @@ private:
 /// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
 static inline const char* getCurrentThreadId(void) {
     std::stringstream ss;
-#   if (_ELPP_OS_WINDOWS)
+#      if (_ELPP_OS_WINDOWS)
     ss << GetCurrentThreadId();
-#   endif // (_ELPP_OS_WINDOWS)
+#      endif // (_ELPP_OS_WINDOWS)
     return ss.str().c_str();
 }
-typedef base::utils::threading::Mutex mutex;
-typedef base::utils::threading::ScopedLock<base::utils::threading::Mutex> lock_guard;
+typedef base::threading::Mutex mutex;
+typedef base::threading::ScopedLock<base::threading::Mutex> lock_guard;
 #   else
 /// @brief Gets ID of currently running threading using std::this_thread::get_id()
 static inline const char* getCurrentThreadId(void) {
@@ -935,10 +934,26 @@ private:
 static inline const char* getCurrentThreadId(void) {
     return "";
 }
-typedef base::utils::threading::NoMutex mutex;
-typedef base::utils::threading::NoScopedLock<base::utils::threading::NoMutex> lock_guard;
+typedef base::threading::NoMutex mutex;
+typedef base::threading::NoScopedLock<base::threading::NoMutex> lock_guard;
 #endif // _ELPP_THREADING_ENABLED
+/// @brief Base of thread safe class
+class ThreadSafe {
+public:
+    virtual inline void lock(void) FINAL {
+        m_mutex.lock();
+    }
+    virtual inline void unlock(void) FINAL {
+        m_mutex.unlock();
+    }
+    virtual inline base::threading::mutex& mutex(void) FINAL {
+        return m_mutex;
+    }
+private:
+    base::threading::mutex m_mutex;
+};
 } // namespace threading
+namespace utils {
 class File : private base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
@@ -950,7 +965,6 @@ public:
         } else {
             base::utils::safeDelete(fs);
             ELPP_INTERNAL_ERROR("Bad file [" << filename << "]", true);
-            return nullptr;
         }
         return fs;
     }
@@ -1161,13 +1175,10 @@ public:
     }
 
     /// @brief Compares cstring equality - uses strcmp
-    static bool cStringEq(const char* s1, const char* s2) {
+    static inline bool cStringEq(const char* s1, const char* s2) {
         if (s1 == nullptr && s2 == nullptr) return true;
         if (s1 == nullptr || s2 == nullptr) return false;
-        if (s1 != nullptr && s2 != nullptr) {
-            return strcmp(s1, s2) == 0;
-        }
-        return false;
+        return strcmp(s1, s2) == 0;
     }
 
     /// @brief Compares cstring equality (case-insensitive) - uses toupper(char)
@@ -1175,19 +1186,17 @@ public:
     static bool cStringCaseEq(const char* s1, const char* s2) {
         if (s1 == nullptr && s2 == nullptr) return true;
         if (s1 == nullptr || s2 == nullptr) return false;
-        if (s1 != nullptr && s2 != nullptr) {
-            if (strlen(s1) != strlen(s2)) return false;
-            while (*s1 != '\0' && *s2 != '\0') {
-                if (::toupper(*s1) != ::toupper(*s2)) return false;
-                ++s1;
-                ++s2;
-            }
+        if (strlen(s1) != strlen(s2)) return false;
+        while (*s1 != '\0' && *s2 != '\0') {
+            if (::toupper(*s1) != ::toupper(*s2)) return false;
+            ++s1;
+            ++s2;
         }
         return true;
     }
 
     /// @brief Returns true if c exist in str
-    static bool contains(const char* str, char c) {
+    static inline bool contains(const char* str, char c) {
         for (; *str; ++str) {
             if (*str == c)
                 return true;
@@ -1473,18 +1482,16 @@ public:
         double result = static_cast<double>(time);
         unsigned short start = static_cast<unsigned short>(timestampUnit);
         const char* unit = base::consts::kTimeFormats[start].unit;
-        std::stringstream stream_;
         for (unsigned short i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
-            if (result > base::consts::kTimeFormats[i].value) {
-                result /= base::consts::kTimeFormats[i].value;
-                unit = base::consts::kTimeFormats[i + 1].unit;
-            } else {
-                // Break as soon as its not greater
+            if (result <= base::consts::kTimeFormats[i].value) {
                 break;
             }
+            result /= base::consts::kTimeFormats[i].value;
+            unit = base::consts::kTimeFormats[i + 1].unit;
         }
-        stream_ << result << " " << unit;
-        return stream_.str();
+        std::stringstream ss;
+        ss << result << " " << unit;
+        return ss.str();
     }
 
     /// @brief Gets time difference in milli/micro second depending on timestampUnit
@@ -1520,7 +1527,7 @@ private:
 /// and few more methods; get() to find element, unregister() to unregister single entry.
 /// Please note that this is thread-unsafe and should also implement thread-safety mechanisms in implementation.
 template <typename T_Ptr, typename Container>
-class AbstractRegistry {
+class AbstractRegistry : public base::threading::ThreadSafe {
 public:
     typedef typename Container::iterator iterator;
     typedef typename Container::const_iterator const_iterator;
@@ -1620,21 +1627,6 @@ public:
 
 protected:
 
-    /// @brief Locks repository mutex for multi-threading
-    virtual inline void lock(void) FINAL {
-        m_mutex.lock();
-    }
-
-    /// @brief Unlocks mutex
-    virtual inline void unlock(void) FINAL {
-        m_mutex.unlock();
-    }
-
-    /// @brief Returns mutex for repository for multi-threading
-    virtual inline base::utils::threading::mutex& mutex(void) FINAL {
-        return m_mutex;
-    }
-
     virtual void deepCopy(const AbstractRegistry<T_Ptr, Container>&) = 0;
 
     void reinitDeepCopy(const AbstractRegistry<T_Ptr, Container>& sr) {
@@ -1643,7 +1635,6 @@ protected:
     }
 private:
     Container m_list;
-    base::utils::threading::mutex m_mutex;
 };
 
 /// @brief A pointer registry mechanism to manage memory and provide search functionalities. (non-predicate version)
@@ -1978,39 +1969,37 @@ protected:
                     base::consts::kDebugLevelLogValue);
             return;
         }
-        else if (m_level == Level::Info) {
+        if (m_level == Level::Info) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kInfoLevelLogValue);
             return;
         }
-        else if (m_level == Level::Warning) {
+        if (m_level == Level::Warning) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kWarningLevelLogValue);
             return;
         }
-        else if (m_level == Level::Error) {
+        if (m_level == Level::Error) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kErrorLevelLogValue);
             return;
         }
-        else if (m_level == Level::Fatal) {
+        if (m_level == Level::Fatal) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kFatalLevelLogValue);
             return;
         }
-        else if (m_level == Level::Verbose) {
+        if (m_level == Level::Verbose) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kVerboseLevelLogValue);
             return;
         }
-        else if (m_level == Level::Trace) {
+        if (m_level == Level::Trace) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kTraceLevelLogValue);
             return;
         }
-        else
         // Ignore Level::Global and Level::Unknown
-        return;
     }
 
     inline void addFlag(const base::FormatFlags& flag) {
@@ -2181,7 +2170,7 @@ public:
         if (base == nullptr || base == this) {
             return;
         }
-        base::utils::threading::lock_guard lock(base->mutex());
+        base::threading::lock_guard lock(base->mutex());
         for (Configuration*& conf : base->list()) {
             set(conf);
         }
@@ -2207,7 +2196,7 @@ public:
     /// @param level Level to check
     /// @param configurationType Type of configuration to check existence for.
     inline bool hasConfiguration(const Level& level, const ConfigurationType& configurationType) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
 #if _ELPP_COMPILER_INTEL
         // We cant specify template types here, Intel C++ throws compilation error
         // "error: type name is not allowed"
@@ -2230,7 +2219,7 @@ public:
     /// @see el::Level
     /// @see el::ConfigurationType
     inline void set(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         unsafeSet(level, configurationType, value); // This is not unsafe anymore as we have locked mutex
         if (level == Level::Global) {
             unsafeSetGlobally(configurationType, value, false); // Again this is not unsafe either
@@ -2247,7 +2236,7 @@ public:
     }
 
     inline Configuration* get(const Level& level, const ConfigurationType& configurationType) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         return RegistryWithPred<Configuration, Configuration::Predicate>::get(level, configurationType);
     }
 
@@ -2261,7 +2250,7 @@ public:
 
     /// @brief Clears repository so that all the configurations are unset
     inline void clear(void) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         unregisterAll();
     }
 
@@ -2303,7 +2292,7 @@ public:
     /// true. If you dont do this explicitley (either by calling this function or by using second param in Constructor
     /// and try to access a value, an error is thrown
     void setRemainingToDefault(void) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Enabled, "true");
 #if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
@@ -2521,7 +2510,7 @@ class LogDispatcher;
 /// This is to perform faster while writing logs using correct configurations.
 ///
 /// This is thread safe and final class containing non-virtual destructor (means nothing should inherit this class)
-class TypedConfigurations {
+class TypedConfigurations : public base::threading::ThreadSafe {
 public:
     /// @brief Constructor to initialize (construct) the object off el::Configurations
     /// @param configurations Configurations pointer/reference to base this typed configurations off.
@@ -2586,20 +2575,19 @@ private:
     std::map<Level, bool> m_performanceTrackingMap;
     std::map<Level, std::shared_ptr<std::fstream>> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
-    base::utils::threading::mutex m_mutex;
     base::LogStreamsReferenceMap* m_logStreamsReference;
     friend class Writer;
     friend class LogDispatcher;
 
     template <typename Conf_T>
     inline Conf_T getConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         return unsafeGetConfigByVal(level, confMap, confName); // This is not unsafe anymore - mutex locked in scope
     }
 
     template <typename Conf_T>
     inline Conf_T& getConfigByRef(const Level& level, std::map<Level, Conf_T>& confMap, const char* confName) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         return unsafeGetConfigByRef(level, confMap, confName); // This is not unsafe anymore - mutex locked in scope
     }
 
@@ -2658,7 +2646,7 @@ private:
     }
 
     void build(Configurations* configurations) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(mutex());
         auto getBool = [] (std::string boolStr) -> bool { // Pass by value for trimming
             base::utils::Str::trim(boolStr);
             return (boolStr == "TRUE" || boolStr == "true" || boolStr == "1");
@@ -2775,7 +2763,7 @@ private:
     }
 
     bool validateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(m_mutex);
         return unsafeValidateFileRolling(level, preRollOutHandler);
     }
 };
@@ -2863,7 +2851,7 @@ public:
     /// @return True if validation resulted in triggering hit. Meaning logs will be written everytime true is returned
     ///          and won't be written otherwise.
     bool validate(const char* filename, unsigned long int lineNumber, std::size_t occasion) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
             registerNew(counter = new base::HitCounter(filename, lineNumber));
@@ -2875,7 +2863,7 @@ public:
 
     /// @brief Gets hit counter registered at specified position
     inline const base::HitCounter* getCounter(const char* filename, unsigned long int lineNumber) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         return get(filename, lineNumber);
     }
 };
@@ -2886,7 +2874,7 @@ class LogDispatcher;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
-class Logger {
+class Logger : public base::threading::ThreadSafe {
 public:
     explicit Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
@@ -2937,7 +2925,7 @@ public:
 
     /// @brief Configures the logger using specified configurations.
     void configure(const Configurations& configurations) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << configurations << "]");
         Configurations base = m_configurations;
         if (m_configurations != configurations) {
@@ -2974,7 +2962,7 @@ public:
         return m_typedConfigurations;
     }
 
-    inline static bool isValidId(const std::string& id) {
+    inline static bool isValidId(const std::string& id) const {
         for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
             if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
                 return false;
@@ -2991,7 +2979,6 @@ private:
     bool m_isConfigured;
     Configurations m_configurations;
     base::LogStreamsReferenceMap* m_logStreamsReference;
-    base::utils::threading::mutex m_mutex;
 
     friend class base::LogDispatcher;
     friend class base::Writer;
@@ -3003,18 +2990,6 @@ private:
 
     inline std::stringstream& stream(void) {
         return m_stream;
-    }
-
-    inline base::utils::threading::mutex& mutex(void) {
-        return m_mutex;
-    }
-
-    inline void lock(void) {
-        m_mutex.lock();
-    }
-
-    inline void unlock(void) {
-        m_mutex.unlock();
     }
 
     inline Configurations& refConfigurations(void) {
@@ -3032,12 +3007,12 @@ public:
     }
 
     inline void setDefaultConfigurations(const Configurations& configurations) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         m_defaultConfigurations.setFromBase(const_cast<Configurations*>(&configurations));
     }
 
     Logger* get(const std::string& id, bool forceCreation = true) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         Logger* logger_ = base::utils::Registry<Logger, std::string>::get(id);
         if (logger_ == nullptr && forceCreation) {
             bool validId = Logger::isValidId(id);
@@ -3056,7 +3031,7 @@ public:
     }
 
     inline void unregister(Logger*& logger) {
-        base::utils::threading::lock_guard lock(mutex());
+        base::threading::lock_guard lock(mutex());
         base::utils::Registry<Logger, std::string>::unregister(logger->id());
     }
 
@@ -3069,7 +3044,7 @@ private:
     friend class base::Storage;
 };
 /// @brief Represents registries for verbose logging
-class VRegistry : private base::NoCopy {
+class VRegistry : private base::NoCopy, public base::threading::ThreadSafe {
 public:
     typedef int VLevel;
 
@@ -3078,7 +3053,7 @@ public:
 
     /// @brief Sets verbose level. Accepted range is 0-9
     inline void setLevel(VLevel level) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(m_mutex);
         if (level < 0)
             m_level = 0;
         else if (level > 9)
@@ -3092,7 +3067,7 @@ public:
     }
 
     void setModules(const char* modules) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(m_mutex);
 #if !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
         auto addSuffix = [](std::stringstream& ss, const char* sfx, const char* prev) {
             if (prev != nullptr && base::utils::Str::endsWith(ss.str(), prev)) {
@@ -3164,7 +3139,7 @@ public:
     }
 
     bool allowed(VLevel vlevel, const char* file, unsigned int flags = 0x0) {
-        base::utils::threading::lock_guard lock(m_mutex);
+        base::threading::lock_guard lock(m_mutex);
         if (m_modules.empty() || file == nullptr) {
             return vlevel <= m_level;
         } else {
@@ -3174,10 +3149,7 @@ public:
                     return vlevel <= it->second;
                 }
             }
-            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, flags)) {
-                return true;
-            }
-            return false;
+            return base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, flags);
         }
     }
 
@@ -3185,28 +3157,16 @@ public:
         return m_modules;
     }
 
-    inline base::utils::threading::mutex& mutex(void) {
-        return m_mutex;
-    }
-
-    inline void lock(void) {
-        m_mutex.lock();
-    }
-
-    inline void unlock(void) {
-        m_mutex.unlock();
-    }
 private:
     VLevel m_level;
     std::map<std::string, VLevel> m_modules;
-    base::utils::threading::mutex m_mutex;
 };
 class LogMessage {
 public:
     LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,
-                          VRegistry::VLevel verboseLevel, Logger* logger, const std::string& message) :
+                          VRegistry::VLevel verboseLevel, Logger* logger, std::string&& message) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
-                  m_verboseLevel(verboseLevel), m_logger(logger), m_message(message) {
+                  m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(message)) {
     }
     inline Level& level(void) { return m_level; }
     inline const char* file(void) { return m_file; }
@@ -3227,7 +3187,7 @@ private:
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
-class Storage : private base::NoCopy {
+class Storage : private base::NoCopy, public base::threading::ThreadSafe {
 public:
     Storage(void) :
         m_username(base::utils::OS::currentUser()),
@@ -3293,18 +3253,6 @@ public:
         return m_tempStream;
     }
 
-    inline base::utils::threading::mutex& mutex(void) {
-        return m_mutex;
-    }
-
-    inline void lock(void) {
-        m_mutex.lock();
-    }
-
-    inline void unlock(void) {
-        m_mutex.unlock();
-    }
-
     inline void setPreRollOutHandler(const PreRollOutHandler& handler) {
         m_preRollOutHandler = handler;
     }
@@ -3321,7 +3269,6 @@ private:
     unsigned short m_flags;
     PreRollOutHandler m_preRollOutHandler;
     std::stringstream m_tempStream;
-    base::utils::threading::mutex m_mutex;
 
     friend class base::LogDispatcher;
     friend class base::Writer;
@@ -3407,7 +3354,7 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
           // Thread ID
           base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-                  base::utils::threading::getCurrentThreadId());
+                  base::threading::getCurrentThreadId());
         }
         if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
           // DateTime
@@ -3583,11 +3530,10 @@ public:
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(el::base::consts::kDefaultLoggerId, el::Level::Error, file, line, func)
+            Writer(el::base::consts::kDefaultLoggerId, Level::Error, file, line, func)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
-        }
-        if (m_proceed) {
+        } else {
             m_logger->lock(); // This should not be unlocked by checking m_proceed because
                               // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
@@ -4024,11 +3970,11 @@ private:
 
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
-class Trackable : private base::NoCopy {
+class Trackable : private base::NoCopy, public base::threading::ThreadSafe {
 public:
     Trackable(const char* blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
-            const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const el::Level& level = el::Level::Info) :
+            const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const Level& level = Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -4038,16 +3984,16 @@ public:
         // or before calling checkpoint, we still depend on state of configuraton at time of construction
         m_enabled = m_enabled && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
         if (m_enabled) {
-            base::utils::DateTime::gettimeofday(&startTime);
+            base::utils::DateTime::gettimeofday(&m_startTime);
         }
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
     virtual ~Trackable(void) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
-            base::utils::threading::lock_guard lock(m_mutex);
+            base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
-                base::utils::DateTime::gettimeofday(&endTime);
+                base::utils::DateTime::gettimeofday(&m_endTime);
                 _ELPP_WRITE_LOG(m_loggerId, m_level) << "Executed [" << m_blockName << "] in [" << *this << "]";
             }
         }
@@ -4057,8 +4003,8 @@ public:
     void checkpoint(const char* id = nullptr, const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
-            base::utils::threading::lock_guard lock(m_mutex);
-            base::utils::DateTime::gettimeofday(&endTime);
+            base::threading::lock_guard lock(mutex());
+            base::utils::DateTime::gettimeofday(&m_endTime);
             std::stringstream ss;
             ss << "Performance checkpoint";
             if (id != nullptr) {
@@ -4068,7 +4014,7 @@ public:
 #   if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             if (m_hasChecked) {
                 ss << " (["
-                   << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(endTime, lastCheckpointTime,
+                   << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime, lastCheckpointTime,
                                   m_timestampUnit), m_timestampUnit) << "]"
                     << " from ";
                 if (m_lastCheckpointId == nullptr) {
@@ -4083,7 +4029,7 @@ public:
 #   else
          ss << "]";
 #   endif // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            base::utils::DateTime::gettimeofday(&lastCheckpointTime);
+            base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
             el::base::Writer(m_loggerId, m_level, file, line, func) << ss;
@@ -4098,10 +4044,9 @@ private:
     const char* m_loggerId;
     bool m_scopedLog;
     el::Level m_level;
-    struct timeval startTime, endTime, lastCheckpointTime;
+    struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
     bool m_hasChecked;
     const char* m_lastCheckpointId;
-    base::utils::threading::mutex m_mutex;
     bool m_enabled;
     Trackable(void);
 
