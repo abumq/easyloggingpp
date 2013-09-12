@@ -940,6 +940,8 @@ typedef base::threading::NoScopedLock<base::threading::NoMutex> lock_guard;
 /// @brief Base of thread safe class
 class ThreadSafe {
 public:
+    ThreadSafe(void) {}
+    virtual ~ThreadSafe(void) {}
     virtual inline void lock(void) FINAL {
         m_mutex.lock();
     }
@@ -2521,7 +2523,7 @@ public:
         build(m_configurations);
     }
 
-    ~TypedConfigurations(void) {
+    virtual ~TypedConfigurations(void) {
     }
 
     const Configurations* configurations(void) const {
