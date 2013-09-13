@@ -1343,11 +1343,11 @@ public:
     static void gettimeofday(struct timeval* tv) {
 #if _ELPP_OS_WINDOWS
         if (tv != nullptr) {
-#   if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#   if _ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
             const unsigned __int64 delta_ = 11644473600000000Ui64;
 #   else
             const unsigned __int64 delta_ = 11644473600000000ULL;
-#   endif // defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+#   endif // _ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
             const double secOffSet = 0.000001;
             const unsigned long usecOffSet = 1000000;
             FILETIME fileTime;
@@ -1362,11 +1362,10 @@ public:
             tv->tv_sec = static_cast<long>(present * secOffSet);
             tv->tv_usec = static_cast<long>(present % usecOffSet);
         }
-    }
 #else
         ::gettimeofday(tv, nullptr);
-    }
 #endif // _ELPP_OS_WINDOWS
+    }
 
     /// @brief Function that is used to parse date/time format.
     /// @param [out] buf Target buffer
