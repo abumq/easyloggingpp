@@ -937,11 +937,9 @@ static inline const char* getCurrentThreadId(void) {
 typedef base::threading::NoMutex mutex;
 typedef base::threading::NoScopedLock<base::threading::NoMutex> lock_guard;
 #endif // _ELPP_THREADING_ENABLED
-/// @brief Base of thread safe class
+/// @brief Base of thread safe class, this class is inheritable-only
 class ThreadSafe {
 public:
-    ThreadSafe(void) {}
-    virtual ~ThreadSafe(void) {}
     virtual inline void lock(void) FINAL {
         m_mutex.lock();
     }
@@ -951,6 +949,9 @@ public:
     virtual inline base::threading::mutex& mutex(void) FINAL {
         return m_mutex;
     }
+protected:
+    ThreadSafe(void) {}
+    virtual ~ThreadSafe(void) {}
 private:
     base::threading::mutex m_mutex;
 };
@@ -3151,7 +3152,10 @@ public:
                     return vlevel <= it->second;
                 }
             }
-            return base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, flags);
+            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, flags)) {
+                return true;
+            }
+            return false;
         }
     }
 
