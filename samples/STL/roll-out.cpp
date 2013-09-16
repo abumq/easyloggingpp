@@ -15,7 +15,7 @@ static unsigned int idx;
 
 void rolloutHandler(const char* filename, std::size_t size) {
    // SHOULD NOT LOG ANYTHING HERE BECAUSE LOG FILE IS CLOSED!
-   std::cout << "************** Rolling out [" << filename << "] because it reached [" << size << "]" << std::endl;
+   std::cout << "************** Rolling out [" << filename << "] because it reached [" << size << " bytes]" << std::endl;
 
    // BACK IT UP
    std::stringstream ss;
