@@ -96,7 +96,7 @@ Why yet another library? Well, answer is pretty straight forward, use it as if y
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that a typical developer will require while writing a software;
  * Highly configurable
- * Extremely fast (~ 4-12 microsecond / depending upon system)
+ * Extremely fast (~ 4-12 microsecond)
  * Thread and type safe
  * Cross-platform
  * Custom log patterns
@@ -106,8 +106,8 @@ Easylogging++ is feature-rich containing many features that a typical developer 
  * Crash handling
  * Helper CHECK macros
  * STL logging
- * Third-party logging (Qt)
- * Extensible (Logging your own class)
+ * Third-party library logging (Qt, boost, wxWidgets etc)
+ * Extensible (Logging your own class or third-party class)
  * And many more...
 
  [![top] Goto Top](#table-of-contents)
@@ -411,7 +411,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations
-If you wish to read configurations of certain logger, you can do so by using typedConfigurations() function in Logger class.
+If you wish to read configurations of certain logger, you can do so by using `typedConfigurations()` function in Logger class.
 ```c++
 el::Logger* l = el::Loggers::getLogger("default");
 bool enabled = l->typedConfigurations()->enabled(el::Level::Info);
