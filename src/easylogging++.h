@@ -3666,18 +3666,6 @@ public:
         m_logger->stream() << ss.str();
         return *this;
     }
-#if (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || _ELPP_MINGW \
-        || (_ELPP_COMPILER_MSVC && _MSC_VER <= 1700))
-    // We only implement this signature for selected compilers, who knows which compiler has not implemented
-    // this.
-    // VC++ 2013 (preview) does not have this implementation for stringstream::operator<<(std::ostream&)
-    //     so we exclude that compiler
-    inline Writer& operator<<(std::ostream& ss) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << ss;
-        return *this;
-    }
-#endif // (!_ELPP_COMPILER_MSVC || (_ELPP_COMPILER_MSVC && _MSC_VER <= 1700))
     // ostream manipulators
     inline Writer& operator<<(std::ostream& (*OStreamMani)(std::ostream&)) {
         if (!m_proceed) { return *this; }
