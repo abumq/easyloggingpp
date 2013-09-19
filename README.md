@@ -119,6 +119,7 @@ Applications that do not use C++11 may still use v8.x which is also efficient pr
 * Crash handling
 * Stacktrace on failures
 * Helper CHECK macros
+* Third-party library logging (except for Qt)
 
 Please note, most of the features can be disabled by defining macros. Details are given later in this manual. As far as upgrade from v8.x is concerned, you can refer to release notes on github to see what's deprecated and what's changed.
 
@@ -1007,6 +1008,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |-----------|------------------------|-------------------------------------------------------------------------------------|
 |![win8]    | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]    | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
+|![winxp]   | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
 |![mac]     | Mac OSX                | Clang++ 3.1 (Tested by contributor)                                                 |
 |![sl]      | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
@@ -1066,6 +1068,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [sl]: http://www.easylogging.org/images/icons/scientific-linux.png?v=2
   [fedora]: http://www.easylogging.org/images/icons/fedora.png?v=3
   [mac]: http://www.easylogging.org/images/icons/mac-osx.png?v=2
+  [winxp]: http://www.easylogging.org/images/icons/windowsxp.png?v=2
   [win7]: http://www.easylogging.org/images/icons/windows7.png?v=2
   [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
   [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
