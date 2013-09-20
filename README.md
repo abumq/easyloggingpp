@@ -5,8 +5,6 @@
 > **Manual For v9.18**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
->
-> <pre><a href='http://www.pledgie.com/campaigns/22070'><img alt='Click here to lend your support to: Easylogging++ and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/22070.png?skin_name=chrome' border='0' /></a></pre>
 
 ### Quick Links
 
@@ -17,6 +15,8 @@
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
   [![www] Project Homepage](http://easylogging.org/)
+
+  [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
 
 ---
@@ -987,7 +987,7 @@ Easylogging++ is free to use for any type of software but it costs money to main
 
 But please be sure the donation money is halaal in islam in every aspect, meaning it's not money from interest paid by bank or stolen etc. Have a look at [this document](http://www.auscif.com/wp-content/uploads/2012/09/Halal-Money-Guide-2012.pdf) for further details on what's halaal and what's not (haraam)
 
-<pre><a href='http://www.pledgie.com/campaigns/22070'><img alt='Click here to lend your support to: Easylogging++ and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/22070.png?skin_name=chrome' border='0' /></a></pre>
+[![pledgie]](http://www.pledgie.com/campaigns/22070)
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1095,3 +1095,5 @@ Icons used in this manual (in compatibility section) are solely for information 
   [notes]: http://easylogging.org/images/notes.png?v=4
   [top]: http://easylogging.org/images/up.png?v=4
   [www]: http://easylogging.org/images/logo-www.png?v=6
+  
+  [pledgie]: http://www.pledgie.com/campaigns/22070.png?skin_name=chrome
