@@ -32,26 +32,6 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 //////////////////////////////////////////////////////////////////////
-// Function macro _ELPP_FUNC
-// This macro is used to find log source function
-//////////////////////////////////////////////////////////////////////
-#undef _ELPP_FUNC
-#if defined(_MSC_VER) && (_MSC_VER >= 1020) // Visual C++
-#   define _ELPP_FUNC __FUNCSIG__
-#elif (defined(__GNUC__) && (__GNUC__ >= 2)) // GCC
-#   define _ELPP_FUNC __PRETTY_FUNCTION__
-#elif (defined(__INTEL_COMPILER)) // Intel C++
-#   define _ELPP_FUNC __PRETTY_FUNCTION__
-#elif defined(__clang__) && (__clang__ == 1) // Clang++
-#   define _ELPP_FUNC __PRETTY_FUNCTION__
-#else
-#   if defined(__func__)
-#      define _ELPP_FUNC __func__
-#   else
-#      define _ELPP_FUNC ""
-#   endif // defined(__func__)
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
-//////////////////////////////////////////////////////////////////////
 // Compilers and C++0x/C++11 Evaluation
 // We define one of the following macros:
 //  * _ELPP_CXX0X
@@ -193,9 +173,11 @@
 // Log file permissions for unix-based systems
 #   define _ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // Some special functions that are special for VC++
 // This is to prevent CRT security warnings and to override deprecated methods but at the same time
 // MinGW does not support some functions, so we need to make sure that proper function is used.
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #undef SPRINTF
 #undef STRTOK
 #if _ELPP_CRT_DBG_WARNINGS
@@ -222,6 +204,26 @@
 #if defined(_ELPP_THREAD_SAFE)
 #   define _ELPP_THREADING_ENABLED 1
 #endif // defined(_ELPP_THREAD_SAFE)
+//////////////////////////////////////////////////////////////////////
+// Function macro _ELPP_FUNC
+// This macro is used to find log source function
+//////////////////////////////////////////////////////////////////////
+#undef _ELPP_FUNC
+#if defined(_MSC_VER) && (_MSC_VER >= 1020) // Visual C++
+#   define _ELPP_FUNC __FUNCSIG__
+#elif (defined(__GNUC__) && (__GNUC__ >= 2)) // GCC
+#   define _ELPP_FUNC __PRETTY_FUNCTION__
+#elif (defined(__INTEL_COMPILER)) // Intel C++
+#   define _ELPP_FUNC __PRETTY_FUNCTION__
+#elif defined(__clang__) && (__clang__ == 1) // Clang++
+#   define _ELPP_FUNC __PRETTY_FUNCTION__
+#else
+#   if defined(__func__)
+#      define _ELPP_FUNC __func__
+#   else
+#      define _ELPP_FUNC ""
+#   endif // defined(__func__)
+#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Logging Enable/Disable macros
 // This defines whether or not certain or all logs are enabled. We define macros for internal use based on
@@ -356,6 +358,7 @@
 #   include <QStack>
 #endif // defined(_ELPP_QT_LOGGING)
 #if defined(_ELPP_BOOST_LOGGING)
+// For logging boost based classes & templates
 #   include <boost/container/vector.hpp>
 #   include <boost/container/stable_vector.hpp>
 #   include <boost/container/list.hpp>
@@ -366,6 +369,7 @@
 #   include <boost/container/flat_set.hpp>
 #endif // defined(_ELPP_BOOST_LOGGING)
 #if defined(_ELPP_WXWIDGETS_LOGGING)
+// For logging wxWidgets based classes & templates
 #   include <wx/vector.h>
 #endif // defined(_ELPP_WXWIDGETS_LOGGING)
 /// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
