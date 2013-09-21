@@ -34,7 +34,7 @@ public:
     void clear() {
         Registry<Person>::unregisterAll();
     }
-    Person* getLogger(const char* name) {
+    Person* getPerson(const char* name) {
         return Registry<Person>::get(name);
     }
 };
@@ -62,7 +62,7 @@ TEST(RegistryTest, RegisterAndUnregister) {
     people.regNew("John", john2);
 
     EXPECT_EQ(1, people.size());
-    unsigned int n = people.getLogger("John")->num();
+    unsigned int n = people.getPerson("John")->num();
     EXPECT_EQ(n, 123456);
 
     People people2;
