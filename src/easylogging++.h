@@ -695,6 +695,8 @@ namespace consts {
     // Miscellaneous constants
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
+    // Never use following logger to write logs
+    static const char* kStreamFriendlyHelperLoggerId           =      "el_internal_stream_friendly_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;
@@ -2020,6 +2022,7 @@ private:
 };
 } // namespace base
 class Loggers;
+class Helpers;
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
 /// @detail String based value means any value either its boolean, integer or string itself, it will be embedded inside quotes
@@ -2989,6 +2992,7 @@ private:
     friend class base::LogDispatcher;
     friend class base::Writer;
     friend class el::Loggers;
+    friend class el::Helpers;
     friend class base::Storage;
     friend class base::Trackable;
 
@@ -3530,9 +3534,9 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, VRegistry::VLevel verboseLevel = 0) :
+               const char* func, VRegistry::VLevel verboseLevel = 0, bool skipDispatch = false) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(true), m_containerLogSeperator("") {
+                   m_proceed(true), m_skipDispatch(skipDispatch), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
@@ -3551,12 +3555,12 @@ public:
     }
 
     virtual ~Writer(void) {
-        if (m_proceed) {
+        if (m_proceed && !m_skipDispatch) {
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
-            m_logger->stream().str("");
         }
         if (m_logger != nullptr) {
+            m_logger->stream().str("");
             m_logger->unlock();
         }
 #if !defined(_ELPP_PREVENT_FATAL_ABORT)
@@ -3943,7 +3947,9 @@ private:
     VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
+    bool m_skipDispatch;
     const char* m_containerLogSeperator;
+    friend class el::Helpers;
 
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
@@ -4302,6 +4308,14 @@ public:
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out (can be useful for backing up)
     static void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
         base::elStorage->setPreRollOutHandler(handler);
+    }
+    /// @brief Stream friendly template - useful for loggable classes to log containers within log(std::ostream&) const
+    template <typename T>
+    static inline std::string streamFriendly(const T& templ) {
+        base::elStorage->registeredLoggers()->get(el::base::consts::kStreamFriendlyHelperLoggerId, true);
+        el::base::Writer w(el::base::consts::kStreamFriendlyHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
+        w << templ;
+        return w.m_logger->stream().str();
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
