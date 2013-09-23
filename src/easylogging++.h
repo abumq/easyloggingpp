@@ -696,7 +696,7 @@ namespace consts {
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
     // Never use following logger to write logs
-    static const char* kStreamFriendlyHelperLoggerId           =      "el_internal_stream_friendly_helper_logger";
+    static const char* kTemplateToStdStringHelperLoggerId      =      "el_internal_stream_friendly_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;
@@ -4311,9 +4311,9 @@ public:
     }
     /// @brief Stream friendly template - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
-    static inline std::string streamFriendly(const T& templ) {
-        base::elStorage->registeredLoggers()->get(el::base::consts::kStreamFriendlyHelperLoggerId, true);
-        el::base::Writer w(el::base::consts::kStreamFriendlyHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
+    static inline std::string convertTemplateToStdString(const T& templ) {
+        base::elStorage->registeredLoggers()->get(el::base::consts::kTemplateToStdStringHelperLoggerId, true);
+        el::base::Writer w(el::base::consts::kTemplateToStdStringHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
         w << templ;
         return w.m_logger->stream().str();
     }
