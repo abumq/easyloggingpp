@@ -695,8 +695,7 @@ namespace consts {
     // Miscellaneous constants
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
-    // Never use following logger to write logs
-    static const char* kTemplateToStdStringHelperLoggerId      =      "el_internal_stream_friendly_helper_logger";
+    static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;
@@ -3220,7 +3219,7 @@ public:
         performanceLogger->reconfigure();
 
         // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
-        Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kTemplateToStdStringHelperLoggerId));
+        Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
         templateHelperLogger->refConfigurations().setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
         templateHelperLogger->reconfigure();
 
@@ -4320,8 +4319,8 @@ public:
     /// @brief Stream friendly template - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
-        base::elStorage->registeredLoggers()->get(el::base::consts::kTemplateToStdStringHelperLoggerId, true);
-        el::base::Writer w(el::base::consts::kTemplateToStdStringHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
+        base::elStorage->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
+        el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
         w << templ;
         return w.m_logger->stream().str();
     }
