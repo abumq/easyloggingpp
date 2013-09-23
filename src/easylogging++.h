@@ -3210,12 +3210,20 @@ public:
         m_vRegistry(new base::VRegistry(0)),
         m_flags(0x0),
         m_preRollOutHandler(base::defaultPreRollOutHandler) {
+
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
+
         // Register performance logger and reconfigure format
         Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
+
+        // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
+        Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kTemplateToStdStringHelperLoggerId));
+        templateHelperLogger->refConfigurations().setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
+        templateHelperLogger->reconfigure();
+
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
         ELPP_INTERNAL_INFO("Easylogging++ has been initialized");
     }
