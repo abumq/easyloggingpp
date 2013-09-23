@@ -1,7 +1,7 @@
 #ifndef LOGGABLETEST_H_
 #define LOGGABLETEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 class Integer : public el::Loggable {
 public:

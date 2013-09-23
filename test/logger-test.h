@@ -2,7 +2,7 @@
 #ifndef LOGGERS_TEST_H_
 #define LOGGERS_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(LoggerTest, RegisterTenThousandLoggers) {
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");

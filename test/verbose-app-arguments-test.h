@@ -1,6 +1,6 @@
 #ifndef VMODULE_TESTS_H_
 #define VMODULE_TESTS_H_
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(VerboseAppArgumentsTest, AppArgsLevel) {
 

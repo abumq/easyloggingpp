@@ -1,7 +1,7 @@
 #ifndef REGISTRY_TEST_H_
 #define REGISTRY_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 class Person {
 public:

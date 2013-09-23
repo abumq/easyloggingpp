@@ -2,7 +2,7 @@
 #ifndef UTILITIES_TEST_H_
 #define UTILITIES_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(UtilitiesTest, SafeDelete) {
     int* i = new int(12);

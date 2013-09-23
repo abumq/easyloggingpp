@@ -1,7 +1,7 @@
 #ifndef CONFIGURATIONS_TEST_H_
 #define CONFIGURATIONS_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(ConfigurationsTest, Set) {
     Configurations c;

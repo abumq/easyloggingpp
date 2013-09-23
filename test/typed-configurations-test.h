@@ -1,7 +1,7 @@
 #ifndef TYPED_CONFIGURATIONS_TEST_H_
 #define TYPED_CONFIGURATIONS_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 const char* getConfFile(void) {
     const char* file = "/tmp/temp-test.conf";

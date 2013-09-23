@@ -2,7 +2,7 @@
 #ifndef WRITE_ALL_TEST_H_
 #define WRITE_ALL_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(WriteAllTests, Entry) {
     reconfigureLoggersForTest();

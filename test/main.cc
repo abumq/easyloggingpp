@@ -1,14 +1,15 @@
 // gtest based unit tests
 
-#include "test-helpers.h"
-#include "enum-helper-tests.h"
+#include "test.h"
+#include "enum-helper-test.h"
+#include "helpers-test.h"
 #include "utilities-test.h"
 #include "registry-test.h"
 #include "configurations-test.h"
 #include "global-configurations-test.h"
 #include "typed-configurations-test.h"
 #include "hit-counter-test.h"
-#include "verbose-app-arguments-tests.h"
+#include "verbose-app-arguments-test.h"
 #include "write-all-test.h"
 #include "logger-test.h"
 #include "loggable-test.h"

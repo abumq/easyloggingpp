@@ -1,7 +1,7 @@
 
 #ifndef ENUM_HELPER_TESTS_H
 #define ENUM_HELPER_TESTS_H
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(LevelTest, ConvertFromString) {
     EXPECT_EQ(Level::Global, LevelHelper::convertFromString("GLOBAL"));
