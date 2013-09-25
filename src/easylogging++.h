@@ -1527,7 +1527,7 @@ private:
     }
 };
 /// @brief Command line arguments for application if specified using el::Helpers::setArgs(..) or _START_EASYLOGGINGPP(..)
-class CommandLineArgs : public base::threading::ThreadSafe {
+class CommandLineArgs {
 public:
     CommandLineArgs(void) {
         setArgs(0, static_cast<char**>(nullptr));
@@ -1539,6 +1539,7 @@ public:
         setArgs(argc, argv);
     }
     virtual ~CommandLineArgs(void) {}
+    /// @brief Sets arguments and parses them
     inline void setArgs(int argc, const char** argv) {
         setArgs(argc, const_cast<char**>(argv));
     }
