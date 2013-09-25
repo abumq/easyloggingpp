@@ -2515,6 +2515,11 @@ public:
                 std::size_t quotesEnd = std::string::npos;
                 if (quotesStart != std::string::npos) {
                     quotesEnd = currValue.find("\"", quotesStart + 1);
+                    while (quotesEnd != std::string::npos && currValue.at(quotesEnd - 1) == '\\') {
+                        currValue = currValue.erase(quotesEnd - 1, 1);
+                        quotesEnd = currValue.find("\"", quotesEnd + 2);
+                    }
+
                 }
                 if (quotesStart != std::string::npos && quotesEnd != std::string::npos) {
                     // Quote provided - check and strip if valid
