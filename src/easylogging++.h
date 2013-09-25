@@ -3231,7 +3231,8 @@ public:
     }
 
     void setFromArgs(const base::utils::CommandLineArgs* commandLineArgs) {
-        if (commandLineArgs->hasParam("-v") || commandLineArgs->hasParam("--verbose")) {
+        if (commandLineArgs->hasParam("-v") || commandLineArgs->hasParam("--verbose") ||
+            commandLineArgs->hasParam("-V") || commandLineArgs->hasParam("--VERBOSE")) {
             setLevel(base::consts::kMaxVerboseLevel);
         } else if (commandLineArgs->hasParamWithValue("--v")) {
             setLevel(atoi(commandLineArgs->getParamValue("--v")));
