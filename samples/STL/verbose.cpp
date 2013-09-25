@@ -19,5 +19,7 @@ int main(int argc, char** argv) {
   VLOG_IF(true, 1) << "Always verbose for level 1";
 
   VLOG_EVERY_N(1, 3) << "Verbose every N";
+
+  VLOG(4) << "Command line arguments provided " << *el::Helpers::commandLineArgs();
   return 0;
 }

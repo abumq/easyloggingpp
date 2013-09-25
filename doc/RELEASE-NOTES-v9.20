@@ -6,7 +6,8 @@ Easylogging++ v9.20 RELEASE NOTES
 =      NEW FEATURES      =
 ==========================
 
- - Introduced `el::Helpers::streamFriendly` for loggable classes (and other classes) to return `std::string` from easylogging++ friendly templates
+ - Introduced `el::Helpers::convertTemplateToStdString` for loggable classes (and other classes) to return `std::string` from easylogging++ friendly templates
+ - Introduced `el::Helpers::commandLineArgs` for reading command line arguments provided
 
 ==========================
 =         NOTES          =

@@ -1526,7 +1526,68 @@ private:
         return buf;
     }
 };
-
+/// @brief Command line arguments for application if specified using el::Helpers::setArgs(..) or _START_EASYLOGGINGPP(..)
+class CommandLineArgs : public base::threading::ThreadSafe {
+public:
+    CommandLineArgs(void) {
+        setArgs(0, nullptr);
+    }
+    CommandLineArgs(int argc, char** argv) {
+        setArgs(argc, argv);
+    }
+    virtual ~CommandLineArgs(void) {}
+    /// @brief Sets arguments and parses them
+    inline void setArgs(int argc, char** argv) {
+        m_params.clear();
+        m_paramsWithValue.clear();
+        if (argc == 0 || argv == nullptr) {
+            return;
+        }
+        m_argc = argc;
+        m_argv = argv;
+        for (int i = 1; i < m_argc; ++i) {
+            const char* v = (strstr(m_argv[i], "="));
+            if (v != nullptr && strlen(v) > 0) {
+                std::string key = std::string(m_argv[i]);
+                key = key.substr(0, key.find_first_of('='));
+                m_paramsWithValue.insert(std::make_pair(key, std::string(v + 1)));
+            }
+            if (v == nullptr) {
+                m_params.push_back(std::string(m_argv[i]));
+            }
+        }
+    }
+    /// @brief Returns true if arguments contain paramKey with a value (seperated by '=')
+    inline bool hasParamWithValue(const char* paramKey) const {
+        return m_paramsWithValue.find(std::string(paramKey)) != m_paramsWithValue.end();
+    }
+    /// @brief Returns value of arguments
+    /// @see hasParamWithValue(const char*)
+    inline const char* getParamValue(const char* paramKey) const {
+        return m_paramsWithValue.find(std::string(paramKey))->second.c_str();
+    }
+    /// @brief Return true if arguments has a param (not having a value) i,e without '='
+    inline bool hasParam(const char* paramKey) const {
+        return std::find(m_params.begin(), m_params.end(), std::string(paramKey)) != m_params.end();
+    }
+    /// @brief Returns true if no params available. This exclude argv[0]
+    inline bool empty(void) const {
+        return m_params.empty() && m_paramsWithValue.empty();
+    }
+    inline friend std::ostream& operator<<(std::ostream& os, const CommandLineArgs& c) {
+        for (int i = 1; i < c.m_argc; ++i) {
+            os << "[" << c.m_argv[i] << "]";
+            if (i < c.m_argc - 1)
+                os << " ";
+        }
+        return os;
+    }
+private:
+    int m_argc;
+    char** m_argv;
+    std::map<std::string, std::string> m_paramsWithValue;
+    std::vector<std::string> m_params;
+};
 /// @brief Abstract registry (aka repository) that provides basic interface for pointer repository specified by T_Ptr type.
 ///
 /// @detail Most of the functions are virtual final methods but anything implementing this abstract class should implement
@@ -3169,6 +3230,23 @@ public:
         return m_modules;
     }
 
+    void setFromArgs(const base::utils::CommandLineArgs* commandLineArgs) {
+        if (commandLineArgs->hasParam("-v") || commandLineArgs->hasParam("--verbose")) {
+            setLevel(base::consts::kMaxVerboseLevel);
+        } else if (commandLineArgs->hasParamWithValue("--v")) {
+            setLevel(atoi(commandLineArgs->getParamValue("--v")));
+        } else if (commandLineArgs->hasParamWithValue("--V")) {
+            setLevel(atoi(commandLineArgs->getParamValue("--V")));
+        }
+#if (!defined(_ELPP_DISABLE_VMODULES))
+        else if (commandLineArgs->hasParamWithValue("-vmodule")) {
+            setModules(commandLineArgs->getParamValue("-vmodule"));
+        } else if (commandLineArgs->hasParamWithValue("-VMODULE")) {
+            setModules(commandLineArgs->getParamValue("-VMODULE"));
+        }
+#endif // (!defined(_ELPP_DISABLE_VMODULES))
+    }
+
 private:
     VLevel m_level;
     std::map<std::string, VLevel> m_modules;
@@ -3249,6 +3327,10 @@ public:
         return m_vRegistry;
     }
 
+    inline const base::utils::CommandLineArgs* commandLineArgs(void) const {
+        return &m_commandLineArgs;
+    }
+
     inline void addFlag(const LoggingFlag& flag) {
         base::utils::addFlag(flag, m_flags);
     }
@@ -3286,6 +3368,7 @@ private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
     base::VRegistry* m_vRegistry;
+    base::utils::CommandLineArgs m_commandLineArgs;
     unsigned short m_flags;
     PreRollOutHandler m_preRollOutHandler;
     std::stringstream m_tempStream;
@@ -3303,34 +3386,8 @@ private:
     }
 
     void setApplicationArguments(int argc, char** argv) {
-        while (argc-- > 0) {
-            // Look for --v=X argument
-            if ((strlen(argv[argc]) >= 5) && (argv[argc][0] == '-') && (argv[argc][1] == '-') &&
-                    (argv[argc][2] == 'v' || argv[argc][2] == 'V') && (argv[argc][3] == '=') &&
-                    (isdigit(argv[argc][4]))) {
-                // Current argument is --v=X
-                // where X is a digit between 0-9
-                m_vRegistry->setLevel(atoi(argv[argc] + 4));
-            }
-            // Look for -v argument
-            else if ((strlen(argv[argc]) == 2) && (base::utils::Str::cStringCaseEq(argv[argc], "-v"))) {
-                m_vRegistry->setLevel(base::consts::kMaxVerboseLevel);
-            }
-            // Look for --verbose argument
-            else if ((strlen(argv[argc]) == 9) && (base::utils::Str::cStringCaseEq(argv[argc], "--verbose"))) {
-                m_vRegistry->setLevel(base::consts::kMaxVerboseLevel);
-            }
-#if (!defined(_ELPP_DISABLE_VMODULES))
-            // Look for -vmodule=
-            else if ((strlen(argv[argc]) >= 9) && (argv[argc][0] == '-') && (argv[argc][1] == 'v' || argv[argc][1] == 'V') &&
-                     (argv[argc][2] == 'm' || argv[argc][2] == 'M') && (argv[argc][3] == 'o' || argv[argc][3] == 'O') &&
-                     (argv[argc][4] == 'd' || argv[argc][4] == 'D') && (argv[argc][5] == 'u' || argv[argc][5] == 'U') &&
-                     (argv[argc][6] == 'l' || argv[argc][6] == 'L') && (argv[argc][7] == 'e' || argv[argc][7] == 'E') &&
-                     (argv[argc][8] == '=')) {
-                m_vRegistry->setModules(argv[argc] + 9);
-            }
-#endif // (!defined(_ELPP_DISABLE_VMODULES))
-        }
+        m_commandLineArgs.setArgs(argc, argv);
+        m_vRegistry->setFromArgs(commandLineArgs());
     }
 
     inline void setApplicationArguments(int argc, const char** argv) {
@@ -4316,13 +4373,17 @@ public:
     static void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
         base::elStorage->setPreRollOutHandler(handler);
     }
-    /// @brief Stream friendly template - useful for loggable classes to log containers within log(std::ostream&) const
+    /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         base::elStorage->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
         el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
         w << templ;
         return w.m_logger->stream().str();
+    }
+    /// @brief Returns command line arguments (pointer) provided to easylogging++
+    static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
+        return base::elStorage->commandLineArgs();
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
