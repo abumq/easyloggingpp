@@ -1530,12 +1530,18 @@ private:
 class CommandLineArgs : public base::threading::ThreadSafe {
 public:
     CommandLineArgs(void) {
-        setArgs(0, nullptr);
+        setArgs(0, static_cast<char**>(nullptr));
+    }
+    CommandLineArgs(int argc, const char** argv) {
+        setArgs(argc, argv);
     }
     CommandLineArgs(int argc, char** argv) {
         setArgs(argc, argv);
     }
     virtual ~CommandLineArgs(void) {}
+    inline void setArgs(int argc, const char** argv) {
+        setArgs(argc, const_cast<char**>(argv));
+    }
     /// @brief Sets arguments and parses them
     inline void setArgs(int argc, char** argv) {
         m_params.clear();
@@ -1550,10 +1556,18 @@ public:
             if (v != nullptr && strlen(v) > 0) {
                 std::string key = std::string(m_argv[i]);
                 key = key.substr(0, key.find_first_of('='));
-                m_paramsWithValue.insert(std::make_pair(key, std::string(v + 1)));
+                if (hasParamWithValue(key.c_str())) {
+                    ELPP_INTERNAL_INFO("Skipping [" << key << "] arg since it already has value [" << getParamValue(key.c_str()) << "]");
+                } else {
+                    m_paramsWithValue.insert(std::make_pair(key, std::string(v + 1)));
+                }
             }
             if (v == nullptr) {
-                m_params.push_back(std::string(m_argv[i]));
+                if (hasParam(m_argv[i])) {
+                    ELPP_INTERNAL_INFO("Skipping [" << m_argv[i] << "] arg since it already exists");
+                } else {
+                    m_params.push_back(std::string(m_argv[i]));
+                }
             }
         }
     }
@@ -1573,6 +1587,10 @@ public:
     /// @brief Returns true if no params available. This exclude argv[0]
     inline bool empty(void) const {
         return m_params.empty() && m_paramsWithValue.empty();
+    }
+    /// @brief Returns total number of arguments. This exclude argv[0]
+    inline std::size_t size(void) const {
+        return m_params.size() + m_paramsWithValue.size();
     }
     inline friend std::ostream& operator<<(std::ostream& os, const CommandLineArgs& c) {
         for (int i = 1; i < c.m_argc; ++i) {

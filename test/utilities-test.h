@@ -147,4 +147,27 @@ TEST(LogFormatAndDateUtilsTest, ParseFormatTest) {
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", defaultFormat4.dateTimeFormat());
 }
 
+TEST(CommandLineArgsTest, SetArgs) {
+    const char* c[10];
+    c[0] = "myprog";
+    c[1] = "-arg1";
+    c[2] = "--arg2WithValue=1";
+    c[3] = "--arg3WithValue=something=some_other_thing";
+    c[4] = "-arg1"; // Shouldn't be added
+    c[5] = "--arg3WithValue=this_should_be_ignored_since_key_already_exist";
+    c[6] = "--arg4WithValue=this_should_Added";
+    c[7] = '\0';
+    CommandLineArgs cmd(7, c);
+    EXPECT_EQ(4, cmd.size());
+    EXPECT_FALSE(cmd.hasParamWithValue("-arg1"));
+    EXPECT_FALSE(cmd.hasParam("--arg2WithValue"));
+    EXPECT_FALSE(cmd.hasParam("--arg3WithValue"));
+    EXPECT_TRUE(cmd.hasParamWithValue("--arg2WithValue"));
+    EXPECT_TRUE(cmd.hasParamWithValue("--arg3WithValue"));
+    EXPECT_TRUE(cmd.hasParam("-arg1"));
+    EXPECT_STRCASEEQ(cmd.getParamValue("--arg2WithValue"), "1");
+    EXPECT_STRCASEEQ(cmd.getParamValue("--arg3WithValue"), "something=some_other_thing");
+    EXPECT_STRCASEEQ(cmd.getParamValue("--arg4WithValue"), "this_should_Added");
+}
+
 #endif // UTILITIES_TEST_H_
