@@ -2458,6 +2458,10 @@ public:
             std::size_t quotesEnd = std::string::npos;
             if (quotesStart != std::string::npos) {
                 quotesEnd = line.find("\"", quotesStart + 1);
+                while (quotesEnd != std::string::npos && line.at(quotesEnd - 1) == '\\') {
+                    // Do not erase slash yet - we will erase it in parseLine(..) while loop
+                    quotesEnd = line.find("\"", quotesEnd + 2);
+                }
             }
             if ((foundAt = line.find(base::consts::kConfigurationComment)) != std::string::npos) {
                 if (foundAt < quotesEnd) {
