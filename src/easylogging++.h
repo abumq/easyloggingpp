@@ -4510,6 +4510,22 @@ public:
             configure();
         }
     }
+    /// @brief Configures loggers using command line arg. Ensure you have already set command line args, see Helpers::setArgs(..)
+    /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger. If true is returned
+    ///         that does not mean it has been configured successfully, it only means that it has attempeted to configure logger using configuration
+    ///         file provided in argument
+    static inline bool configureFromArg(const char* argKey) {
+#if defined(_ELPP_DISABLE_CONFIGURATION_FROM_PROGRAM_ARGS)
+        _ELPP_UNUSED(argKey);
+#else
+        if (!Helpers::commandLineArgs()->hasParamWithValue(argKey)) {
+            ELPP_INTERNAL_ERROR("Unable to configure from argKey [" << argKey << "]. Argument value not found in program arguments: " << *Helpers::commandLineArgs(), false);
+            return false;
+        }
+        configureFromGlobal(Helpers::commandLineArgs()->getParamValue(argKey));
+#endif // defined(_ELPP_DISABLE_CONFIGURATION_FROM_PROGRAM_ARGS)
+        return true;
+    }
 };
 class VersionInfo : private base::StaticClass {
 public:
