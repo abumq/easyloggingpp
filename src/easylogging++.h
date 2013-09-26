@@ -450,19 +450,19 @@ public:
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (level == Level::Global)
             return "GLOBAL";
-        else if (level == Level::Debug)
+        if (level == Level::Debug)
             return "DEBUG";
-        else if (level == Level::Info)
+        if (level == Level::Info)
             return "INFO";
-        else if (level == Level::Warning)
+        if (level == Level::Warning)
             return "WARNING";
-        else if (level == Level::Error)
+        if (level == Level::Error)
             return "ERROR";
-        else if (level == Level::Fatal)
+        if (level == Level::Fatal)
             return "FATAL";
-        else if (level == Level::Verbose)
+        if (level == Level::Verbose)
             return "VERBOSE";
-        else if (level == Level::Trace)
+        if (level == Level::Trace)
             return "TRACE";
         return "UNKNOWN";
     }
@@ -473,19 +473,19 @@ public:
     static Level convertFromString(const char* levelStr) {
         if ((strcmp(levelStr, "GLOBAL") == 0) || (strcmp(levelStr, "global") == 0))
             return Level::Global;
-        else if ((strcmp(levelStr, "DEBUG") == 0) || (strcmp(levelStr, "debug") == 0))
+        if ((strcmp(levelStr, "DEBUG") == 0) || (strcmp(levelStr, "debug") == 0))
             return Level::Debug;
-        else if ((strcmp(levelStr, "INFO") == 0) || (strcmp(levelStr, "info") == 0))
+        if ((strcmp(levelStr, "INFO") == 0) || (strcmp(levelStr, "info") == 0))
             return Level::Info;
-        else if ((strcmp(levelStr, "WARNING") == 0) || (strcmp(levelStr, "warning") == 0))
+        if ((strcmp(levelStr, "WARNING") == 0) || (strcmp(levelStr, "warning") == 0))
             return Level::Warning;
-        else if ((strcmp(levelStr, "ERROR") == 0) || (strcmp(levelStr, "error") == 0))
+        if ((strcmp(levelStr, "ERROR") == 0) || (strcmp(levelStr, "error") == 0))
             return Level::Error;
-        else if ((strcmp(levelStr, "FATAL") == 0) || (strcmp(levelStr, "fatal") == 0))
+        if ((strcmp(levelStr, "FATAL") == 0) || (strcmp(levelStr, "fatal") == 0))
             return Level::Fatal;
-        else if ((strcmp(levelStr, "VERBOSE") == 0) || (strcmp(levelStr, "verbose") == 0))
+        if ((strcmp(levelStr, "VERBOSE") == 0) || (strcmp(levelStr, "verbose") == 0))
             return Level::Verbose;
-        else if ((strcmp(levelStr, "TRACE") == 0) || (strcmp(levelStr, "trace") == 0))
+        if ((strcmp(levelStr, "TRACE") == 0) || (strcmp(levelStr, "trace") == 0))
             return Level::Trace;
         return Level::Unknown;
     }
@@ -578,19 +578,19 @@ public:
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (configurationType == ConfigurationType::Enabled)
             return "ENABLED";
-        else if (configurationType == ConfigurationType::Filename)
+        if (configurationType == ConfigurationType::Filename)
             return "FILENAME";
-        else if (configurationType == ConfigurationType::Format)
+        if (configurationType == ConfigurationType::Format)
             return "FORMAT";
-        else if (configurationType == ConfigurationType::ToFile)
+        if (configurationType == ConfigurationType::ToFile)
             return "TO_FILE";
-        else if (configurationType == ConfigurationType::ToStandardOutput)
+        if (configurationType == ConfigurationType::ToStandardOutput)
             return "TO_STANDARD_OUTPUT";
-        else if (configurationType == ConfigurationType::MillisecondsWidth)
+        if (configurationType == ConfigurationType::MillisecondsWidth)
             return "MILLISECONDS_WIDTH";
-        else if (configurationType == ConfigurationType::PerformanceTracking)
+        if (configurationType == ConfigurationType::PerformanceTracking)
             return "PERFORMANCE_TRACKING";
-        else if (configurationType == ConfigurationType::MaxLogFileSize)
+        if (configurationType == ConfigurationType::MaxLogFileSize)
             return "MAX_LOG_FILE_SIZE";
         return "UNKNOWN";
     }
@@ -601,19 +601,19 @@ public:
     static ConfigurationType convertFromString(const char* configStr) {
         if ((strcmp(configStr, "ENABLED") == 0) || (strcmp(configStr, "enabled") == 0))
             return ConfigurationType::Enabled;
-        else if ((strcmp(configStr, "TO_FILE") == 0) || (strcmp(configStr, "to_file") == 0))
+        if ((strcmp(configStr, "TO_FILE") == 0) || (strcmp(configStr, "to_file") == 0))
             return ConfigurationType::ToFile;
-        else if ((strcmp(configStr, "TO_STANDARD_OUTPUT") == 0) || (strcmp(configStr, "to_standard_output") == 0))
+        if ((strcmp(configStr, "TO_STANDARD_OUTPUT") == 0) || (strcmp(configStr, "to_standard_output") == 0))
             return ConfigurationType::ToStandardOutput;
-        else if ((strcmp(configStr, "FORMAT") == 0) || (strcmp(configStr, "format") == 0))
+        if ((strcmp(configStr, "FORMAT") == 0) || (strcmp(configStr, "format") == 0))
             return ConfigurationType::Format;
-        else if ((strcmp(configStr, "FILENAME") == 0) || (strcmp(configStr, "filename") == 0))
+        if ((strcmp(configStr, "FILENAME") == 0) || (strcmp(configStr, "filename") == 0))
             return ConfigurationType::Filename;
-        else if ((strcmp(configStr, "MILLISECONDS_WIDTH") == 0) || (strcmp(configStr, "milliseconds_width") == 0))
+        if ((strcmp(configStr, "MILLISECONDS_WIDTH") == 0) || (strcmp(configStr, "milliseconds_width") == 0))
             return ConfigurationType::MillisecondsWidth;
-        else if ((strcmp(configStr, "PERFORMANCE_TRACKING") == 0) || (strcmp(configStr, "performance_tracking") == 0))
+        if ((strcmp(configStr, "PERFORMANCE_TRACKING") == 0) || (strcmp(configStr, "performance_tracking") == 0))
             return ConfigurationType::PerformanceTracking;
-        else if ((strcmp(configStr, "MAX_LOG_FILE_SIZE") == 0) || (strcmp(configStr, "max_log_file_size") == 0))
+        if ((strcmp(configStr, "MAX_LOG_FILE_SIZE") == 0) || (strcmp(configStr, "max_log_file_size") == 0))
             return ConfigurationType::MaxLogFileSize;
         return ConfigurationType::Unknown;
     }
@@ -783,9 +783,8 @@ namespace utils {
 /// @param pointer Valid pointer to be deleted
 template <typename T>
 inline static void safeDelete(T*& pointer) {
-    if (pointer == nullptr) {
+    if (pointer == nullptr)
         return;
-    }
     delete pointer;
     pointer = nullptr;
 }
@@ -796,17 +795,14 @@ inline static const char* charPtrVal(const char* pointer) {
 /// @brief Bitwise operations for C++11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
 /// Use these function as <pre>flag = bitOr<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
-
 template <typename EnumType>
 inline static unsigned short And(EnumType e, unsigned short flag) {
     return static_cast<unsigned short>(flag) & static_cast<unsigned short>(e);
 }
-
 template <typename EnumType>
 inline static unsigned short Not(EnumType e, unsigned short flag) {
     return static_cast<unsigned short>(flag) & ~(static_cast<unsigned short>(e));
 }
-
 template <typename EnumType>
 inline static unsigned short Or(EnumType e, unsigned short flag) {
     return static_cast<unsigned short>(flag) | static_cast<unsigned short>(e);
