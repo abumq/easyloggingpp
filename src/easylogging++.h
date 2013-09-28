@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.20
+//  Easylogging++ v9.20 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Author Majid Khan
@@ -3019,19 +3019,18 @@ public:
     /// @brief Configures the logger using specified configurations.
     void configure(const Configurations& configurations) {
         base::threading::lock_guard lock(mutex());
-        ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << configurations << "]");
-        Configurations base = m_configurations;
         if (m_configurations != configurations) {
-            m_configurations = configurations;
-            base.setFromBase(const_cast<Configurations*>(&configurations));
+            m_configurations.setFromBase(const_cast<Configurations*>(&configurations));
+            ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
+            base::utils::safeDelete(m_typedConfigurations);
+            m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
+            m_isConfigured = true;
         }
-        base::utils::safeDelete(m_typedConfigurations);
-        m_typedConfigurations = new base::TypedConfigurations(&base, m_logStreamsReference);
-        m_isConfigured = true;
     }
 
     /// @brief Reconfigures logger using configurations previously provided.
     inline void reconfigure(void) {
+        ELPP_INTERNAL_INFO("Reconfiguring logger [" << m_id << "]");
         configure(m_configurations);
     }
 

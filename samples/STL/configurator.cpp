@@ -20,6 +20,7 @@ int main(void) {
      
     LOG(INFO) << "Info log after manually configuring 'default' logger";
     LOG(FATAL) << "Fatal logging is off";
+    el::Loggers::getLogger("default")->reconfigure();
     LOG(ERROR) << "Error log";
     LOG(WARNING) << "WARNING! log";
     VLOG(1) << "Verbose log 1";
