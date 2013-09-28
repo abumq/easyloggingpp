@@ -3021,11 +3021,11 @@ public:
         base::threading::lock_guard lock(mutex());
         if (m_configurations != configurations) {
             m_configurations.setFromBase(const_cast<Configurations*>(&configurations));
-            ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
-            base::utils::safeDelete(m_typedConfigurations);
-            m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
-            m_isConfigured = true;
         }
+        ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
+        base::utils::safeDelete(m_typedConfigurations);
+        m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
+        m_isConfigured = true;
     }
 
     /// @brief Reconfigures logger using configurations previously provided.
