@@ -2,41 +2,16 @@
 //  Easylogging++ v9.20 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Author Majid Khan
+//  Copyright (c) 2013 Majid Khan
 //
 //  support@easylogging.org
 //  http://easylogging.org
+//  http://www.easylogging.org/licence.php
 //  https://github.com/easylogging/easyloggingpp
-//
-//  The MIT License (MIT)
-//
-//  Copyright (c) 2013 Majid Khan
-//
-//  Permission is hereby granted, free of charge, to any person obtaining a copy of
-//  this software and associated documentation files (the "Software"), to deal in
-//  the Software without restriction, including without limitation the rights to
-//  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-//  the Software, and to permit persons to whom the Software is furnished to do so,
-//  subject to the following conditions:
-//
-//  The above copyright notice and this permission notice shall be included in all
-//  copies or substantial portions of the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-//  FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-//  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-//  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
-//////////////////////////////////////////////////////////////////////
 // Compilers and C++0x/C++11 Evaluation
-// We define one of the following macros:
-//  * _ELPP_CXX0X
-//  * _ELPP_CXX11
-//////////////////////////////////////////////////////////////////////
 #if defined(__GNUC__)
 #   define _ELPP_COMPILER_GCC 1
 #   define _ELPP_GCC_VERSION (__GNUC__ * 10000 \
@@ -82,14 +57,7 @@
 #if defined(__INTEL_COMPILER)
 #   define _ELPP_COMPILER_INTEL 1
 #endif
-//////////////////////////////////////////////////////////////////////
 // Operating System Evaluation
-// We define one of the following macros:
-//   * _ELPP_OS_WINDOWS
-//   * _ELPP_OS_LINUX (_ELPP_OS_UNIX)
-//   * _ELPP_OS_MAC (_ELPP_OS_UNIX)
-//   * _ELPP_OS_ANDROID
-///////////////////////////////////////////////////////////////////////
 // Windows
 #if defined(_WIN32) || defined(_WIN64)
 #   define _ELPP_OS_WINDOWS 1
@@ -123,14 +91,10 @@
 #   define _ELPP_OS_UNIX 1
 #   define _ELPP_OS_LINUX 1
 #endif
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Internal Assertions and errors
-// Depending on users definition of several macros, we define assertion macros used internally to notify developer
-// of any internal failure.
-// If developer wants to disable internal assertion they will need to define of of following macros
-//    _ELPP_DISABLE_ASSERT                  Disables assertion
-//    _ELPP_STOP_ON_FIRST_ASSERTION         Stops execution on first assert failure
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Important Macros:
+//    _ELPP_DISABLE_ASSERT             |     Disables assertion
+//    _ELPP_STOP_ON_FIRST_ASSERTION    |     Stops execution on first assert failure
 #if (!defined(_ELPP_DISABLE_ASSERT))
 #   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
@@ -165,19 +129,13 @@
 #      endif // _ELPP_COMPILER_MSVC
 #   endif // _ELPP_COMPILER_GCC
 #endif // (defined(_ELPP_STACKTRACE_ON_CRASH))
-//////////////////////////////
 // Miscellaneous macros
-/////////////////////////////
 #define _ELPP_UNUSED(x) (void)x;
 #if _ELPP_OS_UNIX
 // Log file permissions for unix-based systems
 #   define _ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Some special functions that are special for VC++
-// This is to prevent CRT security warnings and to override deprecated methods but at the same time
-// MinGW does not support some functions, so we need to make sure that proper function is used.
-////////////////////////////////////////////////////////////////////////////////////////////////////
+// Some special functions that are VC++ specific
 #undef SPRINTF
 #undef STRTOK
 #if _ELPP_CRT_DBG_WARNINGS
@@ -187,9 +145,7 @@
 #   define SPRINTF sprintf
 #   define STRTOK(a,b,c) strtok(a,b)
 #endif
-////////////////////////////////////////////////
-// Some compiler specific support evaluations
-////////////////////////////////////////////////
+// Compiler specific support evaluations
 #if _ELPP_MINGW || _ELPP_COMPILER_CLANG
 #   define _ELPP_USE_STD_THREADING 0
 #else
@@ -204,12 +160,9 @@
 #if defined(_ELPP_THREAD_SAFE)
 #   define _ELPP_THREADING_ENABLED 1
 #endif // defined(_ELPP_THREAD_SAFE)
-//////////////////////////////////////////////////////////////////////
 // Function macro _ELPP_FUNC
-// This macro is used to find log source function
-//////////////////////////////////////////////////////////////////////
 #undef _ELPP_FUNC
-#if defined(_MSC_VER) && (_MSC_VER >= 1020) // Visual C++
+#if defined(_MSC_VER) // Visual C++
 #   define _ELPP_FUNC __FUNCSIG__
 #elif (defined(__GNUC__) && (__GNUC__ >= 2)) // GCC
 #   define _ELPP_FUNC __PRETTY_FUNCTION__
@@ -223,12 +176,8 @@
 #   else
 #      define _ELPP_FUNC ""
 #   endif // defined(__func__)
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1020)
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#endif // defined(_MSC_VER)
 // Logging Enable/Disable macros
-// This defines whether or not certain or all logs are enabled. We define macros for internal use based on
-// what developer has defined.
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if (defined(_ELPP_DISABLE_LOGS))
 #   define _ELPP_LOGGING_ENABLED 0
 #else
@@ -269,22 +218,11 @@
 #else
 #   define _ELPP_VERBOSE_LOG 0
 #endif // (!defined(_ELPP_DISABLE_VERBOSE_LOGS) && (_ELPP_LOGGING_ENABLED))
-///////////////////////////////////////////////////////////////////////
 // Now let user know that we only support C++0x/C++11 applications
-//////////////////////////////////////////////////////////////////////
 #if (!(_ELPP_CXX0X || _ELPP_CXX11))
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
 #endif // (!(_ELPP_CXX0X || _ELPP_CXX11))
-///////////////////////////////////////////////////////////////////////////
-// Headers inclusion
-// We include in following order:
-//  * C-headers
-//  * OS specific headers
-//  * C++ Headers
-//  * C++11 Headers
-//  * Headers supported by STL Logging
-//  * Headers supported by third party libraries logging e.g, Qt, boost etc
-///////////////////////////////////////////////////////////////////////////
+// Headers
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -976,7 +914,7 @@ public:
     ///
     /// @detail It is expected to have stream already opened.
     static std::size_t getSizeOfFile(std::fstream* fs) {
-        if (!fs) {
+        if (fs == nullptr) {
             return 0;
         }
         std::streampos currPos = fs->tellg();
@@ -1070,7 +1008,7 @@ public:
     }
 
     /// @brief Matches wildcards, '*' and '?' only supported.
-    static inline bool wildCardMatch(const char* str, const char* pattern) {
+    static bool wildCardMatch(const char* str, const char* pattern) {
         while (*pattern) {
             switch (*pattern) {
             case '?':
@@ -2217,7 +2155,7 @@ public:
 
     /// @brief Parses configuration from file.
     /// @param configurationFile Full path to configuration file
-    /// @param baseConfigurations to base new configuration repository off. This value is used when you want to use
+    /// @param base Configurations to base new configuration repository off. This value is used when you want to use
     ///        existing Configurations to base all the values and then set rest of configuration via configuration file.
     /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
     ///         do not proceed without successful parse.
@@ -2237,11 +2175,12 @@ public:
     ///
     /// @detail This configuration string has same syntax as configuration file contents. Make sure all the necessary
     /// new line characters are provided.
-    /// @param configurationsString
+    /// @param base Configurations to base new configuration repository off. This value is used when you want to use
+    ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
     /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
     ///         do not proceed without successful parse.
-    inline bool parseFromText(const std::string& configurationsString) {
-        bool success = Parser::parseFromText(configurationsString, this);
+    inline bool parseFromText(const std::string& configurationsString, Configurations* base = nullptr) {
+        bool success = Parser::parseFromText(configurationsString, this, base);
         if (success) {
             m_isFromFile = false;
         }
@@ -2404,7 +2343,7 @@ public:
         /// @brief Parses configuration from file.
         /// @param configurationFile Full path to configuration file
         /// @param sender Sender configurations pointer. Usually 'this' is used from calling class
-        /// @param baseConfigurations to base new configuration repository off. This value is used when you want to use
+        /// @param base Configurations to base new configuration repository off. This value is used when you want to use
         ///        existing Configurations to base all the values and then set rest of configuration via configuration file.
         /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
         ///         do not proceed without successful parse.
@@ -2432,8 +2371,11 @@ public:
         /// do not proceed without successful parse (This is recommended)
         /// @param configurationsString
         /// @param sender Sender configurations pointer. Usually 'this' is used from calling class
+        /// @param base Configurations to base new configuration repository off. This value is used when you want to use
+        ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
         /// @return True if successfully parsed, false otherwise.
-        static bool parseFromText(const std::string& configurationsString, Configurations* sender) {
+        static bool parseFromText(const std::string& configurationsString, Configurations* sender, Configurations* base = nullptr) {
+            sender->setFromBase(base);
             bool parsedSuccessfully = false;
             std::stringstream ss(configurationsString);
             std::string line = std::string();
@@ -4528,66 +4470,10 @@ public:
 };
 class VersionInfo : private base::StaticClass {
 public:
-    /// @brief Minimal formatted displayable information
-    static inline const std::string formattedInfo(void) {
-        std::stringstream ss;
-        ss << "Easylogging++ v" << version() << " (" << releaseDate() << ")";
-        ss << std::endl;
-        ss << supportEmail();
-        ss << std::endl;
-        ss << website();
-        ss << std::endl;
-        ss << copyright();
-        return ss.str();
-    }
-
     /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.20"); }
-
     /// @brief Release date of current version
     static inline const std::string releaseDate(void) { return std::string("27-09-2013 1800hrs"); }
-
-    /// @brief Original author and maintainer
-    static inline const std::string author(void) { return std::string("Majid Khan"); }
-
-    /// @brief Support email
-    static inline const std::string supportEmail(void) { return std::string("support@easylogging.org"); }
-
-    /// @brief Web link
-    static inline const std::string website(void) { return std::string("http://easylogging.org/"); }
-
-    /// @brief Link to source code
-    static inline const std::string sourceCodeLink(void) { return std::string("https://github.com/easylogging/easyloggingpp"); }
-
-    /// @brief Copyright information
-    static inline const std::string copyright(void) { return std::string("Copyright (c) 2013 Majid Khan"); }
-
-    /// @brief Full licence
-    static const std::string licence(void) {
-        std::stringstream ss;
-        ss << "The MIT License (MIT)" << std::endl;
-        ss << copyright() << std::endl;
-        ss << website() << std::endl;
-        ss << "   Permission is hereby granted, free of charge, to any person obtaining" << std::endl;
-        ss << "   a copy of this software and associated documentation files (the" << std::endl;
-        ss << "   \"Software\"), to deal in the Software without restriction, including" << std::endl;
-        ss << "   without limitation the rights to use, copy, modify, merge, publish," << std::endl;
-        ss << "   distribute, sublicense, and/or sell copies of the Software, and to" << std::endl;
-        ss << "   permit persons to whom the Software is furnished to do so, subject to" << std::endl;
-        ss << "   the following conditions:" << std::endl;
-        ss << std::endl;
-        ss << "   The above copyright notice and this permission notice shall be" << std::endl;
-        ss << "   included in all copies or substantial portions of the Software." << std::endl;
-        ss << std::endl;
-        ss << "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND," << std::endl;
-        ss << "EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF" << std::endl;
-        ss << "MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND" << std::endl;
-        ss << "NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE" << std::endl;
-        ss << "LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION" << std::endl;
-        ss << "OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION" << std::endl;
-        ss << "WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE" << std::endl;
-        return ss.str();
-    }
 };
 } // namespace el
 #undef VLOG_IS_ON
