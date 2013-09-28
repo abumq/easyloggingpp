@@ -2,7 +2,7 @@
 
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
-> **Manual For v9.20**
+> **Manual For v9.21**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -10,7 +10,7 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.20)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.21)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
@@ -883,7 +883,7 @@ You may also have a look at wxWidgets sample
 
 ### Extending Library
 
-> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.20/README.md)
+> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.21/README.md)
 
 #### Logging Your Own Class
 
