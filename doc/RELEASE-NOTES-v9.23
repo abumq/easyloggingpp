@@ -2,6 +2,12 @@ Easylogging++ v9.23 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=      DEPRECATED        =
+==========================
+
+ - `_ELPP_PREVENT_FATAL_ABORT` is replaced with `el::LoggingFlag::DisableApplicationAbortOnFatalLog` (issue #119)
+
+==========================
 =         NOTES          =
 ==========================
 

@@ -9,7 +9,6 @@
 #define _ELPP_DISABLE_VMODULES_EXTENSION
 #define _ELPP_STACKTRACE_ON_CRASH
 #define _ELPP_STRICT_SIZE_CHECK
-#define _ELPP_PREVENT_FATAL_ABORT
 
 #include <gtest/gtest.h>
 #include "easylogging++.h"
@@ -31,6 +30,10 @@ static void reconfigureLoggersForTest(void) {
     c.setGlobally(el::ConfigurationType::ToStandardOutput, "false");
     c.setGlobally(el::ConfigurationType::PerformanceTracking, "true");
     Loggers::setDefaultConfigurations(c, true);
+
+    if (!Helpers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+        Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
+    }
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {

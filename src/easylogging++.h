@@ -590,7 +590,10 @@ enum class LoggingFlag : unsigned short {
     AllowVerboseIfModuleNotSpecified = 2,
 
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
-    LogDetailedCrashReason = 4
+    LogDetailedCrashReason = 4,
+
+    /// @brief Allows to disable application abortion when logged using FATAL level
+    DisableApplicationAbortOnFatalLog = 8
 };
 namespace base {
 ///
@@ -3595,11 +3598,10 @@ public:
             m_logger->stream().str("");
             m_logger->unlock();
         }
-#if !defined(_ELPP_PREVENT_FATAL_ABORT)
-        if (m_proceed && m_level == Level::Fatal) {
+        if (m_proceed && m_level == Level::Fatal
+                && !base::elStorage->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             exit(1);
         }
-#endif // !defined(_ELPP_PREVENT_FATAL_ABORT)
     }
 
     inline Writer& operator<<(const std::string& log_) {

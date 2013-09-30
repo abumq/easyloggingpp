@@ -35,8 +35,12 @@ private:
     std::string* str;
 };
 
-int main(void) {
-    
+int main(int argc, char** argv) {
+    // If argv[1] == "y" means PREVENT CRASH ABORTION = YES
+    if (argc > 1 && argv[1][0] == 'y') {
+        el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+        LOG(FATAL) << "Before we crash we try to log using FATAL log and make sure app did not crash because we added flag DisableApplicationAbortOnFatalLog";
+    }
     Crasher c;
     return 0;
 }
