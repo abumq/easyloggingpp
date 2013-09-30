@@ -1,14 +1,17 @@
-#include "test-helpers.h"
-#include "enum-helper-tests.h"
+// gtest based unit tests
+
+#include "test.h"
+#include "enum-helper-test.h"
+#include "helpers-test.h"
 #include "utilities-test.h"
 #include "registry-test.h"
 #include "configurations-test.h"
 #include "global-configurations-test.h"
 #include "typed-configurations-test.h"
 #include "hit-counter-test.h"
-#include "vmodule-tests.h"
+#include "verbose-app-arguments-test.h"
 #include "write-all-test.h"
-#include "loggers-test.h"
+#include "logger-test.h"
 #include "loggable-test.h"
 
 TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");

@@ -2,7 +2,7 @@
 #ifndef HITCOUNTER_TESTS_H_
 #define HITCOUNTER_TESTS_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(RegisteredHitCountersTest, Validation) {
     RegisteredHitCounters r;

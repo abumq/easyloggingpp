@@ -1,9 +1,3 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2013-07-30T19:58:11
-#
-#-------------------------------------------------
-
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -13,7 +7,13 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
 
-DEFINES += _ELPP_STOP_ON_FIRST_ASSERTION
+COMPILER = g++
+QMAKE_CC = $$COMPILER
+QMAKE_CXX = $$COMPILER
+QMAKE_LINK = $$COMPILER
+
+DEFINES += _ELPP_STOP_ON_FIRST_ASSERTION \
+           _ELPP_STL_LOGGING
 
 LIBS += -lgtest
 
@@ -21,15 +21,16 @@ SOURCES += main.cc
 
 HEADERS  += \
     configurations-test.h \
-    enum-helper-tests.h \
+    enum-helper-test.h \
     hit-counter-test.h \
-    loggers-test.h \
     registry-test.h \
-    test-helpers.h \
+    test.h \
     typed-configurations-test.h \
     utilities-test.h \
-    vmodule-tests.h \
+    helpers-test.h \
     write-all-test.h \
     easylogging++.h \
     global-configurations-test.h \
-    loggable-test.h
+    loggable-test.h \
+    logger-test.h \
+    verbose-app-arguments-test.h

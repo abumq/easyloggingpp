@@ -1,7 +1,7 @@
 #ifndef GLOBAL_CONFIGURATIONS_TEST_H_
 #define GLOBAL_CONFIGURATIONS_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(GlobalConfigurationTest, Parse) {
     const char* globalConfFile = "/tmp/global-conf-test.conf";

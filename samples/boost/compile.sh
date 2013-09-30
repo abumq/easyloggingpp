@@ -22,7 +22,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -I/home/majid/Downloads/boost_1_51_0/ -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
+COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -I/usr/include/x86_64-linux-gnu/c++/4.7/"
 
 echo "    $COMPILE_LINE"
 

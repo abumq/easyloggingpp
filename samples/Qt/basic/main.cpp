@@ -79,5 +79,9 @@ int main(int argc, char* argv[]) {
     qstack_.push ("200");
     qstack_.push ("100");
     LOG(DEBUG) << "Printing qstack " << qstack_;
+
+
+    DCHECK(1 > 2) << "What????";
+
     return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef CONFIGURATIONS_TEST_H_
 #define CONFIGURATIONS_TEST_H_
 
-#include "test-helpers.h"
+#include "test.h"
 
 TEST(ConfigurationsTest, Set) {
     Configurations c;
@@ -108,6 +108,34 @@ TEST(ConfigurationsTest, ParsingFromText) {
     EXPECT_EQ("%datetime %level [%user@%host] [%func] [%loc] %log", c.get(el::Level::Debug, ConfigurationType::Format)->value());
     EXPECT_EQ("%datetime %level %log", c.get(el::Level::Error, ConfigurationType::Format)->value());
     EXPECT_EQ("%datetime %level %log", c.get(el::Level::Fatal, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level-%vlevel %log", c.get(el::Level::Verbose, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level [%func] [%loc] %log", c.get(el::Level::Trace, ConfigurationType::Format)->value());
+}
+
+TEST(ConfigurationsTest, ParsingFromTextWithEscape) {
+    std::stringstream ss;
+    ss << " * GLOBAL:\n"
+    << "    FORMAT               =  %datetime{%d/%M/%Y %h:%m:%s,%g} %level %log\n"
+    << "* DEBUG:\n"
+    << "    FORMAT               =  \"%datetime %level [%user@%host] [%func] [%loc] \\\"inside quotes\\\" %log\"\n"
+    // INFO and WARNING uses is defined by GLOBAL
+    << "* ERROR:\n"
+    << "    FORMAT               =  \"%datetime %level \\\"##hash##\\\" %log\"\n"
+    << "* FATAL:\n"
+    << "    FORMAT               =  %datetime %level ## Comment out log format specifier temporarily %log\n"
+    << "* VERBOSE:\n"
+    << "    FORMAT               =  %datetime %level-%vlevel %log\n"
+    << "* TRACE:\n"
+    << "    FORMAT               =  %datetime %level [%func] [%loc] %log\n";
+
+    Configurations c;
+    c.parseFromText(ss.str());
+    EXPECT_EQ("%datetime{%d/%M/%Y %h:%m:%s,%g} %level %log", c.get(el::Level::Global, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime{%d/%M/%Y %h:%m:%s,%g} %level %log", c.get(el::Level::Info, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime{%d/%M/%Y %h:%m:%s,%g} %level %log", c.get(el::Level::Warning, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level [%user@%host] [%func] [%loc] \"inside quotes\" %log", c.get(el::Level::Debug, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level \"##hash##\" %log", c.get(el::Level::Error, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level", c.get(el::Level::Fatal, ConfigurationType::Format)->value());
     EXPECT_EQ("%datetime %level-%vlevel %log", c.get(el::Level::Verbose, ConfigurationType::Format)->value());
     EXPECT_EQ("%datetime %level [%func] [%loc] %log", c.get(el::Level::Trace, ConfigurationType::Format)->value());
 }

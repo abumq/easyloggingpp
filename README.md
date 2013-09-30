@@ -2,7 +2,7 @@
 
                                        ﻿بِسمِ اللہِ الرَّحمٰنِ الرَّحِيم
 
-> **Manual For v9.17**
+> **Manual For v9.22**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -10,11 +10,13 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.17)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.22)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
   
   [![www] Project Homepage](http://easylogging.org/)
+
+  [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
 
 ---
@@ -96,7 +98,7 @@ Why yet another library? Well, answer is pretty straight forward, use it as if y
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that a typical developer will require while writing a software;
  * Highly configurable
- * Extremely fast (~ 4-12 microsecond / depending upon system)
+ * Extremely fast (~ 4-12 microsecond)
  * Thread and type safe
  * Cross-platform
  * Custom log patterns
@@ -106,8 +108,8 @@ Easylogging++ is feature-rich containing many features that a typical developer 
  * Crash handling
  * Helper CHECK macros
  * STL logging
- * Third-party logging (Qt)
- * Extensible (Logging your own class)
+ * Third-party library logging (Qt, boost, wxWidgets etc)
+ * Extensible (Logging your own class or third-party class)
  * And many more...
 
  [![top] Goto Top](#table-of-contents)
@@ -119,6 +121,7 @@ Applications that do not use C++11 may still use v8.x which is also efficient pr
 * Crash handling
 * Stacktrace on failures
 * Helper CHECK macros
+* Third-party library logging (except for Qt)
 
 Please note, most of the features can be disabled by defining macros. Details are given later in this manual. As far as upgrade from v8.x is concerned, you can refer to release notes on github to see what's deprecated and what's changed.
 
@@ -412,7 +415,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations
-If you wish to read configurations of certain logger, you can do so by using typedConfigurations() function in Logger class.
+If you wish to read configurations of certain logger, you can do so by using `typedConfigurations()` function in Logger class.
 ```c++
 el::Logger* l = el::Loggers::getLogger("default");
 bool enabled = l->typedConfigurations()->enabled(el::Level::Info);
@@ -428,8 +431,8 @@ Logging in easylogging++ is done using collection of macros. This is to make it 
 
 ### Basic
 You are provided with two basic macros that you can use in order to write logs:
-* LOG(LEVEL)
-* CLOG(LEVEL, logger ID)
+* `LOG(LEVEL)`
+* `CLOG(LEVEL, logger ID)`
 
 `LOG` uses 'default' logger while in CLOG (Custom LOG) you specify the logger ID. For LEVELs please refer to Configurations - Levels section above. Different loggers might have different configurations depending on your need, you may as well write custom macro to access custom logger. You also have different macros for verbose logging that is explained in section below.
 Here is very simple example of using these macros after you have initialized easylogging++.
@@ -443,29 +446,27 @@ CLOG(ERROR, "performance") << "This is info log using performance logger";
 ### Conditional Logging
 Easylogging++ provides certain aspects of logging, one these aspects is conditional logging, i.e, log will be written only if certain condition fulfils. This comes very handy in some situations. 
 Helper macros end with _IF;
-* LOG_IF(condition, LEVEL)
-* CLOG_IF(condition, LEVEL, logger ID)
+* `LOG_IF(condition, LEVEL)`
+* `CLOG_IF(condition, LEVEL, logger ID)`
 
 
 #### Some examples:
 ```c++
 LOG_IF(condition, INFO) << "Logged if condition is true";
 
-
-
 LOG_IF(false, WARNING) << "Never logged";
 CLOG_IF(true, INFO, "performance") << "Always logged (performance logger)"
 ```
 
-Same macros are available for verbose logging with V in the beginning, i.e, VLOG_IF and CVLOG_IF. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
+Same macros are available for verbose logging with V in the beginning, i.e, `VLOG_IF` and `CVLOG_IF`. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Occasional Logging
 Occasional logging is another useful aspect of logging with Easylogging++. This means a log will be written if it's hit certain times or part of certain times, e.g, every 10th hit or 100th hit or 2nd hit.
-Helper macros end with _EVERY_N;
-* LOG_EVERY_N(n, LEVEL)
-* CLOG_EVERY_N(n, LEVEL, logger ID)
+Helper macros end with `_EVERY_N`;
+* `LOG_EVERY_N(n, LEVEL)`
+* `CLOG_EVERY_N(n, LEVEL, logger ID)`
 
 #### Some examples:
 ```c++
@@ -475,6 +476,8 @@ for (int i = 1; i <= 10; ++i) {
 
 // 5 logs written; 2, 4, 6, 7, 10
 ```
+
+> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 
  [![top] Goto Top](#table-of-contents)
  
@@ -803,6 +806,8 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
 | `CHECK_STRCASENE(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_STRCASENE(username1, username2) << "Same username not allowed";`           |
 
+> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
+
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
@@ -879,7 +884,7 @@ You may also have a look at wxWidgets sample
 
 ### Extending Library
 
-> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.17/README.md)
+> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.22/README.md)
 
 #### Logging Your Own Class
 
@@ -983,6 +988,8 @@ Easylogging++ is free to use for any type of software but it costs money to main
 
 But please be sure the donation money is halaal in islam in every aspect, meaning it's not money from interest paid by bank or stolen etc. Have a look at [this document](http://www.auscif.com/wp-content/uploads/2012/09/Halal-Money-Guide-2012.pdf) for further details on what's halaal and what's not (haraam)
 
+[![pledgie]](http://www.pledgie.com/campaigns/22070)
+
  [![top] Goto Top](#table-of-contents)
 
 # Compatibility
@@ -1006,6 +1013,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |-----------|------------------------|-------------------------------------------------------------------------------------|
 |![win8]    | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]    | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
+|![winxp]   | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
 |![mac]     | Mac OSX                | Clang++ 3.1 (Tested by contributor)                                                 |
 |![sl]      | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
@@ -1065,6 +1073,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [sl]: http://www.easylogging.org/images/icons/scientific-linux.png?v=2
   [fedora]: http://www.easylogging.org/images/icons/fedora.png?v=3
   [mac]: http://www.easylogging.org/images/icons/mac-osx.png?v=2
+  [winxp]: http://www.easylogging.org/images/icons/windowsxp.png?v=2
   [win7]: http://www.easylogging.org/images/icons/windows7.png?v=2
   [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
   [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
@@ -1087,3 +1096,5 @@ Icons used in this manual (in compatibility section) are solely for information 
   [notes]: http://easylogging.org/images/notes.png?v=4
   [top]: http://easylogging.org/images/up.png?v=4
   [www]: http://easylogging.org/images/logo-www.png?v=6
+  
+  [pledgie]: http://www.pledgie.com/campaigns/22070.png?skin_name=chrome
