@@ -1665,8 +1665,8 @@ private:
 
 /// @brief A pointer registry mechanism to manage memory and provide search functionalities. (non-predicate version)
 ///
-/// @detail NOTE: This is thread-unsafe implementation of AbstractRegistry<T_Ptr, Container>. Any implementation of this class
-/// should be made thread-safe explicitly
+/// @detail NOTE: This is thread-unsafe implementation (although it contains lock function, it does not uses these functions)
+///         of AbstractRegistry<T_Ptr, Container>. Any implementation of this class should be  explicitly (by using lock functions)
 template <typename T_Ptr, typename T_Key = const char*>
 class Registry : public AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>> {
 public:
