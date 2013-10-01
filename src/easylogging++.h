@@ -3350,8 +3350,22 @@ public:
     }
 
     inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
+        base::threading::lock_guard lock(mutex());
         m_customFormatSpecifiers.push_back(customFormatSpecifier);
     }
+
+    inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
+        base::threading::lock_guard lock(mutex());
+        for (std::vector<CustomFormatSpecifier>::iterator it = m_customFormatSpecifiers.begin();
+                 it != m_customFormatSpecifiers.end(); ++it) {
+            if (strcmp(formatSpecifier, it->formatSpecifier()) == 0) {
+                m_customFormatSpecifiers.erase(it);
+                return true;
+            }
+        }
+        return false;
+    }
+
 private:
     std::string m_username;
     std::string m_hostname;
@@ -4380,9 +4394,16 @@ public:
         return base::elStorage->commandLineArgs();
     }
 
+    /// @brief Installs user defined format specifier and handler
     static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
         base::elStorage->installCustomFormatSpecifier(customFormatSpecifier);
     }
+
+    /// @brief Uninstalls user defined format specifier and handler
+    static inline void uninstallCustomFormatSpecifier(const char* formatSpecifier) {
+        base::elStorage->uninstallCustomFormatSpecifier(formatSpecifier);
+    }
+
 };
 /// @brief Static helpers to deal with loggers and their configurations
 class Loggers : private base::StaticClass {
