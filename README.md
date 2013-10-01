@@ -346,6 +346,21 @@ You can customize format of logging using following specifiers:
 | %log          | Actual log message                                                                          |
 | %             | Escape character (e.g, %%level will write %level)                                           |
 
+Since ver. 9.23, you can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCp server application;
+
+```C++
+const char* getIp(void) {
+    return "192.168.1.1";
+}
+
+int main(void) {
+    el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %log");
+    LOG(INFO) << "This is request from client";
+    return 0;
+}
+```
+
  [![top] Goto Top](#table-of-contents)
  
 ### Date/Time Format Specifiers

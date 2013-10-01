@@ -2039,6 +2039,21 @@ private:
     unsigned short m_flags;
 };
 } // namespace base
+/// @brief Resolving function for format specifier
+typedef std::function<const char*(void)> FormatSpecifierValueResolver;
+/// @brief User-provided custom format specifier
+/// @see el::Helpers::installCustomFormatSpecifier
+/// @see FormatSpecifierValueResolver
+class CustomFormatSpecifier {
+public:
+    CustomFormatSpecifier(const char* formatSpecifier, const FormatSpecifierValueResolver& resolver) :
+        m_formatSpecifier(formatSpecifier), m_resolver(resolver) {}
+    inline const char* formatSpecifier(void) { return m_formatSpecifier; }
+    inline FormatSpecifierValueResolver& resolver(void) { return m_resolver; }
+private:
+    const char* m_formatSpecifier;
+    FormatSpecifierValueResolver m_resolver;
+};
 class Loggers;
 class Helpers;
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
@@ -3333,6 +3348,10 @@ public:
     inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
+
+    inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
+        m_customFormatSpecifiers.push_back(customFormatSpecifier);
+    }
 private:
     std::string m_username;
     std::string m_hostname;
@@ -3342,6 +3361,7 @@ private:
     base::utils::CommandLineArgs m_commandLineArgs;
     unsigned short m_flags;
     PreRollOutHandler m_preRollOutHandler;
+    std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_tempStream;
 
     friend class base::LogDispatcher;
@@ -3391,63 +3411,67 @@ public:
         base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_log.level()));
         std::string logLine = logFormat->format();
         if (logFormat->hasFlag(base::FormatFlags::AppName)) {
-          // App name
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
-                   m_log.logger()->parentApplicationName());
+            // App name
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
+                    m_log.logger()->parentApplicationName());
         }
         if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
-          // Logger ID
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_log.logger()->id());
+            // Logger ID
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_log.logger()->id());
         }
         if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
-          // Thread ID
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-                  base::threading::getCurrentThreadId());
+            // Thread ID
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
+                    base::threading::getCurrentThreadId());
         }
         if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
-          // DateTime
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
-                  base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_log.level())));
+            // DateTime
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
+                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_log.level())));
         }
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
-          // Function
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_log.func()));
+            // Function
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_log.func()));
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
-          // File
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_log.file()));
+            // File
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_log.file()));
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
-          // Line
-          base::elStorage->tempStream() << m_log.line();
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, base::elStorage->tempStream().str());
-          base::elStorage->tempStream().str("");
+            // Line
+            base::elStorage->tempStream() << m_log.line();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, base::elStorage->tempStream().str());
+            base::elStorage->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
-          // Location
-          base::elStorage->tempStream() << m_log.file() << ":" << m_log.line();
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, base::elStorage->tempStream().str());
-          base::elStorage->tempStream().str("");
+            // Location
+            base::elStorage->tempStream() << m_log.file() << ":" << m_log.line();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, base::elStorage->tempStream().str());
+            base::elStorage->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::User)) {
-          // User
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentUserFormatSpecifier, elStorage->username());
+            // User
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentUserFormatSpecifier, elStorage->username());
         }
         if (logFormat->hasFlag(base::FormatFlags::Host)) {
-          // Host
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
+            // Host
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
         }
         if (m_log.level() == Level::Verbose &&
               logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
-          // Verbose level
-          base::elStorage->tempStream() << m_log.verboseLevel();
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, base::elStorage->tempStream().str());
-          base::elStorage->tempStream().str("");
+            // Verbose level
+            base::elStorage->tempStream() << m_log.verboseLevel();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, base::elStorage->tempStream().str());
+            base::elStorage->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
-          // Log message
-          base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
+            // Log message
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
         }
+        for (std::vector<CustomFormatSpecifier>::iterator it = base::elStorage->m_customFormatSpecifiers.begin();
+                it != base::elStorage->m_customFormatSpecifiers.end(); ++it) {
+            base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
+        } 
         dispatch(logLine, needToLockLogger);
     }
 private:
@@ -4354,6 +4378,10 @@ public:
     /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
         return base::elStorage->commandLineArgs();
+    }
+
+    static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
+        base::elStorage->installCustomFormatSpecifier(customFormatSpecifier);
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
