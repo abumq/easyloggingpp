@@ -37,7 +37,6 @@ static void reconfigureLoggersForTest(void) {
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {
-    ++n;
     if (n == 0) return std::string();
     std::ifstream fstr(filename);
     if (!fstr.is_open()) {
@@ -45,7 +44,7 @@ static std::string tail(unsigned int n, const char* filename = logfile) {
     }
     fstr.seekg(0, fstr.end);
     int size = static_cast<int>(fstr.tellg());
-    int ncopy = n;
+    int ncopy = n + 1;
     for (int i = (size - 1); i >= 0; --i) {
         fstr.seekg(i);
         char c = fstr.get();
