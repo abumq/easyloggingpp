@@ -3665,7 +3665,6 @@ public:
         if (m_proceed && !m_skipDispatch) {
             if (base::elStorage->appendPostStreamValue()) {
                 m_logger->stream() << base::elStorage->m_postStream.str();
-                base::elStorage->m_postStream.str("");
                 base::elStorage->setAppendPostStreamValue(false);
             }
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
