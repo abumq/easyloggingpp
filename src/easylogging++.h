@@ -3486,10 +3486,12 @@ public:
             // Log message
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
         }
+#if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
         for (std::vector<CustomFormatSpecifier>::iterator it = base::elStorage->m_customFormatSpecifiers.begin();
                 it != base::elStorage->m_customFormatSpecifiers.end(); ++it) {
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
-        } 
+        }
+#endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
         dispatch(logLine, needToLockLogger);
     }
 private:
