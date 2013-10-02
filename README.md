@@ -332,19 +332,19 @@ Please note, it is not possible to register new logger using global configuratio
 ### Logging Format Specifiers
 You can customize format of logging using following specifiers:
 
-|   Specifier   |                 Replaced By                                                                 |
-|---------------|---------------------------------------------------------------------------------------------|
-| %logger       | Logger ID                                                                                   |
-| %thread       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
-| %level        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
-| %vlevel       | Verbosity level (Applicable to verbose logging)                                             |
-| %datetime     | Date and/or time - Pattern is customizable - see Date/Time Format Specifiers below          |
-| %user         | User currently running application                                                          |
-| %host         | Computer name application is running on                                                     |
-| %func         | Logging function                                                                            |
-| %loc          | Source filename and line number of logging                                                  |
-| %log          | Actual log message                                                                          |
-| %             | Escape character (e.g, %%level will write %level)                                           |
+|     Specifier   |                 Replaced By                                                                 |
+|-----------------|---------------------------------------------------------------------------------------------|
+| `%logger`       | Logger ID                                                                                   |
+| `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
+| `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
+| `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |
+| `%datetime`     | Date and/or time - Pattern is customizable - see Date/Time Format Specifiers below          |
+| `%user`         | User currently running application                                                          |
+| `%host`         | Computer name application is running on                                                     |
+| `%func`         | Logging function                                                                            |
+| `%loc`          | Source filename and line number of logging                                                  |
+| `%log`          | Actual log message                                                                          |
+| `%`             | Escape character (e.g, %%level will write %level)                                           |
 
 Since ver. 9.23, you can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCp server application;
 
@@ -366,23 +366,23 @@ int main(void) {
 ### Date/Time Format Specifiers
 You can customize date/time format using following specifiers
 
-|   Specifier   |                 Replaced By                                                                                      |
-|---------------|------------------------------------------------------------------------------------------------------------------|
-| %d            | Day of month (zero-padded)                                                                                       |
-| %a            | Day of the week - short (Mon, Tue, Wed, Thu, Fri, Sat, Sun)                                                      |
-| %A            | Day of the week - long (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)                          |
-| %M            | Month (zero-padded)                                                                                              |
-| %b            | Month - short (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)                                       |
-| %B            | Month - Long (January, February, March, April, May, June, July, August, September, October, November, December)  |
-| %y            | Year - Two digit (13, 14 etc)                                                                                    |
-| %Y            | Year - Four digit (2013, 2014 etc)                                                                               |
-| %h            | Hour (12-hour format)                                                                                            |
-| %H            | Hour (24-hour format)                                                                                            |
-| %m            | Minute (zero-padded)                                                                                             |
-| %s            | Second (zero-padded)                                                                                             |
-| %g            | Milliseconds (width is configured by ConfigurationType::MillisecondsWidth)                                       |
-| %F            | AM/PM designation                                                                                                |
-| %             | Escape character                                                                                                 |
+|    Specifier    |                 Replaced By                                                                                      |
+|-----------------|------------------------------------------------------------------------------------------------------------------|
+| `%d`            | Day of month (zero-padded)                                                                                       |
+| `%a`            | Day of the week - short (Mon, Tue, Wed, Thu, Fri, Sat, Sun)                                                      |
+| `%A`            | Day of the week - long (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)                          |
+| `%M`            | Month (zero-padded)                                                                                              |
+| `%b`            | Month - short (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)                                       |
+| `%B`            | Month - Long (January, February, March, April, May, June, July, August, September, October, November, December)  |
+| `%y`            | Year - Two digit (13, 14 etc)                                                                                    |
+| `%Y`            | Year - Four digit (2013, 2014 etc)                                                                               |
+| `%h`            | Hour (12-hour format)                                                                                            |
+| `%H`            | Hour (24-hour format)                                                                                            |
+| `%m`            | Minute (zero-padded)                                                                                             |
+| `%s`            | Second (zero-padded)                                                                                             |
+| `%g`            | Milliseconds (width is configured by ConfigurationType::MillisecondsWidth)                                       |
+| `%F`            | AM/PM designation                                                                                                |
+| `%`             | Escape character                                                                                                 |
 
 Please note, this date/time functionality is built-in hence is cross-platform.
 
@@ -391,12 +391,12 @@ Please note, this date/time functionality is built-in hence is cross-platform.
 ###Logging flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
-|   Flag                             |                 Description                                                                                                                   |
-|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| NewLineForContainer                | Makes sure we have new line for each container log entry                                                                                      |
-| AllowVerboseIfModuleNotSpecified   | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule   |
-| LogDetailedCrashReason             | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                          |
-| DisableApplicationAbortOnFatalLog  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                         |
+|     Flag                             |                 Description                                                                                                                   |
+|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `NewLineForContainer`                | Makes sure we have new line for each container log entry                                                                                      |
+| `AllowVerboseIfModuleNotSpecified`   | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule   |
+| `LogDetailedCrashReason`             | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                          |
+| `DisableApplicationAbortOnFatalLog`  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                         |
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
