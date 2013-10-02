@@ -4811,12 +4811,20 @@ public:
 #undef CHECK
 #undef CHECK_EQ
 #undef CHECK_NE
+#undef CHECK_LT
+#undef CHECK_GT
+#undef CHECK_LE
+#undef CHECK_GE
 #undef CHECK_NOTNULL
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
 #define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
 #define CHECK_EQ(a, b) CHECK(a == b)
 #define CHECK_NE(a, b) CHECK(a != b)
+#define CHECK_LT(a, b) CHECK(a < b)
+#define CHECK_GT(a, b) CHECK(a > b)
+#define CHECK_LE(a, b) CHECK(a <= b)
+#define CHECK_GE(a, b) CHECK(a >= b)
 namespace el {
 namespace base {
 namespace utils {
@@ -4840,12 +4848,20 @@ static T* CheckNotNull(T* ptr, const char* name) {
 #undef DCHECK
 #undef DCHECK_EQ
 #undef DCHECK_NE
+#undef DCHECK_LT
+#undef DCHECK_GT
+#undef DCHECK_LE
+#undef DCHECK_GE
 #undef DCHECK_NOTNULL
 #undef DCHECK_STRCASEEQ
 #undef DCHECK_STRCASENE
 #define DCHECK(condition) if (_ELPP_DEBUG_LOG) CHECK(condition)
 #define DCHECK_EQ(a, b) if (_ELPP_DEBUG_LOG) CHECK_EQ(a, b)
 #define DCHECK_NE(a, b) if (_ELPP_DEBUG_LOG) CHECK_NE(a, b)
+#define DCHECK_LT(a, b) if (_ELPP_DEBUG_LOG) CHECK_LT(a, b)
+#define DCHECK_GT(a, b) if (_ELPP_DEBUG_LOG) CHECK_GT(a, b)
+#define DCHECK_LE(a, b) if (_ELPP_DEBUG_LOG) CHECK_LE(a, b)
+#define DCHECK_GE(a, b) if (_ELPP_DEBUG_LOG) CHECK_GE(a, b)
 #define DCHECK_NULLPTR(ptr) if (_ELPP_DEBUG_LOG) CHECK_NOTNULL(ptr)
 #define DCHECK_STREQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STREQ(str1, str2)
 #define DCHECK_STRNE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRNE(str1, str2)
