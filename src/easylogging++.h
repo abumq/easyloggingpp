@@ -3345,6 +3345,10 @@ public:
         m_preRollOutHandler = handler;
     }
 
+    inline void unsetPreRollOutHandler(void) {
+        m_preRollOutHandler = base::defaultPreRollOutHandler;
+    }
+
     inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
@@ -4374,12 +4378,16 @@ public:
     /// @param stackTraceIfAvailable Includes stack trace if available
     /// @param level Logging level
     /// @param logger Logger to use for logging
-    static void logCrashReason(int sig, bool stackTraceIfAvailable = false, const Level& level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
+    static inline void logCrashReason(int sig, bool stackTraceIfAvailable = false, const Level& level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out (can be useful for backing up)
-    static void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
+    static inline void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
         base::elStorage->setPreRollOutHandler(handler);
+    }
+    /// @brief Uninstalls pre rollout handler
+    static inline void uninstallPreRollOutHandler(void) {
+        base::elStorage->unsetPreRollOutHandler();
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
@@ -4393,17 +4401,14 @@ public:
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
         return base::elStorage->commandLineArgs();
     }
-
     /// @brief Installs user defined format specifier and handler
     static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
         base::elStorage->installCustomFormatSpecifier(customFormatSpecifier);
     }
-
     /// @brief Uninstalls user defined format specifier and handler
     static inline void uninstallCustomFormatSpecifier(const char* formatSpecifier) {
         base::elStorage->uninstallCustomFormatSpecifier(formatSpecifier);
     }
-
 };
 /// @brief Static helpers to deal with loggers and their configurations
 class Loggers : private base::StaticClass {

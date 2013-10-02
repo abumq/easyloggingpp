@@ -12,6 +12,7 @@ Easylogging++ v9.23 RELEASE NOTES
 ==========================
 
  - Custom installable format specifiers (issue #118)
+ - Ability to uninstall pre-rollout handler
 
 ==========================
 =         NOTES          =
