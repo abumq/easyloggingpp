@@ -37,11 +37,11 @@ TEST(LoggableTest, TestValidLog) {
     Integer myint = 5;
     LOG(INFO) << "My integer = " << myint;
     std::string expected = BUILD_STR(getDate() << " My integer = 5\n");
-    EXPECT_EQ(expected, tail(2));
+    EXPECT_EQ(expected, tail(1));
     ++myint;
     LOG(INFO) << "My integer = " << myint;
     expected = BUILD_STR(getDate() << " My integer = 6\n");
-    EXPECT_EQ(expected, tail(2));
+    EXPECT_EQ(expected, tail(1));
 }
 
 class String {
@@ -60,7 +60,7 @@ inline MAKE_LOGGABLE(String, str, os) {
 TEST(LoggableTest, MakeLoggable) {
     LOG(INFO) << String("this is my string");
     std::string expected = BUILD_STR(getDate() << " this is my string\n");
-    EXPECT_EQ(expected, tail(2));
+    EXPECT_EQ(expected, tail(1));
 }
 
 #endif // LOGGABLETEST_H_

@@ -33,4 +33,5 @@ HEADERS  += \
     global-configurations-test.h \
     loggable-test.h \
     logger-test.h \
-    verbose-app-arguments-test.h
+    verbose-app-arguments-test.h \
+    custom-format-specifier-test.h

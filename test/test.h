@@ -37,6 +37,7 @@ static void reconfigureLoggersForTest(void) {
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {
+    ++n;
     if (n == 0) return std::string();
     std::ifstream fstr(filename);
     if (!fstr.is_open()) {

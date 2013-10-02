@@ -13,6 +13,7 @@
 #include "write-all-test.h"
 #include "logger-test.h"
 #include "loggable-test.h"
+#include "custom-format-specifier-test.h"
 
 TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");
 int main(int argc, char** argv) {

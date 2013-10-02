@@ -1,4 +1,3 @@
-
 #ifndef ENUM_HELPER_TESTS_H
 #define ENUM_HELPER_TESTS_H
 #include "test.h"

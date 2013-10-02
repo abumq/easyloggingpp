@@ -2048,8 +2048,11 @@ class CustomFormatSpecifier {
 public:
     CustomFormatSpecifier(const char* formatSpecifier, const FormatSpecifierValueResolver& resolver) :
         m_formatSpecifier(formatSpecifier), m_resolver(resolver) {}
-    inline const char* formatSpecifier(void) { return m_formatSpecifier; }
-    inline FormatSpecifierValueResolver& resolver(void) { return m_resolver; }
+    inline const char* formatSpecifier(void) const { return m_formatSpecifier; }
+    inline const FormatSpecifierValueResolver& resolver(void) const { return m_resolver; }
+    inline bool operator==(const char* formatSpecifier) {
+        return strcmp(m_formatSpecifier, formatSpecifier) == 0;
+    }
 private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
@@ -3353,19 +3356,27 @@ public:
         return m_preRollOutHandler;
     }
 
+    inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
+        base::threading::lock_guard lock(mutex());
+        return std::find(m_customFormatSpecifiers.begin(), m_customFormatSpecifiers.end(),
+                formatSpecifier) != m_customFormatSpecifiers.end();
+    }
+
     inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
+        if (hasCustomFormatSpecifier(customFormatSpecifier.formatSpecifier())) {
+            return;
+        }
         base::threading::lock_guard lock(mutex());
         m_customFormatSpecifiers.push_back(customFormatSpecifier);
     }
 
     inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
         base::threading::lock_guard lock(mutex());
-        for (std::vector<CustomFormatSpecifier>::iterator it = m_customFormatSpecifiers.begin();
-                 it != m_customFormatSpecifiers.end(); ++it) {
-            if (strcmp(formatSpecifier, it->formatSpecifier()) == 0) {
-                m_customFormatSpecifiers.erase(it);
-                return true;
-            }
+        std::vector<CustomFormatSpecifier>::iterator it = std::find(m_customFormatSpecifiers.begin(),
+                m_customFormatSpecifiers.end(), formatSpecifier);
+        if (it != m_customFormatSpecifiers.end() && strcmp(formatSpecifier, it->formatSpecifier()) == 0) {
+            m_customFormatSpecifiers.erase(it);
+            return true;
         }
         return false;
     }
@@ -4408,8 +4419,12 @@ public:
         base::elStorage->installCustomFormatSpecifier(customFormatSpecifier);
     }
     /// @brief Uninstalls user defined format specifier and handler
-    static inline void uninstallCustomFormatSpecifier(const char* formatSpecifier) {
-        base::elStorage->uninstallCustomFormatSpecifier(formatSpecifier);
+    static inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
+        return base::elStorage->uninstallCustomFormatSpecifier(formatSpecifier);
+    }
+    /// @brief Returns true if custom format specifier is installed
+    static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
+        return base::elStorage->hasCustomFormatSpecifier(formatSpecifier);
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations

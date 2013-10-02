@@ -13,20 +13,20 @@ TEST(WriteAllTests, l) {\
     std::string s;\
     LOG(l) << name << " 1";\
     s = BUILD_STR(getDate() << " " << name << " 1\n");\
-    EXPECT_EQ(s, tail(2));\
+    EXPECT_EQ(s, tail(1));\
     LOG_IF(true, l) << name << " 2";\
     s = BUILD_STR(getDate() << " " << name << " 1\n"\
                << getDate() << " " << name << " 2\n");\
-    EXPECT_EQ(s, tail(3));\
+    EXPECT_EQ(s, tail(2));\
     LOG_IF(true, l) << name << " 3";\
     s = BUILD_STR(getDate() << " " << name << " 3\n");\
-    EXPECT_EQ(s, tail(2));\
+    EXPECT_EQ(s, tail(1));\
     LOG_IF(false, l) << "SHOULD NOT LOG";\
     s = BUILD_STR(getDate() << " " << name << " 3\n");\
-    EXPECT_EQ(s, tail(2));\
+    EXPECT_EQ(s, tail(1));\
     LOG_EVERY_N(1, l) << name << " every n=1";\
     s = BUILD_STR(getDate() << " " << name << " every n=1\n");\
-    EXPECT_EQ(s, tail(2));\
+    EXPECT_EQ(s, tail(1));\
 }
 
 TEST_LEVEL(DEBUG, "Debug")
@@ -50,19 +50,19 @@ TEST(WriteAllTests, VERBOSE) {
     s = BUILD_STR(getDate() << " VER-2 every n=2\n"
                << getDate() << " VER-2 every n=4\n"
                << getDate() << " VER-2 every n=6\n");
-    EXPECT_EQ(s, tail(4));
+    EXPECT_EQ(s, tail(3));
 
     VLOG_IF(true, 3) << "Test conditional verbose log";
     s = BUILD_STR(getDate() << " VER-3 Test conditional verbose log\n");
-    EXPECT_EQ(s, tail(2));
+    EXPECT_EQ(s, tail(1));
 
     VLOG_IF(false, 3) << "SHOULD NOT LOG";
     // Should not log!
-    EXPECT_EQ(s, tail(2));
+    EXPECT_EQ(s, tail(1));
 
     VLOG(3) << "Log normally (verbose)";
     s = BUILD_STR(getDate() << " VER-3 Log normally (verbose)\n");
-    EXPECT_EQ(s, tail(2));
+    EXPECT_EQ(s, tail(1));
 
     // Reset it back to old
     Loggers::reconfigureAllLoggers(cOld);
@@ -77,6 +77,6 @@ TEST(WriteAllTests, EVERY_N) {
     s = BUILD_STR(getDate() << " " << name << " every n=2\n"
                << getDate() << " " << name << " every n=4\n"
                << getDate() << " " << name << " every n=6\n");
-    EXPECT_EQ(s, tail(4));
+    EXPECT_EQ(s, tail(3));
 }
 #endif // WRITE_ALL_TEST_H_
