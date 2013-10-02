@@ -3275,7 +3275,8 @@ public:
         m_registeredLoggers(new base::RegisteredLoggers()),
         m_vRegistry(new base::VRegistry(0)),
         m_flags(0x0),
-        m_preRollOutHandler(base::defaultPreRollOutHandler) {
+        m_preRollOutHandler(base::defaultPreRollOutHandler),
+        m_appendPostStreamValue(false) {
 
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
@@ -3380,7 +3381,21 @@ public:
         }
         return false;
     }
+    inline void clearPostStream(void) {
+        m_postStream.str("");
+    }
 
+    inline std::stringstream& postStream(void) {
+        return m_postStream;
+    }
+
+    inline void setAppendPostStreamValue(bool val) {
+        m_appendPostStreamValue = val;
+    }
+
+    inline bool appendPostStreamValue(void) const {
+        return m_appendPostStreamValue;
+    }
 private:
     std::string m_username;
     std::string m_hostname;
@@ -3390,8 +3405,10 @@ private:
     base::utils::CommandLineArgs m_commandLineArgs;
     unsigned short m_flags;
     PreRollOutHandler m_preRollOutHandler;
+    bool m_appendPostStreamValue;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_tempStream;
+    std::stringstream m_postStream;
 
     friend class base::LogDispatcher;
     friend class base::Writer;
@@ -3646,6 +3663,11 @@ public:
 
     virtual ~Writer(void) {
         if (m_proceed && !m_skipDispatch) {
+            if (base::elStorage->appendPostStreamValue()) {
+                m_logger->stream() << base::elStorage->m_postStream.str();
+                base::elStorage->m_postStream.str("");
+                base::elStorage->setAppendPostStreamValue(false);
+            }
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
         }
@@ -4768,6 +4790,15 @@ public:
 // Interval logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
 #define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
+// Generic PLOG()
+#undef CPLOG
+#undef CPLOG_IF
+#undef PLOG
+#undef PLOG_IF
+#define CPLOG(LEVEL, loggerId) el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->clearPostStream(); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; CLOG(LEVEL, loggerId)
+#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->clearPostStream(); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; CLOG_IF(condition, LEVEL, loggerId)
+#define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
+#define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
 //
 // Custom Debug Only Loggers - Requires (level, loggerId)
 //
@@ -4809,6 +4840,7 @@ public:
 #define DVLOG_EVERY_N(n, vlevel) DCVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
 // Check macros
 #undef CHECK
+#undef PCHECK
 #undef CHECK_EQ
 #undef CHECK_NE
 #undef CHECK_LT
@@ -4819,6 +4851,7 @@ public:
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
 #define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
+#define PCHECK(condition) PLOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
 #define CHECK_EQ(a, b) CHECK(a == b)
 #define CHECK_NE(a, b) CHECK(a != b)
 #define CHECK_LT(a, b) CHECK(a < b)
