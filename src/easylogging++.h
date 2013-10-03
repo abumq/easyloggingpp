@@ -4797,7 +4797,7 @@ public:
 #undef PLOG
 #undef PLOG_IF
 #define CPLOG(LEVEL, loggerId) el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; CLOG(LEVEL, loggerId)
-#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; CLOG_IF(condition, LEVEL, loggerId)
+#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; } CLOG_IF(condition, LEVEL, loggerId)
 #define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
 //
