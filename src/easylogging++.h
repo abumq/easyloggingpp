@@ -3381,6 +3381,7 @@ public:
         }
         return false;
     }
+
     inline void clearPostStream(void) {
         m_postStream.str("");
     }
