@@ -15,7 +15,6 @@ int main(void) {
     PLOG(INFO) << "A message with plog";
     PLOG_IF(true, INFO) << "A message with plog";
     PLOG_IF(false, INFO) << "A message with plog";
-    PCHECK(false) << "This is not good";
     PCHECK(true) << "This is good";
     return 0;
 }
