@@ -834,6 +834,8 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 ### Logging perror()
 Easylogging++ supports `perror()` styled logging using `PLOG()`, `PLOG_IF()`, and `PCHECK()` using `default` logger; and for custom logger use `CPLOG(LEVEL, LoggerId)`, `CPLOG_IF(Condition, LEVEL, LoggerId)`. This will append `: log-error [errno]` in the end of log line.
 
+> Since version 9.23
+
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
