@@ -594,7 +594,7 @@ Standard manipulators are also supported, in addition std::stringstream is also 
  [![top] Goto Top](#table-of-contents)
  
 ### Registering New Loggers
-Loggers are unique in logger repository by ID. You can register new logger the same way as you would get logger. Using `getLogger(.., ..)` from `el::Loggers` helper class. This function takes two params, first being ID and second being boolean to whether or not to register new logger if does not already exist and returns pointer to existing (or newly created) el::Logger class. This second param is optional and defaults to true. If you set it to false and logger does not exist already, it will return nullptr.
+Loggers are unique in logger repository by ID. You can register new logger the same way as you would get logger. Using `getLogger(.., ..)` from `el::Loggers` helper class. This function takes two params, first being ID and second being boolean (optional) to whether or not to register new logger if does not already exist and returns pointer to existing (or newly created) el::Logger class. This second param is optional and defaults to true. If you set it to false and logger does not exist already, it will return nullptr.
 
 By default, Easylogging++ registers two loggers;
 * Default logger (ID: `default`)
@@ -605,7 +605,7 @@ If you wish to register a new logger, say e.g, with ID `business`
 el::Logger* businessLogger = el::Loggers::getLogger("business");
 ```	
 
-This will register a new logger if it does not already exist otherwise it will get an existing one. But if you has passed in `false` to the second param and logger does not already exist, `businessLogger` will be nullptr.
+This will register a new logger if it does not already exist otherwise it will get an existing one. But if you have passed in `false` to the second param and logger does not already exist, `businessLogger` will be nullptr.
 
 When you register a new logger, default configurations are used (see Default Configurations section above). Also worth noticing, logger IDs are case sensitive.
 
