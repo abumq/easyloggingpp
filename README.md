@@ -67,6 +67,7 @@
     <a href="#stacktrace">Stacktrace</a>
     <a href="#multi-threading">Multi-threading</a>
     <a href="#check-macros">CHECK Macros</a>
+    <a href="#logging-perror">Logging perror()</a>
     <a href="#qt-logging">Qt Logging</a>
     <a href="#boost-logging">Boost Logging</a>
     <a href="#wxwidgets-logging">wxWidgets Logging</a>
@@ -827,6 +828,11 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_STRCASENE(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_STRCASENE(username1, username2) << "Same username not allowed";`           |
 
 > Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
+
+ [![top] Goto Top](#table-of-contents)
+ 
+### Logging perror()
+Easylogging++ supports `perror()` styled logging using `PLOG()`, `PLOG_IF()`, and `PCHECK()` using `default` logger; and for custom logger use `CPLOG(LEVEL, LoggerId)`, `CPLOG_IF(Condition, LEVEL, LoggerId)`. This will append `: log-error [errno]` in the end of log line.
 
  [![top] Goto Top](#table-of-contents)
  
