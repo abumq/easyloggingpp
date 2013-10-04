@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.23
+//  Easylogging++ v9.23 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -140,12 +140,15 @@
 // Some special functions that are VC++ specific
 #undef SPRINTF
 #undef STRTOK
+#undef STRERROR
 #if _ELPP_CRT_DBG_WARNINGS
 #   define SPRINTF sprintf_s
 #   define STRTOK(a,b,c) strtok_s(a,b,c)
+#   define STRERROR(a, b, c) strerror_s(a, b, c)
 #else
 #   define SPRINTF sprintf
 #   define STRTOK(a,b,c) strtok(a,b)
+#   define STRERROR(a, b, c) strerror(c)
 #endif
 // Compiler specific support evaluations
 #if _ELPP_MINGW || _ELPP_COMPILER_CLANG
@@ -231,6 +234,7 @@
 #include <cctype>
 #include <cwchar>
 #include <csignal>
+#include <cerrno>
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
 #   include <execinfo.h>
@@ -4796,8 +4800,13 @@ public:
 #undef CPLOG_IF
 #undef PLOG
 #undef PLOG_IF
-#define CPLOG(LEVEL, loggerId) el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; CLOG(LEVEL, loggerId)
-#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]"; } CLOG_IF(condition, LEVEL, loggerId)
+#if _ELPP_COMPILER_MSVC
+#   define _ELPP_ERRORNO_TO_POSTSTREAM el::base::elStorage->setAppendPostStreamValue(true); char buff[256]; strerror_s(buff, 256, errno); el::base::elStorage->postStream() << ": " << buff << " [" << errno << "]";
+#else
+#   define _ELPP_ERRORNO_TO_POSTSTREAM el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]";
+#endif
+#define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } CLOG(LEVEL, loggerId)
+#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } CLOG_IF(condition, LEVEL, loggerId)
 #define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
 //
