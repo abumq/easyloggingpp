@@ -3247,7 +3247,7 @@ private:
 class LogMessage {
 public:
     LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,
-                          VRegistry::VLevel verboseLevel, Logger* logger, std::string&& message) :
+                          base::VRegistry::VLevel verboseLevel, Logger* logger, std::string&& message) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(message)) {
     }
@@ -3263,7 +3263,7 @@ private:
     const char* m_file;
     unsigned long int m_line;
     const char* m_func;
-    VRegistry::VLevel m_verboseLevel;
+    base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     std::string m_message;
 };
