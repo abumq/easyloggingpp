@@ -3097,7 +3097,7 @@ public:
         base::utils::Registry<Logger, std::string>::unregister(logger->id());
     }
 
-    inline LogStreamsReferenceMap* logStreamsReference(void) {
+    inline base::LogStreamsReferenceMap* logStreamsReference(void) {
         return &m_logStreamsReference;
     }
 private:
