@@ -2576,7 +2576,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 public:
     /// @brief Constructor to initialize (construct) the object off el::Configurations
     /// @param configurations Configurations pointer/reference to base this typed configurations off.
-    /// @param logStreamsReference Use el::base::elStorage->registeredLoggers()->logStreamsReference()
+    /// @param logStreamsReference Use ELPP->registeredLoggers()->logStreamsReference()
     explicit TypedConfigurations(Configurations* configurations, base::LogStreamsReferenceMap* logStreamsReference) {
         m_configurations = configurations;
         m_logStreamsReference = logStreamsReference;
@@ -3349,7 +3349,7 @@ public:
         return m_tempStream;
     }
 
-    inline void setPreRollOutHandler(const PreRollOutHandler& handler) {
+    inline void setPreRollOutHandler(const base::PreRollOutHandler& handler) {
         m_preRollOutHandler = handler;
     }
 
@@ -3357,7 +3357,7 @@ public:
         m_preRollOutHandler = base::defaultPreRollOutHandler;
     }
 
-    inline PreRollOutHandler& preRollOutHandler(void) {
+    inline base::PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
     }
 
@@ -3409,7 +3409,7 @@ private:
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
     unsigned short m_flags;
-    PreRollOutHandler m_preRollOutHandler;
+    base::PreRollOutHandler m_preRollOutHandler;
     bool m_appendPostStreamValue;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_tempStream;
@@ -3437,6 +3437,7 @@ private:
     }
 };
 extern std::unique_ptr<base::Storage> elStorage;
+#define ELPP el::base::elStorage
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
@@ -3450,12 +3451,12 @@ public:
             return;
         }
         // We minimize the time of elStorage's lock - this lock is released after log is written
-        base::elStorage->lock();
+        ELPP->lock();
         if (needToLockLogger) {
             m_log.logger()->lock();
         }
 #if (defined(_ELPP_STRICT_SIZE_CHECK))
-        m_log.logger()->m_typedConfigurations->validateFileRolling(m_log.level(), base::elStorage->preRollOutHandler());
+        m_log.logger()->m_typedConfigurations->validateFileRolling(m_log.level(), ELPP->preRollOutHandler());
 #endif // (defined(_ELPP_STRICT_SIZE_CHECK))
 
         base::TypedConfigurations* tc = m_log.logger()->m_typedConfigurations;
@@ -3490,15 +3491,15 @@ public:
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
-            base::elStorage->tempStream() << m_log.line();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, base::elStorage->tempStream().str());
-            base::elStorage->tempStream().str("");
+            ELPP->tempStream() << m_log.line();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, ELPP->tempStream().str());
+            ELPP->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
-            base::elStorage->tempStream() << m_log.file() << ":" << m_log.line();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, base::elStorage->tempStream().str());
-            base::elStorage->tempStream().str("");
+            ELPP->tempStream() << m_log.file() << ":" << m_log.line();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, ELPP->tempStream().str());
+            ELPP->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::User)) {
             // User
@@ -3511,17 +3512,17 @@ public:
         if (m_log.level() == Level::Verbose &&
               logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
-            base::elStorage->tempStream() << m_log.verboseLevel();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, base::elStorage->tempStream().str());
-            base::elStorage->tempStream().str("");
+            ELPP->tempStream() << m_log.verboseLevel();
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, ELPP->tempStream().str());
+            ELPP->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
             // Log message
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
         }
 #if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        for (std::vector<CustomFormatSpecifier>::iterator it = base::elStorage->m_customFormatSpecifiers.begin();
-                it != base::elStorage->m_customFormatSpecifiers.end(); ++it) {
+        for (std::vector<CustomFormatSpecifier>::iterator it = ELPP->m_customFormatSpecifiers.begin();
+                it != ELPP->m_customFormatSpecifiers.end(); ++it) {
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
@@ -3548,7 +3549,7 @@ private:
                 ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
             }
         }
-        base::elStorage->unlock();
+        ELPP->unlock();
         if (m_log.logger()->m_typedConfigurations->toStandardOutput(m_log.level())) {
             if (m_log.level() == Level::Error || m_log.level() == Level::Fatal) {
                 std::cerr << logLine << std::endl;
@@ -3646,7 +3647,7 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, VRegistry::VLevel verboseLevel = 0, bool skipDispatch = false) :
+               const char* func, base::VRegistry::VLevel verboseLevel = 0, bool skipDispatch = false) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_skipDispatch(skipDispatch), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
@@ -3662,16 +3663,16 @@ public:
             m_logger->lock(); // This should not be unlocked by checking m_proceed because
                               // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
-            m_containerLogSeperator = base::elStorage->hasFlag(LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
+            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
         }
     }
 
     virtual ~Writer(void) {
         if (m_proceed && !m_skipDispatch) {
-            if (base::elStorage->appendPostStreamValue()) {
-                m_logger->stream() << base::elStorage->m_postStream.str();
-                base::elStorage->clearPostStream();
-                base::elStorage->setAppendPostStreamValue(false);
+            if (ELPP->appendPostStreamValue()) {
+                m_logger->stream() << ELPP->m_postStream.str();
+                ELPP->clearPostStream();
+                ELPP->setAppendPostStreamValue(false);
             }
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str())).dispatch(false);
@@ -3681,7 +3682,7 @@ public:
             m_logger->unlock();
         }
         if (m_proceed && m_level == Level::Fatal
-                && !base::elStorage->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+                && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             exit(1);
         }
     }
@@ -4018,7 +4019,7 @@ public:
 ///        for an example usage
 #define MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
     std::ostream& operator<<(std::ostream& ss, const ContainerType& container) {\
-        const char* sep = el::base::elStorage->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";\
+        const char* sep = ELPP->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";\
         ContainerType::const_iterator elem = container.begin();\
         ContainerType::const_iterator endElem = container.end();\
         std::size_t size_ = container.SizeMethod; \
@@ -4060,7 +4061,7 @@ private:
     const char* m_file;
     const unsigned long int m_line;
     const char* m_func;
-    VRegistry::VLevel m_verboseLevel;
+    base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
     bool m_skipDispatch;
@@ -4084,7 +4085,7 @@ private:
 #define _ELPP_WRITE_LOG(loggerId, level) el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC)
 #define _ELPP_WRITE_LOG_IF(condition, loggerId, level) if (condition) \
     el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC)
-#define _ELPP_WRITE_LOG_EVERY_N(occasion, loggerId, level) if (el::base::elStorage->validateCounter(__FILE__, __LINE__, occasion)) \
+#define _ELPP_WRITE_LOG_EVERY_N(occasion, loggerId, level) if (ELPP->validateCounter(__FILE__, __LINE__, occasion)) \
     el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC)
 
 /// @brief Represents trackable block of code that conditionally adds performance status to log
@@ -4294,7 +4295,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
             ss << "Application has crashed due to [" <<
                   base::consts::kCrashSignals[i].name <<
                   "] signal";
-            if (base::elStorage->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
+            if (ELPP->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
                 ss << std::endl <<
                       "    " << base::consts::kCrashSignals[i].brief << std::endl <<
                       "    " << base::consts::kCrashSignals[i].detail;
@@ -4381,26 +4382,26 @@ class Helpers : private base::StaticClass {
 public:
     /// @brief Sets application arguments and figures out whats active for logging and whats not.
     static inline void setArgs(int argc, char** argv) {
-        base::elStorage->setApplicationArguments(argc, argv);
+        ELPP->setApplicationArguments(argc, argv);
     }
     /// @copydoc setArgs(int argc, char** argv)
     static inline void setArgs(int argc, const char** argv) {
-        base::elStorage->setApplicationArguments(argc, const_cast<char**>(argv));
+        ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
     }
     /// @brief Adds logging flag used internally.
     /// @see el::LoggingFlag
     static inline void addFlag(const el::LoggingFlag& flag) {
-        base::elStorage->addFlag(flag);
+        ELPP->addFlag(flag);
     }
     /// @brief Removes logging flag used internally.
     /// @see el::LoggingFlag
     static inline void removeFlag(const el::LoggingFlag& flag) {
-        base::elStorage->removeFlag(flag);
+        ELPP->removeFlag(flag);
     }
     /// @brief Determines whether or not certain flag is active
     /// @see el::LoggingFlag
     static inline bool hasFlag(const el::LoggingFlag& flag) {
-        return base::elStorage->hasFlag(flag);
+        return ELPP->hasFlag(flag);
     }
     /// @brief Overrides default crash handler and installs custom handler.
     /// @param crashHandler A functor with no return type that takes single int argument.
@@ -4423,35 +4424,35 @@ public:
     }
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out (can be useful for backing up)
     static inline void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
-        base::elStorage->setPreRollOutHandler(handler);
+        ELPP->setPreRollOutHandler(handler);
     }
     /// @brief Uninstalls pre rollout handler
     static inline void uninstallPreRollOutHandler(void) {
-        base::elStorage->unsetPreRollOutHandler();
+        ELPP->unsetPreRollOutHandler();
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
-        base::elStorage->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
+        ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
         el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", 0, true);
         w << templ;
         return w.m_logger->stream().str();
     }
     /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
-        return base::elStorage->commandLineArgs();
+        return ELPP->commandLineArgs();
     }
     /// @brief Installs user defined format specifier and handler
     static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
-        base::elStorage->installCustomFormatSpecifier(customFormatSpecifier);
+        ELPP->installCustomFormatSpecifier(customFormatSpecifier);
     }
     /// @brief Uninstalls user defined format specifier and handler
     static inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
-        return base::elStorage->uninstallCustomFormatSpecifier(formatSpecifier);
+        return ELPP->uninstallCustomFormatSpecifier(formatSpecifier);
     }
     /// @brief Returns true if custom format specifier is installed
     static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
-        return base::elStorage->hasCustomFormatSpecifier(formatSpecifier);
+        return ELPP->hasCustomFormatSpecifier(formatSpecifier);
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
@@ -4459,11 +4460,11 @@ class Loggers : private base::StaticClass {
 public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
-        return base::elStorage->registeredLoggers()->get(identity, registerIfNotAvailable);
+        return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
     }
     /// @brief Whether or not logger with id is registered
     static inline bool hasLogger(const std::string& identity) {
-        return base::elStorage->registeredLoggers()->has(identity);
+        return ELPP->registeredLoggers()->has(identity);
     }
     /// @brief Reconfigures specified logger with new configurations
     static inline Logger* reconfigureLogger(Logger* logger, const Configurations& configurations) {
@@ -4479,8 +4480,8 @@ public:
     }
     /// @brief Reconfigures all the existing loggers with new configurations
     static inline void reconfigureAllLoggers(Configurations& configurations) {
-        for (base::RegisteredLoggers::iterator it = base::elStorage->registeredLoggers()->begin();
-                it != base::elStorage->registeredLoggers()->end(); ++it) {
+        for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
+                it != ELPP->registeredLoggers()->end(); ++it) {
             Loggers::reconfigureLogger(it->second, configurations);
         }
     }
@@ -4490,8 +4491,8 @@ public:
     }
     ///@brief Reconfigures single configuration for all the loggers for specified level
     static inline void reconfigureAllLoggers(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
-        for (base::RegisteredLoggers::iterator it = base::elStorage->registeredLoggers()->begin();
-                it != base::elStorage->registeredLoggers()->end(); ++it) {
+        for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
+                it != ELPP->registeredLoggers()->end(); ++it) {
             Logger* logger = it->second;
             logger->refConfigurations().set(level, configurationType, value);
             logger->reconfigure();
@@ -4499,7 +4500,7 @@ public:
     }
     /// @brief Sets default configurations. This configuration is used for future (and conditionally for existing) loggers
     static inline void setDefaultConfigurations(Configurations& configurations, bool reconfigureExistingLoggers = false) {
-        base::elStorage->registeredLoggers()->setDefaultConfigurations(configurations);
+        ELPP->registeredLoggers()->setDefaultConfigurations(configurations);
         if (reconfigureExistingLoggers) {
             Loggers::reconfigureAllLoggers(configurations);
         }
@@ -4508,8 +4509,8 @@ public:
     /// @param [out] targetList List of fill up.
     static inline std::vector<std::string>& populateAllLoggerIds(std::vector<std::string>& targetList) {
         targetList.clear();
-        for (base::RegisteredLoggers::iterator it = base::elStorage->registeredLoggers()->list().begin();
-                it != base::elStorage->registeredLoggers()->list().end(); ++it) {
+        for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->list().begin();
+                it != ELPP->registeredLoggers()->list().end(); ++it) {
             targetList.push_back(it->first);
         }
         return targetList;
@@ -4580,7 +4581,7 @@ public:
 } // namespace el
 #undef VLOG_IS_ON
 /// @brief Determines whether verbose logging is on for specified level current file.
-#define VLOG_IS_ON(verboseLevel) (el::base::elStorage->vRegistry()->allowed(verboseLevel, __FILE__, el::base::elStorage->flags()))
+#define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__, ELPP->flags()))
 #undef TIMED_BLOCK
 #undef TIMED_FUNC
 #undef _ELPP_MIN_UNIT
@@ -4611,7 +4612,7 @@ public:
 #undef ELPP_COUNTER
 #undef ELPP_COUNTER_POS
 /// @brief Gets hit counter for file/line
-#define ELPP_COUNTER (el::base::elStorage->hitCounters()->getCounter(__FILE__, __LINE__))
+#define ELPP_COUNTER (ELPP->hitCounters()->getCounter(__FILE__, __LINE__))
 /// @brief Gets hit counter position for file/line, -1 if not registered yet
 #define ELPP_COUNTER_POS (ELPP_COUNTER == nullptr ? -1 : ELPP_COUNTER->hitCounts())
 // Undef levels to support LOG(LEVEL)
@@ -4750,7 +4751,7 @@ public:
 #   define CTRACE_EVERY_N(occasion, loggerId) el::base::NullWriter()
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) VLOG_IF(el::base::elStorage->validateCounter(__FILE__, __LINE__, occasion), vlevel)
+#   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) VLOG_IF(ELPP->validateCounter(__FILE__, __LINE__, occasion), vlevel)
 #else
 #   define CVERBOSE_EVERY_N(occasion, vlevel, loggerId) el::base::NullWriter()
 #endif // _ELPP_VERBOSE_LOG
@@ -4801,9 +4802,9 @@ public:
 #undef PLOG
 #undef PLOG_IF
 #if _ELPP_COMPILER_MSVC
-#   define _ELPP_ERRORNO_TO_POSTSTREAM el::base::elStorage->setAppendPostStreamValue(true); char buff[256]; strerror_s(buff, 256, errno); el::base::elStorage->postStream() << ": " << buff << " [" << errno << "]";
+#   define _ELPP_ERRORNO_TO_POSTSTREAM ELPP->setAppendPostStreamValue(true); char buff[256]; strerror_s(buff, 256, errno); ELPP->postStream() << ": " << buff << " [" << errno << "]";
 #else
-#   define _ELPP_ERRORNO_TO_POSTSTREAM el::base::elStorage->setAppendPostStreamValue(true); el::base::elStorage->postStream() << ": " << strerror(errno) << " [" << errno << "]";
+#   define _ELPP_ERRORNO_TO_POSTSTREAM ELPP->setAppendPostStreamValue(true); ELPP->postStream() << ": " << strerror(errno) << " [" << errno << "]";
 #endif
 #define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } CLOG(LEVEL, loggerId)
 #define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } CLOG_IF(condition, LEVEL, loggerId)
