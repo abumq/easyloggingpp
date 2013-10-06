@@ -6,6 +6,7 @@ Easylogging++ v9.24 RELEASE NOTES
 ==========================
 
  - `strerror` CRT warning fix for VC++ when using PLOG() or any equivalent (issue# 123)
+ - Fixed `CVERBOSE_EVERY_N` resolution from `VLOG_IF` to custom logger verbose log
 
 ==========================
 =         NOTES          =
