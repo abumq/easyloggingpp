@@ -145,7 +145,5 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
     EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.hh", ELPP->flags())));
     EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.h", ELPP->flags())));
     EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.c", ELPP->flags())));
-
-
 }
 #endif // VMODULE_TESTS_H_
