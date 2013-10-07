@@ -843,7 +843,7 @@ Easylogging++ supports `perror()` styled logging using `PLOG(LEVEL)`, `PLOG_IF(C
 ### Syslog
 Easylogging++ supports syslog for platforms that have `syslog.h` header. In order to enable it, you need to define `_ELPP_SYSLOG`. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
 
-Syslog in Easylogging++ supports streams logging, following example shows a potential usage
+Syslog in Easylogging++ supports C++ styled streams logging, following example;
 ```c++
 #include "easylogging++.h"
 

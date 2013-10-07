@@ -16,5 +16,9 @@ int main(void) {
  
     SYSLOG(INFO) << "My first easylogging++ syslog message";
 
+    SYSLOG_IF(true, INFO) << "This is conditional info syslog";
+    for (int i = 1; i <= 10; ++i)
+        SYSLOG_EVERY_N(2, INFO) << "This is [" << i << "] iter of SYSLOG_EVERY_N";
+
     return 0;
 }

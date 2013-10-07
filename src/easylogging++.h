@@ -4886,7 +4886,7 @@ public:
 #undef SYSLOG_IF
 #if defined(_ELPP_SYSLOG)
 #   define CSYSLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
-#   define CSYSLOG_IF(condition, LEVEL, loggerId) if (condition) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define CSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
 #   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
 #   define SYSLOG(LEVEL) CSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_IF(condition, LEVEL) CSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
