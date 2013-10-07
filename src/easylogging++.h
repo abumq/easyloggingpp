@@ -3448,39 +3448,38 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, base::LogMessage&& log, unsigned short dispatchAction) :
+    LogDispatcher(bool proceed, base::LogMessage&& logMessage, unsigned short dispatchAction) :
         m_proceed(proceed),
-        m_log(std::move(log)),
+        m_logMessage(std::move(logMessage)),
         m_dispatchAction(std::move(dispatchAction)) {
+    }
+
+    void dispatch(bool lockLogger) {
         if (m_proceed && base::utils::hasFlag(base::DispatchAction::None, m_dispatchAction)) {
             m_proceed = false;
         }
-    }
-
-    void dispatch(bool needToLockLogger) {
         if (!m_proceed) {
             return;
         }
         // We minimize the time of elStorage's lock - this lock is released after log is written
         ELPP->lock();
-        if (needToLockLogger) {
-            m_log.logger()->lock();
+        if (lockLogger) {
+            m_logMessage.logger()->lock();
         }
 #if (defined(_ELPP_STRICT_SIZE_CHECK))
-        m_log.logger()->m_typedConfigurations->validateFileRolling(m_log.level(), ELPP->preRollOutHandler());
+        m_logMessage.logger()->m_typedConfigurations->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
 #endif // (defined(_ELPP_STRICT_SIZE_CHECK))
-
-        base::TypedConfigurations* tc = m_log.logger()->m_typedConfigurations;
-        base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_log.level()));
+        base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
+        base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_logMessage.level()));
         std::string logLine = logFormat->format();
         if (logFormat->hasFlag(base::FormatFlags::AppName)) {
             // App name
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
-                    m_log.logger()->parentApplicationName());
+                    m_logMessage.logger()->parentApplicationName());
         }
         if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
             // Logger ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_log.logger()->id());
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_logMessage.logger()->id());
         }
         if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
             // Thread ID
@@ -3490,25 +3489,25 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
             // DateTime
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
-                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_log.level())));
+                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_logMessage.level())));
         }
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
             // Function
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_log.func()));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_logMessage.func()));
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_log.file()));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_logMessage.file()));
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
-            ELPP->tempStream() << m_log.line();
+            ELPP->tempStream() << m_logMessage.line();
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, ELPP->tempStream().str());
             ELPP->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
-            ELPP->tempStream() << m_log.file() << ":" << m_log.line();
+            ELPP->tempStream() << m_logMessage.file() << ":" << m_logMessage.line();
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, ELPP->tempStream().str());
             ELPP->tempStream().str("");
         }
@@ -3520,16 +3519,16 @@ public:
             // Host
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
         }
-        if (m_log.level() == Level::Verbose &&
+        if (m_logMessage.level() == Level::Verbose &&
               logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
-            ELPP->tempStream() << m_log.verboseLevel();
+            ELPP->tempStream() << m_logMessage.verboseLevel();
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, ELPP->tempStream().str());
             ELPP->tempStream().str("");
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
             // Log message
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_log.message());
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_logMessage.message());
         }
 #if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
         for (std::vector<CustomFormatSpecifier>::iterator it = ELPP->m_customFormatSpecifiers.begin();
@@ -3537,21 +3536,25 @@ public:
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        dispatch(logLine, needToLockLogger);
+        dispatch(std::move(logLine));
+        if (lockLogger) {
+            m_logMessage.logger()->unlock();
+        }
+        ELPP->unlock();
     }
 private:
     bool m_proceed;
-    base::LogMessage m_log;
+    base::LogMessage m_logMessage;
     unsigned short m_dispatchAction;
 
-    void dispatch(const std::string& logLine, bool needToUnlockLogger) {
+    void dispatch(std::string&& logLine) {
         if (base::utils::hasFlag(base::DispatchAction::Log, m_dispatchAction)) {
-            if (m_log.logger()->m_typedConfigurations->toFile(m_log.level())) {
-                std::fstream* fs = m_log.logger()->m_typedConfigurations->fileStream(m_log.level());
+            if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
+                std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
                     *fs << logLine << std::endl;
                      if (fs->fail()) {
-                        ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_log.logger()->m_typedConfigurations->filename(m_log.level()) << "].\n"
+                        ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_logMessage.logger()->m_typedConfigurations->filename(m_logMessage.level()) << "].\n"
                                 << "Few possible reasons (could be something else):\n"
                                 << "      * Permission denied\n"
                                 << "      * Disk full\n"
@@ -3562,17 +3565,13 @@ private:
                     ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
                 }
             }
-            if (m_log.logger()->m_typedConfigurations->toStandardOutput(m_log.level())) {
-                if (m_log.level() == Level::Error || m_log.level() == Level::Fatal) {
+            if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
+                if (m_logMessage.level() == Level::Error || m_logMessage.level() == Level::Fatal) {
                     std::cerr << logLine << std::endl;
                 } else {
                     std::cout << logLine << std::endl;
                 }
             }
-        }
-        ELPP->unlock();
-        if (needToUnlockLogger) {
-            m_log.logger()->unlock();
         }
     }
 };
