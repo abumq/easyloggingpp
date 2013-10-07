@@ -68,6 +68,7 @@
     <a href="#multi-threading">Multi-threading</a>
     <a href="#check-macros">CHECK Macros</a>
     <a href="#logging-perror">Logging perror()</a>
+    <a href="#syslog">syslog</a>
     <a href="#qt-logging">Qt Logging</a>
     <a href="#boost-logging">Boost Logging</a>
     <a href="#wxwidgets-logging">wxWidgets Logging</a>
