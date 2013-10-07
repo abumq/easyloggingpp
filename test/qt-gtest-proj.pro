@@ -13,7 +13,9 @@ QMAKE_CXX = $$COMPILER
 QMAKE_LINK = $$COMPILER
 
 DEFINES += _ELPP_STOP_ON_FIRST_ASSERTION \
-           _ELPP_STL_LOGGING
+           _ELPP_STL_LOGGING \
+           _ELPP_SYSLOG \
+           _ELPP_FORCE_ENV_VAR_FROM_BASH
 
 LIBS += -lgtest
 
@@ -34,4 +36,5 @@ HEADERS  += \
     loggable-test.h \
     logger-test.h \
     verbose-app-arguments-test.h \
-    custom-format-specifier-test.h
+    custom-format-specifier-test.h \
+    syslog-test.h

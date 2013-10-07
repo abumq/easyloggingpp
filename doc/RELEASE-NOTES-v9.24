@@ -9,6 +9,13 @@ Easylogging++ v9.24 RELEASE NOTES
  - Fixed `CVERBOSE_EVERY_N` resolution from `VLOG_IF` to custom logger verbose log
 
 ==========================
+=       NEW FEATURES     =
+==========================
+
+ - New helper `reconfigureLogger(const std::string&, const ConfigurationType&, const std::string&)`
+ - Support for syslog (issue #120)
+
+==========================
 =         NOTES          =
 ==========================
 

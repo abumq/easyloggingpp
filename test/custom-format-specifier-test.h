@@ -14,7 +14,9 @@ TEST(CustomFormatSpecifierTest, TestInstall) {
 }
 
 TEST(CustomFormatSpecifierTest, TestResolution) {
-    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %ip: %log");
+    Configurations c;
+    c.setGlobally(el::ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %ip: %log");
+    el::Loggers::reconfigureLogger(consts::kDefaultLoggerId, c);
     LOG(INFO) << "My ip test";
     std::string s = BUILD_STR(getDate() << " 127.0.0.1: My ip test\n");
     EXPECT_EQ(s, tail(1));

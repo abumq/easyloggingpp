@@ -23,13 +23,14 @@ static const char* logfile = "/tmp/logs/el.gtest.log";
 
 static void reconfigureLoggersForTest(void) {
     Configurations c;
-    c.setFromBase(const_cast<el::Configurations*>(Loggers::getLogger("default")->configurations()));
-    c.setGlobally(el::ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %log");
-    c.setGlobally(el::ConfigurationType::Filename, "/tmp/logs/el.gtest.log");
-    c.setGlobally(el::ConfigurationType::MaxLogFileSize, "2097152"); // 2MB
-    c.setGlobally(el::ConfigurationType::ToStandardOutput, "false");
-    c.setGlobally(el::ConfigurationType::PerformanceTracking, "true");
+    c.setGlobally(ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %log");
+    c.setGlobally(ConfigurationType::Filename, "/tmp/logs/el.gtest.log");
+    c.setGlobally(ConfigurationType::MaxLogFileSize, "2097152"); // 2MB
+    c.setGlobally(ConfigurationType::ToStandardOutput, "false");
+    c.setGlobally(ConfigurationType::PerformanceTracking, "true");
     Loggers::setDefaultConfigurations(c, true);
+    // We do not want to reconfgure syslog with date/time
+    Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %log");
 
     if (!Helpers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
         Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
@@ -64,8 +65,8 @@ static std::string tail(unsigned int n, const char* filename = logfile) {
     return ss.str();
 }
 
-static std::string getDate() {
-    return DateTime::getDateTime("%a %b %d, %H:%m");
+static std::string getDate(const char* format = "%a %b %d, %H:%m") {
+    return DateTime::getDateTime(format);
 }
 
 static void cleanLogFile(const char* filename = logfile) {
@@ -76,4 +77,5 @@ static void cleanLogFile(const char* filename = logfile) {
 #undef BUILD_STR
 #define BUILD_STR(strb) [&]() -> std::string { std::stringstream ssb; ssb << strb; return ssb.str(); }()
 
+static const char* kSysLogIndent = "Easylogging++ Unit Tests";
 #endif // TEST_HELPERS_H_

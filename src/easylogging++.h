@@ -228,6 +228,9 @@
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
 #endif // (!(_ELPP_CXX0X || _ELPP_CXX11))
 // Headers
+#if defined(_ELPP_SYSLOG)
+#   include <syslog.h>
+#endif // defined(_ELPP_SYSLOG)
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -643,6 +646,7 @@ namespace consts {
     // Miscellaneous constants
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
+    static const char* kSysLogLoggerId                         =      "syslog";
     static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
@@ -3282,7 +3286,7 @@ private:
 };
 /// @brief Action to be taken for dispatching
 enum class DispatchAction : unsigned short {
-    None = 1, Log = 2, PostStream = 4
+    None = 1, NormalLog = 2, PostStream = 4, SysLog = 8
 };
 /// @brief Contains all the storages that is needed by writer
 ///
@@ -3305,7 +3309,12 @@ public:
         Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
         performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
         performanceLogger->reconfigure();
-
+#if defined(_ELPP_SYSLOG)
+        // Register syslog logger and reconfigure format
+        Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
+        sysLogLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%level: %log");
+        sysLogLogger->reconfigure();
+#endif //  defined(_ELPP_SYSLOG)
         // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
         Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
         templateHelperLogger->refConfigurations().setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
@@ -3548,7 +3557,7 @@ private:
     unsigned short m_dispatchAction;
 
     void dispatch(std::string&& logLine) {
-        if (base::utils::hasFlag(base::DispatchAction::Log, m_dispatchAction)) {
+        if (base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction)) {
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
                 std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
@@ -3572,6 +3581,24 @@ private:
                     std::cout << logLine << std::endl;
                 }
             }
+        } else if (base::utils::hasFlag(base::DispatchAction::SysLog, m_dispatchAction)) {
+ #if defined(_ELPP_SYSLOG)
+            // Determine syslog priority
+            int sysLogPriority = 0;
+            if (m_logMessage.level() == Level::Fatal)
+                sysLogPriority = LOG_EMERG;
+            else if (m_logMessage.level() == Level::Error)
+                sysLogPriority = LOG_ERR;
+            else if (m_logMessage.level() == Level::Warning)
+                sysLogPriority = LOG_WARNING;
+            else if (m_logMessage.level() == Level::Info)
+                sysLogPriority = LOG_INFO;
+            else if (m_logMessage.level() == Level::Debug)
+                sysLogPriority = LOG_DEBUG;
+            else
+                sysLogPriority = LOG_NOTICE;
+            syslog(sysLogPriority, "%s", logLine.c_str());
+ #endif // defined(_ELPP_SYSLOG)
         }
     }
 };
@@ -3660,7 +3687,7 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, unsigned short dispatchAction = static_cast<unsigned short>(base::DispatchAction::Log),
+               const char* func, unsigned short dispatchAction = static_cast<unsigned short>(base::DispatchAction::NormalLog),
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator("") {
@@ -4127,7 +4154,7 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
-                _ELPP_WRITE_LOG(m_loggerId, m_level, base::utils::bitwise::Or(1, base::DispatchAction::Log)) << "Executed [" << m_blockName << "] in [" << *this << "]";
+                _ELPP_WRITE_LOG(m_loggerId, m_level, base::utils::bitwise::Or(1, base::DispatchAction::NormalLog)) << "Executed [" << m_blockName << "] in [" << *this << "]";
             }
         }
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -4326,7 +4353,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
 #else
     _ELPP_UNUSED(stackTraceIfAvailable)
 #endif // _ELPP_STACKTRACE
-    _ELPP_WRITE_LOG(logger, level, base::utils::bitwise::Or(1, base::DispatchAction::Log)) << ss.str();
+    _ELPP_WRITE_LOG(logger, level, base::utils::bitwise::Or(1, base::DispatchAction::NormalLog)) << ss.str();
 }
 /// @brief Aborts application due with user-defined status
 static void crashAbort(int status) {
@@ -4487,9 +4514,17 @@ public:
     }
     /// @brief Reconfigures logger with new configurations after looking it up using identity
     static inline Logger* reconfigureLogger(const std::string& identity, Configurations& configurations) {
+        return Loggers::reconfigureLogger(Loggers::getLogger(identity), configurations);
+    }
+    /// @brief Reconfigures logger's single configuration
+    static inline Logger* reconfigureLogger(const std::string& identity, const ConfigurationType& configurationType,
+            const std::string& value) {
         Logger* logger = Loggers::getLogger(identity);
-        Loggers::reconfigureLogger(logger, configurations);
-        return logger;
+        if (logger == nullptr) {
+            return nullptr;
+        }
+        logger->refConfigurations().set(Level::Global, configurationType, value);
+        logger->reconfigure();
     }
     /// @brief Reconfigures all the existing loggers with new configurations
     static inline void reconfigureAllLoggers(Configurations& configurations) {
@@ -4782,14 +4817,14 @@ public:
 #undef CLOG_VERBOSE_EVERY_N
 #undef CVLOG_EVERY_N
 // Normal logs
-#define CLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
-#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
+#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
 // Conditional logs
-#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
-#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
+#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
 // Interval logs
-#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
-#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
+#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::NormalLog))
 //
 // Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
@@ -4819,10 +4854,30 @@ public:
 #else
 #   define _ELPP_ERRORNO_TO_POSTSTREAM ELPP->postStream() << ": " << strerror(errno) << " [" << errno << "]";
 #endif
-#define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL(loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::Log, el::base::DispatchAction::PostStream))
-#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::Log, el::base::DispatchAction::PostStream))
+#define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL(loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
+#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
 #define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
+// Generic SYSLOG()
+#undef CSYSLOG
+#undef CSYSLOG_IF
+#undef SYSLOG
+#undef SYSLOG_IF
+#if defined(_ELPP_SYSLOG)
+#   define CSYSLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define CSYSLOG_IF(condition, LEVEL, loggerId) if (condition) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define SYSLOG(LEVEL) CSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
+#   define SYSLOG_IF(condition, LEVEL) CSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define SYSLOG_EVERY_N(n, LEVEL) CSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#else
+#   define CSYSLOG(LEVEL, loggerId) el::base::NullWriter()
+#   define CSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
+#   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define SYSLOG(LEVEL) el::base::NullWriter()
+#   define SYSLOG_IF(condition, LEVEL) el::base::NullWriter()
+#   define SYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
+#endif // defined(_ELPP_SYSLOG)
 //
 // Custom Debug Only Loggers - Requires (level, loggerId)
 //

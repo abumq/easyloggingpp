@@ -596,9 +596,10 @@ Standard manipulators are also supported, in addition std::stringstream is also 
 ### Registering New Loggers
 Loggers are unique in logger repository by ID. You can register new logger the same way as you would get logger. Using `getLogger(.., ..)` from `el::Loggers` helper class. This function takes two params, first being ID and second being boolean (optional) to whether or not to register new logger if does not already exist and returns pointer to existing (or newly created) el::Logger class. This second param is optional and defaults to true. If you set it to false and logger does not exist already, it will return nullptr.
 
-By default, Easylogging++ registers two loggers;
+By default, Easylogging++ registers three loggers (+ an internal logger);
 * Default logger (ID: `default`)
 * Performance logger (ID: `performance`)
+* Syslog logger (if `_ELPP_SYSLOG` macro is defined) (ID: `syslog`)
 
 If you wish to register a new logger, say e.g, with ID `business`
 ```c++
@@ -832,9 +833,27 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
  [![top] Goto Top](#table-of-contents)
  
 ### Logging perror()
-Easylogging++ supports `perror()` styled logging using `PLOG()`, `PLOG_IF()`, and `PCHECK()` using `default` logger; and for custom logger use `CPLOG(LEVEL, LoggerId)`, `CPLOG_IF(Condition, LEVEL, LoggerId)`. This will append `: log-error [errno]` in the end of log line.
+Easylogging++ supports `perror()` styled logging using `PLOG(LEVEL)`, `PLOG_IF(Condition, LEVEL)`, and `PCHECK()` using `default` logger; and for custom logger use `CPLOG(LEVEL, LoggerId)`, `CPLOG_IF(Condition, LEVEL, LoggerId)`. This will append `: log-error [errno]` in the end of log line.
 
 > Since version 9.23
+
+ [![top] Goto Top](#table-of-contents)
+
+### Syslog
+Easylogging++ supports syslog for platforms that have `syslog.h` header. In order to enable it, you need to define `_ELPP_SYSLOG`. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
+
+Syslog in Easylogging++ supports streams logging, following example shows a potential usage
+```c++
+#include "easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
+int main(void) {
+    SYSLOG(INFO) << "This is syslog - read it from /var/log/syslog"
+    return 0;
+}
+```
+
+> Since version 9.24
 
  [![top] Goto Top](#table-of-contents)
  

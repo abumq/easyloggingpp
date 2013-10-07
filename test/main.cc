@@ -14,12 +14,14 @@
 #include "logger-test.h"
 #include "loggable-test.h"
 #include "custom-format-specifier-test.h"
+#include "syslog-test.h"
 
 TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");
 
-
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
+    openlog(kSysLogIndent, 0, 0);
+
     reconfigureLoggersForTest();
 
     std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;
