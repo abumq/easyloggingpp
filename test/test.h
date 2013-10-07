@@ -5,16 +5,6 @@
 #ifndef TEST_HELPERS_H_
 #define TEST_HELPERS_H_
 
-// We define these macros here for travis to pick up
-#define _ELPP_STOP_ON_FIRST_ASSERTION
-#define _ELPP_STL_LOGGING
-#define _ELPP_FORCE_ENV_VAR_FROM_BASH
-#define _ELPP_ENABLE_THREADING
-#define _ELPP_STACKTRACE_ON_CRASH
-#define _ELPP_DISABLE_VMODULES_EXTENSION
-#define _ELPP_STRICT_SIZE_CHECK
-#define _ELPP_SYSLOG
-
 #include <gtest/gtest.h>
 #include "easylogging++.h"
 
