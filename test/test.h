@@ -69,6 +69,10 @@ static std::string getDate(const char* format = "%a %b %d, %H:%m") {
     return DateTime::getDateTime(format);
 }
 
+static bool fileExists(const char* filename) {
+    return File::pathExists(filename, true);
+}
+
 static void cleanLogFile(const char* filename = logfile) {
     std::cout << "Cleaning out log file...[" << logfile << "]\n";
     std::ofstream fstr(filename, std::ofstream::trunc);
