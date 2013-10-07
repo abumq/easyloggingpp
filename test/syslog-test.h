@@ -11,9 +11,8 @@ TEST(SysLogTest, TestSysLogFile) {
 
     SYSLOG(INFO) << "this is my syslog";
     sleep(1); // Make sure daemon has picked it up
-    std::string expectedEnd = BUILD_STR(OS::currentHost() << " " << kSysLogIndent << ": INFO : this is my syslog\n");
+    std::string expectedEnd = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : this is my syslog\n");
     std::string actual = tail(1, kSysLogFile);
-
     EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
 }
 

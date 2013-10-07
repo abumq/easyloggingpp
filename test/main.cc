@@ -20,7 +20,6 @@ TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
-    openlog(kSysLogIndent, 0, 0);
 
     reconfigureLoggersForTest();
 

@@ -77,5 +77,5 @@ static void cleanLogFile(const char* filename = logfile) {
 #undef BUILD_STR
 #define BUILD_STR(strb) [&]() -> std::string { std::stringstream ssb; ssb << strb; return ssb.str(); }()
 
-static const char* kSysLogIndent = "Easylogging++ Unit Tests";
+static const char* kSysLogIdent = "qt-gtest-proj";
 #endif // TEST_HELPERS_H_
