@@ -3314,6 +3314,8 @@ public:
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
         sysLogLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%level: %log");
         sysLogLogger->reconfigure();
+#else
+        _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif //  defined(_ELPP_SYSLOG)
         // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
         Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
@@ -4525,6 +4527,7 @@ public:
         }
         logger->refConfigurations().set(Level::Global, configurationType, value);
         logger->reconfigure();
+        return logger;
     }
     /// @brief Reconfigures all the existing loggers with new configurations
     static inline void reconfigureAllLoggers(Configurations& configurations) {
