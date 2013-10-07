@@ -4329,22 +4329,22 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
 #endif // _ELPP_STACKTRACE
     _ELPP_WRITE_LOG(logger, level, base::utils::bitwise::Or(1, base::DispatchAction::Log)) << ss.str();
 }
-/// @brief Aborts application due to crash signal
-static void crashAbort(int sig) {
+/// @brief Aborts application due with user-defined status
+static void crashAbort(int status) {
 #if defined(_ELPP_COMPILER_MSVC) && defined(_M_IX86) && defined(_DEBUG)
     // Ignore msvc critical error dialog - break instead (on debug mode)
-    _ELPP_UNUSED(sig)
+    _ELPP_UNUSED(status)
     _asm int 3
 #else
-    exit(sig);
+    exit(status);
 #endif
 }
 /// @brief Default application crash handler
 ///
 /// @detail This function writes log using 'default' logger, prints stack trace for GCC based compilers and exits program.
 static void defaultCrashHandler(int sig) {
-    logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
-    crashAbort(sig);
+    base::debug::logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
+    base::debug::crashAbort(sig);
 }
 /// @brief Handles unexpected crashes
 class CrashHandler : private base::NoCopy {
