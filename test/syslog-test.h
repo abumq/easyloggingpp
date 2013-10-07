@@ -5,9 +5,8 @@
 
 static const char* kSysLogFile = "/var/log/syslog";
 
-#if defined(_ELPP_SYSLOG)
 TEST(SysLogTest, TestSysLogFile) {
-
+#if defined(_ELPP_SYSLOG)
     // To avoid "Easylogging++ last message repeated 2 times"
     SYSLOG(INFO) << "last message suppress";
 
@@ -18,10 +17,10 @@ TEST(SysLogTest, TestSysLogFile) {
     if (fileExists(kSysLogFile)) {
         EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
     }
-}
 #else
     _ELPP_UNUSED(kSysLogFile);
 #   warning "Skipping [SysLogTest] for [_ELPP_SYSLOG] not defined"
 #endif // defined(_ELPP_SYSLOG)
+}
 
 #endif // SYSLOGTEST_H
