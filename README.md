@@ -848,6 +848,9 @@ Syslog in Easylogging++ supports streams logging, following example shows a pote
 
 _INITIALIZE_EASYLOGGINGPP
 int main(void) {
+    _INIT_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER) // This is optional, you may not add it if you dont want to specify options
+    // Alternatively you may do
+    // el::SysLogInitializer elSyslogInit("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
     SYSLOG(INFO) << "This is syslog - read it from /var/log/syslog"
     return 0;
 }

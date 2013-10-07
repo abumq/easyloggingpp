@@ -4406,7 +4406,25 @@ private:
 extern base::debug::CrashHandler elCrashHandler;
 #define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
     std::ostream& operator<<(std::ostream& OutputStreamInstance, const ClassType& ClassInstance)
-
+/// @brief Initializes syslog with process ID, options and facility. calls closelog() on d'tor
+class SysLogInitializer {
+public:
+    SysLogInitializer(const char* processIdent, int options = 0, int facility = 0) {
+#if defined(_ELPP_SYSLOG)
+        openlog(processIdent, options, facility);
+#else
+        _ELPP_UNUSED(processIdent);
+        _ELPP_UNUSED(options);
+        _ELPP_UNUSED(facility);
+#endif // defined(_ELPP_SYSLOG)
+    }
+    virtual ~SysLogInitializer(void) {
+#if defined(_ELPP_SYSLOG)
+        closelog();
+#endif // defined(_ELPP_SYSLOG)
+    }
+};
+#define _INIT_SYSLOG(id, opt, fac) el::SysLogInitializer elSyslogInit(id, opt, fac)
 /// @brief Base of Easylogging++ friendly class
 ///
 /// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
