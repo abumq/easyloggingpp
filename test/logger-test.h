@@ -22,7 +22,7 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
     //       2.      /tmp/logs/myeasylog.log
     //       3.      /tmp/my-test-err.log
     //       4.      /tmp/my-test.log
-    EXPECT_EQ(4, el::base::elStorage->registeredLoggers()->logStreamsReference()->size());
+    EXPECT_EQ(4, ELPP->registeredLoggers()->logStreamsReference()->size());
 }
 
 TEST(LoggerTest, CheckTenThousandLoggers) {

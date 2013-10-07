@@ -31,7 +31,7 @@ const char* getConfFile(void) {
 
 TEST(TypedConfigurationsTest, Initialization) {
     Configurations c(getConfFile());
-    TypedConfigurations tConf(&c, el::base::elStorage->registeredLoggers()->logStreamsReference());
+    TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
 
     EXPECT_TRUE(tConf.enabled(Level::Global));
 
@@ -59,7 +59,7 @@ TEST(TypedConfigurationsTest, Initialization) {
 
 TEST(TypedConfigurationsTest, SharedFileStreams) {
     Configurations c(getConfFile());
-    TypedConfigurations tConf(&c, el::base::elStorage->registeredLoggers()->logStreamsReference());
+    TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     // Make sure we have only two unique file streams for ALL and ERROR
     unsigned short lIndex = LevelHelper::kMinValid;
     std::fstream* prev = nullptr;
@@ -79,7 +79,7 @@ TEST(TypedConfigurationsTest, SharedFileStreams) {
 
 TEST(TypedConfigurationsTest, WriteToFiles) {
     Configurations c(getConfFile());
-    TypedConfigurations tConf(&c, el::base::elStorage->registeredLoggers()->logStreamsReference());
+    TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     {
         EXPECT_TRUE(tConf.fileStream(Level::Info)->is_open());
         EXPECT_EQ("/tmp/my-test.log", tConf.filename(Level::Info));

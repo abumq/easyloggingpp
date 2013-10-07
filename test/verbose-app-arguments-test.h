@@ -119,32 +119,32 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
     c[2] = "\0";
     el::Helpers::setArgs(2, c);
 
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(2, "main.cpp", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(3, "main.h", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(4, "main.c", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(5, "main.cpp", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(2, "main.cxx", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(1, "main.cc", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(3, "main-file-for-prog.cc", el::base::elStorage->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main.h", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "main.c", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(5, "main.cpp", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cxx", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "main.cc", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main-file-for-prog.cc", ELPP->flags())));
 
     el::Helpers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);  // Check strictly
 
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(4, "tmain.cxx", el::base::elStorage->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "tmain.cxx", ELPP->flags())));
 
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(1, "easy.cpp", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(1, "easy.cxx", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(1, "easy.hxx", el::base::elStorage->flags())));
-    EXPECT_TRUE((el::base::elStorage->vRegistry()->allowed(1, "easy.hpp", el::base::elStorage->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cpp", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cxx", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hxx", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hpp", ELPP->flags())));
 
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(2, "easy.cpp", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(2, "easy.cxx", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(2, "easy.hxx", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(2, "easy.hpp", el::base::elStorage->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cpp", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cxx", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hxx", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hpp", ELPP->flags())));
 
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(1, "easy.cc", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(1, "easy.hh", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(1, "easy.h", el::base::elStorage->flags())));
-    EXPECT_FALSE((el::base::elStorage->vRegistry()->allowed(1, "easy.c", el::base::elStorage->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.cc", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.hh", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.h", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.c", ELPP->flags())));
 
 
 }
