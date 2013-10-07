@@ -857,6 +857,16 @@ int main(void) {
 }
 ```
 
+Syslog support for Easylogging++ only supports following levels; each level is corresponded with syslog priority as following
+
+ * INFO (LOG_INFO)
+ * DEBUG (LOG_DEBUG)
+ * WARNING (LOG_WARNING)
+ * ERROR (LOG_ERR)
+ * FATAL (LOG_EMERG)
+
+Following levels are not supported and correspond to `LOG_NOTICE`: TRACE, whereas VERBOSE level is completely not supported
+
 > Since version 9.24
 
  [![top] Goto Top](#table-of-contents)
