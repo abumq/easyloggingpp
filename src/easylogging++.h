@@ -235,6 +235,7 @@
 #include <cwchar>
 #include <csignal>
 #include <cerrno>
+#include <cstdarg>
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
 #   include <execinfo.h>
@@ -753,6 +754,18 @@ inline static unsigned short Not(const EnumType& e, unsigned short flag) {
 template <typename EnumType>
 inline static unsigned short Or(const EnumType& e, unsigned short flag) {
     return static_cast<unsigned short>(flag) | static_cast<unsigned short>(e);
+}
+template <typename EnumType>
+inline static unsigned short Or(int n, EnumType flag, ...) {
+    va_list flags;
+    va_start(flags, flag);
+    unsigned short result = 0x0;
+    result = base::utils::bitwise::Or(static_cast<EnumType>(flag), result);
+    for (int i = 0; i < n - 1; ++i) {
+        result = base::utils::bitwise::Or(static_cast<EnumType>(va_arg(flags, int)), result);
+    }
+    va_end(flags);
+    return result;
 }
 } // namespace bitwise
 /// @brief Adds flag
@@ -3267,6 +3280,7 @@ private:
     Logger* m_logger;
     std::string m_message;
 };
+/// @brief Action to be taken for dispatching
 enum class DispatchAction : unsigned short {
     None = 1, Log = 2, PostStream = 4
 };
@@ -3434,10 +3448,13 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, base::LogMessage&& log, base::DispatchAction&& dispatchAction) :
+    LogDispatcher(bool proceed, base::LogMessage&& log, unsigned short dispatchAction) :
         m_proceed(proceed),
         m_log(std::move(log)),
         m_dispatchAction(std::move(dispatchAction)) {
+        if (m_proceed && base::utils::hasFlag(base::DispatchAction::None, m_dispatchAction)) {
+            m_proceed = false;
+        }
     }
 
     void dispatch(bool needToLockLogger) {
@@ -3525,11 +3542,10 @@ public:
 private:
     bool m_proceed;
     base::LogMessage m_log;
-    base::DispatchAction m_dispatchAction;
+    unsigned short m_dispatchAction;
 
     void dispatch(const std::string& logLine, bool needToUnlockLogger) {
-        // Log and PostStream both uses same form of logging
-        if (m_dispatchAction == base::DispatchAction::Log || m_dispatchAction == base::DispatchAction::PostStream) {
+        if (base::utils::hasFlag(base::DispatchAction::Log, m_dispatchAction)) {
             if (m_log.logger()->m_typedConfigurations->toFile(m_log.level())) {
                 std::fstream* fs = m_log.logger()->m_typedConfigurations->fileStream(m_log.level());
                 if (fs != nullptr) {
@@ -3645,8 +3661,8 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, base::VRegistry::VLevel verboseLevel = 0,
-               base::DispatchAction&& dispatchAction = base::DispatchAction::Log) :
+               const char* func, unsigned short dispatchAction = static_cast<unsigned short>(base::DispatchAction::Log),
+               base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator("") {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
@@ -3667,13 +3683,13 @@ public:
     }
 
     virtual ~Writer(void) {
-        if (m_proceed && (m_dispatchAction != base::DispatchAction::None)) {
-            if (m_dispatchAction == base::DispatchAction::PostStream) {
+        if (m_proceed) {
+            if (base::utils::hasFlag(base::DispatchAction::PostStream, m_dispatchAction)) {
                 m_logger->stream() << ELPP->m_postStream.str();
                 ELPP->clearPostStream();
             }
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger, m_logger->stream().str()), std::move(m_dispatchAction)).dispatch(false);
+                          m_logger, m_logger->stream().str()), m_dispatchAction).dispatch(false);
         }
         if (m_logger != nullptr) {
             m_logger->stream().str("");
@@ -4062,7 +4078,7 @@ private:
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
-    base::DispatchAction m_dispatchAction;
+    unsigned short m_dispatchAction;
     const char* m_containerLogSeperator;
     friend class el::Helpers;
 
@@ -4080,11 +4096,11 @@ private:
         return *this;
     }
 };
-#define _ELPP_WRITE_LOG(loggerId, level, dispatchAction) el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, 0, dispatchAction)
+#define _ELPP_WRITE_LOG(loggerId, level, dispatchAction) el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #define _ELPP_WRITE_LOG_IF(condition, loggerId, level, dispatchAction) if (condition) \
-    el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, 0, dispatchAction)
+    el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #define _ELPP_WRITE_LOG_EVERY_N(occasion, loggerId, level, dispatchAction) if (ELPP->validateCounter(__FILE__, __LINE__, occasion)) \
-    el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, 0, dispatchAction)
+    el::base::Writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
@@ -4112,7 +4128,7 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
-                _ELPP_WRITE_LOG(m_loggerId, m_level, base::DispatchAction::Log) << "Executed [" << m_blockName << "] in [" << *this << "]";
+                _ELPP_WRITE_LOG(m_loggerId, m_level, base::utils::bitwise::Or(1, base::DispatchAction::Log)) << "Executed [" << m_blockName << "] in [" << *this << "]";
             }
         }
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -4311,7 +4327,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
 #else
     _ELPP_UNUSED(stackTraceIfAvailable)
 #endif // _ELPP_STACKTRACE
-    _ELPP_WRITE_LOG(logger, level, base::DispatchAction::Log) << ss.str();
+    _ELPP_WRITE_LOG(logger, level, base::utils::bitwise::Or(1, base::DispatchAction::Log)) << ss.str();
 }
 /// @brief Aborts application due to crash signal
 static void crashAbort(int sig) {
@@ -4432,7 +4448,7 @@ public:
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
-        el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", 0, base::DispatchAction::None);
+        el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", 0, base::utils::bitwise::Or(1, el::base::DispatchAction::None));
         w << templ;
         return w.m_logger->stream().str();
     }
@@ -4676,7 +4692,7 @@ public:
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE(vlevel, loggerId, dispatchAction) if (VLOG_IS_ON(vlevel)) el::base::Writer(loggerId, \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, vlevel, dispatchAction)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel)
 #else
 #   define CVERBOSE(vlevel, loggerId, dispatchAction) el::base::NullWriter()
 #endif // _ELPP_VERBOSE_LOG
@@ -4713,7 +4729,7 @@ public:
 #endif // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE_IF(condition_, vlevel, loggerId, dispatchAction) if (VLOG_IS_ON(vlevel) && (condition_)) el::base::Writer(loggerId, \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, vlevel, dispatchAction)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel)
 #else
 #   define CVERBOSE_IF(condition_, vlevel, loggerId) el::base::NullWriter()
 #endif // _ELPP_VERBOSE_LOG
@@ -4767,14 +4783,14 @@ public:
 #undef CLOG_VERBOSE_EVERY_N
 #undef CVLOG_EVERY_N
 // Normal logs
-#define CLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::DispatchAction::Log)
-#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId, el::base::DispatchAction::Log)
+#define CLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CVLOG(vlevel, loggerId) CVERBOSE(vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
 // Conditional logs
-#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::DispatchAction::Log)
-#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId, el::base::DispatchAction::Log)
+#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(condition, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
 // Interval logs
-#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::DispatchAction::Log)
-#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId, el::base::DispatchAction::Log)
+#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
+#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(n, vlevel, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::Log))
 //
 // Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
@@ -4804,8 +4820,8 @@ public:
 #else
 #   define _ELPP_ERRORNO_TO_POSTSTREAM ELPP->postStream() << ": " << strerror(errno) << " [" << errno << "]";
 #endif
-#define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL(loggerId, el::base::DispatchAction::PostStream)
-#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(condition, loggerId, el::base::DispatchAction::PostStream)
+#define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL(loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::Log, el::base::DispatchAction::PostStream))
+#define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::Log, el::base::DispatchAction::PostStream))
 #define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
 //
