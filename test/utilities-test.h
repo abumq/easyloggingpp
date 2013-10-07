@@ -156,7 +156,7 @@ TEST(CommandLineArgsTest, SetArgs) {
     c[4] = "-arg1"; // Shouldn't be added
     c[5] = "--arg3WithValue=this_should_be_ignored_since_key_already_exist";
     c[6] = "--arg4WithValue=this_should_Added";
-    c[7] = '\0';
+    c[7] = "\0";
     CommandLineArgs cmd(7, c);
     EXPECT_EQ(4, cmd.size());
     EXPECT_FALSE(cmd.hasParamWithValue("-arg1"));
