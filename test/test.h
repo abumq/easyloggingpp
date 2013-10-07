@@ -65,7 +65,8 @@ static std::string getDate(const char* format = "%a %b %d, %H:%m") {
 }
 
 static bool fileExists(const char* filename) {
-    return File::pathExists(filename, true);
+    std::ifstream fstr(filename, std::ifstream::in);
+    return fstr.is_open();
 }
 
 static void cleanLogFile(const char* filename = logfile) {
