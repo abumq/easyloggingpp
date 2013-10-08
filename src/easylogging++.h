@@ -1423,14 +1423,12 @@ public:
     /// @param format User provided date/time format
     /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
     /// @returns string based date time in specified format.
-    static std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
+    static inline std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
         struct timeval currTime;
-        struct ::tm* timeInfo = nullptr;
-        buildLocalTime(&currTime, timeInfo);
+        gettimeofday(&currTime);
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        DateTime::parseFormat(buff_, kBuffSize, format, timeInfo, &currTime, milliSecondOffset);
-        return std::string(buff_);
+        return std::string(DateTime::parseFormat(buff_, kBuffSize, format, buildLocalTime(&currTime), &currTime, milliSecondOffset));
     }
 
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
@@ -1474,22 +1472,21 @@ private:
         }
         return buf;
     }
-    static void buildLocalTime(struct timeval* currTime, struct ::tm*& timeInfo) {
-        gettimeofday(currTime);
+
+    static struct ::tm* buildLocalTime(struct timeval* currTime) {
 #if _ELPP_OS_UNIX
-        timeInfo = localtime(&currTime->tv_sec);
+        return localtime(&currTime->tv_sec);
 #else
 #   if _ELPP_COMPILER_MSVC
         struct tm localTime;
         time_t t;
         _time64(&t);
         localtime_s(&localTime, &t);
-        timeInfo = &localTime;
+        return &localTime;
 #   else
         // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
         time_t rawTime = time(nullptr);
-        struct tm* localTime = localtime(&rawTime);
-        timeInfo = localTime;
+        return localtime(&rawTime);
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
