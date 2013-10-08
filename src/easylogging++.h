@@ -1426,9 +1426,11 @@ public:
     static inline std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
         struct timeval currTime;
         gettimeofday(&currTime);
+        struct ::tm timeInfo;
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        return std::string(DateTime::parseFormat(buff_, kBuffSize, format, buildLocalTime(&currTime), &currTime, milliSecondOffset));
+        DateTime::parseFormat(buff_, kBuffSize, format, buildTimeInfo(&currTime, &timeInfo), &currTime, milliSecondOffset);
+        return std::string(buff_);
     }
 
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
@@ -1473,20 +1475,23 @@ private:
         return buf;
     }
 
-    static struct ::tm* buildLocalTime(struct timeval* currTime) {
+    static struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
 #if _ELPP_OS_UNIX
-        return localtime(&currTime->tv_sec);
+        time_t clock = currTime->tv_sec;
+        ::localtime_r(&clock, timeInfo);
+        return timeInfo;
 #else
 #   if _ELPP_COMPILER_MSVC
-        struct tm localTime;
+        _ELPP_UNUSED(currTime);
         time_t t;
         _time64(&t);
-        localtime_s(&localTime, &t);
-        return &localTime;
+        localtime_s(timeInfo, &t);
+        return timeInfo;
 #   else
         // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
-        time_t rawTime = time(nullptr);
-        return localtime(&rawTime);
+        time_t clock = currTime->tv_sec;
+        ::localtime_r(&clock, timeInfo);
+        return timeInfo;
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
