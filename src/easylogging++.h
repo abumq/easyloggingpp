@@ -1125,6 +1125,7 @@ public:
     /// @brief Replaces first occurance of 'replaceWhat' with 'replaceWith' and ignores escaped string
     static void replaceFirstWithEscape(std::string& str, const std::string& replaceWhat, const std::string& replaceWith) {
         std::size_t foundAt = std::string::npos;
+        
         while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos){
             if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatEscapeChar) {
                 str.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
@@ -2950,6 +2951,7 @@ public:
 class Storage;
 class Trackable;
 class LogDispatcher;
+class LogMessage;
 } // namespace base
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
@@ -3061,6 +3063,7 @@ private:
 
     friend class base::LogDispatcher;
     friend class base::Writer;
+    friend class base::LogMessage;
     friend class el::Loggers;
     friend class el::Helpers;
     friend class base::Storage;
@@ -3265,9 +3268,9 @@ private:
 class LogMessage {
 public:
     LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,
-                          base::VRegistry::VLevel verboseLevel, Logger* logger, std::string&& message) :
+                          base::VRegistry::VLevel verboseLevel, Logger* logger) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
-                  m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(message)) {
+                  m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
     }
     inline Level& level(void) { return m_level; }
     inline const char* file(void) { return m_file; }
@@ -3560,7 +3563,7 @@ public:
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        dispatch(std::move(logLine));
+        dispatch(std::move(logLine + "\n"));
         if (lockLogger) {
             m_logMessage.logger()->unlock();
         }
@@ -3729,9 +3732,8 @@ public:
                 m_logger->stream() << ELPP->m_postStream.str();
                 ELPP->clearPostStream();
             }
-            m_logger->stream() << std::endl;
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger, m_logger->stream().str()), m_dispatchAction).dispatch(false);
+                          m_logger), m_dispatchAction).dispatch(false);
         }
         if (m_logger != nullptr) {
             m_logger->stream().str("");
