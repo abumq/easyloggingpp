@@ -3591,7 +3591,7 @@ private:
                                 << "      * Disk is not writable"
                                 , true);
                     } else if (ELPP->hasFlag(LoggingFlag::FlushWithEachLog)) {
-                        *fs << std::flush;
+                        fs->flush();
                     }
                 } else {
                     ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
@@ -3599,9 +3599,9 @@ private:
             }
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (m_logMessage.level() == Level::Error || m_logMessage.level() == Level::Fatal) {
-                    std::cerr << logLine;
+                    std::cerr << logLine << std::flush;
                 } else {
-                    std::cout << logLine;
+                    std::cout << logLine << std::flush;
                 }
             }
         } else if (base::utils::hasFlag(base::DispatchAction::SysLog, m_dispatchAction)) {
