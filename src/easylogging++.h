@@ -1475,7 +1475,7 @@ private:
         return buf;
     }
 
-    static struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
+    static inline struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
 #if _ELPP_OS_UNIX
         time_t clock = currTime->tv_sec;
         ::localtime_r(&clock, timeInfo);
