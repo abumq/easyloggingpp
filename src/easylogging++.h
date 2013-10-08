@@ -1116,7 +1116,7 @@ public:
         if (replaceWhat == replaceWith)
             return str;
         std::size_t foundAt = std::string::npos;
-        while ((foundAt = str.find(replaceWhat)) != std::string::npos) {
+        while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos) {
             str.replace(foundAt, replaceWhat.length(), replaceWith);
         }
         return str;
@@ -1130,7 +1130,7 @@ public:
                 str.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                 ++foundAt;
             } else {
-                str = str.replace(foundAt, replaceWhat.size(), replaceWith);
+                str.replace(foundAt, replaceWhat.length(), replaceWith);
                 return;
             }
         }
@@ -1424,10 +1424,9 @@ public:
         char buff_[kBuffSize] = "";
         struct timeval currTime;
         gettimeofday(&currTime);
-        struct tm* timeInfo = nullptr;
+        struct ::tm* timeInfo = nullptr;
 #if _ELPP_OS_UNIX
-        struct tm* localTime = localtime(&currTime.tv_sec);
-        timeInfo = localTime;
+        timeInfo = localtime(&currTime.tv_sec);
 #else
 #   if _ELPP_COMPILER_MSVC
         struct tm localTime;
@@ -3577,7 +3576,7 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
                 std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
-                    *fs << logLine << std::endl;
+                     fs->write(logLine.c_str(), logLine.size());
                      if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_logMessage.logger()->m_typedConfigurations->filename(m_logMessage.level()) << "].\n"
                                 << "Few possible reasons (could be something else):\n"
@@ -3592,9 +3591,9 @@ private:
             }
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (m_logMessage.level() == Level::Error || m_logMessage.level() == Level::Fatal) {
-                    std::cerr << logLine << std::endl;
+                    std::cerr << logLine;
                 } else {
-                    std::cout << logLine << std::endl;
+                    std::cout << logLine;
                 }
             }
         } else if (base::utils::hasFlag(base::DispatchAction::SysLog, m_dispatchAction)) {
@@ -3730,6 +3729,7 @@ public:
                 m_logger->stream() << ELPP->m_postStream.str();
                 ELPP->clearPostStream();
             }
+            m_logger->stream() << std::endl;
             base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger, m_logger->stream().str()), m_dispatchAction).dispatch(false);
         }

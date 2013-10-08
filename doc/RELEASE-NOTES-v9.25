@@ -6,6 +6,7 @@ Easylogging++ v9.25 RELEASE NOTES
 ==========================
 
  - Default log file using command line args (issue #122)
+ - Massive performance improvement
 
 ==========================
 =         NOTES          =
