@@ -601,7 +601,10 @@ enum class LoggingFlag : unsigned short {
     LogDetailedCrashReason = 4,
 
     /// @brief Allows to disable application abortion when logged using FATAL level
-    DisableApplicationAbortOnFatalLog = 8
+    DisableApplicationAbortOnFatalLog = 8,
+
+    /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
+    FlushWithEachLog = 16
 };
 namespace base {
 ///
@@ -1474,7 +1477,7 @@ public:
     }
 private:
     /// @brief Appends values to buf pointer
-    static inline char* appendToBuff(const std::size_t n, const char* format, char* buf, const char* bufLim) {
+    static inline char* appendToBuff(const std::size_t& n, const char* format, char* buf, const char* bufLim) {
         char localBuff[32];
         SPRINTF(localBuff, format, n);
         return appendToBuff(localBuff, buf, bufLim);
@@ -3587,6 +3590,8 @@ private:
                                 << "      * Disk full\n"
                                 << "      * Disk is not writable"
                                 , true);
+                    } else if (ELPP->hasFlag(LoggingFlag::FlushWithEachLog)) {
+                        *fs << std::flush;
                     }
                 } else {
                     ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
