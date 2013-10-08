@@ -604,7 +604,7 @@ enum class LoggingFlag : unsigned short {
     DisableApplicationAbortOnFatalLog = 8,
 
     /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
-    FlushWithEachLog = 16
+    StrictFlush = 16
 };
 namespace base {
 ///
@@ -3590,7 +3590,7 @@ private:
                                 << "      * Disk full\n"
                                 << "      * Disk is not writable"
                                 , true);
-                    } else if (ELPP->hasFlag(LoggingFlag::FlushWithEachLog)) {
+                    } else if (ELPP->hasFlag(LoggingFlag::StrictFlush)) {
                         fs->flush();
                     }
                 } else {
