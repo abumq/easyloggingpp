@@ -1424,27 +1424,11 @@ public:
     /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
     /// @returns string based date time in specified format.
     static std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
+        struct timeval currTime;
+        struct ::tm* timeInfo = nullptr;
+        buildLocalTime(&currTime, timeInfo);
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        struct timeval currTime;
-        gettimeofday(&currTime);
-        struct ::tm* timeInfo = nullptr;
-#if _ELPP_OS_UNIX
-        timeInfo = localtime(&currTime.tv_sec);
-#else
-#   if _ELPP_COMPILER_MSVC
-        struct tm localTime;
-        time_t t;
-        _time64(&t);
-        localtime_s(&localTime, &t);
-        timeInfo = &localTime;
-#   else
-        // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
-        time_t rawTime = time(nullptr);
-        struct tm* localTime = localtime(&rawTime);
-        timeInfo = localTime;
-#   endif // _ELPP_COMPILER_MSVC
-#endif // _ELPP_OS_UNIX
         DateTime::parseFormat(buff_, kBuffSize, format, timeInfo, &currTime, milliSecondOffset);
         return std::string(buff_);
     }
@@ -1489,6 +1473,25 @@ private:
             ++buf;
         }
         return buf;
+    }
+    static void buildLocalTime(struct timeval* currTime, struct ::tm*& timeInfo) {
+        gettimeofday(currTime);
+#if _ELPP_OS_UNIX
+        timeInfo = localtime(&currTime->tv_sec);
+#else
+#   if _ELPP_COMPILER_MSVC
+        struct tm localTime;
+        time_t t;
+        _time64(&t);
+        localtime_s(&localTime, &t);
+        timeInfo = &localTime;
+#   else
+        // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
+        time_t rawTime = time(nullptr);
+        struct tm* localTime = localtime(&rawTime);
+        timeInfo = localTime;
+#   endif // _ELPP_COMPILER_MSVC
+#endif // _ELPP_OS_UNIX
     }
 };
 /// @brief Command line arguments for application if specified using el::Helpers::setArgs(..) or _START_EASYLOGGINGPP(..)
