@@ -2,6 +2,12 @@ Easylogging++ v9.25 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=      NEW FEATURES      =
+==========================
+
+ - Default log file using command line args (issue #122)
+
+==========================
 =         NOTES          =
 ==========================
 

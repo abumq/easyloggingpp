@@ -666,10 +666,12 @@ namespace consts {
     static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      endif // _ELPP_OS_ANDROID
 #   elif _ELPP_OS_WINDOWS
-       static const char* kDefaultLogFile                      =      "logs\\myeasylog.log";
+    static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
 #   endif // _ELPP_OS_UNIX
 #endif // defined(_ELPP_DEFAULT_LOG_FILE)
-
+#if !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
+    static const char* kDefaultLogFileParam                    =      "--log-file";
+#endif // !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
 #if _ELPP_OS_WINDOWS
     static const char* kFilePathSeperator                      =      "\\";
 #else
@@ -3448,6 +3450,18 @@ private:
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
         m_vRegistry->setFromArgs(commandLineArgs());
+        // default log file
+#if !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
+        if (m_commandLineArgs.hasParamWithValue(base::consts::kDefaultLogFileParam)) {
+            Configurations c;
+            c.setGlobally(ConfigurationType::Filename, m_commandLineArgs.getParamValue(base::consts::kDefaultLogFileParam));
+            registeredLoggers()->setDefaultConfigurations(c);
+            for (base::RegisteredLoggers::iterator it = registeredLoggers()->begin();
+                    it != registeredLoggers()->end(); ++it) {
+                it->second->configure(c);
+            }
+        }
+#endif // !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
     }
 
     inline void setApplicationArguments(int argc, const char** argv) {
