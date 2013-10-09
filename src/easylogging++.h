@@ -3064,7 +3064,7 @@ public:
     }
     /// @brief Flushes logger to sync all log files for specified level
     inline void flush(const Level& level) {
-        ELPP_INTERNAL_INFO(8, "Flushing logger [" << m_id << "] [" << LevelHelper::convertToString(level) << "]");
+        ELPP_INTERNAL_INFO(5, "Flushing logger [" << m_id << "] [" << LevelHelper::convertToString(level) << "]");
         base::threading::lock_guard lock(mutex());
         if (m_typedConfigurations->toFile(level)) {
             std::fstream* fs = m_typedConfigurations->fileStream(level);
@@ -4660,7 +4660,7 @@ public:
         std::stringstream ss;
         Logger* logger = nullptr;
         auto configure = [&](void) {
-            ELPP_INTERNAL_INFO(1, "Configuring logger: '" << logger->id() << "' with configurations \n" << ss.str() << "\n--------------");
+            ELPP_INTERNAL_INFO(8, "Configuring logger: '" << logger->id() << "' with configurations \n" << ss.str() << "\n--------------");
             Configurations c;
             c.parseFromText(ss.str());
             logger->configure(c);
