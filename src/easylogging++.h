@@ -499,7 +499,7 @@ enum class ConfigurationType : unsigned short {
     /// @detail If file size of corresponding log file (for corresponding level) is >= specified size, log file will be truncated
     /// and re-initiated.
     MaxLogFileSize = 128,
-    /// @brief Specifies number of log entries to hold until we need to flush to log file
+    /// @brief Specifies number of log entries to hold until we flush pending log data
     LogFlushThreshold = 256,
     /// @brief Represents unknown configuration
     Unknown = 1010
