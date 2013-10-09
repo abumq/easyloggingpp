@@ -3571,7 +3571,7 @@ public:
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        dispatch(std::move(logLine + "\n"));
+        dispatch(std::move(logLine));
         if (lockLogger) {
             m_logMessage.logger()->unlock();
         }
@@ -3584,6 +3584,7 @@ private:
 
     void dispatch(std::string&& logLine) {
         if (base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction)) {
+            logLine += "\n";
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
                 std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
