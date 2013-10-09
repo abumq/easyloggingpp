@@ -3088,6 +3088,7 @@ public:
     /// @brief Flushes logger to sync all log files for all levels 
     inline void flush(void) {
         ELPP_INTERNAL_INFO(3, "Flushing logger [" << m_id << "] all levels");
+        base::threading::lock_guard lock(mutex());
         unsigned short lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             flush(LevelHelper::castFromInt(lIndex), nullptr);
