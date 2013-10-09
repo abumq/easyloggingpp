@@ -1351,7 +1351,7 @@ public:
     /// @param format User provided date/time format
     /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
     /// @returns string based date time in specified format.
-    static inline std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
+    static inline std::string getDateTime(const char* format, std::size_t milliSecondOffset) {
         struct timeval currTime;
         gettimeofday(&currTime);
         struct ::tm timeInfo;
