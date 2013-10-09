@@ -499,6 +499,8 @@ enum class ConfigurationType : unsigned short {
     /// @detail If file size of corresponding log file (for corresponding level) is >= specified size, log file will be truncated
     /// and re-initiated.
     MaxLogFileSize = 128,
+    /// @brief Specifies number of log entries to hold until we need to flush to log file
+    LogFlushThreshold = 256,
     /// @brief Represents unknown configuration
     Unknown = 1010
 };
@@ -543,6 +545,8 @@ public:
             return "PERFORMANCE_TRACKING";
         if (configurationType == ConfigurationType::MaxLogFileSize)
             return "MAX_LOG_FILE_SIZE";
+        if (configurationType == ConfigurationType::LogFlushThreshold)
+            return "LOG_FLUSH_THRESHOLD";
         return "UNKNOWN";
     }
 
@@ -565,7 +569,9 @@ public:
         if ((strcmp(configStr, "PERFORMANCE_TRACKING") == 0) || (strcmp(configStr, "performance_tracking") == 0))
             return ConfigurationType::PerformanceTracking;
         if ((strcmp(configStr, "MAX_LOG_FILE_SIZE") == 0) || (strcmp(configStr, "max_log_file_size") == 0))
-            return ConfigurationType::MaxLogFileSize;
+            return ConfigurationType::MaxLogFileSize;        
+        if ((strcmp(configStr, "LOG_FLUSH_THRESHOLD") == 0) || (strcmp(configStr, "log_flush_threshold") == 0))
+            return ConfigurationType::LogFlushThreshold;
         return ConfigurationType::Unknown;
     }
 
@@ -607,7 +613,7 @@ enum class LoggingFlag : unsigned short {
     DisableApplicationAbortOnFatalLog = 8,
 
     /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
-    StrictFlush = 16
+    ImmediateFlush = 16
 };
 namespace base {
 ///
@@ -2355,6 +2361,7 @@ public:
         setGlobally(ConfigurationType::MillisecondsWidth, "3", true);
         setGlobally(ConfigurationType::PerformanceTracking, "true", true);
         setGlobally(ConfigurationType::MaxLogFileSize, "0", true);
+        setGlobally(ConfigurationType::LogFlushThreshold, "0", true);
 
         setGlobally(ConfigurationType::Format, "%datetime %level [%logger] %log", true);
         set(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
@@ -2656,6 +2663,10 @@ public:
     inline std::size_t maxLogFileSize(const Level& level) {
         return getConfigByVal<std::size_t>(level, m_maxLogFileSizeMap, "maxLogFileSize");
     }
+    
+    inline unsigned int logFlushThreshold(const Level& level) {
+        return getConfigByVal<unsigned int>(level, m_logFlushThresholdMap, "logFlushThreshold");
+    }
 
 private:
     Configurations* m_configurations;
@@ -2668,6 +2679,7 @@ private:
     std::map<Level, bool> m_performanceTrackingMap;
     std::map<Level, std::shared_ptr<std::fstream>> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
+    std::map<Level, unsigned int> m_logFlushThresholdMap;
     base::LogStreamsReferenceMap* m_logStreamsReference;
     friend class Writer;
     friend class LogDispatcher;
@@ -2784,6 +2796,8 @@ private:
 #if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
                 unsafeValidateFileRolling(conf->level(), base::defaultPreRollOutHandler); // This is not unsafe as mutex is locked in currect scope
 #endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
+            } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
+                setValue(conf->level(), static_cast<unsigned int>(getULong(conf->value())), m_logFlushThresholdMap);
             }
         }
     }
@@ -2976,6 +2990,7 @@ public:
             m_parentApplicationName(std::string()),
             m_isConfigured(false),
             m_logStreamsReference(logStreamsReference) {
+        initUnflushedCount();
     }
 
     Logger(const std::string& id, const Configurations& configurations, base::LogStreamsReferenceMap* logStreamsReference) :
@@ -2984,6 +2999,7 @@ public:
             m_parentApplicationName(std::string()),
             m_isConfigured(false),
             m_logStreamsReference(logStreamsReference) {
+        initUnflushedCount();
         configure(configurations);
     }
 
@@ -2994,6 +3010,7 @@ public:
         m_parentApplicationName = logger.m_parentApplicationName;
         m_isConfigured = logger.m_isConfigured;
         m_configurations = logger.m_configurations;
+        m_unflushedCount = logger.m_unflushedCount;
         m_logStreamsReference = logger.m_logStreamsReference;
     }
 
@@ -3004,6 +3021,7 @@ public:
         m_parentApplicationName = logger.m_parentApplicationName;
         m_isConfigured = logger.m_isConfigured;
         m_configurations = logger.m_configurations;
+        m_unflushedCount = logger.m_unflushedCount;
         m_logStreamsReference = logger.m_logStreamsReference;
         return *this;
     }
@@ -3019,6 +3037,7 @@ public:
 
     /// @brief Configures the logger using specified configurations.
     void configure(const Configurations& configurations) {
+        initUnflushedCount();
         if (m_typedConfigurations != nullptr) {
             flush();
         }
@@ -3082,6 +3101,7 @@ private:
     std::string m_parentApplicationName;
     bool m_isConfigured;
     Configurations m_configurations;
+    std::map<Level, unsigned int> m_unflushedCount;
     base::LogStreamsReferenceMap* m_logStreamsReference;
 
     friend class base::LogDispatcher;
@@ -3093,6 +3113,15 @@ private:
     friend class base::Trackable;
 
     Logger(void);
+
+    void initUnflushedCount(void) {
+        m_unflushedCount.clear();
+        unsigned short lIndex = LevelHelper::kMinValid;
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
+            m_unflushedCount.insert(std::make_pair(LevelHelper::castFromInt(lIndex), 0));
+            return false;
+        });
+    }
 
     inline std::stringstream& stream(void) {
         return m_stream;
@@ -3107,7 +3136,13 @@ private:
         }
         if (fs != nullptr) {
             fs->flush();
+            m_unflushedCount.find(level)->second = 0;
         }
+    }
+    inline unsigned int incrementedUnflushedCount(const Level& level) {
+        std::map<Level, unsigned int>::iterator it = m_unflushedCount.find(level);
+        ++it->second;
+        return it->second;
     }
 };
 class Helpers;
@@ -3460,11 +3495,9 @@ public:
         }
         return false;
     }
-
     inline void clearPostStream(void) {
         m_postStream.str("");
     }
-
     inline std::stringstream& postStream(void) {
         return m_postStream;
     }
@@ -3627,13 +3660,13 @@ private:
                      fs->write(logLine.c_str(), logLine.size());
                      if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_logMessage.logger()->m_typedConfigurations->filename(m_logMessage.level()) << "].\n"
-                                << "Few possible reasons (could be something else):\n"
-                                << "      * Permission denied\n"
-                                << "      * Disk full\n"
-                                << "      * Disk is not writable"
+                                << "Few possible reasons (could be something else):\n" << "      * Permission denied\n" << "      * Disk full\n" << "      * Disk is not writable"
                                 , true);
-                    } else if (ELPP->hasFlag(LoggingFlag::StrictFlush)) {
-                        m_logMessage.logger()->flush(m_logMessage.level(), fs);
+                    } else {
+                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || 
+                                (m_logMessage.logger()->incrementedUnflushedCount(m_logMessage.level()) >= m_logMessage.logger()->m_typedConfigurations->logFlushThreshold(m_logMessage.level()))) {
+                            m_logMessage.logger()->flush(m_logMessage.level(), fs);
+                        }
                     }
                 } else {
                     ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
