@@ -1347,88 +1347,6 @@ public:
 #endif // _ELPP_OS_WINDOWS
     }
 
-    /// @brief Function that is used to parse date/time format.
-    /// @param [out] buf Target buffer
-    /// @param bufSz Size of target buffer
-    /// @param format User provided format for date/time
-    /// @param tInfo underlying time info pointer to be used in order to determine the actual time
-    /// @param tVal underlying timeval pointer in order to determine milliseconds
-    /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
-    /// @return Parsed buffer
-    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, const struct timeval* tVal, std::size_t millisecondsOffset = 1000) {
-        if (buf == nullptr || tInfo == nullptr || format == nullptr) {
-            ELPP_INTERNAL_ERROR("Cannot parse format; buf: '" << base::utils::charPtrVal(buf) << "'; bufSz: " << bufSz << "; "
-                    "format '" << base::utils::charPtrVal(format) << "';", false);
-            return buf;
-        }
-
-        const char* bufLim = buf + bufSz;
-        if (millisecondsOffset <= 0 || millisecondsOffset >= 1000) {
-            millisecondsOffset = base::consts::kDefaultMillisecondsOffset;
-        }
-        for (; *format; ++format) {
-            if (*format == '%') {
-                switch (*++format) {
-                case base::consts::kFormatEscapeChar: // Escape
-                    break;
-                case '\0':  // End
-                    --format;
-                    break;
-                case 'd':  // Day
-                    buf = appendToBuff(tInfo->tm_mday, "%02d", buf, bufLim);
-                    continue;
-                case 'a': // Day of week (short)
-                    buf = appendToBuff(((tInfo->tm_wday < 0 || tInfo->tm_wday > 6) ? "?" : base::consts::kDaysAbbrev[tInfo->tm_wday]), buf, bufLim);
-                    continue;
-                case 'A': // Day of week (long)
-                    buf = appendToBuff(((tInfo->tm_wday < 0 || tInfo->tm_wday > 6) ? "?" : base::consts::kDays[tInfo->tm_wday]), buf, bufLim);
-                    continue;
-                case 'M': // month
-                    buf = appendToBuff(tInfo->tm_mon + 1, "%02d", buf, bufLim);
-                    continue;
-                case 'b': // month (short)
-                    buf = appendToBuff(((tInfo->tm_mon < 0 || tInfo->tm_mon > 11) ? "?" : base::consts::kMonthsAbbrev[tInfo->tm_mon]), buf, bufLim);
-                    continue;
-                case 'B': // month (long)
-                    buf = appendToBuff(((tInfo->tm_mon < 0 || tInfo->tm_mon > 11) ? "?" : base::consts::kMonths[tInfo->tm_mon]), buf, bufLim);
-                    continue;
-                case 'y': // year (two digits)
-                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%02d", buf, bufLim);
-                    continue;
-                case 'Y': // year (four digits)
-                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%04d", buf, bufLim);
-                    continue;
-                case 'h': // hour (12-hour)
-                    buf = appendToBuff((tInfo->tm_hour % 12) ? (tInfo->tm_hour % 12) : 12, "%02d", buf, bufLim);
-                    continue;
-                case 'H': // hour (24-hour)
-                    buf = appendToBuff(tInfo->tm_hour, "%02d", buf, bufLim);
-                    continue;
-                case 'm': // minute
-                    buf = appendToBuff(tInfo->tm_min, "%02d", buf, bufLim);
-                    continue;
-                case 's': // second
-                    buf = appendToBuff(tInfo->tm_sec, "%02d", buf, bufLim);
-                    continue;
-                case 'z': // milliseconds
-                case 'g':
-                    buf = appendToBuff(tVal == nullptr ? 0 : (tVal->tv_usec / millisecondsOffset), "%03ld", buf, bufLim);
-                    continue;
-                case 'F': // AM/PM
-                    buf = appendToBuff((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
-                    continue;
-                default:
-                    continue;
-                }
-            }
-            if (buf == bufLim) {
-                break;
-            }
-            *buf++ = *format;
-        }
-        return buf;
-    }
-
     /// @brief Gets current date and time with milliseconds.
     /// @param format User provided date/time format
     /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
@@ -1499,11 +1417,75 @@ private:
         return timeInfo;
 #   else
         // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
-        time_t clock = currTime->tv_sec;
-        ::localtime_r(&clock, timeInfo);
-        return timeInfo;
+        time_t rawTime = time(nullptr);
+        return localtime(&rawTime);
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
+    }
+
+    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, const struct timeval* tVal, std::size_t millisecondsOffset) {
+        const char* bufLim = buf + bufSz;
+        for (; *format; ++format) {
+            if (*format == '%') {
+                switch (*++format) {
+                case base::consts::kFormatEscapeChar: // Escape
+                    break;
+                case '\0':  // End
+                    --format;
+                    break;
+                case 'd':  // Day
+                    buf = appendToBuff(tInfo->tm_mday, "%02d", buf, bufLim);
+                    continue;
+                case 'a': // Day of week (short)
+                    buf = appendToBuff(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
+                    continue;
+                case 'A': // Day of week (long)
+                    buf = appendToBuff(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
+                    continue;
+                case 'M': // month
+                    buf = appendToBuff(tInfo->tm_mon + 1, "%02d", buf, bufLim);
+                    continue;
+                case 'b': // month (short)
+                    buf = appendToBuff(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
+                    continue;
+                case 'B': // month (long)
+                    buf = appendToBuff(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
+                    continue;
+                case 'y': // year (two digits)
+                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%02d", buf, bufLim);
+                    continue;
+                case 'Y': // year (four digits)
+                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%04d", buf, bufLim);
+                    continue;
+                case 'h': // hour (12-hour)
+                    buf = appendToBuff(tInfo->tm_hour % 12, "%02d", buf, bufLim);
+                    continue;
+                case 'H': // hour (24-hour)
+                    buf = appendToBuff(tInfo->tm_hour, "%02d", buf, bufLim);
+                    continue;
+                case 'm': // minute
+                    buf = appendToBuff(tInfo->tm_min, "%02d", buf, bufLim);
+                    continue;
+                case 's': // second
+                    buf = appendToBuff(tInfo->tm_sec, "%02d", buf, bufLim);
+                    continue;
+                case 'z': // milliseconds
+                case 'g':
+                    buf = appendToBuff(tVal->tv_usec / millisecondsOffset, "%03ld", buf, bufLim);
+                    continue;
+                case 'F': // AM/PM
+                    buf = appendToBuff((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
+                    continue;
+                default:
+                    continue;
+                }
+            }
+            if (buf == bufLim) {
+                break;
+            }
+            *buf++ = *format;
+        }
+        return buf;
     }
 };
 /// @brief Command line arguments for application if specified using el::Helpers::setArgs(..) or _START_EASYLOGGINGPP(..)
