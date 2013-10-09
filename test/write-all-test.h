@@ -4,12 +4,12 @@
 
 #include "test.h"
 
-TEST(WriteAllTests, Entry) {
+TEST(WriteAllTest, Entry) {
     reconfigureLoggersForTest();
 }
 
 #define TEST_LEVEL(l, name) \
-TEST(WriteAllTests, l) {\
+TEST(WriteAllTest, l) {\
     std::string s;\
     LOG(l) << name << " 1";\
     s = BUILD_STR(getDate() << " " << name << " 1\n");\
@@ -37,7 +37,7 @@ TEST_LEVEL(FATAL, "Fatal")
 TEST_LEVEL(TRACE, "Trace")
 
 
-TEST(WriteAllTests, VERBOSE) {
+TEST(WriteAllTest, VERBOSE) {
     Configurations cOld(*Loggers::getLogger("default")->configurations());
     Loggers::reconfigureAllLoggers(ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %level-%vlevel %log");
 
@@ -68,7 +68,7 @@ TEST(WriteAllTests, VERBOSE) {
     Loggers::reconfigureAllLoggers(cOld);
 }
 
-TEST(WriteAllTests, EVERY_N) {
+TEST(WriteAllTest, EVERY_N) {
     std::string s;
     const char* name = "INFO";
     for (int i = 1; i <= 6; ++i)

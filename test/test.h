@@ -30,6 +30,9 @@ static void reconfigureLoggersForTest(void) {
     if (!Helpers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
         Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
     }
+    if (!Helpers::hasFlag(LoggingFlag::StrictFlush)) {
+        Helpers::addFlag(LoggingFlag::StrictFlush);
+    }
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {
