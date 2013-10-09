@@ -3131,6 +3131,7 @@ private:
     inline Configurations& refConfigurations(void) {
         return m_configurations;
     }
+
     inline void flush(const Level& level, std::fstream* fs) {
         if (fs == nullptr && m_typedConfigurations->toFile(level)) {
             fs = m_typedConfigurations->fileStream(level);
@@ -3140,10 +3141,9 @@ private:
             m_unflushedCount.find(level)->second = 0;
         }
     }
+
     inline unsigned int incrementedUnflushedCount(const Level& level) {
-        std::map<Level, unsigned int>::iterator it = m_unflushedCount.find(level);
-        ++it->second;
-        return it->second;
+        return ++m_unflushedCount.find(level)->second;
     }
 };
 class Helpers;
