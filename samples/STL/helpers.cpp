@@ -18,10 +18,6 @@ int main(int argc, char** argv) {
 
     // Flush all levels
     el::Loggers::getLogger("default")->flush();
-    // Flush single level
-    el::Loggers::getLogger("default")->flush(el::Level::Info);
-    // Flush all loggers single level
-    el::Loggers::flushAll(el::Level::Info);
     // Flush all loggers all levels
     el::Loggers::flushAll();
     return 0;

@@ -3066,18 +3066,12 @@ public:
         }
         return true;
     }
-    /// @brief Flushes logger to sync all log files for specified level
-    inline void flush(const Level& level) {
-        ELPP_INTERNAL_INFO(5, "Flushing logger [" << m_id << "] [" << LevelHelper::convertToString(level) << "]");
-        base::threading::lock_guard lock(mutex());
-        flush(level, nullptr);
-    }
     /// @brief Flushes logger to sync all log files for all levels 
     inline void flush(void) {
         ELPP_INTERNAL_INFO(3, "Flushing logger [" << m_id << "] all levels");
         unsigned short lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
-            flush(LevelHelper::castFromInt(lIndex));
+            flush(LevelHelper::castFromInt(lIndex), nullptr);
             return false;
         });
     }
@@ -3164,16 +3158,11 @@ public:
     }
 
     inline void flushAll(void) {
-        ELPP_INTERNAL_INFO(1, "Flushing all loggers all levels");
-        for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
+        ELPP_INTERNAL_INFO(1, "Flushing all log files");
+        base::threading::lock_guard lock(mutex());
+        for (base::LogStreamsReferenceMap::iterator it = m_logStreamsReference.begin(); it != m_logStreamsReference.end(); ++it) {
+            if (it->second.get() == nullptr) continue;
             it->second->flush();
-        }
-    }
-
-    inline void flushAll(const Level& level) {
-        ELPP_INTERNAL_INFO(1, "Flushing all loggers [" << LevelHelper::convertToString(level) << "]");
-        for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
-            it->second->flush(level);
         }
     }
 private:
@@ -4717,11 +4706,6 @@ public:
     /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
     static inline void flushAll(void) {
         ELPP->registeredLoggers()->flushAll();
-    }
-
-    /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
-    static inline void flushAll(const Level& level) {
-        ELPP->registeredLoggers()->flushAll(level);
     }
 };
 class VersionInfo : private base::StaticClass {
