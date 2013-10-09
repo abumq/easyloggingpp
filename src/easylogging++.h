@@ -2983,7 +2983,7 @@ public:
             m_typedConfigurations(nullptr),
             m_parentApplicationName(std::string()),
             m_isConfigured(false),
-            m_logStreamsReference(logStreamsReference)  {
+            m_logStreamsReference(logStreamsReference) {
         configure(configurations);
     }
 
@@ -3019,6 +3019,9 @@ public:
 
     /// @brief Configures the logger using specified configurations.
     void configure(const Configurations& configurations) {
+        if (m_typedConfigurations != nullptr) {
+            flush();
+        }
         base::threading::lock_guard lock(mutex());
         if (m_configurations != configurations) {
             m_configurations.setFromBase(const_cast<Configurations*>(&configurations));
@@ -3067,12 +3070,7 @@ public:
     inline void flush(const Level& level) {
         ELPP_INTERNAL_INFO(5, "Flushing logger [" << m_id << "] [" << LevelHelper::convertToString(level) << "]");
         base::threading::lock_guard lock(mutex());
-        if (m_typedConfigurations->toFile(level)) {
-            std::fstream* fs = m_typedConfigurations->fileStream(level);
-            if (fs != nullptr) {
-                fs->flush();
-            }
-        }
+        flush(level, nullptr);
     }
     /// @brief Flushes logger to sync all log files for all levels 
     inline void flush(void) {
@@ -3108,6 +3106,14 @@ private:
 
     inline Configurations& refConfigurations(void) {
         return m_configurations;
+    }
+    inline void flush(const Level& level, std::fstream* fs) {
+        if (fs == nullptr && m_typedConfigurations->toFile(level)) {
+            fs = m_typedConfigurations->fileStream(level);
+        }
+        if (fs != nullptr) {
+            fs->flush();
+        }
     }
 };
 class Helpers;
@@ -3638,7 +3644,7 @@ private:
                                 << "      * Disk is not writable"
                                 , true);
                     } else if (ELPP->hasFlag(LoggingFlag::StrictFlush)) {
-                        fs->flush();
+                        m_logMessage.logger()->flush(m_logMessage.level(), fs);
                     }
                 } else {
                     ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
