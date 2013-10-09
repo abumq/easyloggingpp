@@ -6,6 +6,7 @@
  // @author mkhan3189
  //
 
+#define _ELPP_SYSLOG
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

@@ -3610,8 +3610,9 @@ private:
                     std::cout << logLine << std::flush;
                 }
             }
-        } else if (base::utils::hasFlag(base::DispatchAction::SysLog, m_dispatchAction)) {
+        }
  #if defined(_ELPP_SYSLOG)
+        else if (base::utils::hasFlag(base::DispatchAction::SysLog, m_dispatchAction)) {
             // Determine syslog priority
             int sysLogPriority = 0;
             if (m_logMessage.level() == Level::Fatal)
@@ -3627,8 +3628,8 @@ private:
             else
                 sysLogPriority = LOG_NOTICE;
             syslog(sysLogPriority, "%s", logLine.c_str());
- #endif // defined(_ELPP_SYSLOG)
         }
+ #endif // defined(_ELPP_SYSLOG)
     }
 };
 #if defined(_ELPP_STL_LOGGING)
