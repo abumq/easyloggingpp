@@ -3142,8 +3142,8 @@ private:
         }
     }
 
-    inline unsigned int incrementedUnflushedCount(const Level& level) {
-        return ++m_unflushedCount.find(level)->second;
+    inline bool isFlushNeeded(const Level& level) {
+        return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
     }
 };
 class Helpers;
@@ -3664,8 +3664,7 @@ private:
                                 << "Few possible reasons (could be something else):\n" << "      * Permission denied\n" << "      * Disk full\n" << "      * Disk is not writable"
                                 , true);
                     } else {
-                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || 
-                                (m_logMessage.logger()->incrementedUnflushedCount(m_logMessage.level()) >= m_logMessage.logger()->m_typedConfigurations->logFlushThreshold(m_logMessage.level()))) {
+                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (m_logMessage.logger()->isFlushNeeded(m_logMessage.level()))) {
                             m_logMessage.logger()->flush(m_logMessage.level(), fs);
                         }
                     }
