@@ -116,9 +116,12 @@
 #   define ELPP_INTERNAL_ERROR(msg, pe)
 #endif // (defined(_ELPP_ENABLE_ERRORS))
 #if (defined(_ELPP_ENABLE_INFO))
-#   define ELPP_INTERNAL_INFO(msg) std::cout << msg << std::endl;
+#   if !(defined(_ELPP_INTERNAL_INFO_LEVEL))
+#      define _ELPP_INTERNAL_INFO_LEVEL 9
+#   endif // !(defined(_ELPP_INTERNAL_INFO_LEVEL))
+#   define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= _ELPP_INTERNAL_INFO_LEVEL) std::cout << msg << std::endl; }
 #else
-#   define ELPP_INTERNAL_INFO(msg)
+#   define ELPP_INTERNAL_INFO(lvl, msg)
 #endif // (defined(_ELPP_ENABLE_INFO))
 #if defined(_ELPP_STACKTRACE_ON_CRASH)
 #   if (_ELPP_COMPILER_GCC && !_ELPP_MINGW)
@@ -1528,14 +1531,14 @@ public:
                 std::string key = std::string(m_argv[i]);
                 key = key.substr(0, key.find_first_of('='));
                 if (hasParamWithValue(key.c_str())) {
-                    ELPP_INTERNAL_INFO("Skipping [" << key << "] arg since it already has value [" << getParamValue(key.c_str()) << "]");
+                    ELPP_INTERNAL_INFO(1, "Skipping [" << key << "] arg since it already has value [" << getParamValue(key.c_str()) << "]");
                 } else {
                     m_paramsWithValue.insert(std::make_pair(key, std::string(v + 1)));
                 }
             }
             if (v == nullptr) {
                 if (hasParam(m_argv[i])) {
-                    ELPP_INTERNAL_INFO("Skipping [" << m_argv[i] << "] arg since it already exists");
+                    ELPP_INTERNAL_INFO(1, "Skipping [" << m_argv[i] << "] arg since it already exists");
                 } else {
                     m_params.push_back(std::string(m_argv[i]));
                 }
@@ -2841,7 +2844,7 @@ private:
         std::size_t currFileSize = base::utils::File::getSizeOfFile(fs);
         if (maxLogFileSize != 0 && currFileSize >= maxLogFileSize) {
             std::string fname = unsafeGetConfigByRef(level, m_filenameMap, "filename");
-            ELPP_INTERNAL_INFO("Truncating log file [" << fname << "] as a result of configurations for level ["
+            ELPP_INTERNAL_INFO(1, "Truncating log file [" << fname << "] as a result of configurations for level ["
                     << LevelHelper::convertToString(level) << "]");
             fs->close();
             preRollOutHandler(fname.c_str(), currFileSize);
@@ -3019,7 +3022,7 @@ public:
         if (m_configurations != configurations) {
             m_configurations.setFromBase(const_cast<Configurations*>(&configurations));
         }
-        ELPP_INTERNAL_INFO("Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
+        ELPP_INTERNAL_INFO(9, "Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
         base::utils::safeDelete(m_typedConfigurations);
         m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
         m_isConfigured = true;
@@ -3027,7 +3030,7 @@ public:
 
     /// @brief Reconfigures logger using configurations previously provided.
     inline void reconfigure(void) {
-        ELPP_INTERNAL_INFO("Reconfiguring logger [" << m_id << "]");
+        ELPP_INTERNAL_INFO(1, "Reconfiguring logger [" << m_id << "]");
         configure(m_configurations);
     }
 
@@ -3061,6 +3064,8 @@ public:
     }
     /// @brief Flushes logger to sync all log files for specified level
     inline void flush(const Level& level) {
+        ELPP_INTERNAL_INFO(8, "Flushing logger [" << m_id << "] [" << LevelHelper::convertToString(level) << "]");
+        base::threading::lock_guard lock(mutex());
         if (m_typedConfigurations->toFile(level)) {
             std::fstream* fs = m_typedConfigurations->fileStream(level);
             if (fs != nullptr) {
@@ -3070,6 +3075,7 @@ public:
     }
     /// @brief Flushes logger to sync all log files for all levels 
     inline void flush(void) {
+        ELPP_INTERNAL_INFO(3, "Flushing logger [" << m_id << "] all levels");
         unsigned short lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             flush(LevelHelper::castFromInt(lIndex));
@@ -3151,14 +3157,14 @@ public:
     }
 
     inline void flushAll(void) {
-        ELPP_INTERNAL_INFO("Flushing all loggers all levels");
+        ELPP_INTERNAL_INFO(1, "Flushing all loggers all levels");
         for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
             it->second->flush();
         }
     }
 
     inline void flushAll(const Level& level) {
-        ELPP_INTERNAL_INFO("Flushing all loggers [" << LevelHelper::convertToString(level) << "]");
+        ELPP_INTERNAL_INFO(1, "Flushing all loggers [" << LevelHelper::convertToString(level) << "]");
         for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
             it->second->flush(level);
         }
@@ -3369,7 +3375,7 @@ public:
         templateHelperLogger->reconfigure();
 
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
-        ELPP_INTERNAL_INFO("Easylogging++ has been initialized");
+        ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 
     virtual ~Storage(void) {
@@ -4385,7 +4391,7 @@ private:
         }
         free(strings);
 #else
-        ELPP_INTERNAL_INFO("Stacktrace generation not supported for selected compiler");
+        ELPP_INTERNAL_INFO(1, "Stacktrace generation not supported for selected compiler");
 #endif // _ELPP_STACKTRACE
     }
 };
@@ -4654,14 +4660,14 @@ public:
         std::stringstream ss;
         Logger* logger = nullptr;
         auto configure = [&](void) {
-            ELPP_INTERNAL_INFO("Configuring logger: '" << logger->id() << "' with configurations \n" << ss.str() << "\n--------------");
+            ELPP_INTERNAL_INFO(1, "Configuring logger: '" << logger->id() << "' with configurations \n" << ss.str() << "\n--------------");
             Configurations c;
             c.parseFromText(ss.str());
             logger->configure(c);
         };
         while (gcfStream.good()) {
            std::getline(gcfStream, line);
-           ELPP_INTERNAL_INFO("Parsing line: " << line);
+           ELPP_INTERNAL_INFO(1, "Parsing line: " << line);
            base::utils::Str::trim(line);
            if (Configurations::Parser::isComment(line)) continue;
            Configurations::Parser::ignoreComments(line);
@@ -4674,7 +4680,7 @@ public:
                line = line.substr(2);
                base::utils::Str::trim(line);
                if (line.size() > 1) {
-                   ELPP_INTERNAL_INFO("Getting logger: '" << line << "'");
+                   ELPP_INTERNAL_INFO(1, "Getting logger: '" << line << "'");
                    logger = getLogger(line);
                }
             } else {
