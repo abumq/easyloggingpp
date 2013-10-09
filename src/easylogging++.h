@@ -3059,7 +3059,23 @@ public:
         }
         return true;
     }
-
+    /// @brief Flushes logger to sync all log files for specified level
+    inline void flush(const Level& level) {
+        if (m_typedConfigurations->toFile(level)) {
+            std::fstream* fs = m_typedConfigurations->fileStream(level);
+            if (fs != nullptr) {
+                fs->flush();
+            }
+        }
+    }
+    /// @brief Flushes logger to sync all log files for all levels 
+    inline void flush(void) {
+        unsigned short lIndex = LevelHelper::kMinValid;
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
+            flush(LevelHelper::castFromInt(lIndex));
+            return false;
+        });
+    }
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3097,6 +3113,10 @@ public:
         m_defaultConfigurations.setToDefault();
     }
 
+    virtual ~RegisteredLoggers(void) {
+        flushAll();
+    }
+        
     inline void setDefaultConfigurations(const Configurations& configurations) {
         base::threading::lock_guard lock(mutex());
         m_defaultConfigurations.setFromBase(const_cast<Configurations*>(&configurations));
@@ -3128,6 +3148,20 @@ public:
 
     inline base::LogStreamsReferenceMap* logStreamsReference(void) {
         return &m_logStreamsReference;
+    }
+
+    inline void flushAll(void) {
+        ELPP_INTERNAL_INFO("Flushing all loggers all levels");
+        for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
+            it->second->flush();
+        }
+    }
+
+    inline void flushAll(const Level& level) {
+        ELPP_INTERNAL_INFO("Flushing all loggers [" << LevelHelper::convertToString(level) << "]");
+        for (base::RegisteredLoggers::iterator it = list().begin(); it != list().end(); ++it) {
+            it->second->flush(level);
+        }
     }
 private:
     Configurations m_defaultConfigurations;
@@ -4666,6 +4700,15 @@ public:
         configureFromGlobal(Helpers::commandLineArgs()->getParamValue(argKey));
 #endif // defined(_ELPP_DISABLE_CONFIGURATION_FROM_PROGRAM_ARGS)
         return true;
+    }    
+    /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
+    static inline void flushAll(void) {
+        ELPP->registeredLoggers()->flushAll();
+    }
+
+    /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
+    static inline void flushAll(const Level& level) {
+        ELPP->registeredLoggers()->flushAll(level);
     }
 };
 class VersionInfo : private base::StaticClass {
