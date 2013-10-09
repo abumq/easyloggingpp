@@ -1355,9 +1355,10 @@ public:
         struct timeval currTime;
         gettimeofday(&currTime);
         struct ::tm timeInfo;
+        buildTimeInfo(&currTime, &timeInfo);
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        DateTime::parseFormat(buff_, kBuffSize, format, buildTimeInfo(&currTime, &timeInfo), &currTime, milliSecondOffset);
+        parseFormat(buff_, kBuffSize, format, &timeInfo, currTime.tv_usec / milliSecondOffset);
         return std::string(buff_);
     }
 
@@ -1388,21 +1389,6 @@ public:
         }
     }
 private:
-    /// @brief Appends values to buf pointer
-    static inline char* appendToBuff(const std::size_t& n, const char* format, char* buf, const char* bufLim) {
-        char localBuff[32];
-        SPRINTF(localBuff, format, n);
-        return appendToBuff(localBuff, buf, bufLim);
-    }
-
-    /// @brief Appends values to buf pointer
-    static inline char* appendToBuff(const char* str, char* buf, const char* bufLim) {
-        while ((buf < bufLim) && ((*buf = *str++) != '\0')) {
-            ++buf;
-        }
-        return buf;
-    }
-
     static inline struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
 #if _ELPP_OS_UNIX
         time_t clock = currTime->tv_sec;
@@ -1422,8 +1408,18 @@ private:
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
-
-    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, const struct timeval* tVal, std::size_t millisecondsOffset) {
+    
+    static inline char* conv(int n, const char* format, char* buf, const char* bufLim) {
+        char localBuff[7];
+        SPRINTF(localBuff, format, n);
+        return add(localBuff, buf, bufLim);
+    }
+    static inline char* add(const char* str, char* buf, const char* bufLim) {
+        while ((buf < bufLim) && ((*buf = *str++) != '\0'))
+            ++buf;
+        return buf;
+    }
+    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, int msec) {
         const char* bufLim = buf + bufSz;
         for (; *format; ++format) {
             if (*format == '%') {
@@ -1434,47 +1430,47 @@ private:
                     --format;
                     break;
                 case 'd':  // Day
-                    buf = appendToBuff(tInfo->tm_mday, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_mday, "%02d", buf, bufLim);
                     continue;
                 case 'a': // Day of week (short)
-                    buf = appendToBuff(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
+                    buf = add(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
                     continue;
                 case 'A': // Day of week (long)
-                    buf = appendToBuff(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
+                    buf = add(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
                     continue;
                 case 'M': // month
-                    buf = appendToBuff(tInfo->tm_mon + 1, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_mon + 1, "%02d", buf, bufLim);
                     continue;
                 case 'b': // month (short)
-                    buf = appendToBuff(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
+                    buf = add(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
                     continue;
                 case 'B': // month (long)
-                    buf = appendToBuff(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
+                    buf = add(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
                     continue;
                 case 'y': // year (two digits)
-                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_year + base::consts::kYearBase, "%02d", buf, bufLim);
                     continue;
                 case 'Y': // year (four digits)
-                    buf = appendToBuff(tInfo->tm_year + base::consts::kYearBase, "%04d", buf, bufLim);
+                    buf = conv(tInfo->tm_year + base::consts::kYearBase, "%04d", buf, bufLim);
                     continue;
                 case 'h': // hour (12-hour)
-                    buf = appendToBuff(tInfo->tm_hour % 12, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_hour % 12, "%02d", buf, bufLim);
                     continue;
                 case 'H': // hour (24-hour)
-                    buf = appendToBuff(tInfo->tm_hour, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_hour, "%02d", buf, bufLim);
                     continue;
                 case 'm': // minute
-                    buf = appendToBuff(tInfo->tm_min, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_min, "%02d", buf, bufLim);
                     continue;
                 case 's': // second
-                    buf = appendToBuff(tInfo->tm_sec, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_sec, "%02d", buf, bufLim);
                     continue;
                 case 'z': // milliseconds
                 case 'g':
-                    buf = appendToBuff(tVal->tv_usec / millisecondsOffset, "%03ld", buf, bufLim);
+                    buf = conv(msec, "%03ld", buf, bufLim);
                     continue;
                 case 'F': // AM/PM
-                    buf = appendToBuff((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
+                    buf = add((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
                     continue;
                 default:
                     continue;

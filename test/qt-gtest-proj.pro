@@ -7,10 +7,12 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++0x
 
-COMPILER = g++
+COMPILER = icpc
 QMAKE_CC = $$COMPILER
 QMAKE_CXX = $$COMPILER
 QMAKE_LINK = $$COMPILER
+
+DEFINES += _ELPP_SYSLOG  ## We define here in .pro file so that travis does not pick up
 
 LIBS += -lgtest
 
