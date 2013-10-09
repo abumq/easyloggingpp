@@ -1355,6 +1355,7 @@ public:
                     "format '" << base::utils::charPtrVal(format) << "';", false);
             return buf;
         }
+
         const char* bufLim = buf + bufSz;
         if (millisecondsOffset <= 0 || millisecondsOffset >= 1000) {
             millisecondsOffset = base::consts::kDefaultMillisecondsOffset;
@@ -1377,7 +1378,7 @@ public:
                     buf = appendToBuff(((tInfo->tm_wday < 0 || tInfo->tm_wday > 6) ? "?" : base::consts::kDays[tInfo->tm_wday]), buf, bufLim);
                     continue;
                 case 'M': // month
-                    buf = appendToBuff(tInfo->tm_mon, "%02d", buf, bufLim);
+                    buf = appendToBuff(tInfo->tm_mon + 1, "%02d", buf, bufLim);
                     continue;
                 case 'b': // month (short)
                     buf = appendToBuff(((tInfo->tm_mon < 0 || tInfo->tm_mon > 11) ? "?" : base::consts::kMonthsAbbrev[tInfo->tm_mon]), buf, bufLim);

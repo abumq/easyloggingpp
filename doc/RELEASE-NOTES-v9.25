@@ -2,6 +2,12 @@ Easylogging++ v9.25 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=          FIXES         =
+==========================
+
+ - Month (numeric) is not correct in %datetime (issue #125)
+
+==========================
 =      NEW FEATURES      =
 ==========================
 
