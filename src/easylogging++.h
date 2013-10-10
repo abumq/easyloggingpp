@@ -141,15 +141,12 @@
 #   define _ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif // _ELPP_OS_UNIX
 // Some special functions that are VC++ specific
-#undef SPRINTF
 #undef STRTOK
 #undef STRERROR
 #if _ELPP_CRT_DBG_WARNINGS
-#   define SPRINTF sprintf_s
 #   define STRTOK(a,b,c) strtok_s(a,b,c)
 #   define STRERROR(a, b, c) strerror_s(a, b, c)
 #else
-#   define SPRINTF sprintf
 #   define STRTOK(a,b,c) strtok(a,b)
 #   define STRERROR(a, b, c) strerror(c)
 #endif
