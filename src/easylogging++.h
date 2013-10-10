@@ -3861,6 +3861,8 @@ public:
         }
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+            Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
+                    << "Aborting due to FATAL log... (LoggingFlag::DisableApplicationAbortOnFatalLog not set)";
             exit(1);
         }
     }
