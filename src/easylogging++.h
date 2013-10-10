@@ -1458,8 +1458,8 @@ public:
 private:
     static inline struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
 #if _ELPP_OS_UNIX
-        time_t clock = currTime->tv_sec;
-        ::localtime_r(&clock, timeInfo);
+        time_t rawTime = currTime->tv_sec;
+        ::localtime_r(&rawTime, timeInfo);
         return timeInfo;
 #else
 #   if _ELPP_COMPILER_MSVC
@@ -1470,8 +1470,10 @@ private:
         return timeInfo;
 #   else
         // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
-        time_t rawTime = time(nullptr);
-        return localtime(&rawTime);
+        time_t rawTime = currTime->tv_sec;
+        struct tm* tmInf = localtime(&rawTime);
+        *timeInfo = *tmInf;
+        return timeInfo;
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
@@ -1533,9 +1535,7 @@ private:
                     continue;
                 }
             }
-            if (buf == bufLim) {
-                break;
-            }
+            if (buf == bufLim) break;
             *buf++ = *format;
         }
         return buf;
