@@ -42,6 +42,7 @@
     <a href="#logging-format-specifiers">Logging Format Specifiers</a>
     <a href="#datetime-format-specifiers">Date/Time Format Specifiers</a>
     <a href="#logging-flags">Logging flags</a>
+    <a href="#application-arguments">Application Arguments</a>
     <a href="#configuration-macros">Configuration Macros</a>
     <a href="#reading-configurations">Reading Configurations</a>
 <a href="#logging">Logging</a>
@@ -52,7 +53,6 @@
         <a href="#basic-1">Basic</a>
         <a href="#conditional-and-occasional">Conditional and Occasional</a>
         <a href="#verbose-level">Verbose Level</a>
-        <a href="#application-arguments">Application Arguments</a>
         <a href="#check-if-verbose-logging-is-on">Check If Verbose Logging Is On</a>
         <a href="#vmodule">VModule</a>
     <a href="#stl-logging">STL Logging</a>
@@ -407,7 +407,21 @@ You can set/unset these flags by using static `el::Helpers::addFlag` and `el::He
  > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
- 
+
+### Application Arguments
+Verbose level will not be active unless you either set application arguments for it; even before that you will need to make sure you have used `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function. Following table will explain every arguments;
+
+|        Argument            |                                      Description                                        |
+|----------------------------|-----------------------------------------------------------------------------------------|
+| `-v`                       | Activates maximum verbosity                                                             |
+| `--v=2`                    | Activates verbosity upto verbose level 2 (valid range: 0-9)                             |
+| `--verbose`                | Activates maximum verbosity                                                             |
+| `-vmodule=MODULE_NAME`     | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma. Please note vmodules are last in order of precedence of checking arguments for verbose logging, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.                                                                                                               |
+| `--logging-flags=3`        | Since ver. 9.25, Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
+| `--default-log-file=FILE`  | Since ver. 9.25, Sets default log file for existing and future loggers. You may want to consider defining `_ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                           |
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Configuration Macros
 Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `_ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with _ELPP_
 
@@ -523,22 +537,7 @@ Verbose logging also has conditional and occasional logging aspects i.e,
 
  
 #### Verbose-Level
-Verbose level is level of verbosity that can have range of 1-9
-
- [![top] Goto Top](#table-of-contents)
- 
-#### Application Arguments
-Verbose level will not be active unless you either set application arguments for it; even before that you will need to make sure you have used `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function. Following table will explain every arguments;
-
-|        Argument            |                                      Description                                        |
-|----------------------------|-----------------------------------------------------------------------------------------|
-| `-v`                       | Activates maximum verbosity                                                             |
-| `--v=2`                    | Activates verbosity upto verbose level 2 (valid range: 0-9)                             |
-| `--verbose`                | Activates maximum verbosity                                                             |
-| `-vmodule=MODULE_NAME`     | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma. Please note vmodules are last in order of precedence of checking arguments for verbose logging, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.                                                                                                               |
-| `--logging-flags=3`        | Since ver. 9.25, Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
-| `--default-log-file=FILE`  | Since ver. 9.25, Sets default log file for existing and future loggers. You may want to consider defining `_ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                   |
-
+Verbose level is level of verbosity that can have range of 1-9. Please read through [Application Arguments](#application-arguments) section to understand more about verbose logging.
 
  [![top] Goto Top](#table-of-contents)
  
