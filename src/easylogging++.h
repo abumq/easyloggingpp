@@ -143,12 +143,18 @@
 // Some special functions that are VC++ specific
 #undef STRTOK
 #undef STRERROR
+#undef STRCAT
+#undef STRCPY
 #if _ELPP_CRT_DBG_WARNINGS
 #   define STRTOK(a,b,c) strtok_s(a,b,c)
 #   define STRERROR(a, b, c) strerror_s(a, b, c)
+#   define STRCAT(a, b, len) strcat_s(a, len, b)
+#   define STRCPY(a, b, len) strcpy_s(a, len, b)
 #else
 #   define STRTOK(a,b,c) strtok(a,b)
 #   define STRERROR(a, b, c) strerror(c)
+#   define STRCAT(a, b, len) strcat(a, b)
+#   define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
 #if _ELPP_MINGW || _ELPP_COMPILER_CLANG
@@ -698,8 +704,8 @@ namespace consts {
     static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLoggerId                  =      "--";
     
-    static const int kSourceFilenameMaxLength                  =      100;
-    static const int kSourceLineMaxLength                      =      10;
+    static const std::size_t kSourceFilenameMaxLength                  =      100;
+    static const std::size_t kSourceLineMaxLength                      =      10;
 
     static const int kMaxTimeFormats                           =      6;
     const struct {
@@ -1070,14 +1076,16 @@ public:
         return fullPath.substr(0, lastSlashAt + 1);
     }
     /// @brief builds stripped filename and puts it in buff
-    static void buildStrippedFilename(const char* filename, char buff[], int limit = base::consts::kSourceFilenameMaxLength) {
+    static void buildStrippedFilename(const char* filename, char buff[], std::size_t limit = base::consts::kSourceFilenameMaxLength) {
         std::size_t sizeOfFilename = strlen(filename);
         if (sizeOfFilename >= limit) {
-            filename += (sizeOfFilename - base::consts::kSourceFilenameMaxLength);
-            if (filename[0] != '.' && filename[1] != '.') // prepend if not already
-                strcat(buff, "...");
+            filename += (sizeOfFilename - limit);
+            if (filename[0] != '.' && filename[1] != '.') { // prepend if not already
+                filename += 3; // 3 = '..'
+                STRCAT(buff, "..", limit);
+            }
         }
-        strcat(buff, filename);
+        STRCAT(buff, filename, limit);
     }
 };
 /// @brief String utilities helper class used internally. You should not use it.
@@ -1240,8 +1248,8 @@ public:
             ++buf;
         return buf;
     }
-    static inline char* clearBuff(char buff[]) {
-        strcpy(buff, "");
+    static inline char* clearBuff(char buff[], std::size_t lim) {
+        STRCPY(buff, "", lim);
         return buff;
     }
 };
@@ -3614,20 +3622,20 @@ public:
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
-            char* buf = base::utils::Str::clearBuff(buff);
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
             base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
-            char* buf = base::utils::Str::clearBuff(buff);
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceLineMaxLength);
             buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
-            char* buf = base::utils::Str::clearBuff(buff);
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength);
             base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
@@ -3644,7 +3652,7 @@ public:
         }
         if (m_logMessage.level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
-            char* buf = base::utils::Str::clearBuff(buff);
+            char* buf = base::utils::Str::clearBuff(buff, 1);
             buf = base::utils::Str::convertAndAddToBuff( m_logMessage.verboseLevel(), 1, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, buff);
         }
