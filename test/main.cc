@@ -23,7 +23,6 @@ int main(int argc, char** argv) {
     _INIT_SYSLOG(kSysLogIdent, 0, 0);
 
     reconfigureLoggersForTest();
-
     std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;
 
     return ::testing::UnitTest::GetInstance()->Run();

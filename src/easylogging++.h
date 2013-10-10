@@ -691,6 +691,9 @@ namespace consts {
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLoggerId                  =      "--";
+    
+    static const int kSourceFilenameMaxLength                  =      100;
+    static const int kSourceLineMaxLength                      =      10;
 
     static const int kMaxTimeFormats                           =      6;
     const struct {
@@ -980,8 +983,6 @@ public:
         return fs;
     }
     /// @brief Gets size of file provided in stream
-    ///
-    /// @detail It is expected to have stream already opened.
     static std::size_t getSizeOfFile(std::fstream* fs) {
         if (fs == nullptr) {
             return 0;
@@ -993,7 +994,6 @@ public:
         return size;
     }
     /// @brief Determines whether or not provided path exist in current file system
-    /// @param path Path to check
     static inline bool pathExists(const char* path, bool considerFile = false) {
         if (path == nullptr) {
             return false;
@@ -1052,10 +1052,6 @@ public:
         return true;
     }
     /// @brief Extracts path of filename with leading slash
-    /// @param fullPath Full path to filename
-    /// @param seperator Path delimiter, for unix it is / for win it is \\, by default value from
-    ///        constant is used
-    /// @return String copy
     static std::string extractPathFromFilename(const std::string& fullPath,
             const char* seperator = base::consts::kFilePathSeperator) {
         if ((fullPath == "") || (fullPath.find(seperator) == std::string::npos)) {
@@ -1066,6 +1062,16 @@ public:
             return std::string(seperator);
         }
         return fullPath.substr(0, lastSlashAt + 1);
+    }
+    /// @brief builds stripped filename and puts it in buff
+    static void buildStrippedFilename(const char* filename, char buff[], int limit = base::consts::kSourceFilenameMaxLength) {
+        std::size_t sizeOfFilename = strlen(filename);
+        if (sizeOfFilename >= limit) {
+            filename += (sizeOfFilename - base::consts::kSourceFilenameMaxLength);
+            if (filename[0] != '.' && filename[1] != '.') // prepend if not already
+                strcat(buff, "...");
+        }
+        strcat(buff, filename);
     }
 };
 /// @brief String utilities helper class used internally. You should not use it.
@@ -1214,6 +1220,21 @@ public:
                 return true;
         }
         return false;
+    }
+        
+    static inline char* convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bufLim, bool zeroPadded = true) {
+        char localBuff[10] = "";
+        char* p = localBuff + sizeof(localBuff) - 2;
+        for (; n > 0 && p > localBuff; n /= 10, --len) *--p = (char)(n % 10 + '0');
+        if (zeroPadded)
+            while (p > localBuff && len-- > 0) *--p = (char) '0';
+        return addToBuff(p, buf, bufLim);
+    }
+    
+    static inline char* addToBuff(const char* str, char* buf, const char* bufLim) {
+        while ((buf < bufLim) && ((*buf = *str++) != '\0'))
+            ++buf;
+        return buf;
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
@@ -1387,7 +1408,7 @@ public:
         buildTimeInfo(&currTime, &timeInfo);
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        parseFormat(buff_, kBuffSize, format, &timeInfo, currTime.tv_usec / msWidth->m_width, msWidth);
+        parseFormat(buff_, kBuffSize, format, &timeInfo, static_cast<std::size_t>(currTime.tv_usec / msWidth->m_offset), msWidth);
         return std::string(buff_);
     }
 
@@ -1437,21 +1458,8 @@ private:
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
-    static inline char* conv(int n, int len, char* buf, const char* bufLim) {
-        char localBuff[7] = "";
-        for (int i = len; i > 0; n /= 10, --i) {
-            localBuff[i - 1] = (char)(n % 10 + '0');
-        }
-        localBuff[len] = '\0';
-        return add(localBuff, buf, bufLim);
-    }
-    static inline char* add(const char* str, char* buf, const char* bufLim) {
-        while ((buf < bufLim) && ((*buf = *str++) != '\0'))
-            ++buf;
-        return buf;
-    }
-    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, 
-            unsigned int msec, const base::MillisecondsWidth* msWidth) {
+    static char* parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo, 
+            std::size_t msec, const base::MillisecondsWidth* msWidth) {
         const char* bufLim = buf + bufSz;
         for (; *format; ++format) {
             if (*format == '%') {
@@ -1462,47 +1470,47 @@ private:
                     --format;
                     break;
                 case 'd':  // Day
-                    buf = conv(tInfo->tm_mday, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_mday, 2, buf, bufLim);
                     continue;
                 case 'a': // Day of week (short)
-                    buf = add(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
+                    buf = base::utils::Str::addToBuff(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
                     continue;
                 case 'A': // Day of week (long)
-                    buf = add(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
+                    buf = base::utils::Str::addToBuff(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
                     continue;
                 case 'M': // month
-                    buf = conv(tInfo->tm_mon + 1, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_mon + 1, 2, buf, bufLim);
                     continue;
                 case 'b': // month (short)
-                    buf = add(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
+                    buf = base::utils::Str::addToBuff(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
                     continue;
                 case 'B': // month (long)
-                    buf = add(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
+                    buf = base::utils::Str::addToBuff(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
                     continue;
                 case 'y': // year (two digits)
-                    buf = conv(tInfo->tm_year + base::consts::kYearBase, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year + base::consts::kYearBase, 2, buf, bufLim);
                     continue;
                 case 'Y': // year (four digits)
-                    buf = conv(tInfo->tm_year + base::consts::kYearBase, 4, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year + base::consts::kYearBase, 4, buf, bufLim);
                     continue;
                 case 'h': // hour (12-hour)
-                    buf = conv(tInfo->tm_hour % 12, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_hour % 12, 2, buf, bufLim);
                     continue;
                 case 'H': // hour (24-hour)
-                    buf = conv(tInfo->tm_hour, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_hour, 2, buf, bufLim);
                     continue;
                 case 'm': // minute
-                    buf = conv(tInfo->tm_min, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_min, 2, buf, bufLim);
                     continue;
                 case 's': // second
-                    buf = conv(tInfo->tm_sec, 2, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_sec, 2, buf, bufLim);
                     continue;
                 case 'z': // milliseconds
                 case 'g':
-                    buf = conv(msec, msWidth->m_width, buf, bufLim);
+                    buf = base::utils::Str::convertAndAddToBuff(msec, msWidth->m_width, buf, bufLim);
                     continue;
                 case 'F': // AM/PM
-                    buf = add((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
+                    buf = base::utils::Str::addToBuff((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
                     continue;
                 default:
                     continue;
@@ -3448,10 +3456,6 @@ public:
         m_flags = flags;
     }
 
-    inline std::stringstream& tempStream(void) {
-        return m_tempStream;
-    }
-
     inline void setPreRollOutHandler(const base::PreRollOutHandler& handler) {
         m_preRollOutHandler = handler;
     }
@@ -3488,9 +3492,11 @@ public:
         }
         return false;
     }
+    
     inline void clearPostStream(void) {
         m_postStream.str("");
     }
+    
     inline std::stringstream& postStream(void) {
         return m_postStream;
     }
@@ -3504,7 +3510,6 @@ private:
     unsigned short m_flags;
     base::PreRollOutHandler m_preRollOutHandler;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
-    std::stringstream m_tempStream;
     std::stringstream m_postStream;
 
     friend class base::LogDispatcher;
@@ -3569,6 +3574,8 @@ public:
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
         base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_logMessage.level()));
         std::string logLine = logFormat->format();
+        char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
+        const char* bufLim = buff + sizeof(buff);
         if (logFormat->hasFlag(base::FormatFlags::AppName)) {
             // App name
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
@@ -3590,23 +3597,32 @@ public:
         }
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
             // Function
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, std::string(m_logMessage.func()));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, m_logMessage.func());
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(m_logMessage.file()));
+            strcpy(buff, "");
+            char* buf = buff;
+            base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
+            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
-            ELPP->tempStream() << m_logMessage.line();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, ELPP->tempStream().str());
-            ELPP->tempStream().str("");
+            strcpy(buff, "");
+            char* buf = buff;
+            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), 10, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
-            ELPP->tempStream() << m_logMessage.file() << ":" << m_logMessage.line();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, ELPP->tempStream().str());
-            ELPP->tempStream().str("");
+            strcpy(buff, "");
+            char* buf = buff;
+            base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
+            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
+            buf = base::utils::Str::addToBuff(":", buf, bufLim);
+            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), 10, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::User)) {
             // User
@@ -3616,12 +3632,12 @@ public:
             // Host
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
         }
-        if (m_logMessage.level() == Level::Verbose &&
-              logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
+        if (m_logMessage.level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
-            ELPP->tempStream() << m_logMessage.verboseLevel();
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, ELPP->tempStream().str());
-            ELPP->tempStream().str("");
+            strcpy(buff, "");
+            char* buf = buff;
+            buf = base::utils::Str::convertAndAddToBuff( m_logMessage.verboseLevel(), 1, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
             // Log message
