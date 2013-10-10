@@ -610,7 +610,10 @@ enum class LoggingFlag : unsigned short {
     DisableApplicationAbortOnFatalLog = 8,
 
     /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
-    ImmediateFlush = 16
+    ImmediateFlush = 16,
+    
+    /// @brief Enables strict file rolling
+    StrictLogFileSizeCheck = 32
 };
 namespace base {
 ///
@@ -679,8 +682,11 @@ namespace consts {
 #   endif // _ELPP_OS_UNIX
 #endif // defined(_ELPP_DEFAULT_LOG_FILE)
 #if !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
-    static const char* kDefaultLogFileParam                    =      "--log-file";
+    static const char* kDefaultLogFileParam                    =      "--default-log-file";
 #endif // !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
+#if !defined(_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG)
+    static const char* kLoggingFlagsParam                      =      "--logging-flags";
+#endif // !defined(_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG)
 #if _ELPP_OS_WINDOWS
     static const char* kFilePathSeperator                      =      "\\";
 #else
@@ -1221,7 +1227,6 @@ public:
         }
         return false;
     }
-        
     static inline char* convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bufLim, bool zeroPadded = true) {
         char localBuff[10] = "";
         char* p = localBuff + sizeof(localBuff) - 2;
@@ -1230,11 +1235,14 @@ public:
             while (p > localBuff && len-- > 0) *--p = (char) '0';
         return addToBuff(p, buf, bufLim);
     }
-    
     static inline char* addToBuff(const char* str, char* buf, const char* bufLim) {
         while ((buf < bufLim) && ((*buf = *str++) != '\0'))
             ++buf;
         return buf;
+    }
+    static inline char* clearBuff(char buff[]) {
+        strcpy(buff, "");
+        return buff;
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
@@ -2007,7 +2015,7 @@ public:
        return m_flags;
     }
 
-    inline bool hasFlag(const base::FormatFlags& flag) {
+    inline bool hasFlag(const base::FormatFlags& flag) const {
         return base::utils::hasFlag(flag, m_flags) > 0;
     }
 
@@ -2701,6 +2709,7 @@ private:
     base::LogStreamsReferenceMap* m_logStreamsReference;
     friend class Writer;
     friend class LogDispatcher;
+    friend class el::Helpers;
 
     template <typename Conf_T>
     inline Conf_T getConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
@@ -3146,7 +3155,6 @@ private:
         return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
     }
 };
-class Helpers;
 namespace base {
 class Storage;
 /// @brief Loggers repository
@@ -3539,6 +3547,11 @@ private:
             }
         }
 #endif // !defined(_ELPP_DISABLE_LOG_FILE_CONFIGURE_FROM_ARG)
+#if !defined(_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG)
+        if (m_commandLineArgs.hasParamWithValue(base::consts::kLoggingFlagsParam)) {
+            m_flags = atoi(m_commandLineArgs.getParamValue(base::consts::kLoggingFlagsParam));
+        }
+#endif // !defined(_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG)
     }
 
     inline void setApplicationArguments(int argc, const char** argv) {
@@ -3568,11 +3581,11 @@ public:
         if (lockLogger) {
             m_logMessage.logger()->lock();
         }
-#if (defined(_ELPP_STRICT_SIZE_CHECK))
-        m_logMessage.logger()->m_typedConfigurations->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
-#endif // (defined(_ELPP_STRICT_SIZE_CHECK))
+        if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
+            m_logMessage.logger()->m_typedConfigurations->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
+        }
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
-        base::LogFormat* logFormat = const_cast<base::LogFormat*>(&tc->logFormat(m_logMessage.level()));
+        const base::LogFormat* logFormat = &tc->logFormat(m_logMessage.level());
         std::string logLine = logFormat->format();
         char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
         const char* bufLim = buff + sizeof(buff);
@@ -3601,27 +3614,24 @@ public:
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
-            strcpy(buff, "");
-            char* buf = buff;
+            char* buf = base::utils::Str::clearBuff(buff);
             base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
-            strcpy(buff, "");
-            char* buf = buff;
-            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), 10, buf, bufLim, false);
+            char* buf = base::utils::Str::clearBuff(buff);
+            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
-            strcpy(buff, "");
-            char* buf = buff;
+            char* buf = base::utils::Str::clearBuff(buff);
             base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
-            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), 10, buf, bufLim, false);
+            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::User)) {
@@ -3634,8 +3644,7 @@ public:
         }
         if (m_logMessage.level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
-            strcpy(buff, "");
-            char* buf = buff;
+            char* buf = base::utils::Str::clearBuff(buff);
             buf = base::utils::Str::convertAndAddToBuff( m_logMessage.verboseLevel(), 1, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, buff);
         }
@@ -4618,6 +4627,10 @@ public:
     /// @brief Returns true if custom format specifier is installed
     static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
         return ELPP->hasCustomFormatSpecifier(formatSpecifier);
+    }
+    static inline void validateFileRolling(Logger* logger, const Level& level) {
+        if (logger == nullptr) return;
+        logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutHandler());
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations

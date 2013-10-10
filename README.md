@@ -393,23 +393,26 @@ Please note, date/time is limited to `30` characters at most.
 ###Logging flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
-|     Flag                             |                 Description                                                                                                                   |
-|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `NewLineForContainer`                | Makes sure we have new line for each container log entry                                                                                      |
-| `AllowVerboseIfModuleNotSpecified`   | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule   |
-| `LogDetailedCrashReason`             | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                          |
-| `DisableApplicationAbortOnFatalLog`  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                         |
+|     Flag                                 |                 Description                                                                                                                   |
+|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `NewLineForContainer (1)`                | Makes sure we have new line for each container log entry                                                                                      |
+| `AllowVerboseIfModuleNotSpecified (2)`   | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
+| `LogDetailedCrashReason (4)`         | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                                |
+| `DisableApplicationAbortOnFatalLog (8)`  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                               |
+| `ImmediateFlush (16)`                    | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
+| `StrictLogFileSizeCheck (32)`            | Makes sure log file size is checked with every log                                                                                            |
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
+
+ > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG`
 
  [![top] Goto Top](#table-of-contents)
  
 ### Configuration Macros
-Some of logging options can be set by macros, this is a thoughtful decision, for example if we have _ELPP_STRICT_SIZE_CHECK defined, a line is processed. On the other hand if design was to use one of the logging flags, we would have had an extra check which is not very efficient while writing log entry. To make it easy to remember and prevent possible conflicts, all the macros start with _ELPP_
+Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `_ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with _ELPP_
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_STRICT_SIZE_CHECK`                | Makes sure file size is checked with every log                                                                                                     |
 | `_ELPP_STOP_ON_FIRST_ASSERTION`          | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
 | `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `_ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
