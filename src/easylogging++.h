@@ -4270,12 +4270,12 @@ private:
 
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
-class Trackable : private base::NoCopy, public base::threading::ThreadSafe {
+class Trackable : public base::threading::ThreadSafe {
 public:
-    Trackable(const char* blockName,
+    Trackable(const std::string& blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
             const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const Level& level = Level::Info) :
-        m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
+        m_blockName(blockName.c_str()), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         el::Logger* loggerPtr = elStorage->registeredLoggers()->get(logger, false);
@@ -4339,7 +4339,7 @@ public:
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
 private:
-    const char* m_blockName;
+    std::string m_blockName;
     base::TimestampUnit m_timestampUnit;
     const char* m_loggerId;
     bool m_scopedLog;
@@ -4348,7 +4348,6 @@ private:
     bool m_hasChecked;
     const char* m_lastCheckpointId;
     bool m_enabled;
-    Trackable(void);
 
     friend std::ostream& operator<<(std::ostream& os, const Trackable& trackable) {
         os << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(trackable.m_endTime,
@@ -4798,6 +4797,7 @@ public:
 /// @brief Determines whether verbose logging is on for specified level current file.
 #define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__, ELPP->flags()))
 #undef TIMED_BLOCK
+#undef TIMED_SCOPE
 #undef TIMED_FUNC
 #undef _ELPP_MIN_UNIT
 #if defined(_ELPP_PERFORMANCE_MICROSECONDS)
@@ -4805,14 +4805,15 @@ public:
 #else
 #   define _ELPP_MIN_UNIT el::base::TimestampUnit::Millisecond
 #endif // (defined(_ELPP_PERFORMANCE_MICROSECONDS))
-/// @brief Performance tracked block. Performance gets written when goes out of scope using
+/// @brief Performance tracked scope. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
 /// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
 /// @see el::base::Trackable
 /// @see el::base::Trackable::checkpoint
 // Note: Do not surround this definition with null macro because of obj instance
-#define TIMED_BLOCK(obj, blockname) el::base::Trackable obj(blockname, _ELPP_MIN_UNIT)
+#define TIMED_SCOPE(obj, blockname) el::base::Trackable obj(blockname, _ELPP_MIN_UNIT)
+#define TIMED_BLOCK(obj, blockName) for(struct { int i; el::base::Trackable timer; } obj = { 0, el::base::Trackable(blockName) }; obj.i < 1; ++obj.i)
 /// @brief Performance tracked function. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
