@@ -24,7 +24,7 @@
 #ifndef _ELPP_STRICT_SIZE_CHECK
 #   define _ELPP_STRICT_SIZE_CHECK
 #endif
-#ifdef _ELPP_SYSLOG
+#ifndef _ELPP_SYSLOG
 #   define _ELPP_SYSLOG
 #endif
 
