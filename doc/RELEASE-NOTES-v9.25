@@ -23,7 +23,7 @@ Easylogging++ v9.25 RELEASE NOTES
 =       DEPRECATED       =
 ==========================
 
- - Replaced format specifier `%log` with `%msg`
+ - Replaced format specifier `%log` with `%msg` (issue #131)
  - Replaced `_ELPP_STRICT_SIZE_CHECK` macro with `LoggingFlag::StrictLogFileSizeCheck` (issue #130)
 
 ==========================
