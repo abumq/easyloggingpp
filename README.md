@@ -1028,9 +1028,9 @@ You can manually flush log files using `el::Logger::flush()` (to flush single lo
 
 If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, you can manually check for log files that need rolling; by using `el::Helpers::validateFileRolling(el::Logger*, const el::Level&)`. 
 
- [![top] Goto Top](#table-of-contents)
-
  > Since ver. 9.25
+
+ [![top] Goto Top](#table-of-contents)
 
 # Contribution
 ### Submitting Patches
