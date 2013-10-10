@@ -818,7 +818,7 @@ inline static unsigned short Or(const EnumType& e, unsigned short flag) {
     return static_cast<unsigned short>(flag) | static_cast<unsigned short>(e);
 }
 template <typename EnumType>
-inline static unsigned short Or(int n, EnumType flag, ...) {
+static unsigned short Or(int n, EnumType flag, ...) {
     va_list flags;
     va_start(flags, flag);
     unsigned short result = 0x0;
@@ -1250,6 +1250,7 @@ public:
     }
     static inline char* clearBuff(char buff[], std::size_t lim) {
         STRCPY(buff, "", lim);
+        _ELPP_UNUSED(lim); // For *nix we dont have anything using lim in above STRCPY macro
         return buff;
     }
 };
