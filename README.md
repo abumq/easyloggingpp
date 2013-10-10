@@ -1024,21 +1024,12 @@ Just be careful with this as having a time-consuming overloading of `log(std::os
  
 # Contribution
 ### Submitting Patches
-If you wish to contribute to the project, you can do so by normal pull-requests. 
-
-* Always push to develop branch, pushes to other branches will not be accepted.. 
-* When sending pull-requests please be sure to have an updated copy of library as this library is based on single file so chances of having merge-conflicts are very high.
-* In regards to newly added/modified code, if you get a copy of code from somewhere else, please provide appropriate link to make it easy for me to check the licence. 
-* Please add (brief) doxygyn comment for newly created functions as per other parts of file.
-
-If you don't follow above points, your pull-request might be closed without being merged. 
-
-Once successfully merged, I will add your github user ID to list of contributors.
+Since ver. 9.25, we do not accept any patches. Contribution can only be done by report bugs. This is because Easylogging++ is based on single header file hence we run into conflicts a lot of times, which no developer likes.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Reporting a Bug
-If you have found a bug and wish to report it, feel free to do so at github issue tracker. I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
+If you have found a bug and wish to report it, feel free to do so at [github issue tracker](https://github.com/easylogging/easyloggingpp/issues?state=open). I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
 * Platform (OS, Compiler)
 * Log file location
 * Macros defined (on compilation) OR simple compilation 
@@ -1100,6 +1091,8 @@ Easylogging++ has also been tested with following C++ libraries;
  
 # Licence
 ```
+The MIT License (MIT)
+
 (c) Copyright 2013 Majid Khan
 http://easylogging.org/
 
