@@ -34,6 +34,7 @@ TEST(ConfigurationTypeTest, ConvertFromString) {
     EXPECT_EQ(ConfigurationType::MillisecondsWidth, ConfigurationTypeHelper::convertFromString("MILLISECONDS_WIDTH"));
     EXPECT_EQ(ConfigurationType::PerformanceTracking, ConfigurationTypeHelper::convertFromString("PERFORMANCE_TRACKING"));
     EXPECT_EQ(ConfigurationType::MaxLogFileSize, ConfigurationTypeHelper::convertFromString("MAX_LOG_FILE_SIZE"));
+    EXPECT_EQ(ConfigurationType::LogFlushThreshold, ConfigurationTypeHelper::convertFromString("LOG_FLUSH_THRESHOLD"));
 }
 
 TEST(ConfigurationTypeTest, ConvertToString) {
@@ -45,5 +46,6 @@ TEST(ConfigurationTypeTest, ConvertToString) {
     EXPECT_EQ("MILLISECONDS_WIDTH", ConfigurationTypeHelper::convertToString(ConfigurationType::MillisecondsWidth));
     EXPECT_EQ("PERFORMANCE_TRACKING", ConfigurationTypeHelper::convertToString(ConfigurationType::PerformanceTracking));
     EXPECT_EQ("MAX_LOG_FILE_SIZE", ConfigurationTypeHelper::convertToString(ConfigurationType::MaxLogFileSize));
+    EXPECT_EQ("LOG_FLUSH_THRESHOLD", ConfigurationTypeHelper::convertToString(ConfigurationType::LogFlushThreshold));
 }
 #endif // ENUM_HELPER_TESTS_H

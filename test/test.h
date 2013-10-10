@@ -18,14 +18,14 @@ static const char* logfile = "/tmp/logs/el.gtest.log";
 
 static void reconfigureLoggersForTest(void) {
     Configurations c;
-    c.setGlobally(ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %log");
+    c.setGlobally(ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %msg");
     c.setGlobally(ConfigurationType::Filename, "/tmp/logs/el.gtest.log");
     c.setGlobally(ConfigurationType::MaxLogFileSize, "2097152"); // 2MB
     c.setGlobally(ConfigurationType::ToStandardOutput, "false");
     c.setGlobally(ConfigurationType::PerformanceTracking, "true");
     Loggers::setDefaultConfigurations(c, true);
     // We do not want to reconfgure syslog with date/time
-    Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %log");
+    Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %msg");
 
     if (!Helpers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
         Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);

@@ -8,23 +8,23 @@ const char* getConfFile(void) {
     std::fstream confFile(file, std::fstream::out);
     confFile << " * GLOBAL:\n"
     << "    FILENAME             =  /tmp/my-test.log\n"
-    << "    FORMAT               =  %datetime %level %log\n"
+    << "    FORMAT               =  %datetime %level %msg\n"
     << "    MAX_LOG_FILE_SIZE        =  1\n"
     << "    TO_STANDARD_OUTPUT   =  TRUE\n"
     << "* DEBUG:\n"
     // NOTE escaped %level and %host below
-    << "    FORMAT               =  %datetime %%level %level [%user@%%host] [%func] [%loc] %log\n"
+    << "    FORMAT               =  %datetime %%level %level [%user@%%host] [%func] [%loc] %msg\n"
     // INFO and WARNING uses is defined by GLOBAL
     << "* ERROR:\n"
     << "    FILENAME             =  /tmp/my-test-err.log\n"
-    << "    FORMAT               =  %datetime %level %log\n"
+    << "    FORMAT               =  %%logger %%logger %logger %%logger %msg\n"
     << "    MAX_LOG_FILE_SIZE        =  10\n"
     << "* FATAL:\n"
-    << "    FORMAT               =  %datetime %%datetime{%H:%m} %level %log\n"
+    << "    FORMAT               =  %datetime %%datetime{%H:%m} %level %msg\n"
     << "* VERBOSE:\n"
-    << "    FORMAT               =  %%datetime{%h:%m} %datetime %level-%vlevel %log\n"
+    << "    FORMAT               =  %%datetime{%h:%m} %datetime %level-%vlevel %msg\n"
     << "* TRACE:\n"
-    << "    FORMAT               =  %datetime{%h:%m} %%level %level [%func] [%loc] %log\n";
+    << "    FORMAT               =  %datetime{%h:%m} %%level %level [%func] [%loc] %msg\n";
     confFile.close();
     return file;
 }
@@ -35,26 +35,30 @@ TEST(TypedConfigurationsTest, Initialization) {
 
     EXPECT_TRUE(tConf.enabled(Level::Global));
 
-    EXPECT_EQ("%datetime %level %log", tConf.logFormat(Level::Info).userFormat());
-    EXPECT_EQ("%datetime INFO  %log", tConf.logFormat(Level::Info).format());
+    EXPECT_EQ("%datetime %level %msg", tConf.logFormat(Level::Info).userFormat());
+    EXPECT_EQ("%datetime INFO  %msg", tConf.logFormat(Level::Info).format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
-    EXPECT_EQ("%datetime %%level %level [%user@%%host] [%func] [%loc] %log", tConf.logFormat(Level::Debug).userFormat());
-    EXPECT_EQ("%datetime %level DEBUG [%user@%%host] [%func] [%loc] %log", tConf.logFormat(Level::Debug).format());
+    EXPECT_EQ("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg", tConf.logFormat(Level::Debug).userFormat());
+    EXPECT_EQ("%datetime %level DEBUG [%user@%%host] [%func] [%loc] %msg", tConf.logFormat(Level::Debug).format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Debug).dateTimeFormat());
 
     // This double quote is escaped at run-time for %date and %datetime
-    EXPECT_EQ("%datetime %%datetime{%H:%m} %level %log", tConf.logFormat(Level::Fatal).userFormat());
-    EXPECT_EQ("%datetime %%datetime{%H:%m} FATAL %log", tConf.logFormat(Level::Fatal).format());
+    EXPECT_EQ("%datetime %%datetime{%H:%m} %level %msg", tConf.logFormat(Level::Fatal).userFormat());
+    EXPECT_EQ("%datetime %%datetime{%H:%m} FATAL %msg", tConf.logFormat(Level::Fatal).format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Fatal).dateTimeFormat());
 
-    EXPECT_EQ("%datetime{%h:%m} %%level %level [%func] [%loc] %log", tConf.logFormat(Level::Trace).userFormat());
-    EXPECT_EQ("%datetime %level TRACE [%func] [%loc] %log", tConf.logFormat(Level::Trace).format());
+    EXPECT_EQ("%datetime{%h:%m} %%level %level [%func] [%loc] %msg", tConf.logFormat(Level::Trace).userFormat());
+    EXPECT_EQ("%datetime %level TRACE [%func] [%loc] %msg", tConf.logFormat(Level::Trace).format());
     EXPECT_EQ("%h:%m", tConf.logFormat(Level::Trace).dateTimeFormat());
 
-    EXPECT_EQ("%%datetime{%h:%m} %datetime %level-%vlevel %log", tConf.logFormat(Level::Verbose).userFormat());
-    EXPECT_EQ("%%datetime{%h:%m} %datetime VER-%vlevel %log", tConf.logFormat(Level::Verbose).format());
+    EXPECT_EQ("%%datetime{%h:%m} %datetime %level-%vlevel %msg", tConf.logFormat(Level::Verbose).userFormat());
+    EXPECT_EQ("%%datetime{%h:%m} %datetime VER-%vlevel %msg", tConf.logFormat(Level::Verbose).format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Verbose).dateTimeFormat());
+
+    EXPECT_EQ("%%logger %%logger %logger %%logger %msg", tConf.logFormat(Level::Error).userFormat());
+    EXPECT_EQ("%%logger %%logger %logger %logger %msg", tConf.logFormat(Level::Error).format());
+    EXPECT_EQ("", tConf.logFormat(Level::Error).dateTimeFormat());
 }
 
 TEST(TypedConfigurationsTest, SharedFileStreams) {

@@ -15,17 +15,17 @@ TEST(GlobalConfigurationTest, Parse) {
     << "* INFO:\n"
     // Following should be included in format because its inside the quotes
     << "* DEBUG:\n"
-    << "    FORMAT               =  %datetime %level [%user@%host] [%func] [%loc] %log ## Comment before EOL char\n"
+    << "    FORMAT               =  %datetime %level [%user@%host] [%func] [%loc] %msg ## Comment before EOL char\n"
     << "## Comment on empty line\n"
     // WARNING is defined by GLOBAL
     << "* ERROR:\n"
-    << "    FORMAT               =  %datetime %level %log\n"
+    << "    FORMAT               =  %datetime %level %msg\n"
     << "* FATAL:\n"
-    << "    FORMAT               =  %datetime %level %log\n"
+    << "    FORMAT               =  %datetime %level %msg\n"
     << "* VERBOSE:\n"
-    << "    FORMAT               =  %datetime %level-%vlevel %log\n"
+    << "    FORMAT               =  %datetime %level-%vlevel %msg\n"
     << "* TRACE:\n"
-    << "    FORMAT               =  %datetime %level [%func] [%loc] %log\n";
+    << "    FORMAT               =  %datetime %level [%func] [%loc] %msg\n";
     confFile.close();
 
     Logger* perfLogger = CHECK_NOTNULL(Loggers::getLogger("performance", false));
@@ -47,7 +47,7 @@ TEST(GlobalConfigurationTest, Parse) {
     EXPECT_NE(testLogger, nullptr);
 
     EXPECT_EQ("GLOBAL_TEST", testLogger->configurations()->get(Level::Info, ConfigurationType::Format)->value());
-    EXPECT_EQ("%datetime %level [%user@%host] [%func] [%loc] %log", testLogger->configurations()->get(Level::Debug, ConfigurationType::Format)->value());
+    EXPECT_EQ("%datetime %level [%user@%host] [%func] [%loc] %msg", testLogger->configurations()->get(Level::Debug, ConfigurationType::Format)->value());
 
 }
 

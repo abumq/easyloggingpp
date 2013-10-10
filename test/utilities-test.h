@@ -84,9 +84,9 @@ TEST(StringUtilsTest, ReplaceFirstWithEscape) {
     str = "%this is great and this is not";
     Str::replaceFirstWithEscape(str, "this is", "that was");
     EXPECT_EQ("this is great and that was not", str);
-    str = "%datetime %level %log";
+    str = "%datetime %level %msg";
     Str::replaceFirstWithEscape(str, "%level", LevelHelper::convertToString(Level::Info));
-    EXPECT_EQ("%datetime INFO %log", str);
+    EXPECT_EQ("%datetime INFO %msg", str);
 }
 
 #if _ELPP_OS_UNIX
@@ -133,7 +133,6 @@ TEST(LogFormatAndDateUtilsTest, ParseFormatTest) {
     EXPECT_EQ("%logger %datetime{%%H %H} %thread", escapeTest.userFormat());
     EXPECT_EQ("%logger %datetime %thread", escapeTest.format());
     EXPECT_EQ("%%H %H", escapeTest.dateTimeFormat());
-    EXPECT_EQ("%%H %H", escapeTest.dateTimeFormat());
     MillisecondsWidth msWidth(3);
     EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
 
@@ -146,6 +145,18 @@ TEST(LogFormatAndDateUtilsTest, ParseFormatTest) {
     EXPECT_EQ("%logger %level-%vlevel %datetime %thread", defaultFormat4.userFormat());
     EXPECT_EQ("%logger VER-%vlevel %datetime %thread", defaultFormat4.format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", defaultFormat4.dateTimeFormat());
+
+    LogFormat escapeTest2(Level::Info, "%%logger %%datetime{%%H %H %%H} %%thread %thread %%thread");
+    EXPECT_EQ("%%logger %%datetime{%%H %H %%H} %%thread %thread %%thread", escapeTest2.userFormat());
+    EXPECT_EQ("%%logger %%datetime{%%H %H %%H} %%thread %thread %thread", escapeTest2.format());
+    EXPECT_EQ("", escapeTest2.dateTimeFormat()); // Date/time escaped
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
+
+    LogFormat escapeTest3(Level::Info, "%%logger %datetime{%%H %H %%H} %%thread %thread %%thread");
+    EXPECT_EQ("%%logger %datetime{%%H %H %%H} %%thread %thread %%thread", escapeTest3.userFormat());
+    EXPECT_EQ("%%logger %datetime %%thread %thread %thread", escapeTest3.format());
+    EXPECT_EQ("%%H %H %%H", escapeTest3.dateTimeFormat()); // Date/time escaped
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
 }
 
 TEST(CommandLineArgsTest, SetArgs) {

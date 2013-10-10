@@ -7,6 +7,7 @@ Easylogging++ v9.25 RELEASE NOTES
 
  - Month (numeric) is not correct in %datetime (issue #125)
  - Massive improvement for each log entry
+ - Fix to log format like `%%logger %%logger %logger %%logger %msg`
 
 ==========================
 =      NEW FEATURES      =
@@ -22,6 +23,7 @@ Easylogging++ v9.25 RELEASE NOTES
 =       DEPRECATED       =
 ==========================
 
+ - Replaced format specifier `%log` with `%msg`
  - Replaced `_ELPP_STRICT_SIZE_CHECK` macro with `LoggingFlag::StrictLogFileSizeCheck` (issue #130)
 
 ==========================

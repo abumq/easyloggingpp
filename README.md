@@ -228,7 +228,7 @@ Please do not use double-quotes anywhere in comment, you might end up in unexpec
 Sample Configuration File
 ```
 * GLOBAL:
-   FORMAT               =  "%datetime %log"
+   FORMAT               =  "%datetime %msg"
    FILENAME             =  "/tmp/logs/my.log"
    ENABLED              =  true
    TO_FILE              =  true
@@ -237,7 +237,7 @@ Sample Configuration File
    PERFORMANCE_TRACKING =  true
    MAX_LOG_FILE_SIZE    =  2097152 ## 2MB - Comment starts with two hashes (##)
 * DEBUG:
-   FORMAT               = "%datetime{%d/%M} %func %log"
+   FORMAT               = "%datetime{%d/%M} %func %msg"
 ```
 
 ##### Explanation 
@@ -274,13 +274,13 @@ int main(int argc, const char** argv) {
    defaultConf.setToDefault();
     // Values are always std::string
    defaultConf.set(el::Level::Info, 
-            el::ConfigurationType::Format, "%datetime %level %log");
+            el::ConfigurationType::Format, "%datetime %level %msg");
     // default logger uses default configurations
-    el::Loggers::reconfigureLogger("default", defaultConf);    
+    el::Loggers::reconfigureLogger("default", defaultConf);
     LOG(INFO) << "Log using default file";
     // To set GLOBAL configurations you may use
    defaultConf.setGlobally(
-            el::ConfigurationType::Format, "%date %log");
+            el::ConfigurationType::Format, "%date %msg");
    el::Loggers::reconfigureLogger("default", defaultConf);
     return 0;
 }
@@ -295,7 +295,7 @@ Inline configuration means you can set configurations in std::string but make su
 ```c++
 el::Configurations c;
 c.setToDefault();
-c.parseFromText("*GLOBAL:\n FORMAT = %level %log");
+c.parseFromText("*GLOBAL:\n FORMAT = %level %msg");
 ```
 
 Please note, above code only sets Configurations object, you still need to re-configure logger/s using this configurations.
@@ -346,7 +346,7 @@ You can customize format of logging using following specifiers:
 | `%host`         | Computer name application is running on                                                     |
 | `%func`         | Logging function                                                                            |
 | `%loc`          | Source filename and line number of logging                                                  |
-| `%log`          | Actual log message                                                                          |
+| `%msg`          | Actual log message, (before ver.9.25 it was `%log`)                                         |
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
 Since ver. 9.23, you can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCp server application;
@@ -358,7 +358,7 @@ const char* getIp(void) {
 
 int main(void) {
     el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
-    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %log");
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
     LOG(INFO) << "This is request from client";
     return 0;
 }

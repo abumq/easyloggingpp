@@ -647,7 +647,7 @@ namespace consts {
     static const char* kLogFunctionFormatSpecifier      =      "%func";
     static const char* kCurrentUserFormatSpecifier      =      "%user";
     static const char* kCurrentHostFormatSpecifier      =      "%host";
-    static const char* kMessageFormatSpecifier          =      "%log";
+    static const char* kMessageFormatSpecifier          =      "%msg";
     static const char* kVerboseLevelFormatSpecifier     =      "%vlevel";
 
     // Date/time
@@ -1971,12 +1971,22 @@ public:
         // i.e, removing user provided date format from original format
         // and then storing it.
         std::string formatCopy = userFormat;
+        m_flags = 0x0;
         auto conditionalAddFlag = [&](const char* specifier, const base::FormatFlags& flag) {
-            if (formatCopy.find(specifier) != std::string::npos) {
-                addFlag(flag);
+            std::size_t foundAt = std::string::npos;
+            while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != std::string::npos){
+                if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatEscapeChar) {
+                    if (hasFlag(flag)) {
+                        // If we already have flag we remove the escape chars so that '%%' is turned to '%'
+                        // even after specifier resolution - this is because we only replaceFirst specifier
+                        formatCopy.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+                        ++foundAt;
+                    }
+                } else {
+                    if (!hasFlag(flag)) addFlag(flag);
+                }
             }
         };
-        m_flags = 0x0;
         conditionalAddFlag(base::consts::kAppNameFormatSpecifier, base::FormatFlags::AppName);
         conditionalAddFlag(base::consts::kSeverityLevelFormatSpecifier, base::FormatFlags::Level);
         conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
@@ -2398,13 +2408,13 @@ public:
         setGlobally(ConfigurationType::MaxLogFileSize, "0", true);
         setGlobally(ConfigurationType::LogFlushThreshold, "0", true);
 
-        setGlobally(ConfigurationType::Format, "%datetime %level [%logger] %log", true);
-        set(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
+        setGlobally(ConfigurationType::Format, "%datetime %level [%logger] %msg", true);
+        set(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %msg");
         // INFO and WARNING are set to default by Level::Global
-        set(Level::Error, ConfigurationType::Format, "%datetime %level [%logger] %log");
-        set(Level::Fatal, ConfigurationType::Format, "%datetime %level [%logger] %log");
-        set(Level::Verbose, ConfigurationType::Format, "%datetime %level-%vlevel [%logger] %log");
-        set(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %log");
+        set(Level::Error, ConfigurationType::Format, "%datetime %level [%logger] %msg");
+        set(Level::Fatal, ConfigurationType::Format, "%datetime %level [%logger] %msg");
+        set(Level::Verbose, ConfigurationType::Format, "%datetime %level-%vlevel [%logger] %msg");
+        set(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %msg");
     }
 
     /// @brief Lets you set the remaining configurations to default.
@@ -2425,13 +2435,13 @@ public:
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, "3");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, "true");
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MaxLogFileSize, "0");
-        unsafeSetIfNotExist(Level::Global, ConfigurationType::Format, "%datetime %level [%logger] %log");
-        unsafeSetIfNotExist(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %log");
+        unsafeSetIfNotExist(Level::Global, ConfigurationType::Format, "%datetime %level [%logger] %msg");
+        unsafeSetIfNotExist(Level::Debug, ConfigurationType::Format, "%datetime %level [%logger] [%user@%host] [%func] [%loc] %msg");
         // INFO and WARNING are set to default by Level::Global
-        unsafeSetIfNotExist(Level::Error, ConfigurationType::Format, "%datetime %level [%logger] %log");
-        unsafeSetIfNotExist(Level::Fatal, ConfigurationType::Format, "%datetime %level [%logger] %log");
-        unsafeSetIfNotExist(Level::Verbose, ConfigurationType::Format, "%datetime %level-%vlevel [%logger] %log");
-        unsafeSetIfNotExist(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %log");
+        unsafeSetIfNotExist(Level::Error, ConfigurationType::Format, "%datetime %level [%logger] %msg");
+        unsafeSetIfNotExist(Level::Fatal, ConfigurationType::Format, "%datetime %level [%logger] %msg");
+        unsafeSetIfNotExist(Level::Verbose, ConfigurationType::Format, "%datetime %level-%vlevel [%logger] %msg");
+        unsafeSetIfNotExist(Level::Trace, ConfigurationType::Format, "%datetime %level [%logger] [%func] [%loc] %msg");
     }
 
     /// @brief Parser used internally to parse configurations from file or text.
@@ -3408,12 +3418,12 @@ public:
 
         // Register performance logger and reconfigure format
         Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
-        performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %log");
+        performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %msg");
         performanceLogger->reconfigure();
 #if defined(_ELPP_SYSLOG)
         // Register syslog logger and reconfigure format
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
-        sysLogLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%level: %log");
+        sysLogLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%level: %msg");
         sysLogLogger->reconfigure();
 #else
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
