@@ -19,8 +19,6 @@ int main(int argc, char* argv[]) {
 
     el::Helpers::removeFlag(el::LoggingFlag::NewLineForContainer);
 
-    el::Loggers::reconfigureLogger("default", el::ConfigurationType::Format, "%%logger %%logger %logger %%logger %msg");
-
     bool runThreads = true;
 
     if (runThreads) {

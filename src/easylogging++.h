@@ -3434,6 +3434,9 @@ public:
         templateHelperLogger->reconfigure();
 
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+#if defined(_ELPP_STRICT_SIZE_CHECK)
+        addFlag(LoggingFlag::StrictLogFileSizeCheck);
+#endif // defined(_ELPP_STRICT_SIZE_CHECK)
         ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 

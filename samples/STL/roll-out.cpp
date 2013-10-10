@@ -5,8 +5,6 @@
  // @author mkhan3189
  //
 
-#define _ELPP_STRICT_SIZE_CHECK
-
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
@@ -25,7 +23,7 @@ void rolloutHandler(const char* filename, std::size_t size) {
 
 int main(int, char**) {
    idx = 0;
-
+   el::Helpers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Filename, "/tmp/logs/max-size.log");
    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::MaxLogFileSize, "100");
    el::Helpers::installPreRollOutHandler(rolloutHandler);

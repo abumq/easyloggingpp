@@ -33,6 +33,9 @@ static void reconfigureLoggersForTest(void) {
     if (!Helpers::hasFlag(LoggingFlag::ImmediateFlush)) {
         Helpers::addFlag(LoggingFlag::ImmediateFlush);
     }
+    if (!Helpers::hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
+        Helpers::addFlag(LoggingFlag::StrictLogFileSizeCheck);
+    }
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {
