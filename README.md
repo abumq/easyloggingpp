@@ -431,7 +431,9 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `_ELPP_NO_DEFAULT_LOG_FILE`              | (since ver. 9.13) If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
 | `_ELPP_ENABLE_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
-| `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers resolution                                                                                                                                             |
+| `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
+| `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
+| `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -528,14 +530,15 @@ Verbose level is level of verbosity that can have range of 1-9
 #### Application Arguments
 Verbose level will not be active unless you either set application arguments for it; even before that you will need to make sure you have used `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function. Following table will explain every arguments;
 
-|        Argument         |                                      Description                                        |
-|-------------------------|-----------------------------------------------------------------------------------------|
-| `-v`                    | Activates maximum verbosity                                                             |
-| `--v=2`                 | Activates verbosity upto verbose level 2                                                |
-| `--verbose`             | Activates maximum verbosity                                                             |
-| `-vmodule=main*=1`      | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma.                                                                                                 |
+|        Argument            |                                      Description                                        |
+|----------------------------|-----------------------------------------------------------------------------------------|
+| `-v`                       | Activates maximum verbosity                                                             |
+| `--v=2`                    | Activates verbosity upto verbose level 2 (valid range: 0-9)                             |
+| `--verbose`                | Activates maximum verbosity                                                             |
+| `-vmodule=MODULE_NAME`     | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma. Please note vmodules are last in order of precedence of checking arguments for verbose logging, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.                                                                                                               |
+| `--logging-flags=3`        | Since ver. 9.25, Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
+| `--default-log-file=FILE`  | Since ver. 9.25, Sets default log file for existing and future loggers. You may want to consider defining `_ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                   |
 
-Please note vmodules are last in order of precedence of checking arguments, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.
 
  [![top] Goto Top](#table-of-contents)
  
