@@ -75,6 +75,7 @@
     <a href="#extending-library">Extending Library</a>
         <a href="#logging-your-own-class">Logging Your Own Class</a>
         <a href="#logging-third-party-class">Logging Third-party Class</a>
+    <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -1018,10 +1019,19 @@ int main(void) {
 }
 ```
 
+Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
+
  [![top] Goto Top](#table-of-contents)
 
-Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
- 
+### Manually Flushing and Rolling Log Files
+You can manually flush log files using `el::Logger::flush()` (to flush single logger with all referencing log files) or `el::Loggers::flushAll()` (to flush all log files for all levels).
+
+If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, you can manually check for log files that need rolling; by using `el::Helpers::validateFileRolling(el::Logger*, const el::Level&)`. 
+
+ [![top] Goto Top](#table-of-contents)
+
+ > Since ver. 9.25
+
 # Contribution
 ### Submitting Patches
 Since ver. 9.25, we do not accept any patches. Contribution can only be done by report bugs. This is because Easylogging++ is based on single header file hence we run into conflicts a lot of times, which no developer likes.
