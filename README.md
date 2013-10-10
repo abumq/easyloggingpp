@@ -386,7 +386,7 @@ You can customize date/time format using following specifiers
 | `%F`            | AM/PM designation                                                                                                |
 | `%`             | Escape character                                                                                                 |
 
-Please note, this date/time functionality is built-in hence is cross-platform.
+Please note, date/time is limited to `30` characters at most.
 
  [![top] Goto Top](#table-of-contents)
  

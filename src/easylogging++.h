@@ -1441,7 +1441,7 @@ private:
 #endif // _ELPP_OS_UNIX
     }
     static inline char* conv(int n, int len, char* buf, const char* bufLim) {
-        char localBuff[10] = "";
+        char localBuff[7] = "";
         for (int i = len; i > 0; n /= 10, --i) {
             localBuff[i - 1] = (char)(n % 10 + '0');
         }
