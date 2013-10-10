@@ -6,7 +6,7 @@
 
 TEST(LoggerTest, RegisterTenThousandLoggers) {
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");
-    TIMED_BLOCK(timer, "RegisterTenThousandLoggers");
+    TIMED_SCOPE(timer, "RegisterTenThousandLoggers");
     for (unsigned int i = 1; i <= 10000; ++i) {
         std::stringstream ss;
         ss << "logger" << i;

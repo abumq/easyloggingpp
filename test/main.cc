@@ -16,7 +16,7 @@
 #include "custom-format-specifier-test.h"
 #include "syslog-test.h"
 
-TIMED_BLOCK(testTimer, "Easylogging++ Unit Tests");
+TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
