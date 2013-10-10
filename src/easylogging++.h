@@ -664,7 +664,7 @@ namespace consts {
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;
     static const unsigned int kMaxLogPerCounter                =      100000;
-    static const unsigned int  kDefaultMillisecondsOffset      =      1000;
+    static const unsigned int  kDefaultMillisecondsWidth       =      3;
     static const short kMaxVerboseLevel                        =      9;
     static const char* kUnknownUser                            =      "user";
     static const char* kUnknownHost                            =      "unknown-host";
@@ -739,6 +739,38 @@ enum class FormatFlags : unsigned short {
     DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
     User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
     Level = 8192
+};
+/// @brief A milliseconds width class containing actual width and offset for date/time
+class MillisecondsWidth {
+public:
+    MillisecondsWidth(void) { init(base::consts::kDefaultMillisecondsWidth); }
+    explicit MillisecondsWidth(int width) { init(width); }
+    bool operator==(const MillisecondsWidth& msWidth) { return m_width == msWidth.m_width && m_offset == msWidth.m_offset; }
+    int m_width; unsigned int m_offset;
+private:
+    void init(int width) {
+        if (width < 1 || width > 6) {
+            width = base::consts::kDefaultMillisecondsWidth;
+        }
+        m_width = width;
+        switch (m_width) {
+        case 3:
+            m_offset = 1000;
+            break;
+        case 4:
+            m_offset = 100;
+            break;
+        case 5:
+            m_offset = 10;
+            break;
+        case 6:
+            m_offset = 1;
+            break;
+        default:
+            m_offset = 1000;
+            break;
+        }
+    }
 };
 /// @brief Namespace containing utility functions/static classes used internally
 namespace utils {
@@ -1349,16 +1381,16 @@ public:
 
     /// @brief Gets current date and time with milliseconds.
     /// @param format User provided date/time format
-    /// @param millisecondsOffset Milliseconds offset. This is used to determine milliseconds width; 1000 = 3, 100 = 4, 10 = 5, 1 = 6
+    /// @param msWidth A pointer to base::MillisecondsWidth from configuration (non-null)
     /// @returns string based date time in specified format.
-    static inline std::string getDateTime(const char* format, std::size_t milliSecondOffset = 1000) {
+    static inline std::string getDateTime(const char* format, const base::MillisecondsWidth* msWidth) {
         struct timeval currTime;
         gettimeofday(&currTime);
         struct ::tm timeInfo;
         buildTimeInfo(&currTime, &timeInfo);
         const int kBuffSize = 30;
         char buff_[kBuffSize] = "";
-        parseFormat(buff_, kBuffSize, format, &timeInfo, currTime.tv_usec / milliSecondOffset);
+        parseFormat(buff_, kBuffSize, format, &timeInfo, currTime.tv_usec / msWidth->m_width, msWidth);
         return std::string(buff_);
     }
 
@@ -1408,10 +1440,12 @@ private:
 #   endif // _ELPP_COMPILER_MSVC
 #endif // _ELPP_OS_UNIX
     }
-    
-    static inline char* conv(int n, const char* format, char* buf, const char* bufLim) {
-        char localBuff[7];
-        SPRINTF(localBuff, format, n);
+    static inline char* conv(int n, int len, char* buf, const char* bufLim) {
+        char localBuff[10] = "";
+        for (int i = len; i > 0; n /= 10, --i) {
+            localBuff[i - 1] = (char)(n % 10 + '0');
+        }
+        localBuff[len] = '\0';
         return add(localBuff, buf, bufLim);
     }
     static inline char* add(const char* str, char* buf, const char* bufLim) {
@@ -1419,7 +1453,8 @@ private:
             ++buf;
         return buf;
     }
-    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, int msec) {
+    static char* parseFormat(char* buf, size_t bufSz, const char* format, const struct tm* tInfo, 
+            unsigned int msec, const base::MillisecondsWidth* msWidth) {
         const char* bufLim = buf + bufSz;
         for (; *format; ++format) {
             if (*format == '%') {
@@ -1430,7 +1465,7 @@ private:
                     --format;
                     break;
                 case 'd':  // Day
-                    buf = conv(tInfo->tm_mday, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_mday, 2, buf, bufLim);
                     continue;
                 case 'a': // Day of week (short)
                     buf = add(base::consts::kDaysAbbrev[tInfo->tm_wday], buf, bufLim);
@@ -1439,7 +1474,7 @@ private:
                     buf = add(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
                     continue;
                 case 'M': // month
-                    buf = conv(tInfo->tm_mon + 1, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_mon + 1, 2, buf, bufLim);
                     continue;
                 case 'b': // month (short)
                     buf = add(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
@@ -1448,26 +1483,26 @@ private:
                     buf = add(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
                     continue;
                 case 'y': // year (two digits)
-                    buf = conv(tInfo->tm_year + base::consts::kYearBase, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_year + base::consts::kYearBase, 2, buf, bufLim);
                     continue;
                 case 'Y': // year (four digits)
-                    buf = conv(tInfo->tm_year + base::consts::kYearBase, "%04d", buf, bufLim);
+                    buf = conv(tInfo->tm_year + base::consts::kYearBase, 4, buf, bufLim);
                     continue;
                 case 'h': // hour (12-hour)
-                    buf = conv(tInfo->tm_hour % 12, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_hour % 12, 2, buf, bufLim);
                     continue;
                 case 'H': // hour (24-hour)
-                    buf = conv(tInfo->tm_hour, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_hour, 2, buf, bufLim);
                     continue;
                 case 'm': // minute
-                    buf = conv(tInfo->tm_min, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_min, 2, buf, bufLim);
                     continue;
                 case 's': // second
-                    buf = conv(tInfo->tm_sec, "%02d", buf, bufLim);
+                    buf = conv(tInfo->tm_sec, 2, buf, bufLim);
                     continue;
                 case 'z': // milliseconds
                 case 'g':
-                    buf = conv(msec, "%03ld", buf, bufLim);
+                    buf = conv(msec, msWidth->m_width, buf, bufLim);
                     continue;
                 case 'F': // AM/PM
                     buf = add((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
@@ -2626,8 +2661,8 @@ public:
         return getConfigByRef<base::LogFormat>(level, m_logFormatMap, "logFormat");
     }
 
-    inline unsigned int millisecondsWidth(const Level& level = Level::Global) {
-        return getConfigByVal<unsigned int>(level, m_millisecondsWidthMap, "millisecondsWidth");
+    inline const MillisecondsWidth& millisecondsWidth(const Level& level = Level::Global) {
+        return getConfigByRef<MillisecondsWidth>(level, m_millisecondsWidthMap, "millisecondsWidth");
     }
 
     inline bool performanceTracking(const Level& level = Level::Global) {
@@ -2653,7 +2688,7 @@ private:
     std::map<Level, std::string> m_filenameMap;
     std::map<Level, bool> m_toStandardOutputMap;
     std::map<Level, base::LogFormat> m_logFormatMap;
-    std::map<Level, unsigned int> m_millisecondsWidthMap;
+    std::map<Level, base::MillisecondsWidth> m_millisecondsWidthMap;
     std::map<Level, bool> m_performanceTrackingMap;
     std::map<Level, std::shared_ptr<std::fstream>> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
@@ -2746,27 +2781,9 @@ private:
             } else if (conf->configurationType() == ConfigurationType::Filename) {
                 insertFile(conf->level(), conf->value());
             } else if (conf->configurationType() == ConfigurationType::Format) {
-                setValue(conf->level(), LogFormat(conf->level(), conf->value()), m_logFormatMap);
+                setValue(conf->level(), base::LogFormat(conf->level(), conf->value()), m_logFormatMap);
             } else if (conf->configurationType() == ConfigurationType::MillisecondsWidth) {
-                unsigned int msOffset;
-                switch (static_cast<int>(getULong(conf->value()))) {
-                case 3:
-                    msOffset = 1000;
-                    break;
-                case 4:
-                    msOffset = 100;
-                    break;
-                case 5:
-                    msOffset = 10;
-                    break;
-                case 6:
-                    msOffset = 1;
-                    break;
-                default:
-                    msOffset = base::consts::kDefaultMillisecondsOffset;
-                    break;
-                }
-                setValue(Level::Global, msOffset, m_millisecondsWidthMap);
+                setValue(Level::Global, base::MillisecondsWidth(static_cast<int>(getULong(conf->value()))), m_millisecondsWidthMap);
             } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
                 setValue(Level::Global, getBool(conf->value()), m_performanceTrackingMap);
             } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
@@ -3572,7 +3589,7 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
             // DateTime
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
-                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), tc->millisecondsWidth(m_logMessage.level())));
+                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), &tc->millisecondsWidth(m_logMessage.level())));
         }
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
             // Function

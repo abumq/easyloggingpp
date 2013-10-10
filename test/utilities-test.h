@@ -134,7 +134,8 @@ TEST(LogFormatAndDateUtilsTest, ParseFormatTest) {
     EXPECT_EQ("%logger %datetime %thread", escapeTest.format());
     EXPECT_EQ("%%H %H", escapeTest.dateTimeFormat());
     EXPECT_EQ("%%H %H", escapeTest.dateTimeFormat());
-    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str()), "%H"));
+    MillisecondsWidth msWidth(3);
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
 
     LogFormat defaultFormat2(Level::Info, "%logger %datetime %thread");
     EXPECT_EQ("%logger %datetime %thread", defaultFormat2.userFormat());

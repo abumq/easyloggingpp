@@ -17,6 +17,12 @@ Easylogging++ v9.25 RELEASE NOTES
  - Introduced `Logger::flush` family and `Loggers::flushAll` family of function to manually flush log files (issue #128)
 
 ==========================
+=      IMPROVEMENTS      =
+==========================
+
+ - Massive improvement for each log entry
+
+==========================
 =         NOTES          =
 ==========================
 
