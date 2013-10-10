@@ -404,7 +404,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_CONFIGURE_FROM_ARG`
+ > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
  
