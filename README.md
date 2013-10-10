@@ -409,7 +409,7 @@ You can set/unset these flags by using static `el::Helpers::addFlag` and `el::He
  [![top] Goto Top](#table-of-contents)
 
 ### Application Arguments
-Verbose level will not be active unless you either set application arguments for it; even before that you will need to make sure you have used `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function. Following table will explain every arguments;
+Following table will explain all command line arguments that you may use to define certain behaviour; You will need to initialize application arguments by using `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function.
 
 |        Argument            |                                      Description                                        |
 |----------------------------|-----------------------------------------------------------------------------------------|
@@ -537,7 +537,7 @@ Verbose logging also has conditional and occasional logging aspects i.e,
 
  
 #### Verbose-Level
-Verbose level is level of verbosity that can have range of 1-9. Please read through [Application Arguments](#application-arguments) section to understand more about verbose logging.
+Verbose level is level of verbosity that can have range of 1-9. Verbose level will not be active unless you either set application arguments for it. Please read through [Application Arguments](#application-arguments) section to understand more about verbose logging.
 
  [![top] Goto Top](#table-of-contents)
  
