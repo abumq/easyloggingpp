@@ -4288,6 +4288,7 @@ public:
         }
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
+    /// @brief Copy constructor
     Trackable(const Trackable& t) {
         m_blockName = t.m_blockName;
         m_timestampUnit = t.m_timestampUnit;
@@ -4297,6 +4298,8 @@ public:
         m_enabled = t.m_enabled;
         m_startTime = t.m_startTime;
         m_endTime = t.m_endTime;
+        m_lastCheckpointTime = t.m_lastCheckpointTime;
+        m_lastCheckpointId = t.m_lastCheckpointId;
     }
     virtual ~Trackable(void) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
