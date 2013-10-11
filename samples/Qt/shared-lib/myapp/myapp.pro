@@ -15,7 +15,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 DEPENDPATH += . ../mylib
 INCLUDEPATH +=  ../mylib
-LIBS+=  -L../mylib/debug -lmylib # try in lib build dir "sudo cp %{buildDir}/libmylib.so* /usr/lib/" to make this work
+LIBS+=  -L../build-mylib -lmylib # try in lib build dir "sudo cp %{buildDir}/libmylib.so* /usr/lib/" to make this work
 
 
 SOURCES += main.cc

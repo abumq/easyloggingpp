@@ -101,7 +101,7 @@
 #   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
           std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
-              << msg << "\"" << std::endl; exit(1); }
+              << msg << "\"" << std::endl; base::utils::abort(1, msg); }
 #   else
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
         __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
@@ -801,6 +801,18 @@ inline static void safeDelete(T*& pointer) {
 /// @brief Gets value of const char* but if it is nullptr, a string nullptr is returned
 inline static const char* charPtrVal(const char* pointer) {
     return pointer == nullptr ? base::consts::kNullPointer : pointer;
+}
+/// @brief Aborts application due with user-defined status
+inline static void abort(int status, const char* reason = "") {
+    // Both status and reason params are there for debugging with something like VS
+    _ELPP_UNUSED(status);
+    _ELPP_UNUSED(reason);
+#if defined(_ELPP_COMPILER_MSVC) && defined(_M_IX86) && defined(_DEBUG)
+    // Ignore msvc critical error dialog - break instead (on debug mode)
+    _asm int 3
+#else
+    ::abort();
+#endif
 }
 /// @brief Bitwise operations for C++11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
 /// Use these function as <pre>flag = bitOr<MyEnum>(MyEnum::val1, flag);</pre>
@@ -3865,8 +3877,14 @@ public:
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
-                    << "Aborting due to FATAL log... (LoggingFlag::DisableApplicationAbortOnFatalLog not set)";
-            exit(1);
+                    << "Aborting application. [Reason: Fatal log]";
+            char filenameBuff[base::consts::kSourceFilenameMaxLength] = "";
+            base::utils::File::buildStrippedFilename(m_file, filenameBuff);
+            std::stringstream reasonStream;
+            reasonStream << "Fatal log at [" << filenameBuff << ":" << m_line << "]"
+                << " If you wish to disable abort on fatal log please use "
+                << "el::Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)";
+            base::utils::abort(1, reasonStream.str().c_str());
         }
     }
 
@@ -4512,20 +4530,13 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
 #endif // _ELPP_STACKTRACE
     _ELPP_WRITE_LOG(logger, level, base::utils::bitwise::Or(1, base::DispatchAction::NormalLog)) << ss.str();
 }
-/// @brief Aborts application due with user-defined status
-static void crashAbort(int status) {
-#if defined(_ELPP_COMPILER_MSVC) && defined(_M_IX86) && defined(_DEBUG)
-    // Ignore msvc critical error dialog - break instead (on debug mode)
-    _ELPP_UNUSED(status)
-    _asm int 3
-#else
-    exit(status);
-#endif
+static inline void crashAbort(int sig) {
+    base::utils::abort(sig);
 }
 /// @brief Default application crash handler
 ///
-/// @detail This function writes log using 'default' logger, prints stack trace for GCC based compilers and exits program.
-static void defaultCrashHandler(int sig) {
+/// @detail This function writes log using 'default' logger, prints stack trace for GCC based compilers and aborts program.
+static inline void defaultCrashHandler(int sig) {
     base::debug::logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
     base::debug::crashAbort(sig);
 }
