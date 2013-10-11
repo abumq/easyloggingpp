@@ -331,7 +331,6 @@
 namespace el {
 /// @brief Namespace containing base/internal functionality used by easylogging++
 namespace base {
-
 /// @brief Internal helper class that prevent copy constructor for class
 ///
 /// @detail When using this class simply inherit it privately
@@ -342,7 +341,6 @@ private:
     NoCopy(const NoCopy&);
     NoCopy& operator=(const NoCopy&);
 };
-
 /// @brief Internal helper class that makes all default constructors private.
 ///
 /// @detail This prevents initializing class making it static unless an explicit constructor is declared.
@@ -353,13 +351,15 @@ private:
     StaticClass(const StaticClass&);
     StaticClass& operator=(const StaticClass&);
 };
-} // namespace internal
+/// @brief Enum underlying type
+typedef unsigned short EUType;
+} // namespace base
 /// @brief Represents enumeration for severity level used to determine level of logging
 ///
 /// @detail Easylogging++ has different concept of level. Developers may disable or enable any level regardless of
 /// what the severity is
 /// @see el::LevelHelper
-enum class Level : unsigned short {
+enum class Level : base::EUType {
         /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
         Global = 1,
         /// @brief Informational events most useful for developers to debug application
@@ -383,44 +383,31 @@ enum class Level : unsigned short {
 class LevelHelper: private base::StaticClass {
 public:
     /// @brief Represents minimum valid level. Useful when iterating through enum.
-    static const unsigned short kMinValid = static_cast<unsigned short>(Level::Debug);
-
+    static const base::EUType kMinValid = static_cast<base::EUType>(Level::Debug);
     /// @brief Represents maximum valid level. This is used internally and you should not need it.
-    static const unsigned short kMaxValid = static_cast<unsigned short>(Level::Trace);
-
+    static const base::EUType kMaxValid = static_cast<base::EUType>(Level::Trace);
     /// @brief Casts level to int, useful for iterating through enum.
-    static unsigned short castToInt(const Level& level) {
-        return static_cast<unsigned short>(level);
+    static base::EUType castToInt(const Level& level) {
+        return static_cast<base::EUType>(level);
     }
-
     /// @brief Casts int(ushort) to level, useful for iterating through enum.
-    static Level castFromInt(unsigned short l) {
+    static Level castFromInt(base::EUType l) {
         return static_cast<Level>(l);
     }
-
     /// @brief Converts level to associated const char*
     /// @return Upper case string based level.
     static const char* convertToString(const Level& level) {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
-        if (level == Level::Global)
-            return "GLOBAL";
-        if (level == Level::Debug)
-            return "DEBUG";
-        if (level == Level::Info)
-            return "INFO";
-        if (level == Level::Warning)
-            return "WARNING";
-        if (level == Level::Error)
-            return "ERROR";
-        if (level == Level::Fatal)
-            return "FATAL";
-        if (level == Level::Verbose)
-            return "VERBOSE";
-        if (level == Level::Trace)
-            return "TRACE";
+        if (level == Level::Global) return "GLOBAL";
+        if (level == Level::Debug) return "DEBUG";
+        if (level == Level::Info) return "INFO";
+        if (level == Level::Warning) return "WARNING";
+        if (level == Level::Error) return "ERROR";
+        if (level == Level::Fatal) return "FATAL";
+        if (level == Level::Verbose) return "VERBOSE";
+        if (level == Level::Trace) return "TRACE";
         return "UNKNOWN";
     }
-
     /// @brief Converts from levelStr to Level
     /// @param levelStr Upper case string based level.
     ///        Lower case is also valid but providing upper case is recommended.
@@ -443,14 +430,13 @@ public:
             return Level::Trace;
         return Level::Unknown;
     }
-
     /// @brief Applies specified lambda to each level starting from startIndex
     /// @param startIndex initial value to start the iteration from. This is passed by reference and is incremented (left-shifted)
     ///        so this can be used inside lambda function as well to represent current level.
     /// @param lambdaFn Lambda function having no param with bool return type to apply with each level. See more details below
     ///
     /// @detail The bool return type of lambda expression represents whether or not to skip rest of levels. Consider following example;
-    /// <pre>unsigned short currLevel = LevelHelper::kMinValid;
+    /// <pre>base::EUType currLevel = LevelHelper::kMinValid;
     ///    bool result = false;
     ///    forEachLevel(min, [&]() -> bool {
     ///       if (hasConfiguration(currLevel)) {
@@ -462,8 +448,8 @@ public:
     /// Code above is very good example of possible usages, returns inside lambda tells function not to exit/break iteration yet. Meaning
     /// if result is true the expression will return right away and result from main function will be return as soon as second <code>return result;</code>
     /// is hit.
-    static void forEachLevel(unsigned short& startIndex, const std::function<bool(void)>& lambdaFn) {
-        unsigned short lIndexMax = LevelHelper::kMaxValid;
+    static void forEachLevel(base::EUType& startIndex, const std::function<bool(void)>& lambdaFn) {
+        base::EUType lIndexMax = LevelHelper::kMaxValid;
         do {
             if (lambdaFn())
                 break;
@@ -471,14 +457,13 @@ public:
         } while (startIndex <= lIndexMax);
     }
 };
-
 /// @brief Represents enumeration of ConfigurationType used to configure or access certain aspect
 /// of logging
 ///
 /// @detail NOTE: All the configurations for corresponding level also depend on loggers. You can use one
 /// configuration for one logger and different for other logger.
 /// @see el::ConfigurationTypeHelper
-enum class ConfigurationType : unsigned short {
+enum class ConfigurationType : base::EUType {
     /// @brief Determines whether or not corresponding level and logger of logging is enabled
     /// You may disable all logs by using el::Level::Global
     Enabled = 1,
@@ -507,52 +492,36 @@ enum class ConfigurationType : unsigned short {
     /// @brief Represents unknown configuration
     Unknown = 1010
 };
-
 /// @brief Static class that contains conversion helper functions for el::ConfigurationType
 class ConfigurationTypeHelper: private base::StaticClass {
 public:
-
     /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
-    static const unsigned short kMinValid = static_cast<unsigned short>(ConfigurationType::Enabled);
-
+    static const base::EUType kMinValid = static_cast<base::EUType>(ConfigurationType::Enabled);
     /// @brief Represents maximum valid configuration type. This is used internally and you should not need it.
-    static const unsigned short kMaxValid = static_cast<unsigned short>(ConfigurationType::MaxLogFileSize);
-
+    static const base::EUType kMaxValid = static_cast<base::EUType>(ConfigurationType::MaxLogFileSize);
     /// @brief Casts configuration type to int, useful for iterating through enum.
-    static unsigned short castToInt(const ConfigurationType& configurationType) {
-        return static_cast<unsigned short>(configurationType);
+    static base::EUType castToInt(const ConfigurationType& configurationType) {
+        return static_cast<base::EUType>(configurationType);
     }
-
     /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
-    static ConfigurationType castFromInt(unsigned short c) {
+    static ConfigurationType castFromInt(base::EUType c) {
         return static_cast<ConfigurationType>(c);
     }
-
     /// @brief Converts configuration type to associated const char*
     /// @returns Upper case string based configuration type.
     static const char* convertToString(const ConfigurationType& configurationType) {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
-        if (configurationType == ConfigurationType::Enabled)
-            return "ENABLED";
-        if (configurationType == ConfigurationType::Filename)
-            return "FILENAME";
-        if (configurationType == ConfigurationType::Format)
-            return "FORMAT";
-        if (configurationType == ConfigurationType::ToFile)
-            return "TO_FILE";
-        if (configurationType == ConfigurationType::ToStandardOutput)
-            return "TO_STANDARD_OUTPUT";
-        if (configurationType == ConfigurationType::MillisecondsWidth)
-            return "MILLISECONDS_WIDTH";
-        if (configurationType == ConfigurationType::PerformanceTracking)
-            return "PERFORMANCE_TRACKING";
-        if (configurationType == ConfigurationType::MaxLogFileSize)
-            return "MAX_LOG_FILE_SIZE";
-        if (configurationType == ConfigurationType::LogFlushThreshold)
-            return "LOG_FLUSH_THRESHOLD";
+        if (configurationType == ConfigurationType::Enabled) return "ENABLED";
+        if (configurationType == ConfigurationType::Filename) return "FILENAME";
+        if (configurationType == ConfigurationType::Format) return "FORMAT";
+        if (configurationType == ConfigurationType::ToFile) return "TO_FILE";
+        if (configurationType == ConfigurationType::ToStandardOutput) return "TO_STANDARD_OUTPUT";
+        if (configurationType == ConfigurationType::MillisecondsWidth) return "MILLISECONDS_WIDTH";
+        if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
+        if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
+        if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
         return "UNKNOWN";
     }
-
     /// @brief Converts from configStr to ConfigurationType
     /// @param configStr Upper case string based configuration type.
     ///        Lower case is also valid but providing upper case is recommended.
@@ -577,15 +546,14 @@ public:
             return ConfigurationType::LogFlushThreshold;
         return ConfigurationType::Unknown;
     }
-
     /// @brief Applies specified lambda to each configuration type starting from startIndex
     /// @param startIndex initial value to start the iteration from. This is passed by reference and is incremented (left-shifted)
     ///        so this can be used inside lambda function as well to represent current configuration type.
     /// @param lambdaFn Lambda function having no param with bool return type to apply with each configuration type. This bool represent
     ///        whether or not to continue iterating through configurations. For details please see
     ///        LevelHelper::forEachLevel
-    static void forEachConfigType(unsigned short& startIndex, const std::function<bool(void)>& lambdaFn) {
-        unsigned short cIndexMax = ConfigurationTypeHelper::kMaxValid;
+    static void forEachConfigType(base::EUType& startIndex, const std::function<bool(void)>& lambdaFn) {
+        base::EUType cIndexMax = ConfigurationTypeHelper::kMaxValid;
         do {
             if (lambdaFn())
                 break;
@@ -593,14 +561,12 @@ public:
         } while (startIndex <= cIndexMax);
     }
 };
-
 /// @brief Flags used while writing logs. This flags are set by user
 ///
 /// @see el::Helpers
-enum class LoggingFlag : unsigned short {
+enum class LoggingFlag : base::EUType {
     /// @brief Makes sure we have new line for each container log entry
     NewLineForContainer = 1,
-
     /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
     /// logging is allowed via that module.
     ///
@@ -608,23 +574,17 @@ enum class LoggingFlag : unsigned short {
     /// called something.cpp then if this flag is enabled, log will be written otherwise
     /// it will be disallowed.
     AllowVerboseIfModuleNotSpecified = 2,
-
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
     LogDetailedCrashReason = 4,
-
     /// @brief Allows to disable application abortion when logged using FATAL level
     DisableApplicationAbortOnFatalLog = 8,
-
     /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
     ImmediateFlush = 16,
-    
     /// @brief Enables strict file rolling
     StrictLogFileSizeCheck = 32
 };
 namespace base {
-///
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
-///
 namespace consts {
     // Level log values - These are values that are replaced in place of %level format specifier
     static const char* kInfoLevelLogValue     =   "INFO ";
@@ -634,7 +594,6 @@ namespace consts {
     static const char* kFatalLevelLogValue    =   "FATAL";
     static const char* kVerboseLevelLogValue  =   "VER";
     static const char* kTraceLevelLogValue    =   "TRACE";
-
     // Format specifiers - These are used to define log format
     static const char* kAppNameFormatSpecifier          =      "%app";
     static const char* kLoggerIdFormatSpecifier         =      "%logger";
@@ -649,7 +608,6 @@ namespace consts {
     static const char* kCurrentHostFormatSpecifier      =      "%host";
     static const char* kMessageFormatSpecifier          =      "%msg";
     static const char* kVerboseLevelFormatSpecifier     =      "%vlevel";
-
     // Date/time
     static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
     static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
@@ -660,7 +618,6 @@ namespace consts {
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
-
     // Miscellaneous constants
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
@@ -699,14 +656,11 @@ namespace consts {
     static const char* kFilePathSeperator                      =      "/";
 #endif // _ELPP_OS_WINDOWS
     static const char* kValidLoggerIdSymbols                   =      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
-
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLoggerId                  =      "--";
-    
     static const std::size_t kSourceFilenameMaxLength                  =      100;
     static const std::size_t kSourceLineMaxLength                      =      10;
-
     static const int kMaxTimeFormats                           =      6;
     const struct {
         double value;
@@ -719,7 +673,6 @@ namespace consts {
        { 24.0f, "hours" },
        { 7.0f, "days" }
     };
-
     static const int kMaxCrashSignals                          =      5;
     const struct {
         int numb;
@@ -743,11 +696,11 @@ namespace consts {
 typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
 static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
 /// @brief Enum to represent timestamp unit
-enum class TimestampUnit : unsigned short {
+enum class TimestampUnit : base::EUType {
     Microsecond = 0, Millisecond = 1, Second = 2, Minute = 3, Hour = 4, Day = 5
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
-enum class FormatFlags : unsigned short {
+enum class FormatFlags : base::EUType {
     DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
     User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
     Level = 8192
@@ -766,31 +719,17 @@ private:
         }
         m_width = width;
         switch (m_width) {
-        case 3:
-            m_offset = 1000;
-            break;
-        case 4:
-            m_offset = 100;
-            break;
-        case 5:
-            m_offset = 10;
-            break;
-        case 6:
-            m_offset = 1;
-            break;
-        default:
-            m_offset = 1000;
-            break;
+        case 3: m_offset = 1000; break;
+        case 4: m_offset = 100; break;
+        case 5: m_offset = 10; break;
+        case 6: m_offset = 1; break;
+        default: m_offset = 1000; break;
         }
     }
 };
 /// @brief Namespace containing utility functions/static classes used internally
 namespace utils {
-/// @brief Deletes memory safely
-///
-/// @detail if this is used whereever we need to delete memory it will always be safe because
-/// we will never delete a dangling or wild pointer
-/// @param pointer Valid pointer to be deleted
+/// @brief Deletes memory safely and points to null
 template <typename T>
 inline static void safeDelete(T*& pointer) {
     if (pointer == nullptr)
@@ -815,25 +754,25 @@ inline static void abort(int status, const char* reason = "") {
 #endif
 }
 /// @brief Bitwise operations for C++11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
-/// Use these function as <pre>flag = bitOr<MyEnum>(MyEnum::val1, flag);</pre>
+/// Use these function as <pre>flag = bitwise::Or<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
 template <typename EnumType>
-inline static unsigned short And(const EnumType& e, unsigned short flag) {
-    return static_cast<unsigned short>(flag) & static_cast<unsigned short>(e);
+inline static base::EUType And(const EnumType& e, base::EUType flag) {
+    return static_cast<base::EUType>(flag) & static_cast<base::EUType>(e);
 }
 template <typename EnumType>
-inline static unsigned short Not(const EnumType& e, unsigned short flag) {
-    return static_cast<unsigned short>(flag) & ~(static_cast<unsigned short>(e));
+inline static base::EUType Not(const EnumType& e, base::EUType flag) {
+    return static_cast<base::EUType>(flag) & ~(static_cast<base::EUType>(e));
 }
 template <typename EnumType>
-inline static unsigned short Or(const EnumType& e, unsigned short flag) {
-    return static_cast<unsigned short>(flag) | static_cast<unsigned short>(e);
+inline static base::EUType Or(const EnumType& e, base::EUType flag) {
+    return static_cast<base::EUType>(flag) | static_cast<base::EUType>(e);
 }
 template <typename EnumType>
-static unsigned short Or(int n, EnumType flag, ...) {
+static base::EUType Or(int n, const EnumType& flag, ...) {
     va_list flags;
     va_start(flags, flag);
-    unsigned short result = 0x0;
+    base::EUType result = 0x0;
     result = base::utils::bitwise::Or(static_cast<EnumType>(flag), result);
     for (int i = 0; i < n - 1; ++i) {
         result = base::utils::bitwise::Or(static_cast<EnumType>(va_arg(flags, int)), result);
@@ -844,17 +783,17 @@ static unsigned short Or(int n, EnumType flag, ...) {
 } // namespace bitwise
 /// @brief Adds flag
 template <typename EnumType>
-inline static void addFlag(const EnumType& e, unsigned short& flag) {
+inline static void addFlag(const EnumType& e, base::EUType& flag) {
     flag = base::utils::bitwise::Or<EnumType>(e, flag);
 }
 /// @brief Removes flag
 template <typename EnumType>
-inline static void removeFlag(const EnumType& e, unsigned short& flag) {
+inline static void removeFlag(const EnumType& e, base::EUType& flag) {
     flag = base::utils::bitwise::Not<EnumType>(e, flag);
 }
 /// @brief Determines whether flag is set or not
 template <typename EnumType>
-inline static unsigned short hasFlag(const EnumType& e, unsigned short flag) {
+inline static base::EUType hasFlag(const EnumType& e, base::EUType flag) {
     return base::utils::bitwise::And<EnumType>(e, flag);
 }
 } // namespace utils
@@ -995,7 +934,7 @@ namespace utils {
 class File : private base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
-    /// @return Newly created filestream or nullptr
+    /// @return Pointer to newly created fstream or nullptr
     static std::fstream* newFileStream(const std::string& filename) {
         std::fstream *fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
         if (fs->is_open()) {
@@ -1006,6 +945,7 @@ public:
         }
         return fs;
     }
+
     /// @brief Gets size of file provided in stream
     static std::size_t getSizeOfFile(std::fstream* fs) {
         if (fs == nullptr) {
@@ -1017,6 +957,7 @@ public:
         fs->seekg(currPos);
         return size;
     }
+
     /// @brief Determines whether or not provided path exist in current file system
     static inline bool pathExists(const char* path, bool considerFile = false) {
         if (path == nullptr) {
@@ -1447,9 +1388,9 @@ public:
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
     static std::string formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {
         double result = static_cast<double>(time);
-        unsigned short start = static_cast<unsigned short>(timestampUnit);
+        base::EUType start = static_cast<base::EUType>(timestampUnit);
         const char* unit = base::consts::kTimeFormats[start].unit;
-        for (unsigned short i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
+        for (base::EUType i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
             if (result <= base::consts::kTimeFormats[i].value) {
                 break;
             }
@@ -2045,7 +1986,7 @@ public:
        return m_dateTimeFormat;
     }
 
-    inline unsigned short flags(void) const {
+    inline base::EUType flags(void) const {
        return m_flags;
     }
 
@@ -2137,7 +2078,7 @@ private:
     std::string m_userFormat;
     std::string m_format;
     std::string m_dateTimeFormat;
-    unsigned short m_flags;
+    base::EUType m_flags;
 };
 } // namespace base
 /// @brief Resolving function for format specifier
@@ -2328,7 +2269,7 @@ public:
     /// @detail Returns as soon as first level is found.
     /// @param configurationType Type of configuration to check existence for.
     bool hasConfiguration(const ConfigurationType& configurationType) {
-        unsigned short lIndex = LevelHelper::kMinValid;
+        base::EUType lIndex = LevelHelper::kMinValid;
         bool result = false;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             if (hasConfiguration(LevelHelper::castFromInt(lIndex), configurationType)) {
@@ -2639,7 +2580,7 @@ private:
         if (includeGlobalLevel) {
             set(Level::Global, configurationType, value);
         }
-        unsigned short lIndex = LevelHelper::kMinValid;
+        base::EUType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             set(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
@@ -2652,7 +2593,7 @@ private:
         if (includeGlobalLevel) {
             unsafeSet(Level::Global, configurationType, value);
         }
-        unsigned short lIndex = LevelHelper::kMinValid;
+        base::EUType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool  {
             unsafeSet(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
@@ -2723,7 +2664,7 @@ public:
     inline std::size_t maxLogFileSize(const Level& level) {
         return getConfigByVal<std::size_t>(level, m_maxLogFileSizeMap, "maxLogFileSize");
     }
-    
+
     inline std::size_t logFlushThreshold(const Level& level) {
         return getConfigByVal<std::size_t>(level, m_logFlushThresholdMap, "logFlushThreshold");
     }
@@ -3132,7 +3073,7 @@ public:
     inline void flush(void) {
         ELPP_INTERNAL_INFO(3, "Flushing logger [" << m_id << "] all levels");
         base::threading::lock_guard lock(mutex());
-        unsigned short lIndex = LevelHelper::kMinValid;
+        base::EUType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             flush(LevelHelper::castFromInt(lIndex), nullptr);
             return false;
@@ -3160,7 +3101,7 @@ private:
 
     void initUnflushedCount(void) {
         m_unflushedCount.clear();
-        unsigned short lIndex = LevelHelper::kMinValid;
+        base::EUType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             m_unflushedCount.insert(std::make_pair(LevelHelper::castFromInt(lIndex), 0));
             return false;
@@ -3411,7 +3352,7 @@ private:
     std::string m_message;
 };
 /// @brief Action to be taken for dispatching
-enum class DispatchAction : unsigned short {
+enum class DispatchAction : base::EUType {
     None = 1, NormalLog = 2, PostStream = 4, SysLog = 8
 };
 /// @brief Contains all the storages that is needed by writer
@@ -3493,7 +3434,7 @@ public:
         return base::utils::hasFlag(flag, m_flags) > 0;
     }
 
-    inline unsigned short flags(void) const {
+    inline base::EUType flags(void) const {
         return m_flags;
     }
 
@@ -3537,11 +3478,11 @@ public:
         }
         return false;
     }
-    
+
     inline void clearPostStream(void) {
         m_postStream.str("");
     }
-    
+
     inline std::stringstream& postStream(void) {
         return m_postStream;
     }
@@ -3552,7 +3493,7 @@ private:
     base::RegisteredLoggers* m_registeredLoggers;
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
-    unsigned short m_flags;
+    base::EUType m_flags;
     base::PreRollOutHandler m_preRollOutHandler;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_postStream;
@@ -3600,7 +3541,7 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, base::LogMessage&& logMessage, unsigned short dispatchAction) :
+    LogDispatcher(bool proceed, base::LogMessage&& logMessage, base::EUType dispatchAction) :
         m_proceed(proceed),
         m_logMessage(std::move(logMessage)),
         m_dispatchAction(std::move(dispatchAction)) {
@@ -3704,7 +3645,7 @@ public:
 private:
     bool m_proceed;
     base::LogMessage m_logMessage;
-    unsigned short m_dispatchAction;
+    base::EUType m_dispatchAction;
 
     void dispatch(std::string&& logLine) {
         if (base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction)) {
@@ -3840,7 +3781,7 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, unsigned short dispatchAction = static_cast<unsigned short>(base::DispatchAction::NormalLog),
+               const char* func, base::EUType dispatchAction = static_cast<base::EUType>(base::DispatchAction::NormalLog),
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator("") {
@@ -4263,7 +4204,7 @@ private:
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
-    unsigned short m_dispatchAction;
+    base::EUType m_dispatchAction;
     const char* m_containerLogSeperator;
     friend class el::Helpers;
 
