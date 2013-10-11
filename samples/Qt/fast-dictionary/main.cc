@@ -4,7 +4,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-TIMED_BLOCK(app, "app");
+TIMED_SCOPE(app, "app");
 
 int main(int argc, char *argv[])
 {

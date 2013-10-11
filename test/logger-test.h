@@ -27,7 +27,7 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
 
 TEST(LoggerTest, CheckTenThousandLoggers) {
 
-    TIMED_BLOCK(timer, "CheckTenThousandLoggers");
+    TIMED_SCOPE(timer, "CheckTenThousandLoggers");
 
     unsigned short lIndex = LevelHelper::kMinValid;
     std::fstream* logger1Stream = el::Loggers::getLogger("logger1")->typedConfigurations()->fileStream(LevelHelper::castFromInt(lIndex));

@@ -45,7 +45,7 @@ void ListWithSearch::setFocus()
 
 ListWithSearch::~ListWithSearch()
 {
-    TIMED_BLOCK(cleaner, "cleaner");
+    TIMED_SCOPE(cleaner, "cleaner");
     LOG(TRACE) << "Cleaning memory...";
     for (int i = items.count() - 1; i >= 0; --i) {
         delete items.at(i);
