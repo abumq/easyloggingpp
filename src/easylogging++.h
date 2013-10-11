@@ -5127,14 +5127,14 @@ namespace el {
 namespace base {
 namespace utils {
 template <typename T>
-static T* CheckNotNull(T* ptr, const char* name) {
+static T* checkNotNull(T* ptr, const char* name) {
     LOG_IF(ptr == nullptr, FATAL) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
 } // namespace utils
 } // namespace base
 } // namespace el
-#define CHECK_NOTNULL(ptr) el::base::utils::CheckNotNull(ptr, #ptr)
+#define CHECK_NOTNULL(ptr) el::base::utils::checkNotNull(ptr, #ptr)
 #define CHECK_STREQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CHECK_STRNE(str1, str2) LOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL) \
