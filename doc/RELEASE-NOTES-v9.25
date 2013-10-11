@@ -21,6 +21,7 @@ Easylogging++ v9.25 RELEASE NOTES
  - Abort warning on fatal log
  - Renamed `TIMED_BLOCK` to `TIMED_SCOPE` and introduced new `TIMED_BLOCK` that can be used like `TIMED_BLOCK(obj, "blk") { ... }`
  - Now aborts application on crashes etc (as opposed to `exit(status)`) and contains `status` and `reason` params to make it easy to debug using IDE like VS
+ - Introduced mor params in `el::Helpers::crashAbort` to specify the location and be helpful while debugging
 
 ==========================
 =       DEPRECATED       =

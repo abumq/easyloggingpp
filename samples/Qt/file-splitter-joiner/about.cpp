@@ -7,7 +7,7 @@ About::About(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::About) {
     ui->setupUi(this);
-    ui->el_info->setText(QString(el::VersionInfo::formattedInfo().c_str()));
+    ui->el_info->setText(QString("Easylogging++ v") + QString(el::VersionInfo::version().c_str()));
 }
 
 About::~About() {

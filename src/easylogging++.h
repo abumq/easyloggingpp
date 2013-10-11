@@ -3878,10 +3878,8 @@ public:
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
                     << "Aborting application. [Reason: Fatal log]";
-            char filenameBuff[base::consts::kSourceFilenameMaxLength] = "";
-            base::utils::File::buildStrippedFilename(m_file, filenameBuff);
             std::stringstream reasonStream;
-            reasonStream << "Fatal log at [" << filenameBuff << ":" << m_line << "]"
+            reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
                 << " If you wish to disable abort on fatal log please use "
                 << "el::Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)";
             base::utils::abort(1, reasonStream.str().c_str());
@@ -4500,10 +4498,8 @@ private:
 #endif // _ELPP_STACKTRACE
     }
 };
-/// @brief Logs reason of crash from sig
-static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& level, const char* logger) {
+static std::string crashReason(int sig) {
     std::stringstream ss;
-    ss << "CRASH HANDLED; ";
     bool foundReason = false;
     for (int i = 0; i < base::consts::kMaxCrashSignals; ++i) {
         if (base::consts::kCrashSignals[i].numb == sig) {
@@ -4521,6 +4517,13 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
     if (!foundReason) {
         ss << "Application has crashed due to unknown signal [" << sig << "]";
     }
+    return ss.str();
+}
+/// @brief Logs reason of crash from sig
+static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& level, const char* logger) {
+    std::stringstream ss;
+    ss << "CRASH HANDLED; ";
+    ss << crashReason(sig);
 #if _ELPP_STACKTRACE
     if (stackTraceIfAvailable) {
         ss << std::endl << "    ======= Backtrace: =========" << std::endl << base::debug::StackTrace();
@@ -4637,8 +4640,16 @@ public:
     }
     /// @brief Abort due to crash with signal in parameter
     /// @param sig Crash signal
-    static inline void crashAbort(int sig) {
-        el::base::debug::crashAbort(sig);
+    static inline void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {
+        std::stringstream ss;
+        ss << base::debug::crashReason(sig).c_str();
+        ss << " - [Called el::Helpers::crashAbort(" << sig << ")]";
+        if (sourceFile != nullptr && strlen(sourceFile) > 0) {
+            ss << " - Source: " << sourceFile;
+            if (line > 0) ss << ":" << line;
+            else ss << " (line number not specified)";
+        }
+        base::utils::abort(sig, ss.str().c_str());
     }
     /// @brief Logs reason of crash as per sig
     /// @param sig Crash signal
