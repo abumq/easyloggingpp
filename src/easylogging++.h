@@ -101,7 +101,7 @@
 #   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
           std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
-              << msg << "\"" << std::endl; base::utils::abort(1, msg); }
+              << msg << "\"" << std::endl; base::utils::abort(1, "ELPP Assertion failure, please define _ELPP_STOP_ON_FIRST_ASSERTION"); }
 #   else
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
         __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
