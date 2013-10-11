@@ -352,14 +352,14 @@ private:
     StaticClass& operator=(const StaticClass&);
 };
 /// @brief Enum underlying type
-typedef unsigned short EUType;
+typedef unsigned short EnumType;
 } // namespace base
 /// @brief Represents enumeration for severity level used to determine level of logging
 ///
 /// @detail Easylogging++ has different concept of level. Developers may disable or enable any level regardless of
 /// what the severity is
 /// @see el::LevelHelper
-enum class Level : base::EUType {
+enum class Level : base::EnumType {
         /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
         Global = 1,
         /// @brief Informational events most useful for developers to debug application
@@ -383,15 +383,15 @@ enum class Level : base::EUType {
 class LevelHelper: private base::StaticClass {
 public:
     /// @brief Represents minimum valid level. Useful when iterating through enum.
-    static const base::EUType kMinValid = static_cast<base::EUType>(Level::Debug);
+    static const base::EnumType kMinValid = static_cast<base::EnumType>(Level::Debug);
     /// @brief Represents maximum valid level. This is used internally and you should not need it.
-    static const base::EUType kMaxValid = static_cast<base::EUType>(Level::Trace);
+    static const base::EnumType kMaxValid = static_cast<base::EnumType>(Level::Trace);
     /// @brief Casts level to int, useful for iterating through enum.
-    static base::EUType castToInt(const Level& level) {
-        return static_cast<base::EUType>(level);
+    static base::EnumType castToInt(const Level& level) {
+        return static_cast<base::EnumType>(level);
     }
     /// @brief Casts int(ushort) to level, useful for iterating through enum.
-    static Level castFromInt(base::EUType l) {
+    static Level castFromInt(base::EnumType l) {
         return static_cast<Level>(l);
     }
     /// @brief Converts level to associated const char*
@@ -436,7 +436,7 @@ public:
     /// @param lambdaFn Lambda function having no param with bool return type to apply with each level. See more details below
     ///
     /// @detail The bool return type of lambda expression represents whether or not to skip rest of levels. Consider following example;
-    /// <pre>base::EUType currLevel = LevelHelper::kMinValid;
+    /// <pre>base::EnumType currLevel = LevelHelper::kMinValid;
     ///    bool result = false;
     ///    forEachLevel(min, [&]() -> bool {
     ///       if (hasConfiguration(currLevel)) {
@@ -448,8 +448,8 @@ public:
     /// Code above is very good example of possible usages, returns inside lambda tells function not to exit/break iteration yet. Meaning
     /// if result is true the expression will return right away and result from main function will be return as soon as second <code>return result;</code>
     /// is hit.
-    static void forEachLevel(base::EUType& startIndex, const std::function<bool(void)>& lambdaFn) {
-        base::EUType lIndexMax = LevelHelper::kMaxValid;
+    static void forEachLevel(base::EnumType& startIndex, const std::function<bool(void)>& lambdaFn) {
+        base::EnumType lIndexMax = LevelHelper::kMaxValid;
         do {
             if (lambdaFn())
                 break;
@@ -463,7 +463,7 @@ public:
 /// @detail NOTE: All the configurations for corresponding level also depend on loggers. You can use one
 /// configuration for one logger and different for other logger.
 /// @see el::ConfigurationTypeHelper
-enum class ConfigurationType : base::EUType {
+enum class ConfigurationType : base::EnumType {
     /// @brief Determines whether or not corresponding level and logger of logging is enabled
     /// You may disable all logs by using el::Level::Global
     Enabled = 1,
@@ -496,15 +496,15 @@ enum class ConfigurationType : base::EUType {
 class ConfigurationTypeHelper: private base::StaticClass {
 public:
     /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
-    static const base::EUType kMinValid = static_cast<base::EUType>(ConfigurationType::Enabled);
+    static const base::EnumType kMinValid = static_cast<base::EnumType>(ConfigurationType::Enabled);
     /// @brief Represents maximum valid configuration type. This is used internally and you should not need it.
-    static const base::EUType kMaxValid = static_cast<base::EUType>(ConfigurationType::MaxLogFileSize);
+    static const base::EnumType kMaxValid = static_cast<base::EnumType>(ConfigurationType::MaxLogFileSize);
     /// @brief Casts configuration type to int, useful for iterating through enum.
-    static base::EUType castToInt(const ConfigurationType& configurationType) {
-        return static_cast<base::EUType>(configurationType);
+    static base::EnumType castToInt(const ConfigurationType& configurationType) {
+        return static_cast<base::EnumType>(configurationType);
     }
     /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
-    static ConfigurationType castFromInt(base::EUType c) {
+    static ConfigurationType castFromInt(base::EnumType c) {
         return static_cast<ConfigurationType>(c);
     }
     /// @brief Converts configuration type to associated const char*
@@ -552,8 +552,8 @@ public:
     /// @param lambdaFn Lambda function having no param with bool return type to apply with each configuration type. This bool represent
     ///        whether or not to continue iterating through configurations. For details please see
     ///        LevelHelper::forEachLevel
-    static void forEachConfigType(base::EUType& startIndex, const std::function<bool(void)>& lambdaFn) {
-        base::EUType cIndexMax = ConfigurationTypeHelper::kMaxValid;
+    static void forEachConfigType(base::EnumType& startIndex, const std::function<bool(void)>& lambdaFn) {
+        base::EnumType cIndexMax = ConfigurationTypeHelper::kMaxValid;
         do {
             if (lambdaFn())
                 break;
@@ -564,7 +564,7 @@ public:
 /// @brief Flags used while writing logs. This flags are set by user
 ///
 /// @see el::Helpers
-enum class LoggingFlag : base::EUType {
+enum class LoggingFlag : base::EnumType {
     /// @brief Makes sure we have new line for each container log entry
     NewLineForContainer = 1,
     /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
@@ -696,11 +696,11 @@ namespace consts {
 typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
 static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
 /// @brief Enum to represent timestamp unit
-enum class TimestampUnit : base::EUType {
+enum class TimestampUnit : base::EnumType {
     Microsecond = 0, Millisecond = 1, Second = 2, Minute = 3, Hour = 4, Day = 5
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
-enum class FormatFlags : base::EUType {
+enum class FormatFlags : base::EnumType {
     DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
     User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
     Level = 8192
@@ -756,45 +756,45 @@ inline static void abort(int status, const char* reason = "") {
 /// @brief Bitwise operations for C++11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
 /// Use these function as <pre>flag = bitwise::Or<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
-template <typename EnumType>
-inline static base::EUType And(const EnumType& e, base::EUType flag) {
-    return static_cast<base::EUType>(flag) & static_cast<base::EUType>(e);
+template <typename Enum>
+inline static base::EnumType And(const Enum& e, base::EnumType flag) {
+    return static_cast<base::EnumType>(flag) & static_cast<base::EnumType>(e);
 }
-template <typename EnumType>
-inline static base::EUType Not(const EnumType& e, base::EUType flag) {
-    return static_cast<base::EUType>(flag) & ~(static_cast<base::EUType>(e));
+template <typename Enum>
+inline static base::EnumType Not(const Enum& e, base::EnumType flag) {
+    return static_cast<base::EnumType>(flag) & ~(static_cast<base::EnumType>(e));
 }
-template <typename EnumType>
-inline static base::EUType Or(const EnumType& e, base::EUType flag) {
-    return static_cast<base::EUType>(flag) | static_cast<base::EUType>(e);
+template <typename Enum>
+inline static base::EnumType Or(const Enum& e, base::EnumType flag) {
+    return static_cast<base::EnumType>(flag) | static_cast<base::EnumType>(e);
 }
-template <typename EnumType>
-static base::EUType Or(int n, const EnumType& flag, ...) {
+template <typename Enum>
+static base::EnumType Or(int n, const Enum& flag, ...) {
     va_list flags;
     va_start(flags, flag);
-    base::EUType result = 0x0;
-    result = base::utils::bitwise::Or(static_cast<EnumType>(flag), result);
+    base::EnumType result = 0x0;
+    result = base::utils::bitwise::Or(static_cast<Enum>(flag), result);
     for (int i = 0; i < n - 1; ++i) {
-        result = base::utils::bitwise::Or(static_cast<EnumType>(va_arg(flags, int)), result);
+        result = base::utils::bitwise::Or(static_cast<Enum>(va_arg(flags, int)), result);
     }
     va_end(flags);
     return result;
 }
 } // namespace bitwise
 /// @brief Adds flag
-template <typename EnumType>
-inline static void addFlag(const EnumType& e, base::EUType& flag) {
-    flag = base::utils::bitwise::Or<EnumType>(e, flag);
+template <typename Enum>
+inline static void addFlag(const Enum& e, base::EnumType& flag) {
+    flag = base::utils::bitwise::Or<Enum>(e, flag);
 }
 /// @brief Removes flag
-template <typename EnumType>
-inline static void removeFlag(const EnumType& e, base::EUType& flag) {
-    flag = base::utils::bitwise::Not<EnumType>(e, flag);
+template <typename Enum>
+inline static void removeFlag(const Enum& e, base::EnumType& flag) {
+    flag = base::utils::bitwise::Not<Enum>(e, flag);
 }
 /// @brief Determines whether flag is set or not
-template <typename EnumType>
-inline static base::EUType hasFlag(const EnumType& e, base::EUType flag) {
-    return base::utils::bitwise::And<EnumType>(e, flag);
+template <typename Enum>
+inline static base::EnumType hasFlag(const Enum& e, base::EnumType flag) {
+    return base::utils::bitwise::And<Enum>(e, flag);
 }
 } // namespace utils
 namespace threading {
@@ -1388,9 +1388,9 @@ public:
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
     static std::string formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {
         double result = static_cast<double>(time);
-        base::EUType start = static_cast<base::EUType>(timestampUnit);
+        base::EnumType start = static_cast<base::EnumType>(timestampUnit);
         const char* unit = base::consts::kTimeFormats[start].unit;
-        for (base::EUType i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
+        for (base::EnumType i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
             if (result <= base::consts::kTimeFormats[i].value) {
                 break;
             }
@@ -1986,7 +1986,7 @@ public:
        return m_dateTimeFormat;
     }
 
-    inline base::EUType flags(void) const {
+    inline base::EnumType flags(void) const {
        return m_flags;
     }
 
@@ -2078,7 +2078,7 @@ private:
     std::string m_userFormat;
     std::string m_format;
     std::string m_dateTimeFormat;
-    base::EUType m_flags;
+    base::EnumType m_flags;
 };
 } // namespace base
 /// @brief Resolving function for format specifier
@@ -2269,7 +2269,7 @@ public:
     /// @detail Returns as soon as first level is found.
     /// @param configurationType Type of configuration to check existence for.
     bool hasConfiguration(const ConfigurationType& configurationType) {
-        base::EUType lIndex = LevelHelper::kMinValid;
+        base::EnumType lIndex = LevelHelper::kMinValid;
         bool result = false;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             if (hasConfiguration(LevelHelper::castFromInt(lIndex), configurationType)) {
@@ -2580,7 +2580,7 @@ private:
         if (includeGlobalLevel) {
             set(Level::Global, configurationType, value);
         }
-        base::EUType lIndex = LevelHelper::kMinValid;
+        base::EnumType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             set(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
@@ -2593,7 +2593,7 @@ private:
         if (includeGlobalLevel) {
             unsafeSet(Level::Global, configurationType, value);
         }
-        base::EUType lIndex = LevelHelper::kMinValid;
+        base::EnumType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool  {
             unsafeSet(LevelHelper::castFromInt(lIndex), configurationType, value);
             return false; // Do not break lambda function yet as we need to set all levels regardless
@@ -3073,7 +3073,7 @@ public:
     inline void flush(void) {
         ELPP_INTERNAL_INFO(3, "Flushing logger [" << m_id << "] all levels");
         base::threading::lock_guard lock(mutex());
-        base::EUType lIndex = LevelHelper::kMinValid;
+        base::EnumType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             flush(LevelHelper::castFromInt(lIndex), nullptr);
             return false;
@@ -3101,7 +3101,7 @@ private:
 
     void initUnflushedCount(void) {
         m_unflushedCount.clear();
-        base::EUType lIndex = LevelHelper::kMinValid;
+        base::EnumType lIndex = LevelHelper::kMinValid;
         LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
             m_unflushedCount.insert(std::make_pair(LevelHelper::castFromInt(lIndex), 0));
             return false;
@@ -3352,7 +3352,7 @@ private:
     std::string m_message;
 };
 /// @brief Action to be taken for dispatching
-enum class DispatchAction : base::EUType {
+enum class DispatchAction : base::EnumType {
     None = 1, NormalLog = 2, PostStream = 4, SysLog = 8
 };
 /// @brief Contains all the storages that is needed by writer
@@ -3434,7 +3434,7 @@ public:
         return base::utils::hasFlag(flag, m_flags) > 0;
     }
 
-    inline base::EUType flags(void) const {
+    inline base::EnumType flags(void) const {
         return m_flags;
     }
 
@@ -3493,7 +3493,7 @@ private:
     base::RegisteredLoggers* m_registeredLoggers;
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
-    base::EUType m_flags;
+    base::EnumType m_flags;
     base::PreRollOutHandler m_preRollOutHandler;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_postStream;
@@ -3541,7 +3541,7 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, base::LogMessage&& logMessage, base::EUType dispatchAction) :
+    LogDispatcher(bool proceed, base::LogMessage&& logMessage, base::EnumType dispatchAction) :
         m_proceed(proceed),
         m_logMessage(std::move(logMessage)),
         m_dispatchAction(std::move(dispatchAction)) {
@@ -3645,7 +3645,7 @@ public:
 private:
     bool m_proceed;
     base::LogMessage m_logMessage;
-    base::EUType m_dispatchAction;
+    base::EnumType m_dispatchAction;
 
     void dispatch(std::string&& logLine) {
         if (base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction)) {
@@ -3781,7 +3781,7 @@ public:
 class Writer : private base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
-               const char* func, base::EUType dispatchAction = static_cast<base::EUType>(base::DispatchAction::NormalLog),
+               const char* func, base::EnumType dispatchAction = static_cast<base::EnumType>(base::DispatchAction::NormalLog),
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator("") {
@@ -4204,7 +4204,7 @@ private:
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
-    base::EUType m_dispatchAction;
+    base::EnumType m_dispatchAction;
     const char* m_containerLogSeperator;
     friend class el::Helpers;
 
