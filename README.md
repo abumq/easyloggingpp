@@ -86,7 +86,7 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, log) and simplicity. Its highly configurable and extremely useful for small to large size projects.
+Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, log, simple) and portability. Its highly configurable and extremely useful for small to large size projects.
 This manual is written as starting reference for version 9.0+. For older versions please refer to corresponding [releases](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
@@ -101,12 +101,12 @@ Why yet another library? Well, answer is pretty straight forward, use it as if y
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that a typical developer will require while writing a software;
  * Highly configurable
- * Extremely fast (~ 4-12 microsecond)
+ * Extremely fast
  * Thread and type safe
  * Cross-platform
  * Custom log patterns
  * Conditional and occasional logging
- * Performance tracking (Upto microseconds)
+ * Performance tracking
  * Verbose logging
  * Crash handling
  * Helper CHECK macros
@@ -221,6 +221,7 @@ Following table contains configurations supported by configuration file.
 | Milliseconds_Width    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                               |
 | Performance_Tracking  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified. |
 | Max_Log_File_Size     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                   |
+| Log_Flush_Threshold   |  size_t  | Specifies number of log entries to hold until we flush pending log data |
 	
 
 Please do not use double-quotes anywhere in comment, you might end up in unexpected behaviour.
@@ -236,6 +237,7 @@ Sample Configuration File
    MILLISECONDS_WIDTH   =  6
    PERFORMANCE_TRACKING =  true
    MAX_LOG_FILE_SIZE    =  2097152 ## 2MB - Comment starts with two hashes (##)
+   LOG_FLUSH_THRESHOLD  =  100 ## Flush after every 100 logs
 * DEBUG:
    FORMAT               = "%datetime{%d/%M} %func %msg"
 ```

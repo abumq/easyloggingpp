@@ -2709,8 +2709,8 @@ public:
         return getConfigByVal<std::size_t>(level, m_maxLogFileSizeMap, "maxLogFileSize");
     }
     
-    inline unsigned int logFlushThreshold(const Level& level) {
-        return getConfigByVal<unsigned int>(level, m_logFlushThresholdMap, "logFlushThreshold");
+    inline std::size_t logFlushThreshold(const Level& level) {
+        return getConfigByVal<std::size_t>(level, m_logFlushThresholdMap, "logFlushThreshold");
     }
 
 private:
@@ -2724,7 +2724,7 @@ private:
     std::map<Level, bool> m_performanceTrackingMap;
     std::map<Level, std::shared_ptr<std::fstream>> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
-    std::map<Level, unsigned int> m_logFlushThresholdMap;
+    std::map<Level, std::size_t> m_logFlushThresholdMap;
     base::LogStreamsReferenceMap* m_logStreamsReference;
     friend class Writer;
     friend class LogDispatcher;
@@ -2825,7 +2825,7 @@ private:
                 unsafeValidateFileRolling(conf->level(), base::defaultPreRollOutHandler); // This is not unsafe as mutex is locked in currect scope
 #endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
-                setValue(conf->level(), static_cast<unsigned int>(getULong(conf->value())), m_logFlushThresholdMap);
+                setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), m_logFlushThresholdMap);
             }
         }
     }

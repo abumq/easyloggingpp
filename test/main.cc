@@ -15,6 +15,7 @@
 #include "loggable-test.h"
 #include "custom-format-specifier-test.h"
 #include "syslog-test.h"
+#include "strict-file-size-check-test.h"
 
 TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
