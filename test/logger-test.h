@@ -17,12 +17,9 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
     CLOG(INFO, "logger8478") << "Writing using logger 'logger8478'";
     PERFORMANCE_CHECKPOINT_WITH_ID(timer, "Log written using logger8478");
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "false");
-    // We have 4 unique log streams registered at this point!
-    //       1.      /tmp/logs/el.gtest.log
-    //       2.      /tmp/logs/myeasylog.log
-    //       3.      /tmp/my-test-err.log
-    //       4.      /tmp/my-test.log
-    EXPECT_EQ(4, ELPP->registeredLoggers()->logStreamsReference()->size());
+    // streams should not be more than 10 (this is worse case, otherwise until this point we dont have
+    // more than 2 unique loggers registered)
+    EXPECT_LT(ELPP->registeredLoggers()->logStreamsReference()->size(), 10);
 }
 
 TEST(LoggerTest, CheckTenThousandLoggers) {

@@ -1,25 +1,29 @@
 // gtest based unit tests
 
 #include "test.h"
-#include "enum-helper-test.h"
-#include "helpers-test.h"
-#include "utilities-test.h"
-#include "string-utils-test.h"
-#include "os-utils-test.h"
-#include "file-utils-test.h"
+
+// Included in alphabetical order
+
 #include "command-line-args-test.h"
-#include "registry-test.h"
 #include "configurations-test.h"
+#include "custom-format-specifier-test.h"
+#include "enum-helper-test.h"
+#include "file-utils-test.h"
 #include "global-configurations-test.h"
-#include "typed-configurations-test.h"
+#include "helpers-test.h"
 #include "hit-counter-test.h"
+#include "log-format-resolution-test.h"
+#include "loggable-test.h"
+#include "logger-test.h"
+#include "os-utils-test.h"
+#include "registry-test.h"
+#include "strict-file-size-check-test.h"
+#include "string-utils-test.h"
+#include "syslog-test.h"
+#include "typed-configurations-test.h"
+#include "utilities-test.h"
 #include "verbose-app-arguments-test.h"
 #include "write-all-test.h"
-#include "logger-test.h"
-#include "loggable-test.h"
-#include "custom-format-specifier-test.h"
-#include "syslog-test.h"
-#include "strict-file-size-check-test.h"
 
 TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
