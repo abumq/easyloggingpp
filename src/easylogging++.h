@@ -1235,6 +1235,7 @@ public:
         }
         return false;
     }
+
     static inline char* convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bufLim, bool zeroPadded = true) {
         char localBuff[10] = "";
         char* p = localBuff + sizeof(localBuff) - 2;
@@ -1243,11 +1244,13 @@ public:
             while (p > localBuff && len-- > 0) *--p = (char) '0';
         return addToBuff(p, buf, bufLim);
     }
+
     static inline char* addToBuff(const char* str, char* buf, const char* bufLim) {
         while ((buf < bufLim) && ((*buf = *str++) != '\0'))
             ++buf;
         return buf;
     }
+
     static inline char* clearBuff(char buff[], std::size_t lim) {
         STRCPY(buff, "", lim);
         _ELPP_UNUSED(lim); // For *nix we dont have anything using lim in above STRCPY macro

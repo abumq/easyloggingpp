@@ -76,13 +76,25 @@ static bool fileExists(const char* filename) {
     return fstr.is_open();
 }
 
-static void cleanLogFile(const char* filename = logfile) {
-    std::cout << "Cleaning out log file...[" << logfile << "]\n";
-    std::ofstream fstr(filename, std::ofstream::trunc);
+static void cleanFile(const char* filename = logfile, std::fstream* fs = nullptr) {
+    if (fs != nullptr && fs->is_open()) {
+        fs->close();
+        fs->open(filename, std::fstream::out);
+    } else {
+        std::ofstream f(filename, std::ofstream::out);
+        if (f.is_open()) {
+            f.close();
+        }
+        _ELPP_UNUSED(f);
+    }
 }
 
 #undef BUILD_STR
 #define BUILD_STR(strb) [&]() -> std::string { std::stringstream ssb; ssb << strb; return ssb.str(); }()
+
+static void removeFile(const char* path) {
+    system(BUILD_STR("rm -rf " << path).c_str());
+}
 
 static const char* kSysLogIdent = "qt-gtest-proj";
 #endif // TEST_HELPERS_H_

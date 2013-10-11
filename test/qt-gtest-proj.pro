@@ -33,4 +33,9 @@ HEADERS  += \
     verbose-app-arguments-test.h \
     custom-format-specifier-test.h \
     syslog-test.h \
-    strict-file-size-check-test.h
+    strict-file-size-check-test.h \
+    command-line-args-test.h \
+    log-format-resolution-test.h \
+    string-utils-test.h \
+    os-utils-test.h \
+    file-utils-test.h
