@@ -1175,4 +1175,4 @@ Icons used in this manual (in compatibility section) are solely for information 
   [top]: http://easylogging.org/images/up.png?v=4
   [www]: http://easylogging.org/images/logo-www.png?v=6
   
-  [pledgie]: http://www.pledgie.com/campaigns/22070.png?skin_name=chrome
+  [pledgie]: http://www.pledgie.com/campaigns/22070.png?skin_name=chrome&v=2
