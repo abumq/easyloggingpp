@@ -4288,6 +4288,16 @@ public:
         }
 #endif // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
+    Trackable(const Trackable& t) {
+        m_blockName = t.m_blockName;
+        m_timestampUnit = t.m_timestampUnit;
+        m_loggerId = t.m_loggerId;
+        m_scopedLog = t.m_scopedLog;
+        m_level = t.m_level;
+        m_enabled = t.m_enabled;
+        m_startTime = t.m_startTime;
+        m_endTime = t.m_endTime;
+    }
     virtual ~Trackable(void) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
@@ -4348,6 +4358,8 @@ private:
     bool m_hasChecked;
     const char* m_lastCheckpointId;
     bool m_enabled;
+
+    Trackable(void);
 
     friend std::ostream& operator<<(std::ostream& os, const Trackable& trackable) {
         os << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(trackable.m_endTime,

@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
 
      TIMED_BLOCK(t, "whole-block") {
         t.timer.checkpoint();
+
         LOG(WARNING) << "Starting Qt Logging";
 
         QVector<QString> stringList;

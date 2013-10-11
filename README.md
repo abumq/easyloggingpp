@@ -632,6 +632,7 @@ One of the most notable features of Easylogging++ is its ability to track perfor
 Please note, this is not backward compatible as previously we had bad macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v8.91 ReadMe for older way of doing it)
 The new way of tracking performance is much easier and reliable. All you need to do is use one of two macros from where you want to start tracking.
 * `TIMED_FUNC(obj-name)`
+* `TIMED_SCOPE(obj-name, block-name)`
 * `TIMED_BLOCK(obj-name, block-name)`
 
 An example that just uses usleep 
@@ -642,7 +643,7 @@ void performHeavyTask(int iter) {
    // Some more heavy tasks
    usleep(5000);
    while (iter-- > 0) {
-       TIMED_BLOCK(timerBlkObj, "heavy-iter");
+       TIMED_SCOPE(timerBlkObj, "heavy-iter");
        // Perform some heavy task in each iter
        usleep(10000);
    }
@@ -664,7 +665,7 @@ The result of above execution for iter = 10, is as following
 06:22:31,460 INFO Executed [void performHeavyTask(int)] in [106 ms]
 ```
 
-In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object name timerObj and line-7 we have TIMED_BLOCK with object name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_BLOC` with block name = function name)
+In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object name timerObj and line-7 we have TIMED_SCOPE with object name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_BLOC` with block name = function name)
 
 You might wonder why do we need object name. Well easylogging++ performance tracking feature takes it further and provides ability to add, what's called checkpoints. 
 Checkpoints have two macros:
@@ -679,7 +680,7 @@ void performHeavyTask(int iter) {
    // Some more heavy tasks
    usleep(5000);
    while (iter-- > 0) {
-       TIMED_BLOCK(timerBlkObj, "heavy-iter");
+       TIMED_SCOPE(timerBlkObj, "heavy-iter");
        // Perform some heavy task in each iter
        // Notice following sleep varies with each iter
        usleep(iter * 1000);
@@ -716,7 +717,7 @@ You can also compare two checkpoints if they are in sub-blocks e.g, changing fro
 06:40:35,522 INFO Performance checkpoint for block [void performHeavyTask(int)] : [51 ms ([1 ms] from last checkpoint)]
 ```
 
-If you had used PERFORMANCE_CHECKPOINT_WITH_ID(timerObj, "mychkpnt"); instead, you will get
+If you had used `PERFORMANCE_CHECKPOINT_WITH_ID(timerObj, "mychkpnt");` instead, you will get
 ```
 06:44:37,979 INFO Performance checkpoint [mychkpnt] for block [void performHeavyTask(int)] : [51 ms ([1 ms] from checkpoint 'mychkpnt')]
 ```
@@ -734,6 +735,12 @@ Notes:
 1. Performance tracking uses `performance` logger (INFO level) by default unless `el::base::Trackable` is constructed manually (not using macro - not recommended). When configuring other loggers, make sure you configure this one as well.
 
 2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::Trackable` and `checkpoint()` can be accessed by `timerObj.checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
+
+3. `TIMED_BLOCK` in older version (before ver 9.25) has been renamed to `TIMED_SCOPE` and functionality of `TIMED_BLOCK` is new
+
+4. In order to access `el::base::Trackable` while in `TIMED_BLOCK`, you can use `timerObj.timer`
+
+5. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
  [![top] Goto Top](#table-of-contents)
  
