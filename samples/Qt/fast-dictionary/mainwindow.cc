@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initializeDictionary("../fast-dictionary/words.txt");
     list->setFocus();
     connect(list, SIGNAL(selectionMade(QString)), this, SLOT(onSelectionMade(QString)));
-    ui->labelAbout->setText("Easylogging++ Info\n================\n" + QString::fromStdString(el::VersionInfo::formattedInfo()));
+    ui->labelAbout->setText("Easylogging++ Info\n================\n" + QString::fromStdString(el::VersionInfo::version()));
 
 }
 
