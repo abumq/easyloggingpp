@@ -1049,6 +1049,8 @@ In order to install this handler, you need a function with signature `void handl
 
 Please note, if you are definitely not using this handler, it is always recommended to `#undef _ELPP_HANDLE_POST_LOG_DISPATCH`, so that if you are using a library that is using easylogging++ and has installed this handler is not triggering this anymore. (You may not know how expensive this handler is and hence blocking / delaying your log dispatches)
 
+ > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions.
+
  > Since ver. 9.26
 
  [![top] Goto Top](#table-of-contents)
