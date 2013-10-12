@@ -7,6 +7,10 @@
 static const char* kSysLogFile = "/var/log/syslog";
 
 TEST(SysLogTest, WriteLog) {
+    if (!fileExists(kSysLogFile)) {
+        // Do not check for syslog config, just dont test it
+        return;
+    }
     // To avoid "Easylogging++ last message repeated 2 times"
     SYSLOG(INFO) << "last message suppress";
 
@@ -14,12 +18,14 @@ TEST(SysLogTest, WriteLog) {
     sleep(1); // Make sure daemon has picked it up
     std::string expectedEnd = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : this is my syslog\n");
     std::string actual = tail(1, kSysLogFile);
-    if (fileExists(kSysLogFile)) {
-        EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
-    }
+    EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
 }
 
 TEST(SysLogTest, DebugVersionLogs) {
+    if (!fileExists(kSysLogFile)) {
+        // Do not check for syslog config, just dont test it
+        return;
+    }
     // Test enabled
     #undef _ELPP_DEBUG_LOG
     #define _ELPP_DEBUG_LOG 0
