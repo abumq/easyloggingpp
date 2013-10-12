@@ -751,7 +751,7 @@ Notes:
 Easylogging++ has ability to roll out (or throw away) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
-This can be done by using `el::Helpers::installPreRollOutHandler(const base::PreRollOutHandler& handler)` where `PreRollOutHandler` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
+This can be done by using `el::Helpers::installPreRollOutHandler(const PreRollOutHandler& handler)` where `PreRollOutHandler` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
 > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions. If you are sure that you are not going to log to same file and not using same logger, feel free to give it a try.
 
@@ -1048,8 +1048,6 @@ If you wish to capture log message right after it is dispatched, you can do so b
 In order to install this handler, you need a function with signature `void handler(const el::LogMessage*)` and install it at anytime using `el::Helpers::installPostLogDispatchHandler(handler)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPostLogDispatchHandler()`
 
 Please note, if you are definitely not using this handler, it is always recommended to `#undef _ELPP_HANDLE_POST_LOG_DISPATCH`, so that if you are using a library that is using easylogging++ and has installed this handler is not triggering this anymore. (You may not know how expensive this handler is and hence blocking / delaying your log dispatches)
-
- > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions.
 
  > Since ver. 9.26
 
