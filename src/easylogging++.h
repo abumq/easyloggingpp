@@ -5140,6 +5140,7 @@ static T* checkNotNull(T* ptr, const char* name) {
 #undef DCHECK_NOTNULL
 #undef DCHECK_STRCASEEQ
 #undef DCHECK_STRCASENE
+#undef DPCHECK
 #define DCHECK(condition) if (_ELPP_DEBUG_LOG) CHECK(condition)
 #define DCHECK_EQ(a, b) if (_ELPP_DEBUG_LOG) CHECK_EQ(a, b)
 #define DCHECK_NE(a, b) if (_ELPP_DEBUG_LOG) CHECK_NE(a, b)
@@ -5152,6 +5153,7 @@ static T* checkNotNull(T* ptr, const char* name) {
 #define DCHECK_STRNE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRNE(str1, str2)
 #define DCHECK_STRCASEEQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASEEQ(str1, str2)
 #define DCHECK_STRCASENE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASENE(str1, str2)
+#define DPCHECK(condition) if (_ELPP_DEBUG_LOG) PCHECK(condition)
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
