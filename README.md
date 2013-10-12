@@ -76,6 +76,7 @@
         <a href="#logging-your-own-class">Logging Your Own Class</a>
         <a href="#logging-third-party-class">Logging Third-party Class</a>
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
+    <a href="#post-log-dispatch-handler">Post Log Dispatch Handler</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -1041,6 +1042,17 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 
  [![top] Goto Top](#table-of-contents)
 
+### Post Log Dispatch Handler
+If you wish to capture log message right after it is dispatched, you can do so by defining `_ELPP_HANDLE_POST_LOG_DISPATCH`, by doing so you are telling library to trigger an installed post log dispatch handler, called `PostLogDispatchHandler` in `el` namespace.
+
+In order to install this handler, you need a function with signature `void handler(const el::LogMessage*)` and install it at anytime using `el::Helpers::installPostLogDispatchHandler(handler)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPostLogDispatchHandler()`
+
+Please note, if you are definitely not using this handler, it is always recommended to `#undef _ELPP_HANDLE_POST_LOG_DISPATCH`, so that if you are using a library that is using easylogging++ and has installed this handler is not triggering this anymore. (You may not know how expensive this handler is and hence blocking / delaying your log dispatches)
+
+ > Since ver. 9.26
+
+ [![top] Goto Top](#table-of-contents)
+ 
 # Contribution
 ### Submitting Patches
 Since ver. 9.25, we do not accept any patches. Contribution can only be done by report bugs. This is because Easylogging++ is based on single header file hence we run into conflicts a lot of times, which no developer likes.
