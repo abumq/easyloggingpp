@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.25
+//  Easylogging++ v9.25 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -4998,6 +4998,10 @@ public:
 #undef CPLOG_IF
 #undef PLOG
 #undef PLOG_IF
+#undef DCPLOG
+#undef DCPLOG_IF
+#undef DPLOG
+#undef DPLOG_IF
 #if _ELPP_COMPILER_MSVC
 #   define _ELPP_ERRORNO_TO_POSTSTREAM char buff[256]; strerror_s(buff, 256, errno); ELPP->postStream() << ": " << buff << " [" << errno << "]";
 #else
@@ -5005,13 +5009,21 @@ public:
 #endif
 #define CPLOG(LEVEL, loggerId) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL(loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
 #define CPLOG_IF(condition, LEVEL, loggerId) if (condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
+#define DCPLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) { _ELPP_ERRORNO_TO_POSTSTREAM } if (_ELPP_DEBUG_LOG) C##LEVEL(loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
+#define DCPLOG_IF(condition, LEVEL, loggerId) if (_ELPP_DEBUG_LOG && condition) { _ELPP_ERRORNO_TO_POSTSTREAM } C##LEVEL##_IF(_ELPP_DEBUG_LOG && condition, loggerId, el::base::utils::bitwise::Or(2, el::base::DispatchAction::NormalLog, el::base::DispatchAction::PostStream))
 #define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
+#define DPLOG(LEVEL) DCPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
+#define DPLOG_IF(condition, LEVEL) DCPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
 // Generic SYSLOG()
 #undef CSYSLOG
 #undef CSYSLOG_IF
 #undef SYSLOG
 #undef SYSLOG_IF
+#undef DCSYSLOG
+#undef DCSYSLOG_IF
+#undef DSYSLOG
+#undef DSYSLOG_IF
 #if defined(_ELPP_SYSLOG)
 #   define CSYSLOG(LEVEL, loggerId) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
 #   define CSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
@@ -5019,6 +5031,12 @@ public:
 #   define SYSLOG(LEVEL) CSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_IF(condition, LEVEL) CSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_EVERY_N(n, LEVEL) CSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define DCSYSLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL(loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define DCSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(_ELPP_DEBUG_LOG && condition, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(n, loggerId, el::base::utils::bitwise::Or(1, el::base::DispatchAction::SysLog))
+#   define DSYSLOG(LEVEL) DCSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
+#   define DSYSLOG_IF(condition, LEVEL) DCSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define DSYSLOG_EVERY_N(n, LEVEL) DCSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #else
 #   define CSYSLOG(LEVEL, loggerId) el::base::NullWriter()
 #   define CSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
@@ -5026,6 +5044,12 @@ public:
 #   define SYSLOG(LEVEL) el::base::NullWriter()
 #   define SYSLOG_IF(condition, LEVEL) el::base::NullWriter()
 #   define SYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
+#   define DCSYSLOG(LEVEL, loggerId) el::base::NullWriter()
+#   define DCSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
+#   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define DSYSLOG(LEVEL) el::base::NullWriter()
+#   define DSYSLOG_IF(condition, LEVEL) el::base::NullWriter()
+#   define DSYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
 #endif // defined(_ELPP_SYSLOG)
 //
 // Custom Debug Only Loggers - Requires (level, loggerId)

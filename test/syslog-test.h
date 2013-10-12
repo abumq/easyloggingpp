@@ -3,10 +3,10 @@
 
 #include "test.h"
 
+#if defined(_ELPP_SYSLOG)
 static const char* kSysLogFile = "/var/log/syslog";
 
 TEST(SysLogTest, WriteLog) {
-#if defined(_ELPP_SYSLOG)
     // To avoid "Easylogging++ last message repeated 2 times"
     SYSLOG(INFO) << "last message suppress";
 
@@ -17,10 +17,51 @@ TEST(SysLogTest, WriteLog) {
     if (fileExists(kSysLogFile)) {
         EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
     }
+}
+
+TEST(SysLogTest, DebugVersionLogs) {
+    // Test enabled
+    #undef _ELPP_DEBUG_LOG
+    #define _ELPP_DEBUG_LOG 0
+
+    std::string currentTail = tail(1, kSysLogFile);
+
+    DSYSLOG(INFO) << "No DSYSLOG should be resolved";
+    EXPECT_TRUE(Str::endsWith(currentTail, tail(1, kSysLogFile)));
+
+    DSYSLOG_IF(true, INFO) << "No DSYSLOG_IF should be resolved";
+    EXPECT_TRUE(Str::endsWith(currentTail, tail(1, kSysLogFile)));
+
+    DCSYSLOG(INFO, "performance") << "No DCSYSLOG should be resolved";
+    EXPECT_TRUE(Str::endsWith(currentTail, tail(1, kSysLogFile)));
+
+    DCSYSLOG(INFO, "performance") << "No DCSYSLOG should be resolved";
+    EXPECT_TRUE(Str::endsWith(currentTail, tail(1, kSysLogFile)));
+
+    // Reset
+    #undef _ELPP_DEBUG_LOG
+    #define _ELPP_DEBUG_LOG 1
+
+    // Now test again
+    DSYSLOG(INFO) << "DSYSLOG should be resolved";
+    std::string expected = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : DSYSLOG should be resolved\n");
+    EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
+
+    DSYSLOG_IF(true, INFO) << "DSYSLOG_IF should be resolved";
+    expected = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : DSYSLOG_IF should be resolved\n");
+    EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
+
+    DCSYSLOG(INFO, el::base::consts::kSysLogLoggerId) << "DCSYSLOG should be resolved";
+    expected = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
+    EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
+
+    DCSYSLOG(INFO, el::base::consts::kSysLogLoggerId) << "DCSYSLOG should be resolved";
+    expected = BUILD_STR(OS::currentHost() << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
+    EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
+}
+
 #else
-    _ELPP_UNUSED(kSysLogFile);
 #   warning "Skipping [SysLogTest] for [_ELPP_SYSLOG] not defined"
 #endif // defined(_ELPP_SYSLOG)
-}
 
 #endif // SYSLOG_TEST_H
