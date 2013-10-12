@@ -38,4 +38,5 @@ HEADERS  += \
     log-format-resolution-test.h \
     string-utils-test.h \
     os-utils-test.h \
-    file-utils-test.h
+    file-utils-test.h \
+    plog-test.h

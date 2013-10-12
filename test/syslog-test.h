@@ -1,11 +1,11 @@
-#ifndef SYSLOGTEST_H
-#define SYSLOGTEST_H
+#ifndef SYSLOG_TEST_H
+#define SYSLOG_TEST_H
 
 #include "test.h"
 
 static const char* kSysLogFile = "/var/log/syslog";
 
-TEST(SysLogTest, TestSysLogFile) {
+TEST(SysLogTest, WriteLog) {
 #if defined(_ELPP_SYSLOG)
     // To avoid "Easylogging++ last message repeated 2 times"
     SYSLOG(INFO) << "last message suppress";
@@ -23,4 +23,4 @@ TEST(SysLogTest, TestSysLogFile) {
 #endif // defined(_ELPP_SYSLOG)
 }
 
-#endif // SYSLOGTEST_H
+#endif // SYSLOG_TEST_H
