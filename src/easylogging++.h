@@ -3583,10 +3583,10 @@ public:
         if (lockLogger) {
             m_logMessage.logger()->lock();
         }
-        if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-            m_logMessage.logger()->m_typedConfigurations->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
-        }
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
+        if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
+            tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
+        }
         const base::LogFormat* logFormat = &tc->logFormat(m_logMessage.level());
         std::string logLine = logFormat->format();
         char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
@@ -3665,6 +3665,11 @@ public:
             m_logMessage.logger()->unlock();
         }
         ELPP->unlock();
+#if defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        m_logMessage.logger()->stream().str("");
+        m_logMessage.logger()->unlock();
+        ELPP->postLogDispatchHandler()(&m_logMessage);
+ #endif // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
     }
 private:
     bool m_proceed;
@@ -3718,9 +3723,6 @@ private:
             syslog(sysLogPriority, "%s", logLine.c_str());
         }
  #endif // defined(_ELPP_SYSLOG)
- #if defined(_ELPP_HANDLE_POST_LOG)
-        ELPP->postLogDispatchHandler()(&m_logMessage);
- #endif // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
     }
 };
 #if defined(_ELPP_STL_LOGGING)
@@ -3838,10 +3840,14 @@ public:
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
+#if !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        // If we don't handle post-log-dispatches, we need to unlock logger
+        // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
         if (m_logger != nullptr) {
             m_logger->stream().str("");
             m_logger->unlock();
         }
+#endif // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
