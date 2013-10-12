@@ -693,7 +693,12 @@ namespace consts {
                  "Interruption generated (generally) by user or operating system." },
     };
 } // namespace consts
+} // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
+class LogMessage;
+typedef std::function<void(const LogMessage* logMessage)> PostLogDispatchHandler;
+namespace base {
+static inline void defaultPostLogDispatchHandler(const LogMessage*) {}
 static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
 /// @brief Enum to represent timestamp unit
 enum class TimestampUnit : base::EnumType {
@@ -2965,7 +2970,6 @@ public:
 class Storage;
 class Trackable;
 class LogDispatcher;
-class LogMessage;
 } // namespace base
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
@@ -3095,7 +3099,7 @@ private:
 
     friend class base::LogDispatcher;
     friend class base::Writer;
-    friend class base::LogMessage;
+    friend class LogMessage;
     friend class el::Loggers;
     friend class el::Helpers;
     friend class base::Storage;
@@ -3332,6 +3336,7 @@ private:
     VLevel m_level;
     std::map<std::string, VLevel> m_modules;
 };
+} // namespace base
 class LogMessage {
 public:
     LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,
@@ -3339,13 +3344,13 @@ public:
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
     }
-    inline Level& level(void) { return m_level; }
-    inline const char* file(void) { return m_file; }
-    inline unsigned long int line(void) { return m_line; }
-    inline const char* func(void) { return m_func; }
-    inline VRegistry::VLevel verboseLevel(void) { return m_verboseLevel; }
-    inline Logger* logger(void) { return m_logger; }
-    inline std::string& message(void) { return m_message; }
+    inline const Level& level(void) const { return m_level; }
+    inline const char* file(void) const { return m_file; }
+    inline unsigned long int line(void) const { return m_line; }
+    inline const char* func(void) const { return m_func; }
+    inline base::VRegistry::VLevel verboseLevel(void) const { return m_verboseLevel; }
+    inline Logger* logger(void) const { return m_logger; }
+    inline const std::string& message(void) const { return m_message; }
 private:
     Level m_level;
     const char* m_file;
@@ -3355,6 +3360,7 @@ private:
     Logger* m_logger;
     std::string m_message;
 };
+namespace base {
 /// @brief Action to be taken for dispatching
 enum class DispatchAction : base::EnumType {
     None = 1, NormalLog = 2, PostStream = 4, SysLog = 8
@@ -3371,7 +3377,8 @@ public:
         m_registeredLoggers(new base::RegisteredLoggers()),
         m_vRegistry(new base::VRegistry(0)),
         m_flags(0x0),
-        m_preRollOutHandler(base::defaultPreRollOutHandler) {
+        m_preRollOutHandler(base::defaultPreRollOutHandler),
+        m_postLogDispatchHandler(base::defaultPostLogDispatchHandler) {
 
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
@@ -3446,7 +3453,7 @@ public:
         m_flags = flags;
     }
 
-    inline void setPreRollOutHandler(const base::PreRollOutHandler& handler) {
+    inline void setPreRollOutHandler(const PreRollOutHandler& handler) {
         m_preRollOutHandler = handler;
     }
 
@@ -3454,8 +3461,20 @@ public:
         m_preRollOutHandler = base::defaultPreRollOutHandler;
     }
 
-    inline base::PreRollOutHandler& preRollOutHandler(void) {
+    inline PreRollOutHandler& preRollOutHandler(void) {
         return m_preRollOutHandler;
+    }
+    
+    inline void setPostLogDispatchHandler(const PostLogDispatchHandler& handler) {
+        m_postLogDispatchHandler = handler;
+    }
+
+    inline void unsetPostLogDispatchHandler(void) {
+        m_postLogDispatchHandler = base::defaultPostLogDispatchHandler;
+    }
+
+    inline PostLogDispatchHandler& postLogDispatchHandler(void) {
+        return m_postLogDispatchHandler;
     }
 
     inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
@@ -3498,7 +3517,8 @@ private:
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
     base::EnumType m_flags;
-    base::PreRollOutHandler m_preRollOutHandler;
+    PreRollOutHandler m_preRollOutHandler;
+    PostLogDispatchHandler m_postLogDispatchHandler;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_postStream;
 
@@ -3545,7 +3565,7 @@ extern std::unique_ptr<base::Storage> elStorage;
 /// @brief Dispatches log messages
 class LogDispatcher : private base::NoCopy {
 public:
-    LogDispatcher(bool proceed, base::LogMessage&& logMessage, base::EnumType dispatchAction) :
+    LogDispatcher(bool proceed, LogMessage&& logMessage, base::EnumType dispatchAction) :
         m_proceed(proceed),
         m_logMessage(std::move(logMessage)),
         m_dispatchAction(std::move(dispatchAction)) {
@@ -3648,7 +3668,7 @@ public:
     }
 private:
     bool m_proceed;
-    base::LogMessage m_logMessage;
+    LogMessage m_logMessage;
     base::EnumType m_dispatchAction;
 
     void dispatch(std::string&& logLine) {
@@ -3698,6 +3718,9 @@ private:
             syslog(sysLogPriority, "%s", logLine.c_str());
         }
  #endif // defined(_ELPP_SYSLOG)
+ #if defined(_ELPP_HANDLE_POST_LOG)
+        ELPP->postLogDispatchHandler()(&m_logMessage);
+ #endif // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
     }
 };
 #if defined(_ELPP_STL_LOGGING)
@@ -3812,7 +3835,7 @@ public:
                 m_logger->stream() << ELPP->m_postStream.str();
                 ELPP->clearPostStream();
             }
-            base::LogDispatcher(m_proceed, base::LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
+            base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
         if (m_logger != nullptr) {
@@ -4605,12 +4628,20 @@ public:
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out (can be useful for backing up)
-    static inline void installPreRollOutHandler(const base::PreRollOutHandler& handler) {
+    static inline void installPreRollOutHandler(const PreRollOutHandler& handler) {
         ELPP->setPreRollOutHandler(handler);
     }
     /// @brief Uninstalls pre rollout handler
     static inline void uninstallPreRollOutHandler(void) {
         ELPP->unsetPreRollOutHandler();
+    }
+    /// @brief Installs post log dispatch handler, this handler is triggered when log is dispatched
+    static inline void installPostLogDispatchHandler(const PostLogDispatchHandler& handler) {
+        ELPP->setPostLogDispatchHandler(handler);
+    }
+    /// @brief Uninstalls post log dispatch
+    static inline void uninstallPostLogDispatchHandler(void) {
+        ELPP->unsetPostLogDispatchHandler();
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>

@@ -31,7 +31,7 @@ TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     _INIT_SYSLOG(kSysLogIdent, 0, 0);
-
+        
     reconfigureLoggersForTest();
     std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;
 

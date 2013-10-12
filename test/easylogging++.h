@@ -24,6 +24,5 @@
 #ifndef _ELPP_SYSLOG
 #   define _ELPP_SYSLOG
 #endif
-
 #include "../src/easylogging++.h"
 #endif // EASYLOGGING_FOR_SAMPLES_H

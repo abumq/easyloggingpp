@@ -7,6 +7,13 @@ Easylogging++ v9.26 RELEASE NOTES
 
  - Debug version of PLOG (issue #133)
  - Debug version of SYSLOG
+ - Introduced `PostLogDispatchHandler` to write your own handler for any action after log is dispatched
+
+===========================
+=      API CHANGES        =
+===========================
+
+ - `el::base::PreRollOutHandler` has moved to `el::PreRollOutHandler`
 
 ==========================
 =         NOTES          =
