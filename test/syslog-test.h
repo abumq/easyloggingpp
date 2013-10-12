@@ -1,9 +1,10 @@
 #ifndef SYSLOG_TEST_H
 #define SYSLOG_TEST_H
 
+#if defined(_ELPP_SYSLOG)
+
 #include "test.h"
 
-#if defined(_ELPP_SYSLOG)
 static const char* kSysLogFile = "/var/log/syslog";
 
 TEST(SysLogTest, WriteLog) {
