@@ -3821,7 +3821,7 @@ public:
                     << "Aborting application. [Reason: Fatal log]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
-                << " If you wish to disable abort on fatal log please use "
+                << " If you wish to disable 'abort on fatal log' please use "
                 << "el::Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)";
             base::utils::abort(1, reasonStream.str().c_str());
         }
@@ -4367,7 +4367,7 @@ public:
         generateNew();
     }
 
-    ~StackTrace(void) {
+    virtual ~StackTrace(void) {
     }
 
     inline std::vector<StackTraceEntry>& getLatestStack(void) {
