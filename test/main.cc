@@ -17,6 +17,7 @@
 #include "logger-test.h"
 #include "os-utils-test.h"
 #include "plog-test.h"
+#include "post-log-dispatch-handler-test.h"
 #include "registry-test.h"
 #include "strict-file-size-check-test.h"
 #include "string-utils-test.h"
