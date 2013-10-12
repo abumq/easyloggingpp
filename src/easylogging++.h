@@ -770,10 +770,14 @@ inline static base::EnumType Or(const Enum& e, base::EnumType flag) {
 }
 template <typename Enum>
 static base::EnumType Or(int n, const Enum& flag, ...) {
-    va_list flags;
-    va_start(flags, flag);
+    if (n == 0) return 0x0;
     base::EnumType result = 0x0;
     result = base::utils::bitwise::Or(static_cast<Enum>(flag), result);
+    if (n == 1) {
+        return result;
+    }
+    va_list flags;
+    va_start(flags, flag);
     for (int i = 0; i < n - 1; ++i) {
         result = base::utils::bitwise::Or(static_cast<Enum>(va_arg(flags, int)), result);
     }
