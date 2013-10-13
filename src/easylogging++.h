@@ -860,7 +860,7 @@ private:
 };
 /// @brief Scoped lock for compiler that dont yet support std::lock_guard
 template <typename M>
-class ScopedLock : private base::NoCopy {
+class ScopedLock : base::NoCopy {
 public:
     explicit ScopedLock(M& mutex) {
         m_mutex = &mutex;
@@ -905,7 +905,7 @@ public:
 };
 /// @brief Lock guard wrapper used when multi-threading is disabled.
 template <typename Mutex>
-class NoScopedLock : private base::NoCopy {
+class NoScopedLock : base::NoCopy {
 public:
     explicit NoScopedLock(Mutex&) {
     }
@@ -3198,7 +3198,7 @@ private:
     friend class base::Storage;
 };
 /// @brief Represents registries for verbose logging
-class VRegistry : private base::NoCopy, public base::threading::ThreadSafe {
+class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 public:
     typedef int VLevel;
 
@@ -3368,7 +3368,7 @@ enum class DispatchAction : base::EnumType {
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
-class Storage : private base::NoCopy, public base::threading::ThreadSafe {
+class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
     Storage(void) :
         m_username(base::utils::OS::currentUser()),
@@ -3563,7 +3563,7 @@ private:
 extern std::unique_ptr<base::Storage> elStorage;
 #define ELPP el::base::elStorage
 /// @brief Dispatches log messages
-class LogDispatcher : private base::NoCopy {
+class LogDispatcher : base::NoCopy {
 public:
     LogDispatcher(bool proceed, LogMessage&& logMessage, base::EnumType dispatchAction) :
         m_proceed(proceed),
@@ -3797,7 +3797,7 @@ private:
 } // namespace workarounds
 #endif // defined(_ELPP_STL_LOGGING)
 /// @brief Writes nothing - Used when certain log is disabled
-class NullWriter : private base::NoCopy {
+class NullWriter : base::NoCopy {
 public:
     NullWriter(void) {}
 
@@ -3807,7 +3807,7 @@ public:
     }
 };
 /// @brief Main entry point of each logging
-class Writer : private base::NoCopy {
+class Writer : base::NoCopy {
 public:
     Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,
                const char* func, base::EnumType dispatchAction = static_cast<base::EnumType>(base::DispatchAction::NormalLog),
@@ -4365,7 +4365,7 @@ private:
 };
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
-class StackTrace : private base::NoCopy {
+class StackTrace : base::NoCopy {
 public:
     static const std::size_t kMaxStack = 64;
     static const std::size_t kStackStart = 2; // We want to skip c'tor and StackTrace::generateNew()
@@ -4518,7 +4518,7 @@ static inline void defaultCrashHandler(int sig) {
     base::debug::crashAbort(sig);
 }
 /// @brief Handles unexpected crashes
-class CrashHandler : private base::NoCopy {
+class CrashHandler : base::NoCopy {
 public:
     typedef void (*Handler)(int);
 
