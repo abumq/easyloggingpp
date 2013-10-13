@@ -14,6 +14,7 @@ Easylogging++ v9.26 RELEASE NOTES
 ===========================
 
  - `el::base::PreRollOutHandler` has moved to `el::PreRollOutHandler`
+ - `el::base::LogMessage` has moved to `el::LogMessage`
 
 ==========================
 =         NOTES          =
