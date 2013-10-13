@@ -1319,32 +1319,47 @@ public:
 
     /// @brief Gets current username.
     static inline const std::string currentUser(void) {
+        if (s_retrievedUser) return s_currentUser;
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        return getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
+        s_currentUser = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
+        s_currentUser = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
-        return std::string("android");
+        s_currentUser = std::string("android");
 #else
-        return std::string();
+        s_currentUser = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
+       s_retrievedUser = true;
+       return s_currentUser;
     }
 
     /// @brief Gets current host name or computer name.
     ///
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
     static inline const std::string currentHost(void) {
+        if (s_retrievedHost) return s_currentHost;
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        return getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
+        s_currentHost = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
-        return getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
+        s_currentHost = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
-        return getDeviceName();
+        s_currentHost = getDeviceName();
 #else
-        return std::string();
+        s_currentHost = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
+       s_retrievedHost = true;
+       return s_currentHost;
     }
+private:
+    static std::string s_currentUser;
+    static std::string s_currentHost;
+    static bool s_retrievedUser;
+    static bool s_retrievedHost;
 };
+std::string base::utils::OS::s_currentUser = std::string();
+std::string base::utils::OS::s_currentHost = std::string();
+bool base::utils::OS::s_retrievedUser = false;
+bool base::utils::OS::s_retrievedHost = false;
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : private base::StaticClass {
 public:
@@ -1976,7 +1991,7 @@ public:
             }
         }
         m_format = formatCopy;
-        updateLevelFormatSpec();
+        updateFormatSpec();
     }
 
     inline const Level& level(void) const {
@@ -2039,42 +2054,37 @@ protected:
     }
 
     /// @brief Updates %level from format. This is so that we dont have to do it at log-writing-time. It uses m_format and m_level
-    virtual void updateLevelFormatSpec(void) FINAL {
+    virtual void updateFormatSpec(void) FINAL {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (m_level == Level::Debug) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kDebugLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Info) {
+        } else if (m_level == Level::Info) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kInfoLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Warning) {
+        } else if (m_level == Level::Warning) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kWarningLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Error) {
+        } else if (m_level == Level::Error) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kErrorLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Fatal) {
+        } else if (m_level == Level::Fatal) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kFatalLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Verbose) {
+        } else if (m_level == Level::Verbose) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kVerboseLevelLogValue);
-            return;
-        }
-        if (m_level == Level::Trace) {
+        } else if (m_level == Level::Trace) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kTraceLevelLogValue);
-            return;
+        }
+        if (hasFlag(base::FormatFlags::User)) {
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentUserFormatSpecifier, 
+                    base::utils::OS::currentUser());
+        }
+        if (hasFlag(base::FormatFlags::Host)) {
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentHostFormatSpecifier, 
+                    base::utils::OS::currentHost());
         }
         // Ignore Level::Global and Level::Unknown
     }
@@ -3371,8 +3381,6 @@ enum class DispatchAction : base::EnumType {
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
     Storage(void) :
-        m_username(base::utils::OS::currentUser()),
-        m_hostname(base::utils::OS::currentHost()),
         m_registeredHitCounters(new base::RegisteredHitCounters()),
         m_registeredLoggers(new base::RegisteredLoggers()),
         m_vRegistry(new base::VRegistry(0)),
@@ -3510,8 +3518,6 @@ public:
         return m_postStream;
     }
 private:
-    std::string m_username;
-    std::string m_hostname;
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
     base::VRegistry* m_vRegistry;
@@ -3525,14 +3531,6 @@ private:
     friend class base::LogDispatcher;
     friend class base::Writer;
     friend class el::Helpers;
-
-    inline const std::string& username(void) const {
-        return m_username;
-    }
-
-    inline const std::string& hostname(void) const {
-        return m_hostname;
-    }
 
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
@@ -3635,14 +3633,6 @@ public:
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
             buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, buff);
-        }
-        if (logFormat->hasFlag(base::FormatFlags::User)) {
-            // User
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentUserFormatSpecifier, elStorage->username());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Host)) {
-            // Host
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kCurrentHostFormatSpecifier, elStorage->hostname());
         }
         if (m_logMessage.level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level

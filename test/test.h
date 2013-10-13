@@ -23,6 +23,7 @@ static void reconfigureLoggersForTest(void) {
     c.setGlobally(ConfigurationType::MaxLogFileSize, "2097152"); // 2MB
     c.setGlobally(ConfigurationType::ToStandardOutput, "false");
     c.setGlobally(ConfigurationType::PerformanceTracking, "true");
+    c.setGlobally(ConfigurationType::LogFlushThreshold, "1");
     Loggers::setDefaultConfigurations(c, true);
     // We do not want to reconfgure syslog with date/time
     Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %msg");
@@ -63,6 +64,7 @@ static std::string tail(unsigned int n, const char* filename = logfile) {
         ss << c;
         c = fstr.get();
     }
+    fstr.close();
     return ss.str();
 }
 

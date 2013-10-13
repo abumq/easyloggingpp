@@ -40,7 +40,8 @@ TEST(TypedConfigurationsTest, Initialization) {
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
     EXPECT_EQ("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg", tConf.logFormat(Level::Debug).userFormat());
-    EXPECT_EQ("%datetime %level DEBUG [%user@%%host] [%func] [%loc] %msg", tConf.logFormat(Level::Debug).format());
+    std::string expected = BUILD_STR("%datetime %level DEBUG [" << OS::currentUser() << "@%%host] [%func] [%loc] %msg");
+    EXPECT_EQ(expected, tConf.logFormat(Level::Debug).format());
     EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Debug).dateTimeFormat());
 
     // This double quote is escaped at run-time for %date and %datetime
