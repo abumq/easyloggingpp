@@ -1,7 +1,10 @@
  // This file is part of Easylogging++ samples
+ //
  // Sample to demonstrate using ***_EVERY_N logs
- // Revision 1.0
+ //
+ // Revision 1.1
  // @author mkhan3189
+ //
 
 #include "easylogging++.h"
 

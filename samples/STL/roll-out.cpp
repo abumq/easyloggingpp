@@ -1,7 +1,9 @@
  //
  // This file is part of Easylogging++ samples 
+ //
+ // Demonstration on possible usage of pre-rollout handler
  // 
- // Revision: 1.0
+ // Revision: 1.1
  // @author mkhan3189
  //
 
@@ -30,5 +32,7 @@ int main(int, char**) {
 
    for (int i = 0; i < 100; ++i)
        LOG(INFO) << "Test";
+       
+   el::Helpers::uninstallPreRollOutHandler();
    return 0;
 }

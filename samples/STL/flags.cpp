@@ -1,3 +1,11 @@
+ //
+ // This file is part of Easylogging++ samples
+ // Demonstration of STL flags, e.g, std::boolalpha
+ //
+ // Revision 1.1
+ // @author mkhan3189
+ //
+
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

@@ -1,3 +1,11 @@
+ //
+ // This file is part of Easylogging++ samples
+ //
+ // Logs different STL containers, some containing STL templates and other containing our own class Vehicle
+ //
+ // Revision 1.2
+ // @author mkhan3189
+ //
 
 #include "easylogging++.h"
 #include <sstream>

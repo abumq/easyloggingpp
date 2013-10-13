@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // PLOG etc
  //
- // Revision 1.0
+ // Log using PLOG and family. PLOG is same as perror() with c++-styled stream
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

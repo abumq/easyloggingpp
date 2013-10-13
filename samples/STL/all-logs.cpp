@@ -1,16 +1,20 @@
  //
  // This file is part of Easylogging++ samples
  //
- // Revision 1.0
+ // Writes all logs (incl. debug version of logs i.e, DLOG etc) using default logger
+ // We add logging flag `DisableApplicationAbortOnFatalLog` that prevents application abort on FATAL log
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 
-#define _ELPP_PREVENT_FATAL_ABORT
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
+    
+    el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     
     LOG(INFO);
     LOG(DEBUG);

@@ -1,18 +1,20 @@
  //
  // This file is part of Easylogging++ samples
- // Check macros
  //
- // Revision 1.0
+ // Check macros (incl. debug versions i.e, DCHECK etc) + PCHECK and DCHECK
+ // We add logging flag `DisableApplicationAbortOnFatalLog` that prevents application abort because CHECK macros always log FATAL
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
-
-#define _ELPP_PREVENT_FATAL_ABORT
 
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
+    el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+    
     // These checks should fail
     LOG(INFO) << "----- DONT WORRY ABOUT FOLLOWING CHECKS FAILING - THEY ARE EXPECTED";
     CHECK(1 > 2) << "1 is not greater than 2";
@@ -48,5 +50,10 @@ int main(void) {
     DCHECK_STRNE("abc", "abc") << " :(";
     DCHECK_STRCASEEQ("abc", "ABCD") << " :p";
     DCHECK_STRCASENE("abc", "ABC") << " B)";
+    
+    // PCHECKs
+    std::fstream fstr("a/file/that/does/not/exist", std::fstream::in);
+    PCHECK(fstr.is_open());
+    DPCHECK(fstr.is_open());
     return 0;
 }

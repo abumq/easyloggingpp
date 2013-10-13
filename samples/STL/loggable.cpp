@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // el::Loggable sample
  //
- // Revision 1.0
+ // Usage sample of el::Loggable to make class log-friendly
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

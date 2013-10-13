@@ -1,9 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // MAKE_LOGGABLE sample
  //
- // Feature since: v9.12
- // Revision 1.0
+ // Usage of MAKE_LOGGABLE to make class log-friendly
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

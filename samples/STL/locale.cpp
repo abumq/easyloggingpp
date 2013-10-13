@@ -1,3 +1,12 @@
+ //
+ // This file is part of Easylogging++ samples
+ //
+ // Demonstration on how locale gives output
+ //
+ // Revision 1.1
+ // @author mkhan3189
+ //
+
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

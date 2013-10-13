@@ -1,8 +1,10 @@
  //
  // This file is part of EasyLogging++ samples
- // Conditional logging
  //
- // Revision 1.0
+ // Conditional logging using LOG_IF, you can use CLOG_IF(condition, loggerID) macro to use your own logger if you 
+ // don't want to use default logger
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

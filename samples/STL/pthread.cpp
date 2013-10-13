@@ -1,13 +1,14 @@
-/**
- * This file is part of Easylogging++ samples
- * Demonstration of multithreaded application using pthread
- * 
- * Compile this program using (if using gcc-c++):
- *     [icpc | g++] ./pthread.cpp -o bin/./pthread.cpp.bin -D_ELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
- * 
- * Revision: 1.1
- * @author mkhan3189
- */
+//
+// This file is part of Easylogging++ samples
+//
+// Demonstration of multithreaded application using pthread
+// 
+// Compile this program using (if using gcc-c++ or intel or clang++):
+//     [icpc | g++ | clang++] ./pthread.cpp -o bin/./pthread.cpp.bin -D_ELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
+// 
+// Revision: 1.1
+// @author mkhan3189
+//
 
 #include <pthread.h>
 #include "easylogging++.h"

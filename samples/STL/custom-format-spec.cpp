@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // Custom format specifier
  //
- // Revision 1.0
+ // Custom format specifier to demonstrate usage of el::Helpers::installCustomFormatSpecifier
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

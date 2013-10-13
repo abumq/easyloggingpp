@@ -1,4 +1,11 @@
-// Demonstrates setting default configruations for existing and future loggers
+ //
+ // This file is part of Easylogging++ samples
+ //
+ // Demonstrates setting default configurations for existing and future loggers
+ //
+ // Revision 1.1
+ // @author mkhan3189
+ //
 
 #include "easylogging++.h"
 
@@ -6,7 +13,8 @@ _INITIALIZE_EASYLOGGINGPP
 
 using namespace el;
 
-void run(void) {
+int main(void) {
+    
     Configurations c;
     c.setGlobally(ConfigurationType::Format, "[%logger] %level: %log");
     c.setGlobally(ConfigurationType::Filename, "/tmp/logs/custom.log");
@@ -21,11 +29,6 @@ void run(void) {
     LOG(INFO) << "Existing loggers updated as well";
     Loggers::getLogger("testDefaultConf2");
     CLOG(INFO, "testDefaultConf2") << "Logging using new logger 2";
-}
-
-int main(void) {
-    
-    run();
 
     return 0;
 }

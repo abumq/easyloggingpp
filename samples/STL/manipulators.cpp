@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // Very basic sample with manipulators
  //
- // Revision 1.0
+ // Demonstration of manipulators usages and how they behave
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

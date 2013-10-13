@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // Very basic sample to configure using global configuration
  //
- // Revision 1.0
+ // Very basic sample to configure using global configuration (el::Loggers::configureFromGlobal)
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

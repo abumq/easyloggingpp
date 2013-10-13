@@ -1,10 +1,12 @@
-/**
- * This file is part of EasyLogging++ samples
- * Demonstration of logging your own class
- *
- * Revision: 1.1
- * @author mkhan3189
- */
+ //
+ // This file is part of EasyLogging++ samples
+ //
+ // Demonstration of logging your own class, a bit similar to containers.cpp but specific to custom class only
+ //
+ // Revision 1.2
+ // @author mkhan3189
+ //
+
 #include <sstream>
 #include <vector>
 #include "easylogging++.h"

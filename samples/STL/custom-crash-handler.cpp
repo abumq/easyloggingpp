@@ -1,6 +1,7 @@
  //
  // This file is part of Easylogging++ samples
- // Custom crash handler sample
+ //
+ // Custom crash handler sample to demonstrate el::Helpers::setCrashHandler
  //
  // Revision 1.0
  // @author mkhan3189

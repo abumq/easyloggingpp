@@ -1,6 +1,7 @@
  //
  // This file is part of Easylogging++ samples
- // Post log dispatch handler
+ //
+ // Possible usage of post log dispatch handler
  //
  // Revision 1.0
  // @author mkhan3189

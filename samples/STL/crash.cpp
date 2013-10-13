@@ -1,8 +1,10 @@
  //
  // This file is part of Easylogging++ samples
- // Crash sample
  //
- // Revision 1.0
+ // Demonstration on how crashes are handled. You can set second argument of this progam to `y`
+ // and application will not abort before crash is handled
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 

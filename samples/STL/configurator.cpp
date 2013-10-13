@@ -1,8 +1,9 @@
  //
  // This file is part of Easylogging++ samples
- // Very basic sample to configure using configuration
  //
- // Revision 1.0
+ // Very basic sample to configure using el::Configuration and configuration file
+ //
+ // Revision 1.1
  // @author mkhan3189
  //
 
