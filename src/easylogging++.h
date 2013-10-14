@@ -805,8 +805,8 @@ inline static void removeFlag(const Enum& e, base::EnumType& flag) {
 }
 /// @brief Determines whether flag is set or not
 template <typename Enum>
-inline static base::EnumType hasFlag(const Enum& e, base::EnumType flag) {
-    return base::utils::bitwise::And<Enum>(e, flag);
+inline static bool hasFlag(const Enum& e, base::EnumType flag) {
+    return base::utils::bitwise::And<Enum>(e, flag) > 0x0;
 }
 } // namespace utils
 namespace threading {
@@ -2031,7 +2031,7 @@ public:
     }
 
     inline bool hasFlag(const base::FormatFlags& flag) const {
-        return base::utils::hasFlag(flag, m_flags) > 0;
+        return base::utils::hasFlag(flag, m_flags);
     }
 
     friend inline std::ostream& operator<<(std::ostream& os, const LogFormat& format) {
@@ -3515,7 +3515,7 @@ public:
     }
 
     inline bool hasFlag(const LoggingFlag& flag) const {
-        return base::utils::hasFlag(flag, m_flags) > 0;
+        return base::utils::hasFlag(flag, m_flags);
     }
 
     inline base::EnumType flags(void) const {
