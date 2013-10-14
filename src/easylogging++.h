@@ -3212,7 +3212,7 @@ class Storage;
 /// @brief Loggers repository
 class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 public:
-    RegisteredLoggers(api::LogBuilder* defaultLogBuilder) :
+    RegisteredLoggers(const api::LogBuilderPtr& defaultLogBuilder) :
         m_defaultLogBuilder(defaultLogBuilder) {
         m_defaultConfigurations.setToDefault();
     }
@@ -3446,7 +3446,7 @@ enum class DispatchAction : base::EnumType {
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
-    Storage(api::LogBuilder* defaultLogBuilder) :
+    Storage(const api::LogBuilderPtr& defaultLogBuilder) :
         m_registeredHitCounters(new base::RegisteredHitCounters()),
         m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
         m_vRegistry(new base::VRegistry(0)),
@@ -3763,7 +3763,7 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_logMessage.logger()->logBuilder()->convertToColoredOutput(logLine, m_logMessage.level());
-                printf("%s", logLine.c_str());
+                std::cout << logLine << std::flush;
             }
         }
  #if defined(_ELPP_SYSLOG)
@@ -5269,7 +5269,7 @@ static T* checkNotNull(T* ptr, const char* name) {
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
-            std::unique_ptr<base::Storage> elStorage(new base::Storage(new base::DefaultLogBuilder()));       \
+            std::unique_ptr<base::Storage> elStorage(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())));       \
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
