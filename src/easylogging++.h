@@ -699,6 +699,7 @@ namespace consts {
 typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
 class LogMessage;
 typedef std::function<void(const LogMessage* logMessage)> PostLogDispatchHandler;
+class Logger;
 namespace base {
 static inline void defaultPostLogDispatchHandler(const LogMessage*) {}
 static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
@@ -2113,6 +2114,7 @@ private:
     std::string m_format;
     std::string m_dateTimeFormat;
     base::EnumType m_flags;
+    friend class el::Logger; // To resolve loggerId format specifier easily
 };
 } // namespace base
 /// @brief Resolving function for format specifier
@@ -2995,7 +2997,6 @@ public:
 };
 class Storage;
 class Trackable;
-class LogDispatcher;
 } // namespace base
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
@@ -3066,6 +3067,7 @@ public:
         ELPP_INTERNAL_INFO(9, "Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
         base::utils::safeDelete(m_typedConfigurations);
         m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
+        resolveLoggerFormatSpec();
         m_isConfigured = true;
     }
 
@@ -3163,6 +3165,16 @@ private:
 
     inline bool isFlushNeeded(const Level& level) {
         return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
+    }
+
+    void resolveLoggerFormatSpec(void) const {
+        base::EnumType lIndex = LevelHelper::kMinValid;
+        LevelHelper::forEachLevel(lIndex, [&](void) -> bool {
+            base::LogFormat* logFormat = const_cast<base::LogFormat*>(&m_typedConfigurations->logFormat(LevelHelper::castFromInt(lIndex)));
+            base::utils::Str::replaceFirstWithEscape(logFormat->m_format,
+                    base::consts::kLoggerIdFormatSpecifier, m_id);
+            return false;
+        });
     }
 };
 namespace base {
@@ -3590,10 +3602,6 @@ public:
             // App name
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
                     logMessage->logger()->parentApplicationName());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
-            // Logger ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, logMessage->logger()->id());
         }
         if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
             // Thread ID
