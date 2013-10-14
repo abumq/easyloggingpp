@@ -380,7 +380,7 @@ enum class Level : base::EnumType {
         Unknown = 1010
 };
 /// @brief Static class that contains helper functions for el::Level
-class LevelHelper: private base::StaticClass {
+class LevelHelper : base::StaticClass {
 public:
     /// @brief Represents minimum valid level. Useful when iterating through enum.
     static const base::EnumType kMinValid = static_cast<base::EnumType>(Level::Debug);
@@ -493,7 +493,7 @@ enum class ConfigurationType : base::EnumType {
     Unknown = 1010
 };
 /// @brief Static class that contains conversion helper functions for el::ConfigurationType
-class ConfigurationTypeHelper: private base::StaticClass {
+class ConfigurationTypeHelper : base::StaticClass {
 public:
     /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
     static const base::EnumType kMinValid = static_cast<base::EnumType>(ConfigurationType::Enabled);
@@ -581,7 +581,9 @@ enum class LoggingFlag : base::EnumType {
     /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
     ImmediateFlush = 16,
     /// @brief Enables strict file rolling
-    StrictLogFileSizeCheck = 32
+    StrictLogFileSizeCheck = 32,
+    /// @brief Make terminal output colorful for supported terminals
+    ColoredTerminalOutput = 64
 };
 namespace base {
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
@@ -940,7 +942,7 @@ private:
 };
 } // namespace threading
 namespace utils {
-class File : private base::StaticClass {
+class File : base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
     /// @return Pointer to newly created fstream or nullptr
@@ -1051,7 +1053,7 @@ public:
     }
 };
 /// @brief String utilities helper class used internally. You should not use it.
-class Str : private base::StaticClass {
+class Str : base::StaticClass {
 public:
     /// @brief Checks if character is digit. Dont use libc implementation of it to prevent locale issues.
     static inline bool isDigit(char c) {
@@ -1220,7 +1222,7 @@ public:
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
-class OS : private base::StaticClass {
+class OS : base::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
     /// @brief Gets environment variables for Windows based OS. We are not using <code>getenv(const char*)</code> because of CRT deprecation
@@ -1319,7 +1321,7 @@ public:
 
     /// @brief Gets current username.
     static inline const std::string currentUser(void) {
-        if (s_retrievedUser) return s_currentUser;
+        if (s_resolvedUser) return s_currentUser;
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
         s_currentUser = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
@@ -1329,7 +1331,7 @@ public:
 #else
         s_currentUser = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       s_retrievedUser = true;
+       s_resolvedUser = true;
        return s_currentUser;
     }
 
@@ -1337,7 +1339,7 @@ public:
     ///
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
     static inline const std::string currentHost(void) {
-        if (s_retrievedHost) return s_currentHost;
+        if (s_resolvedHost) return s_currentHost;
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
         s_currentHost = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
@@ -1347,21 +1349,34 @@ public:
 #else
         s_currentHost = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       s_retrievedHost = true;
+       s_resolvedHost = true;
        return s_currentHost;
+    }
+
+    static inline bool termSupportsColor(void) {
+        if (s_resolvedTermSupportsColor) return s_termSupportsColor;
+        std::string term = getEnvironmentVariable("TERM", "");
+        s_termSupportsColor = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
+                              term == "screen" || term == "linux" || term == "cygwin";
+        s_resolvedTermSupportsColor = true;
+        return s_termSupportsColor;
     }
 private:
     static std::string s_currentUser;
     static std::string s_currentHost;
-    static bool s_retrievedUser;
-    static bool s_retrievedHost;
+    static bool s_termSupportsColor;
+    static bool s_resolvedUser;
+    static bool s_resolvedHost;
+    static bool s_resolvedTermSupportsColor;
 };
 std::string base::utils::OS::s_currentUser = std::string();
 std::string base::utils::OS::s_currentHost = std::string();
-bool base::utils::OS::s_retrievedUser = false;
-bool base::utils::OS::s_retrievedHost = false;
+bool base::utils::OS::s_termSupportsColor = false;
+bool base::utils::OS::s_resolvedUser = false;
+bool base::utils::OS::s_resolvedHost = false;
+bool base::utils::OS::s_resolvedTermSupportsColor = false;
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
-class DateTime : private base::StaticClass {
+class DateTime : base::StaticClass {
 public:
     /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current millisecond.
     ///
@@ -2423,7 +2438,7 @@ public:
     ///
     /// @detail This class makes use of base::utils::Str.
     /// You should not need this unless you are working on some tool for Easylogging++
-    class Parser : private base::StaticClass {
+    class Parser : base::StaticClass {
     public:
         /// @brief Parses configuration from file.
         /// @param configurationFile Full path to configuration file
@@ -2624,6 +2639,7 @@ namespace base {
 typedef std::map<std::string, std::shared_ptr<std::fstream>> LogStreamsReferenceMap;
 class Writer;
 class LogDispatcher;
+class LogBuilder;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
@@ -3108,6 +3124,7 @@ private:
     base::LogStreamsReferenceMap* m_logStreamsReference;
 
     friend class base::LogDispatcher;
+    friend class base::LogBuilder;
     friend class base::Writer;
     friend class LogMessage;
     friend class el::Loggers;
@@ -3529,6 +3546,7 @@ private:
     std::stringstream m_postStream;
 
     friend class base::LogDispatcher;
+    friend class base::LogBuilder;
     friend class base::Writer;
     friend class el::Helpers;
 
@@ -3560,6 +3578,87 @@ private:
 };
 extern std::unique_ptr<base::Storage> elStorage;
 #define ELPP el::base::elStorage
+class LogBuilder : base::StaticClass {
+public:
+    static std::string build(const LogMessage* logMessage, bool appendNewLine) {
+        base::TypedConfigurations* tc = logMessage->logger()->m_typedConfigurations;
+        const base::LogFormat* logFormat = &tc->logFormat(logMessage->level());
+        std::string logLine = logFormat->format();
+        char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
+        const char* bufLim = buff + sizeof(buff);
+        if (logFormat->hasFlag(base::FormatFlags::AppName)) {
+            // App name
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
+                    logMessage->logger()->parentApplicationName());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
+            // Logger ID
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, logMessage->logger()->id());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
+            // Thread ID
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
+                    base::threading::getCurrentThreadId());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
+            // DateTime
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
+                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), &tc->millisecondsWidth(logMessage->level())));
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Function)) {
+            // Function
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, logMessage->func());
+        }
+        if (logFormat->hasFlag(base::FormatFlags::File)) {
+            // File
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
+            base::utils::File::buildStrippedFilename(logMessage->file(), buff);
+            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Line)) {
+            // Line
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceLineMaxLength);
+            buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, buff);
+        }
+        if (logFormat->hasFlag(base::FormatFlags::Location)) {
+            // Location
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength);
+            base::utils::File::buildStrippedFilename(logMessage->file(), buff);
+            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
+            buf = base::utils::Str::addToBuff(":", buf, bufLim);
+            buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, buff);
+        }
+        if (logMessage->level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
+            // Verbose level
+            char* buf = base::utils::Str::clearBuff(buff, 1);
+            buf = base::utils::Str::convertAndAddToBuff(logMessage->verboseLevel(), 1, buf, bufLim, false);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, buff);
+        }
+        if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
+            // Log message
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, logMessage->message());
+        }
+#if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
+        for (std::vector<CustomFormatSpecifier>::iterator it = ELPP->m_customFormatSpecifiers.begin();
+                it != ELPP->m_customFormatSpecifiers.end(); ++it) {
+            base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
+        }
+#endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
+        if (appendNewLine) logLine += "\n";
+        return logLine;
+    }
+    static void convertToColoredOutput(std::string& logLine, const Level& level) {
+        if (!base::utils::OS::termSupportsColor()) return;
+        const char* resetColor = "\x1b[0m";
+        if (level == Level::Error || level == Level::Fatal)
+            logLine = "\x1b[31m" + logLine + resetColor;
+        else if (level == Level::Warning)
+            logLine = "\x1b[33m" + logLine + resetColor;
+    }
+};
 /// @brief Dispatches log messages
 class LogDispatcher : base::NoCopy {
 public:
@@ -3585,72 +3684,7 @@ public:
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
             tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
         }
-        const base::LogFormat* logFormat = &tc->logFormat(m_logMessage.level());
-        std::string logLine = logFormat->format();
-        char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
-        const char* bufLim = buff + sizeof(buff);
-        if (logFormat->hasFlag(base::FormatFlags::AppName)) {
-            // App name
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
-                    m_logMessage.logger()->parentApplicationName());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::LoggerId)) {
-            // Logger ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLoggerIdFormatSpecifier, m_logMessage.logger()->id());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
-            // Thread ID
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-                    base::threading::getCurrentThreadId());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
-            // DateTime
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
-                    base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), &tc->millisecondsWidth(m_logMessage.level())));
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Function)) {
-            // Function
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, m_logMessage.func());
-        }
-        if (logFormat->hasFlag(base::FormatFlags::File)) {
-            // File
-            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
-            base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
-            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Line)) {
-            // Line
-            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceLineMaxLength);
-            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, buff);
-        }
-        if (logFormat->hasFlag(base::FormatFlags::Location)) {
-            // Location
-            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength);
-            base::utils::File::buildStrippedFilename(m_logMessage.file(), buff);
-            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
-            buf = base::utils::Str::addToBuff(":", buf, bufLim);
-            buf = base::utils::Str::convertAndAddToBuff(m_logMessage.line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, buff);
-        }
-        if (m_logMessage.level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
-            // Verbose level
-            char* buf = base::utils::Str::clearBuff(buff, 1);
-            buf = base::utils::Str::convertAndAddToBuff( m_logMessage.verboseLevel(), 1, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, buff);
-        }
-        if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
-            // Log message
-            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, m_logMessage.message());
-        }
-#if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        for (std::vector<CustomFormatSpecifier>::iterator it = ELPP->m_customFormatSpecifiers.begin();
-                it != ELPP->m_customFormatSpecifiers.end(); ++it) {
-            base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
-        }
-#endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        dispatch(std::move(logLine));
+        dispatch(std::move(LogBuilder::build(&m_logMessage, base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction))));
         if (lockLogger) {
             m_logMessage.logger()->unlock();
         }
@@ -3668,7 +3702,6 @@ private:
 
     void dispatch(std::string&& logLine) {
         if (base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction)) {
-            logLine += "\n";
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
                 std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
@@ -3687,11 +3720,9 @@ private:
                 }
             }
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
-                if (m_logMessage.level() == Level::Error || m_logMessage.level() == Level::Fatal) {
-                    std::cerr << logLine << std::flush;
-                } else {
-                    std::cout << logLine << std::flush;
-                }
+                if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+                    LogBuilder::convertToColoredOutput(logLine, m_logMessage.level());
+                printf("%s", logLine.c_str());
             }
         }
  #if defined(_ELPP_SYSLOG)
@@ -4571,7 +4602,7 @@ private:
     }
 };
 /// @brief Static helpers for developers
-class Helpers : private base::StaticClass {
+class Helpers : base::StaticClass {
 public:
     /// @brief Sets application arguments and figures out whats active for logging and whats not.
     static inline void setArgs(int argc, char** argv) {
@@ -4669,7 +4700,7 @@ public:
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
-class Loggers : private base::StaticClass {
+class Loggers : base::StaticClass {
 public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
@@ -4797,7 +4828,7 @@ public:
         ELPP->registeredLoggers()->flushAll();
     }
 };
-class VersionInfo : private base::StaticClass {
+class VersionInfo : base::StaticClass {
 public:
     /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.25"); }

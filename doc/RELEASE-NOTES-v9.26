@@ -8,6 +8,7 @@ Easylogging++ v9.26 RELEASE NOTES
  - Debug version of PLOG (issue #133)
  - Debug version of SYSLOG
  - Introduced `PostLogDispatchHandler` to write your own handler for any action after log is dispatched
+ - Introduced `LoggingFlag::ColoredTerminalOutput` to support colorful output if supported by terminal
 
 ===========================
 =      API CHANGES        =

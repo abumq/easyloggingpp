@@ -12,8 +12,8 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-int main(void) {
-    
+int main(int argc, char** argv) {
+    _START_EASYLOGGINGPP(argc, argv);
     el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     
     LOG(INFO);
