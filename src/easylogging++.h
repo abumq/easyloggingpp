@@ -2638,10 +2638,10 @@ private:
 };
 
 namespace base {
-typedef std::map<std::string, std::shared_ptr<std::fstream>> LogStreamsReferenceMap;
+typedef std::shared_ptr<std::fstream> FileStreamPtr;
+typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
 class Writer;
 class LogDispatcher;
-class LogBuilder;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
@@ -2695,7 +2695,7 @@ public:
     }
 
     inline std::fstream* fileStream(const Level& level) {
-        return getConfigByRef<std::shared_ptr<std::fstream>>(level, m_fileStreamMap, "fileStream").get();
+        return getConfigByRef<base::FileStreamPtr>(level, m_fileStreamMap, "fileStream").get();
     }
 
     inline std::size_t maxLogFileSize(const Level& level) {
@@ -2715,13 +2715,14 @@ private:
     std::map<Level, base::LogFormat> m_logFormatMap;
     std::map<Level, base::MillisecondsWidth> m_millisecondsWidthMap;
     std::map<Level, bool> m_performanceTrackingMap;
-    std::map<Level, std::shared_ptr<std::fstream>> m_fileStreamMap;
+    std::map<Level, base::FileStreamPtr> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
     std::map<Level, std::size_t> m_logFlushThresholdMap;
     base::LogStreamsReferenceMap* m_logStreamsReference;
-    friend class Writer;
-    friend class LogDispatcher;
+    
     friend class el::Helpers;
+    friend class el::base::Writer;
+    friend class el::base::LogDispatcher;
 
     template <typename Conf_T>
     inline Conf_T getConfigByVal(const Level& level, const std::map<Level, Conf_T>& confMap, const char* confName) {
@@ -2852,14 +2853,14 @@ private:
                 std::fstream* fs = base::utils::File::newFileStream(fullFilename);
                 if (fs != nullptr) {
                     m_filenameMap.insert(std::make_pair(level, fullFilename));
-                    m_fileStreamMap.insert(std::make_pair(level, std::shared_ptr<std::fstream>(fs)));
-                    m_logStreamsReference->insert(std::make_pair(fullFilename, std::shared_ptr<std::fstream>(m_fileStreamMap.at(level))));
+                    m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
+                    m_logStreamsReference->insert(std::make_pair(fullFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
                 }
                 // else we already display error from File::newFileStream()
             } else {
                 // Woops! we have an existing one, share it!
                 m_filenameMap.insert(std::make_pair(level, filestreamIter->first));
-                m_fileStreamMap.insert(std::make_pair(level, std::shared_ptr<std::fstream>(filestreamIter->second)));
+                m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(filestreamIter->second)));
             }
         };
         if (m_filenameMap.empty() && m_fileStreamMap.empty()) {
@@ -2995,9 +2996,29 @@ public:
         return get(filename, lineNumber);
     }
 };
+class RegisteredLoggers;
 class Storage;
 class Trackable;
 } // namespace base
+namespace api {
+class LogBuilder : base::NoCopy {
+public:
+    virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
+    virtual std::string build(const LogMessage* logMessage, bool appendNewLine) const = 0;
+private:
+    friend class el::base::LogDispatcher;
+    
+    void convertToColoredOutput(std::string& logLine, const Level& level) {
+        if (!base::utils::OS::termSupportsColor()) return;
+        const char* resetColor = "\x1b[0m";
+        if (level == Level::Error || level == Level::Fatal)
+            logLine = "\x1b[31m" + logLine + resetColor;
+        else if (level == Level::Warning)
+            logLine = "\x1b[33m" + logLine + resetColor;
+    }
+};
+typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
+} // namespace api
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
@@ -3115,6 +3136,14 @@ public:
             return false;
         });
     }
+    
+    inline api::LogBuilder* logBuilder(void) const {
+        return m_logBuilder.get();
+    }
+    
+    inline void setLogBuilder(const api::LogBuilderPtr& logBuilder) {
+        m_logBuilder = logBuilder;
+    }
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3124,15 +3153,16 @@ private:
     Configurations m_configurations;
     std::map<Level, unsigned int> m_unflushedCount;
     base::LogStreamsReferenceMap* m_logStreamsReference;
+    api::LogBuilderPtr m_logBuilder;
 
-    friend class base::LogDispatcher;
-    friend class base::LogBuilder;
-    friend class base::Writer;
-    friend class LogMessage;
+    friend class el::LogMessage;
     friend class el::Loggers;
     friend class el::Helpers;
-    friend class base::Storage;
-    friend class base::Trackable;
+    friend class el::base::RegisteredLoggers;
+    friend class el::base::LogDispatcher;
+    friend class el::base::Writer;
+    friend class el::base::Storage;
+    friend class el::base::Trackable;
 
     Logger(void);
 
@@ -3182,7 +3212,8 @@ class Storage;
 /// @brief Loggers repository
 class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 public:
-    RegisteredLoggers(void) {
+    RegisteredLoggers(api::LogBuilder* defaultLogBuilder) :
+        m_defaultLogBuilder(defaultLogBuilder) {
         m_defaultConfigurations.setToDefault();
     }
 
@@ -3205,6 +3236,7 @@ public:
                 return nullptr;
             }
             logger_ = new Logger(id, m_defaultConfigurations, &m_logStreamsReference);
+            logger_->m_logBuilder = m_defaultLogBuilder;
             registerNew(id, logger_);
         }
         return logger_;
@@ -3231,10 +3263,14 @@ public:
             it->second->flush();
         }
     }
+    inline void setDefaultLogBuilder(const api::LogBuilderPtr& logBuilder) {
+        m_defaultLogBuilder = logBuilder;
+    }
 private:
+    api::LogBuilderPtr m_defaultLogBuilder;
     Configurations m_defaultConfigurations;
     base::LogStreamsReferenceMap m_logStreamsReference;
-    friend class base::Storage;
+    friend class el::base::Storage;
 };
 /// @brief Represents registries for verbose logging
 class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
@@ -3400,6 +3436,7 @@ private:
     std::string m_message;
 };
 namespace base {
+class DefaultLogBuilder;
 /// @brief Action to be taken for dispatching
 enum class DispatchAction : base::EnumType {
     None = 1, NormalLog = 2, PostStream = 4, SysLog = 8
@@ -3409,14 +3446,13 @@ enum class DispatchAction : base::EnumType {
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
-    Storage(void) :
+    Storage(api::LogBuilder* defaultLogBuilder) :
         m_registeredHitCounters(new base::RegisteredHitCounters()),
-        m_registeredLoggers(new base::RegisteredLoggers()),
+        m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
         m_vRegistry(new base::VRegistry(0)),
         m_flags(0x0),
         m_preRollOutHandler(base::defaultPreRollOutHandler),
         m_postLogDispatchHandler(base::defaultPostLogDispatchHandler) {
-
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
 
@@ -3538,6 +3574,10 @@ public:
         }
         return false;
     }
+    
+    const std::vector<CustomFormatSpecifier>* customFormatSpecifiers(void) const {
+        return &m_customFormatSpecifiers;
+    }
 
     inline void clearPostStream(void) {
         m_postStream.str("");
@@ -3546,6 +3586,7 @@ public:
     inline std::stringstream& postStream(void) {
         return m_postStream;
     }
+
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
@@ -3557,10 +3598,10 @@ private:
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     std::stringstream m_postStream;
 
-    friend class base::LogDispatcher;
-    friend class base::LogBuilder;
-    friend class base::Writer;
     friend class el::Helpers;
+    friend class el::base::LogDispatcher;
+    friend class el::api::LogBuilder;
+    friend class el::base::Writer;
 
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
@@ -3590,10 +3631,10 @@ private:
 };
 extern std::unique_ptr<base::Storage> elStorage;
 #define ELPP el::base::elStorage
-class LogBuilder : base::StaticClass {
+class DefaultLogBuilder : public api::LogBuilder {
 public:
-    static std::string build(const LogMessage* logMessage, bool appendNewLine) {
-        base::TypedConfigurations* tc = logMessage->logger()->m_typedConfigurations;
+    std::string build(const LogMessage* logMessage, bool appendNewLine) const {
+        base::TypedConfigurations* tc = logMessage->logger()->typedConfigurations();
         const base::LogFormat* logFormat = &tc->logFormat(logMessage->level());
         std::string logLine = logFormat->format();
         char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
@@ -3650,21 +3691,13 @@ public:
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, logMessage->message());
         }
 #if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        for (std::vector<CustomFormatSpecifier>::iterator it = ELPP->m_customFormatSpecifiers.begin();
-                it != ELPP->m_customFormatSpecifiers.end(); ++it) {
+        for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
+                it != ELPP->customFormatSpecifiers()->end(); ++it) {
             base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
         if (appendNewLine) logLine += "\n";
         return logLine;
-    }
-    static void convertToColoredOutput(std::string& logLine, const Level& level) {
-        if (!base::utils::OS::termSupportsColor()) return;
-        const char* resetColor = "\x1b[0m";
-        if (level == Level::Error || level == Level::Fatal)
-            logLine = "\x1b[31m" + logLine + resetColor;
-        else if (level == Level::Warning)
-            logLine = "\x1b[33m" + logLine + resetColor;
     }
 };
 /// @brief Dispatches log messages
@@ -3692,7 +3725,7 @@ public:
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
             tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
         }
-        dispatch(std::move(LogBuilder::build(&m_logMessage, base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction))));
+        dispatch(std::move(m_logMessage.logger()->logBuilder()->build(&m_logMessage, base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction))));
         if (lockLogger) {
             m_logMessage.logger()->unlock();
         }
@@ -3729,7 +3762,7 @@ private:
             }
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                    LogBuilder::convertToColoredOutput(logLine, m_logMessage.level());
+                    m_logMessage.logger()->logBuilder()->convertToColoredOutput(logLine, m_logMessage.level());
                 printf("%s", logLine.c_str());
             }
         }
@@ -4706,6 +4739,10 @@ public:
         if (logger == nullptr) return;
         logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutHandler());
     }
+    static inline void setDefaultLogBuilder(const api::LogBuilderPtr& logBuilder) {
+        if (logBuilder == nullptr) return;
+        ELPP->registeredLoggers()->setDefaultLogBuilder(logBuilder);
+    }
 };
 /// @brief Static helpers to deal with loggers and their configurations
 class Loggers : base::StaticClass {
@@ -5232,7 +5269,7 @@ static T* checkNotNull(T* ptr, const char* name) {
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
-            std::unique_ptr<base::Storage> elStorage(new base::Storage());       \
+            std::unique_ptr<base::Storage> elStorage(new base::Storage(new base::DefaultLogBuilder()));       \
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
