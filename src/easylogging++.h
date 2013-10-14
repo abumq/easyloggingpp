@@ -1353,7 +1353,7 @@ public:
        s_resolvedHost = true;
        return s_currentHost;
     }
-
+    /// @brief Whether or not terminal supports colors
     static inline bool termSupportsColor(void) {
         if (s_resolvedTermSupportsColor) return s_termSupportsColor;
         std::string term = getEnvironmentVariable("TERM", "");
