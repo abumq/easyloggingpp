@@ -405,6 +405,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `DisableApplicationAbortOnFatalLog (8)`  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                               |
 | `ImmediateFlush (16)`                    | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
 | `StrictLogFileSizeCheck (32)`            | Makes sure log file size is checked with every log                                                                                            |
+| `ColoredTerminalOutput (64)`             | Terminal output will be colorful if supported by terminal.                                                                                            |
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
