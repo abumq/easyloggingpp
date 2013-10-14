@@ -22,8 +22,16 @@ public:
 };
 
 int main(void) {
-    el::Loggers::getLogger("default")->setLogBuilder(el::api::LogBuilderPtr(new MyLogBuilder()));
-    LOG(INFO) << "My first ultimate log message";
+    el::api::LogBuilderPtr myLogBuilder = el::api::LogBuilderPtr(new MyLogBuilder());
+    el::Loggers::getLogger("default")->setLogBuilder(myLogBuilder);
+    LOG(INFO) << "message from default logger";
 
+    el::Loggers::getLogger("new_logger");
+    CLOG(INFO, "new_logger") << "message from new_logger logger";
+
+    el::Helpers::setDefaultLogBuilder(myLogBuilder);
+    el::Loggers::getLogger("new_logger2");
+    CLOG(INFO, "new_logger2") << "message from new_logger2 logger";
+    
     return 0;
 }
