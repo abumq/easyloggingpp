@@ -3077,6 +3077,7 @@ public:
 
     /// @brief Configures the logger using specified configurations.
     void configure(const Configurations& configurations) {
+        m_isConfigured = false; // we set it to false in case if we fail
         initUnflushedCount();
         if (m_typedConfigurations != nullptr) {
             flush();
