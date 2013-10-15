@@ -3263,9 +3263,6 @@ public:
             it->second->flush();
         }
     }
-    inline void setDefaultLogBuilder(const api::LogBuilderPtr& logBuilder) {
-        m_defaultLogBuilder = logBuilder;
-    }
 private:
     api::LogBuilderPtr m_defaultLogBuilder;
     Configurations m_defaultConfigurations;
@@ -4738,10 +4735,6 @@ public:
     static inline void validateFileRolling(Logger* logger, const Level& level) {
         if (logger == nullptr) return;
         logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutHandler());
-    }
-    static inline void setDefaultLogBuilder(const api::LogBuilderPtr& logBuilder) {
-        if (logBuilder == nullptr) return;
-        ELPP->registeredLoggers()->setDefaultLogBuilder(logBuilder);
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations

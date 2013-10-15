@@ -29,9 +29,5 @@ int main(void) {
     el::Loggers::getLogger("new_logger");
     CLOG(INFO, "new_logger") << "message from new_logger logger";
 
-    el::Helpers::setDefaultLogBuilder(myLogBuilder);
-    el::Loggers::getLogger("new_logger2");
-    CLOG(INFO, "new_logger2") << "message from new_logger2 logger";
-    
     return 0;
 }
