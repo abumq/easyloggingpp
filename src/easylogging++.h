@@ -3179,10 +3179,6 @@ private:
         return m_stream;
     }
 
-    inline Configurations& refConfigurations(void) {
-        return m_configurations;
-    }
-
     inline void flush(const Level& level, std::fstream* fs) {
         if (fs == nullptr && m_typedConfigurations->toFile(level)) {
             fs = m_typedConfigurations->fileStream(level);
@@ -3455,19 +3451,19 @@ public:
 
         // Register performance logger and reconfigure format
         Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
-        performanceLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%datetime %level %msg");
+        performanceLogger->configurations()->setGlobally(ConfigurationType::Format, "%datetime %level %msg");
         performanceLogger->reconfigure();
 #if defined(_ELPP_SYSLOG)
         // Register syslog logger and reconfigure format
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
-        sysLogLogger->refConfigurations().setGlobally(ConfigurationType::Format, "%level: %msg");
+        sysLogLogger->configurations()->setGlobally(ConfigurationType::Format, "%level: %msg");
         sysLogLogger->reconfigure();
 #else
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif //  defined(_ELPP_SYSLOG)
         // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
         Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
-        templateHelperLogger->refConfigurations().setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
+        templateHelperLogger->configurations()->setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
         templateHelperLogger->reconfigure();
 
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
@@ -4765,7 +4761,7 @@ public:
         if (logger == nullptr) {
             return nullptr;
         }
-        logger->refConfigurations().set(Level::Global, configurationType, value);
+        logger->configurations()->set(Level::Global, configurationType, value);
         logger->reconfigure();
         return logger;
     }
@@ -4785,7 +4781,7 @@ public:
         for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
                 it != ELPP->registeredLoggers()->end(); ++it) {
             Logger* logger = it->second;
-            logger->refConfigurations().set(level, configurationType, value);
+            logger->configurations()->set(level, configurationType, value);
             logger->reconfigure();
         }
     }
