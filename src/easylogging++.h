@@ -1222,6 +1222,14 @@ public:
         return buff;
     }
 };
+#define ELPP_RESOLVED_VAL(var) s_##var
+#define ELPP_RESOLVED(var) s_##var##resolved
+#define ELPP_RESOLVED_VAR_DECLARE(type, var) static type ELPP_RESOLVED_VAL(var); static bool ELPP_RESOLVED(var)
+#define ELPP_RETURN_IF_RESOLVED(var) if (ELPP_RESOLVED(var)) return ELPP_RESOLVED_VAL(var)
+#define ELPP_RESOLVE_AND_RETURN(var) (0 ? (void)0; ELPP_RESOLVED(var) = true; ELPP_RESOLVED_VAL(var))
+ELPP_RESOLVED_VAR_DECLARE(std::string, currentUser);
+ELPP_RESOLVED_VAR_DECLARE(std::string, currentHost);
+ELPP_RESOLVED_VAR_DECLARE(bool, terminalSupportsColor);
 /// @brief Operating System helper static class used internally. You should not use it.
 class OS : base::StaticClass {
 public:
@@ -1322,44 +1330,51 @@ public:
 
     /// @brief Gets current username.
     static inline const std::string currentUser(void) {
-        std::string currentUser = std::string();
+        ELPP_RETURN_IF_RESOLVED(currentUser);
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        currentUser = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
+        ELPP_RESOLVED_VAL(currentUser) = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
-        currentUser = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
+        ELPP_RESOLVED_VAL(currentUser) = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
-        currentUser = std::string("android");
+        ELPP_RESOLVED_VAL(currentUser) = std::string("android");
 #else
-        currentUser = std::string();
+        ELPP_RESOLVED_VAL(currentUser) = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       return currentUser;
+       ELPP_RESOLVED(currentUser) = true;
+       return ELPP_RESOLVED_VAL(currentUser);
     }
 
     /// @brief Gets current host name or computer name.
     ///
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
     static inline const std::string currentHost(void) {
-        std::string currentHost = std::string();
+       ELPP_RETURN_IF_RESOLVED(currentHost);
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        currentHost = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
+        ELPP_RESOLVED_VAL(currentHost) = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
-        currentHost = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
+        ELPP_RESOLVED_VAL(currentHost) = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
-        currentHost = getDeviceName();
+        ELPP_RESOLVED_VAL(currentHost) = getDeviceName();
 #else
-        currentHost = std::string();
+        ELPP_RESOLVED_VAL(currentHost) = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       return currentHost;
+       ELPP_RESOLVED(currentHost) = true;
+       return ELPP_RESOLVED_VAL(currentHost);
     }
     /// @brief Whether or not terminal supports colors
     static inline bool termSupportsColor(void) {
-        bool termSupportsColor = false;
+        ELPP_RETURN_IF_RESOLVED(terminalSupportsColor);
         std::string term = getEnvironmentVariable("TERM", "");
-        termSupportsColor = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
+        ELPP_RESOLVED_VAL(terminalSupportsColor) = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
                               term == "screen" || term == "linux" || term == "cygwin";
-        return termSupportsColor;
+        ELPP_RESOLVED(terminalSupportsColor) = true;
+        return ELPP_RESOLVED_VAL(terminalSupportsColor);
     }
 };
+#undef ELPP_RESOLVED_VAL
+#undef ELPP_RESOLVED
+#undef ELPP_RESOLVED_VAR_DECLARE
+#undef ELPP_RETURN_IF_RESOLVED
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
 public:

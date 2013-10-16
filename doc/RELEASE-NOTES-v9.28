@@ -2,6 +2,12 @@ Easylogging++ v9.28 RELEASE NOTES
 ---------------------------------
 
 ==========================
+=      IMPROVEMENTS      =
+==========================
+
+ - One time resolution for currentUser, currentHost and terminalSupportsColor for performance improvement
+
+==========================
 =         NOTES          =
 ==========================
 
