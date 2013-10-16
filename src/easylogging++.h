@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.26
+//  Easylogging++ v9.27
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -1322,60 +1322,44 @@ public:
 
     /// @brief Gets current username.
     static inline const std::string currentUser(void) {
-        if (s_resolvedUser) return s_currentUser;
+        std::string currentUser = std::string();
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        s_currentUser = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
+        currentUser = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
-        s_currentUser = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
+        currentUser = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
-        s_currentUser = std::string("android");
+        currentUser = std::string("android");
 #else
-        s_currentUser = std::string();
+        currentUser = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       s_resolvedUser = true;
-       return s_currentUser;
+       return currentUser;
     }
 
     /// @brief Gets current host name or computer name.
     ///
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
     static inline const std::string currentHost(void) {
-        if (s_resolvedHost) return s_currentHost;
+        std::string currentHost = std::string();
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        s_currentHost = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
+        currentHost = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
-        s_currentHost = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
+        currentHost = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
-        s_currentHost = getDeviceName();
+        currentHost = getDeviceName();
 #else
-        s_currentHost = std::string();
+        currentHost = std::string();
 #endif // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       s_resolvedHost = true;
-       return s_currentHost;
+       return currentHost;
     }
     /// @brief Whether or not terminal supports colors
     static inline bool termSupportsColor(void) {
-        if (s_resolvedTermSupportsColor) return s_termSupportsColor;
+        bool termSupportsColor = false;
         std::string term = getEnvironmentVariable("TERM", "");
-        s_termSupportsColor = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
+        termSupportsColor = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
                               term == "screen" || term == "linux" || term == "cygwin";
-        s_resolvedTermSupportsColor = true;
-        return s_termSupportsColor;
+        return termSupportsColor;
     }
-private:
-    static std::string s_currentUser;
-    static std::string s_currentHost;
-    static bool s_termSupportsColor;
-    static bool s_resolvedUser;
-    static bool s_resolvedHost;
-    static bool s_resolvedTermSupportsColor;
 };
-std::string base::utils::OS::s_currentUser = std::string();
-std::string base::utils::OS::s_currentHost = std::string();
-bool base::utils::OS::s_termSupportsColor = false;
-bool base::utils::OS::s_resolvedUser = false;
-bool base::utils::OS::s_resolvedHost = false;
-bool base::utils::OS::s_resolvedTermSupportsColor = false;
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
 public:
@@ -4867,9 +4851,9 @@ public:
 class VersionInfo : base::StaticClass {
 public:
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.26"); }
+    static inline const std::string version(void) { return std::string("9.27"); }
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("16-10-2013 1604hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("16-10-2013 1615hrs"); }
 };
 } // namespace el
 #undef VLOG_IS_ON
