@@ -3719,7 +3719,8 @@ public:
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
             tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
         }
-        dispatch(std::move(m_logMessage.logger()->logBuilder()->build(&m_logMessage, base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction))));
+        dispatch(std::move(m_logMessage.logger()->logBuilder()->build(&m_logMessage, 
+                base::utils::hasFlag(base::DispatchAction::NormalLog, m_dispatchAction))));
         if (lockLogger) {
             m_logMessage.logger()->unlock();
         }
