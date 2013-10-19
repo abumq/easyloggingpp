@@ -17,5 +17,6 @@ int main(void) {
     PLOG_IF(true, INFO) << "A message with plog";
     PLOG_IF(false, INFO) << "A message with plog";
     PCHECK(true) << "This is good";
+    LOG(INFO) << "This is normal info log after plog";
     return 0;
 }

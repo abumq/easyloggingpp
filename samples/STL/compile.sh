@@ -23,7 +23,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors -I/usr/include/x86_64-linux-gnu/c++/4.7/"
+COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors"
 
 echo "    $COMPILE_LINE"
 
