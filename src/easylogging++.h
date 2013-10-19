@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.29
+//  Easylogging++ v9.29 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -3583,7 +3583,6 @@ private:
     PreRollOutHandler m_preRollOutHandler;
     PostLogDispatchHandler m_postLogDispatchHandler;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
-    std::stringstream m_postStream;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
