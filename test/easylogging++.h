@@ -3,7 +3,7 @@
 #define EASYLOGGING_FOR_TEST_H
 
 // We define these macros here for travis to pick up
-#   define _ELPP_STOP_ON_FIRST_ASSERTION
+#define _ELPP_STOP_ON_FIRST_ASSERTION
 #define _ELPP_STL_LOGGING
 #define _ELPP_FORCE_ENV_VAR_FROM_BASH
 #define _ELPP_ENABLE_THREADING

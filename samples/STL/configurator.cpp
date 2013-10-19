@@ -12,7 +12,6 @@
 _INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
-    el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     LOG(INFO) << "Info log using 'default' logger before using configuration";
    
     el::Configurations confFromFile("../default-logger.conf");
@@ -20,7 +19,7 @@ int main(void) {
     el::Loggers::reconfigureAllLoggers(confFromFile); 
      
     LOG(INFO) << "Info log after manually configuring 'default' logger";
- //   LOG(FATAL) << "Fatal logging is off";
+    LOG(FATAL) << "Fatal logging is off";
     el::Loggers::getLogger("default")->reconfigure();
     LOG(ERROR) << "Error log";
     LOG(WARNING) << "WARNING! log";
