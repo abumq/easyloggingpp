@@ -3902,7 +3902,7 @@ public:
 #endif // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
+            base::Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
                     << "Aborting application. [Reason: Fatal log]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
