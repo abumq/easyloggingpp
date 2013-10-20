@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.30
+//  Easylogging++ v9.30 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -2770,7 +2770,7 @@ private:
             confMap.insert(std::make_pair(level, value));
         } else {
             // Value found, just update value
-            confMap[level] = value;
+            confMap.at(level) = value;
         }
     }
 
