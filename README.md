@@ -137,7 +137,7 @@ Current stable release is always http://easylogging.org/latest.zip
 
 Versioned releases can be downloaded from `http://easylogging.org/releases/easyloggingpp_v[MAJOR].[MINOR].zip` for example for v8.91, link will be `http://easylogging.org/releases/easyloggingpp_v8.91.zip` and corresponding release notes are `http://easylogging.org/releases/release-notes-v[MAJOR].[MINOR].txt`
 
-Minimum downloadable version is version 8.91 and minimum version with release notes is version 9.00. If you wish to get an older version (up to v2.3) please email support@easylogging.org with your reason of using older version. Using older versions are not recommended as there were some minor and major fixes with every version to improve performance.
+Minimum downloadable version is version 8.91 and minimum version with release notes is version 9+. If you wish to get an older version (up to v2.3) you can do so by going to [easylogging++ homepage](http://easylogging.org) and select version from top-right corner
 
  [![top] Goto Top](#table-of-contents)
  
@@ -962,7 +962,7 @@ You may also have a look at wxWidgets sample
 
 ### Extending Library
 
-> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.31/README.md)
+> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.11/README.md)
 
 #### Logging Your Own Class
 
