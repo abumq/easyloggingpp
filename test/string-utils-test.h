@@ -67,17 +67,17 @@ TEST(StringUtilsTest, Contains) {
 }
 
 TEST(StringUtilsTest, ReplaceFirstWithEscape) {
-    std::string str = "Rolling in the deep";
-    Str::replaceFirstWithEscape(str, "Rolling", "Swimming");
+    el::base::type::string_t str = UNICODE_LITERAL("Rolling in the deep");
+    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("Rolling"), UNICODE_LITERAL("Swimming"));
     EXPECT_EQ("Swimming in the deep", str);
-    str = "this is great and this is not";
-    Str::replaceFirstWithEscape(str, "this is", "that was");
+    str = UNICODE_LITERAL("this is great and this is not");
+    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("this is"), UNICODE_LITERAL("that was"));
     EXPECT_EQ("that was great and this is not", str);
-    str = "%this is great and this is not";
-    Str::replaceFirstWithEscape(str, "this is", "that was");
+    str = UNICODE_LITERAL("%this is great and this is not");
+    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("this is"), UNICODE_LITERAL("that was"));
     EXPECT_EQ("this is great and that was not", str);
-    str = "%datetime %level %msg";
-    Str::replaceFirstWithEscape(str, "%level", LevelHelper::convertToString(Level::Info));
+    str = UNICODE_LITERAL("%datetime %level %msg");
+    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("%level"), LevelHelper::convertToString(Level::Info));
     EXPECT_EQ("%datetime INFO %msg", str);
 }
 

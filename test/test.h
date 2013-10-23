@@ -74,16 +74,16 @@ static std::string getDate(const char* format = "%a %b %d, %H:%m") {
 }
 
 static bool fileExists(const char* filename) {
-    std::ifstream fstr(filename, std::ifstream::in);
+    el::base::type::fstream_t fstr(filename, el::base::type::fstream_t::in);
     return fstr.is_open();
 }
 
-static void cleanFile(const char* filename = logfile, std::fstream* fs = nullptr) {
+static void cleanFile(const char* filename = logfile, el::base::type::fstream_t* fs = nullptr) {
     if (fs != nullptr && fs->is_open()) {
         fs->close();
-        fs->open(filename, std::fstream::out);
+        fs->open(filename, el::base::type::fstream_t::out);
     } else {
-        std::ofstream f(filename, std::ofstream::out);
+        el::base::type::fstream_t f(filename, el::base::type::fstream_t::out);
         if (f.is_open()) {
             f.close();
         }

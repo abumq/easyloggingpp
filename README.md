@@ -433,6 +433,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `_ELPP_STOP_ON_FIRST_ASSERTION`          | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
+| `_ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
 | `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `_ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
 | `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
@@ -980,7 +981,8 @@ public:
         return *this;
     }
     // Following line does the trick!
-    virtual void log(std::ostream& os) const {
+    // Note: el::base::types::ostream_t is either std::wostream or std::ostream depending on unicode enabled or not
+    virtual void log(el::base::types::ostream_t& os) const {
         os << m_underlyingInt;
     }
 private:

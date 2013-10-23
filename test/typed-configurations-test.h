@@ -67,7 +67,7 @@ TEST(TypedConfigurationsTest, SharedFileStreams) {
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     // Make sure we have only two unique file streams for ALL and ERROR
     unsigned short lIndex = LevelHelper::kMinValid;
-    std::fstream* prev = nullptr;
+    el::base::type::fstream_t* prev = nullptr;
     LevelHelper::forEachLevel(lIndex, [&]() -> bool {
         if (prev == nullptr) {
             prev = tConf.fileStream(LevelHelper::castFromInt(lIndex));

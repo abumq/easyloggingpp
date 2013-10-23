@@ -25,7 +25,7 @@ public:
     inline bool operator==(const Integer& integer) const {
         return m_underlyingInt == integer.m_underlyingInt;
     }
-    void inline log(std::ostream& os) const {
+    void inline log(el::base::type::ostream_t& os) const {
         os << m_underlyingInt;
     }
 private:

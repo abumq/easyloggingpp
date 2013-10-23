@@ -4,7 +4,7 @@
 #include "test.h"
 
 static const char* filename = "/tmp/files_utils_test";
-static std::fstream* fs;
+static el::base::type::fstream_t* fs;
 
 TEST(FileUtilsTest, NewFileStream) {
     fs = File::newFileStream(filename);
@@ -16,7 +16,7 @@ TEST(FileUtilsTest, NewFileStream) {
 TEST(FileUtilsTest, GetSizeOfFile) {
     EXPECT_EQ(File::getSizeOfFile(fs), 0);
     const char* data = "123";
-    fs->write(data, strlen(data));
+    (*fs) << data;
     fs->flush();
     EXPECT_EQ(File::getSizeOfFile(fs), strlen(data));
 }

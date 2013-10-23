@@ -245,6 +245,7 @@
 #include <csignal>
 #include <cerrno>
 #include <cstdarg>
+#include <locale>
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
 #   include <execinfo.h>
@@ -331,6 +332,31 @@
 namespace el {
 /// @brief Namespace containing base/internal functionality used by easylogging++
 namespace base {
+/// @brief Data types for unicode support
+namespace type {
+#undef UNICODE_LITERAL
+#undef UNICODE_STRLEN
+#undef UNICODE_COUT
+#if defined(_ELPP_UNICODE)
+#   define UNICODE_LITERAL(txt) L##txt
+#   define UNICODE_STRLEN wcslen
+#   define UNICODE_COUT std::wcout
+typedef wchar_t char_t;
+typedef std::wstring string_t;
+typedef std::wstringstream stringstream_t;
+typedef std::wfstream fstream_t;
+typedef std::wostream ostream_t;
+#else
+#   define UNICODE_LITERAL(txt) txt
+#   define UNICODE_STRLEN strlen
+#   define UNICODE_COUT std::cout
+typedef char char_t;
+typedef std::string string_t;
+typedef std::stringstream stringstream_t;
+typedef std::fstream fstream_t;
+typedef std::ostream ostream_t;
+#endif // defined(_ELPP_UNICODE)
+}
 /// @brief Internal helper class that prevent copy constructor for class
 ///
 /// @detail When using this class simply inherit it privately
@@ -589,33 +615,33 @@ namespace base {
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
 namespace consts {
     // Level log values - These are values that are replaced in place of %level format specifier
-    static const char* kInfoLevelLogValue     =   "INFO ";
-    static const char* kDebugLevelLogValue    =   "DEBUG";
-    static const char* kWarningLevelLogValue  =   "WARN ";
-    static const char* kErrorLevelLogValue    =   "ERROR";
-    static const char* kFatalLevelLogValue    =   "FATAL";
-    static const char* kVerboseLevelLogValue  =   "VER";
-    static const char* kTraceLevelLogValue    =   "TRACE";
+    static const base::type::char_t* kInfoLevelLogValue     =   UNICODE_LITERAL("INFO ");
+    static const base::type::char_t* kDebugLevelLogValue    =   UNICODE_LITERAL("DEBUG");
+    static const base::type::char_t* kWarningLevelLogValue  =   UNICODE_LITERAL("WARN ");
+    static const base::type::char_t* kErrorLevelLogValue    =   UNICODE_LITERAL("ERROR");
+    static const base::type::char_t* kFatalLevelLogValue    =   UNICODE_LITERAL("FATAL");
+    static const base::type::char_t* kVerboseLevelLogValue  =   UNICODE_LITERAL("VER");
+    static const base::type::char_t* kTraceLevelLogValue    =   UNICODE_LITERAL("TRACE");
     // Format specifiers - These are used to define log format
-    static const char* kAppNameFormatSpecifier          =      "%app";
-    static const char* kLoggerIdFormatSpecifier         =      "%logger";
-    static const char* kThreadIdFormatSpecifier         =      "%thread";
-    static const char* kSeverityLevelFormatSpecifier    =      "%level";
-    static const char* kDateTimeFormatSpecifier         =      "%datetime";
-    static const char* kLogFileFormatSpecifier          =      "%file";
-    static const char* kLogLineFormatSpecifier          =      "%line";
-    static const char* kLogLocationFormatSpecifier      =      "%loc";
-    static const char* kLogFunctionFormatSpecifier      =      "%func";
-    static const char* kCurrentUserFormatSpecifier      =      "%user";
-    static const char* kCurrentHostFormatSpecifier      =      "%host";
-    static const char* kMessageFormatSpecifier          =      "%msg";
-    static const char* kVerboseLevelFormatSpecifier     =      "%vlevel";
+    static const base::type::char_t* kAppNameFormatSpecifier          =      UNICODE_LITERAL("%app");
+    static const base::type::char_t* kLoggerIdFormatSpecifier         =      UNICODE_LITERAL("%logger");
+    static const base::type::char_t* kThreadIdFormatSpecifier         =      UNICODE_LITERAL("%thread");
+    static const base::type::char_t* kSeverityLevelFormatSpecifier    =      UNICODE_LITERAL("%level");
+    static const base::type::char_t* kDateTimeFormatSpecifier         =      UNICODE_LITERAL("%datetime");
+    static const base::type::char_t* kLogFileFormatSpecifier          =      UNICODE_LITERAL("%file");
+    static const base::type::char_t* kLogLineFormatSpecifier          =      UNICODE_LITERAL("%line");
+    static const base::type::char_t* kLogLocationFormatSpecifier      =      UNICODE_LITERAL("%loc");
+    static const base::type::char_t* kLogFunctionFormatSpecifier      =      UNICODE_LITERAL("%func");
+    static const base::type::char_t* kCurrentUserFormatSpecifier      =      UNICODE_LITERAL("%user");
+    static const base::type::char_t* kCurrentHostFormatSpecifier      =      UNICODE_LITERAL("%host");
+    static const base::type::char_t* kMessageFormatSpecifier          =      UNICODE_LITERAL("%msg");
+    static const base::type::char_t* kVerboseLevelFormatSpecifier     =      UNICODE_LITERAL("%vlevel");
     // Date/time
     static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
     static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-    static const char* kMonths[12]                      =      { "January", "February", "March", "April", "May", "June", "July", "August",
+    static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
             "September", "October", "November", "December" };
-    static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Ju", "Aug", "Sep", "Oct", "Nov", "Dec" };
     static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %h:%m:%s,%g";
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
@@ -666,14 +692,14 @@ namespace consts {
     static const int kMaxTimeFormats                           =      6;
     const struct {
         double value;
-        const char* unit;
+        const base::type::char_t* unit;
     } kTimeFormats[kMaxTimeFormats] = {
-       { 1000.0f, "mis" },
-       { 1000.0f, "ms" },
-       { 60.0f, "seconds" },
-       { 60.0f, "minutes" },
-       { 24.0f, "hours" },
-       { 7.0f, "days" }
+       { 1000.0f, UNICODE_LITERAL("mis") },
+       { 1000.0f, UNICODE_LITERAL("ms") },
+       { 60.0f, UNICODE_LITERAL("seconds") },
+       { 60.0f, UNICODE_LITERAL("minutes") },
+       { 24.0f, UNICODE_LITERAL("hours") },
+       { 7.0f, UNICODE_LITERAL("days") }
     };
     static const int kMaxCrashSignals                          =      5;
     const struct {
@@ -931,8 +957,8 @@ class File : base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
     /// @return Pointer to newly created fstream or nullptr
-    static std::fstream* newFileStream(const std::string& filename) {
-        std::fstream *fs = new std::fstream(filename.c_str(), std::fstream::out | std::fstream::app);
+    static base::type::fstream_t* newFileStream(const std::string& filename) {
+        base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(), base::type::fstream_t::out | base::type::fstream_t::app);
         if (fs->is_open()) {
             fs->flush();
         } else {
@@ -943,7 +969,7 @@ public:
     }
 
     /// @brief Gets size of file provided in stream
-    static std::size_t getSizeOfFile(std::fstream* fs) {
+    static std::size_t getSizeOfFile(base::type::fstream_t* fs) {
         if (fs == nullptr) {
             return 0;
         }
@@ -1131,12 +1157,10 @@ public:
         }
         return str;
     }
-
-    /// @brief Replaces first occurance of 'replaceWhat' with 'replaceWith' and ignores escaped string
-    static void replaceFirstWithEscape(std::string& str, const std::string& replaceWhat, const std::string& replaceWith) {
-        std::size_t foundAt = std::string::npos;
         
-        while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos){
+    static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat, const base::type::string_t& replaceWith) {
+        std::size_t foundAt = base::type::string_t::npos;
+        while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos){
             if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatEscapeChar) {
                 str.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                 ++foundAt;
@@ -1146,7 +1170,11 @@ public:
             }
         }
     }
-
+#if defined(_ELPP_UNICODE)
+    static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat, const std::string& replaceWith) {
+        replaceFirstWithEscape(str, replaceWhat, base::type::string_t(replaceWith.begin(), replaceWith.end()));
+    }
+#endif // defined(_ELPP_UNICODE)
     /// @brief Converts string to uppercase
     /// @param str String to convert
     /// @return Uppercase string
@@ -1409,10 +1437,10 @@ public:
     }
 
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
-    static std::string formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {
+    static base::type::string_t formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {
         double result = static_cast<double>(time);
         base::EnumType start = static_cast<base::EnumType>(timestampUnit);
-        const char* unit = base::consts::kTimeFormats[start].unit;
+        const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
         for (base::EnumType i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
             if (result <= base::consts::kTimeFormats[i].value) {
                 break;
@@ -1420,7 +1448,7 @@ public:
             result /= base::consts::kTimeFormats[i].value;
             unit = base::consts::kTimeFormats[i + 1].unit;
         }
-        std::stringstream ss;
+        base::type::stringstream_t ss;
         ss << result << " " << unit;
         return ss.str();
     }
@@ -1587,11 +1615,11 @@ public:
     inline std::size_t size(void) const {
         return m_params.size() + m_paramsWithValue.size();
     }
-    inline friend std::ostream& operator<<(std::ostream& os, const CommandLineArgs& c) {
+    inline friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineArgs& c) {
         for (int i = 1; i < c.m_argc; ++i) {
-            os << "[" << c.m_argv[i] << "]";
+            os << UNICODE_LITERAL("[") << c.m_argv[i] << UNICODE_LITERAL("]");
             if (i < c.m_argc - 1)
-                os << " ";
+                os << UNICODE_LITERAL(" ");
         }
         return os;
     }
@@ -1830,9 +1858,9 @@ public:
         return *this;
     }
 
-    friend inline std::ostream& operator<<(std::ostream& os, const RegistryWithPred& sr) {
+    friend inline base::type::ostream_t& operator<<(base::type::ostream_t& os, const RegistryWithPred& sr) {
         for (const_iterator it = sr.list().begin(); it != sr.list().end(); ++it) {
-            os << "    " << **it << "\n";
+            os << UNICODE_LITERAL("    ") << **it << UNICODE_LITERAL("\n");
         }
         return os;
     }
@@ -1900,13 +1928,13 @@ class LogFormat {
 public:
     LogFormat(void) :
         m_level(Level::Unknown),
-        m_userFormat(std::string()),
-        m_format(std::string()),
+        m_userFormat(base::type::string_t()),
+        m_format(base::type::string_t()),
         m_dateTimeFormat(std::string()),
         m_flags(0x0) {
     }
 
-    LogFormat(const Level& level, const std::string& format)
+    LogFormat(const Level& level, const base::type::string_t& format)
             : m_level(level), m_userFormat(format) {
         parseFromFormat(m_userFormat);
     }
@@ -1945,15 +1973,15 @@ public:
 
     /// @brief Updates format to be used while logging.
     /// @param userFormat User provided format
-    void parseFromFormat(const std::string& userFormat) {
+    void parseFromFormat(const base::type::string_t& userFormat) {
         // We make copy because we will be changing the format
         // i.e, removing user provided date format from original format
         // and then storing it.
-        std::string formatCopy = userFormat;
+        base::type::string_t formatCopy = userFormat;
         m_flags = 0x0;
-        auto conditionalAddFlag = [&](const char* specifier, const base::FormatFlags& flag) {
-            std::size_t foundAt = std::string::npos;
-            while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != std::string::npos){
+        auto conditionalAddFlag = [&](const base::type::char_t* specifier, const base::FormatFlags& flag) {
+            std::size_t foundAt = base::type::string_t::npos;
+            while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != base::type::string_t::npos){
                 if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatEscapeChar) {
                     if (hasFlag(flag)) {
                         // If we already have flag we remove the escape chars so that '%%' is turned to '%'
@@ -1997,11 +2025,11 @@ public:
         return m_level;
     }
 
-    inline const std::string& userFormat(void) const {
+    inline const base::type::string_t& userFormat(void) const {
         return m_userFormat;
     }
 
-    inline const std::string& format(void) const {
+    inline const base::type::string_t& format(void) const {
        return m_format;
     }
 
@@ -2017,7 +2045,7 @@ public:
         return base::utils::hasFlag(flag, m_flags);
     }
 
-    friend inline std::ostream& operator<<(std::ostream& os, const LogFormat& format) {
+    friend inline base::type::ostream_t& operator<<(base::type::ostream_t& os, const LogFormat& format) {
         os << format.m_format;
         return os;
     }
@@ -2025,11 +2053,11 @@ protected:
     /// @brief Updates date time format if available in currFormat.
     /// @param index Index where %datetime, %date or %time was found
     /// @param [in,out] currFormat current format that is being used to format
-    virtual void updateDateFormat(std::size_t index, std::string& currFormat) FINAL {
+    virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) FINAL {
         if (hasFlag(base::FormatFlags::DateTime)) {
-            index += strlen(base::consts::kDateTimeFormatSpecifier);
+            index += UNICODE_STRLEN(base::consts::kDateTimeFormatSpecifier);
         }
-        const char* ptr = currFormat.c_str() + index;
+        const base::type::char_t* ptr = currFormat.c_str() + index;
         if ((currFormat.size() > index) && (ptr[0] == '{')) {
             // User has provided format for date/time
             ++ptr;
@@ -2093,8 +2121,8 @@ protected:
     }
 private:
     Level m_level;
-    std::string m_userFormat;
-    std::string m_format;
+    base::type::string_t m_userFormat;
+    base::type::string_t m_format;
     std::string m_dateTimeFormat;
     base::EnumType m_flags;
     friend class el::Logger; // To resolve loggerId format specifier easily
@@ -2178,10 +2206,10 @@ public:
         m_value = value;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Configuration& c) {
+    friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const Configuration& c) {
         os << LevelHelper::convertToString(c.m_level)
-            << " " << ConfigurationTypeHelper::convertToString(c.m_configurationType)
-            << " = " << c.m_value;
+            << UNICODE_LITERAL(" ") << ConfigurationTypeHelper::convertToString(c.m_configurationType)
+            << UNICODE_LITERAL(" = ") << c.m_value.c_str();
         return os;
     }
 
@@ -2621,7 +2649,7 @@ private:
 };
 
 namespace base {
-typedef std::shared_ptr<std::fstream> FileStreamPtr;
+typedef std::shared_ptr<base::type::fstream_t> FileStreamPtr;
 typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
 class Writer;
 class PErrorWriter;
@@ -2678,7 +2706,7 @@ public:
         return getConfigByVal<bool>(level, m_performanceTrackingMap, "performanceTracking");
     }
 
-    inline std::fstream* fileStream(const Level& level) {
+    inline base::type::fstream_t* fileStream(const Level& level) {
         return getConfigByRef<base::FileStreamPtr>(level, m_fileStreamMap, "fileStream").get();
     }
 
@@ -2792,7 +2820,7 @@ private:
             } else if (conf->configurationType() == ConfigurationType::Filename) {
                 insertFile(conf->level(), conf->value());
             } else if (conf->configurationType() == ConfigurationType::Format) {
-                setValue(conf->level(), base::LogFormat(conf->level(), conf->value()), m_logFormatMap);
+                setValue(conf->level(), base::LogFormat(conf->level(), base::type::string_t(conf->value().begin(), conf->value().end())), m_logFormatMap);
             } else if (conf->configurationType() == ConfigurationType::MillisecondsWidth) {
                 setValue(Level::Global, base::MillisecondsWidth(static_cast<int>(getULong(conf->value()))), m_millisecondsWidthMap);
             } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
@@ -2834,7 +2862,7 @@ private:
             base::LogStreamsReferenceMap::iterator filestreamIter = m_logStreamsReference->find(fullFilename);
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
-                std::fstream* fs = base::utils::File::newFileStream(fullFilename);
+                base::type::fstream_t* fs = base::utils::File::newFileStream(fullFilename);
                 if (fs != nullptr) {
                     m_filenameMap.insert(std::make_pair(level, fullFilename));
                     m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
@@ -2857,7 +2885,7 @@ private:
     }
 
     bool unsafeValidateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
-        std::fstream* fs = unsafeGetConfigByRef(level, m_fileStreamMap, "fileStream").get();
+        base::type::fstream_t* fs = unsafeGetConfigByRef(level, m_fileStreamMap, "fileStream").get();
         if (fs == nullptr) {
             return true;
         }
@@ -2988,17 +3016,17 @@ namespace api {
 class LogBuilder : base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
-    virtual std::string build(const LogMessage* logMessage, bool appendNewLine) const = 0;
+    virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
 private:
     friend class el::base::LogDispatcher;
     
-    void convertToColoredOutput(std::string& logLine, const Level& level) {
+    void convertToColoredOutput(base::type::string_t& logLine, const Level& level) {
         if (!base::utils::OS::termSupportsColor()) return;
-        const char* resetColor = "\x1b[0m";
+        const base::type::char_t* resetColor = UNICODE_LITERAL("\x1b[0m");
         if (level == Level::Error || level == Level::Fatal)
-            logLine = "\x1b[31m" + logLine + resetColor;
+            logLine = UNICODE_LITERAL("\x1b[31m") + logLine + resetColor;
         else if (level == Level::Warning)
-            logLine = "\x1b[33m" + logLine + resetColor;
+            logLine = UNICODE_LITERAL("\x1b[33m") + logLine + resetColor;
     }
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
@@ -3132,7 +3160,7 @@ public:
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
-    std::stringstream m_stream;
+    base::type::stringstream_t m_stream;
     std::string m_parentApplicationName;
     bool m_isConfigured;
     Configurations m_configurations;
@@ -3161,11 +3189,11 @@ private:
         });
     }
 
-    inline std::stringstream& stream(void) {
+    inline base::type::stringstream_t& stream(void) {
         return m_stream;
     }
 
-    inline void flush(const Level& level, std::fstream* fs) {
+    inline void flush(const Level& level, base::type::fstream_t* fs) {
         if (fs == nullptr && m_typedConfigurations->toFile(level)) {
             fs = m_typedConfigurations->fileStream(level);
         }
@@ -3404,7 +3432,7 @@ public:
     inline const char* func(void) const { return m_func; }
     inline base::VRegistry::VLevel verboseLevel(void) const { return m_verboseLevel; }
     inline Logger* logger(void) const { return m_logger; }
-    inline const std::string& message(void) const { return m_message; }
+    inline const base::type::string_t& message(void) const { return m_message; }
 private:
     Level m_level;
     const char* m_file;
@@ -3412,7 +3440,7 @@ private:
     const char* m_func;
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
-    std::string m_message;
+    base::type::string_t m_message;
 };
 namespace base {
 class DefaultLogBuilder;
@@ -3603,10 +3631,10 @@ extern std::unique_ptr<base::Storage> elStorage;
 #define ELPP el::base::elStorage
 class DefaultLogBuilder : public api::LogBuilder {
 public:
-    std::string build(const LogMessage* logMessage, bool appendNewLine) const {
+    base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const {
         base::TypedConfigurations* tc = logMessage->logger()->typedConfigurations();
         const base::LogFormat* logFormat = &tc->logFormat(logMessage->level());
-        std::string logLine = logFormat->format();
+        base::type::string_t logLine = logFormat->format();
         char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
         const char* bufLim = buff + sizeof(buff);
         if (logFormat->hasFlag(base::FormatFlags::AppName)) {
@@ -3663,10 +3691,12 @@ public:
 #if !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
         for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
                 it != ELPP->customFormatSpecifiers()->end(); ++it) {
-            base::utils::Str::replaceFirstWithEscape(logLine, it->formatSpecifier(), it->resolver()());
+            std::string fs(it->formatSpecifier());
+            base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
+            base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()());
         }
 #endif // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        if (appendNewLine) logLine += "\n";
+        if (appendNewLine) logLine += UNICODE_LITERAL("\n");
         return logLine;
     }
 };
@@ -3701,7 +3731,7 @@ public:
         }
         ELPP->unlock();
 #if defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        m_logMessage.logger()->stream().str("");
+        m_logMessage.logger()->stream().str(UNICODE_LITERAL(""));
         m_logMessage.logger()->unlock();
         ELPP->postLogDispatchHandler()(&m_logMessage);
  #endif // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
@@ -3711,10 +3741,10 @@ private:
     LogMessage m_logMessage;
     base::DispatchAction m_dispatchAction;
 
-    void dispatch(std::string&& logLine) {
+    void dispatch(base::type::string_t&& logLine) {
         if (m_dispatchAction == base::DispatchAction::NormalLog) {
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
-                std::fstream* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
+                base::type::fstream_t* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
                      fs->write(logLine.c_str(), logLine.size());
                      if (fs->fail()) {
@@ -3733,7 +3763,7 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_logMessage.logger()->logBuilder()->convertToColoredOutput(logLine, m_logMessage.level());
-                std::cout << logLine << std::flush;
+                UNICODE_COUT << logLine << std::flush;
             }
         }
  #if defined(_ELPP_SYSLOG)
@@ -3878,7 +3908,7 @@ public:
         // If we don't handle post-log-dispatches, we need to unlock logger
         // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
         if (m_logger != nullptr) {
-            m_logger->stream().str("");
+            m_logger->stream().str(UNICODE_LITERAL(""));
             m_logger->unlock();
         }
 #endif // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
@@ -3897,7 +3927,7 @@ public:
 
     inline Writer& operator<<(const std::string& log_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
+        m_logger->stream() << log_.c_str();
         return *this;
     }
     inline Writer& operator<<(char log_) {
@@ -3992,11 +4022,6 @@ public:
 #   endif // _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
         m_logger->stream() << buff_;
         free(buff_);
-        return *this;
-    }
-    inline Writer& operator<<(const std::stringstream& ss) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << ss.str();
         return *this;
     }
     // ostream manipulators
@@ -4102,7 +4127,11 @@ public:
 #if defined(_ELPP_QT_LOGGING)
     inline Writer& operator<<(const QString& log_) {
         if (!m_proceed) { return *this; }
+#   if defined(_ELPP_UNICODE)
+        m_logger->stream() << log_.toStdWString();
+#   else
         m_logger->stream() << log_.toStdString();
+#   endif // defined(_ELPP_UNICODE)
         return *this;
     }
     inline Writer& operator<<(const QByteArray& log_) {
@@ -4115,12 +4144,20 @@ public:
     }
     inline Writer& operator<<(qint64 log_) {
         if (!m_proceed) { return *this; }
+#   if defined(_ELPP_UNICODE)
+        m_logger->stream() << QString::number(log_).toStdWString();
+#   else
         m_logger->stream() << QString::number(log_).toStdString();
+#   endif // defined(_ELPP_UNICODE)
         return *this;
     }
     inline Writer& operator<<(quint64 log_) {
         if (!m_proceed) { return *this; }
+#   if defined(_ELPP_UNICODE)
+        m_logger->stream() << QString::number(log_).toStdWString();
+#   else
         m_logger->stream() << QString::number(log_).toStdString();
+#   endif // defined(_ELPP_UNICODE)
         return *this;
     }
     inline Writer& operator<<(QChar log_) {
@@ -4324,7 +4361,7 @@ public:
     Trackable(const std::string& blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
             const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const Level& level = Level::Info) :
-        m_blockName(blockName.c_str()), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
+        m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         el::Logger* loggerPtr = elStorage->registeredLoggers()->get(logger, false);
@@ -4367,18 +4404,18 @@ public:
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);
-            std::stringstream ss;
+            base::type::stringstream_t ss;
             ss << "Performance checkpoint";
             if (id != nullptr) {
                 ss << " [" << id << "]";
             }
-            ss << " for block [" << m_blockName << "] : [" << *this;
+            ss << " for block [" << m_blockName.c_str() << "] : [" << *this;
 #   if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             if (m_hasChecked) {
                 ss << " (["
                    << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime,
-                                  m_timestampUnit), m_timestampUnit) << "]"
-                    << " from ";
+                                  m_timestampUnit), m_timestampUnit)
+                   << "] from ";
                 if (m_lastCheckpointId == nullptr) {
                     ss << "last checkpoint";
                 } else {
@@ -4413,7 +4450,7 @@ private:
 
     Trackable(void);
 
-    friend std::ostream& operator<<(std::ostream& os, const Trackable& trackable) {
+    friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const Trackable& trackable) {
         os << base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(trackable.m_endTime,
                 trackable.m_startTime, trackable.m_timestampUnit), trackable.m_timestampUnit);
         return os;
@@ -4604,7 +4641,7 @@ private:
 } // namespace base
 extern base::debug::CrashHandler elCrashHandler;
 #define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
-    std::ostream& operator<<(std::ostream& OutputStreamInstance, const ClassType& ClassInstance)
+    el::base::type::ostream_t& operator<<(el::base::type::ostream_t& OutputStreamInstance, const ClassType& ClassInstance)
 /// @brief Initializes syslog with process ID, options and facility. calls closelog() on d'tor
 class SysLogInitializer {
 public:
@@ -4629,9 +4666,9 @@ public:
 /// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
 class Loggable {
 public:
-    virtual void log(std::ostream&) const = 0;
+    virtual void log(el::base::type::ostream_t&) const = 0;
 private:
-    friend inline std::ostream& operator<<(std::ostream& os, const Loggable& loggable) {
+    friend inline el::base::type::ostream_t& operator<<(el::base::type::ostream_t& os, const Loggable& loggable) {
         loggable.log(os);
         return os;
     }
@@ -4711,7 +4748,11 @@ public:
         ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
         el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0);
         w << templ;
+#if defined(_ELPP_UNICODE)
+        return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
+#else
         return w.m_logger->stream().str();
+#endif // defined(_ELPP_UNICODE)
     }
     /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
@@ -4851,7 +4892,6 @@ public:
         _ELPP_UNUSED(argKey);
 #else
         if (!Helpers::commandLineArgs()->hasParamWithValue(argKey)) {
-            ELPP_INTERNAL_ERROR("Unable to configure from argKey [" << argKey << "]. Argument value not found in program arguments: " << *Helpers::commandLineArgs(), false);
             return false;
         }
         configureFromGlobal(Helpers::commandLineArgs()->getParamValue(argKey));
@@ -5258,7 +5298,11 @@ static T* checkNotNull(T* ptr, const char* name) {
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
-#define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv)
+#if defined(_ELPP_UNICODE)
+#   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
+#else
+#   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv)
+#endif // defined(_ELPP_UNICODE)
 // For minimal backward compatibility
 namespace easyloggingpp = el;
 #endif // EASYLOGGINGPP_H

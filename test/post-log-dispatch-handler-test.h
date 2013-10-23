@@ -3,7 +3,7 @@
 
 #include "test.h"
 
-static std::vector<std::string> loggedMessages;
+static std::vector<el::base::type::string_t> loggedMessages;
 
 void postLogHandler(const LogMessage* msg) {
     loggedMessages.push_back(msg->message());
