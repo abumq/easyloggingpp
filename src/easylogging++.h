@@ -3877,7 +3877,7 @@ public:
                const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator("") {
+                   m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(UNICODE_LITERAL("")) {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
@@ -3891,7 +3891,7 @@ public:
             m_logger->lock(); // This should not be unlocked by checking m_proceed because
                               // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
-            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? "\n    " : ", ";
+            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? UNICODE_LITERAL("\n    ") : UNICODE_LITERAL(", ");
         }
     }
 
@@ -4191,23 +4191,23 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << "[";
+        m_logger->stream() << UNICODE_LITERAL("[");
         QList<K> keys = map_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
         typename QList<K>::const_iterator end = keys.end();
         int max_ = static_cast<int>(base::consts::kMaxLogPerContainer); // to prevent warning
         for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            m_logger->stream() << "(";
+            m_logger->stream() << UNICODE_LITERAL("(");
             operator << (static_cast<K>(*begin));
-            m_logger->stream() << ", ";
+            m_logger->stream() << UNICODE_LITERAL(", ");
             operator << (static_cast<V>(map_.value(*begin)));
-            m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : "");
+            m_logger->stream() << UNICODE_LITERAL(")");
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
         }
         if (begin != end) {
-            m_logger->stream() << "...";
+            m_logger->stream() << UNICODE_LITERAL("...");
         }
-        m_logger->stream() << "]";
+        m_logger->stream() << UNICODE_LITERAL("]");
         return *this;
     }
     template <typename K, typename V>
@@ -4230,7 +4230,7 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(hash_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : "");
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
         }
         if (begin != end) {
             m_logger->stream() << "...";
@@ -4265,20 +4265,20 @@ public:
 /// @param ElementInstance Instance of element to be fed out. Insance name is "elem". See WX_ELPP_ENABLED macro
 ///        for an example usage
 #define MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
-    std::ostream& operator<<(std::ostream& ss, const ContainerType& container) {\
-        const char* sep = ELPP->hasFlag(el::LoggingFlag::NewLineForContainer) ? "\n    " : ", ";\
+    el::base::type::ostream_t& operator<<(el::base::type::ostream_t& ss, const ContainerType& container) {\
+        const el::base::type::char_t* sep = ELPP->hasFlag(el::LoggingFlag::NewLineForContainer) ? UNICODE_LITERAL("\n    ") : UNICODE_LITERAL(", ");\
         ContainerType::const_iterator elem = container.begin();\
         ContainerType::const_iterator endElem = container.end();\
         std::size_t size_ = container.SizeMethod; \
-        ss << "[";\
+        ss << UNICODE_LITERAL("[");\
         for (std::size_t i = 0; elem != endElem && i < el::base::consts::kMaxLogPerContainer; ++i, ++elem) {\
             ss << ElementInstance;\
-            ss << ((i < size_ - 1) ? sep : "");\
+            ss << ((i < size_ - 1) ? sep : UNICODE_LITERAL(""));\
         }\
         if (elem != endElem) {\
-            ss << "...";\
+            ss << UNICODE_LITERAL("...");\
         }\
-        ss << "]";\
+        ss << UNICODE_LITERAL("]");\
         return ss;\
     }
 #if defined(_ELPP_WXWIDGETS_LOGGING)
@@ -4312,20 +4312,20 @@ protected:
     Logger* m_logger;
     bool m_proceed;
     base::DispatchAction m_dispatchAction;
-    const char* m_containerLogSeperator;
+    const base::type::char_t* m_containerLogSeperator;
     friend class el::Helpers;
 
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
-        m_logger->stream() << "[";
+        m_logger->stream() << UNICODE_LITERAL("[");
         for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
             operator << (*begin_);
-            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : "");
+            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
          }
         if (begin_ != end_) {
-            m_logger->stream() << "...";
+            m_logger->stream() << UNICODE_LITERAL("...");
         }
-        m_logger->stream() << "]";
+        m_logger->stream() << UNICODE_LITERAL("]");
         return *this;
     }
 };
@@ -4433,7 +4433,7 @@ public:
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
-            el::base::Writer(m_loggerId, m_level, file, line, func) << ss;
+            el::base::Writer(m_loggerId, m_level, file, line, func) << ss.str();
         }
 #else
         _ELPP_UNUSED(id)
