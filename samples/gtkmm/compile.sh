@@ -21,7 +21,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE `pkg-config --libs --cflags gtkmm-2.4 sigc++-2.0` -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -I/usr/include/x86_64-linux-gnu/c++/4.7/"
+COMPILE_LINE="$COMPILER $FILE `pkg-config --libs --cflags gtkmm-2.4 sigc++-2.0` -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
 echo "    $COMPILE_LINE"
 
 $($COMPILE_LINE)
