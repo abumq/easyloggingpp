@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.32
+//  Easylogging++ v9.32 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -245,7 +245,9 @@
 #include <csignal>
 #include <cerrno>
 #include <cstdarg>
-#include <locale>
+#if defined(_ELPP_UNICODE)
+#   include <locale>
+#endif // defined(_ELPP_UNICODE)
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
 #   include <execinfo.h>
