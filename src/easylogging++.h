@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.34
+//  Easylogging++ v9.34 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -4012,18 +4012,22 @@ public:
             m_logger->stream() << base::consts::kNullPointer;
             return *this;
         }
+#   if defined(_ELPP_UNICODE)
+        m_logger->stream() << log_;
+#   else
         std::size_t len_ = wcslen(log_) + 1;
         char* buff_ = (char*)malloc(len_ + 1);
-#   if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
+#      if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
         std::wcstombs(buff_, log_, len_);
-#   elif _ELPP_OS_WINDOWS
+#      elif _ELPP_OS_WINDOWS
         std::size_t convCount_ = 0;
         mbstate_t mbState_;
         ::memset((void*)&mbState_, 0, sizeof(mbState_));
         wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
-#   endif // _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
+#      endif // _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
         m_logger->stream() << buff_;
         free(buff_);
+#   endif
         return *this;
     }
     // ostream manipulators
