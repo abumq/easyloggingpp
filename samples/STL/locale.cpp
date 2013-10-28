@@ -7,11 +7,14 @@
  // @author mkhan3189
  //
 
+#define _ELPP_UNICODE
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
 
-int main(int, const char** ) {
-    LOG(INFO) << "世界，你好";
+int main(int argc, const char** argv) {
+    _START_EASYLOGGINGPP(argc, argv);
+
+    LOG(INFO) << L"世界，你好";
     return 0;
 }
