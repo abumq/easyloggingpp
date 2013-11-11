@@ -32,7 +32,7 @@ TEST(LoggerTest, CheckTenThousandLoggers) {
     for (unsigned int i = 1; i <= 10000; ++i) {
         std::stringstream ss;
         ss << "logger" << i;
-        LevelHelper::forEachLevel(lIndex, [&]() -> bool {
+        LevelHelper::forEachLevel(&lIndex, [&]() -> bool {
             EXPECT_EQ(logger1Stream, el::Loggers::getLogger(ss.str())->typedConfigurations()->fileStream(LevelHelper::castFromInt(lIndex)));
             return false;
         });

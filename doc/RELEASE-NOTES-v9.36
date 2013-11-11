@@ -1,11 +1,12 @@
 Easylogging++ v9.36 RELEASE NOTES
 ---------------------------------
 
-=========================
-=      FIXES            =
-=========================
+============================
+=      REFACTOR            =
+============================
 
- - Happy Google C++ style guide (cpplint.py)
+ - Happy Google C++ style guide (patch-1) (cpplint.py)
+ - API changes to use pointers instead of reference e.g, `populateAllLoggerIds(std::vector<std::string>&)` to `populateAllLoggerIds(std::vector<std::string>*)`
 
 ==========================
 =         NOTES          =
