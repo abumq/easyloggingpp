@@ -9,6 +9,12 @@ Easylogging++ v9.36 RELEASE NOTES
  - API changes to use pointers instead of reference e.g, `populateAllLoggerIds(std::vector<std::string>&)` to `populateAllLoggerIds(std::vector<std::string>*)`
 
 ==========================
+=        FIXES           =
+==========================
+
+ - Fixed `TIMED_BLOCK` to reflect `_ELPP_PERFORMANCE_MICROSECONDS`
+
+==========================
 =         NOTES          =
 ==========================
 

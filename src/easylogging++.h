@@ -4960,7 +4960,7 @@ class VersionInfo : base::StaticClass {
 /// @see el::base::Trackable::checkpoint
 // Note: Do not surround this definition with null macro because of obj instance
 #define TIMED_SCOPE(obj, blockname) el::base::Trackable obj(blockname, _ELPP_MIN_UNIT)
-#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::Trackable timer; } obj = { 0, el::base::Trackable(blockName) }; obj.i < 1; ++obj.i)
+#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::Trackable timer; } obj = { 0, el::base::Trackable(blockName, _ELPP_MIN_UNIT) }; obj.i < 1; ++obj.i)
 /// @brief Performance tracked function. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
