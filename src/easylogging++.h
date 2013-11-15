@@ -358,7 +358,6 @@ typedef std::string string_t;
 typedef std::stringstream stringstream_t;
 typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
-/// @brief Enum underlying type
 #endif  // defined(_ELPP_UNICODE)
 typedef unsigned short EnumType;  // NOLINT
 }  // namespace type
