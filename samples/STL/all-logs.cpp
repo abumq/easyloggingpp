@@ -47,5 +47,8 @@ int main(int argc, char** argv) {
     LOG_EVERY_N(1, TRACE);
     VLOG_EVERY_N(1, 1);
     LOG_EVERY_N(1, FATAL);
+
+    CHECK(1 == 1);
+    CCHECK(1 == 1, "default");
     return 0;
 }

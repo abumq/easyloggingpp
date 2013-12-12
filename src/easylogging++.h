@@ -3899,7 +3899,7 @@ class Writer : base::NoCopy {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(el::base::consts::kDefaultLoggerId, Level::Error, file, line, func)
+            Writer(base::consts::kDefaultLoggerId, Level::Error, file, line, func)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
@@ -3931,7 +3931,7 @@ class Writer : base::NoCopy {
 #endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            base::Writer(el::base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
+            base::Writer(base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
                     << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
@@ -4375,14 +4375,19 @@ class PErrorWriter : public base::Writer {
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, level, dispatchAction) if (ELPP->validateCounter(__FILE__, __LINE__, occasion)) \
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-
+#undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
+#if defined(_PERFORMANCE_LOGGER)
+#   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
+#else
+#   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID el::base::consts::kPerformanceLoggerId
+#endif
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
 class Trackable : public base::threading::ThreadSafe {
  public:
     Trackable(const std::string& blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
-            const char* logger = base::consts::kPerformanceLoggerId, bool scopedLog = true, const Level& level = Level::Info) :
+            const char* logger = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, bool scopedLog = true, const Level& level = Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -5149,15 +5154,23 @@ class VersionInfo : base::StaticClass {
 #undef VLOG_IF
 #undef LOG_EVERY_N
 #undef VLOG_EVERY_N
+#undef _CURRENT_FILE_LOGGER_ID
+#if defined(_LOGGER)
+#   define _CURRENT_FILE_LOGGER_ID _LOGGER
+#else
+#   define _CURRENT_FILE_LOGGER_ID el::base::consts::kDefaultLoggerId
+#endif
+#undef _TRACE
+#define _TRACE CLOG(TRACE, _CURRENT_FILE_LOGGER_ID)
 // Normal logs
-#define LOG(LEVEL) CLOG(LEVEL, el::base::consts::kDefaultLoggerId)
-#define VLOG(vlevel) CVLOG(vlevel, el::base::consts::kDefaultLoggerId)
+#define LOG(LEVEL) CLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define VLOG(vlevel) CVLOG(vlevel, _CURRENT_FILE_LOGGER_ID)
 // Conditional logs
-#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
-#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, el::base::consts::kDefaultLoggerId)
+#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Interval logs
-#define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
-#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
+#define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Generic PLOG()
 #undef CPLOG
 #undef CPLOG_IF
@@ -5171,10 +5184,10 @@ class VersionInfo : base::StaticClass {
 #define CPLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::PErrorWriter, condition, loggerId, el::base::DispatchAction::NormalLog)
 #define DCPLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::PErrorWriter, loggerId, el::base::DispatchAction::NormalLog)
 #define DCPLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::PErrorWriter, (_ELPP_DEBUG_LOG) && (condition), loggerId, el::base::DispatchAction::NormalLog)
-#define PLOG(LEVEL) CPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
-#define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
-#define DPLOG(LEVEL) DCPLOG(LEVEL, el::base::consts::kDefaultLoggerId)
-#define DPLOG_IF(condition, LEVEL) DCPLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
+#define PLOG(LEVEL) CPLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DPLOG(LEVEL) DCPLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DPLOG_IF(condition, LEVEL) DCPLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
 // Generic SYSLOG()
 #undef CSYSLOG
 #undef CSYSLOG_IF
@@ -5242,15 +5255,26 @@ class VersionInfo : base::StaticClass {
 #undef DLOG_EVERY_N
 #undef DVLOG_EVERY_N
 // Normal logs
-#define DLOG(LEVEL) DCLOG(LEVEL, el::base::consts::kDefaultLoggerId)
-#define DVLOG(vlevel) DCVLOG(vlevel, el::base::consts::kDefaultLoggerId)
+#define DLOG(LEVEL) DCLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DVLOG(vlevel) DCVLOG(vlevel, _CURRENT_FILE_LOGGER_ID)
 // Conditional logs
-#define DLOG_IF(condition, LEVEL) DCLOG_IF(condition, LEVEL, el::base::consts::kDefaultLoggerId)
-#define DVLOG_IF(condition, vlevel) DCVLOG_IF(condition, vlevel, el::base::consts::kDefaultLoggerId)
+#define DLOG_IF(condition, LEVEL) DCLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DVLOG_IF(condition, vlevel) DCVLOG_IF(condition, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Interval logs
-#define DLOG_EVERY_N(n, LEVEL) DCLOG_EVERY_N(n, LEVEL, el::base::consts::kDefaultLoggerId)
-#define DVLOG_EVERY_N(n, vlevel) DCVLOG_EVERY_N(n, vlevel, el::base::consts::kDefaultLoggerId)
+#define DLOG_EVERY_N(n, LEVEL) DCLOG_EVERY_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DVLOG_EVERY_N(n, vlevel) DCVLOG_EVERY_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Check macros
+#undef CCHECK
+#undef PCCHECK
+#undef CCHECK_EQ
+#undef CCHECK_NE
+#undef CCHECK_LT
+#undef CCHECK_GT
+#undef CCHECK_LE
+#undef CCHECK_GE
+#undef CCHECK_NOTNULL
+#undef CCHECK_STRCASEEQ
+#undef CCHECK_STRCASENE
 #undef CHECK
 #undef PCHECK
 #undef CHECK_EQ
@@ -5262,34 +5286,58 @@ class VersionInfo : base::StaticClass {
 #undef CHECK_NOTNULL
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
-#define CHECK(condition) LOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
-#define PCHECK(condition) PLOG_IF(!(condition), FATAL) << "Check failed: [" << #condition << "] "
-#define CHECK_EQ(a, b) CHECK(a == b)
-#define CHECK_NE(a, b) CHECK(a != b)
-#define CHECK_LT(a, b) CHECK(a < b)
-#define CHECK_GT(a, b) CHECK(a > b)
-#define CHECK_LE(a, b) CHECK(a <= b)
-#define CHECK_GE(a, b) CHECK(a >= b)
+#define CCHECK(condition, loggerId) CLOG_IF(!(condition), FATAL, loggerId) << "Check failed: [" << #condition << "] "
+#define CPCHECK(condition, loggerId) CPLOG_IF(!(condition), FATAL, loggerId) << "Check failed: [" << #condition << "] "
+#define CHECK(condition) CCHECK(condition, _CURRENT_FILE_LOGGER_ID)
+#define PCHECK(condition) CPCHECK(condition, _CURRENT_FILE_LOGGER_ID)
+#define CCHECK_EQ(a, b, loggerId) CCHECK(a == b, loggerId)
+#define CCHECK_NE(a, b, loggerId) CCHECK(a != b, loggerId)
+#define CCHECK_LT(a, b, loggerId) CCHECK(a < b, loggerId)
+#define CCHECK_GT(a, b, loggerId) CCHECK(a > b, loggerId)
+#define CCHECK_LE(a, b, loggerId) CCHECK(a <= b, loggerId)
+#define CCHECK_GE(a, b, loggerId) CCHECK(a >= b, loggerId)
+#define CHECK_EQ(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_NE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_LT(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_GT(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_LE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_GE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
 namespace el {
 namespace base {
 namespace utils {
 template <typename T>
-static T* checkNotNull(T* ptr, const char* name) {
-    LOG_IF(ptr == nullptr, FATAL) << "Check failed: [" << name << " != nullptr]";
+static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT_FILE_LOGGER_ID) {
+    CLOG_IF(ptr == nullptr, FATAL, loggerId) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
 }  // namespace utils
 }  // namespace base
 }  // namespace el
-#define CHECK_NOTNULL(ptr) el::base::utils::checkNotNull(ptr, #ptr)
-#define CHECK_STREQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL) \
+#define CCHECK_NOTNULL(ptr, loggerId) el::base::utils::checkNotNull(ptr, #ptr, loggerId)
+#define CCHECK_STREQ(str1, str2, loggerId) CLOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL, loggerId) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
-#define CHECK_STRNE(str1, str2) LOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL) \
+#define CCHECK_STRNE(str1, str2, loggerId) CLOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL, loggerId) \
                         << "Check failed: [" << #str1 << " != " << #str2 << "] "
-#define CHECK_STRCASEEQ(str1, str2) LOG_IF(!el::base::utils::Str::cStringCaseEq(str1, str2), FATAL) \
+#define CCHECK_STRCASEEQ(str1, str2, loggerId) CLOG_IF(!el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, loggerId) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
-#define CHECK_STRCASENE(str1, str2) LOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL) \
+#define CCHECK_STRCASENE(str1, str2, loggerId) CLOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, loggerId) \
                         << "Check failed: [" << #str1 << " != " << #str2 << "] "
+#define CHECK_NOTNULL(ptr) CCHECK_NOTNULL(ptr, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_STREQ(str1, str2) CCHECK_STREQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_STRNE(str1, str2) CCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_STRCASEEQ(str1, str2) CCHECK_STRCASEEQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_STRCASENE(str1, str2) CHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#undef DCCHECK
+#undef DCCHECK_EQ
+#undef DCCHECK_NE
+#undef DCCHECK_LT
+#undef DCCHECK_GT
+#undef DCCHECK_LE
+#undef DCCHECK_GE
+#undef DCCHECK_NOTNULL
+#undef DCCHECK_STRCASEEQ
+#undef DCCHECK_STRCASENE
+#undef DPCCHECK
 #undef DCHECK
 #undef DCHECK_EQ
 #undef DCHECK_NE
@@ -5301,19 +5349,32 @@ static T* checkNotNull(T* ptr, const char* name) {
 #undef DCHECK_STRCASEEQ
 #undef DCHECK_STRCASENE
 #undef DPCHECK
-#define DCHECK(condition) if (_ELPP_DEBUG_LOG) CHECK(condition)
-#define DCHECK_EQ(a, b) if (_ELPP_DEBUG_LOG) CHECK_EQ(a, b)
-#define DCHECK_NE(a, b) if (_ELPP_DEBUG_LOG) CHECK_NE(a, b)
-#define DCHECK_LT(a, b) if (_ELPP_DEBUG_LOG) CHECK_LT(a, b)
-#define DCHECK_GT(a, b) if (_ELPP_DEBUG_LOG) CHECK_GT(a, b)
-#define DCHECK_LE(a, b) if (_ELPP_DEBUG_LOG) CHECK_LE(a, b)
-#define DCHECK_GE(a, b) if (_ELPP_DEBUG_LOG) CHECK_GE(a, b)
-#define DCHECK_NULLPTR(ptr) if (_ELPP_DEBUG_LOG) CHECK_NOTNULL(ptr)
-#define DCHECK_STREQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STREQ(str1, str2)
-#define DCHECK_STRNE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRNE(str1, str2)
-#define DCHECK_STRCASEEQ(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASEEQ(str1, str2)
-#define DCHECK_STRCASENE(str1, str2) if (_ELPP_DEBUG_LOG) CHECK_STRCASENE(str1, str2)
-#define DPCHECK(condition) if (_ELPP_DEBUG_LOG) PCHECK(condition)
+#define DCCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) CCHECK(condition, loggerId)
+#define DCCHECK_EQ(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_EQ(a, b, loggerId)
+#define DCCHECK_NE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_NE(a, b, loggerId)
+#define DCCHECK_LT(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_LT(a, b, loggerId)
+#define DCCHECK_GT(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_GT(a, b, loggerId)
+#define DCCHECK_LE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_LE(a, b, loggerId)
+#define DCCHECK_GE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_GE(a, b, loggerId)
+#define DCCHECK_NULLPTR(ptr, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_NOTNULL(ptr, loggerId)
+#define DCCHECK_STREQ(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STREQ(str1, str2, loggerId)
+#define DCCHECK_STRNE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRNE(str1, str2, loggerId)
+#define DCCHECK_STRCASEEQ(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASEEQ(str1, str2, loggerId)
+#define DCCHECK_STRCASENE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASENE(str1, str2, loggerId)
+#define DPCCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) PCCHECK(condition, loggerId)
+#define DCHECK(condition) DCCHECK(condition, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_EQ(a, b) DCCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_NE(a, b) DCCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_LT(a, b) DCCHECK_LT(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_GT(a, b) DCCHECK_GT(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_LE(a, b) DCCHECK_LE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_GE(a, b) DCCHECK_GE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_NULLPTR(ptr) DCCHECK_NOTNULL(ptr, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_STREQ(str1, str2) DCCHECK_STREQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_STRNE(str1, str2) DCCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_STRCASEEQ(str1, str2) DCCHECK_STRCASEEQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_STRCASENE(str1, str2) DCCHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define DPCHECK(condition) DPCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
