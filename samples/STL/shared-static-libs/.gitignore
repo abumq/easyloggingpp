@@ -1,0 +1,6 @@
+lib/libmyLib.so
+lib/mylib.o
+libmyLib.so
+logs/*
+myapp
+
