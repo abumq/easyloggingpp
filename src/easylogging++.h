@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.38
+//  Easylogging++ v9.39
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -3880,6 +3880,11 @@ class NullWriter : base::NoCopy {
  public:
     NullWriter(void) {}
 
+    // Null manipulator 
+    inline NullWriter& operator<<(std::ostream& (*)(std::ostream&)) {
+      return *this;
+    }
+
     template <typename T>
     inline NullWriter& operator<<(const T&) {
         return *this;
@@ -4939,9 +4944,9 @@ class Loggers : base::StaticClass {
 class VersionInfo : base::StaticClass {
  public:
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.38"); }
+    static inline const std::string version(void) { return std::string("9.39"); }
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("12-12-2013 1150hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("17-12-2013 2257hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON
