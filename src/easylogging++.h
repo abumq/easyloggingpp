@@ -4976,7 +4976,7 @@ class VersionInfo : base::StaticClass {
 /// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
 /// @see el::base::Trackable
 /// @see el::base::Trackable::checkpoint
-#define TIMED_FUNC(obj) TIMED_BLOCK(obj, _ELPP_FUNC)
+#define TIMED_FUNC(obj) TIMED_SCOPE(obj, _ELPP_FUNC)
 #undef PERFORMANCE_CHECKPOINT
 #undef PERFORMANCE_CHECKPOINT_WITH_ID
 #define PERFORMANCE_CHECKPOINT(obj) obj.checkpoint(nullptr, __FILE__, __LINE__, _ELPP_FUNC)
