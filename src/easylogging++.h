@@ -2677,7 +2677,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
     /// @brief Constructor to initialize (construct) the object off el::Configurations
     /// @param configurations Configurations pointer/reference to base this typed configurations off.
     /// @param logStreamsReference Use ELPP->registeredLoggers()->logStreamsReference()
-    explicit TypedConfigurations(Configurations* configurations, base::LogStreamsReferenceMap* logStreamsReference) {
+    TypedConfigurations(Configurations* configurations, base::LogStreamsReferenceMap* logStreamsReference) {
         m_configurations = configurations;
         m_logStreamsReference = logStreamsReference;
         build(m_configurations);
@@ -3050,7 +3050,7 @@ typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
 class Logger : public base::threading::ThreadSafe {
  public:
-    explicit Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
+    Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
             m_typedConfigurations(nullptr),
             m_parentApplicationName(std::string()),
