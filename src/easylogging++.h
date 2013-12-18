@@ -2682,6 +2682,12 @@ class TypedConfigurations : public base::threading::ThreadSafe {
         m_logStreamsReference = logStreamsReference;
         build(m_configurations);
     }
+    
+    TypedConfigurations(const TypedConfigurations& other) {
+        this->m_configurations = other.m_configurations;
+        this->m_logStreamsReference = other.m_logStreamsReference;
+        build(m_configurations);
+    }
 
     virtual ~TypedConfigurations(void) {
     }
@@ -4884,8 +4890,10 @@ class Loggers : base::StaticClass {
     static inline const base::LogStreamsReferenceMap* logStreamsReference(void) {
         return ELPP->registeredLoggers()->logStreamsReference();
     }
+    /// @brief Default typed configuration based on existing defaultConf
     static base::TypedConfigurations defaultTypedConfigurations(void) {
-        return base::TypedConfigurations(ELPP->registeredLoggers()->defaultConfigurations(),
+        return base::TypedConfigurations(
+            ELPP->registeredLoggers()->defaultConfigurations(),
             ELPP->registeredLoggers()->logStreamsReference());
     }
     /// @brief Populates all logger IDs in current repository.
