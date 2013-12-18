@@ -3251,7 +3251,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
         m_defaultConfigurations.setFromBase(const_cast<Configurations*>(&configurations));
     }
 
-    inline const Configurations* defaultConfigurations(void) const {
+    inline Configurations* defaultConfigurations(void) {
         return &m_defaultConfigurations;
     }
 
@@ -4883,6 +4883,10 @@ class Loggers : base::StaticClass {
     /// @brief Returns log stream reference pointer if needed by user
     static inline const base::LogStreamsReferenceMap* logStreamsReference(void) {
         return ELPP->registeredLoggers()->logStreamsReference();
+    }
+    static base::TypedConfigurations defaultTypedConfigurations(void) {
+        return base::TypedConfigurations(ELPP->registeredLoggers()->defaultConfigurations(),
+            ELPP->registeredLoggers()->logStreamsReference());
     }
     /// @brief Populates all logger IDs in current repository.
     /// @param [out] targetList List of fill up.

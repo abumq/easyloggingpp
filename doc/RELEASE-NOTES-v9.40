@@ -6,6 +6,7 @@ Easylogging++ v9.40 RELEASE NOTES
 ==============================
 
  - Default configuration getter
+ - Default typed-configuration getter
  - Log streams reference (constant) getter for public-use
 
 ==============================
