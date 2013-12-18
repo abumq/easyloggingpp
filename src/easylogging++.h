@@ -1752,7 +1752,7 @@ class AbstractRegistry : public base::threading::ThreadSafe {
 
 /// @brief A pointer registry mechanism to manage memory and provide search functionalities. (non-predicate version)
 ///
-/// @detail NOTE: This is thread-unsafe implementation (although it contains lock function, it does not uses these functions)
+/// @detail NOTE: This is thread-unsafe implementation (although it contains lock function, it does not use these functions)
 ///         of AbstractRegistry<T_Ptr, Container>. Any implementation of this class should be  explicitly (by using lock functions)
 template <typename T_Ptr, typename T_Key = const char*>
 class Registry : public AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>> {
@@ -3249,6 +3249,10 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
     inline void setDefaultConfigurations(const Configurations& configurations) {
         base::threading::lock_guard lock(mutex());
         m_defaultConfigurations.setFromBase(const_cast<Configurations*>(&configurations));
+    }
+
+    inline const Configurations* defaultConfigurations(void) const {
+        return &m_defaultConfigurations;
     }
 
     Logger* get(const std::string& id, bool forceCreation = true) {
@@ -4871,6 +4875,14 @@ class Loggers : base::StaticClass {
         if (reconfigureExistingLoggers) {
             Loggers::reconfigureAllLoggers(configurations);
         }
+    }
+    /// @brief Returns current default
+    static inline const Configurations* defaultConfigurations(void) {
+        return ELPP->registeredLoggers()->defaultConfigurations();
+    }
+    /// @brief Returns log stream reference pointer if needed by user
+    static inline const base::LogStreamsReferenceMap* logStreamsReference(void) {
+        return ELPP->registeredLoggers()->logStreamsReference();
     }
     /// @brief Populates all logger IDs in current repository.
     /// @param [out] targetList List of fill up.
