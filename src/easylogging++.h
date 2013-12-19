@@ -3110,7 +3110,11 @@ class Logger : public base::threading::ThreadSafe {
         m_isConfigured = false;  // we set it to false in case if we fail
         initUnflushedCount();
         if (m_typedConfigurations != nullptr) {
-            flush();
+            Configurations* c = const_cast<Configurations*>(&configurations);
+            if (c->hasConfiguration(Level::Global, ConfigurationType::Filename)) {
+                // This check is definitely needed for cases like _ELPP_NO_DEFAULT_LOG_FILE
+                flush();
+            }
         }
         base::threading::lock_guard lock(mutex());
         if (m_configurations != configurations) {

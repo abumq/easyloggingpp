@@ -6,6 +6,7 @@ Easylogging++ v9.42 RELEASE NOTES
 ==============================
 
  - Registry<>::get for VC++ does not have exception catch anymore that caused problems with CDB
+ - Issue with Visual C++ and `_ELPP_NO_DEFAULT_LOG_FILE` macro
 
 ==========================
 =         NOTES          =
