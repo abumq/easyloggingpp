@@ -1812,12 +1812,10 @@ class Registry : public AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>> {
 
     /// @brief Gets pointer from repository. If none found, nullptr is returned.
     inline T_Ptr* get(const T_Key& uniqKey) {
-        T_Ptr* ptrExisting = nullptr;
-        try {
-            ptrExisting = this->list().at(uniqKey);
-        } catch (...) {
-        }
-        return ptrExisting;
+        iterator it = this->list().find(uniqKey);
+        return it == this->list().end()
+                ? nullptr
+                : it->second;
     }
 
  private:
