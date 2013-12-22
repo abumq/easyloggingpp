@@ -1107,7 +1107,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![win8]    | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]    | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
 |![winxp]   | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
-|![mac]     | Mac OSX                | Clang++ 3.1 (Tested by contributor)                                                 |
+|![mac]     | Mac OSX                | Clang++ 3.1, g++ (You need `-std=c++11 -stdlib=libc++` to successfully compile)|
 |![sl]      | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
 |![fedora]  | Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
