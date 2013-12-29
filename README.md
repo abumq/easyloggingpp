@@ -12,7 +12,7 @@
   
   [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.42)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.42/samples)
   
   [![www] Project Homepage](http://easylogging.org/)
 
@@ -552,6 +552,10 @@ Verbose logging also has conditional and occasional logging aspects i.e,
 * `CVLOG_IF(condition, verbose-level, loggerID)`
 * `VLOG_EVERY_N(n, verbose-level)`
 * `CVLOG_EVERY_N(n, verbose-level, loggerID)`
+* `VLOG_AFTER_N(n, verbose-level)`
+* `CVLOG_AFTER_N(n, verbose-level, loggerID)`
+* `VLOG_N_TIMES(n, verbose-level)`
+* `CVLOG_N_TIMES(n, verbose-level, loggerID)`
 
  [![top] Goto Top](#table-of-contents)
 
