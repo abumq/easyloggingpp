@@ -524,9 +524,14 @@ for (int i = 1; i <= 10; ++i) {
 // 5 logs written; 2, 4, 6, 7, 10
 
 for (int i = 1; i <= 10; ++i) {
-   LOG_AFTER_N(2, INFO) << "Log after 2 hits";
+   LOG_AFTER_N(2, INFO) << "Log after 2 hits; " << i;
 }
-// 5 logs written; 3, 4, 5, 6, 7, 8, 9, 10
+// 8 logs written; 3, 4, 5, 6, 7, 8, 9, 10
+
+for (int i = 1; i <= 100; ++i) {
+   LOG_N_TIMES(3, INFO) << "Log only 3 times; " << i;
+}
+// 3 logs writter; 1, 2, 3
 ```
 
 > Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
