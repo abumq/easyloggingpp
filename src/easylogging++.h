@@ -2962,9 +2962,9 @@ class HitCounter {
     }
 
     /// @brief Validates hit counts and resets it if necessary
-    inline void validateHitCounts(std::size_t occasion) {
+    inline void validateHitCounts(std::size_t n, std::size_t resetVal = 0) {
         if (m_hitCounts >= base::consts::kMaxLogPerCounter) {
-            m_hitCounts = (occasion >= 1 ? base::consts::kMaxLogPerCounter % occasion : 0);
+            m_hitCounts = (n >= 1 ? base::consts::kMaxLogPerCounter % n : 0);
         }
         ++m_hitCounts;
     }
@@ -2979,6 +2979,10 @@ class HitCounter {
 
     inline std::size_t hitCounts(void) const {
         return m_hitCounts;
+    }
+    
+    inline void increment(void) {
+        ++m_hitCounts;
     }
 
     class Predicate {
@@ -3007,18 +3011,48 @@ class HitCounter {
 class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCounter, base::HitCounter::Predicate> {
  public:
     /// @brief Validates counter for every N, i.e, registers new if does not exist otherwise updates original one
-    /// @return True if validation resulted in triggering hit. Meaning logs will be written everytime true is returned
-    ///          and won't be written otherwise.
-    bool validateEveryN(const char* filename, unsigned long int lineNumber, 
-            std::size_t occasion) {  // NOLINT
+    /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+    bool validateEveryN(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
         base::threading::lock_guard lock(mutex());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
             registerNew(counter = new base::HitCounter(filename, lineNumber));
         }
-        counter->validateHitCounts(occasion);
-        bool result = (occasion >= 1 && counter->hitCounts() != 0 && counter->hitCounts() % occasion == 0);
+        counter->validateHitCounts(n);
+        bool result = (n >= 1 && counter->hitCounts() != 0 && counter->hitCounts() % n == 0);
         return result;
+    }
+    
+    /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
+    /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+    bool validateAfterN(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
+        base::threading::lock_guard lock(mutex());
+        base::HitCounter* counter = get(filename, lineNumber);
+        if (counter == nullptr) {
+            registerNew(counter = new base::HitCounter(filename, lineNumber));
+        }
+        // Do not use validateHitCounts here since we do not want to reset counter here
+        // Note the >= instead of > because we are incrementing
+        // after this check
+        if (counter->hitCounts() >= n)
+            return true;
+        counter->increment();
+        return false;
+    }
+        
+    /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
+    /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+    bool validateNTimes(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
+        base::threading::lock_guard lock(mutex());
+        base::HitCounter* counter = get(filename, lineNumber);
+        if (counter == nullptr) {
+            registerNew(counter = new base::HitCounter(filename, lineNumber));
+        }
+        counter->increment();
+        // Do not use validateHitCounts here since we do not want to reset counter here
+        if (counter->hitCounts() <= n)
+            return true;
+        return false;
     }
 
     /// @brief Gets hit counter registered at specified position
@@ -3522,9 +3556,16 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
         base::utils::safeDelete(m_vRegistry);
     }
 
-    inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, 
-            std::size_t occasion) {  // NOLINT
+    inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {  // NOLINT
         return hitCounters()->validateEveryN(filename, lineNumber, occasion);
+    }
+    
+    inline bool validateAfterNCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
+        return hitCounters()->validateAfterN(filename, lineNumber, n);
+    }
+    
+    inline bool validateNTimesCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
+        return hitCounters()->validateNTimes(filename, lineNumber, n);
     }
 
     inline base::RegisteredHitCounters* hitCounters(void) const {
@@ -4394,6 +4435,10 @@ class PErrorWriter : public base::Writer {
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, level, dispatchAction) if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
+#define _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, level, dispatchAction) if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
+    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
+#define _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, level, dispatchAction) if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
+    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -5045,6 +5090,20 @@ class VersionInfo : base::StaticClass {
 #undef CFATAL_EVERY_N
 #undef CTRACE_EVERY_N
 #undef CVERBOSE_EVERY_N
+#undef CINFO_AFTER_N
+#undef CWARNING_AFTER_N
+#undef CDEBUG_AFTER_N
+#undef CERROR_AFTER_N
+#undef CFATAL_AFTER_N
+#undef CTRACE_AFTER_N
+#undef CVERBOSE_AFTER_N
+#undef CINFO_N_TIMES
+#undef CWARNING_N_TIMES
+#undef CDEBUG_N_TIMES
+#undef CERROR_N_TIMES
+#undef CFATAL_N_TIMES
+#undef CTRACE_N_TIMES
+#undef CVERBOSE_N_TIMES
 // Normal logs
 #if _ELPP_INFO_LOG
 #   define CINFO(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Info, dispatchAction)
@@ -5119,7 +5178,7 @@ class VersionInfo : base::StaticClass {
 #else
 #   define CVERBOSE_IF(writer, condition_, vlevel, loggerId) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
-// Interval logs
+// Occasional logs
 #if _ELPP_INFO_LOG
 #   define CINFO_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Info, dispatchAction)
 #else
@@ -5151,9 +5210,81 @@ class VersionInfo : base::StaticClass {
 #   define CTRACE_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateCounter(__FILE__, __LINE__, occasion), vlevel, loggerId, dispatchAction)
+#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion), vlevel, loggerId, dispatchAction)
 #else
 #   define CVERBOSE_EVERY_N(writer, occasion, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_VERBOSE_LOG
+// After N logs
+#if _ELPP_INFO_LOG
+#   define CINFO_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Info, dispatchAction)
+#else
+#   define CINFO_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_INFO_LOG
+#if _ELPP_WARNING_LOG
+#   define CWARNING_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Warning, dispatchAction)
+#else
+#   define CWARNING_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_WARNING_LOG
+#if _ELPP_DEBUG_LOG
+#   define CDEBUG_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Debug, dispatchAction)
+#else
+#   define CDEBUG_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_DEBUG_LOG
+#if _ELPP_ERROR_LOG
+#   define CERROR_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Error, dispatchAction)
+#else
+#   define CERROR_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
+#   define CFATAL_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Fatal, dispatchAction)
+#else
+#   define CFATAL_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_FATAL_LOG
+#if _ELPP_TRACE_LOG
+#   define CTRACE_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Trace, dispatchAction)
+#else
+#   define CTRACE_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_TRACE_LOG
+#if _ELPP_VERBOSE_LOG
+#   define CVERBOSE_AFTER_N(writer, n, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateAfterNCounter(__FILE__, __LINE__, n), vlevel, loggerId, dispatchAction)
+#else
+#   define CVERBOSE_AFTER_N(writer, n, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_VERBOSE_LOG
+// N Times logs
+#if _ELPP_INFO_LOG
+#   define CINFO_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Info, dispatchAction)
+#else
+#   define CINFO_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_INFO_LOG
+#if _ELPP_WARNING_LOG
+#   define CWARNING_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Warning, dispatchAction)
+#else
+#   define CWARNING_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_WARNING_LOG
+#if _ELPP_DEBUG_LOG
+#   define CDEBUG_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Debug, dispatchAction)
+#else
+#   define CDEBUG_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_DEBUG_LOG
+#if _ELPP_ERROR_LOG
+#   define CERROR_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Error, dispatchAction)
+#else
+#   define CERROR_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
+#   define CFATAL_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Fatal, dispatchAction)
+#else
+#   define CFATAL_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_FATAL_LOG
+#if _ELPP_TRACE_LOG
+#   define CTRACE_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Trace, dispatchAction)
+#else
+#   define CTRACE_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#endif  // _ELPP_TRACE_LOG
+#if _ELPP_VERBOSE_LOG
+#   define CVERBOSE_N_TIMES(writer, n, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateNTimesCounter(__FILE__, __LINE__, n), vlevel, loggerId, dispatchAction)
+#else
+#   define CVERBOSE_N_TIMES(writer, n, vlevel, loggerId, dispatchAction) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 //
 // Custom Loggers - Requires (level, loggerId, dispatchAction)
@@ -5166,17 +5297,24 @@ class VersionInfo : base::StaticClass {
 #undef CLOG_VERBOSE_IF
 #undef CVLOG_IF
 #undef CLOG_EVERY_N
-#undef CLOG_VERBOSE_EVERY_N
 #undef CVLOG_EVERY_N
+#undef CLOG_AFTER_N
+#undef CVLOG_AFTER_N
+#undef CLOG_N_TIMES
+#undef CVLOG_N_TIMES
 // Normal logs
 #define CLOG(LEVEL, loggerId) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::NormalLog)
 #define CVLOG(vlevel, loggerId) CVERBOSE(el::base::Writer, vlevel, loggerId, el::base::DispatchAction::NormalLog)
 // Conditional logs
 #define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, condition, loggerId, el::base::DispatchAction::NormalLog)
 #define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(el::base::Writer, condition, vlevel, loggerId, el::base::DispatchAction::NormalLog)
-// Interval logs
+// Hit counts based logs
 #define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
 #define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
+#define CLOG_AFTER_N(n, LEVEL, loggerId) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
+#define CVLOG_AFTER_N(n, vlevel, loggerId) CVERBOSE_AFTER_N(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
+#define CLOG_N_TIMES(n, LEVEL, loggerId) C##LEVEL##_N_TIMES(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
+#define CVLOG_N_TIMES(n, vlevel, loggerId) CVERBOSE_N_TIMES(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
 //
 // Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
@@ -5187,6 +5325,10 @@ class VersionInfo : base::StaticClass {
 #undef VLOG_IF
 #undef LOG_EVERY_N
 #undef VLOG_EVERY_N
+#undef LOG_AFTER_N
+#undef VLOG_AFTER_N
+#undef LOG_N_TIMES
+#undef VLOG_N_TIMES
 #undef _CURRENT_FILE_LOGGER_ID
 #if defined(_LOGGER)
 #   define _CURRENT_FILE_LOGGER_ID _LOGGER
@@ -5201,9 +5343,13 @@ class VersionInfo : base::StaticClass {
 // Conditional logs
 #define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, _CURRENT_FILE_LOGGER_ID)
-// Interval logs
+// Hit counts based logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define VLOG_EVERY_N(n, vlevel) CVLOG_EVERY_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
+#define LOG_AFTER_N(n, LEVEL) CLOG_AFTER_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define VLOG_AFTER_N(n, vlevel) CVLOG_AFTER_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
+#define LOG_N_TIMES(n, LEVEL) CLOG_N_TIMES(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define VLOG_N_TIMES(n, vlevel) CVLOG_N_TIMES(n, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Generic PLOG()
 #undef CPLOG
 #undef CPLOG_IF
@@ -5224,39 +5370,67 @@ class VersionInfo : base::StaticClass {
 // Generic SYSLOG()
 #undef CSYSLOG
 #undef CSYSLOG_IF
+#undef CSYSLOG_EVERY_N
+#undef CSYSLOG_AFTER_N
+#undef CSYSLOG_N_TIMES
 #undef SYSLOG
 #undef SYSLOG_IF
+#undef SYSLOG_EVERY_N
+#undef SYSLOG_AFTER_N
+#undef SYSLOG_N_TIMES
 #undef DCSYSLOG
 #undef DCSYSLOG_IF
+#undef DCSYSLOG_EVERY_N
+#undef DCSYSLOG_AFTER_N
+#undef DCSYSLOG_N_TIMES
 #undef DSYSLOG
 #undef DSYSLOG_IF
+#undef DSYSLOG_EVERY_N
+#undef DSYSLOG_AFTER_N
+#undef DSYSLOG_N_TIMES
 #if defined(_ELPP_SYSLOG)
 #   define CSYSLOG(LEVEL, loggerId) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::SysLog)
 #   define CSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, condition, loggerId, el::base::DispatchAction::SysLog)
 #   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define CSYSLOG_AFTER_N(n, LEVEL, loggerId) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define CSYSLOG_N_TIMES(n, LEVEL, loggerId) C##LEVEL##_N_TIMES(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
 #   define SYSLOG(LEVEL) CSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_IF(condition, LEVEL) CSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_EVERY_N(n, LEVEL) CSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define SYSLOG_AFTER_N(n, LEVEL) CSYSLOG_AFTER_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define SYSLOG_N_TIMES(n, LEVEL) CSYSLOG_N_TIMES(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DCSYSLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::SysLog)
 #   define DCSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, (_ELPP_DEBUG_LOG) && (condition), loggerId, el::base::DispatchAction::SysLog)
 #   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define DCSYSLOG_AFTER_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define DCSYSLOG_N_TIMES(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
 #   define DSYSLOG(LEVEL) DCSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_IF(condition, LEVEL) DCSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_EVERY_N(n, LEVEL) DCSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define DSYSLOG_AFTER_N(n, LEVEL) DCSYSLOG_AFTER_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
+#   define DSYSLOG_N_TIMES(n, LEVEL) DCSYSLOG_N_TIMES(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #else
 #   define CSYSLOG(LEVEL, loggerId) el::base::NullWriter()
 #   define CSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
 #   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define CSYSLOG_AFTER_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define CSYSLOG_N_TIMES(n, LEVEL, loggerId) el::base::NullWriter()
 #   define SYSLOG(LEVEL) el::base::NullWriter()
 #   define SYSLOG_IF(condition, LEVEL) el::base::NullWriter()
 #   define SYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
+#   define SYSLOG_AFTER_N(n, LEVEL) el::base::NullWriter()
+#   define SYSLOG_N_TIMES(n, LEVEL) el::base::NullWriter()
 #   define DCSYSLOG(LEVEL, loggerId) el::base::NullWriter()
 #   define DCSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
 #   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define DCSYSLOG_AFTER_N(n, LEVEL, loggerId) el::base::NullWriter()
+#   define DCSYSLOG_N_TIMES(n, LEVEL, loggerId) el::base::NullWriter()
 #   define DSYSLOG(LEVEL) el::base::NullWriter()
 #   define DSYSLOG_IF(condition, LEVEL) el::base::NullWriter()
 #   define DSYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
-#endif  // defined(_ELPP_SYSLOG)
+#   define DSYSLOG_AFTER_N(n, LEVEL) el::base::NullWriter()
+#   define DSYSLOG_N_TIMES(n, LEVEL) el::base::NullWriter()
+#endif // defined(_ELPP_SYSLOG)
 //
 // Custom Debug Only Loggers - Requires (level, loggerId)
 //
@@ -5267,6 +5441,10 @@ class VersionInfo : base::StaticClass {
 #undef DCVLOG_IF
 #undef DCLOG_EVERY_N
 #undef DCVLOG_EVERY_N
+#undef DCLOG_AFTER_N
+#undef DCVLOG_AFTER_N
+#undef DCLOG_N_TIMES
+#undef DCVLOG_N_TIMES
 // Normal logs
 #define DCLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG(LEVEL, loggerId)
 #define DCLOG_VERBOSE(vlevel, loggerId) if (_ELPP_DEBUG_LOG) CLOG_VERBOSE(vlevel, loggerId)
@@ -5274,9 +5452,13 @@ class VersionInfo : base::StaticClass {
 // Conditional logs
 #define DCLOG_IF(condition, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_IF(condition, LEVEL, loggerId)
 #define DCVLOG_IF(condition, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_IF(condition, vlevel, loggerId)
-// Interval logs
+// Hit counts based logs
 #define DCLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_EVERY_N(n, LEVEL, loggerId)
 #define DCVLOG_EVERY_N(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_EVERY_N(n, vlevel, loggerId)
+#define DCLOG_AFTER_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_AFTER_N(n, LEVEL, loggerId)
+#define DCVLOG_AFTER_N(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_AFTER_N(n, vlevel, loggerId)
+#define DCLOG_N_TIMES(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_N_TIMES(n, LEVEL, loggerId)
+#define DCVLOG_N_TIMES(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_N_TIMES(n, vlevel, loggerId)
 //
 // Default Debug Only Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
@@ -5287,15 +5469,23 @@ class VersionInfo : base::StaticClass {
 #undef DVLOG_IF
 #undef DLOG_EVERY_N
 #undef DVLOG_EVERY_N
+#undef DLOG_AFTER_N
+#undef DVLOG_AFTER_N
+#undef DLOG_N_TIMES
+#undef DVLOG_N_TIMES
 // Normal logs
 #define DLOG(LEVEL) DCLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define DVLOG(vlevel) DCVLOG(vlevel, _CURRENT_FILE_LOGGER_ID)
 // Conditional logs
 #define DLOG_IF(condition, LEVEL) DCLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define DVLOG_IF(condition, vlevel) DCVLOG_IF(condition, vlevel, _CURRENT_FILE_LOGGER_ID)
-// Interval logs
+// Hit counts based logs
 #define DLOG_EVERY_N(n, LEVEL) DCLOG_EVERY_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define DVLOG_EVERY_N(n, vlevel) DCVLOG_EVERY_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
+#define DLOG_AFTER_N(n, LEVEL) DCLOG_AFTER_N(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DVLOG_AFTER_N(n, vlevel) DCVLOG_AFTER_N(n, vlevel, _CURRENT_FILE_LOGGER_ID)
+#define DLOG_N_TIMES(n, LEVEL) DCLOG_N_TIMES(n, LEVEL, _CURRENT_FILE_LOGGER_ID)
+#define DVLOG_N_TIMES(n, vlevel) DCVLOG_N_TIMES(n, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Check macros
 #undef CCHECK
 #undef PCCHECK

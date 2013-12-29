@@ -2,6 +2,12 @@ Easylogging++ v9.43 RELEASE NOTES
 ---------------------------------
 
 ==============================
+=       NEW FEATURES         =
+==============================
+
+ - Introduced `LOG_AFTER_N` and `LOG_N_TIMES` that works pretty much same as `LOG_EVERY_N`
+
+==============================
 =        BUG FIXES           =
 ==============================
 

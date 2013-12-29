@@ -26,6 +26,10 @@ TEST(WriteAllTest, l) {\
     EXPECT_EQ(s, tail(1));\
     LOG_EVERY_N(1, l) << name << " every n=1";\
     s = BUILD_STR(getDate() << " " << name << " every n=1\n");\
+    LOG_AFTER_N(1, l) << name << " after n=1";\
+    s = BUILD_STR(getDate() << " " << name << " after n=1\n");\
+    LOG_N_TIMES(2, l) << name << " n times=2";\
+    s = BUILD_STR(getDate() << " " << name << " n times=2\n");\
     EXPECT_EQ(s, tail(1));\
 }
 
@@ -35,7 +39,6 @@ TEST_LEVEL(ERROR, "Error")
 TEST_LEVEL(WARNING, "Warning")
 TEST_LEVEL(FATAL, "Fatal")
 TEST_LEVEL(TRACE, "Trace")
-
 
 TEST(WriteAllTest, VERBOSE) {
     Configurations cOld(*Loggers::getLogger("default")->configurations());
@@ -70,13 +73,39 @@ TEST(WriteAllTest, VERBOSE) {
 
 TEST(WriteAllTest, EVERY_N) {
     std::string s;
-    const char* name = "INFO";
+    const char* levelName = "INFO";
     for (int i = 1; i <= 6; ++i)
-        LOG_EVERY_N(2, INFO) << name << " every n=" << i;
+        LOG_EVERY_N(2, INFO) << levelName << " every n=" << i;
 
-    s = BUILD_STR(getDate() << " " << name << " every n=2\n"
-               << getDate() << " " << name << " every n=4\n"
-               << getDate() << " " << name << " every n=6\n");
+    s = BUILD_STR(getDate() << " " << levelName << " every n=2\n"
+               << getDate() << " " << levelName << " every n=4\n"
+               << getDate() << " " << levelName << " every n=6\n");
     EXPECT_EQ(s, tail(3));
+}
+
+TEST(WriteAllTest, AFTER_N) {
+    std::string s;
+    const char* levelName = "INFO";
+    for (int i = 1; i <= 6; ++i)
+        LOG_AFTER_N(2, INFO) << levelName << " after n=" << i;
+
+    s = BUILD_STR(getDate() << " " << levelName << " after n=3\n"
+               << getDate() << " " << levelName << " after n=4\n"
+               << getDate() << " " << levelName << " after n=5\n"
+               << getDate() << " " << levelName << " after n=6\n");
+    EXPECT_EQ(s, tail(4));
+}
+
+TEST(WriteAllTest, N_TIMES) {
+    std::string s;
+    const char* levelName = "INFO";
+    for (int i = 1; i <= 6; ++i)
+        LOG_N_TIMES(4, INFO) << levelName << " n times=" << i;
+
+    s = BUILD_STR(getDate() << " " << levelName << " n times=1\n"
+               << getDate() << " " << levelName << " n times=2\n"
+               << getDate() << " " << levelName << " n times=3\n"
+               << getDate() << " " << levelName << " n times=4\n");
+    EXPECT_EQ(s, tail(4));
 }
 #endif // WRITE_ALL_TEST_H_

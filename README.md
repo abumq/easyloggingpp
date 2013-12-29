@@ -511,13 +511,22 @@ Helper macros end with `_EVERY_N`;
 * `LOG_EVERY_N(n, LEVEL)`
 * `CLOG_EVERY_N(n, LEVEL, logger ID)`
 
+#### Other Hit Counts Based Logging
+There are some other ways of logging as well based on hit counts, this was introduced in ver. 9.43. These useful macros are
+* `LOG_AFTER_N(n, LEVEL)`; Only logs when we have reached hit counts of `n`
+* `LOG_N_TIMES(n, LEVEL)`; Logs n times
+
 #### Some examples:
 ```c++
 for (int i = 1; i <= 10; ++i) {
    LOG_EVERY_N(2, INFO) << "Logged every second iter";
 }
-
 // 5 logs written; 2, 4, 6, 7, 10
+
+for (int i = 1; i <= 10; ++i) {
+   LOG_AFTER_N(2, INFO) << "Log after 2 hits";
+}
+// 5 logs written; 3, 4, 5, 6, 7, 8, 9, 10
 ```
 
 > Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
