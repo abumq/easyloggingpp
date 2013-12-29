@@ -3006,10 +3006,11 @@ class HitCounter {
 /// @brief Repository for hit counters used across the application
 class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCounter, base::HitCounter::Predicate> {
  public:
-    /// @brief Validates counter, i.e, registers new if does not exist otherwise updates original one
+    /// @brief Validates counter for every N, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs will be written everytime true is returned
     ///          and won't be written otherwise.
-    bool validate(const char* filename, unsigned long int lineNumber, std::size_t occasion) {  // NOLINT
+    bool validateEveryN(const char* filename, unsigned long int lineNumber, 
+            std::size_t occasion) {  // NOLINT
         base::threading::lock_guard lock(mutex());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
@@ -3110,7 +3111,7 @@ class Logger : public base::threading::ThreadSafe {
         m_isConfigured = false;  // we set it to false in case if we fail
         initUnflushedCount();
         if (m_typedConfigurations != nullptr) {
-            Configurations* c = const_cast<Configurations*>(&configurations);
+            Configurations* c = const_cast<Configurations*>(m_typedConfigurations->configurations());
             if (c->hasConfiguration(Level::Global, ConfigurationType::Filename)) {
                 // This check is definitely needed for cases like _ELPP_NO_DEFAULT_LOG_FILE
                 flush();
@@ -3521,8 +3522,9 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
         base::utils::safeDelete(m_vRegistry);
     }
 
-    inline bool validateCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {  // NOLINT
-        return m_registeredHitCounters->validate(filename, lineNumber, occasion);
+    inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, 
+            std::size_t occasion) {  // NOLINT
+        return hitCounters()->validateEveryN(filename, lineNumber, occasion);
     }
 
     inline base::RegisteredHitCounters* hitCounters(void) const {
@@ -4390,7 +4392,7 @@ class PErrorWriter : public base::Writer {
 #define _ELPP_WRITE_LOG(writer, loggerId, level, dispatchAction) writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #define _ELPP_WRITE_LOG_IF(writer, condition, loggerId, level, dispatchAction) if (condition) \
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-#define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, level, dispatchAction) if (ELPP->validateCounter(__FILE__, __LINE__, occasion)) \
+#define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, level, dispatchAction) if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
     writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
