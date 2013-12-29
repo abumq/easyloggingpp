@@ -1,11 +1,10 @@
-QT       += core
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core
 
 TARGET = qt-gtest-proj
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors
 
 COMPILER = g++
 QMAKE_CC = $$COMPILER

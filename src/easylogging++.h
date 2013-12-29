@@ -2962,7 +2962,7 @@ class HitCounter {
     }
 
     /// @brief Validates hit counts and resets it if necessary
-    inline void validateHitCounts(std::size_t n, std::size_t resetVal = 0) {
+    inline void validateHitCounts(std::size_t n) {
         if (m_hitCounts >= base::consts::kMaxLogPerCounter) {
             m_hitCounts = (n >= 1 ? base::consts::kMaxLogPerCounter % n : 0);
         }
