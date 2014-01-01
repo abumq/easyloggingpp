@@ -484,6 +484,30 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
+Since ver. 9.42, there is new way introduced to use same macro i.e, `LOG` (and associated macros), this is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+
+A quick example is here
+```c++
+#ifndef _LOGGER
+#   define _LOGGER "update_manager"
+#endif
+#ifndef _PERFORMANCE_LOGGER
+#   define _PERFORMANCE_LOGGER _LOGGER
+#endif
+#include "easylogging++.h"
+UpdateManager::UpdateManager {
+    _TRACE; // Logs using LOG(TRACE) provided logger is already registered - i.e, update_manager
+}
+```
+
+```c++
+#include "easylogging++.h"
+UpdateManager::UpdateManager {
+    _TRACE; // Logs using LOG(TRACE) using default logger because no _LOGGER is defined unless you have it in makefile
+}
+```
+
+
  [![top] Goto Top](#table-of-contents)
  
 ### Conditional Logging
