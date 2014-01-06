@@ -16,8 +16,9 @@
   
   [![www] Project Homepage](http://easylogging.org/)
 
-  [![pledgie]](http://www.pledgie.com/campaigns/22070)
+  [![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
 
+  [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
 ---
 
@@ -1081,6 +1082,8 @@ Easylogging++ is free to use for any type of software but it costs money to main
 
 But please be sure the donation money is halaal in islam in every aspect, meaning it's not money from interest paid by bank or stolen etc. Have a look at [this document](http://www.auscif.com/wp-content/uploads/2012/09/Halal-Money-Guide-2012.pdf) for further details on what's halaal and what's not (haraam)
 
+[![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
+
 [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
  [![top] Goto Top](#table-of-contents)
@@ -1192,4 +1195,5 @@ Icons used in this manual (in compatibility section) are solely for information 
   [top]: http://easylogging.org/images/up.png?v=4
   [www]: http://easylogging.org/images/logo-www.png?v=6
   
+  [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
