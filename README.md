@@ -16,9 +16,9 @@
   
   [![www] Project Homepage](http://easylogging.org/)
 
-  [![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
-
   [![pledgie]](http://www.pledgie.com/campaigns/22070)
+
+  [![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
 
 ---
 
@@ -1120,13 +1120,13 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 ### Donation
 
-Easylogging++ is free to use for any type of software but it costs money to maintain the project and to run website (easylogging.org), so donations are very well accepted on your will. You can donate via paypal or by using credit card by going to http://easylogging.org and clicking 'Donate' on the bottom. 
+Easylogging++ is free to use for any type of software but it costs money to maintain the project and to run website (easylogging.org), so donations are very well accepted on your will. You can also donate by visiting http://easylogging.org or by clicking on one of the links below.
 
 But please be sure the donation money is halaal in islam in every aspect, meaning it's not money from interest paid by bank or stolen etc. Have a look at [this document](http://www.auscif.com/wp-content/uploads/2012/09/Halal-Money-Guide-2012.pdf) for further details on what's halaal and what's not (haraam)
 
-[![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
-
 [![pledgie]](http://www.pledgie.com/campaigns/22070)
+
+[![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4W7YDRCXWURWG)
 
  [![top] Goto Top](#table-of-contents)
 
