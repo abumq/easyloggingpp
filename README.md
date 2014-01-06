@@ -2,7 +2,7 @@
 
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
-> **Manual For v9.40**
+> **Manual For v9.43**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -10,9 +10,9 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.40)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.43)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/master/samples/)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.43/samples)
   
   [![www] Project Homepage](http://easylogging.org/)
 
@@ -485,6 +485,30 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
+Since ver. 9.42, there is new way introduced to use same macro i.e, `LOG` (and associated macros), this is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+
+A quick example is here
+```c++
+#ifndef _LOGGER
+#   define _LOGGER "update_manager"
+#endif
+#ifndef _PERFORMANCE_LOGGER
+#   define _PERFORMANCE_LOGGER _LOGGER
+#endif
+#include "easylogging++.h"
+UpdateManager::UpdateManager {
+    _TRACE; // Logs using LOG(TRACE) provided logger is already registered - i.e, update_manager
+}
+```
+
+```c++
+#include "easylogging++.h"
+UpdateManager::UpdateManager {
+    _TRACE; // Logs using LOG(TRACE) using default logger because no _LOGGER is defined unless you have it in makefile
+}
+```
+
+
  [![top] Goto Top](#table-of-contents)
  
 ### Conditional Logging
@@ -512,13 +536,27 @@ Helper macros end with `_EVERY_N`;
 * `LOG_EVERY_N(n, LEVEL)`
 * `CLOG_EVERY_N(n, LEVEL, logger ID)`
 
+#### Other Hit Counts Based Logging
+There are some other ways of logging as well based on hit counts, this was introduced in ver. 9.43. These useful macros are
+* `LOG_AFTER_N(n, LEVEL)`; Only logs when we have reached hit counts of `n`
+* `LOG_N_TIMES(n, LEVEL)`; Logs n times
+
 #### Some examples:
 ```c++
 for (int i = 1; i <= 10; ++i) {
    LOG_EVERY_N(2, INFO) << "Logged every second iter";
 }
-
 // 5 logs written; 2, 4, 6, 7, 10
+
+for (int i = 1; i <= 10; ++i) {
+   LOG_AFTER_N(2, INFO) << "Log after 2 hits; " << i;
+}
+// 8 logs written; 3, 4, 5, 6, 7, 8, 9, 10
+
+for (int i = 1; i <= 100; ++i) {
+   LOG_N_TIMES(3, INFO) << "Log only 3 times; " << i;
+}
+// 3 logs writter; 1, 2, 3
 ```
 
 > Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
@@ -539,6 +577,10 @@ Verbose logging also has conditional and occasional logging aspects i.e,
 * `CVLOG_IF(condition, verbose-level, loggerID)`
 * `VLOG_EVERY_N(n, verbose-level)`
 * `CVLOG_EVERY_N(n, verbose-level, loggerID)`
+* `VLOG_AFTER_N(n, verbose-level)`
+* `CVLOG_AFTER_N(n, verbose-level, loggerID)`
+* `VLOG_N_TIMES(n, verbose-level)`
+* `CVLOG_N_TIMES(n, verbose-level, loggerID)`
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1110,7 +1152,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![win8]    | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]    | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
 |![winxp]   | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
-|![mac]     | Mac OSX                | Clang++ 3.1 (Tested by contributor)                                                 |
+|![mac]     | Mac OSX                | Clang++ 3.1, g++ (You need `-std=c++11 -stdlib=libc++` to successfully compile)|
 |![sl]      | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
 |![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
 |![fedora]  | Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
