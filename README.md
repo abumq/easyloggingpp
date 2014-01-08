@@ -2,7 +2,7 @@
 
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
-> **Manual For v9.43**
+> **Manual For v9.44**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -10,9 +10,9 @@
 
   [![download] Download Latest](http://easylogging.org/latest.zip)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.43)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.44)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.43/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.44/samples)
   
   [![www] Project Homepage](http://easylogging.org/)
 
