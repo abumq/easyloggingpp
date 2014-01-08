@@ -795,7 +795,7 @@ Notes:
 ### Log File Rolling
 Easylogging++ has ability to roll out (or throw away) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
-If you are having failure in log-rollout may you have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck` or alternatively you can defined `_ELPP_STRICT_SIZE_CHECK` at compile-time to automatically add this while initializing.
+If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck` or alternatively you can define macro `_ELPP_STRICT_SIZE_CHECK` at compile-time to automatically add this while initializing.
 
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutHandler(const PreRollOutHandler& handler)` where `PreRollOutHandler` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
