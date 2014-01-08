@@ -5488,7 +5488,7 @@ class VersionInfo : base::StaticClass {
 #define DVLOG_N_TIMES(n, vlevel) DCVLOG_N_TIMES(n, vlevel, _CURRENT_FILE_LOGGER_ID)
 // Check macros
 #undef CCHECK
-#undef PCCHECK
+#undef CPCHECK
 #undef CCHECK_EQ
 #undef CCHECK_NE
 #undef CCHECK_LT
@@ -5560,7 +5560,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #undef DCCHECK_NOTNULL
 #undef DCCHECK_STRCASEEQ
 #undef DCCHECK_STRCASENE
-#undef DPCCHECK
+#undef DCPCHECK
 #undef DCHECK
 #undef DCHECK_EQ
 #undef DCHECK_NE
@@ -5584,7 +5584,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #define DCCHECK_STRNE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRNE(str1, str2, loggerId)
 #define DCCHECK_STRCASEEQ(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASEEQ(str1, str2, loggerId)
 #define DCCHECK_STRCASENE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASENE(str1, str2, loggerId)
-#define DPCCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) PCCHECK(condition, loggerId)
+#define DCPCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) CPCHECK(condition, loggerId)
 #define DCHECK(condition) DCCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_EQ(a, b) DCCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_NE(a, b) DCCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
@@ -5597,7 +5597,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #define DCHECK_STRNE(str1, str2) DCCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STRCASEEQ(str1, str2) DCCHECK_STRCASEEQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STRCASENE(str1, str2) DCCHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
-#define DPCHECK(condition) DPCCHECK(condition, _CURRENT_FILE_LOGGER_ID)
+#define DPCHECK(condition) DCPCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
