@@ -5597,7 +5597,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #define DCHECK_STRNE(str1, str2) DCCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STRCASEEQ(str1, str2) DCCHECK_STRCASEEQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STRCASENE(str1, str2) DCCHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
-#define DPCHECK(condition) DPCHECK(condition, _CURRENT_FILE_LOGGER_ID)
+#define DPCHECK(condition) DPCCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #if defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
