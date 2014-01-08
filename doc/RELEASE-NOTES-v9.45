@@ -5,7 +5,7 @@ Easylogging++ v9.45 RELEASE NOTES
 =        BUG FIXES           =
 ==============================
 
- - DPCHECK bug fix
+ - PCHECK macro bug fixes
 
 ==========================
 =         NOTES          =
