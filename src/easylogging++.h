@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.45
+//  Easylogging++ v9.46
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2013 Majid Khan
@@ -5017,9 +5017,9 @@ class Loggers : base::StaticClass {
 class VersionInfo : base::StaticClass {
  public:
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.45"); }
+    static inline const std::string version(void) { return std::string("9.46"); }
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("08-01-2014 1234hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("12-01-2014 1717hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON
@@ -5519,12 +5519,12 @@ class VersionInfo : base::StaticClass {
 #define CCHECK_GT(a, b, loggerId) CCHECK(a > b, loggerId)
 #define CCHECK_LE(a, b, loggerId) CCHECK(a <= b, loggerId)
 #define CCHECK_GE(a, b, loggerId) CCHECK(a >= b, loggerId)
-#define CHECK_EQ(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_NE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_LT(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_GT(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_LE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_GE(a, b) CCHECK(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_EQ(a, b) CCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_NE(a, b) CCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_LT(a, b) CCHECK_LT(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_GT(a, b) CCHECK_GT(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_LE(a, b) CCHECK_LE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_GE(a, b) CCHECK_GE(a, b, _CURRENT_FILE_LOGGER_ID)
 namespace el {
 namespace base {
 namespace utils {
@@ -5549,7 +5549,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #define CHECK_STREQ(str1, str2) CCHECK_STREQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_STRNE(str1, str2) CCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_STRCASEEQ(str1, str2) CCHECK_STRCASEEQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
-#define CHECK_STRCASENE(str1, str2) CHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_STRCASENE(str1, str2) CCHECK_STRCASENE(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #undef DCCHECK
 #undef DCCHECK_EQ
 #undef DCCHECK_NE
