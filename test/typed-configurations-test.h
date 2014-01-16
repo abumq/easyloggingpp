@@ -37,17 +37,17 @@ TEST(TypedConfigurationsTest, Initialization) {
 
     EXPECT_EQ("%datetime %level %msg", tConf.logFormat(Level::Info).userFormat());
     EXPECT_EQ("%datetime INFO  %msg", tConf.logFormat(Level::Info).format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
     EXPECT_EQ("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg", tConf.logFormat(Level::Debug).userFormat());
     std::string expected = BUILD_STR("%datetime %level DEBUG [" << OS::currentUser() << "@%%host] [%func] [%loc] %msg");
     EXPECT_EQ(expected, tConf.logFormat(Level::Debug).format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Debug).dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", tConf.logFormat(Level::Debug).dateTimeFormat());
 
     // This double quote is escaped at run-time for %date and %datetime
     EXPECT_EQ("%datetime %%datetime{%H:%m} %level %msg", tConf.logFormat(Level::Fatal).userFormat());
     EXPECT_EQ("%datetime %%datetime{%H:%m} FATAL %msg", tConf.logFormat(Level::Fatal).format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Fatal).dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", tConf.logFormat(Level::Fatal).dateTimeFormat());
 
     EXPECT_EQ("%datetime{%h:%m} %%level %level [%func] [%loc] %msg", tConf.logFormat(Level::Trace).userFormat());
     EXPECT_EQ("%datetime %level TRACE [%func] [%loc] %msg", tConf.logFormat(Level::Trace).format());
@@ -55,7 +55,7 @@ TEST(TypedConfigurationsTest, Initialization) {
 
     EXPECT_EQ("%%datetime{%h:%m} %datetime %level-%vlevel %msg", tConf.logFormat(Level::Verbose).userFormat());
     EXPECT_EQ("%%datetime{%h:%m} %datetime VER-%vlevel %msg", tConf.logFormat(Level::Verbose).format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", tConf.logFormat(Level::Verbose).dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", tConf.logFormat(Level::Verbose).dateTimeFormat());
 
     EXPECT_EQ("%%logger %%logger %logger %%logger %msg", tConf.logFormat(Level::Error).userFormat());
     EXPECT_EQ("%%logger %%logger %logger %logger %msg", tConf.logFormat(Level::Error).format());

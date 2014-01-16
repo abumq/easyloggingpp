@@ -24,17 +24,17 @@ TEST(LogFormatResolutionTest, DefaultFormat) {
     LogFormat defaultFormat(Level::Info, UNICODE_LITERAL("%logger %datetime %thread"));
     EXPECT_EQ("%logger %datetime %thread", defaultFormat.userFormat());
     EXPECT_EQ("%logger %datetime %thread", defaultFormat.format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", defaultFormat.dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat.dateTimeFormat());
 
     LogFormat defaultFormat2(Level::Info, UNICODE_LITERAL("%logger %datetime %thread"));
     EXPECT_EQ("%logger %datetime %thread", defaultFormat2.userFormat());
     EXPECT_EQ("%logger %datetime %thread", defaultFormat2.format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", defaultFormat2.dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat2.dateTimeFormat());
 
     LogFormat defaultFormat4(Level::Verbose, UNICODE_LITERAL("%logger %level-%vlevel %datetime %thread"));
     EXPECT_EQ("%logger %level-%vlevel %datetime %thread", defaultFormat4.userFormat());
     EXPECT_EQ("%logger VER-%vlevel %datetime %thread", defaultFormat4.format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s,%g", defaultFormat4.dateTimeFormat());
+    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat4.dateTimeFormat());
 }
 
 TEST(LogFormatResolutionTest, EscapedFormat) {
