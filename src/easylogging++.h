@@ -643,8 +643,8 @@ namespace consts {
     static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
             "September", "October", "November", "December" };
-    static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Ju", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %h:%m:%s,%g";
+    static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %H:%m:%s,%g";
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
@@ -3959,7 +3959,7 @@ class Writer : base::NoCopy {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(base::consts::kDefaultLoggerId, Level::Error, file, line, func)
+            Writer(base::consts::kDefaultLoggerId, Level::Debug, file, line, func)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
