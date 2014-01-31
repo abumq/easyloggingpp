@@ -59,6 +59,7 @@
     <a href="#stl-logging">STL Logging</a>
         <a href="#supported-templates">Supported Templates</a>
     <a href="#registering-new-loggers">Registering New Loggers</a>
+    <a href="#unregister-loggers">Unregister Loggers</a>
     <a href="#populating-existing-logger-ids">Populating Existing Logger IDs</a>
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
@@ -666,7 +667,16 @@ This will register a new logger if it does not already exist otherwise it will g
 When you register a new logger, default configurations are used (see Default Configurations section above). Also worth noticing, logger IDs are case sensitive.
 
  [![top] Goto Top](#table-of-contents)
- 
+
+### Unregister Loggers
+You may unregister loggers; any logger except for `default`. You should be really careful with this function, only unregister loggers that you have created yourself otherwise you may end up in unexpected errors. For example, you dont want to unregister logger that is used or initialized by a third-party library and it may be using it.
+
+To unregister logger, use `el::Loggers::unregisterLogger("logger-id")`
+
+> Since version 9.49
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Populating Existing Logger IDs
 Although this is a rare situation but if you wish to get list of all the logger IDs currently in repository, you may use `el::Loggers::populateAllLoggerIds(std::vector<std::string>&)` function to do that. The list passed in is cleared and filled up with all existing logger IDs.
 
