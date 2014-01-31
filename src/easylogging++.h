@@ -3314,6 +3314,17 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
         return logger_;
     }
 
+    bool remove(const std::string& id) {
+        if (id == "default") {
+            return false;
+        }
+        Logger* logger = base::utils::Registry<Logger, std::string>::get(id);
+        if (logger != nullptr) {
+            unregister(logger);
+        }
+        return true;
+    }
+
     inline bool has(const std::string& id) {
         return get(id, false) != nullptr;
     }
@@ -4878,6 +4889,11 @@ class Loggers : base::StaticClass {
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
         return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
+    }
+    /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
+    ///        loggers initialized / used by third-party libs.
+    static inline bool unregisterLogger(const std::string& identity) {
+        return ELPP->registeredLoggers()->remove(identity);
     }
     /// @brief Whether or not logger with id is registered
     static inline bool hasLogger(const std::string& identity) {
