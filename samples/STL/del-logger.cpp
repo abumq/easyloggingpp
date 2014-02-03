@@ -18,5 +18,6 @@ int main(void) {
     CLOG(INFO, "test") << "Write";
     el::Loggers::unregisterLogger("test");
     CLOG(INFO, "test") << "Send me error";
+    DLOG(INFO) << "Wow";
     return 0;
 }

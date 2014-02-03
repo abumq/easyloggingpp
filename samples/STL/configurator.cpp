@@ -11,7 +11,8 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-int main(void) {
+int main(int argc, char** argv) {
+    _START_EASYLOGGINGPP(argc, argv);
     LOG(INFO) << "Info log using 'default' logger before using configuration";
    
     el::Configurations confFromFile("../default-logger.conf");
