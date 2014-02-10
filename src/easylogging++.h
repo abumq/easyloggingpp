@@ -645,6 +645,7 @@ namespace consts {
             "September", "October", "November", "December" };
     static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
     static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %H:%m:%s,%g";
+    static const char* kDefaultDateTimeFormatInFilename =      "%d-%M-%Y_%H-%m";
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
@@ -2865,24 +2866,63 @@ class TypedConfigurations : public base::threading::ThreadSafe {
         return atol(confVal.c_str());
     }
 
+    std::string resolveFilename(const std::string& filename) {
+        std::string resultingFilename = filename;
+        std::size_t dateIndex = std::string::npos;
+        if ((dateIndex = resultingFilename.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
+            while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatEscapeChar) {
+                dateIndex = resultingFilename.find(base::consts::kDateTimeFormatSpecifier, dateIndex + 1);
+            }
+            if (dateIndex != std::string::npos) {
+                const base::type::char_t* ptr = resultingFilename.c_str() + dateIndex;
+                // Goto end of specifier
+                ptr += std::string(base::consts::kDateTimeFormatSpecifier).size();
+                std::string fmt;
+                if ((resultingFilename.size() > dateIndex) && (ptr[0] == '{')) {
+                    // User has provided format for date/time
+                    ++ptr;
+                    int count = 1;  // Start by 1 in order to remove starting brace
+                    std::stringstream ss;
+                    for (; *ptr; ++ptr, ++count) {
+                        if (*ptr == '}') {
+                            ++count;  // In order to remove ending brace
+                            break;
+                        }
+                        ss << *ptr;
+                    }
+                    resultingFilename.erase(dateIndex + std::string(base::consts::kDateTimeFormatSpecifier).size(), count);
+                    fmt = ss.str();
+                } else {
+                    fmt = std::string(base::consts::kDefaultDateTimeFormatInFilename);
+                }
+                MillisecondsWidth msWidth(3);
+                std::string now = base::utils::DateTime::getDateTime(fmt.c_str(), &msWidth);
+                base::utils::Str::replaceAll(now, '/', '-'); // Replace path element since we are dealing with filename
+                base::utils::Str::replaceFirstWithEscape(resultingFilename, std::string(base::consts::kDateTimeFormatSpecifier), now);
+            }
+        }
+        return resultingFilename;
+    }
+
     void insertFile(const Level& level, const std::string& fullFilename) {
-        if (fullFilename.empty()) {
+        std::string resolvedFilename = resolveFilename(fullFilename);
+        if (resolvedFilename.empty()) {
             std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
                     << LevelHelper::convertToString(level) << "]";
         }
-        std::string filePath = base::utils::File::extractPathFromFilename(fullFilename, base::consts::kFilePathSeperator);
-        if (filePath.size() < fullFilename.size()) {
+        std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeperator);
+        if (filePath.size() < resolvedFilename.size()) {
             base::utils::File::createPath(filePath);
         }
         auto create = [&](const Level& level) {
-            base::LogStreamsReferenceMap::iterator filestreamIter = m_logStreamsReference->find(fullFilename);
+            base::LogStreamsReferenceMap::iterator filestreamIter = m_logStreamsReference->find(resolvedFilename);
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
-                base::type::fstream_t* fs = base::utils::File::newFileStream(fullFilename);
+                base::type::fstream_t* fs = base::utils::File::newFileStream(resolvedFilename);
                 if (fs != nullptr) {
-                    m_filenameMap.insert(std::make_pair(level, fullFilename));
+                    m_filenameMap.insert(std::make_pair(level, resolvedFilename));
                     m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
-                    m_logStreamsReference->insert(std::make_pair(fullFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
+                    m_logStreamsReference->insert(std::make_pair(resolvedFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
                 }
                 // else we already display error from File::newFileStream()
             } else {
