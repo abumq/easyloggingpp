@@ -2868,15 +2868,16 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 
     std::string resolveFilename(const std::string& filename) {
         std::string resultingFilename = filename;
+#if defined(_ELPP_FILENAME_TIMESTAMP)
         std::size_t dateIndex = std::string::npos;
-        if ((dateIndex = resultingFilename.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
+        if ((dateIndex = resultingFilename.find((char*)base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
             while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatEscapeChar) {
-                dateIndex = resultingFilename.find(base::consts::kDateTimeFormatSpecifier, dateIndex + 1);
+                dateIndex = resultingFilename.find((char*)base::consts::kDateTimeFormatSpecifier, dateIndex + 1);
             }
             if (dateIndex != std::string::npos) {
-                const base::type::char_t* ptr = resultingFilename.c_str() + dateIndex;
+                const char* ptr = resultingFilename.c_str() + dateIndex;
                 // Goto end of specifier
-                ptr += std::string(base::consts::kDateTimeFormatSpecifier).size();
+                ptr += std::string((char*)base::consts::kDateTimeFormatSpecifier).size();
                 std::string fmt;
                 if ((resultingFilename.size() > dateIndex) && (ptr[0] == '{')) {
                     // User has provided format for date/time
@@ -2890,7 +2891,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
                         }
                         ss << *ptr;
                     }
-                    resultingFilename.erase(dateIndex + std::string(base::consts::kDateTimeFormatSpecifier).size(), count);
+                    resultingFilename.erase(dateIndex + std::string((char*)base::consts::kDateTimeFormatSpecifier).size(), count);
                     fmt = ss.str();
                 } else {
                     fmt = std::string(base::consts::kDefaultDateTimeFormatInFilename);
@@ -2898,9 +2899,10 @@ class TypedConfigurations : public base::threading::ThreadSafe {
                 MillisecondsWidth msWidth(3);
                 std::string now = base::utils::DateTime::getDateTime(fmt.c_str(), &msWidth);
                 base::utils::Str::replaceAll(now, '/', '-'); // Replace path element since we are dealing with filename
-                base::utils::Str::replaceFirstWithEscape(resultingFilename, std::string(base::consts::kDateTimeFormatSpecifier), now);
+                base::utils::Str::replaceAll(resultingFilename, std::string((char*)base::consts::kDateTimeFormatSpecifier), now);
             }
         }
+#endif // _ELPP_FILENAME_TIMESTAMP
         return resultingFilename;
     }
 
