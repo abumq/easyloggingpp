@@ -4517,14 +4517,18 @@ public:
 #endif
 class PerformanceTrackingData {
 public:
-    PerformanceTrackingData(base::Trackable* trackable);
-    const std::string* blockName() const;
-    const struct timeval* startTime() const;
-    const struct timeval* endTime() const;
-    const base::type::string_t* formattedTimeTaken() const;
+    // Do not use constructor, will run into multiple definition error, use init(Trackable*)
+    explicit PerformanceTrackingData() : m_trackable(nullptr) {}
+    inline const std::string* blockName() const;
+    inline const struct timeval* startTime() const;
+    inline const struct timeval* endTime() const;
+    inline const base::type::string_t* formattedTimeTaken() const;
 private:
     base::Trackable* m_trackable;
     base::type::string_t m_formattedTimeTaken;
+    inline void init(base::Trackable*);
+
+    friend class base::Trackable;
 };
 namespace base {
 /// @brief Represents trackable block of code that conditionally adds performance status to log
@@ -4568,7 +4572,8 @@ public:
                 base::utils::DateTime::gettimeofday(&m_endTime);
                 _ELPP_WRITE_LOG(el::base::Writer, m_loggerId, m_level, base::DispatchAction::NormalLog) << "Executed [" << m_blockName << "] in [" << *this << "]";
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
-                PerformanceTrackingData data(this);
+                PerformanceTrackingData data;
+                data.init(this);
                 ELPP->postPerformanceTrackingHandler()(&data);
 #   endif // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             }
@@ -4641,14 +4646,13 @@ private:
     }
 };
 } // namespace base
-
-PerformanceTrackingData::PerformanceTrackingData(base::Trackable* trackable) :
-    m_trackable(trackable) { m_formattedTimeTaken = m_trackable->getFormattedTimeTaken(); }
-const std::string* PerformanceTrackingData::blockName() const { return const_cast<const std::string*>(&m_trackable->m_blockName); }
-const struct timeval* PerformanceTrackingData::startTime() const { return const_cast<const struct timeval*>(&m_trackable->m_startTime); }
-const struct timeval* PerformanceTrackingData::endTime() const { return const_cast<const struct timeval*>(&m_trackable->m_endTime); }
-const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const { return &m_formattedTimeTaken; }
-
+namespace {
+inline const std::string* PerformanceTrackingData::blockName() const { return const_cast<const std::string*>(&m_trackable->m_blockName); }
+inline const struct timeval* PerformanceTrackingData::startTime() const { return const_cast<const struct timeval*>(&m_trackable->m_startTime); }
+inline const struct timeval* PerformanceTrackingData::endTime() const { return const_cast<const struct timeval*>(&m_trackable->m_endTime); }
+inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const { return &m_formattedTimeTaken; }
+inline void PerformanceTrackingData::init(base::Trackable* trackable) { m_trackable = trackable; m_formattedTimeTaken = m_trackable->getFormattedTimeTaken(); }
+} // namespace
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
