@@ -4471,7 +4471,7 @@ protected:
         for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
             operator << (*begin_);
             m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
-         }
+        }
         if (begin_ != end_) {
             m_logger->stream() << UNICODE_LITERAL("...");
         }
