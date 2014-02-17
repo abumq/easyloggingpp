@@ -4528,7 +4528,7 @@ private:
     base::type::string_t m_formattedTimeTaken;
     inline void init(base::Trackable*);
 
-    friend class base::Trackable;
+    friend class el::base::Trackable;
 };
 namespace base {
 /// @brief Represents trackable block of code that conditionally adds performance status to log
