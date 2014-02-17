@@ -6,6 +6,7 @@
  // @author mkhan3189
  //
 
+#define _ELPP_HANDLE_POST_PERFORMANCE_TRACKING // we need this!
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

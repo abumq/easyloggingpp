@@ -63,6 +63,7 @@
     <a href="#populating-existing-logger-ids">Populating Existing Logger IDs</a>
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
+        <a href="#make-use-of-performance-tracking-data">Make Use of Performance Tracking Data</a>
     <a href="#log-file-rolling">Log File Rolling</a>
     <a href="#crash-handling">Crash Handling</a>
         <a href="#installing-custom-crash-handlers">Installing Custom Crash Handlers</a>
@@ -801,7 +802,18 @@ Notes:
 5. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
  [![top] Goto Top](#table-of-contents)
+
+#### Make Use of Performance Tracking Data
+If you wish to capture performance tracking data right after it is finished, you can do so by defining `_ELPP_HANDLE_POST_PERFORMANCE_TRACKING`, by doing so you are telling library to trigger an installed post log dispatch handler, called `PostPerformanceTrackingHandler` in `el` namespace.
+
+In order to install this handler, you need a function with signature `void handler(const el::PostLogDispatchHandler*)` and install it at anytime using `el::Helpers::installPostPerformanceTrackingHandler(handler)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPostPerformanceTrackingHandler()`
+
+ > It is strongly recommended to not use any performance tracking within this handler otherwise you will run into indefinite recursive loop of calling this handler.
  
+ > Since ver. 9.54
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Log File Rolling
 Easylogging++ has ability to roll out (or throw away) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 

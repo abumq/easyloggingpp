@@ -4567,8 +4567,10 @@ public:
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
                 _ELPP_WRITE_LOG(el::base::Writer, m_loggerId, m_level, base::DispatchAction::NormalLog) << "Executed [" << m_blockName << "] in [" << *this << "]";
+#   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data(this);
                 ELPP->postPerformanceTrackingHandler()(&data);
+#   endif // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             }
         }
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
