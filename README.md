@@ -1181,7 +1181,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
 |![fedora]  | Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
 |![ubuntu]  | Ubuntu 13.04           | 64-bit, using g++ 4.7.3 (libstdc++6-4.7-dev)                                        |
-|![freebsd] | (from github user)     | (from github user)                                                                  |
+|![freebsd] | FreeBSD                | (from github user)                                                                  |
 |![android] | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
 
 Easylogging++ has also been tested with following C++ libraries;
