@@ -4646,13 +4646,11 @@ private:
     }
 };
 } // namespace base
-namespace {
 inline const std::string* PerformanceTrackingData::blockName() const { return const_cast<const std::string*>(&m_trackable->m_blockName); }
 inline const struct timeval* PerformanceTrackingData::startTime() const { return const_cast<const struct timeval*>(&m_trackable->m_startTime); }
 inline const struct timeval* PerformanceTrackingData::endTime() const { return const_cast<const struct timeval*>(&m_trackable->m_endTime); }
 inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const { return &m_formattedTimeTaken; }
 inline void PerformanceTrackingData::init(base::Trackable* trackable) { m_trackable = trackable; m_formattedTimeTaken = m_trackable->getFormattedTimeTaken(); }
-} // namespace
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
