@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.55
+//  Easylogging++ v9.55 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012 - 2014 Majid Khan
@@ -146,6 +146,15 @@
 // Log file permissions for unix-based systems
 #   define _ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif  // _ELPP_OS_UNIX
+#if defined(_ELPP_AS_DLL) && _ELPP_COMPILER_MSVC
+#   if defined(_ELPP_EXPORT_SYMBOLS)
+#      define _ELPP_EXPORT __declspec(dllexport)
+#   else
+#      define _ELPP_EXPORT __declspec(dllimport)
+#   endif // defined(_ELPP_EXPORT_SYMBOLS)
+#else
+#   define _ELPP_EXPORT
+#endif // defined(_ELPP_DLL_EXPORTS)
 // Some special functions that are VC++ specific
 #undef STRTOK
 #undef STRERROR
@@ -3774,7 +3783,7 @@ private:
         setApplicationArguments(argc, const_cast<char**>(argv));
     }
 };
-extern std::unique_ptr<base::Storage> elStorage;
+extern _ELPP_EXPORT std::unique_ptr<base::Storage> elStorage;
 #define ELPP el::base::elStorage
 class DefaultLogBuilder : public api::LogBuilder {
 public:
