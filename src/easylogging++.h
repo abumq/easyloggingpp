@@ -172,11 +172,11 @@
 #   define STRCPY(a, b, len) strcpy(a, b)  // NOLINT
 #endif
 // Compiler specific support evaluations
-#if _ELPP_MINGW || _ELPP_COMPILER_CLANG
-#   define _ELPP_USE_STD_THREADING 0
-#else
+#if (!_ELPP_MINGW && !_ELPP_COMPILER_CLANG) || defined(_ELPP_FORCE_USE_STD_THREAD)
 #   define _ELPP_USE_STD_THREADING 1
-#endif  // _ELPP_MINGW || _ELPP_COMPILER_CLANG
+#else
+#   define _ELPP_USE_STD_THREADING 0
+#endif  // (!_ELPP_MINGW && !_ELPP_COMPILER_CLANG) || defined(_ELPP_FORCE_USE_STD_THREAD)
 #undef FINAL
 #if _ELPP_COMPILER_INTEL || (_ELPP_GCC_VERSION < 40702)
 #   define FINAL
@@ -351,6 +351,8 @@ namespace el {
 /// @brief Namespace containing base/internal functionality used by easylogging++
 namespace base {
 class Storage;
+class RegisteredLoggers;
+class Trackable;
 /// @brief Data types for unicode support
 namespace type {
 #undef ELPP_LITERAL
@@ -3149,9 +3151,6 @@ public:
         return get(filename, lineNumber);
     }
 };
-class RegisteredLoggers;
-class Storage;
-class Trackable;
 }  // namespace base
 namespace api {
 class LogBuilder : base::NoCopy {
@@ -3364,7 +3363,6 @@ private:
     }
 };
 namespace base {
-class Storage;
 /// @brief Loggers repository
 class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 public:

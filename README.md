@@ -439,6 +439,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_STOP_ON_FIRST_ASSERTION`          | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
 | `_ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
 | `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
+| `_ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `_ELPP_THREAD_SAFE` (since v9.56) |
 | `_ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
 | `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
 | `_ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
@@ -703,7 +704,7 @@ Easylogging++ is feature-rich logging library. Apart from features already menti
 
 ### Performance Tracking
 One of the most notable features of Easylogging++ is its ability to track performance of your function or block of function. 
-Please note, this is not backward compatible as previously we had bad macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v8.91 ReadMe for older way of doing it)
+Please note, this is not backward compatible as previously we had macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v8.91 ReadMe for older way of doing it)
 The new way of tracking performance is much easier and reliable. All you need to do is use one of two macros from where you want to start tracking.
 * `TIMED_FUNC(obj-name)`
 * `TIMED_SCOPE(obj-name, block-name)`
