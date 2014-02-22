@@ -6,6 +6,7 @@ Easylogging++ v9.56 RELEASE NOTES
 =========================
 
  - Issue with writing unicode characters to file (issue #151)
+ - Issue with syslog along with unicode support
 
 =========================
 =     NEW FEATURES      =

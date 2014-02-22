@@ -1260,6 +1260,23 @@ public:
         _ELPP_UNUSED(lim);  // For *nix we dont have anything using lim in above STRCPY macro
         return buff;
     }
+    
+    /**
+     * NOTE: Need to free return value after use!
+     */
+    static char* wcharPtrToCharPtr(const wchar_t* line) {
+        std::size_t len_ = wcslen(line) + 1;
+        char* buff_ = static_cast<char*>(malloc(len_ + 1));
+#      if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
+        std::wcstombs(buff_, line, len_);
+#      elif _ELPP_OS_WINDOWS
+        std::size_t convCount_ = 0;
+        mbstate_t mbState_;
+        ::memset(static_cast<void*>(&mbState_), 0, sizeof(mbState_));
+        wcsrtombs_s(&convCount_, buff_, len_, &line, len_, &mbState_);
+#      endif  // _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
+       return buff_;
+    }
 };
 #define ELPP_RESOLVED_VAL(var) s_##var
 #define ELPP_RESOLVED(var) s_##var##resolved
@@ -3943,8 +3960,12 @@ private:
                 sysLogPriority = LOG_DEBUG;
             else
                 sysLogPriority = LOG_NOTICE;
-            // FIXME: This does not work with _ELPP_UNICODE
-            syslog(sysLogPriority, "%s", logLine.c_str());
+#   if defined(_ELPP_UNICODE)
+            char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
+#   else
+            const char* line = logLine.c_str();
+#   endif
+            syslog(sysLogPriority, "%s", line);
         }
 #endif  // defined(_ELPP_SYSLOG)
     }
@@ -4180,16 +4201,7 @@ public:
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << log_;
 #   else
-        std::size_t len_ = wcslen(log_) + 1;
-        char* buff_ = static_cast<char*>(malloc(len_ + 1));
-#      if _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
-        std::wcstombs(buff_, log_, len_);
-#      elif _ELPP_OS_WINDOWS
-        std::size_t convCount_ = 0;
-        mbstate_t mbState_;
-        ::memset(static_cast<void*>(&mbState_), 0, sizeof(mbState_));
-        wcsrtombs_s(&convCount_, buff_, len_, &log_, len_, &mbState_);
-#      endif  // _ELPP_OS_UNIX || (_ELPP_OS_WINDOWS && !_ELPP_CRT_DBG_WARNINGS)
+        char* buff_ = base::utils::Str::wcharPtrToCharPtr(log_);
         m_logger->stream() << buff_;
         free(buff_);
 #   endif

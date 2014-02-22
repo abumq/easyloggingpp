@@ -69,16 +69,16 @@ TEST(StringUtilsTest, Contains) {
 TEST(StringUtilsTest, ReplaceFirstWithEscape) {
     el::base::type::string_t str = ELPP_LITERAL("Rolling in the deep");
     Str::replaceFirstWithEscape(str, ELPP_LITERAL("Rolling"), ELPP_LITERAL("Swimming"));
-    EXPECT_EQ("Swimming in the deep", str);
+    EXPECT_EQ(ELPP_LITERAL("Swimming in the deep"), str);
     str = ELPP_LITERAL("this is great and this is not");
     Str::replaceFirstWithEscape(str, ELPP_LITERAL("this is"), ELPP_LITERAL("that was"));
-    EXPECT_EQ("that was great and this is not", str);
+    EXPECT_EQ(ELPP_LITERAL("that was great and this is not"), str);
     str = ELPP_LITERAL("%this is great and this is not");
     Str::replaceFirstWithEscape(str, ELPP_LITERAL("this is"), ELPP_LITERAL("that was"));
-    EXPECT_EQ("this is great and that was not", str);
+    EXPECT_EQ(ELPP_LITERAL("this is great and that was not"), str);
     str = ELPP_LITERAL("%datetime %level %msg");
     Str::replaceFirstWithEscape(str, ELPP_LITERAL("%level"), LevelHelper::convertToString(Level::Info));
-    EXPECT_EQ("%datetime INFO %msg", str);
+    EXPECT_EQ(ELPP_LITERAL("%datetime INFO %msg"), str);
 }
 
 TEST(StringUtilsTest, AddToBuff) {
