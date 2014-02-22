@@ -352,22 +352,22 @@ namespace el {
 namespace base {
 /// @brief Data types for unicode support
 namespace type {
-#undef UNICODE_LITERAL
-#undef UNICODE_STRLEN
-#undef UNICODE_COUT
+#undef ELPP_LITERAL
+#undef ELPP_STRLEN
+#undef ELPP_COUT
 #if defined(_ELPP_UNICODE)
-#   define UNICODE_LITERAL(txt) L##txt
-#   define UNICODE_STRLEN wcslen
-#   define UNICODE_COUT std::wcout
+#   define ELPP_LITERAL(txt) L##txt
+#   define ELPP_STRLEN wcslen
+#   define ELPP_COUT std::wcout
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
 typedef std::wfstream fstream_t;
 typedef std::wostream ostream_t;
 #else
-#   define UNICODE_LITERAL(txt) txt
-#   define UNICODE_STRLEN strlen
-#   define UNICODE_COUT std::cout
+#   define ELPP_LITERAL(txt) txt
+#   define ELPP_STRLEN strlen
+#   define ELPP_COUT std::cout
 typedef char char_t;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;
@@ -632,27 +632,27 @@ namespace base {
 /// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
 namespace consts {
     // Level log values - These are values that are replaced in place of %level format specifier
-    static const base::type::char_t* kInfoLevelLogValue     =   UNICODE_LITERAL("INFO ");
-    static const base::type::char_t* kDebugLevelLogValue    =   UNICODE_LITERAL("DEBUG");
-    static const base::type::char_t* kWarningLevelLogValue  =   UNICODE_LITERAL("WARN ");
-    static const base::type::char_t* kErrorLevelLogValue    =   UNICODE_LITERAL("ERROR");
-    static const base::type::char_t* kFatalLevelLogValue    =   UNICODE_LITERAL("FATAL");
-    static const base::type::char_t* kVerboseLevelLogValue  =   UNICODE_LITERAL("VER");
-    static const base::type::char_t* kTraceLevelLogValue    =   UNICODE_LITERAL("TRACE");
+    static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
+    static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
+    static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN ");
+    static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
+    static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
+    static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
+    static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
     // Format specifiers - These are used to define log format
-    static const base::type::char_t* kAppNameFormatSpecifier          =      UNICODE_LITERAL("%app");
-    static const base::type::char_t* kLoggerIdFormatSpecifier         =      UNICODE_LITERAL("%logger");
-    static const base::type::char_t* kThreadIdFormatSpecifier         =      UNICODE_LITERAL("%thread");
-    static const base::type::char_t* kSeverityLevelFormatSpecifier    =      UNICODE_LITERAL("%level");
-    static const base::type::char_t* kDateTimeFormatSpecifier         =      UNICODE_LITERAL("%datetime");
-    static const base::type::char_t* kLogFileFormatSpecifier          =      UNICODE_LITERAL("%file");
-    static const base::type::char_t* kLogLineFormatSpecifier          =      UNICODE_LITERAL("%line");
-    static const base::type::char_t* kLogLocationFormatSpecifier      =      UNICODE_LITERAL("%loc");
-    static const base::type::char_t* kLogFunctionFormatSpecifier      =      UNICODE_LITERAL("%func");
-    static const base::type::char_t* kCurrentUserFormatSpecifier      =      UNICODE_LITERAL("%user");
-    static const base::type::char_t* kCurrentHostFormatSpecifier      =      UNICODE_LITERAL("%host");
-    static const base::type::char_t* kMessageFormatSpecifier          =      UNICODE_LITERAL("%msg");
-    static const base::type::char_t* kVerboseLevelFormatSpecifier     =      UNICODE_LITERAL("%vlevel");
+    static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
+    static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
+    static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
+    static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
+    static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
+    static const base::type::char_t* kLogFileFormatSpecifier          =      ELPP_LITERAL("%file");
+    static const base::type::char_t* kLogLineFormatSpecifier          =      ELPP_LITERAL("%line");
+    static const base::type::char_t* kLogLocationFormatSpecifier      =      ELPP_LITERAL("%loc");
+    static const base::type::char_t* kLogFunctionFormatSpecifier      =      ELPP_LITERAL("%func");
+    static const base::type::char_t* kCurrentUserFormatSpecifier      =      ELPP_LITERAL("%user");
+    static const base::type::char_t* kCurrentHostFormatSpecifier      =      ELPP_LITERAL("%host");
+    static const base::type::char_t* kMessageFormatSpecifier          =      ELPP_LITERAL("%msg");
+    static const base::type::char_t* kVerboseLevelFormatSpecifier     =      ELPP_LITERAL("%vlevel");
     static const char* kDateTimeFormatSpecifierForFilename            =      "%datetime";
     // Date/time
     static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -713,12 +713,12 @@ namespace consts {
         double value;
         const base::type::char_t* unit;
     } kTimeFormats[kMaxTimeFormats] = {
-       { 1000.0f, UNICODE_LITERAL("mis") },
-       { 1000.0f, UNICODE_LITERAL("ms") },
-       { 60.0f, UNICODE_LITERAL("seconds") },
-       { 60.0f, UNICODE_LITERAL("minutes") },
-       { 24.0f, UNICODE_LITERAL("hours") },
-       { 7.0f, UNICODE_LITERAL("days") }
+       { 1000.0f, ELPP_LITERAL("mis") },
+       { 1000.0f, ELPP_LITERAL("ms") },
+       { 60.0f, ELPP_LITERAL("seconds") },
+       { 60.0f, ELPP_LITERAL("minutes") },
+       { 24.0f, ELPP_LITERAL("hours") },
+       { 7.0f, ELPP_LITERAL("days") }
     };
     static const int kMaxCrashSignals                          =      5;
     const struct {
@@ -982,6 +982,10 @@ public:
     /// @return Pointer to newly created fstream or nullptr
     static base::type::fstream_t* newFileStream(const std::string& filename) {
         base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(), base::type::fstream_t::out | base::type::fstream_t::app);
+#if defined(_ELPP_UNICODE)
+        std::locale elppUnicodeLocale("");
+        fs->imbue(elppUnicodeLocale);
+#endif
         if (fs->is_open()) {
             fs->flush();
         } else {
@@ -1641,9 +1645,9 @@ public:
     }
     inline friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineArgs& c) {
         for (int i = 1; i < c.m_argc; ++i) {
-            os << UNICODE_LITERAL("[") << c.m_argv[i] << UNICODE_LITERAL("]");
+            os << ELPP_LITERAL("[") << c.m_argv[i] << ELPP_LITERAL("]");
             if (i < c.m_argc - 1)
-                os << UNICODE_LITERAL(" ");
+                os << ELPP_LITERAL(" ");
         }
         return os;
     }
@@ -1884,7 +1888,7 @@ public:
 
     friend inline base::type::ostream_t& operator<<(base::type::ostream_t& os, const RegistryWithPred& sr) {
         for (const_iterator it = sr.list().begin(); it != sr.list().end(); ++it) {
-            os << UNICODE_LITERAL("    ") << **it << UNICODE_LITERAL("\n");
+            os << ELPP_LITERAL("    ") << **it << ELPP_LITERAL("\n");
         }
         return os;
     }
@@ -2082,7 +2086,7 @@ protected:
     /// @param [in,out] currFormat current format that is being used to format
     virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) FINAL {  // NOLINT
         if (hasFlag(base::FormatFlags::DateTime)) {
-            index += UNICODE_STRLEN(base::consts::kDateTimeFormatSpecifier);
+            index += ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
         }
         const base::type::char_t* ptr = currFormat.c_str() + index;
         if ((currFormat.size() > index) && (ptr[0] == '{')) {
@@ -2237,8 +2241,8 @@ public:
 
     friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const Configuration& c) {
         os << LevelHelper::convertToString(c.m_level)
-            << UNICODE_LITERAL(" ") << ConfigurationTypeHelper::convertToString(c.m_configurationType)
-            << UNICODE_LITERAL(" = ") << c.m_value.c_str();
+            << ELPP_LITERAL(" ") << ConfigurationTypeHelper::convertToString(c.m_configurationType)
+            << ELPP_LITERAL(" = ") << c.m_value.c_str();
         return os;
     }
 
@@ -3135,11 +3139,11 @@ private:
 
     void convertToColoredOutput(base::type::string_t* logLine, const Level& level) {
         if (!base::utils::OS::termSupportsColor()) return;
-        const base::type::char_t* resetColor = UNICODE_LITERAL("\x1b[0m");
+        const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
         if (level == Level::Error || level == Level::Fatal)
-            *logLine = UNICODE_LITERAL("\x1b[31m") + *logLine + resetColor;
+            *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
         else if (level == Level::Warning)
-            *logLine = UNICODE_LITERAL("\x1b[33m") + *logLine + resetColor;
+            *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
     }
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
@@ -3852,7 +3856,7 @@ public:
             base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()());
         }
 #endif  // !defined(_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-        if (appendNewLine) logLine += UNICODE_LITERAL("\n");
+        if (appendNewLine) logLine += ELPP_LITERAL("\n");
         return logLine;
     }
 };
@@ -3887,7 +3891,7 @@ public:
         }
         ELPP->unlock();
 #if defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        m_logMessage.logger()->stream().str(UNICODE_LITERAL(""));
+        m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
         m_logMessage.logger()->unlock();
         ELPP->postLogDispatchHandler()(&m_logMessage);
 #endif  // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
@@ -3903,8 +3907,8 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
                 base::type::fstream_t* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
                 if (fs != nullptr) {
-                     fs->write(logLine.c_str(), logLine.size());
-                     if (fs->fail()) {
+                    fs->write(logLine.c_str(), logLine.size());
+                    if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file [" << m_logMessage.logger()->m_typedConfigurations->filename(m_logMessage.level()) << "].\n"
                                 << "Few possible reasons (could be something else):\n" << "      * Permission denied\n" << "      * Disk full\n" << "      * Disk is not writable"
                                 , true);
@@ -3920,7 +3924,7 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_logMessage.logger()->logBuilder()->convertToColoredOutput(&logLine, m_logMessage.level());
-                UNICODE_COUT << logLine << std::flush;
+                ELPP_COUT << logLine << std::flush;
             }
         }
 #if defined(_ELPP_SYSLOG)
@@ -3939,6 +3943,7 @@ private:
                 sysLogPriority = LOG_DEBUG;
             else
                 sysLogPriority = LOG_NOTICE;
+            // FIXME: This does not work with _ELPP_UNICODE
             syslog(sysLogPriority, "%s", logLine.c_str());
         }
 #endif  // defined(_ELPP_SYSLOG)
@@ -4037,7 +4042,7 @@ public:
                const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(UNICODE_LITERAL("")) {
+                   m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
@@ -4051,7 +4056,7 @@ public:
             m_logger->lock();  // This should not be unlocked by checking m_proceed because
                                // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(level);
-            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? UNICODE_LITERAL("\n    ") : UNICODE_LITERAL(", ");
+            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
         }
     }
 
@@ -4070,7 +4075,7 @@ public:
         // If we don't handle post-log-dispatches, we need to unlock logger
         // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
         if (m_logger != nullptr) {
-            m_logger->stream().str(UNICODE_LITERAL(""));
+            m_logger->stream().str(ELPP_LITERAL(""));
             m_logger->unlock();
         }
 #endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
@@ -4355,23 +4360,23 @@ public:
     template <typename K, typename V>
     inline Writer& operator<<(const QMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << UNICODE_LITERAL("[");
+        m_logger->stream() << ELPP_LITERAL("[");
         QList<K> keys = map_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
         typename QList<K>::const_iterator end = keys.end();
         int max_ = static_cast<int>(base::consts::kMaxLogPerContainer);  // to prevent warning
         for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            m_logger->stream() << UNICODE_LITERAL("(");
+            m_logger->stream() << ELPP_LITERAL("(");
             operator << (static_cast<K>(*begin));
-            m_logger->stream() << UNICODE_LITERAL(", ");
+            m_logger->stream() << ELPP_LITERAL(", ");
             operator << (static_cast<V>(map_.value(*begin)));
-            m_logger->stream() << UNICODE_LITERAL(")");
-            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
+            m_logger->stream() << ELPP_LITERAL(")");
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
         }
         if (begin != end) {
-            m_logger->stream() << UNICODE_LITERAL("...");
+            m_logger->stream() << ELPP_LITERAL("...");
         }
-        m_logger->stream() << UNICODE_LITERAL("]");
+        m_logger->stream() << ELPP_LITERAL("]");
         return *this;
     }
     template <typename K, typename V>
@@ -4394,7 +4399,7 @@ public:
             m_logger->stream() << ", ";
             operator << (static_cast<V>(hash_.value(*begin)));
             m_logger->stream() << ")";
-            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
+            m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
         }
         if (begin != end) {
             m_logger->stream() << "...";
@@ -4430,19 +4435,19 @@ public:
 ///        for an example usage
 #define MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
     el::base::type::ostream_t& operator<<(el::base::type::ostream_t& ss, const ContainerType& container) {\
-        const el::base::type::char_t* sep = ELPP->hasFlag(el::LoggingFlag::NewLineForContainer) ? UNICODE_LITERAL("\n    ") : UNICODE_LITERAL(", ");\
+        const el::base::type::char_t* sep = ELPP->hasFlag(el::LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");\
         ContainerType::const_iterator elem = container.begin();\
         ContainerType::const_iterator endElem = container.end();\
         std::size_t size_ = container.SizeMethod; \
-        ss << UNICODE_LITERAL("[");\
+        ss << ELPP_LITERAL("[");\
         for (std::size_t i = 0; elem != endElem && i < el::base::consts::kMaxLogPerContainer; ++i, ++elem) {\
             ss << ElementInstance;\
-            ss << ((i < size_ - 1) ? sep : UNICODE_LITERAL(""));\
+            ss << ((i < size_ - 1) ? sep : ELPP_LITERAL(""));\
         }\
         if (elem != endElem) {\
-            ss << UNICODE_LITERAL("...");\
+            ss << ELPP_LITERAL("...");\
         }\
-        ss << UNICODE_LITERAL("]");\
+        ss << ELPP_LITERAL("]");\
         return ss;\
     }
 #if defined(_ELPP_WXWIDGETS_LOGGING)
@@ -4482,15 +4487,15 @@ protected:
 
     template<class Iterator>
     inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
-        m_logger->stream() << UNICODE_LITERAL("[");
+        m_logger->stream() << ELPP_LITERAL("[");
         for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
             operator << (*begin_);
-            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : UNICODE_LITERAL(""));
+            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
         }
         if (begin_ != end_) {
-            m_logger->stream() << UNICODE_LITERAL("...");
+            m_logger->stream() << ELPP_LITERAL("...");
         }
-        m_logger->stream() << UNICODE_LITERAL("]");
+        m_logger->stream() << ELPP_LITERAL("]");
         return *this;
     }
 };

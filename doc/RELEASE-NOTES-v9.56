@@ -2,6 +2,12 @@ Easylogging++ v9.56 RELEASE NOTES
 ---------------------------------
 
 =========================
+=       BUG FIXES       =
+=========================
+
+ - Issue with writing unicode characters to file (issue #151)
+
+=========================
 =     NEW FEATURES      =
 =========================
 

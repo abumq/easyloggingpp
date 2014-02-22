@@ -67,17 +67,17 @@ TEST(StringUtilsTest, Contains) {
 }
 
 TEST(StringUtilsTest, ReplaceFirstWithEscape) {
-    el::base::type::string_t str = UNICODE_LITERAL("Rolling in the deep");
-    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("Rolling"), UNICODE_LITERAL("Swimming"));
+    el::base::type::string_t str = ELPP_LITERAL("Rolling in the deep");
+    Str::replaceFirstWithEscape(str, ELPP_LITERAL("Rolling"), ELPP_LITERAL("Swimming"));
     EXPECT_EQ("Swimming in the deep", str);
-    str = UNICODE_LITERAL("this is great and this is not");
-    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("this is"), UNICODE_LITERAL("that was"));
+    str = ELPP_LITERAL("this is great and this is not");
+    Str::replaceFirstWithEscape(str, ELPP_LITERAL("this is"), ELPP_LITERAL("that was"));
     EXPECT_EQ("that was great and this is not", str);
-    str = UNICODE_LITERAL("%this is great and this is not");
-    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("this is"), UNICODE_LITERAL("that was"));
+    str = ELPP_LITERAL("%this is great and this is not");
+    Str::replaceFirstWithEscape(str, ELPP_LITERAL("this is"), ELPP_LITERAL("that was"));
     EXPECT_EQ("this is great and that was not", str);
-    str = UNICODE_LITERAL("%datetime %level %msg");
-    Str::replaceFirstWithEscape(str, UNICODE_LITERAL("%level"), LevelHelper::convertToString(Level::Info));
+    str = ELPP_LITERAL("%datetime %level %msg");
+    Str::replaceFirstWithEscape(str, ELPP_LITERAL("%level"), LevelHelper::convertToString(Level::Info));
     EXPECT_EQ("%datetime INFO %msg", str);
 }
 
