@@ -4916,7 +4916,7 @@ private:
 class Helpers : base::StaticClass {
 public:
     /// @brief Shares logging repository (base::Storage)
-    static inline void setStorage(base::type::StoragePointer storage) {
+    static inline void setStorage(const base::type::StoragePointer& storage) {
         ELPP = storage;
     }
     /// brief Returns main storage repository

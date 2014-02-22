@@ -61,6 +61,7 @@
     <a href="#registering-new-loggers">Registering New Loggers</a>
     <a href="#unregister-loggers">Unregister Loggers</a>
     <a href="#populating-existing-logger-ids">Populating Existing Logger IDs</a>
+    <a href="#sharing-logging-repository">Sharing Logging Repository</a>
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
         <a href="#make-use-of-performance-tracking-data">Make Use of Performance Tracking Data</a>
@@ -682,7 +683,21 @@ To unregister logger, use `el::Loggers::unregisterLogger("logger-id")`
 Although this is a rare situation but if you wish to get list of all the logger IDs currently in repository, you may use `el::Loggers::populateAllLoggerIds(std::vector<std::string>&)` function to do that. The list passed in is cleared and filled up with all existing logger IDs.
 
  [![top] Goto Top](#table-of-contents)
- 
+
+### Sharing Logging Repository
+For advance logging, you can share your logging repositories to shared or static libraries, or even from library to application. This is rare case but a very good example is as follows;
+
+Let's say we have an application that uses easylogging++ and has it's own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
+
+ * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_SHARE_EASYLOGGINGPP(access-function-to-repository)`
+ * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
+
+After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs. A very good example is in `samples/VC++/DLLSample`
+
+ > Since version 9.56
+
+ [![top] Goto Top](#table-of-contents)
+
 # Extra Features
 Easylogging++ is feature-rich logging library. Apart from features already mentioned above, here are some extra features. If code snippets don't make sense and further sample is needed, there are many samples available at github repository (samples). Feel free to browse around.
 
