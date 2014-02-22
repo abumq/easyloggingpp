@@ -13,6 +13,7 @@ Easylogging++ v9.56 RELEASE NOTES
 =========================
 
  - Ability to export symbols for DLL (issue #150)
+ - Ability to share logging repository (issue #153)
 
 ==========================
 =         NOTES          =

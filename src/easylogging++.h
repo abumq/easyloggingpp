@@ -350,6 +350,7 @@
 namespace el {
 /// @brief Namespace containing base/internal functionality used by easylogging++
 namespace base {
+class Storage;
 /// @brief Data types for unicode support
 namespace type {
 #undef ELPP_LITERAL
@@ -375,6 +376,7 @@ typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
 typedef unsigned short EnumType;  // NOLINT
+typedef std::shared_ptr<base::Storage> StoragePointer;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
@@ -2865,6 +2867,7 @@ private:
             base::utils::Str::trim(boolStr);
             return (boolStr == "TRUE" || boolStr == "true" || boolStr == "1");
         };
+        std::vector<Configuration*> withFileSizeLimit;
         for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
             Configuration* conf = *it;
             // We cannot use switch on strong enums because Intel C++ dont support them yet
@@ -2885,11 +2888,15 @@ private:
             } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_maxLogFileSizeMap);
 #if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
-                unsafeValidateFileRolling(conf->level(), base::defaultPreRollOutHandler);  // This is not unsafe as mutex is locked in currect scope
-#endif  // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
+                withFileSizeLimit.push_back(conf);
+#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
             }
+        }
+        for (std::vector<Configuration*>::iterator conf = withFileSizeLimit.begin();
+            conf != withFileSizeLimit.end(); ++conf) {
+                unsafeValidateFileRolling((*conf)->level(), base::defaultPreRollOutHandler);  // This is not unsafe as mutex is locked in currect scope
         }
     }
 
@@ -3804,7 +3811,7 @@ private:
         setApplicationArguments(argc, const_cast<char**>(argv));
     }
 };
-extern _ELPP_EXPORT std::unique_ptr<base::Storage> elStorage;
+extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
 class DefaultLogBuilder : public api::LogBuilder {
 public:
@@ -3962,10 +3969,11 @@ private:
                 sysLogPriority = LOG_NOTICE;
 #   if defined(_ELPP_UNICODE)
             char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
-#   else
-            const char* line = logLine.c_str();
-#   endif
             syslog(sysLogPriority, "%s", line);
+            free(line);
+#   else
+            syslog(sysLogPriority, "%s", logLine.c_str());
+#   endif
         }
 #endif  // defined(_ELPP_SYSLOG)
     }
@@ -4907,6 +4915,14 @@ private:
 /// @brief Static helpers for developers
 class Helpers : base::StaticClass {
 public:
+    /// @brief Shares logging repository (base::Storage)
+    static inline void setStorage(base::type::StoragePointer storage) {
+        ELPP = storage;
+    }
+    /// brief Returns main storage repository
+    static inline base::type::StoragePointer storage() {
+        return ELPP;
+    }
     /// @brief Sets application arguments and figures out whats active for logging and whats not.
     static inline void setArgs(int argc, char** argv) {
         ELPP->setApplicationArguments(argc, argv);
@@ -5752,13 +5768,29 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
+#define _ELPP_CRASH_HANDLER_INIT base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER)
 #define _INITIALIZE_EASYLOGGINGPP \
     namespace el {                \
         namespace base {          \
-            std::unique_ptr<base::Storage> elStorage(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())));       \
-        }                                                                        \
-        base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
+            base::type::StoragePointer elStorage(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())));       \
+        } \
+        _ELPP_CRASH_HANDLER_INIT;   \
     }
+#define _INITIALIZE_NULL_EASYLOGGINGPP \
+    namespace el {                \
+        namespace base {          \
+            base::type::StoragePointer elStorage(nullptr);       \
+        }                                                                        \
+        _ELPP_CRASH_HANDLER_INIT;   \
+    }
+#define _SHARE_EASYLOGGINGPP(sharedElStorage) \
+    namespace el {                \
+        namespace base {          \
+            base::type::StoragePointer elStorage(sharedElStorage);       \
+        }                                                                        \
+        _ELPP_CRASH_HANDLER_INIT;   \
+    }
+
 #if defined(_ELPP_UNICODE)
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
 #else
