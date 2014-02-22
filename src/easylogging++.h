@@ -5769,27 +5769,17 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _ELPP_CRASH_HANDLER_INIT base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER)
+#define _ELPP_INIT_EASYLOGGINGPP(val) \
+    namespace el {                \
+        namespace base {          \
+            base::type::StoragePointer elStorage(val);       \
+        }                                                                        \
+        _ELPP_CRASH_HANDLER_INIT;   \
+    }
 #define _INITIALIZE_EASYLOGGINGPP \
-    namespace el {                \
-        namespace base {          \
-            base::type::StoragePointer elStorage(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())));       \
-        } \
-        _ELPP_CRASH_HANDLER_INIT;   \
-    }
-#define _INITIALIZE_NULL_EASYLOGGINGPP \
-    namespace el {                \
-        namespace base {          \
-            base::type::StoragePointer elStorage(nullptr);       \
-        }                                                                        \
-        _ELPP_CRASH_HANDLER_INIT;   \
-    }
-#define _SHARE_EASYLOGGINGPP(sharedElStorage) \
-    namespace el {                \
-        namespace base {          \
-            base::type::StoragePointer elStorage(sharedElStorage);       \
-        }                                                                        \
-        _ELPP_CRASH_HANDLER_INIT;   \
-    }
+    _ELPP_INIT_EASYLOGGINGPP(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())))
+#define _INITIALIZE_NULL_EASYLOGGINGPP _ELPP_INIT_EASYLOGGINGPP(nullptr)
+#define _SHARE_EASYLOGGINGPP(initializedStorage) _ELPP_INIT_EASYLOGGINGPP(initializedStorage)
 
 #if defined(_ELPP_UNICODE)
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
