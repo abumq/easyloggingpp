@@ -5776,7 +5776,13 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
     }
 #define _INITIALIZE_EASYLOGGINGPP \
     _ELPP_INIT_EASYLOGGINGPP(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())))
-#define _INITIALIZE_NULL_EASYLOGGINGPP _ELPP_INIT_EASYLOGGINGPP(nullptr)
+#define _INITIALIZE_NULL_EASYLOGGINGPP  \
+    namespace el {                \
+        namespace base {          \
+            base::type::StoragePointer elStorage;       \
+        }                                                                        \
+        base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
+    }
 #define _SHARE_EASYLOGGINGPP(initializedStorage) _ELPP_INIT_EASYLOGGINGPP(initializedStorage)
 #if defined(_ELPP_UNICODE)
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
