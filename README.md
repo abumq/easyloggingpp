@@ -595,7 +595,7 @@ Verbose level is level of verbosity that can have range of 1-9. Verbose level wi
  [![top] Goto Top](#table-of-contents)
  
 #### Check If Verbose Logging Is On
-You can use a macro VLOG_IS_ON(verbose-level) to check to see if certain logging is on for source file for specified verbose level. This returns boolean that you can embed into if condition.
+You can use a macro `VLOG_IS_ON(verbose-level)` to check to see if certain logging is on for source file for specified verbose level. This returns boolean that you can embed into if condition.
 ```c++
 if (VLOG_IS_ON(2)) {
    // Verbosity level 2 is on for this file
@@ -605,7 +605,7 @@ if (VLOG_IS_ON(2)) {
  [![top] Goto Top](#table-of-contents)
  
 #### VModule
-VModule is functionality for verbose logging (as mentioned in above table) where you can specify verbosity by modules/source file. Following are some examples with explanation; Any of vmodule below starts with -vmodule= and _ELPP_DISABLE_VMODULES_EXTENSION not defined
+VModule is functionality for verbose logging (as mentioned in above table) where you can specify verbosity by modules/source file. Following are some examples with explanation; Any of vmodule below starts with `-vmodule=` and `_ELPP_DISABLE_VMODULES_EXTENSION` not defined
 
 Example with `AllowVerboseIfModuleNotSpecified` flag;
 
