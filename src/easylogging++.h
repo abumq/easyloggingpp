@@ -5185,7 +5185,7 @@ public:
     /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.57"); }
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("28-02-2014 1217hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("28-02-2014 1220hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON
