@@ -4090,6 +4090,9 @@ public:
     virtual ~Writer(void) {
         if (m_proceed) {
             triggerDispatch();
+        } else {
+            m_logger->stream().str(ELPP_LITERAL(""));
+            m_logger->unlock();
         }
     }
 
