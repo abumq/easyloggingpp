@@ -1282,6 +1282,3 @@ Icons used in this manual (in compatibility section) are solely for information 
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
 
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/easylogging/easyloggingpp/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
