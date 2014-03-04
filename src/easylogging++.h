@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.57
+//  Easylogging++ v9.57 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012 - 2014 Majid Khan
@@ -802,8 +802,8 @@ inline static const char* charPtrVal(const char* pointer) {
     return pointer == nullptr ? base::consts::kNullPointer : pointer;
 }
 /// @brief Aborts application due with user-defined status
-inline static void abort(int status, const char* reason = "") {
-    // Both status and reason params are there for debugging with something like VS
+inline static void abort(int status, const std::string& reason = std::string()) {
+    // Both status and reason params are there for debugging with tools like gdb etc
     _ELPP_UNUSED(status);
     _ELPP_UNUSED(reason);
 #if defined(_ELPP_COMPILER_MSVC) && defined(_M_IX86) && defined(_DEBUG)
@@ -915,21 +915,21 @@ private:
     ScopedLock(void);
 };
 /// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
-static inline const char* getCurrentThreadId(void) {
+static inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
 #      if (_ELPP_OS_WINDOWS)
     ss << GetCurrentThreadId();
 #      endif  // (_ELPP_OS_WINDOWS)
-    return ss.str().c_str();
+    return ss.str();
 }
 typedef base::threading::Mutex mutex;
 typedef base::threading::ScopedLock<base::threading::Mutex> lock_guard;
 #   else
 /// @brief Gets ID of currently running threading using std::this_thread::get_id()
-static inline const char* getCurrentThreadId(void) {
+static inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
     ss << std::this_thread::get_id();
-    return ss.str().c_str();
+    return ss.str();
 }
 typedef std::mutex mutex;
 typedef std::lock_guard<std::mutex> lock_guard;
@@ -954,8 +954,8 @@ public:
 private:
     NoScopedLock(void);
 };
-static inline const char* getCurrentThreadId(void) {
-    return "";
+static inline std::string getCurrentThreadId(void) {
+    return std::string();
 }
 typedef base::threading::NoMutex mutex;
 typedef base::threading::NoScopedLock<base::threading::NoMutex> lock_guard;
@@ -1265,9 +1265,8 @@ public:
         return buff;
     }
     
-    /**
-     * NOTE: Need to free return value after use!
-     */
+    /// @brief Converst wchar* to char*
+    ///        NOTE: Need to free return value after use!
     static char* wcharPtrToCharPtr(const wchar_t* line) {
         std::size_t len_ = wcslen(line) + 1;
         char* buff_ = static_cast<char*>(malloc(len_ + 1));
@@ -1667,8 +1666,9 @@ public:
     inline friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineArgs& c) {
         for (int i = 1; i < c.m_argc; ++i) {
             os << ELPP_LITERAL("[") << c.m_argv[i] << ELPP_LITERAL("]");
-            if (i < c.m_argc - 1)
+            if (i < c.m_argc - 1) {
                 os << ELPP_LITERAL(" ");
+            }
         }
         return os;
     }
@@ -2759,8 +2759,8 @@ public:
         return getConfigByRef<base::LogFormat>(level, &m_logFormatMap, "logFormat");
     }
 
-    inline const MillisecondsWidth& millisecondsWidth(const Level& level = Level::Global) {
-        return getConfigByRef<MillisecondsWidth>(level, &m_millisecondsWidthMap, "millisecondsWidth");
+    inline const base::MillisecondsWidth& millisecondsWidth(const Level& level = Level::Global) {
+        return getConfigByRef<base::MillisecondsWidth>(level, &m_millisecondsWidthMap, "millisecondsWidth");
     }
 
     inline bool performanceTracking(const Level& level = Level::Global) {
@@ -2945,7 +2945,7 @@ private:
                 } else {
                     fmt = std::string(base::consts::kDefaultDateTimeFormatInFilename);
                 }
-                MillisecondsWidth msWidth(3);
+                base::MillisecondsWidth msWidth(3);
                 std::string now = base::utils::DateTime::getDateTime(fmt.c_str(), &msWidth);
                 base::utils::Str::replaceAll(now, '/', '-'); // Replace path element since we are dealing with filename
                 base::utils::Str::replaceAll(resultingFilename, dateTimeFormatSpecifierStr, now);
@@ -3581,23 +3581,23 @@ private:
 }  // namespace base
 class LogMessage {
 public:
-    LogMessage(const Level& level, const char* file, unsigned long int line, const char* func,  // NOLINT
+    LogMessage(const Level& level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
                           base::VRegistry::VLevel verboseLevel, Logger* logger) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
     }
     inline const Level& level(void) const { return m_level; }
-    inline const char* file(void) const { return m_file; }
+    inline const std::string& file(void) const { return m_file; }
     inline unsigned long int line(void) const { return m_line; }  // NOLINT
-    inline const char* func(void) const { return m_func; }
+    inline const std::string& func(void) const { return m_func; }
     inline base::VRegistry::VLevel verboseLevel(void) const { return m_verboseLevel; }
     inline Logger* logger(void) const { return m_logger; }
     inline const base::type::string_t& message(void) const { return m_message; }
 private:
     Level m_level;
-    const char* m_file;
+    std::string m_file;
     unsigned long int m_line;  // NOLINT
-    const char* m_func;
+    std::string m_func;
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     base::type::string_t m_message;
@@ -3841,7 +3841,7 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
-            base::utils::File::buildStrippedFilename(logMessage->file(), buff);
+            base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
         }
@@ -3854,7 +3854,7 @@ public:
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength);
-            base::utils::File::buildStrippedFilename(logMessage->file(), buff);
+            base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
             buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), base::consts::kSourceLineMaxLength, buf, bufLim, false);
@@ -4094,32 +4094,6 @@ public:
             m_logger->stream().str(ELPP_LITERAL(""));
             m_logger->unlock();
         }
-    }
-
-    void triggerDispatch(void) {
-        if (m_proceed) {
-            base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger), m_dispatchAction).dispatch(false);
-        }
-#if !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        // If we don't handle post-log-dispatches, we need to unlock logger
-        // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
-        if (m_logger != nullptr) {
-            m_logger->stream().str(ELPP_LITERAL(""));
-            m_logger->unlock();
-        }
-#endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        if (m_proceed && m_level == Level::Fatal
-                && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            base::Writer(base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
-                    << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
-            std::stringstream reasonStream;
-            reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
-                << " If you wish to disable 'abort on fatal log' please use "
-                << "el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
-            base::utils::abort(1, reasonStream.str().c_str());
-        }
-        m_proceed = false;
     }
 
     inline Writer& operator<<(const std::string& log_) {
@@ -4519,6 +4493,32 @@ protected:
         m_logger->stream() << ELPP_LITERAL("]");
         return *this;
     }
+
+    void triggerDispatch(void) {
+        if (m_proceed) {
+            base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
+                          m_logger), m_dispatchAction).dispatch(false);
+        }
+#if !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        // If we don't handle post-log-dispatches, we need to unlock logger
+        // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
+        if (m_logger != nullptr) {
+            m_logger->stream().str(ELPP_LITERAL(""));
+            m_logger->unlock();
+        }
+#endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        if (m_proceed && m_level == Level::Fatal
+                && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+            base::Writer(base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
+                    << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
+            std::stringstream reasonStream;
+            reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
+                << " If you wish to disable 'abort on fatal log' please use "
+                << "el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
+            base::utils::abort(1, reasonStream.str());
+        }
+        m_proceed = false;
+    }
 };
 class PErrorWriter : public base::Writer {
 public:
@@ -4578,32 +4578,24 @@ class Trackable : public base::threading::ThreadSafe {
 public:
     Trackable(const std::string& blockName,
             const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
-            const char* logger = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, bool scopedLog = true, const Level& level = Level::Info) :
-        m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(logger), m_scopedLog(scopedLog),
+            const std::string& loggerId = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, bool scopedLog = true, const Level& level = Level::Info) :
+        m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
-        el::Logger* loggerPtr = elStorage->registeredLoggers()->get(logger, false);
-        m_enabled = loggerPtr != nullptr;
         // We store it locally so that if user happen to change configuration by the end of scope
         // or before calling checkpoint, we still depend on state of configuraton at time of construction
-        m_enabled = m_enabled && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
+        el::Logger* loggerPtr = elStorage->registeredLoggers()->get(loggerId, false);
+        m_enabled = loggerPtr != nullptr && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
         if (m_enabled) {
             base::utils::DateTime::gettimeofday(&m_startTime);
         }
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
     /// @brief Copy constructor
-    Trackable(const Trackable& t) {
-        m_blockName = t.m_blockName;
-        m_timestampUnit = t.m_timestampUnit;
-        m_loggerId = t.m_loggerId;
-        m_scopedLog = t.m_scopedLog;
-        m_level = t.m_level;
-        m_enabled = t.m_enabled;
-        m_startTime = t.m_startTime;
-        m_endTime = t.m_endTime;
-        m_lastCheckpointTime = t.m_lastCheckpointTime;
-        m_lastCheckpointId = t.m_lastCheckpointId;
+    Trackable(const Trackable& t) :
+        m_blockName(t.m_blockName), m_timestampUnit(t.m_timestampUnit), m_loggerId(t.m_loggerId), m_scopedLog(t.m_scopedLog),
+        m_level(t.m_level), m_hasChecked(t.m_hasChecked), m_lastCheckpointId(t.m_lastCheckpointId), m_enabled(t.m_enabled),
+        m_startTime(t.m_startTime), m_endTime(t.m_endTime), m_lastCheckpointTime(t.m_lastCheckpointTime) {
     }
     virtual ~Trackable(void) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -4664,7 +4656,7 @@ public:
 private:
     std::string m_blockName;
     base::TimestampUnit m_timestampUnit;
-    const char* m_loggerId;
+    std::string m_loggerId;
     bool m_scopedLog;
     el::Level m_level;
     struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
