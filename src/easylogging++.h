@@ -1264,7 +1264,7 @@ public:
         _ELPP_UNUSED(lim);  // For *nix we dont have anything using lim in above STRCPY macro
         return buff;
     }
-    
+
     /// @brief Converst wchar* to char*
     ///        NOTE: Need to free return value after use!
     static char* wcharPtrToCharPtr(const wchar_t* line) {
@@ -2725,7 +2725,7 @@ public:
         m_logStreamsReference = logStreamsReference;
         build(m_configurations);
     }
-    
+
     TypedConfigurations(const TypedConfigurations& other) {
         this->m_configurations = other.m_configurations;
         this->m_logStreamsReference = other.m_logStreamsReference;
@@ -3070,7 +3070,7 @@ public:
     inline std::size_t hitCounts(void) const {
         return m_hitCounts;
     }
-    
+
     inline void increment(void) {
         ++m_hitCounts;
     }
@@ -3112,7 +3112,7 @@ public:
         bool result = (n >= 1 && counter->hitCounts() != 0 && counter->hitCounts() % n == 0);
         return result;
     }
-    
+
     /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
     bool validateAfterN(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
@@ -3129,7 +3129,7 @@ public:
         counter->increment();
         return false;
     }
-        
+
     /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
     bool validateNTimes(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
@@ -3657,11 +3657,11 @@ public:
     inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {  // NOLINT
         return hitCounters()->validateEveryN(filename, lineNumber, occasion);
     }
-    
+
     inline bool validateAfterNCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
         return hitCounters()->validateAfterN(filename, lineNumber, n);
     }
-    
+
     inline bool validateNTimesCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
         return hitCounters()->validateNTimes(filename, lineNumber, n);
     }
@@ -4052,7 +4052,7 @@ class NullWriter : base::NoCopy {
 public:
     NullWriter(void) {}
 
-    // Null manipulator 
+    // Null manipulator
     inline NullWriter& operator<<(std::ostream& (*)(std::ostream&)) {
       return *this;
     }
@@ -5762,7 +5762,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
-#define _ELPP_CRASH_HANDLER_INIT 
+#define _ELPP_CRASH_HANDLER_INIT
 #define _ELPP_INIT_EASYLOGGINGPP(val) \
     namespace el {                \
         namespace base {          \
