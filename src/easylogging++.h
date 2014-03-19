@@ -4659,10 +4659,11 @@ private:
     std::string m_loggerId;
     bool m_scopedLog;
     el::Level m_level;
-    struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
     bool m_hasChecked;
     const char* m_lastCheckpointId;
     bool m_enabled;
+    struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
+
 
     Trackable(void);
 
