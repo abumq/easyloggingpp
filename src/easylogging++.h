@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.58
+//  Easylogging++ v9.58 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012 - 2014 Majid Khan
