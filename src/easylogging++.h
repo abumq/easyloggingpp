@@ -4067,33 +4067,30 @@ class Writer : base::NoCopy {
 public:
     Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const std::string& loggerId) :
+               base::VRegistry::VLevel verboseLevel, const std::string& loggerId/*const std::string& loggers, ...*/) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
         /*va_list vl;
         va_start(vl, loggers);
-        std::string loggerId = va_arg(vl, std::string);
-        va_end(vl);
-          TODO: Need to do this for:
-                  - Trackable
-                  - PErrorWriter
-                  - checkNotNull(ptr*)
-        */
-        m_logger = elStorage->registeredLoggers()->get(loggerId, false);
-        if (m_logger == nullptr) {
-            if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
+        std::string loggerId = va_arg(vl, const char*);*/
+        //while ((loggerId = va_arg(vl, const char*))) {
+            m_logger = elStorage->registeredLoggers()->get(loggerId, false);
+            if (m_logger == nullptr) {
+                if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
-            }
-            Writer(Level::Debug, file, line, func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
+                }
+                Writer(Level::Debug, file, line, func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
-            m_proceed = false;
-        } else {
-            m_logger->lock();  // This should not be unlocked by checking m_proceed because
+                m_proceed = false;
+            } else {
+                m_logger->lock();  // This should not be unlocked by checking m_proceed because
                                // m_proceed can be changed by lines below
-            m_proceed = m_logger->m_typedConfigurations->enabled(level);
-            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
-        }
+                m_proceed = m_logger->m_typedConfigurations->enabled(level);
+                m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
+            }
+        //}
+        /*va_end(vl);*/
     }
 
     virtual ~Writer(void) {
@@ -4533,7 +4530,7 @@ class PErrorWriter : public base::Writer {
 public:
     PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const std::string& loggerId) :
+               base::VRegistry::VLevel verboseLevel, const char* loggerId, ...) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel, loggerId) {
     }
 
@@ -4613,7 +4610,7 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
-                _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId) << "Executed [" << m_blockName << "] in [" << *this << "]";
+                _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) << "Executed [" << m_blockName << "] in [" << *this << "]";
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data;
                 data.init(this);
@@ -5698,8 +5695,8 @@ namespace el {
 namespace base {
 namespace utils {
 template <typename T>
-static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT_FILE_LOGGER_ID) {
-    CLOG_IF(ptr == nullptr, FATAL, loggerId) << "Check failed: [" << name << " != nullptr]";
+static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
+    CLOG_IF(ptr == nullptr, FATAL, loggers) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
 }  // namespace utils
