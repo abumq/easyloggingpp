@@ -4073,7 +4073,12 @@ public:
         /*va_list vl;
         va_start(vl, loggers);
         std::string loggerId = va_arg(vl, std::string);
-        va_end(vl);*/
+        va_end(vl);
+          TODO: Need to do this for:
+                  - Trackable
+                  - PErrorWriter
+                  - checkNotNull(ptr*)
+        */
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
@@ -4554,7 +4559,7 @@ public:
 #define _ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
     writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
-    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -5337,7 +5342,7 @@ public:
 #   define CTRACE_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel) && (condition_)) writer(loggerId, \
+#   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel) && (condition_)) writer( \
        el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel, __VA_ARGS__)
 #else
 #   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) el::base::NullWriter()
@@ -5451,7 +5456,7 @@ public:
 #   define CVERBOSE_N_TIMES(writer, n, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 //
-// Custom Loggers - Requires (level, loggerId, dispatchAction)
+// Custom Loggers - Requires (level, dispatchAction, loggerId/s)
 //
 // undef existing
 #undef CLOG
@@ -5523,10 +5528,10 @@ public:
 #undef DCPLOG_IF
 #undef DPLOG
 #undef DPLOG_IF
-#define CPLOG(LEVEL, loggerId) C##LEVEL(el::base::PErrorWriter, loggerId, el::base::DispatchAction::NormalLog)
-#define CPLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::PErrorWriter, condition, loggerId, el::base::DispatchAction::NormalLog)
-#define DCPLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::PErrorWriter, loggerId, el::base::DispatchAction::NormalLog)
-#define DCPLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::PErrorWriter, (_ELPP_DEBUG_LOG) && (condition), loggerId, el::base::DispatchAction::NormalLog)
+#define CPLOG(LEVEL, ...) C##LEVEL(el::base::PErrorWriter, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CPLOG_IF(condition, LEVEL, ...) C##LEVEL##_IF(el::base::PErrorWriter, condition, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define DCPLOG(LEVEL, ...) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::PErrorWriter, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define DCPLOG_IF(condition, LEVEL, ...) C##LEVEL##_IF(el::base::PErrorWriter, (_ELPP_DEBUG_LOG) && (condition), el::base::DispatchAction::NormalLog, __VA_ARGS__)
 #define PLOG(LEVEL) CPLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define PLOG_IF(condition, LEVEL) CPLOG_IF(condition, LEVEL, _CURRENT_FILE_LOGGER_ID)
 #define DPLOG(LEVEL) DCPLOG(LEVEL, _CURRENT_FILE_LOGGER_ID)
@@ -5553,42 +5558,42 @@ public:
 #undef DSYSLOG_AFTER_N
 #undef DSYSLOG_N_TIMES
 #if defined(_ELPP_SYSLOG)
-#   define CSYSLOG(LEVEL, loggerId) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::SysLog)
-#   define CSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, condition, loggerId, el::base::DispatchAction::SysLog)
-#   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
-#   define CSYSLOG_AFTER_N(n, LEVEL, loggerId) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
-#   define CSYSLOG_N_TIMES(n, LEVEL, loggerId) C##LEVEL##_N_TIMES(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define CSYSLOG(LEVEL, ...) C##LEVEL(el::base::Writer, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define CSYSLOG_IF(condition, LEVEL, ...) C##LEVEL##_IF(el::base::Writer, condition, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define CSYSLOG_EVERY_N(n, LEVEL, ...) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define CSYSLOG_AFTER_N(n, LEVEL, ...) C##LEVEL##_AFTER_N(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define CSYSLOG_N_TIMES(n, LEVEL, ...) C##LEVEL##_N_TIMES(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
 #   define SYSLOG(LEVEL) CSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_IF(condition, LEVEL) CSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_EVERY_N(n, LEVEL) CSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_AFTER_N(n, LEVEL) CSYSLOG_AFTER_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define SYSLOG_N_TIMES(n, LEVEL) CSYSLOG_N_TIMES(n, LEVEL, el::base::consts::kSysLogLoggerId)
-#   define DCSYSLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::SysLog)
-#   define DCSYSLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, (_ELPP_DEBUG_LOG) && (condition), loggerId, el::base::DispatchAction::SysLog)
-#   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
-#   define DCSYSLOG_AFTER_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
-#   define DCSYSLOG_N_TIMES(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::SysLog)
+#   define DCSYSLOG(LEVEL, ...) if (_ELPP_DEBUG_LOG) C##LEVEL(el::base::Writer, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define DCSYSLOG_IF(condition, LEVEL, ...) C##LEVEL##_IF(el::base::Writer, (_ELPP_DEBUG_LOG) && (condition), el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define DCSYSLOG_EVERY_N(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define DCSYSLOG_AFTER_N(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) C##LEVEL##_AFTER_N(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
+#   define DCSYSLOG_N_TIMES(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAction::SysLog, __VA_ARGS__)
 #   define DSYSLOG(LEVEL) DCSYSLOG(LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_IF(condition, LEVEL) DCSYSLOG_IF(condition, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_EVERY_N(n, LEVEL) DCSYSLOG_EVERY_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_AFTER_N(n, LEVEL) DCSYSLOG_AFTER_N(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #   define DSYSLOG_N_TIMES(n, LEVEL) DCSYSLOG_N_TIMES(n, LEVEL, el::base::consts::kSysLogLoggerId)
 #else
-#   define CSYSLOG(LEVEL, loggerId) el::base::NullWriter()
-#   define CSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
-#   define CSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
-#   define CSYSLOG_AFTER_N(n, LEVEL, loggerId) el::base::NullWriter()
-#   define CSYSLOG_N_TIMES(n, LEVEL, loggerId) el::base::NullWriter()
+#   define CSYSLOG(LEVEL, ...) el::base::NullWriter()
+#   define CSYSLOG_IF(condition, LEVEL, ...) el::base::NullWriter()
+#   define CSYSLOG_EVERY_N(n, LEVEL, ...) el::base::NullWriter()
+#   define CSYSLOG_AFTER_N(n, LEVEL, ...) el::base::NullWriter()
+#   define CSYSLOG_N_TIMES(n, LEVEL, ...) el::base::NullWriter()
 #   define SYSLOG(LEVEL) el::base::NullWriter()
 #   define SYSLOG_IF(condition, LEVEL) el::base::NullWriter()
 #   define SYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
 #   define SYSLOG_AFTER_N(n, LEVEL) el::base::NullWriter()
 #   define SYSLOG_N_TIMES(n, LEVEL) el::base::NullWriter()
-#   define DCSYSLOG(LEVEL, loggerId) el::base::NullWriter()
-#   define DCSYSLOG_IF(condition, LEVEL, loggerId) el::base::NullWriter()
-#   define DCSYSLOG_EVERY_N(n, LEVEL, loggerId) el::base::NullWriter()
-#   define DCSYSLOG_AFTER_N(n, LEVEL, loggerId) el::base::NullWriter()
-#   define DCSYSLOG_N_TIMES(n, LEVEL, loggerId) el::base::NullWriter()
+#   define DCSYSLOG(LEVEL, ...) el::base::NullWriter()
+#   define DCSYSLOG_IF(condition, LEVEL, ...) el::base::NullWriter()
+#   define DCSYSLOG_EVERY_N(n, LEVEL, ...) el::base::NullWriter()
+#   define DCSYSLOG_AFTER_N(n, LEVEL, ...) el::base::NullWriter()
+#   define DCSYSLOG_N_TIMES(n, LEVEL, ...) el::base::NullWriter()
 #   define DSYSLOG(LEVEL) el::base::NullWriter()
 #   define DSYSLOG_IF(condition, LEVEL) el::base::NullWriter()
 #   define DSYSLOG_EVERY_N(n, LEVEL) el::base::NullWriter()
@@ -5596,7 +5601,7 @@ public:
 #   define DSYSLOG_N_TIMES(n, LEVEL) el::base::NullWriter()
 #endif // defined(_ELPP_SYSLOG)
 //
-// Custom Debug Only Loggers - Requires (level, loggerId)
+// Custom Debug Only Loggers - Requires (level, loggerId/s)
 //
 // undef existing
 #undef DCLOG
@@ -5610,19 +5615,19 @@ public:
 #undef DCLOG_N_TIMES
 #undef DCVLOG_N_TIMES
 // Normal logs
-#define DCLOG(LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG(LEVEL, loggerId)
-#define DCLOG_VERBOSE(vlevel, loggerId) if (_ELPP_DEBUG_LOG) CLOG_VERBOSE(vlevel, loggerId)
-#define DCVLOG(vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG(vlevel, loggerId)
+#define DCLOG(LEVEL, ...) if (_ELPP_DEBUG_LOG) CLOG(LEVEL, __VA_ARGS__)
+#define DCLOG_VERBOSE(vlevel, ...) if (_ELPP_DEBUG_LOG) CLOG_VERBOSE(vlevel, __VA_ARGS__)
+#define DCVLOG(vlevel, ...) if (_ELPP_DEBUG_LOG) CVLOG(vlevel, __VA_ARGS__)
 // Conditional logs
-#define DCLOG_IF(condition, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_IF(condition, LEVEL, loggerId)
-#define DCVLOG_IF(condition, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_IF(condition, vlevel, loggerId)
+#define DCLOG_IF(condition, LEVEL, ...) if (_ELPP_DEBUG_LOG) CLOG_IF(condition, LEVEL, __VA_ARGS__)
+#define DCVLOG_IF(condition, vlevel, ...) if (_ELPP_DEBUG_LOG) CVLOG_IF(condition, vlevel, __VA_ARGS__)
 // Hit counts based logs
-#define DCLOG_EVERY_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_EVERY_N(n, LEVEL, loggerId)
-#define DCVLOG_EVERY_N(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_EVERY_N(n, vlevel, loggerId)
-#define DCLOG_AFTER_N(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_AFTER_N(n, LEVEL, loggerId)
-#define DCVLOG_AFTER_N(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_AFTER_N(n, vlevel, loggerId)
-#define DCLOG_N_TIMES(n, LEVEL, loggerId) if (_ELPP_DEBUG_LOG) CLOG_N_TIMES(n, LEVEL, loggerId)
-#define DCVLOG_N_TIMES(n, vlevel, loggerId) if (_ELPP_DEBUG_LOG) CVLOG_N_TIMES(n, vlevel, loggerId)
+#define DCLOG_EVERY_N(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) CLOG_EVERY_N(n, LEVEL, __VA_ARGS__)
+#define DCVLOG_EVERY_N(n, vlevel, ...) if (_ELPP_DEBUG_LOG) CVLOG_EVERY_N(n, vlevel, __VA_ARGS__)
+#define DCLOG_AFTER_N(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) CLOG_AFTER_N(n, LEVEL, __VA_ARGS__)
+#define DCVLOG_AFTER_N(n, vlevel, ...) if (_ELPP_DEBUG_LOG) CVLOG_AFTER_N(n, vlevel, __VA_ARGS__)
+#define DCLOG_N_TIMES(n, LEVEL, ...) if (_ELPP_DEBUG_LOG) CLOG_N_TIMES(n, LEVEL, __VA_ARGS__)
+#define DCVLOG_N_TIMES(n, vlevel, ...) if (_ELPP_DEBUG_LOG) CVLOG_N_TIMES(n, vlevel, __VA_ARGS__)
 //
 // Default Debug Only Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
@@ -5673,16 +5678,16 @@ public:
 #undef CHECK_NOTNULL
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
-#define CCHECK(condition, loggerId) CLOG_IF(!(condition), FATAL, loggerId) << "Check failed: [" << #condition << "] "
-#define CPCHECK(condition, loggerId) CPLOG_IF(!(condition), FATAL, loggerId) << "Check failed: [" << #condition << "] "
+#define CCHECK(condition, ...) CLOG_IF(!(condition), FATAL, __VA_ARGS__) << "Check failed: [" << #condition << "] "
+#define CPCHECK(condition, ...) CPLOG_IF(!(condition), FATAL, __VA_ARGS__) << "Check failed: [" << #condition << "] "
 #define CHECK(condition) CCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #define PCHECK(condition) CPCHECK(condition, _CURRENT_FILE_LOGGER_ID)
-#define CCHECK_EQ(a, b, loggerId) CCHECK(a == b, loggerId)
-#define CCHECK_NE(a, b, loggerId) CCHECK(a != b, loggerId)
-#define CCHECK_LT(a, b, loggerId) CCHECK(a < b, loggerId)
-#define CCHECK_GT(a, b, loggerId) CCHECK(a > b, loggerId)
-#define CCHECK_LE(a, b, loggerId) CCHECK(a <= b, loggerId)
-#define CCHECK_GE(a, b, loggerId) CCHECK(a >= b, loggerId)
+#define CCHECK_EQ(a, b, ...) CCHECK(a == b, __VA_ARGS__)
+#define CCHECK_NE(a, b, ...) CCHECK(a != b, __VA_ARGS__)
+#define CCHECK_LT(a, b, ...) CCHECK(a < b, __VA_ARGS__)
+#define CCHECK_GT(a, b, ...) CCHECK(a > b, __VA_ARGS__)
+#define CCHECK_LE(a, b, ...) CCHECK(a <= b, __VA_ARGS__)
+#define CCHECK_GE(a, b, ...) CCHECK(a >= b, __VA_ARGS__)
 #define CHECK_EQ(a, b) CCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_NE(a, b) CCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_LT(a, b) CCHECK_LT(a, b, _CURRENT_FILE_LOGGER_ID)
@@ -5700,14 +5705,14 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 }  // namespace utils
 }  // namespace base
 }  // namespace el
-#define CCHECK_NOTNULL(ptr, loggerId) el::base::utils::checkNotNull(ptr, #ptr, loggerId)
-#define CCHECK_STREQ(str1, str2, loggerId) CLOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL, loggerId) \
+#define CCHECK_NOTNULL(ptr, ...) el::base::utils::checkNotNull(ptr, #ptr, __VA_ARGS__)
+#define CCHECK_STREQ(str1, str2, ...) CLOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
-#define CCHECK_STRNE(str1, str2, loggerId) CLOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL, loggerId) \
+#define CCHECK_STRNE(str1, str2, ...) CLOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " != " << #str2 << "] "
-#define CCHECK_STRCASEEQ(str1, str2, loggerId) CLOG_IF(!el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, loggerId) \
+#define CCHECK_STRCASEEQ(str1, str2, ...) CLOG_IF(!el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
-#define CCHECK_STRCASENE(str1, str2, loggerId) CLOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, loggerId) \
+#define CCHECK_STRCASENE(str1, str2, ...) CLOG_IF(el::base::utils::Str::cStringCaseEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " != " << #str2 << "] "
 #define CHECK_NOTNULL(ptr) CCHECK_NOTNULL(ptr, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_STREQ(str1, str2) CCHECK_STREQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
@@ -5736,19 +5741,19 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggerId = _CURRENT
 #undef DCHECK_STRCASEEQ
 #undef DCHECK_STRCASENE
 #undef DPCHECK
-#define DCCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) CCHECK(condition, loggerId)
-#define DCCHECK_EQ(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_EQ(a, b, loggerId)
-#define DCCHECK_NE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_NE(a, b, loggerId)
-#define DCCHECK_LT(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_LT(a, b, loggerId)
-#define DCCHECK_GT(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_GT(a, b, loggerId)
-#define DCCHECK_LE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_LE(a, b, loggerId)
-#define DCCHECK_GE(a, b, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_GE(a, b, loggerId)
-#define DCCHECK_NOTNULL(ptr, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_NOTNULL(ptr, loggerId)
-#define DCCHECK_STREQ(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STREQ(str1, str2, loggerId)
-#define DCCHECK_STRNE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRNE(str1, str2, loggerId)
-#define DCCHECK_STRCASEEQ(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASEEQ(str1, str2, loggerId)
-#define DCCHECK_STRCASENE(str1, str2, loggerId) if (_ELPP_DEBUG_LOG) CCHECK_STRCASENE(str1, str2, loggerId)
-#define DCPCHECK(condition, loggerId) if (_ELPP_DEBUG_LOG) CPCHECK(condition, loggerId)
+#define DCCHECK(condition, ...) if (_ELPP_DEBUG_LOG) CCHECK(condition, __VA_ARGS__)
+#define DCCHECK_EQ(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_EQ(a, b, __VA_ARGS__)
+#define DCCHECK_NE(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_NE(a, b, __VA_ARGS__)
+#define DCCHECK_LT(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_LT(a, b, __VA_ARGS__)
+#define DCCHECK_GT(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_GT(a, b, __VA_ARGS__)
+#define DCCHECK_LE(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_LE(a, b, __VA_ARGS__)
+#define DCCHECK_GE(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_GE(a, b, __VA_ARGS__)
+#define DCCHECK_NOTNULL(ptr, ...) if (_ELPP_DEBUG_LOG) CCHECK_NOTNULL(ptr, __VA_ARGS__)
+#define DCCHECK_STREQ(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STREQ(str1, str2, __VA_ARGS__)
+#define DCCHECK_STRNE(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STRNE(str1, str2, __VA_ARGS__)
+#define DCCHECK_STRCASEEQ(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STRCASEEQ(str1, str2, __VA_ARGS__)
+#define DCCHECK_STRCASENE(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STRCASENE(str1, str2, __VA_ARGS__)
+#define DCPCHECK(condition, ...) if (_ELPP_DEBUG_LOG) CPCHECK(condition, __VA_ARGS__)
 #define DCHECK(condition) DCCHECK(condition, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_EQ(a, b) DCCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_NE(a, b) DCCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
