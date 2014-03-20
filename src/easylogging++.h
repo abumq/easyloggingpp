@@ -4493,7 +4493,6 @@ protected:
     friend class el::Helpers;
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
     va_list loggersList;
-    base::type::string_t m_previousLog;
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
     template<class Iterator>
@@ -4541,12 +4540,15 @@ protected:
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
         std::string loggerId;
         bool firstDispatched = false;
+        base::type::string_t logMessage;
         do {
             if (m_proceed) {
                 if (firstDispatched) {
-                    m_logger->stream() << m_previousLog;
+                    m_logger->stream() << logMessage;
+                } else {
+                    firstDispatched = true;
+                    logMessage = m_logger->stream().str();
                 }
-                firstDispatched = true;
                 triggerDispatch();
             } else if (m_logger != nullptr) {
                 m_logger->stream().str(ELPP_LITERAL(""));
@@ -4567,9 +4569,6 @@ protected:
 
     void triggerDispatch(void) {
         if (m_proceed) {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-            m_previousLog = m_logger->stream().str();
-#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
@@ -4600,8 +4599,7 @@ public:
     PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
                base::VRegistry::VLevel verboseLevel, const std::string& loggerId, ...) :
-        base::Writer(level, file, line, func, dispatchAction, verboseLevel, 
-            loggerId, el::base::consts::kEndLoggersList) {
+        base::Writer(level, file, line, func, dispatchAction, verboseLevel, loggerId) {
     }
 
     virtual ~PErrorWriter(void) {
