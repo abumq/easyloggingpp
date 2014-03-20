@@ -4493,7 +4493,7 @@ protected:
     friend class el::Helpers;
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
     va_list loggersList;
-    std::string m_previousLog;
+    base::type::string_t m_previousLog;
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
     template<class Iterator>
