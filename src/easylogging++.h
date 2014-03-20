@@ -4065,18 +4065,22 @@ public:
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
 public:
-    Writer(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
-               base::VRegistry::VLevel verboseLevel = 0) :
+    Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
+               const char* func, const base::DispatchAction& dispatchAction,
+               base::VRegistry::VLevel verboseLevel, const std::string& loggerId) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
+        /*va_list vl;
+        va_start(vl, loggers);
+        std::string loggerId = va_arg(vl, std::string);
+        va_end(vl);*/
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(base::consts::kDefaultLoggerId, Level::Debug, file, line, func)
+            Writer(Level::Debug, file, line, func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
@@ -4509,7 +4513,7 @@ protected:
 #endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            base::Writer(base::consts::kDefaultLoggerId, Level::Warning, m_file, m_line, m_func)
+            base::Writer(Level::Warning, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
                     << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
@@ -4522,9 +4526,10 @@ protected:
 };
 class PErrorWriter : public base::Writer {
 public:
-    PErrorWriter(const std::string& loggerId, const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
-               base::VRegistry::VLevel verboseLevel = 0) : base::Writer(loggerId, level, file, line, func, dispatchAction, verboseLevel) {
+    PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
+               const char* func, const base::DispatchAction& dispatchAction,
+               base::VRegistry::VLevel verboseLevel, const std::string& loggerId) :
+        base::Writer(level, file, line, func, dispatchAction, verboseLevel, loggerId) {
     }
 
     virtual ~PErrorWriter(void) {
@@ -4541,15 +4546,15 @@ public:
     }
 };
 } // namespace base
-#define _ELPP_WRITE_LOG(writer, loggerId, level, dispatchAction) writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-#define _ELPP_WRITE_LOG_IF(writer, condition, loggerId, level, dispatchAction) if (condition) \
-    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-#define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, level, dispatchAction) if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
-    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-#define _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, level, dispatchAction) if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
-    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
-#define _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, level, dispatchAction) if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
-    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction)
+#define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
+#define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
+#define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, level, dispatchAction, ...) if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
+#define _ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
+#define _ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
+    writer(loggerId, level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -4603,7 +4608,7 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
-                _ELPP_WRITE_LOG(el::base::Writer, m_loggerId, m_level, base::DispatchAction::NormalLog) << "Executed [" << m_blockName << "] in [" << *this << "]";
+                _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId) << "Executed [" << m_blockName << "] in [" << *this << "]";
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data;
                 data.init(this);
@@ -4646,7 +4651,7 @@ public:
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
-            el::base::Writer(m_loggerId, m_level, file, line, func) << ss.str();
+            el::base::Writer(m_level, file, line, func, base::DispatchAction::NormalLog, 0, m_loggerId) << ss.str();
         }
 #else
         _ELPP_UNUSED(id)
@@ -4829,7 +4834,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& lev
 #else
     _ELPP_UNUSED(stackTraceIfAvailable)
 #endif  // _ELPP_STACKTRACE
-    _ELPP_WRITE_LOG(el::base::Writer, logger, level, base::DispatchAction::NormalLog) << ss.str();
+    _ELPP_WRITE_LOG(el::base::Writer, level, base::DispatchAction::NormalLog, logger) << ss.str();
 }
 static inline void crashAbort(int sig) {
     base::utils::abort(sig);
@@ -4997,7 +5002,7 @@ public:
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
-        el::base::Writer w(el::base::consts::kInternalHelperLoggerId, el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0);
+        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0, el::base::consts::kInternalHelperLoggerId);
         w << templ;
 #if defined(_ELPP_UNICODE)
         return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
@@ -5265,185 +5270,185 @@ public:
 #undef CVERBOSE_N_TIMES
 // Normal logs
 #if _ELPP_INFO_LOG
-#   define CINFO(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Info, dispatchAction)
+#   define CINFO(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Info, dispatchAction, __VA_ARGS__)
 #else
-#   define CINFO(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CINFO(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Warning, dispatchAction)
+#   define CWARNING(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Warning, dispatchAction, __VA_ARGS__)
 #else
-#   define CWARNING(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CWARNING(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Debug, dispatchAction)
+#   define CDEBUG(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Debug, dispatchAction, __VA_ARGS__)
 #else
-#   define CDEBUG(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CDEBUG(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Error, dispatchAction)
+#   define CERROR(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Error, dispatchAction, __VA_ARGS__)
 #else
-#   define CERROR(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CERROR(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Fatal, dispatchAction)
+#   define CFATAL(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Fatal, dispatchAction, __VA_ARGS__)
 #else
-#   define CFATAL(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CFATAL(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE(writer, loggerId, dispatchAction) _ELPP_WRITE_LOG(writer, loggerId, el::Level::Trace, dispatchAction)
+#   define CTRACE(writer, dispatchAction, ...) _ELPP_WRITE_LOG(writer, el::Level::Trace, dispatchAction, __VA_ARGS__)
 #else
-#   define CTRACE(writer, loggerId, dispatchAction) el::base::NullWriter()
+#   define CTRACE(writer, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE(writer, vlevel, loggerId, dispatchAction) if (VLOG_IS_ON(vlevel)) writer(loggerId, \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel)
+#   define CVERBOSE(writer, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel)) writer(\
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel, __VA_ARGS__)
 #else
-#   define CVERBOSE(writer, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#   define CVERBOSE(writer, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 // Conditional logs
 #if _ELPP_INFO_LOG
-#   define CINFO_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Info, dispatchAction)
+#   define CINFO_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Info, dispatchAction, __VA_ARGS__)
 #else
-#   define CINFO_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CINFO_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Warning, dispatchAction)
+#   define CWARNING_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Warning, dispatchAction, __VA_ARGS__)
 #else
-#   define CWARNING_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CWARNING_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Debug, dispatchAction)
+#   define CDEBUG_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Debug, dispatchAction, __VA_ARGS__)
 #else
-#   define CDEBUG_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CDEBUG_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Error, dispatchAction)
+#   define CERROR_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Error, dispatchAction, __VA_ARGS__)
 #else
-#   define CERROR_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CERROR_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Fatal, dispatchAction)
+#   define CFATAL_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Fatal, dispatchAction, __VA_ARGS__)
 #else
-#   define CFATAL_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CFATAL_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE_IF(writer, condition_, loggerId, dispatchAction) _ELPP_WRITE_LOG_IF(writer, (condition_), loggerId, el::Level::Trace, dispatchAction)
+#   define CTRACE_IF(writer, condition_, dispatchAction, ...) _ELPP_WRITE_LOG_IF(writer, (condition_), el::Level::Trace, dispatchAction, __VA_ARGS__)
 #else
-#   define CTRACE_IF(writer, condition_, loggerId, dispatchAction) el::base::NullWriter()
+#   define CTRACE_IF(writer, condition_, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_IF(writer, condition_, vlevel, loggerId, dispatchAction) if (VLOG_IS_ON(vlevel) && (condition_)) writer(loggerId, \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel)
+#   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel) && (condition_)) writer(loggerId, \
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel, __VA_ARGS__)
 #else
-#   define CVERBOSE_IF(writer, condition_, vlevel, loggerId) el::base::NullWriter()
+#   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 // Occasional logs
 #if _ELPP_INFO_LOG
-#   define CINFO_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Info, dispatchAction)
+#   define CINFO_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Info, dispatchAction, __VA_ARGS__)
 #else
-#   define CINFO_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CINFO_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Warning, dispatchAction)
+#   define CWARNING_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Warning, dispatchAction, __VA_ARGS__)
 #else
-#   define CWARNING_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CWARNING_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Debug, dispatchAction)
+#   define CDEBUG_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Debug, dispatchAction, __VA_ARGS__)
 #else
-#   define CDEBUG_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CDEBUG_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Error, dispatchAction)
+#   define CERROR_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Error, dispatchAction, __VA_ARGS__)
 #else
-#   define CERROR_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CERROR_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Fatal, dispatchAction)
+#   define CFATAL_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Fatal, dispatchAction, __VA_ARGS__)
 #else
-#   define CFATAL_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CFATAL_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE_EVERY_N(writer, occasion, loggerId, dispatchAction) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, loggerId, el::Level::Trace, dispatchAction)
+#   define CTRACE_EVERY_N(writer, occasion, dispatchAction, ...) _ELPP_WRITE_LOG_EVERY_N(writer, occasion, el::Level::Trace, dispatchAction, __VA_ARGS__)
 #else
-#   define CTRACE_EVERY_N(writer, occasion, loggerId, dispatchAction) el::base::NullWriter()
+#   define CTRACE_EVERY_N(writer, occasion, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion), vlevel, loggerId, dispatchAction)
+#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, dispatchAction, ...) CVERBOSE_IF(writer, ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion), vlevel, dispatchAction, __VA_ARGS__)
 #else
-#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#   define CVERBOSE_EVERY_N(writer, occasion, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 // After N logs
 #if _ELPP_INFO_LOG
-#   define CINFO_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Info, dispatchAction)
+#   define CINFO_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Info, dispatchAction, __VA_ARGS__)
 #else
-#   define CINFO_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CINFO_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Warning, dispatchAction)
+#   define CWARNING_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Warning, dispatchAction, __VA_ARGS__)
 #else
-#   define CWARNING_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CWARNING_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Debug, dispatchAction)
+#   define CDEBUG_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Debug, dispatchAction, __VA_ARGS__)
 #else
-#   define CDEBUG_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CDEBUG_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Error, dispatchAction)
+#   define CERROR_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Error, dispatchAction, __VA_ARGS__)
 #else
-#   define CERROR_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CERROR_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Fatal, dispatchAction)
+#   define CFATAL_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Fatal, dispatchAction, __VA_ARGS__)
 #else
-#   define CFATAL_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CFATAL_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE_AFTER_N(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_AFTER_N(writer, n, loggerId, el::Level::Trace, dispatchAction)
+#   define CTRACE_AFTER_N(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_AFTER_N(writer, n, el::Level::Trace, dispatchAction, __VA_ARGS__)
 #else
-#   define CTRACE_AFTER_N(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CTRACE_AFTER_N(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_AFTER_N(writer, n, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateAfterNCounter(__FILE__, __LINE__, n), vlevel, loggerId, dispatchAction)
+#   define CVERBOSE_AFTER_N(writer, n, vlevel, dispatchAction, ...) CVERBOSE_IF(writer, ELPP->validateAfterNCounter(__FILE__, __LINE__, n), vlevel, dispatchAction, __VA_ARGS__)
 #else
-#   define CVERBOSE_AFTER_N(writer, n, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#   define CVERBOSE_AFTER_N(writer, n, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 // N Times logs
 #if _ELPP_INFO_LOG
-#   define CINFO_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Info, dispatchAction)
+#   define CINFO_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Info, dispatchAction, __VA_ARGS__)
 #else
-#   define CINFO_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CINFO_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_INFO_LOG
 #if _ELPP_WARNING_LOG
-#   define CWARNING_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Warning, dispatchAction)
+#   define CWARNING_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Warning, dispatchAction, __VA_ARGS__)
 #else
-#   define CWARNING_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CWARNING_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_WARNING_LOG
 #if _ELPP_DEBUG_LOG
-#   define CDEBUG_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Debug, dispatchAction)
+#   define CDEBUG_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Debug, dispatchAction, __VA_ARGS__)
 #else
-#   define CDEBUG_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CDEBUG_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_DEBUG_LOG
 #if _ELPP_ERROR_LOG
-#   define CERROR_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Error, dispatchAction)
+#   define CERROR_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Error, dispatchAction, __VA_ARGS__)
 #else
-#   define CERROR_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CERROR_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_ERROR_LOG
 #if _ELPP_FATAL_LOG
-#   define CFATAL_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Fatal, dispatchAction)
+#   define CFATAL_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Fatal, dispatchAction, __VA_ARGS__)
 #else
-#   define CFATAL_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CFATAL_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_FATAL_LOG
 #if _ELPP_TRACE_LOG
-#   define CTRACE_N_TIMES(writer, n, loggerId, dispatchAction) _ELPP_WRITE_LOG_N_TIMES(writer, n, loggerId, el::Level::Trace, dispatchAction)
+#   define CTRACE_N_TIMES(writer, n, dispatchAction, ...) _ELPP_WRITE_LOG_N_TIMES(writer, n, el::Level::Trace, dispatchAction, __VA_ARGS__)
 #else
-#   define CTRACE_N_TIMES(writer, n, loggerId, dispatchAction) el::base::NullWriter()
+#   define CTRACE_N_TIMES(writer, n, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
-#   define CVERBOSE_N_TIMES(writer, n, vlevel, loggerId, dispatchAction) CVERBOSE_IF(writer, ELPP->validateNTimesCounter(__FILE__, __LINE__, n), vlevel, loggerId, dispatchAction)
+#   define CVERBOSE_N_TIMES(writer, n, vlevel, dispatchAction, ...) CVERBOSE_IF(writer, ELPP->validateNTimesCounter(__FILE__, __LINE__, n), vlevel, dispatchAction, __VA_ARGS__)
 #else
-#   define CVERBOSE_N_TIMES(writer, n, vlevel, loggerId, dispatchAction) el::base::NullWriter()
+#   define CVERBOSE_N_TIMES(writer, n, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
 //
 // Custom Loggers - Requires (level, loggerId, dispatchAction)
@@ -5462,18 +5467,18 @@ public:
 #undef CLOG_N_TIMES
 #undef CVLOG_N_TIMES
 // Normal logs
-#define CLOG(LEVEL, loggerId) C##LEVEL(el::base::Writer, loggerId, el::base::DispatchAction::NormalLog)
-#define CVLOG(vlevel, loggerId) CVERBOSE(el::base::Writer, vlevel, loggerId, el::base::DispatchAction::NormalLog)
+#define CLOG(LEVEL, ...) C##LEVEL(el::base::Writer, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CVLOG(vlevel, ...) CVERBOSE(el::base::Writer, vlevel, el::base::DispatchAction::NormalLog, __VA_ARGS__)
 // Conditional logs
-#define CLOG_IF(condition, LEVEL, loggerId) C##LEVEL##_IF(el::base::Writer, condition, loggerId, el::base::DispatchAction::NormalLog)
-#define CVLOG_IF(condition, vlevel, loggerId) CVERBOSE_IF(el::base::Writer, condition, vlevel, loggerId, el::base::DispatchAction::NormalLog)
+#define CLOG_IF(condition, LEVEL, ...) C##LEVEL##_IF(el::base::Writer, condition, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CVLOG_IF(condition, vlevel, ...) CVERBOSE_IF(el::base::Writer, condition, vlevel, el::base::DispatchAction::NormalLog, __VA_ARGS__)
 // Hit counts based logs
-#define CLOG_EVERY_N(n, LEVEL, loggerId) C##LEVEL##_EVERY_N(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
-#define CVLOG_EVERY_N(n, vlevel, loggerId) CVERBOSE_EVERY_N(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
-#define CLOG_AFTER_N(n, LEVEL, loggerId) C##LEVEL##_AFTER_N(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
-#define CVLOG_AFTER_N(n, vlevel, loggerId) CVERBOSE_AFTER_N(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
-#define CLOG_N_TIMES(n, LEVEL, loggerId) C##LEVEL##_N_TIMES(el::base::Writer, n, loggerId, el::base::DispatchAction::NormalLog)
-#define CVLOG_N_TIMES(n, vlevel, loggerId) CVERBOSE_N_TIMES(el::base::Writer, n, vlevel, loggerId, el::base::DispatchAction::NormalLog)
+#define CLOG_EVERY_N(n, LEVEL, ...) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CVLOG_EVERY_N(n, vlevel, ...) CVERBOSE_EVERY_N(el::base::Writer, n, vlevel, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CLOG_AFTER_N(n, LEVEL, ...) C##LEVEL##_AFTER_N(el::base::Writer, n, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CVLOG_AFTER_N(n, vlevel, ...) CVERBOSE_AFTER_N(el::base::Writer, n, vlevel, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CLOG_N_TIMES(n, LEVEL, ...) C##LEVEL##_N_TIMES(el::base::Writer, n, el::base::DispatchAction::NormalLog, __VA_ARGS__)
+#define CVLOG_N_TIMES(n, vlevel, ...) CVERBOSE_N_TIMES(el::base::Writer, n, vlevel, el::base::DispatchAction::NormalLog, __VA_ARGS__)
 //
 // Default Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
