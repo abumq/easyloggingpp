@@ -18,7 +18,8 @@ QMAKE_LINK = $$COMPILER
 
 QMAKE_CXXFLAGS += -std=c++0x
 DEFINES += _ELPP_STACKTRACE_ON_CRASH \
-
+    _ELPP_MULTI_LOGGER_SUPPORT
+    
 SOURCES += main.cc\
         mainwindow.cc \
     listwithsearch.cc

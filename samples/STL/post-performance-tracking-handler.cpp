@@ -16,6 +16,8 @@ void handler(const el::PerformanceTrackingData* data) {
 
 int main(void) {
 
+    TIMED_BLOCK(mainBlock, "main");
+
     el::Helpers::installPostPerformanceTrackingHandler(handler);
 
     {

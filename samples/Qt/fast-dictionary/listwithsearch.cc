@@ -1,10 +1,10 @@
 #include "listwithsearch.hh"
 #include "easylogging++.h"
-#if QT_VERSION_CHECK(5,0,2) && (defined(_WIN32) || defined(_WIN64))
+//#if QT_VERSION_CHECK(5,0,2) && (defined(_WIN32) || defined(_WIN64))
 #include <QtConcurrent/QtConcurrentRun>
-#else
-#include <QtConcurrentRun>
-#endif
+//#else
+//#include <QtConcurrentRun>
+//#endif
 
 int ListWithSearch::kSearchBarHeight = 22;
 
