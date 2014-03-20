@@ -4067,30 +4067,24 @@ class Writer : base::NoCopy {
 public:
     Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const std::string& loggerId/*const std::string& loggers, ...*/) :
+               base::VRegistry::VLevel verboseLevel, const std::string& loggerId) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
-        /*va_list vl;
-        va_start(vl, loggers);
-        std::string loggerId = va_arg(vl, const char*);*/
-        //while ((loggerId = va_arg(vl, const char*))) {
-            m_logger = elStorage->registeredLoggers()->get(loggerId, false);
-            if (m_logger == nullptr) {
-                if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
+        m_logger = elStorage->registeredLoggers()->get(loggerId, false);
+        if (m_logger == nullptr) {
+            if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
-                }
-                Writer(Level::Debug, file, line, func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
-                    << "Logger [" << loggerId << "] is not registered yet!";
-                m_proceed = false;
-            } else {
-                m_logger->lock();  // This should not be unlocked by checking m_proceed because
-                               // m_proceed can be changed by lines below
-                m_proceed = m_logger->m_typedConfigurations->enabled(level);
-                m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
             }
-        //}
-        /*va_end(vl);*/
+            Writer(Level::Debug, file, line, func, base::DispatchAction::NormalLog, 0, base::consts::kDefaultLoggerId)
+                << "Logger [" << loggerId << "] is not registered yet!";
+            m_proceed = false;
+        } else {
+            m_logger->lock();  // This should not be unlocked by checking m_proceed because
+                           // m_proceed can be changed by lines below
+            m_proceed = m_logger->m_typedConfigurations->enabled(level);
+            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
+        }
     }
 
     virtual ~Writer(void) {
