@@ -5106,7 +5106,8 @@ public:
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
-        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0).construct(el::base::consts::kInternalHelperLoggerId);
+        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0);
+        w.construct(el::base::consts::kInternalHelperLoggerId);
         w << templ;
 #if defined(_ELPP_UNICODE)
         return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
