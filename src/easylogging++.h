@@ -4618,23 +4618,25 @@ public:
     }
 };
 } // namespace base
-#if _ELPP_COMPILER_MSVC
-#   define ELPP_VARIADIC_FUNC_MSVC(FUNC, ARGS) FUNC ARGS
-#   define ELPP_VARIADIC_FUNC_MSVC_RUN(FUNC, ...) ELPP_VARIADIC_FUNC_MSVC(FUNC, (__VA_ARGS__))
-#   define ELPP_VA_LENGTH(...) ELPP_VARIADIC_FUNC_MSVC_RUN(ELPP_VA_LENGTH_LAST, 0, ## __VA_ARGS__,\
-        10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#else
-#   if _ELPP_COMPILER_CLANG
-#       define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#   else
-#       define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#   endif // _ELPP_COMPILER_CLANG
-#endif // _ELPP_COMPILER_MSVC
-#define ELPP_VA_LENGTH_LAST(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-#    define runVariadic(variadicFunction, ...) variadicFunction(ELPP_VA_LENGTH(__VA_ARGS__), __VA_ARGS__)
+#   if _ELPP_COMPILER_MSVC
+#      define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs
+#      define ELPP_VARIADIC_FUNC_MSVC_RUN(variadicFunction, ...) ELPP_VARIADIC_FUNC_MSVC(variadicFunction, (__VA_ARGS__))
+#      define el_getVALength(...) ELPP_VARIADIC_FUNC_MSVC_RUN(el_resolveVALength, 0, ## __VA_ARGS__,\
+          10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   else
+#      if _ELPP_COMPILER_CLANG
+#         define el_getVALength(...) el_resolveVALength(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#      else
+#         define el_getVALength(...) el_resolveVALength(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#      endif // _ELPP_COMPILER_CLANG
+#   endif // _ELPP_COMPILER_MSVC
+#   define el_resolveVALength(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#   define runVariadic(variadicFunction, ...) variadicFunction(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #else
-#    define runVariadic(variadicFunction, ...) variadicFunction(1, __VA_ARGS__)
+#   define el_resolveVALength(...) (void(0))
+#   define el_getVALength(...) (void(0))
+#   define runVariadic(variadicFunction, ...) variadicFunction(1, __VA_ARGS__)
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
     writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
