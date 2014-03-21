@@ -1288,14 +1288,6 @@ public:
        return buff_;
     }
 };
-#define ELPP_RESOLVED_VAL(var) s_##var
-#define ELPP_RESOLVED(var) s_##var##Resolved
-#define ELPP_RESOLVED_VAR_DECLARE(type, var) static type ELPP_RESOLVED_VAL(var); static bool ELPP_RESOLVED(var)
-#define ELPP_RETURN_IF_RESOLVED(var) if (ELPP_RESOLVED(var)) return ELPP_RESOLVED_VAL(var)
-#define ELPP_RESOLVE_AND_RETURN(var) (0 ? (void)0; ELPP_RESOLVED(var) = true; ELPP_RESOLVED_VAL(var))
-ELPP_RESOLVED_VAR_DECLARE(std::string, currentUser);
-ELPP_RESOLVED_VAR_DECLARE(std::string, currentHost);
-ELPP_RESOLVED_VAR_DECLARE(bool, terminalSupportsColor);
 /// @brief Operating System helper static class used internally. You should not use it.
 class OS : base::StaticClass {
 public:
@@ -1394,54 +1386,53 @@ public:
         }
         return std::string(val);
     }
-
     /// @brief Gets current username.
-    static inline const std::string currentUser(void) {
-        ELPP_RETURN_IF_RESOLVED(currentUser);
+    static inline std::string currentUser(void) {
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        ELPP_RESOLVED_VAL(currentUser) = getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
+        return getEnvironmentVariable("USER", base::consts::kUnknownUser, "whoami");
 #elif _ELPP_OS_WINDOWS
-        ELPP_RESOLVED_VAL(currentUser) = getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
+        return getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
-        ELPP_RESOLVED_VAL(currentUser) = std::string("android");
+        return std::string("android");
 #else
-        ELPP_RESOLVED_VAL(currentUser) = std::string();
+        return std::string();
 #endif  // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       ELPP_RESOLVED(currentUser) = true;
-       return ELPP_RESOLVED_VAL(currentUser);
     }
 
     /// @brief Gets current host name or computer name.
     ///
     /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
-    static inline const std::string currentHost(void) {
-       ELPP_RETURN_IF_RESOLVED(currentHost);
+    static inline std::string currentHost(void) {
 #if _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-        ELPP_RESOLVED_VAL(currentHost) = getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
+        return getEnvironmentVariable("HOSTNAME", base::consts::kUnknownHost, "hostname");
 #elif _ELPP_OS_WINDOWS
-        ELPP_RESOLVED_VAL(currentHost) = getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
+        return getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
-        ELPP_RESOLVED_VAL(currentHost) = getDeviceName();
+        return getDeviceName();
 #else
-        ELPP_RESOLVED_VAL(currentHost) = std::string();
+        return std::string();
 #endif  // _ELPP_OS_UNIX && !_ELPP_OS_ANDROID
-       ELPP_RESOLVED(currentHost) = true;
-       return ELPP_RESOLVED_VAL(currentHost);
     }
     /// @brief Whether or not terminal supports colors
     static inline bool termSupportsColor(void) {
-        ELPP_RETURN_IF_RESOLVED(terminalSupportsColor);
         std::string term = getEnvironmentVariable("TERM", "");
-        ELPP_RESOLVED_VAL(terminalSupportsColor) = term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
+        return term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
                               term == "screen" || term == "linux" || term == "cygwin";
-        ELPP_RESOLVED(terminalSupportsColor) = true;
-        return ELPP_RESOLVED_VAL(terminalSupportsColor);
     }
 };
-#undef ELPP_RESOLVED_VAL
-#undef ELPP_RESOLVED
-#undef ELPP_RESOLVED_VAR_DECLARE
-#undef ELPP_RETURN_IF_RESOLVED
+extern std::string s_currentUser;
+extern std::string s_currentHost;
+extern bool s_termSupportsColor;
+#define INITIALIZE_BASIC_DECLARATIONS \
+    namespace el {\
+        namespace base {\
+            namespace utils {\
+                std::string s_currentUser = el::base::utils::OS::currentUser(); \
+                std::string s_currentHost = el::base::utils::OS::currentHost(); \
+                bool s_termSupportsColor = el::base::utils::OS::termSupportsColor(); \
+            }\
+        }\
+   }
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
 public:
@@ -2168,12 +2159,13 @@ protected:
                     base::consts::kTraceLevelLogValue);
         }
         if (hasFlag(base::FormatFlags::User)) {
+            std::string s = base::utils::s_currentUser;
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentUserFormatSpecifier,
-                    base::utils::OS::currentUser());
+                    base::utils::s_currentUser);
         }
         if (hasFlag(base::FormatFlags::Host)) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentHostFormatSpecifier,
-                    base::utils::OS::currentHost());
+                    base::utils::s_currentHost);
         }
         // Ignore Level::Global and Level::Unknown
     }
@@ -3176,7 +3168,7 @@ private:
     friend class el::base::LogDispatcher;
 
     void convertToColoredOutput(base::type::string_t* logLine, const Level& level) {
-        if (!base::utils::OS::termSupportsColor()) return;
+        if (!base::utils::s_termSupportsColor) return;
         const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
         if (level == Level::Error || level == Level::Fatal)
             *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
@@ -5930,15 +5922,18 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _ELPP_CRASH_HANDLER_INIT
 #define _ELPP_INIT_EASYLOGGINGPP(val) \
+    INITIALIZE_BASIC_DECLARATIONS \
     namespace el {                \
         namespace base {          \
             base::type::StoragePointer elStorage(val);       \
         }                                                                        \
         base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
     }
+
 #define _INITIALIZE_EASYLOGGINGPP \
     _ELPP_INIT_EASYLOGGINGPP(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())))
-#define _INITIALIZE_NULL_EASYLOGGINGPP  \
+#define _INITIALIZE_NULL_EASYLOGGINGPP \
+    INITIALIZE_BASIC_DECLARATIONS \
     namespace el {                \
         namespace base {          \
             base::type::StoragePointer elStorage;       \
