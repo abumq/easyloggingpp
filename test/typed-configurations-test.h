@@ -40,7 +40,7 @@ TEST(TypedConfigurationsTest, Initialization) {
     EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
     EXPECT_EQ(ELPP_LITERAL("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg"), tConf.logFormat(Level::Debug).userFormat());
-    std::string expected = BUILD_STR("%datetime %level DEBUG [" << OS::s_currentUser << "@%%host] [%func] [%loc] %msg");
+    std::string expected = BUILD_STR("%datetime %level DEBUG [" << s_currentUser << "@%%host] [%func] [%loc] %msg");
 #if defined(_ELPP_UNICODE)
     char* orig = Str::wcharPtrToCharPtr(tConf.logFormat(Level::Debug).format().c_str());
 #else

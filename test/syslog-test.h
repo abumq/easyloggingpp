@@ -17,7 +17,7 @@ TEST(SysLogTest, WriteLog) {
 
     SYSLOG(INFO) << "this is my syslog";
     sleep(1); // Make sure daemon has picked it up
-    std::string expectedEnd = BUILD_STR(OS::s_currentHost << " " << kSysLogIdent << ": INFO : this is my syslog\n");
+    std::string expectedEnd = BUILD_STR(s_currentHost << " " << kSysLogIdent << ": INFO : this is my syslog\n");
     std::string actual = tail(1, kSysLogFile);
     EXPECT_TRUE(Str::endsWith(actual, expectedEnd));
 }
@@ -56,22 +56,22 @@ TEST(SysLogTest, DebugVersionLogs) {
     // Now test again
     DSYSLOG(INFO) << "DSYSLOG should be resolved";
     sleep(1); // Make sure daemon has picked it up
-    std::string expected = BUILD_STR(OS::s_currentHost << " " << kSysLogIdent << ": INFO : DSYSLOG should be resolved\n");
+    std::string expected = BUILD_STR(s_currentHost << " " << kSysLogIdent << ": INFO : DSYSLOG should be resolved\n");
     EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
 
     DSYSLOG_IF(true, INFO) << "DSYSLOG_IF should be resolved";
     sleep(1); // Make sure daemon has picked it up
-    expected = BUILD_STR(OS::s_currentHost << " " << kSysLogIdent << ": INFO : DSYSLOG_IF should be resolved\n");
+    expected = BUILD_STR(s_currentHost << " " << kSysLogIdent << ": INFO : DSYSLOG_IF should be resolved\n");
     EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
     
     DCSYSLOG(INFO, el::base::consts::kSysLogLoggerId) << "DCSYSLOG should be resolved";
     sleep(1); // Make sure daemon has picked it up
-    expected = BUILD_STR(OS::s_currentHost << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
+    expected = BUILD_STR(s_currentHost << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
     EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
 
     DCSYSLOG(INFO, el::base::consts::kSysLogLoggerId) << "DCSYSLOG should be resolved";
     sleep(1); // Make sure daemon has picked it up
-    expected = BUILD_STR(OS::s_currentHost << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
+    expected = BUILD_STR(s_currentHost << " " << kSysLogIdent << ": INFO : DCSYSLOG should be resolved\n");
     EXPECT_TRUE(Str::endsWith(tail(1, kSysLogFile), expected));
 }
 
