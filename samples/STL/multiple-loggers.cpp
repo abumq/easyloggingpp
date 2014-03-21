@@ -25,7 +25,7 @@ int main(void) {
 
     el::Loggers::getLogger("network"); // Register 'network' logger
 
-    CLOG(INFO, "default", "network") << "My first log message that writes with network and default loggers";
+    CLOG(INFO, "default", "default") << "My first log message that writes with network and default loggers";
 
     return 0;
 }

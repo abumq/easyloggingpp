@@ -4604,7 +4604,6 @@ public:
 #else
             m_logger->stream() << ": " << strerror(errno) << " [" << errno << "]";
 #endif
-            processDispatch();
         }
     }
 };
@@ -5925,20 +5924,20 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
     INITIALIZE_BASIC_DECLARATIONS \
     namespace el {                \
         namespace base {          \
-            base::type::StoragePointer elStorage(val);       \
-        }                                                                        \
-        base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
+            el::base::type::StoragePointer elStorage(val);       \
+        }\
+        el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
 
 #define _INITIALIZE_EASYLOGGINGPP \
-    _ELPP_INIT_EASYLOGGINGPP(new base::Storage(api::LogBuilderPtr(new base::DefaultLogBuilder())))
+    _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::api::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #define _INITIALIZE_NULL_EASYLOGGINGPP \
     INITIALIZE_BASIC_DECLARATIONS \
     namespace el {                \
         namespace base {          \
-            base::type::StoragePointer elStorage;       \
-        }                                                                        \
-        base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);   \
+            el::base::type::StoragePointer elStorage;       \
+        }\
+        el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
 #define _SHARE_EASYLOGGINGPP(initializedStorage) _ELPP_INIT_EASYLOGGINGPP(initializedStorage)
 #if defined(_ELPP_UNICODE)
