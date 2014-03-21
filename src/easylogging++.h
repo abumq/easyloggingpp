@@ -4627,7 +4627,11 @@ public:
 #   define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 #endif // _ELPP_COMPILER_MSVC
 #define ELPP_VA_LENGTH_LAST(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
-#define runVariadic(variadicFunction, ...) variadicFunction(ELPP_VA_LENGTH(__VA_ARGS__), __VA_ARGS__)
+#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
+#    define runVariadic(variadicFunction, ...) variadicFunction(ELPP_VA_LENGTH(__VA_ARGS__), __VA_ARGS__)
+#else
+#    define runVariadic(variadicFunction, ...) variadicFunction(1, __VA_ARGS__)
+#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
     writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
