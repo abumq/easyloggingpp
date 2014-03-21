@@ -692,6 +692,8 @@ Let's say we have an application that uses easylogging++ and has it's own config
 
  * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_SHARE_EASYLOGGINGPP(access-function-to-repository)`
  * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
+ 
+  Refer [this](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/shared-storage) for details
 
 After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs. A very good example is in `samples/VC++/DLLSample`
 
