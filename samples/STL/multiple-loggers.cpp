@@ -6,9 +6,6 @@
  // @author mkhan3189
  //
 
-// NOTE: This is experimental feature and can be removed in future; but there is also possibility that this
-//       may become supported feature for future versions
-//
 //
 // In order for this to work please uncomment following line
 // #define _ELPP_MULTI_LOGGER_SUPPORT

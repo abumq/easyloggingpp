@@ -1,7 +1,7 @@
 Easylogging++ v9.59 RELEASE NOTES
 ---------------------------------
 
-Release type: Minor
+Release type: Major
 API changes: No
 
 =========================
@@ -10,17 +10,20 @@ API changes: No
 
  - Removing trailing spaces and reorder Trackable members class to avoid warning on gcc (issue 158)
 
+
 ==========================
 =      NEW FEATURES      =
 ==========================
 
- - Experimental feature added with `_ELPP_MULTI_LOGGER_SUPPORT` (issue #157)
+ - Ability to use multiple loggers to log single message (needs `_ELPP_MULTI_LOGGER_SUPPORT`) (issue #157)
+
 
 ==========================
 =       BUG FIXES        =
 ==========================
 
  - Segmentation fault when running shared lib apps (issue #160)
+
 
 ==========================
 =         NOTES          =
