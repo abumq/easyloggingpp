@@ -14,6 +14,9 @@
 // #define _ELPP_MULTI_LOGGER_SUPPORT
 //
 
+// You can also uncomment this line and achieve same result using LOG(..) macro
+// #define _LOGGER "default", "network"
+
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
