@@ -676,7 +676,6 @@ namespace consts {
     static const char* kPerformanceLoggerId                    =      "performance";
     static const char* kSysLogLoggerId                         =      "syslog";
     static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
-    static const char* kEndLoggersList                         =      0;
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
