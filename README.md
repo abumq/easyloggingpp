@@ -459,6 +459,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
 | `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
 | `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
+| `_ELPP_MULTI_LOGGER_SUPPORT`             | Enables using multiple loggers for single log, you can achieve this by logging e.g, `CLOG(INFO, "logger1", "logger2")`. See sample [multi-logger](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/multiple-loggers.cpp) for details                                                                    |
 
  [![top] Goto Top](#table-of-contents)
  
