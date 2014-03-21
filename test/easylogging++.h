@@ -11,5 +11,6 @@
 #define _ELPP_DISABLE_VMODULES_EXTENSION
 #define _ELPP_SYSLOG
 #define _ELPP_HANDLE_POST_LOG_DISPATCH
+#define _ELPP_MULTI_LOGGER_SUPPORT
 #include "../src/easylogging++.h"
 #endif // EASYLOGGING_FOR_SAMPLES_H
