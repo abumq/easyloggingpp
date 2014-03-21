@@ -4600,9 +4600,8 @@ class PErrorWriter : public base::Writer {
 public:
     PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const char* loggerId, ...) :
+               base::VRegistry::VLevel verboseLevel) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
-        construct(1, loggerId);
     }
 
     virtual ~PErrorWriter(void) {
@@ -5407,7 +5406,7 @@ public:
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE(writer, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel)) writer(\
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel, __VA_ARGS__)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).runVariadic(construct, __VA_ARGS__)
 #else
 #   define CVERBOSE(writer, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
@@ -5450,7 +5449,7 @@ public:
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel) && (condition_)) writer( \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel, __VA_ARGS__)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).runVariadic(construct, __VA_ARGS__)
 #else
 #   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
