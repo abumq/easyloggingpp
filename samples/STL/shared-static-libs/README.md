@@ -1,4 +1,4 @@
-**A Simple example of shared and static compilations**
+## A Simple example of shared and static compilations
 
 ```
 .
