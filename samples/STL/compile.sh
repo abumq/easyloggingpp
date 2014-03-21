@@ -7,6 +7,7 @@ macro="$macro -D_ELPP_STL_LOGGING"
 macro="$macro -D_ELPP_LOG_UNORDERED_SET"
 macro="$macro -D_ELPP_LOG_UNORDERED_MAP"
 macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
+macro="$macro -D_ELPP_MULTI_LOGGER_SUPPORT"
 
 if [ "$2" = "" ];then
   COMPILER=g++

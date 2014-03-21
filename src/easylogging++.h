@@ -4624,7 +4624,11 @@ public:
 #   define ELPP_VA_LENGTH(...) ELPP_VARIADIC_FUNC_MSVC_RUN(ELPP_VA_LENGTH_LAST, 0, ## __VA_ARGS__,\
         10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 #else
-#   define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   if _ELPP_COMPILER_CLANG
+#       define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   else
+#       define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   endif // _ELPP_COMPILER_CLANG
 #endif // _ELPP_COMPILER_MSVC
 #define ELPP_VA_LENGTH_LAST(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
