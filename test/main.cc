@@ -15,6 +15,7 @@
 #include "log-format-resolution-test.h"
 #include "loggable-test.h"
 #include "logger-test.h"
+#include "macros-test.h"
 #include "os-utils-test.h"
 #include "plog-test.h"
 #include "post-log-dispatch-handler-test.h"

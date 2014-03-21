@@ -39,4 +39,5 @@ HEADERS  += \
     os-utils-test.h \
     file-utils-test.h \
     plog-test.h \
-    post-log-dispatch-handler-test.h
+    post-log-dispatch-handler-test.h \
+    macros-test.h
