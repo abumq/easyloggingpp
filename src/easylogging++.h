@@ -189,13 +189,13 @@
 #endif  // defined(_ELPP_THREAD_SAFE)
 // Function macro _ELPP_FUNC
 #undef _ELPP_FUNC
-#if defined(_MSC_VER)  // Visual C++
+#if _ELPP_COMPILER_MSVC  // Visual C++
 #   define _ELPP_FUNC __FUNCSIG__
-#elif(defined(__GNUC__) && (__GNUC__ >= 2))  // GCC
+#elif _ELPP_COMPILER_GCC  // GCC
 #   define _ELPP_FUNC __PRETTY_FUNCTION__
-#elif(defined(__INTEL_COMPILER))  // Intel C++
+#elif _ELPP_COMPILER_INTEL  // Intel C++
 #   define _ELPP_FUNC __PRETTY_FUNCTION__
-#elif(defined(__clang__) && (__clang__ == 1))  // Clang++
+#elif _ELPP_COMPILER_CLANG  // Clang++
 #   define _ELPP_FUNC __PRETTY_FUNCTION__
 #else
 #   if defined(__func__)
@@ -676,7 +676,7 @@ namespace consts {
     static const char* kPerformanceLoggerId                    =      "performance";
     static const char* kSysLogLoggerId                         =      "syslog";
     static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
-    static const char* kEndLoggersList                         =      "va_args_end";
+    static const char* kEndLoggersList                         =      0;
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatEscapeChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
@@ -3292,9 +3292,6 @@ public:
     }
 
     inline static bool isValidId(const std::string& id) {
-        if (id == base::consts::kEndLoggersList) {
-            return false;
-        }
         for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
             if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
                 return false;
@@ -4094,13 +4091,9 @@ class Writer : base::NoCopy {
 public:
     Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const std::string& loggerIds, ...) :
+               base::VRegistry::VLevel verboseLevel) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(true), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        va_start(loggersList, loggerIds);
-#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        processInit(loggerIds);
+                   m_proceed(false), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
     }
 
     virtual ~Writer(void) {
@@ -4480,6 +4473,23 @@ public:
 #undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
 
+    Writer& construct(int count, const char* loggerIds, ...) {
+#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
+        va_list loggersList;
+        va_start(loggersList, loggerIds);
+        const char* id = loggerIds;
+        for (int i = 0; i < count; ++i) {
+            m_loggerIds.push_back(std::string(id));
+            id = va_arg(loggersList, const char*);
+        }
+        va_end(loggersList);
+        initializeLogger(m_loggerIds.at(0));
+#else
+        _ELPP_UNUSED(count);
+        initializeLogger(loggerIds);
+#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
+        return *this;
+    }
 protected:
     Level m_level;
     const char* m_file;
@@ -4492,7 +4502,7 @@ protected:
     const base::type::char_t* m_containerLogSeperator;
     friend class el::Helpers;
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-    va_list loggersList;
+    std::vector<std::string> m_loggerIds;
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
     template<class Iterator>
@@ -4509,21 +4519,14 @@ protected:
         return *this;
     }
 
-    
-    bool processInit(const std::string& loggerId) {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        if (loggerId == base::consts::kEndLoggersList) {
-            return false;
-        }
-#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
+    void initializeLogger(const std::string& loggerId) {
         m_logger = elStorage->registeredLoggers()->get(loggerId, false);
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(Level::Debug, m_file, m_line, m_func, base::DispatchAction::NormalLog
-                , 0, base::consts::kDefaultLoggerId, base::consts::kEndLoggersList)
+            Writer(Level::Debug, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0).construct(1, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
@@ -4533,14 +4536,13 @@ protected:
             m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
                 ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
         }
-        return true;
     }
     
     void processDispatch() {
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        std::string loggerId;
         bool firstDispatched = false;
         base::type::string_t logMessage;
+        std::size_t i = 0;
         do {
             if (m_proceed) {
                 if (firstDispatched) {
@@ -4554,9 +4556,10 @@ protected:
                 m_logger->stream().str(ELPP_LITERAL(""));
                 m_logger->unlock();
             }
-            loggerId = va_arg(loggersList, const char*);
-        } while (processInit(loggerId));
-        va_end(loggersList);
+            if (i + 1 < m_loggerIds.size()) {
+                initializeLogger(m_loggerIds.at(i + 1));
+            }
+        } while (++i < m_loggerIds.size());
 #else
         if (m_proceed) {
             triggerDispatch();
@@ -4582,8 +4585,7 @@ protected:
 #endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            base::Writer(Level::Warning, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0, 
-                base::consts::kDefaultLoggerId, base::consts::kEndLoggersList)
+            base::Writer(Level::Warning, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0).construct(1, base::consts::kDefaultLoggerId)
                     << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
@@ -4598,8 +4600,9 @@ class PErrorWriter : public base::Writer {
 public:
     PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel, const std::string& loggerId, ...) :
-        base::Writer(level, file, line, func, dispatchAction, verboseLevel, loggerId) {
+               base::VRegistry::VLevel verboseLevel, const char* loggerId, ...) :
+        base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
+        construct(1, loggerId);
     }
 
     virtual ~PErrorWriter(void) {
@@ -4616,19 +4619,29 @@ public:
     }
 };
 } // namespace base
+#if _ELPP_COMPILER_MSVC
+#   define ELPP_VARIADIC_FUNC_MSVC(FUNC, ARGS) FUNC ARGS
+#   define ELPP_VARIADIC_FUNC_MSVC_RUN(FUNC, ...) ELPP_VARIADIC_FUNC_MSVC(FUNC, (__VA_ARGS__))
+#   define ELPP_VA_LENGTH(...) ELPP_VARIADIC_FUNC_MSVC_RUN(ELPP_VA_LENGTH_LAST, 0, ## __VA_ARGS__,\
+        10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#else
+#   define ELPP_VA_LENGTH(...) ELPP_VA_LENGTH_LAST(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#endif // _ELPP_COMPILER_MSVC
+#define ELPP_VA_LENGTH_LAST(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#define runVariadic(variadicFunction, ...) variadicFunction(ELPP_VA_LENGTH(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__, el::base::consts::kEndLoggersList)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__, el::base::consts::kEndLoggersList)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, level, dispatchAction, ...) \
     if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__, el::base::consts::kEndLoggersList)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__, el::base::consts::kEndLoggersList)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0, __VA_ARGS__, el::base::consts::kEndLoggersList)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -4727,7 +4740,7 @@ public:
             m_hasChecked = true;
             m_lastCheckpointId = id;
             el::base::Writer(m_level, file, line, func, base::DispatchAction::NormalLog
-                , 0, m_loggerId, base::consts::kEndLoggersList) << ss.str();
+                , 0).construct(1, m_loggerId.c_str()) << ss.str();
         }
 #else
         _ELPP_UNUSED(id)
@@ -5090,8 +5103,7 @@ public:
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
-        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0,
-            el::base::consts::kInternalHelperLoggerId, base::consts::kEndLoggersList);
+        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0).construct(el::base::consts::kInternalHelperLoggerId);
         w << templ;
 #if defined(_ELPP_UNICODE)
         return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
