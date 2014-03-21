@@ -1,15 +1,15 @@
-**A Simple example of shared and static compilations**
+**A Simple example on sharing Easylogging++ storage / repo**
 
 ```
 .
 ├── compile_shared.sh
-├── compile_static.sh
 ├── lib
 │   ├── include
 │   │   ├── easylogging++.h
 │   │   └── mylib.hpp
 │   └── mylib.cpp
-└── myapp.cpp
+├── myapp.cpp
+└── README.md
 
 2 directories, 6 files
 ```

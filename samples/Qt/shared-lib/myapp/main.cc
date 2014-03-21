@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     LOG(DEBUG) << "1 * 2 = " << l.mul(1, 2);
 
     // This will cause FATAL error because of division by zero
-    LOG(INFO) << l.div(1, 0);
+    // LOG(INFO) << l.div(1, 0);
     
     return 0;
 }

@@ -1289,7 +1289,7 @@ public:
     }
 };
 #define ELPP_RESOLVED_VAL(var) s_##var
-#define ELPP_RESOLVED(var) s_##var##resolved
+#define ELPP_RESOLVED(var) s_##var##Resolved
 #define ELPP_RESOLVED_VAR_DECLARE(type, var) static type ELPP_RESOLVED_VAL(var); static bool ELPP_RESOLVED(var)
 #define ELPP_RETURN_IF_RESOLVED(var) if (ELPP_RESOLVED(var)) return ELPP_RESOLVED_VAL(var)
 #define ELPP_RESOLVE_AND_RETURN(var) (0 ? (void)0; ELPP_RESOLVED(var) = true; ELPP_RESOLVED_VAL(var))
