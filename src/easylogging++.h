@@ -1054,6 +1054,7 @@ public:
         // Use secure functions API
         char* nextTok_;
         currPath = STRTOK(currPath, base::consts::kFilePathSeperator, &nextTok_);
+        _ELPP_UNUSED(nextTok_);
 #endif  // _ELPP_OS_UNIX
         while (currPath != nullptr) {
             builtPath.append(currPath);
