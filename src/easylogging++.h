@@ -3159,6 +3159,10 @@ public:
         return get(filename, lineNumber);
     }
 };
+/// @brief Action to be taken for dispatching
+enum class DispatchAction : base::type::EnumType {
+    None = 1, NormalLog = 2, SysLog = 4
+};
 }  // namespace base
 namespace api {
 class LogBuilder : base::NoCopy {
@@ -3310,6 +3314,24 @@ public:
         m_logBuilder = logBuilder;
     }
 
+#define LOGGER_LEVEL_WRITERS(NAME, LOG_LEVEL) \
+    template <typename T> \
+    inline void NAME(const T& log, const char* file = __FILE__, unsigned long int line = __LINE__, \
+            const char* func = _ELPP_FUNC) { \
+        base::Writer(LOG_LEVEL, file, line, func).construct(this) << log; \
+    }
+
+    LOGGER_LEVEL_WRITERS(info, Level::Info)
+    LOGGER_LEVEL_WRITERS(debug, Level::Debug)
+    LOGGER_LEVEL_WRITERS(warn, Level::Warning)
+    LOGGER_LEVEL_WRITERS(error, Level::Error)
+    LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
+    LOGGER_LEVEL_WRITERS(trace, Level::Trace)
+    template <typename T> void verbose(int vlevel, const T& log, 
+        const char* file = __FILE__, unsigned long int line = __LINE__,
+            const char* func = _ELPP_FUNC);
+
+#undef LOGGER_LEVEL_WRITERS(NAME, LOG_LEVEL)
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3614,10 +3636,6 @@ private:
 };
 namespace base {
 class DefaultLogBuilder;
-/// @brief Action to be taken for dispatching
-enum class DispatchAction : base::type::EnumType {
-    None = 1, NormalLog = 2, SysLog = 4
-};
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
@@ -3821,6 +3839,15 @@ private:
 };
 extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
+} // namespace base
+// Verbose logging from Logger class
+template <typename T>
+void Logger::verbose(int vlevel, const T& log, const char* file, unsigned long int line, const char* func) {
+    if (ELPP->vRegistry()->allowed(vlevel, file, ELPP->flags())) {
+        base::Writer(Level::Verbose, file, line, func, base::DispatchAction::NormalLog, vlevel).construct(this) << log;
+    }
+}
+namespace base {
 class DefaultLogBuilder : public api::LogBuilder {
 public:
     base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const {
@@ -4082,8 +4109,8 @@ public:
 class Writer : base::NoCopy {
 public:
     Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel) :
+               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
+               base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(false), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
     }
@@ -4413,6 +4440,11 @@ public:
 #undef ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
+    Writer& construct(Logger* logger) {
+        m_loggerIds.push_back(logger->id());
+        initializeLogger(logger->id());
+        return *this;
+    }
     Writer& construct(int count, const char* loggerIds, ...) {
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
         va_list loggersList;
@@ -4466,7 +4498,7 @@ protected:
                 // Somehow default logger has been unregistered. Not good! Register again
                 elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
-            Writer(Level::Debug, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0).construct(1, base::consts::kDefaultLoggerId)
+            Writer(Level::Debug, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
@@ -4525,7 +4557,7 @@ protected:
 #endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-            base::Writer(Level::Warning, m_file, m_line, m_func, base::DispatchAction::NormalLog, 0).construct(1, base::consts::kDefaultLoggerId)
+            base::Writer(Level::Warning, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
                     << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
@@ -4539,8 +4571,8 @@ protected:
 class PErrorWriter : public base::Writer {
 public:
     PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction,
-               base::VRegistry::VLevel verboseLevel) :
+               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
+               base::VRegistry::VLevel verboseLevel = 0) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
     }
 
@@ -4578,18 +4610,18 @@ public:
 #   define runVariadic(variadicFunction, ...) variadicFunction(1, __VA_ARGS__)
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, level, dispatchAction, ...) \
     if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
 #define _ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, 0).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -4687,8 +4719,7 @@ public:
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
-            el::base::Writer(m_level, file, line, func, base::DispatchAction::NormalLog
-                , 0).construct(1, m_loggerId.c_str()) << ss.str();
+            el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
         }
 #else
         _ELPP_UNUSED(id)
