@@ -5,6 +5,12 @@ Release type: Minor
 API changes: No
 
 ==========================
+=       REFACTORING      =
+==========================
+
+ - File size cut down
+
+==========================
 =       BUG FIXES        =
 ==========================
 

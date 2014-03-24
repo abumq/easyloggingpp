@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.59
+//  Easylogging++ v9.59 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012 - 2014 Majid Khan
@@ -4092,81 +4092,32 @@ public:
         processDispatch();
     }
 
+#   define ELPP_SIMPLE_LOG(LOG_TYPE)\
+    inline Writer& operator<<(LOG_TYPE log_) {\
+        if (!m_proceed) { return *this; }\
+        m_logger->stream() << log_;\
+        return *this;\
+    }
+
     inline Writer& operator<<(const std::string& log_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << log_.c_str();
         return *this;
     }
-    inline Writer& operator<<(char log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(bool log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(signed short log_) {  // NOLINT
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(unsigned short log_) {  // NOLINT
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(signed int log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(unsigned int log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(signed long log_) {  // NOLINT
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(unsigned long log_) {  // NOLINT
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(float log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(double log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(char* log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(const char* log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(const void* log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
-    inline Writer& operator<<(long double log_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << log_;
-        return *this;
-    }
+    ELPP_SIMPLE_LOG(char)
+    ELPP_SIMPLE_LOG(bool)
+    ELPP_SIMPLE_LOG(signed short) // NOLINT
+    ELPP_SIMPLE_LOG(unsigned short) // NOLINT
+    ELPP_SIMPLE_LOG(signed int)
+    ELPP_SIMPLE_LOG(unsigned int)
+    ELPP_SIMPLE_LOG(signed long)
+    ELPP_SIMPLE_LOG(unsigned long)
+    ELPP_SIMPLE_LOG(float)
+    ELPP_SIMPLE_LOG(double)
+    ELPP_SIMPLE_LOG(char*)
+    ELPP_SIMPLE_LOG(const char*)
+    ELPP_SIMPLE_LOG(const void*)
+    ELPP_SIMPLE_LOG(long double)
     inline Writer& operator<<(const std::wstring& log_) {
         if (!m_proceed) { return *this; }
         return operator<<(log_.c_str());
@@ -4453,18 +4404,15 @@ public:
 #   define ELPP_WX_ENABLED(ContainerType)
 #   define ELPP_WX_HASH_MAP_ENABLED(ContainerType)
 #endif  // defined(_ELPP_WXWIDGETS_LOGGING)
+    // Other classes
     template <class Class>
-    inline Writer& operator<<(const Class& class_) {
-        if (!m_proceed) { return *this; }
-        m_logger->stream() << class_;
-        return *this;
-    }
+    ELPP_SIMPLE_LOG(const Class&)
+#undef ELPP_SIMPLE_LOG
 #undef ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
-
     Writer& construct(int count, const char* loggerIds, ...) {
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
         va_list loggersList;
