@@ -3314,24 +3314,23 @@ public:
         m_logBuilder = logBuilder;
     }
 
-#define LOGGER_LEVEL_WRITERS(NAME, LOG_LEVEL) \
+#define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME, LOG_LEVEL) \
     template <typename T> \
-    inline void NAME(const T& log, const char* file = __FILE__, unsigned long int line = __LINE__, \
-            const char* func = _ELPP_FUNC) { \
-        base::Writer(LOG_LEVEL, file, line, func).construct(this) << log; \
-    }
+    inline void FUNCTION_NAME(const T& log, const char* file = __FILE__, unsigned long int line = __LINE__, \
+            const char* func = _ELPP_FUNC);
 
-    LOGGER_LEVEL_WRITERS(info, Level::Info)
-    LOGGER_LEVEL_WRITERS(debug, Level::Debug)
-    LOGGER_LEVEL_WRITERS(warn, Level::Warning)
-    LOGGER_LEVEL_WRITERS(error, Level::Error)
-    LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
-    LOGGER_LEVEL_WRITERS(trace, Level::Trace)
-    template <typename T> void verbose(int vlevel, const T& log, 
+    LOGGER_LEVEL_WRITERS_SIGNATURES(info, Level::Info)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(debug, Level::Debug)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(warn, Level::Warning)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(error, Level::Error)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(fatal, Level::Fatal)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(trace, Level::Trace)
+    template <typename T> 
+    inline void verbose(int vlevel, const T& log, 
         const char* file = __FILE__, unsigned long int line = __LINE__,
             const char* func = _ELPP_FUNC);
 
-#undef LOGGER_LEVEL_WRITERS(NAME, LOG_LEVEL)
+#undef LOGGER_LEVEL_WRITERS_SIGNATURES
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -3840,13 +3839,6 @@ private:
 extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
 } // namespace base
-// Verbose logging from Logger class
-template <typename T>
-void Logger::verbose(int vlevel, const T& log, const char* file, unsigned long int line, const char* func) {
-    if (ELPP->vRegistry()->allowed(vlevel, file, ELPP->flags())) {
-        base::Writer(Level::Verbose, file, line, func, base::DispatchAction::NormalLog, vlevel).construct(this) << log;
-    }
-}
 namespace base {
 class DefaultLogBuilder : public api::LogBuilder {
 public:
@@ -4589,6 +4581,26 @@ public:
     }
 };
 } // namespace base
+// Logging from Logger class. Why this is here? Because we have Storage and Writer class available
+#define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL) \
+    template <typename T> \
+    inline void Logger::FUNCTION_NAME(const T& log, const char* file, unsigned long int line, \
+            const char* func) { \
+        base::Writer(LOG_LEVEL, file, line, func).construct(this) << log; \
+    }
+    LOGGER_LEVEL_WRITERS(info, Level::Info)
+    LOGGER_LEVEL_WRITERS(debug, Level::Debug)
+    LOGGER_LEVEL_WRITERS(warn, Level::Warning)
+    LOGGER_LEVEL_WRITERS(error, Level::Error)
+    LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
+    LOGGER_LEVEL_WRITERS(trace, Level::Trace)
+template <typename T>
+inline void Logger::verbose(int vlevel, const T& log, const char* file, unsigned long int line, const char* func) {
+    if (ELPP->vRegistry()->allowed(vlevel, file, ELPP->flags())) {
+        base::Writer(Level::Verbose, file, line, func, base::DispatchAction::NormalLog, vlevel).construct(this) << log;
+    }
+}
+#undef LOGGER_LEVEL_WRITERS
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #   if _ELPP_COMPILER_MSVC
 #      define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs
