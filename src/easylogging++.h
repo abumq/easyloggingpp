@@ -204,6 +204,9 @@
 #      define _ELPP_FUNC ""
 #   endif  // defined(__func__)
 #endif  // defined(_MSC_VER)
+#undef _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+#define _ELPP_VARIADIC_TEMPLATES_SUPPORTED \
+    (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || (_ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
 // Logging Enable/Disable macros
 #if (defined(_ELPP_DISABLE_LOGS))
 #   define _ELPP_LOGGING_ENABLED 0
