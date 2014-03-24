@@ -3321,7 +3321,6 @@ public:
     template <typename T> \
     inline void FUNCTION_NAME(const T& log, const char* file = "", unsigned long int line = 0, \
             const char* func = "");
-
     LOGGER_LEVEL_WRITERS_SIGNATURES(info)
     LOGGER_LEVEL_WRITERS_SIGNATURES(debug)
     LOGGER_LEVEL_WRITERS_SIGNATURES(warn)
@@ -3332,7 +3331,6 @@ public:
     inline void verbose(int vlevel, const T& log, 
         const char* file = "", unsigned long int line = 0,
             const char* func = "");
-
 #undef LOGGER_LEVEL_WRITERS_SIGNATURES
 private:
     std::string m_id;
@@ -4436,8 +4434,8 @@ public:
 #undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
     Writer& construct(Logger* logger) {
-        m_loggerIds.push_back(logger->id());
-        initializeLogger(logger->id());
+        m_logger = logger;
+        initializeLogger(logger->id(), false);
         return *this;
     }
     Writer& construct(int count, const char* loggerIds, ...) {
@@ -4486,8 +4484,8 @@ protected:
         return *this;
     }
 
-    void initializeLogger(const std::string& loggerId) {
-        m_logger = elStorage->registeredLoggers()->get(loggerId, false);
+    void initializeLogger(const std::string& loggerId, bool lookup = true) {
+        if (lookup) { m_logger = elStorage->registeredLoggers()->get(loggerId, false); }
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
@@ -4516,7 +4514,9 @@ protected:
                     m_logger->stream() << logMessage;
                 } else {
                     firstDispatched = true;
-                    logMessage = m_logger->stream().str();
+                    if (m_loggerIds.size() > 1) {
+                        logMessage = m_logger->stream().str();
+                    }
                 }
                 triggerDispatch();
             } else if (m_logger != nullptr) {
