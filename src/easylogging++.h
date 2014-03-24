@@ -3314,21 +3314,21 @@ public:
         m_logBuilder = logBuilder;
     }
 
-#define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME, LOG_LEVEL) \
+#define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME) \
     template <typename T> \
-    inline void FUNCTION_NAME(const T& log, const char* file = __FILE__, unsigned long int line = __LINE__, \
-            const char* func = _ELPP_FUNC);
+    inline void FUNCTION_NAME(const T& log, const char* file = "", unsigned long int line = 0, \
+            const char* func = "");
 
-    LOGGER_LEVEL_WRITERS_SIGNATURES(info, Level::Info)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(debug, Level::Debug)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(warn, Level::Warning)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(error, Level::Error)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(fatal, Level::Fatal)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(trace, Level::Trace)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(info)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(debug)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(warn)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(error)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(fatal)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(trace)
     template <typename T> 
     inline void verbose(int vlevel, const T& log, 
-        const char* file = __FILE__, unsigned long int line = __LINE__,
-            const char* func = _ELPP_FUNC);
+        const char* file = "", unsigned long int line = 0,
+            const char* func = "");
 
 #undef LOGGER_LEVEL_WRITERS_SIGNATURES
 private:
