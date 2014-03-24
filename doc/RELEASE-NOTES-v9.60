@@ -5,6 +5,12 @@ Release type: Minor
 API changes: No
 
 ==========================
+=       NEW FEATURES     =
+==========================
+
+ - Support logging from Logger class (issue #162)
+
+==========================
 =       REFACTORING      =
 ==========================
 
