@@ -205,8 +205,9 @@
 #   endif  // defined(__func__)
 #endif  // defined(_MSC_VER)
 #undef _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-#define _ELPP_VARIADIC_TEMPLATES_SUPPORTED \
-    (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || (_ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
+// Keep following line commented until features are fixed
+//#define _ELPP_VARIADIC_TEMPLATES_SUPPORTED \
+//    (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || (_ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
 // Logging Enable/Disable macros
 #if (defined(_ELPP_DISABLE_LOGS))
 #   define _ELPP_LOGGING_ENABLED 0
@@ -3316,22 +3317,25 @@ public:
     inline void setLogBuilder(const api::LogBuilderPtr& logBuilder) {
         m_logBuilder = logBuilder;
     }
-
-#define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME) \
+    
+#if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+#   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME) \
+    template <typename T, typename... Args>\
+    void FUNCTION_NAME(const char* s, const T& value, const Args&... args);\
     template <typename T> \
-    inline void FUNCTION_NAME(const T& log, const char* file = "", unsigned long int line = 0, \
-            const char* func = "");
+    inline void FUNCTION_NAME(const T& log);
+    template <typename T, typename... Args> 
+    void verbose(int vlevel, const char* s, const T& value, const Args&... args);
+    template <typename T> 
+    inline void verbose(int vlevel, const T& log);
     LOGGER_LEVEL_WRITERS_SIGNATURES(info)
     LOGGER_LEVEL_WRITERS_SIGNATURES(debug)
     LOGGER_LEVEL_WRITERS_SIGNATURES(warn)
     LOGGER_LEVEL_WRITERS_SIGNATURES(error)
     LOGGER_LEVEL_WRITERS_SIGNATURES(fatal)
     LOGGER_LEVEL_WRITERS_SIGNATURES(trace)
-    template <typename T> 
-    inline void verbose(int vlevel, const T& log, 
-        const char* file = "", unsigned long int line = 0,
-            const char* func = "");
-#undef LOGGER_LEVEL_WRITERS_SIGNATURES
+#   undef LOGGER_LEVEL_WRITERS_SIGNATURES
+#endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 private:
     std::string m_id;
     base::TypedConfigurations* m_typedConfigurations;
@@ -4585,11 +4589,54 @@ public:
 };
 } // namespace base
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
-#define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL) \
+#if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+#   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
+    template <typename T, typename... Args> \
+    void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) { \
+        base::Writer w(LOG_LEVEL, "file", 0, "func"); \
+        w.construct(this); \
+        while (*s) { \
+            if (*s == '%') { \
+                if (*(s + 1) == '%') { \
+                    ++s; \
+                } else { \
+                    w << value; \
+                    FUNCTION_NAME(s + 1, args...);\
+                    return; \
+                } \
+            } \
+            w << *s++; \
+        } \
+    }\
     template <typename T> \
-    inline void Logger::FUNCTION_NAME(const T& log, const char* file, unsigned long int line, \
-            const char* func) { \
-        base::Writer(LOG_LEVEL, file, line, func).construct(this) << log; \
+    inline void Logger::FUNCTION_NAME(const T& log) { \
+        base::Writer(LOG_LEVEL, "file", 0, "func").construct(this) << log; \
+    }
+    template <typename T, typename... Args> 
+    void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
+        if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
+            base::Writer w(Level::Verbose, "file", 0, "func", 
+                base::DispatchAction::NormalLog, vlevel);
+            w.construct(this);
+            while (*s) {
+                if (*s == '%') {
+                    if (*(s + 1) == '%') {
+                        ++s;
+                    } else {
+                        w << value;
+                        return;
+                    }
+                }
+                w << *s++;
+            }
+        }
+    }
+    template <typename T>
+    inline void Logger::verbose(int vlevel, const T& log) {
+        if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
+            base::Writer(Level::Verbose, "file", 0, "func", 
+                base::DispatchAction::NormalLog, vlevel).construct(this) << log;
+        }
     }
     LOGGER_LEVEL_WRITERS(info, Level::Info)
     LOGGER_LEVEL_WRITERS(debug, Level::Debug)
@@ -4597,13 +4644,8 @@ public:
     LOGGER_LEVEL_WRITERS(error, Level::Error)
     LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
     LOGGER_LEVEL_WRITERS(trace, Level::Trace)
-template <typename T>
-inline void Logger::verbose(int vlevel, const T& log, const char* file, unsigned long int line, const char* func) {
-    if (ELPP->vRegistry()->allowed(vlevel, file, ELPP->flags())) {
-        base::Writer(Level::Verbose, file, line, func, base::DispatchAction::NormalLog, vlevel).construct(this) << log;
-    }
-}
-#undef LOGGER_LEVEL_WRITERS
+#   undef LOGGER_LEVEL_WRITERS
+#endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #   if _ELPP_COMPILER_MSVC
 #      define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs

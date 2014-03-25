@@ -15,8 +15,11 @@ int main(int argc, char** argv) {
     _START_EASYLOGGINGPP(argc, argv);
 
     el::Logger* defaultLogger = el::Loggers::getLogger("default");
-    defaultLogger->info("My first ultimate log message");
-    defaultLogger->debug("My debug from file and line", __FILE__, __LINE__, _ELPP_FUNC);
+ //   defaultLogger->info("My first ultimate log message");
+
+    defaultLogger->info("My first ultimate log message %1 %2", 123);
+
+    defaultLogger->debug("My debug from file and line %1 %2 %3 %4", "__FILE__", "22", "wow");
     defaultLogger->error("My error message");
     defaultLogger->verbose(2, "My verbose message available when --v=2 or more passed in args");
 
