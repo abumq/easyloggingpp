@@ -155,7 +155,7 @@
 #   endif // defined(_ELPP_EXPORT_SYMBOLS)
 #else
 #   define _ELPP_EXPORT
-#endif // defined(_ELPP_DLL_EXPORTS)
+#endif // defined(_ELPP_AS_DLL) && _ELPP_COMPILER_MSVC
 // Some special functions that are VC++ specific
 #undef STRTOK
 #undef STRERROR
