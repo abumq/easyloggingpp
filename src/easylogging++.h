@@ -4716,7 +4716,6 @@ public:
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
     inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
-        lock();\
         log(LOG_LEVEL, s, value, args...);\
     }\
     template <typename T>\
