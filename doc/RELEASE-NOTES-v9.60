@@ -8,13 +8,14 @@ API changes: No
 =       NEW FEATURES     =
 ==========================
 
- - Support logging from Logger class (issue #162)
+ - Support logging from Logger class for compilers with support for variadic templates (issue #162)
 
 ==========================
 =       REFACTORING      =
 ==========================
 
  - File size cut down
+ - Changed `inline static` to `static inline` for better readability
 
 ==========================
 =       BUG FIXES        =

@@ -418,7 +418,7 @@ private:
     StaticClass(const StaticClass&);
     StaticClass& operator=(const StaticClass&);
 };
-}  // namespace base
+} // namespace base
 /// @brief Represents enumeration for severity level used to determine level of logging
 ///
 /// @detail Easylogging++ has different concept of level. Developers may disable or enable any level regardless of
@@ -829,7 +829,7 @@ template <typename Enum>
 static inline base::type::EnumType Or(const Enum& e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) | static_cast<base::type::EnumType>(e);
 }
-}  // namespace bitwise
+} // namespace bitwise
 /// @brief Adds flag
 template <typename Enum>
 static inline void addFlag(const Enum& e, base::type::EnumType* flag) {
@@ -845,7 +845,7 @@ template <typename Enum>
 static inline bool hasFlag(const Enum& e, base::type::EnumType flag) {
     return base::utils::bitwise::And<Enum>(e, flag) > 0x0;
 }
-}  // namespace utils
+} // namespace utils
 namespace threading {
 #if _ELPP_THREADING_ENABLED
 #   if !_ELPP_USE_STD_THREADING
@@ -979,7 +979,7 @@ protected:
 private:
     base::threading::mutex m_mutex;
 };
-}  // namespace threading
+} // namespace threading
 namespace utils {
 class File : base::StaticClass {
 public:
@@ -1974,7 +1974,7 @@ private:
     }
 };
 
-}  // namespace utils
+} // namespace utils
 /// @brief Represents log format containing flags and date format. This is used internally to start initial log
 class LogFormat {
 public:
@@ -2182,7 +2182,7 @@ private:
     base::type::EnumType m_flags;
     friend class el::Logger;  // To resolve loggerId format specifier easily
 };
-}  // namespace base
+} // namespace base
 /// @brief Resolving function for format specifier
 typedef std::function<const char*(void)> FormatSpecifierValueResolver;
 /// @brief User-provided custom format specifier
@@ -3158,7 +3158,7 @@ public:
 enum class DispatchAction : base::type::EnumType {
     None = 1, NormalLog = 2, SysLog = 4
 };
-}  // namespace base
+} // namespace base
 namespace api {
 class LogBuilder : base::NoCopy {
 public:
@@ -3177,7 +3177,7 @@ private:
     }
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
-}  // namespace api
+} // namespace api
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
@@ -3623,7 +3623,7 @@ private:
     VLevel m_level;
     std::map<std::string, VLevel> m_modules;
 };
-}  // namespace base
+} // namespace base
 class LogMessage {
 public:
     LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
@@ -3633,7 +3633,7 @@ public:
     }
     inline Level level(void) const { return m_level; }
     inline const std::string& file(void) const { return m_file; }
-    inline unsigned long int line(void) const { return m_line; }  // NOLINT
+    inline unsigned long int line(void) const { return m_line; } // NOLINT
     inline const std::string& func(void) const { return m_func; }
     inline base::VRegistry::VLevel verboseLevel(void) const { return m_verboseLevel; }
     inline Logger* logger(void) const { return m_logger; }
@@ -4094,7 +4094,7 @@ private:
         return this->c;
     }
 };
-}  // namespace workarounds
+} // namespace workarounds
 #endif  // defined(_ELPP_STL_LOGGING)
 // Log message builder
 class MessageBuilder {
@@ -5058,8 +5058,8 @@ public:
 private:
     Handler m_handler;
 };
-}  // namespace debug
-}  // namespace base
+} // namespace debug
+} // namespace base
 extern base::debug::CrashHandler elCrashHandler;
 #define MAKE_LOGGABLE(ClassType, ClassInstance, OutputStreamInstance) \
     el::base::type::ostream_t& operator<<(el::base::type::ostream_t& OutputStreamInstance, const ClassType& ClassInstance)
@@ -5073,12 +5073,12 @@ public:
         _ELPP_UNUSED(processIdent);
         _ELPP_UNUSED(options);
         _ELPP_UNUSED(facility);
-#endif  // defined(_ELPP_SYSLOG)
+#endif // defined(_ELPP_SYSLOG)
     }
     virtual ~SysLogInitializer(void) {
 #if defined(_ELPP_SYSLOG)
         closelog();
-#endif  // defined(_ELPP_SYSLOG)
+#endif // defined(_ELPP_SYSLOG)
     }
 };
 #define _INIT_SYSLOG(id, opt, fac) el::SysLogInitializer elSyslogInit(id, opt, fac)
@@ -5195,7 +5195,7 @@ public:
         return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
 #else
         return w.m_logger->stream().str();
-#endif  // defined(_ELPP_UNICODE)
+#endif // defined(_ELPP_UNICODE)
     }
     /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
@@ -5376,7 +5376,7 @@ public:
     /// @brief Release date of current version
     static inline const std::string releaseDate(void) { return std::string("21-03-2014 2137hrs"); }
 };
-}  // namespace el
+} // namespace el
 #undef VLOG_IS_ON
 /// @brief Determines whether verbose logging is on for specified level current file.
 #define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__, ELPP->flags()))
@@ -5935,9 +5935,9 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
     CLOG_IF(ptr == nullptr, FATAL, loggers) << "Check failed: [" << name << " != nullptr]";
     return ptr;
 }
-}  // namespace utils
-}  // namespace base
-}  // namespace el
+} // namespace utils
+} // namespace base
+} // namespace el
 #define CCHECK_NOTNULL(ptr, ...) el::base::utils::checkNotNull(ptr, #ptr, __VA_ARGS__)
 #define CCHECK_STREQ(str1, str2, ...) CLOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
@@ -6004,7 +6004,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #   define _ELPP_USE_DEF_CRASH_HANDLER false
 #else
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
-#endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
+#endif // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _ELPP_CRASH_HANDLER_INIT
 #define _ELPP_INIT_EASYLOGGINGPP(val) \
     INITIALIZE_BASIC_DECLARATIONS \
@@ -6030,7 +6030,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
 #else
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv)
-#endif  // defined(_ELPP_UNICODE)
+#endif // defined(_ELPP_UNICODE)
 // For minimal backward compatibility
 namespace easyloggingpp = el;
-#endif  // EASYLOGGINGPP_H  // NOLINT
+#endif // EASYLOGGINGPP_H  // NOLINT
