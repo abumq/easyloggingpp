@@ -2713,6 +2713,7 @@ private:
 namespace base {
 typedef std::shared_ptr<base::type::fstream_t> FileStreamPtr;
 typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
+class MessageBuilder;
 class Writer;
 class PErrorWriter;
 class LogDispatcher;
@@ -2801,6 +2802,7 @@ private:
     base::LogStreamsReferenceMap* m_logStreamsReference;
 
     friend class el::Helpers;
+    friend class el::base::MessageBuilder;
     friend class el::base::Writer;
     friend class el::base::LogDispatcher;
 
@@ -3319,12 +3321,13 @@ public:
     }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-#   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME) \
-    template <typename T, typename... Args>\
-    void FUNCTION_NAME(const char* s, const T& value, const Args&... args);\
-    template <typename T> \
-    inline void FUNCTION_NAME(const T& log);
-    template <typename T, typename... Args> 
+    template <typename T, typename... Args>
+    void log(Level level, const char* s, const T& value, const Args&... args);
+
+    template <typename T>
+    inline void log(Level level, const T& log);
+
+    /*template <typename T, typename... Args> 
     void verbose(int vlevel, const char* s, const T& value, const Args&... args);
     template <typename T> 
     inline void verbose(int vlevel, const T& log);
@@ -3333,7 +3336,7 @@ public:
     LOGGER_LEVEL_WRITERS_SIGNATURES(warn)
     LOGGER_LEVEL_WRITERS_SIGNATURES(error)
     LOGGER_LEVEL_WRITERS_SIGNATURES(fatal)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(trace)
+    LOGGER_LEVEL_WRITERS_SIGNATURES(trace)*/
 #   undef LOGGER_LEVEL_WRITERS_SIGNATURES
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 private:
@@ -3352,6 +3355,7 @@ private:
     friend class el::Helpers;
     friend class el::base::RegisteredLoggers;
     friend class el::base::LogDispatcher;
+    friend class el::base::MessageBuilder;
     friend class el::base::Writer;
     friend class el::base::PErrorWriter;
     friend class el::base::Storage;
@@ -3813,6 +3817,7 @@ private:
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
     friend class el::api::LogBuilder;
+    friend class el::base::MessageBuilder;
     friend class el::base::Writer;
 
     void setApplicationArguments(int argc, char** argv) {
@@ -4087,50 +4092,25 @@ private:
 };
 }  // namespace workarounds
 #endif  // defined(_ELPP_STL_LOGGING)
-/// @brief Writes nothing - Used when certain log is disabled
-class NullWriter : base::NoCopy {
-public:
-    NullWriter(void) {}
-
-    // Null manipulator
-    inline NullWriter& operator<<(std::ostream& (*)(std::ostream&)) {
-      return *this;
-    }
-
-    template <typename T>
-    inline NullWriter& operator<<(const T&) {
-        return *this;
-    }
-};
 class MessageBuilder {
 public:
     // Writer("...").construct(this).messageBuilder() <<
-    MessageBuilder(Logger* logger) : m_logger(logger) {}
-private:
-    Logger* m_logger;
-};
-/// @brief Main entry point of each logging
-class Writer : base::NoCopy {
-public:
-    Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
-               base::VRegistry::VLevel verboseLevel = 0) :
-                   m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(false), m_dispatchAction(dispatchAction), m_containerLogSeperator(ELPP_LITERAL("")) {
-    }
-
-    virtual ~Writer(void) {
-        processDispatch();
+    MessageBuilder(void) : m_logger(nullptr), m_proceed(false), m_containerLogSeperator(ELPP_LITERAL("")) {}
+    void initialize(Logger* logger, bool proceed) {
+        m_logger = logger;
+        m_proceed = proceed;
+        m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
+                ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
     }
 
 #   define ELPP_SIMPLE_LOG(LOG_TYPE)\
-    inline Writer& operator<<(LOG_TYPE log_) {\
+    inline MessageBuilder& operator<<(LOG_TYPE log_) {\
         if (!m_proceed) { return *this; }\
         m_logger->stream() << log_;\
         return *this;\
     }
 
-    inline Writer& operator<<(const std::string& log_) {
+    inline MessageBuilder& operator<<(const std::string& log_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << log_.c_str();
         return *this;
@@ -4149,11 +4129,11 @@ public:
     ELPP_SIMPLE_LOG(const char*)
     ELPP_SIMPLE_LOG(const void*)
     ELPP_SIMPLE_LOG(long double)
-    inline Writer& operator<<(const std::wstring& log_) {
+    inline MessageBuilder& operator<<(const std::wstring& log_) {
         if (!m_proceed) { return *this; }
         return operator<<(log_.c_str());
     }
-    inline Writer& operator<<(const wchar_t* log_) {
+    inline MessageBuilder& operator<<(const wchar_t* log_) {
         if (!m_proceed) { return *this; }
         if (log_ == nullptr) {
             m_logger->stream() << base::consts::kNullPointer;
@@ -4169,38 +4149,38 @@ public:
         return *this;
     }
     // ostream manipulators
-    inline Writer& operator<<(std::ostream& (*OStreamMani)(std::ostream&)) {
+    inline MessageBuilder& operator<<(std::ostream& (*OStreamMani)(std::ostream&)) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << OStreamMani;
         return *this;
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp)                                                    \
     template <typename T>                                                                            \
-    inline Writer& operator<<(const temp<T>& template_inst) {                                        \
+    inline MessageBuilder& operator<<(const temp<T>& template_inst) {                                        \
         if (!m_proceed) { return *this; }                                                            \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(temp)                                                    \
     template <typename T1, typename T2>                                                              \
-    inline Writer& operator<<(const temp<T1, T2>& template_inst) {                                   \
+    inline MessageBuilder& operator<<(const temp<T1, T2>& template_inst) {                                   \
         if (!m_proceed) { return *this; }                                                            \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(temp)                                                  \
     template <typename T1, typename T2, typename T3>                                                 \
-    inline Writer& operator<<(const temp<T1, T2, T3>& template_inst) {                               \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3>& template_inst) {                               \
         if (!m_proceed) { return *this; }                                                            \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(temp)                                                   \
     template <typename T1, typename T2, typename T3, typename T4>                                    \
-    inline Writer& operator<<(const temp<T1, T2, T3, T4>& template_inst) {                           \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4>& template_inst) {                           \
         if (!m_proceed) { return *this; }                                                            \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(temp)                                                   \
     template <typename T1, typename T2, typename T3, typename T4, typename T5>                       \
-    inline Writer& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) {                       \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) {                       \
         if (!m_proceed) { return *this; }                                                            \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
@@ -4214,28 +4194,28 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::map)
     ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::multimap)
     template <class T, class Container>
-    inline Writer& operator<<(const std::queue<T, Container>& queue_) {
+    inline MessageBuilder& operator<<(const std::queue<T, Container>& queue_) {
         if (!m_proceed) { return *this; }
         base::workarounds::IterableQueue<T, Container> iterableQueue_ =
                 static_cast<base::workarounds::IterableQueue<T, Container> >(queue_);
         return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
     }
     template <class T, class Container>
-    inline Writer& operator<<(const std::stack<T, Container>& stack_) {
+    inline MessageBuilder& operator<<(const std::stack<T, Container>& stack_) {
         if (!m_proceed) { return *this; }
         base::workarounds::IterableStack<T, Container> iterableStack_ =
                 static_cast<base::workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
     }
     template <class T, class Container, class Comparator>
-    inline Writer& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
+    inline MessageBuilder& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
         if (!m_proceed) { return *this; }
         base::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
                 static_cast<base::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
     }
     template <class First, class Second>
-    inline Writer& operator<<(const std::pair<First, Second>& pair_) {
+    inline MessageBuilder& operator<<(const std::pair<First, Second>& pair_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << "(";
         operator << (static_cast<First>(pair_.first));
@@ -4245,7 +4225,7 @@ public:
         return *this;
     }
     template <std::size_t Size>
-    inline Writer& operator<<(const std::bitset<Size>& bitset_) {
+    inline MessageBuilder& operator<<(const std::bitset<Size>& bitset_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << "[";
         m_logger->stream() << bitset_.to_string();
@@ -4254,7 +4234,7 @@ public:
     }
 #   if defined(_ELPP_LOG_STD_ARRAY)
     template <class T, std::size_t Size>
-    inline Writer& operator<<(const std::array<T, Size>& array) {
+    inline MessageBuilder& operator<<(const std::array<T, Size>& array) {
         if (!m_proceed) { return *this; }
         return writeIterator(array.begin(), array.end(), array.size());
     }
@@ -4269,7 +4249,7 @@ public:
 #   endif  // defined(_ELPP_LOG_UNORDERED_SET)
 #endif  // defined(_ELPP_STL_LOGGING)
 #if defined(_ELPP_QT_LOGGING)
-    inline Writer& operator<<(const QString& log_) {
+    inline MessageBuilder& operator<<(const QString& log_) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << log_.toStdWString();
@@ -4278,15 +4258,15 @@ public:
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
-    inline Writer& operator<<(const QByteArray& log_) {
+    inline MessageBuilder& operator<<(const QByteArray& log_) {
         if (!m_proceed) { return *this; }
         return operator << (QString(log_));
     }
-    inline Writer& operator<<(const QStringRef& log_) {
+    inline MessageBuilder& operator<<(const QStringRef& log_) {
         if (!m_proceed) { return *this; }
         return operator<<(log_.toString());
     }
-    inline Writer& operator<<(qint64 log_) {
+    inline MessageBuilder& operator<<(qint64 log_) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << QString::number(log_).toStdWString();
@@ -4295,7 +4275,7 @@ public:
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
-    inline Writer& operator<<(quint64 log_) {
+    inline MessageBuilder& operator<<(quint64 log_) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << QString::number(log_).toStdWString();
@@ -4304,12 +4284,12 @@ public:
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
-    inline Writer& operator<<(QChar log_) {
+    inline MessageBuilder& operator<<(QChar log_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << log_.toLatin1();
         return *this;
     }
-    inline Writer& operator<<(const QLatin1String& log_) {
+    inline MessageBuilder& operator<<(const QLatin1String& log_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << log_.latin1();
         return *this;
@@ -4321,7 +4301,7 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QLinkedList)
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QStack)
     template <typename First, typename Second>
-    inline Writer& operator<<(const QPair<First, Second>& pair_) {
+    inline MessageBuilder& operator<<(const QPair<First, Second>& pair_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << "(";
         operator << (static_cast<First>(pair_.first));
@@ -4331,7 +4311,7 @@ public:
         return *this;
     }
     template <typename K, typename V>
-    inline Writer& operator<<(const QMap<K, V>& map_) {
+    inline MessageBuilder& operator<<(const QMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("[");
         QList<K> keys = map_.keys();
@@ -4353,13 +4333,13 @@ public:
         return *this;
     }
     template <typename K, typename V>
-    inline Writer& operator<<(const QMultiMap<K, V>& map_) {
+    inline MessageBuilder& operator<<(const QMultiMap<K, V>& map_) {
         if (!m_proceed) { return *this; }
         operator << (static_cast<QMap<K, V>>(map_));
         return *this;
     }
     template <typename K, typename V>
-    inline Writer& operator<<(const QHash<K, V>& hash_) {
+    inline MessageBuilder& operator<<(const QHash<K, V>& hash_) {
         if (!m_proceed) { return *this; }
         m_logger->stream() << "[";
         QList<K> keys = hash_.keys();
@@ -4381,7 +4361,7 @@ public:
         return *this;
     }
     template <typename K, typename V>
-    inline Writer& operator<<(const QMultiHash<K, V>& multiHash_) {
+    inline MessageBuilder& operator<<(const QMultiHash<K, V>& multiHash_) {
         if (!m_proceed) { return *this; }
         operator << (static_cast<QHash<K, V>>(multiHash_));
         return *this;
@@ -4444,9 +4424,69 @@ public:
 #undef ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
+private:
+    Logger* m_logger;
+    bool m_proceed;
+    const base::type::char_t* m_containerLogSeperator;
+
+    template<class Iterator>
+    inline MessageBuilder& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
+        m_logger->stream() << ELPP_LITERAL("[");
+        for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
+            operator << (*begin_);
+            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+        }
+        if (begin_ != end_) {
+            m_logger->stream() << ELPP_LITERAL("...");
+        }
+        m_logger->stream() << ELPP_LITERAL("]");
+        return *this;
+    }
+};
+/// @brief Writes nothing - Used when certain log is disabled
+class NullWriter : base::NoCopy {
+public:
+    NullWriter(void) {}
+
+    // Null manipulator
+    inline NullWriter& operator<<(std::ostream& (*)(std::ostream&)) {
+        return *this;
+    }
+
+    template <typename T>
+    inline NullWriter& operator<<(const T&) {
+        return *this;
+    }
+};
+/// @brief Main entry point of each logging
+class Writer : base::NoCopy, base::MessageBuilder {
+public:
+    Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
+               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
+               base::VRegistry::VLevel verboseLevel = 0) :
+                   m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
+                   m_proceed(false), m_dispatchAction(dispatchAction) {
+    }
+
+    virtual ~Writer(void) {
+        processDispatch();
+    }
+
+    template <typename T>
+    inline Writer& operator<<(const T& log) {
+        m_messageBuilder << log;
+        return *this;
+    }
+
+    inline Writer& operator<<(std::ostream& (*log)(std::ostream&)) {
+        m_messageBuilder << log;
+        return *this;
+    }
+
     Writer& construct(Logger* logger) {
         m_logger = logger;
         initializeLogger(logger->id(), false);
+        m_messageBuilder.initialize(m_logger, m_proceed);
         return *this;
     }
     Writer& construct(int count, const char* loggerIds, ...) {
@@ -4464,6 +4504,7 @@ public:
         _ELPP_UNUSED(count);
         initializeLogger(loggerIds);
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
+        m_messageBuilder.initialize(m_logger, m_proceed);
         return *this;
     }
 protected:
@@ -4474,26 +4515,12 @@ protected:
     base::VRegistry::VLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
+    base::MessageBuilder m_messageBuilder;
     base::DispatchAction m_dispatchAction;
-    const base::type::char_t* m_containerLogSeperator;
     friend class el::Helpers;
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
     std::vector<std::string> m_loggerIds;
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
-
-    template<class Iterator>
-    inline Writer& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
-        m_logger->stream() << ELPP_LITERAL("[");
-        for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
-            operator << (*begin_);
-            m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
-        }
-        if (begin_ != end_) {
-            m_logger->stream() << ELPP_LITERAL("...");
-        }
-        m_logger->stream() << ELPP_LITERAL("]");
-        return *this;
-    }
 
     void initializeLogger(const std::string& loggerId, bool lookup = true) {
         if (lookup) { m_logger = elStorage->registeredLoggers()->get(loggerId, false); }
@@ -4509,8 +4536,6 @@ protected:
             m_logger->lock();  // This should not be unlocked by checking m_proceed because
                            // m_proceed can be changed by lines below
             m_proceed = m_logger->m_typedConfigurations->enabled(m_level);
-            m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
-                ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
         }
     }
     
@@ -4598,29 +4623,28 @@ public:
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
 // FIXME: Lock logger!
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-#   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
-    template <typename T, typename... Args> \
-    void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) { \
-        base::Writer w(LOG_LEVEL, "file", 0, "func"); \
-        w.construct(this); \
-        while (*s) { \
-            if (*s == '%') { \
-                if (*(s + 1) == '%') { \
-                    ++s; \
-                } else { \
-                    w << value; \
-                    FUNCTION_NAME(s + 1, args...);\
-                    return;\
-                } \
-            } \
-            w << *s++; \
-        } \
-    }\
-    template <typename T> \
-    inline void Logger::FUNCTION_NAME(const T& log) { \
-        base::Writer(LOG_LEVEL, "file", 0, "func").construct(this) << log; \
+    template <typename T, typename... Args>
+    void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
+        base::MessageBuilder b;
+        b.initialize(this, true);
+        while (*s) {
+            if (*s == '%') {
+                if (*(s + 1) == '%') {
+                    ++s;
+                } else {
+                    b << value;
+                    log(level, s + 1, args...);
+                    return;
+                }
+            }
+            b << *s++;
+        }
     }
-    template <typename T, typename... Args> 
+    template <typename T> 
+    inline void Logger::log(Level level, const T& log) { 
+        base::Writer(level, "file", 0, "func").construct(this) << log;
+    }
+    /*template <typename T, typename... Args> 
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
         if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
             base::Writer w(Level::Verbose, "file", 0, "func", 
@@ -4651,7 +4675,7 @@ public:
     LOGGER_LEVEL_WRITERS(warn, Level::Warning)
     LOGGER_LEVEL_WRITERS(error, Level::Error)
     LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
-    LOGGER_LEVEL_WRITERS(trace, Level::Trace)
+    LOGGER_LEVEL_WRITERS(trace, Level::Trace)*/
 #   undef LOGGER_LEVEL_WRITERS
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
