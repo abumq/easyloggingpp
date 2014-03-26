@@ -15,6 +15,7 @@ API changes: No
 ==========================
 
  - File size cut down
+ - Changed `inline static` to `static inline` for better readability
 
 ==========================
 =       BUG FIXES        =
