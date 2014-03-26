@@ -4681,6 +4681,10 @@ public:
     template <typename T, typename... Args>\
     inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
         log(LOG_LEVEL, s, value, args...);\
+    }\
+    template <typename T>\
+    inline void Logger::FUNCTION_NAME(const T& value) {\
+        log(LOG_LEVEL, value);\
     }
 
     LOGGER_LEVEL_WRITERS(info, Level::Info)
