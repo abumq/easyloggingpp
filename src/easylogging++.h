@@ -3377,13 +3377,8 @@ private:
 
     template <typename T>
     inline void log_(Level, int, const T&);
-
-    template <typename T, typename... Args>
-    void verbose_(int, const char*, const T&, const Args&...);
-
-    template <typename T>
-    inline void verbose_(int, const T&);
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+
     void initUnflushedCount(void) {
         m_unflushedCount.clear();
         base::type::EnumType lIndex = LevelHelper::kMinValid;
