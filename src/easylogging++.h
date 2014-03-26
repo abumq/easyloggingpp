@@ -3329,13 +3329,15 @@ public:
 
 #   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME)\
     template <typename T, typename... Args>\
-    inline void FUNCTION_NAME(const char*, const T&, const Args&...);
+    inline void FUNCTION_NAME(const char*, const T&, const Args&...);\
+    template <typename T>\
+    inline void FUNCTION_NAME(const T&);
 
     template <typename T, typename... Args> 
     void verbose(int, const char*, const T&, const Args&...);
 
     template <typename T> 
-    inline void verbose(int vlevel, const T& log);
+    inline void verbose(int, const T&);
 
     LOGGER_LEVEL_WRITERS_SIGNATURES(info)
     LOGGER_LEVEL_WRITERS_SIGNATURES(debug)
@@ -4677,7 +4679,7 @@ public:
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
-    inline void FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
+    inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
         log(LOG_LEVEL, s, value, args...);\
     }
 
