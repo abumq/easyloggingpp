@@ -349,10 +349,8 @@
 // For logging wxWidgets based classes & templates
 #   include <wx/vector.h>
 #endif  // defined(_ELPP_WXWIDGETS_LOGGING)
-/// @brief Easylogging++ entry namespace. Classes present <b>directly</b> in this namespace can be used by
-/// developer. Any other class is for internal use only.
+// Forward declarations
 namespace el {
-/// @brief Namespace containing base/internal functionality used by easylogging++
 class Logger;
 class LogMessage;
 class PerformanceTrackingData;
@@ -367,7 +365,13 @@ class Writer;
 class PErrorWriter;
 class LogDispatcher;
 class DefaultLogBuilder;
-/// @brief Data types for unicode support
+} // namespace base
+} // namespace el
+/// @brief Easylogging++ entry namespace
+namespace el {
+/// @brief Namespace containing base/internal functionality used by Easylogging++
+namespace base {
+/// @brief Data types used by Easylogging++
 namespace type {
 #undef ELPP_LITERAL
 #undef ELPP_STRLEN
@@ -393,7 +397,7 @@ typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
 typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
-}  // namespace type
+} // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
 /// @detail When using this class simply inherit it privately
@@ -611,8 +615,6 @@ public:
     }
 };
 /// @brief Flags used while writing logs. This flags are set by user
-///
-/// @see el::Helpers
 enum class LoggingFlag : base::type::EnumType {
     /// @brief Makes sure we have new line for each container log entry
     NewLineForContainer = 1,
@@ -635,7 +637,7 @@ enum class LoggingFlag : base::type::EnumType {
     ColoredTerminalOutput = 64
 };
 namespace base {
-/// @brief Namespace containing constants used internally. This is in seperate namespace to avoid confusions.
+/// @brief Namespace containing constants used internally.
 namespace consts {
     // Level log values - These are values that are replaced in place of %level format specifier
     static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
@@ -790,18 +792,18 @@ private:
 namespace utils {
 /// @brief Deletes memory safely and points to null
 template <typename T>
-inline static void safeDelete(T*& pointer) {  // NOLINT
+static inline void safeDelete(T*& pointer) {  // NOLINT
     if (pointer == nullptr)
         return;
     delete pointer;
     pointer = nullptr;
 }
 /// @brief Gets value of const char* but if it is nullptr, a string nullptr is returned
-inline static const char* charPtrVal(const char* pointer) {
+static inline const char* charPtrVal(const char* pointer) {
     return pointer == nullptr ? base::consts::kNullPointer : pointer;
 }
 /// @brief Aborts application due with user-defined status
-inline static void abort(int status, const std::string& reason = std::string()) {
+static inline void abort(int status, const std::string& reason = std::string()) {
     // Both status and reason params are there for debugging with tools like gdb etc
     _ELPP_UNUSED(status);
     _ELPP_UNUSED(reason);
@@ -816,31 +818,31 @@ inline static void abort(int status, const std::string& reason = std::string()) 
 /// Use these function as <pre>flag = bitwise::Or<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
 template <typename Enum>
-inline static base::type::EnumType And(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType And(const Enum& e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) & static_cast<base::type::EnumType>(e);
 }
 template <typename Enum>
-inline static base::type::EnumType Not(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType Not(const Enum& e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) & ~(static_cast<base::type::EnumType>(e));
 }
 template <typename Enum>
-inline static base::type::EnumType Or(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType Or(const Enum& e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) | static_cast<base::type::EnumType>(e);
 }
 }  // namespace bitwise
 /// @brief Adds flag
 template <typename Enum>
-inline static void addFlag(const Enum& e, base::type::EnumType* flag) {
+static inline void addFlag(const Enum& e, base::type::EnumType* flag) {
     *flag = base::utils::bitwise::Or<Enum>(e, *flag);
 }
 /// @brief Removes flag
 template <typename Enum>
-inline static void removeFlag(const Enum& e, base::type::EnumType* flag) {
+static inline void removeFlag(const Enum& e, base::type::EnumType* flag) {
     *flag = base::utils::bitwise::Not<Enum>(e, *flag);
 }
 /// @brief Determines whether flag is set or not
 template <typename Enum>
-inline static bool hasFlag(const Enum& e, base::type::EnumType flag) {
+static inline bool hasFlag(const Enum& e, base::type::EnumType flag) {
     return base::utils::bitwise::And<Enum>(e, flag) > 0x0;
 }
 }  // namespace utils
@@ -3280,7 +3282,7 @@ public:
         return m_typedConfigurations;
     }
 
-    inline static bool isValidId(const std::string& id) {
+    static inline bool isValidId(const std::string& id) {
         for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
             if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
                 return false;
