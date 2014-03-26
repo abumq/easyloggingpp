@@ -3371,12 +3371,19 @@ private:
 
     Logger(void);
 
+#if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+    template <typename T, typename... Args>
+    void log_(Level, const char*, const T&, const Args&...);
+
+    template <typename T>
+    inline void log_(Level, const T&);
+
     template <typename T, typename... Args>
     void verbose_(int, const char*, const T&, const Args&...);
 
     template <typename T>
     inline void verbose_(int, const T&);
-
+#endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     void initUnflushedCount(void) {
         m_unflushedCount.clear();
         base::type::EnumType lIndex = LevelHelper::kMinValid;
@@ -4640,10 +4647,9 @@ public:
 };
 } // namespace base
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
-// FIXME: log(T) and verbose(int, T) is not thread safe yet
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
-    void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
+    void Logger::log_(Level level, const char* s, const T& value, const Args&... args) {
         base::MessageBuilder b;
         b.initialize(this, true);
         while (*s) {
@@ -4660,8 +4666,18 @@ public:
         }
     }
     template <typename T> 
-    inline void Logger::log(Level level, const T& log) { 
+    inline void Logger::log_(Level level, const T& log) { 
         base::Writer(level, "file", 0, "func").construct(this, false) << log;
+    }
+    template <typename T, typename... Args>
+    void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
+        lock();
+        log_(level, s, value, args...);
+    }
+    template <typename T> 
+    inline void Logger::log(Level level, const T& log) { 
+        lock();
+        log_(level, log);
     }
     template <typename T, typename... Args> 
     void Logger::verbose_(int vlevel, const char* s, const T& value, const Args&... args) {
