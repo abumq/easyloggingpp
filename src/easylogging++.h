@@ -354,10 +354,20 @@
 /// developer. Any other class is for internal use only.
 namespace el {
 /// @brief Namespace containing base/internal functionality used by easylogging++
+class Logger;
+class LogMessage;
+class PerformanceTrackingData;
+class Loggers;
+class Helpers;
 namespace base {
 class Storage;
 class RegisteredLoggers;
 class Trackable;
+class MessageBuilder;
+class Writer;
+class PErrorWriter;
+class LogDispatcher;
+class DefaultLogBuilder;
 /// @brief Data types for unicode support
 namespace type {
 #undef ELPP_LITERAL
@@ -485,27 +495,14 @@ public:
     /// @brief Applies specified lambda to each level starting from startIndex
     /// @param startIndex initial value to start the iteration from. This is passed by reference and 
     ///        is incremented (left-shifted) so this can be used inside lambda function as well to represent current level.
-    /// @param lambdaFn Lambda function having no param with bool return type to apply with each level. See more details below
-    ///
-    /// @detail The bool return type of lambda expression represents whether or not to skip rest of levels. 
-    ///         Consider following example;
-    /// <pre>base::type::EnumType currLevel = LevelHelper::kMinValid;
-    ///    bool result = false;
-    ///    forEachLevel(&currLevel, [&]() -> bool {
-    ///       if (hasConfiguration(currLevel)) {
-    ///          result = true;
-    ///       }
-    ///       return result;
-    ///    });
-    ///    return result;</pre>
-    /// Code above is very good example of possible usages, returns inside lambda tells function not to exit/break iteration yet. 
-    /// Meaning if result is true the expression will return right away and result from main function will be return as 
-    /// soon as second <code>return result;</code> is hit.
-    static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& lambdaFn) {
+    /// @param fn function to apply with each level. 
+    ///        This bool represent whether or not to stop iterating through levels.
+    static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType lIndexMax = LevelHelper::kMaxValid;
         do {
-            if (lambdaFn())
+            if (fn()) {
                 break;
+            }
             *startIndex = *startIndex << 1;
         } while (*startIndex <= lIndexMax);
     }
@@ -602,14 +599,14 @@ public:
     /// @brief Applies specified lambda to each configuration type starting from startIndex
     /// @param startIndex initial value to start the iteration from. This is passed by reference and bit is shifted
     ///        so this can be used inside lambda function as well to represent current configuration type.
-    /// @param lambdaFn Lambda function having no param with bool return type to apply with each configuration type. 
-    ///        This bool represent whether or not to continue iterating through configurations. For details please see
-    ///        LevelHelper::forEachLevel
-    static void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& lambdaFn) {
+    /// @param fn function to apply with each configuration type. 
+    ///        This bool represent whether or not to stop iterating through configurations.
+    static void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType cIndexMax = ConfigurationTypeHelper::kMaxValid;
         do {
-            if (lambdaFn())
+            if (fn()) {
                 break;
+            }
             *startIndex = *startIndex << 1;
         } while (*startIndex <= cIndexMax);
     }
@@ -716,8 +713,8 @@ namespace consts {
     static const char* kConfigurationComment                   =      "##";
     static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLoggerId                  =      "--";
-    static const std::size_t kSourceFilenameMaxLength                  =      100;
-    static const std::size_t kSourceLineMaxLength                      =      10;
+    static const std::size_t kSourceFilenameMaxLength          =      100;
+    static const std::size_t kSourceLineMaxLength              =      10;
     static const int kMaxTimeFormats                           =      6;
     const struct {
         double value;
@@ -749,14 +746,11 @@ namespace consts {
         { SIGINT, "SIGINT", "Interactive attention signal",
                  "Interruption generated (generally) by user or operating system." },
     };
-}  // namespace consts
-}  // namespace base
+} // namespace consts
+} // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
-class LogMessage;
 typedef std::function<void(const LogMessage* logMessage)> PostLogDispatchHandler;
-class PerformanceTrackingData;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PostPerformanceTrackingHandler;
-class Logger;
 namespace base {
 static inline void defaultPostLogDispatchHandler(const LogMessage*) {}
 static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
@@ -2207,8 +2201,6 @@ private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
 };
-class Loggers;
-class Helpers;
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
 /// @detail String based value means any value either its boolean, integer or string itself, it will be embedded inside quotes
@@ -2713,10 +2705,6 @@ private:
 namespace base {
 typedef std::shared_ptr<base::type::fstream_t> FileStreamPtr;
 typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
-class MessageBuilder;
-class Writer;
-class PErrorWriter;
-class LogDispatcher;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
@@ -3659,7 +3647,6 @@ private:
     base::type::string_t m_message;
 };
 namespace base {
-class DefaultLogBuilder;
 /// @brief Contains all the storages that is needed by writer
 ///
 /// @detail This is initialized when Easylogging++ is initialized and is used by Writer
