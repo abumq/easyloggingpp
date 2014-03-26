@@ -4654,7 +4654,7 @@ public:
     template <typename T, typename... Args> 
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
         base::MessageBuilder b;
-        b.initialize(this);
+        b.initialize(this, true);
         while (*s) {
             if (*s == '%') {
                 if (*(s + 1) == '%') {
