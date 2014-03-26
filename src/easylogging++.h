@@ -4644,7 +4644,7 @@ public:
                     ++s;
                 } else {
                     b << value;
-                    log(level, s + 1, args...);
+                    log(level, ++s, args...);
                     return;
                 }
             }
@@ -4665,7 +4665,7 @@ public:
                     ++s;
                 } else {
                     b << value;
-                    verbose(vlevel, s + 1, args...);
+                    verbose(vlevel, ++s, args...);
                     return;
                 }
             }
