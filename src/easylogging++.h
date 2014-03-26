@@ -4491,7 +4491,7 @@ public:
         return *this;
     }
 
-    Writer& construct(Logger* logger) {
+    Writer& construct(Logger* logger, bool needLock = true) {
         m_logger = logger;
         initializeLogger(logger->id(), false);
         m_messageBuilder.initialize(m_logger, m_proceed);
@@ -4531,7 +4531,7 @@ protected:
     std::vector<std::string> m_loggerIds;
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
-    void initializeLogger(const std::string& loggerId, bool lookup = true) {
+    void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
         if (lookup) { m_logger = elStorage->registeredLoggers()->get(loggerId, false); }
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
@@ -4542,8 +4542,10 @@ protected:
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
         } else {
-            m_logger->lock();  // This should not be unlocked by checking m_proceed because
-                           // m_proceed can be changed by lines below
+            if (needLock) {
+                m_logger->lock();  // This should not be unlocked by checking m_proceed because
+                                   // m_proceed can be changed by lines below
+            }
             m_proceed = m_logger->m_typedConfigurations->enabled(m_level);
         }
     }
@@ -4651,7 +4653,7 @@ public:
     }
     template <typename T> 
     inline void Logger::log(Level level, const T& log) { 
-        base::Writer(level, "file", 0, "func").construct(this) << log;
+        base::Writer(level, "file", 0, "func").construct(this, false) << log;
     }
     template <typename T, typename... Args> 
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
@@ -4674,7 +4676,7 @@ public:
     inline void Logger::verbose(int vlevel, const T& log) {
         if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
             base::Writer(Level::Verbose, "file", 0, "func", 
-                base::DispatchAction::NormalLog, vlevel).construct(this) << log;
+                base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
         }
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
