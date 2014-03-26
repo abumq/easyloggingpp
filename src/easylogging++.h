@@ -439,7 +439,7 @@ public:
     /// @brief Represents maximum valid level. This is used internally and you should not need it.
     static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(Level::Trace);
     /// @brief Casts level to int, useful for iterating through enum.
-    static base::type::EnumType castToInt(const Level& level) {
+    static base::type::EnumType castToInt(Level level) {
         return static_cast<base::type::EnumType>(level);
     }
     /// @brief Casts int(ushort) to level, useful for iterating through enum.
@@ -448,7 +448,7 @@ public:
     }
     /// @brief Converts level to associated const char*
     /// @return Upper case string based level.
-    static const char* convertToString(const Level& level) {
+    static const char* convertToString(Level level) {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (level == Level::Global) return "GLOBAL";
         if (level == Level::Debug) return "DEBUG";
@@ -553,7 +553,7 @@ public:
     /// @brief Represents maximum valid configuration type. This is used internally and you should not need it.
     static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(ConfigurationType::MaxLogFileSize);
     /// @brief Casts configuration type to int, useful for iterating through enum.
-    static base::type::EnumType castToInt(const ConfigurationType& configurationType) {
+    static base::type::EnumType castToInt(ConfigurationType configurationType) {
         return static_cast<base::type::EnumType>(configurationType);
     }
     /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
@@ -562,7 +562,7 @@ public:
     }
     /// @brief Converts configuration type to associated const char*
     /// @returns Upper case string based configuration type.
-    static const char* convertToString(const ConfigurationType& configurationType) {
+    static const char* convertToString(ConfigurationType configurationType) {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (configurationType == ConfigurationType::Enabled) return "ENABLED";
         if (configurationType == ConfigurationType::Filename) return "FILENAME";
@@ -1488,7 +1488,7 @@ public:
     }
 
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
-    static base::type::string_t formatTime(unsigned long long time, const base::TimestampUnit& timestampUnit) {  // NOLINT
+    static base::type::string_t formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {  // NOLINT
         double result = static_cast<double>(time);
         base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
         const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
@@ -1505,7 +1505,7 @@ public:
     }
 
     /// @brief Gets time difference in milli/micro second depending on timestampUnit
-    static inline unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime, const base::TimestampUnit& timestampUnit) {  // NOLINT
+    static inline unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime, base::TimestampUnit timestampUnit) {  // NOLINT
         if (timestampUnit == base::TimestampUnit::Microsecond) {
             return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -  // NOLINT
                     static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));  // NOLINT
@@ -1991,7 +1991,7 @@ public:
         m_flags(0x0) {
     }
 
-    LogFormat(const Level& level, const base::type::string_t& format)
+    LogFormat(Level level, const base::type::string_t& format)
             : m_level(level), m_userFormat(format) {
         parseFromFormat(m_userFormat);
     }
@@ -2036,7 +2036,7 @@ public:
         // and then storing it.
         base::type::string_t formatCopy = userFormat;
         m_flags = 0x0;
-        auto conditionalAddFlag = [&](const base::type::char_t* specifier, const base::FormatFlags& flag) {
+        auto conditionalAddFlag = [&](const base::type::char_t* specifier, base::FormatFlags flag) {
             std::size_t foundAt = base::type::string_t::npos;
             while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != base::type::string_t::npos){
                 if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatEscapeChar) {
@@ -2078,7 +2078,7 @@ public:
         updateFormatSpec();
     }
 
-    inline const Level& level(void) const {
+    inline Level level(void) const {
         return m_level;
     }
 
@@ -2098,7 +2098,7 @@ public:
        return m_flags;
     }
 
-    inline bool hasFlag(const base::FormatFlags& flag) const {
+    inline bool hasFlag(base::FormatFlags flag) const {
         return base::utils::hasFlag(flag, m_flags);
     }
 
@@ -2175,7 +2175,7 @@ protected:
         // Ignore Level::Global and Level::Unknown
     }
 
-    inline void addFlag(const base::FormatFlags& flag) {
+    inline void addFlag(base::FormatFlags flag) {
         base::utils::addFlag(flag, &m_flags);
     }
 
@@ -2237,19 +2237,19 @@ public:
     }
 
     /// @brief Full constructor used to sets value of configuration
-    Configuration(const Level& level, const ConfigurationType& configurationType, const std::string& value) :
+    Configuration(Level level, ConfigurationType configurationType, const std::string& value) :
         m_level(level),
         m_configurationType(configurationType),
         m_value(value) {
     }
 
     /// @brief Gets level of current configuration
-    inline const Level& level(void) const {
+    inline Level level(void) const {
         return m_level;
     }
 
     /// @brief Gets configuration type of current configuration
-    inline const ConfigurationType& configurationType(void) const {
+    inline ConfigurationType configurationType(void) const {
         return m_configurationType;
     }
 
@@ -2275,7 +2275,7 @@ public:
     /// @brief Used to find configuration from configuration (pointers) repository. Avoid using it.
     class Predicate {
     public:
-        Predicate(const Level& level, const ConfigurationType& configurationType) :
+        Predicate(Level level, ConfigurationType configurationType) :
             m_level(level),
             m_configurationType(configurationType) {
         }
@@ -2374,7 +2374,7 @@ public:
     ///
     /// @detail Returns as soon as first level is found.
     /// @param configurationType Type of configuration to check existence for.
-    bool hasConfiguration(const ConfigurationType& configurationType) {
+    bool hasConfiguration(ConfigurationType configurationType) {
         base::type::EnumType lIndex = LevelHelper::kMinValid;
         bool result = false;
         LevelHelper::forEachLevel(&lIndex, [&](void) -> bool {
@@ -2389,7 +2389,7 @@ public:
     /// @brief Determines whether or not specified configuration type exists for specified level
     /// @param level Level to check
     /// @param configurationType Type of configuration to check existence for.
-    inline bool hasConfiguration(const Level& level, const ConfigurationType& configurationType) {
+    inline bool hasConfiguration(Level level, ConfigurationType configurationType) {
         base::threading::lock_guard lock(mutex());
 #if _ELPP_COMPILER_INTEL
         // We cant specify template types here, Intel C++ throws compilation error
@@ -2412,7 +2412,7 @@ public:
     /// @see Configuration::setValue(const std::string& value)
     /// @see el::Level
     /// @see el::ConfigurationType
-    inline void set(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
+    inline void set(Level level, ConfigurationType configurationType, const std::string& value) {
         base::threading::lock_guard lock(mutex());
         unsafeSet(level, configurationType, value);  // This is not unsafe anymore as we have locked mutex
         if (level == Level::Global) {
@@ -2421,7 +2421,7 @@ public:
     }
 
     /// @brief Sets single configuration based on other single configuration.
-    /// @see set(const Level& level, const ConfigurationType& configurationType, const std::string& value)
+    /// @see set(Level level, ConfigurationType configurationType, const std::string& value)
     inline void set(Configuration* conf) {
         if (conf == nullptr) {
             return;
@@ -2429,7 +2429,7 @@ public:
         set(conf->level(), conf->configurationType(), conf->value());
     }
 
-    inline Configuration* get(const Level& level, const ConfigurationType& configurationType) {
+    inline Configuration* get(Level level, ConfigurationType configurationType) {
         base::threading::lock_guard lock(mutex());
         return RegistryWithPred<Configuration, Configuration::Predicate>::get(level, configurationType);
     }
@@ -2437,8 +2437,8 @@ public:
     /// @brief Sets configuration for all levels.
     /// @param configurationType Type of configuration
     /// @param value String based value
-    /// @see Configurations::set(const Level& level, const ConfigurationType& configurationType, const std::string& value)
-    inline void setGlobally(const ConfigurationType& configurationType, const std::string& value) {
+    /// @see Configurations::set(Level level, ConfigurationType configurationType, const std::string& value)
+    inline void setGlobally(ConfigurationType configurationType, const std::string& value) {
         setGlobally(configurationType, value, false);
     }
 
@@ -2663,7 +2663,7 @@ private:
     friend class el::Loggers;
 
     /// @brief Unsafely sets configuration if does not already exist
-    void unsafeSetIfNotExist(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
+    void unsafeSetIfNotExist(Level level, ConfigurationType configurationType, const std::string& value) {
         Configuration* conf = RegistryWithPred<Configuration, Configuration::Predicate>::get(level, configurationType);
         if (conf == nullptr) {
             unsafeSet(level, configurationType, value);
@@ -2671,7 +2671,7 @@ private:
     }
 
     /// @brief Thread unsafe set
-    void unsafeSet(const Level& level, const ConfigurationType& configurationType, const std::string& value) {
+    void unsafeSet(Level level, ConfigurationType configurationType, const std::string& value) {
         Configuration* conf = RegistryWithPred<Configuration, Configuration::Predicate>::get(level, configurationType);
         if (conf == nullptr) {
             registerNew(new Configuration(level, configurationType, value));
@@ -2684,8 +2684,8 @@ private:
     }
 
     /// @brief Sets configurations for all levels including Level::Global if includeGlobalLevel is true
-    /// @see Configurations::setGlobally(const ConfigurationType& configurationType, const std::string& value)
-    void setGlobally(const ConfigurationType& configurationType, const std::string& value, bool includeGlobalLevel) {
+    /// @see Configurations::setGlobally(ConfigurationType configurationType, const std::string& value)
+    void setGlobally(ConfigurationType configurationType, const std::string& value, bool includeGlobalLevel) {
         if (includeGlobalLevel) {
             set(Level::Global, configurationType, value);
         }
@@ -2697,8 +2697,8 @@ private:
     }
 
     /// @brief Sets configurations (Unsafely) for all levels including Level::Global if includeGlobalLevel is true
-    /// @see Configurations::setGlobally(const ConfigurationType& configurationType, const std::string& value)
-    void unsafeSetGlobally(const ConfigurationType& configurationType, const std::string& value, bool includeGlobalLevel) {
+    /// @see Configurations::setGlobally(ConfigurationType configurationType, const std::string& value)
+    void unsafeSetGlobally(ConfigurationType configurationType, const std::string& value, bool includeGlobalLevel) {
         if (includeGlobalLevel) {
             unsafeSet(Level::Global, configurationType, value);
         }
@@ -2747,43 +2747,43 @@ public:
         return m_configurations;
     }
 
-    inline bool enabled(const Level& level) {
+    inline bool enabled(Level level) {
         return getConfigByVal<bool>(level, &m_enabledMap, "enabled");
     }
 
-    inline bool toFile(const Level& level) {
+    inline bool toFile(Level level) {
         return getConfigByVal<bool>(level, &m_toFileMap, "toFile");
     }
 
-    inline const std::string& filename(const Level& level) {
+    inline const std::string& filename(Level level) {
         return getConfigByRef<std::string>(level, &m_filenameMap, "filename");
     }
 
-    inline bool toStandardOutput(const Level& level) {
+    inline bool toStandardOutput(Level level) {
         return getConfigByVal<bool>(level, &m_toStandardOutputMap, "toStandardOutput");
     }
 
-    inline const base::LogFormat& logFormat(const Level& level) {
+    inline const base::LogFormat& logFormat(Level level) {
         return getConfigByRef<base::LogFormat>(level, &m_logFormatMap, "logFormat");
     }
 
-    inline const base::MillisecondsWidth& millisecondsWidth(const Level& level = Level::Global) {
+    inline const base::MillisecondsWidth& millisecondsWidth(Level level = Level::Global) {
         return getConfigByRef<base::MillisecondsWidth>(level, &m_millisecondsWidthMap, "millisecondsWidth");
     }
 
-    inline bool performanceTracking(const Level& level = Level::Global) {
+    inline bool performanceTracking(Level level = Level::Global) {
         return getConfigByVal<bool>(level, &m_performanceTrackingMap, "performanceTracking");
     }
 
-    inline base::type::fstream_t* fileStream(const Level& level) {
+    inline base::type::fstream_t* fileStream(Level level) {
         return getConfigByRef<base::FileStreamPtr>(level, &m_fileStreamMap, "fileStream").get();
     }
 
-    inline std::size_t maxLogFileSize(const Level& level) {
+    inline std::size_t maxLogFileSize(Level level) {
         return getConfigByVal<std::size_t>(level, &m_maxLogFileSizeMap, "maxLogFileSize");
     }
 
-    inline std::size_t logFlushThreshold(const Level& level) {
+    inline std::size_t logFlushThreshold(Level level) {
         return getConfigByVal<std::size_t>(level, &m_logFlushThresholdMap, "logFlushThreshold");
     }
 
@@ -2807,19 +2807,19 @@ private:
     friend class el::base::LogDispatcher;
 
     template <typename Conf_T>
-    inline Conf_T getConfigByVal(const Level& level, const std::map<Level, Conf_T>* confMap, const char* confName) {
+    inline Conf_T getConfigByVal(Level level, const std::map<Level, Conf_T>* confMap, const char* confName) {
         base::threading::lock_guard lock(mutex());
         return unsafeGetConfigByVal(level, confMap, confName);  // This is not unsafe anymore - mutex locked in scope
     }
 
     template <typename Conf_T>
-    inline Conf_T& getConfigByRef(const Level& level, std::map<Level, Conf_T>* confMap, const char* confName) {
+    inline Conf_T& getConfigByRef(Level level, std::map<Level, Conf_T>* confMap, const char* confName) {
         base::threading::lock_guard lock(mutex());
         return unsafeGetConfigByRef(level, confMap, confName);  // This is not unsafe anymore - mutex locked in scope
     }
 
     template <typename Conf_T>
-    inline Conf_T unsafeGetConfigByVal(const Level& level, const std::map<Level, Conf_T>* confMap, const char* confName) {
+    inline Conf_T unsafeGetConfigByVal(Level level, const std::map<Level, Conf_T>* confMap, const char* confName) {
         _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::const_iterator it = confMap->find(level);
         if (it == confMap->end()) {
@@ -2836,7 +2836,7 @@ private:
     }
 
     template <typename Conf_T>
-    inline Conf_T& unsafeGetConfigByRef(const Level& level, std::map<Level, Conf_T>* confMap, const char* confName) {
+    inline Conf_T& unsafeGetConfigByRef(Level level, std::map<Level, Conf_T>* confMap, const char* confName) {
         _ELPP_UNUSED(confName);
         typename std::map<Level, Conf_T>::iterator it = confMap->find(level);
         if (it == confMap->end()) {
@@ -2852,7 +2852,7 @@ private:
     }
 
     template <typename Conf_T>
-    void setValue(const Level& level, const Conf_T& value, std::map<Level, Conf_T>* confMap, bool includeGlobalLevel = true) {
+    void setValue(Level level, const Conf_T& value, std::map<Level, Conf_T>* confMap, bool includeGlobalLevel = true) {
         // If map is empty and we are allowed to add into generic level (Level::Global), do it!
         if (confMap->empty() && includeGlobalLevel) {
             confMap->insert(std::make_pair(Level::Global, value));
@@ -2968,7 +2968,7 @@ private:
         return resultingFilename;
     }
 
-    void insertFile(const Level& level, const std::string& fullFilename) {
+    void insertFile(Level level, const std::string& fullFilename) {
         std::string resolvedFilename = resolveFilename(fullFilename);
         if (resolvedFilename.empty()) {
             std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
@@ -2978,7 +2978,7 @@ private:
         if (filePath.size() < resolvedFilename.size()) {
             base::utils::File::createPath(filePath);
         }
-        auto create = [&](const Level& level) {
+        auto create = [&](Level level) {
             base::LogStreamsReferenceMap::iterator filestreamIter = m_logStreamsReference->find(resolvedFilename);
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
@@ -3004,7 +3004,7 @@ private:
         }
     }
 
-    bool unsafeValidateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
+    bool unsafeValidateFileRolling(Level level, const PreRollOutHandler& preRollOutHandler) {
         base::type::fstream_t* fs = unsafeGetConfigByRef(level, &m_fileStreamMap, "fileStream").get();
         if (fs == nullptr) {
             return true;
@@ -3023,7 +3023,7 @@ private:
         return false;
     }
 
-    bool validateFileRolling(const Level& level, const PreRollOutHandler& preRollOutHandler) {
+    bool validateFileRolling(Level level, const PreRollOutHandler& preRollOutHandler) {
         base::threading::lock_guard lock(mutex());
         return unsafeValidateFileRolling(level, preRollOutHandler);
     }
@@ -3178,7 +3178,7 @@ public:
 private:
     friend class el::base::LogDispatcher;
 
-    void convertToColoredOutput(base::type::string_t* logLine, const Level& level) {
+    void convertToColoredOutput(base::type::string_t* logLine, Level level) {
         if (!base::utils::s_termSupportsColor) return;
         const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
         if (level == Level::Error || level == Level::Fatal)
@@ -3397,7 +3397,7 @@ private:
         return m_stream;
     }
 
-    inline void flush(const Level& level, base::type::fstream_t* fs) {
+    inline void flush(Level level, base::type::fstream_t* fs) {
         if (fs == nullptr && m_typedConfigurations->toFile(level)) {
             fs = m_typedConfigurations->fileStream(level);
         }
@@ -3407,7 +3407,7 @@ private:
         }
     }
 
-    inline bool isFlushNeeded(const Level& level) {
+    inline bool isFlushNeeded(Level level) {
         return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
     }
 
@@ -3642,12 +3642,12 @@ private:
 }  // namespace base
 class LogMessage {
 public:
-    LogMessage(const Level& level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
+    LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
                           base::VRegistry::VLevel verboseLevel, Logger* logger) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
     }
-    inline const Level& level(void) const { return m_level; }
+    inline Level level(void) const { return m_level; }
     inline const std::string& file(void) const { return m_file; }
     inline unsigned long int line(void) const { return m_line; }  // NOLINT
     inline const std::string& func(void) const { return m_func; }
@@ -3949,7 +3949,7 @@ public:
 /// @brief Dispatches log messages
 class LogDispatcher : base::NoCopy {
 public:
-    LogDispatcher(bool proceed, LogMessage&& logMessage, const base::DispatchAction& dispatchAction) :
+    LogDispatcher(bool proceed, LogMessage&& logMessage, base::DispatchAction dispatchAction) :
         m_proceed(proceed),
         m_logMessage(std::move(logMessage)),
         m_dispatchAction(std::move(dispatchAction)) {
@@ -4482,8 +4482,8 @@ public:
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
 public:
-    Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
+    Writer(Level level, const char* file, unsigned long int line,  // NOLINT
+               const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::VRegistry::VLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(false), m_dispatchAction(dispatchAction) {
@@ -4627,8 +4627,8 @@ protected:
 };
 class PErrorWriter : public base::Writer {
 public:
-    PErrorWriter(const Level& level, const char* file, unsigned long int line,  // NOLINT
-               const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
+    PErrorWriter(Level level, const char* file, unsigned long int line,  // NOLINT
+               const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::VRegistry::VLevel verboseLevel = 0) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
     }
@@ -4791,9 +4791,9 @@ namespace base {
 class Trackable : public base::threading::ThreadSafe {
 public:
     Trackable(const std::string& blockName,
-            const base::TimestampUnit& timestampUnit = base::TimestampUnit::Millisecond,
+            base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
             const std::string& loggerId = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, 
-            bool scopedLog = true, const Level& level = Level::Info) :
+            bool scopedLog = true, Level level = Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -5043,7 +5043,7 @@ static std::string crashReason(int sig) {
     return ss.str();
 }
 /// @brief Logs reason of crash from sig
-static void logCrashReason(int sig, bool stackTraceIfAvailable, const Level& level, const char* logger) {
+static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, const char* logger) {
     std::stringstream ss;
     ss << "CRASH HANDLED; ";
     ss << crashReason(sig);
@@ -5192,7 +5192,7 @@ public:
     /// @param level Logging level
     /// @param logger Logger to use for logging
     static inline void logCrashReason(int sig, bool stackTraceIfAvailable = false,
-            const Level& level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
+            Level level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
     /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out
@@ -5249,7 +5249,7 @@ public:
     static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
         return ELPP->hasCustomFormatSpecifier(formatSpecifier);
     }
-    static inline void validateFileRolling(Logger* logger, const Level& level) {
+    static inline void validateFileRolling(Logger* logger, Level level) {
         if (logger == nullptr) return;
         logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutHandler());
     }
@@ -5281,7 +5281,7 @@ public:
         return Loggers::reconfigureLogger(Loggers::getLogger(identity), configurations);
     }
     /// @brief Reconfigures logger's single configuration
-    static inline Logger* reconfigureLogger(const std::string& identity, const ConfigurationType& configurationType,
+    static inline Logger* reconfigureLogger(const std::string& identity, ConfigurationType configurationType,
             const std::string& value) {
         Logger* logger = Loggers::getLogger(identity);
         if (logger == nullptr) {
@@ -5299,11 +5299,11 @@ public:
         }
     }
     /// @brief Reconfigures single configuration for all the loggers
-    static inline void reconfigureAllLoggers(const ConfigurationType& configurationType, const std::string& value) {
+    static inline void reconfigureAllLoggers(ConfigurationType configurationType, const std::string& value) {
         reconfigureAllLoggers(Level::Global, configurationType, value);
     }
     /// @brief Reconfigures single configuration for all the loggers for specified level
-    static inline void reconfigureAllLoggers(const Level& level, const ConfigurationType& configurationType, 
+    static inline void reconfigureAllLoggers(Level level, ConfigurationType configurationType, 
             const std::string& value) {
         for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
                 it != ELPP->registeredLoggers()->end(); ++it) {
