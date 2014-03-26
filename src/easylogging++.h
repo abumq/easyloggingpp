@@ -4634,7 +4634,7 @@ public:
 };
 } // namespace base
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
-// FIXME: Lock logger!
+// FIXME: log(T) and verbose(int, T) is not thread safe yet
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
     void Logger::log(Level level, const char* s, const T& value, const Args&... args) {

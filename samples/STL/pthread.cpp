@@ -27,9 +27,9 @@ void* write2(void* args){
   el::Logger* logger = (el::Logger*)a->logger;
 
   LOG(INFO) << "Writing from different function using macro [Thread #" << threadId << "]";
+
   logger->info("Info log from [Thread #%]", threadId);
-  //logger->error("Error test [Thread #%]", threadId);
-  //logger->verbose(2, "Verbose test [Thread #%]", threadId);
+  logger->verbose(2, "Verbose test [Thread #%]", threadId);
   return NULL;
 }
 
