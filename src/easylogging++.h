@@ -4127,13 +4127,13 @@ public:
 #   define ELPP_SIMPLE_LOG(LOG_TYPE)\
     inline MessageBuilder& operator<<(LOG_TYPE msg) {\
         if (!m_proceed) { return *this; }\
-        m_logger->stream() << log_;\
+        m_logger->stream() << msg;\
         return *this;\
     }
 
     inline MessageBuilder& operator<<(const std::string& msg) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << log_.c_str();
+        m_logger->stream() << msg.c_str();
         return *this;
     }
     ELPP_SIMPLE_LOG(char)
@@ -4152,18 +4152,18 @@ public:
     ELPP_SIMPLE_LOG(long double)
     inline MessageBuilder& operator<<(const std::wstring& msg) {
         if (!m_proceed) { return *this; }
-        return operator<<(log_.c_str());
+        return operator<<(msg.c_str());
     }
     inline MessageBuilder& operator<<(const wchar_t* msg) {
         if (!m_proceed) { return *this; }
-        if (log_ == nullptr) {
+        if (msg == nullptr) {
             m_logger->stream() << base::consts::kNullPointer;
             return *this;
         }
 #   if defined(_ELPP_UNICODE)
-        m_logger->stream() << log_;
+        m_logger->stream() << msg;
 #   else
-        char* buff_ = base::utils::Str::wcharPtrToCharPtr(log_);
+        char* buff_ = base::utils::Str::wcharPtrToCharPtr(msg);
         m_logger->stream() << buff_;
         free(buff_);
 #   endif
@@ -4273,46 +4273,46 @@ public:
     inline MessageBuilder& operator<<(const QString& msg) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
-        m_logger->stream() << log_.toStdWString();
+        m_logger->stream() << msg.toStdWString();
 #   else
-        m_logger->stream() << log_.toStdString();
+        m_logger->stream() << msg.toStdString();
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
     inline MessageBuilder& operator<<(const QByteArray& msg) {
         if (!m_proceed) { return *this; }
-        return operator << (QString(log_));
+        return operator << (QString(msg));
     }
     inline MessageBuilder& operator<<(const QStringRef& msg) {
         if (!m_proceed) { return *this; }
-        return operator<<(log_.toString());
+        return operator<<(msg.toString());
     }
     inline MessageBuilder& operator<<(qint64 msg) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
-        m_logger->stream() << QString::number(log_).toStdWString();
+        m_logger->stream() << QString::number(msg).toStdWString();
 #   else
-        m_logger->stream() << QString::number(log_).toStdString();
+        m_logger->stream() << QString::number(msg).toStdString();
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
     inline MessageBuilder& operator<<(quint64 msg) {
         if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
-        m_logger->stream() << QString::number(log_).toStdWString();
+        m_logger->stream() << QString::number(msg).toStdWString();
 #   else
-        m_logger->stream() << QString::number(log_).toStdString();
+        m_logger->stream() << QString::number(msg).toStdString();
 #   endif  // defined(_ELPP_UNICODE)
         return *this;
     }
     inline MessageBuilder& operator<<(QChar msg) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << log_.toLatin1();
+        m_logger->stream() << msg.toLatin1();
         return *this;
     }
     inline MessageBuilder& operator<<(const QLatin1String& msg) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << log_.latin1();
+        m_logger->stream() << msg.latin1();
         return *this;
     }
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QList)
