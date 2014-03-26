@@ -249,7 +249,6 @@
 #else
 #   define _ELPP_VERBOSE_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_VERBOSE_LOGS) && (_ELPP_LOGGING_ENABLED))
-// Now let user know that we only support C++0x/C++11 applications
 #if (!(_ELPP_CXX0X || _ELPP_CXX11))
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
 #endif  // (!(_ELPP_CXX0X || _ELPP_CXX11))
@@ -678,7 +677,7 @@ namespace consts {
     static const char* kSysLogLoggerId                         =      "syslog";
     static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
-    static const char  kFormatEscapeChar                       =      '%';
+    static const char  kFormatSpecifierChar                       =      '%';
     static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
@@ -1197,7 +1196,7 @@ public:
             const base::type::string_t& replaceWith) {
         std::size_t foundAt = base::type::string_t::npos;
         while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos) {
-            if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatEscapeChar) {
+            if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatSpecifierChar) {
                 str.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
                 ++foundAt;
             } else {
@@ -1534,9 +1533,9 @@ private:
             std::size_t msec, const base::MillisecondsWidth* msWidth) {
         const char* bufLim = buf + bufSz;
         for (; *format; ++format) {
-            if (*format == '%') {
+            if (*format == base::consts::kFormatSpecifierChar) {
                 switch (*++format) {
-                case base::consts::kFormatEscapeChar:  // Escape
+                case base::consts::kFormatSpecifierChar:  // Escape
                     break;
                 case '\0':  // End
                     --format;
@@ -2033,7 +2032,7 @@ public:
         auto conditionalAddFlag = [&](const base::type::char_t* specifier, base::FormatFlags flag) {
             std::size_t foundAt = base::type::string_t::npos;
             while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != base::type::string_t::npos){
-                if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatEscapeChar) {
+                if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatSpecifierChar) {
                     if (hasFlag(flag)) {
                         // If we already have flag we remove the escape chars so that '%%' is turned to '%'
                         // even after specifier resolution - this is because we only replaceFirst specifier
@@ -2060,7 +2059,7 @@ public:
         // For date/time we need to extract user's date format first
         std::size_t dateIndex = std::string::npos;
         if ((dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
-            while (dateIndex > 0 && formatCopy[dateIndex - 1] == base::consts::kFormatEscapeChar) {
+            while (dateIndex > 0 && formatCopy[dateIndex - 1] == base::consts::kFormatSpecifierChar) {
                 dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier, dateIndex + 1);
             }
             if (dateIndex != std::string::npos) {
@@ -2922,7 +2921,7 @@ private:
         std::size_t dateIndex = std::string::npos;
         std::string dateTimeFormatSpecifierStr = std::string(base::consts::kDateTimeFormatSpecifierForFilename);
         if ((dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str())) != std::string::npos) {
-            while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatEscapeChar) {
+            while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatSpecifierChar) {
                 dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str(), dateIndex + 1);
             }
             if (dateIndex != std::string::npos) {
@@ -4635,8 +4634,8 @@ public:
         base::MessageBuilder b;
         b.initialize(this, true);
         while (*s) {
-            if (*s == '%') {
-                if (*(s + 1) == '%') {
+            if (*s == base::consts::kFormatSpecifierChar) {
+                if (*(s + 1) == base::consts::kFormatSpecifierChar) {
                     ++s;
                 } else {
                     b << value;
