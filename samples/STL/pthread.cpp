@@ -30,6 +30,7 @@ void* write2(void* args){
 
   logger->info("Info log from [Thread #%]", threadId);
   logger->verbose(2, "Verbose test [Thread #%]", threadId);
+  logger->verbose(2, "Verbose test");
   return NULL;
 }
 
