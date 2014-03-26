@@ -15,6 +15,24 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
+struct Args {
+  char* thrId;
+  el::Logger* logger;
+}args;
+
+void* write2(void* args){
+  struct Args* a = (struct Args*)args;
+  
+  char* threadId = (char*)a->thrId;
+  el::Logger* logger = (el::Logger*)a->logger;
+
+  LOG(INFO) << "Writing from different function using macro [Thread #" << threadId << "]";
+  logger->lock();logger->info("Info log from [Thread #%]", threadId);logger->unlock();
+  //logger->error("Error test [Thread #%]", threadId);
+  //logger->verbose(2, "Verbose test [Thread #%]", threadId);
+  return NULL;
+}
+
 void *write(void* thrId){
   char* threadId = (char*)thrId;
   // Following line will be logged with every thread
@@ -48,6 +66,9 @@ void *write(void* thrId){
   CLOG(INFO, "logger1") << "Logging using new logger";
   CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET"; // << -- NOTE THIS!
 
+  el::Logger* logger = el::Loggers::getLogger("default");
+  logger->lock();logger->info("Info log from [Thread #%]", threadId);logger->unlock();
+
   // Check for log counters positions
   for (int i = 1; i <= 50; ++i) {
      LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS;
@@ -56,18 +77,26 @@ void *write(void* thrId){
   return NULL;
 }
 
+
 int main(int argc, char** argv)
 {
      _START_EASYLOGGINGPP(argc, argv);
-     pthread_t thread1, thread2, thread3;
+     pthread_t thread1, thread2, thread3, thread4;
+
     /* Create independent threads each of which will execute function */
      pthread_create( &thread1, NULL, write, (void*)"1");
      pthread_create( &thread2, NULL, write, (void*)"2");
      pthread_create( &thread3, NULL, write, (void*)"3");
+     
+     el::Logger* logger = el::Loggers::getLogger("default");
+     args.thrId = "4";
+     args.logger = logger;
+     pthread_create( &thread4, NULL, write2, (void*)&args);
 
      pthread_join(thread1, NULL);
      pthread_join(thread2, NULL); 
      pthread_join(thread3, NULL); 
+     pthread_join(thread4, NULL); 
 
     exit(0);
 }

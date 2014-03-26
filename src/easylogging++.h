@@ -4493,7 +4493,7 @@ public:
 
     Writer& construct(Logger* logger, bool needLock = true) {
         m_logger = logger;
-        initializeLogger(logger->id(), false);
+        initializeLogger(logger->id(), false, needLock);
         m_messageBuilder.initialize(m_logger, m_proceed);
         return *this;
     }
