@@ -36,44 +36,44 @@ void* write2(void* args){
 void *write(void* thrId){
   char* threadId = (char*)thrId;
   // Following line will be logged with every thread
-  LOG(INFO) << "This standard log is written by thread #" << threadId;
+  LOG(INFO) << "This standard log is written by [Thread #" << threadId << "]";
 
   // Following line will be logged with every thread only when --v=2 argument 
   // is provided, i.e, ./bin/multithread_test.cpp.bin --v=2
-  VLOG(2) << "This is verbose level 2 logging from thread #" << threadId;
+  VLOG(2) << "This is verbose level 2 logging from [Thread #" << threadId << "]";
 
   // Following line will be logged only once from second running thread (which every runs second into 
   // this line because of interval 2)
-  LOG_EVERY_N(2, WARNING) << "This will be logged only once from thread who every reaches this line first. Currently running from thread #" << threadId;
+  LOG_EVERY_N(2, WARNING) << "This will be logged only once from thread who every reaches this line first. Currently running from [Thread #" << threadId << "]";
 
   for (int i = 1; i <= 10; ++i) {
-     VLOG_IF(true, 2) << "Verbose condition";
-     VLOG_EVERY_N(2, 3) << "Verbose level 3 log every 4th time. This is at " << i << " from thread #" << threadId;
+     VLOG_IF(true, 2) << "Verbose condition [Thread #" << threadId << "]";
+     VLOG_EVERY_N(2, 3) << "Verbose level 3 log every 4th time. This is at " << i << " from [Thread #" << threadId << "]";
   }
 
   // Following line will be logged once with every thread because of interval 1 
-  LOG_EVERY_N(1, INFO) << "This interval log will be logged with every thread, this one is from thread #" << threadId;
+  LOG_EVERY_N(1, INFO) << "This interval log will be logged with every thread, this one is from [Thread #" << threadId << "]";
 
-  LOG_IF(strcmp(threadId, "2") == 0, INFO) << "This log is only for thread 2 and is ran by thread #" << threadId;
+  LOG_IF(strcmp(threadId, "2") == 0, INFO) << "This log is only for thread 2 and is ran by [Thread #" << threadId << "]";
 
   // Register 5 vague loggers
   for (int i = 1; i <= 5; ++i) {
      std::stringstream ss;
      ss << "logger" << i;
      el::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
-     LOG(INFO) << "Registered logger [" << *logger << "]";
+     LOG(INFO) << "Registered logger [" << *logger << "] [Thread #" << threadId << "]";
   }
-  CLOG(INFO, "logger1") << "Logging using new logger";
-  CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET"; // << -- NOTE THIS!
+  CLOG(INFO, "logger1") << "Logging using new logger [Thread #" << threadId << "]";
+  CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET [Thread #" << threadId << "]"; // << -- NOTE THIS!
 
   el::Logger* logger = el::Loggers::getLogger("default");
   logger->info("Info log from [Thread #%]", threadId);
 
   // Check for log counters positions
   for (int i = 1; i <= 50; ++i) {
-     LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS;
+     LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS << " [Thread #" << threadId << "]";
   }
-  LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS;
+  LOG_EVERY_N(2, INFO) << "Counter pos: " << ELPP_COUNTER_POS << " [Thread #" << threadId << "]";
   return NULL;
 }
 
