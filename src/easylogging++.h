@@ -206,8 +206,8 @@
 #endif  // defined(_MSC_VER)
 #undef _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 // Keep following line commented until features are fixed
-//#define _ELPP_VARIADIC_TEMPLATES_SUPPORTED \
-//    (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || (_ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
+#define _ELPP_VARIADIC_TEMPLATES_SUPPORTED \
+    (_ELPP_COMPILER_GCC || _ELPP_COMPILER_CLANG || _ELPP_COMPILER_INTEL || (_ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
 // Logging Enable/Disable macros
 #if (defined(_ELPP_DISABLE_LOGS))
 #   define _ELPP_LOGGING_ENABLED 0
@@ -4102,6 +4102,13 @@ public:
         return *this;
     }
 };
+class MessageBuilder {
+public:
+    // Writer("...").construct(this).messageBuilder() <<
+    MessageBuilder(Logger* logger) : m_logger(logger) {}
+private:
+    Logger* m_logger;
+};
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
 public:
@@ -4589,6 +4596,7 @@ public:
 };
 } // namespace base
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
+// FIXME: Lock logger!
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args> \
@@ -4602,7 +4610,7 @@ public:
                 } else { \
                     w << value; \
                     FUNCTION_NAME(s + 1, args...);\
-                    return; \
+                    return;\
                 } \
             } \
             w << *s++; \
