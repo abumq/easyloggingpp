@@ -1218,7 +1218,7 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-(c) Copyright 2012 - 2014 Majid Khan
+Copyright (c) 2014 Majid Khan
 http://easylogging.org/
 
 Permission is hereby granted, free of charge, to any person obtaining

@@ -2,7 +2,7 @@
 //  Easylogging++ v9.59 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2012 - 2014 Majid Khan
+//  Copyright (c) 2014 Majid Khan
 //
 //  This library is released under the MIT Licence.
 //  http://www.easylogging.org/licence.php
