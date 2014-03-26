@@ -3373,10 +3373,10 @@ private:
 
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
-    void log_(Level, const char*, const T&, const Args&...);
+    void log_(Level, int, const char*, const T&, const Args&...);
 
     template <typename T>
-    inline void log_(Level, const T&);
+    inline void log_(Level, int, const T&);
 
     template <typename T, typename... Args>
     void verbose_(int, const char*, const T&, const Args&...);
@@ -4649,7 +4649,7 @@ public:
 // Logging from Logger class. Why this is here? Because we have Storage and Writer class available
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
-    void Logger::log_(Level level, const char* s, const T& value, const Args&... args) {
+    void Logger::log_(Level level, int vlevel, const char* s, const T& value, const Args&... args) {
         base::MessageBuilder b;
         b.initialize(this, true);
         while (*s) {
@@ -4658,7 +4658,7 @@ public:
                     ++s;
                 } else {
                     b << value;
-                    log_(level, ++s, args...);
+                    log_(level, vlevel, ++s, args...);
                     return;
                 }
             }
@@ -4666,52 +4666,33 @@ public:
         }
     }
     template <typename T> 
-    inline void Logger::log_(Level level, const T& log) { 
-        base::Writer(level, "file", 0, "func").construct(this, false) << log;
+    inline void Logger::log_(Level level, int vlevel, const T& log) {
+        if (level == Level::Verbose && ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
+            base::Writer(Level::Verbose, "file", 0, "func", 
+                base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
+        } else {
+            base::Writer(level, "file", 0, "func").construct(this, false) << log;
+        }
     }
     template <typename T, typename... Args>
     void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
         lock();
-        log_(level, s, value, args...);
+        log_(level, 0, s, value, args...);
     }
     template <typename T> 
     inline void Logger::log(Level level, const T& log) { 
         lock();
-        log_(level, log);
-    }
-    template <typename T, typename... Args> 
-    void Logger::verbose_(int vlevel, const char* s, const T& value, const Args&... args) {
-        base::MessageBuilder b;
-        b.initialize(this, true);
-        while (*s) {
-            if (*s == '%') {
-                if (*(s + 1) == '%') {
-                    ++s;
-                } else {
-                    b << value;
-                    verbose_(vlevel, ++s, args...);
-                    return;
-                }
-            }
-            b << *s++;
-        }
-    }
-    template <typename T>
-    inline void Logger::verbose_(int vlevel, const T& log) {
-        if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
-            base::Writer(Level::Verbose, "file", 0, "func", 
-                base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
-        }
+        log_(level, 0, log);
     }
     template <typename T, typename... Args>
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
         lock();
-        verbose_(vlevel, s, value, args...);
+        log_(el::Level::Verbose, vlevel, s, value, args...);
     }
     template <typename T>
     inline void Logger::verbose(int vlevel, const T& log) {
         lock();
-        verbose_(vlevel, log);
+        log_(el::Level::Verbose, vlevel, log);
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\

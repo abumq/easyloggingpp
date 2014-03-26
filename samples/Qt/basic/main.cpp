@@ -89,5 +89,6 @@ int main(int argc, char* argv[]) {
     
     LOG(INFO) << "This is not unicode";
     LOG(INFO) << "This is unicode: " << L"世界，你好";
+    
     return 0;
 }
