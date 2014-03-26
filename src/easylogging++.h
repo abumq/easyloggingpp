@@ -3371,6 +3371,12 @@ private:
 
     Logger(void);
 
+    template <typename T, typename... Args>
+    void verbose_(int, const char*, const T&, const Args&...);
+
+    template <typename T>
+    inline void verbose_(int, const T&);
+
     void initUnflushedCount(void) {
         m_unflushedCount.clear();
         base::type::EnumType lIndex = LevelHelper::kMinValid;
@@ -4658,7 +4664,7 @@ public:
         base::Writer(level, "file", 0, "func").construct(this, false) << log;
     }
     template <typename T, typename... Args> 
-    void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
+    void Logger::verbose_(int vlevel, const char* s, const T& value, const Args&... args) {
         base::MessageBuilder b;
         b.initialize(this, true);
         while (*s) {
@@ -4667,7 +4673,7 @@ public:
                     ++s;
                 } else {
                     b << value;
-                    verbose(vlevel, ++s, args...);
+                    verbose_(vlevel, ++s, args...);
                     return;
                 }
             }
@@ -4675,11 +4681,21 @@ public:
         }
     }
     template <typename T>
-    inline void Logger::verbose(int vlevel, const T& log) {
+    inline void Logger::verbose_(int vlevel, const T& log) {
         if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
             base::Writer(Level::Verbose, "file", 0, "func", 
-                base::DispatchAction::NormalLog, vlevel).construct(this) << log;
+                base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
         }
+    }
+    template <typename T, typename... Args>
+    void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
+        lock();
+        verbose_(vlevel, s, value, args...);
+    }
+    template <typename T>
+    inline void Logger::verbose(int vlevel, const T& log) {
+        lock();
+        verbose_(vlevel, log);
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
