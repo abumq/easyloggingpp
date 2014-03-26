@@ -4532,7 +4532,9 @@ protected:
 #endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
     void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
-        if (lookup) { m_logger = elStorage->registeredLoggers()->get(loggerId, false); }
+        if (lookup) {
+            m_logger = elStorage->registeredLoggers()->get(loggerId, false);
+        }
         if (m_logger == nullptr) {
             if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
@@ -4676,12 +4678,13 @@ public:
     inline void Logger::verbose(int vlevel, const T& log) {
         if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
             base::Writer(Level::Verbose, "file", 0, "func", 
-                base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
+                base::DispatchAction::NormalLog, vlevel).construct(this) << log;
         }
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
     inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
+        lock();\
         log(LOG_LEVEL, s, value, args...);\
     }\
     template <typename T>\
