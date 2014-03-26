@@ -3322,21 +3322,27 @@ public:
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
-    void log(Level level, const char* s, const T& value, const Args&... args);
+    void log(Level, const char*, const T&, const Args&...);
 
     template <typename T>
-    inline void log(Level level, const T& log);
+    inline void log(Level, const T&);
 
-    /*template <typename T, typename... Args> 
-    void verbose(int vlevel, const char* s, const T& value, const Args&... args);
+#   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME)\
+    template <typename T, typename... Args>\
+    inline void FUNCTION_NAME(const char*, const T&, const Args&...);
+
+    template <typename T, typename... Args> 
+    void verbose(int, const char*, const T&, const Args&...);
+
     template <typename T> 
     inline void verbose(int vlevel, const T& log);
+
     LOGGER_LEVEL_WRITERS_SIGNATURES(info)
     LOGGER_LEVEL_WRITERS_SIGNATURES(debug)
     LOGGER_LEVEL_WRITERS_SIGNATURES(warn)
     LOGGER_LEVEL_WRITERS_SIGNATURES(error)
     LOGGER_LEVEL_WRITERS_SIGNATURES(fatal)
-    LOGGER_LEVEL_WRITERS_SIGNATURES(trace)*/
+    LOGGER_LEVEL_WRITERS_SIGNATURES(trace)
 #   undef LOGGER_LEVEL_WRITERS_SIGNATURES
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 private:
@@ -4092,9 +4098,9 @@ private:
 };
 }  // namespace workarounds
 #endif  // defined(_ELPP_STL_LOGGING)
+// Log message builder
 class MessageBuilder {
 public:
-    // Writer("...").construct(this).messageBuilder() <<
     MessageBuilder(void) : m_logger(nullptr), m_proceed(false), m_containerLogSeperator(ELPP_LITERAL("")) {}
     void initialize(Logger* logger, bool proceed) {
         m_logger = logger;
@@ -4489,6 +4495,7 @@ public:
         m_messageBuilder.initialize(m_logger, m_proceed);
         return *this;
     }
+
     Writer& construct(int count, const char* loggerIds, ...) {
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
         va_list loggersList;
@@ -4644,23 +4651,21 @@ public:
     inline void Logger::log(Level level, const T& log) { 
         base::Writer(level, "file", 0, "func").construct(this) << log;
     }
-    /*template <typename T, typename... Args> 
+    template <typename T, typename... Args> 
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
-        if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
-            base::Writer w(Level::Verbose, "file", 0, "func", 
-                base::DispatchAction::NormalLog, vlevel);
-            w.construct(this);
-            while (*s) {
-                if (*s == '%') {
-                    if (*(s + 1) == '%') {
-                        ++s;
-                    } else {
-                        w << value;
-                        return;
-                    }
+        base::MessageBuilder b;
+        b.initialize(this);
+        while (*s) {
+            if (*s == '%') {
+                if (*(s + 1) == '%') {
+                    ++s;
+                } else {
+                    b << value;
+                    verbose(vlevel, s + 1, args...);
+                    return;
                 }
-                w << *s++;
             }
+            b << *s++;
         }
     }
     template <typename T>
@@ -4670,12 +4675,18 @@ public:
                 base::DispatchAction::NormalLog, vlevel).construct(this) << log;
         }
     }
+#   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
+    template <typename T, typename... Args>\
+    inline void FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
+        log(LOG_LEVEL, s, value, args...);\
+    }
+
     LOGGER_LEVEL_WRITERS(info, Level::Info)
     LOGGER_LEVEL_WRITERS(debug, Level::Debug)
     LOGGER_LEVEL_WRITERS(warn, Level::Warning)
     LOGGER_LEVEL_WRITERS(error, Level::Error)
     LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
-    LOGGER_LEVEL_WRITERS(trace, Level::Trace)*/
+    LOGGER_LEVEL_WRITERS(trace, Level::Trace)
 #   undef LOGGER_LEVEL_WRITERS
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
