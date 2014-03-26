@@ -2188,7 +2188,7 @@ typedef std::function<const char*(void)> FormatSpecifierValueResolver;
 /// @brief User-provided custom format specifier
 /// @see el::Helpers::installCustomFormatSpecifier
 /// @see FormatSpecifierValueResolver
-class CustomFormatSpecifier {
+class _ELPP_EXPORT CustomFormatSpecifier {
 public:
     CustomFormatSpecifier(const char* formatSpecifier, const FormatSpecifierValueResolver& resolver) :
         m_formatSpecifier(formatSpecifier), m_resolver(resolver) {}
@@ -2211,7 +2211,7 @@ private:
 ///   * el::Configuration confEnabledInfo(el::Level::Info, el::ConfigurationType::Enabled, "true");
 ///   * el::Configuration confMaxLogFileSizeInfo(el::Level::Info, el::ConfigurationType::MaxLogFileSize, "2048");
 ///   * el::Configuration confFilenameInfo(el::Level::Info, el::ConfigurationType::Filename, "/var/log/my.log");
-class Configuration {
+class _ELPP_EXPORT Configuration {
 public:
     Configuration(const Configuration& c) :
             m_level(c.m_level),
@@ -2291,7 +2291,7 @@ private:
 /// @brief Thread-safe Configuration repository
 ///
 /// @detail This repository represents configurations for all the levels and configuration type mapped to a value.
-class Configurations : public base::utils::RegistryWithPred<Configuration, Configuration::Predicate> {
+class _ELPP_EXPORT Configurations : public base::utils::RegistryWithPred<Configuration, Configuration::Predicate> {
 public:
     /// @brief Default constructor with empty repository
     Configurations(void) :
@@ -2712,7 +2712,7 @@ typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
 /// This is to perform faster while writing logs using correct configurations.
 ///
 /// This is thread safe and final class containing non-virtual destructor (means nothing should inherit this class)
-class TypedConfigurations : public base::threading::ThreadSafe {
+class _ELPP_EXPORT TypedConfigurations : public base::threading::ThreadSafe {
 public:
     /// @brief Constructor to initialize (construct) the object off el::Configurations
     /// @param configurations Configurations pointer/reference to base this typed configurations off.
@@ -3181,7 +3181,7 @@ typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
-class Logger : public base::threading::ThreadSafe {
+class _ELPP_EXPORT Logger : public base::threading::ThreadSafe {
 public:
     Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
@@ -3624,7 +3624,7 @@ private:
     std::map<std::string, VLevel> m_modules;
 };
 }  // namespace base
-class LogMessage {
+class _ELPP_EXPORT LogMessage {
 public:
     LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
                           base::VRegistry::VLevel verboseLevel, Logger* logger) :
@@ -4463,7 +4463,7 @@ public:
     }
 };
 /// @brief Main entry point of each logging
-class Writer : base::NoCopy {
+class _ELPP_EXPORT Writer : base::NoCopy {
 public:
     Writer(Level level, const char* file, unsigned long int line,  // NOLINT
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
@@ -4734,7 +4734,7 @@ public:
 #else
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID el::base::consts::kPerformanceLoggerId
 #endif
-class PerformanceTrackingData {
+class _ELPP_EXPORT PerformanceTrackingData {
 public:
     // Do not use constructor, will run into multiple definition error, use init(Trackable*)
     explicit PerformanceTrackingData() : m_trackable(nullptr) {}
@@ -4752,7 +4752,7 @@ private:
 namespace base {
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
-class Trackable : public base::threading::ThreadSafe {
+class _ELPP_EXPORT Trackable : public base::threading::ThreadSafe {
 public:
     Trackable(const std::string& blockName,
             base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
@@ -5096,7 +5096,7 @@ private:
     }
 };
 /// @brief Static helpers for developers
-class Helpers : base::StaticClass {
+class _ELPP_EXPORT Helpers : base::StaticClass {
 public:
     /// @brief Shares logging repository (base::Storage)
     static inline void setStorage(base::type::StoragePointer storage) {
@@ -5219,7 +5219,7 @@ public:
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
-class Loggers : base::StaticClass {
+class _ELPP_EXPORT Loggers : base::StaticClass {
 public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
@@ -5369,7 +5369,7 @@ public:
         ELPP->registeredLoggers()->flushAll();
     }
 };
-class VersionInfo : base::StaticClass {
+class _ELPP_EXPORT VersionInfo : base::StaticClass {
 public:
     /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.59"); }
