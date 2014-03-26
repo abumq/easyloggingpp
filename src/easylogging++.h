@@ -4658,7 +4658,7 @@ public:
                     ++s;
                 } else {
                     b << value;
-                    log(level, ++s, args...);
+                    log_(level, ++s, args...);
                     return;
                 }
             }
