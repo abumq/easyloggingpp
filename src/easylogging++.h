@@ -4459,7 +4459,7 @@ public:
     }
 };
 /// @brief Main entry point of each logging
-class Writer : base::NoCopy, base::MessageBuilder {
+class Writer : base::NoCopy {
 public:
     Writer(const Level& level, const char* file, unsigned long int line,  // NOLINT
                const char* func, const base::DispatchAction& dispatchAction = base::DispatchAction::NormalLog,
