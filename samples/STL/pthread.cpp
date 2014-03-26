@@ -16,7 +16,7 @@
 _INITIALIZE_EASYLOGGINGPP
 
 struct Args {
-  char* thrId;
+  const char* thrId;
   el::Logger* logger;
 }args;
 
