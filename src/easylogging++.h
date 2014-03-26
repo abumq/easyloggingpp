@@ -3256,7 +3256,7 @@ public:
         m_isConfigured = true;
     }
 
-    /// @brief Reconfigures logger using configurations previously provided.
+    /// @brief Reconfigures logger using existing configurations
     inline void reconfigure(void) {
         ELPP_INTERNAL_INFO(1, "Reconfiguring logger [" << m_id << "]");
         configure(m_configurations);
@@ -3648,9 +3648,7 @@ private:
     base::type::string_t m_message;
 };
 namespace base {
-/// @brief Contains all the storages that is needed by writer
-///
-/// @detail This is initialized when Easylogging++ is initialized and is used by Writer
+/// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
     explicit Storage(const api::LogBuilderPtr& defaultLogBuilder) :
@@ -3663,7 +3661,6 @@ public:
         m_postPerformanceTrackingHandler(base::defaultPostPerformanceTrackingHandler) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
-
         // Register performance logger and reconfigure format
         Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
         performanceLogger->configurations()->setGlobally(ConfigurationType::Format, "%datetime %level %msg");
@@ -3680,7 +3677,6 @@ public:
         Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
         templateHelperLogger->configurations()->setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
         templateHelperLogger->reconfigure();
-
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
 #if defined(_ELPP_STRICT_SIZE_CHECK)
         addFlag(LoggingFlag::StrictLogFileSizeCheck);
@@ -4104,7 +4100,7 @@ public:
         m_logger = logger;
         m_proceed = proceed;
         m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
-                ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
+            ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
     }
 
 #   define ELPP_SIMPLE_LOG(LOG_TYPE)\
