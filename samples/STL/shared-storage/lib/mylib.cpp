@@ -6,7 +6,9 @@ _INITIALIZE_EASYLOGGINGPP
 int MyLib::runOnceHelper = runOnce();
 
 int MyLib::runOnce() {
+    LOG(INFO) << "Registering logger [mylib]";
     el::Loggers::getLogger("mylib");
+    return 0;
 }
 
 MyLib::MyLib() {

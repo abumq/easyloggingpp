@@ -6002,26 +6002,34 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #   define _ELPP_USE_DEF_CRASH_HANDLER true
 #endif // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _ELPP_CRASH_HANDLER_INIT
-#define _ELPP_INIT_EASYLOGGINGPP(val) \
-    INITIALIZE_BASIC_DECLARATIONS \
-    namespace el {                \
-        namespace base {          \
-            el::base::type::StoragePointer elStorage(val);       \
+#define _ELPP_INIT_EASYLOGGINGPP(val)\
+    INITIALIZE_BASIC_DECLARATIONS\
+    namespace el {\
+        namespace base {\
+            el::base::type::StoragePointer elStorage(val);\
         }\
         el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
 
-#define _INITIALIZE_EASYLOGGINGPP \
+#define _INITIALIZE_EASYLOGGINGPP\
     _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::api::LogBuilderPtr(new el::base::DefaultLogBuilder())))
-#define _INITIALIZE_NULL_EASYLOGGINGPP \
-    INITIALIZE_BASIC_DECLARATIONS \
-    namespace el {                \
-        namespace base {          \
-            el::base::type::StoragePointer elStorage;       \
+#define _INITIALIZE_NULL_EASYLOGGINGPP\
+    INITIALIZE_BASIC_DECLARATIONS\
+    namespace el {\
+        namespace base {\
+            el::base::type::StoragePointer elStorage;\
         }\
         el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
-#define _SHARE_EASYLOGGINGPP(initializedStorage) _ELPP_INIT_EASYLOGGINGPP(initializedStorage)
+// NOTE: no INITIALIZE_BASIC_DECLARATIONS when sharing - causes double free corruption on external symbols
+#define _SHARE_EASYLOGGINGPP(initializedStorage)\
+    namespace el {\
+        namespace base {\
+            el::base::type::StoragePointer elStorage(initializedStorage);\
+        }\
+        el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
+    }
+
 #if defined(_ELPP_UNICODE)
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv); std::locale::global(std::locale(""))
 #else
