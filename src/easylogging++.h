@@ -818,31 +818,31 @@ static inline void abort(int status, const std::string& reason = std::string()) 
 /// Use these function as <pre>flag = bitwise::Or<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
 template <typename Enum>
-static inline base::type::EnumType And(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType And(Enum e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) & static_cast<base::type::EnumType>(e);
 }
 template <typename Enum>
-static inline base::type::EnumType Not(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType Not(Enum e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) & ~(static_cast<base::type::EnumType>(e));
 }
 template <typename Enum>
-static inline base::type::EnumType Or(const Enum& e, base::type::EnumType flag) {
+static inline base::type::EnumType Or(Enum e, base::type::EnumType flag) {
     return static_cast<base::type::EnumType>(flag) | static_cast<base::type::EnumType>(e);
 }
 }  // namespace bitwise
 /// @brief Adds flag
 template <typename Enum>
-static inline void addFlag(const Enum& e, base::type::EnumType* flag) {
+static inline void addFlag(Enum e, base::type::EnumType* flag) {
     *flag = base::utils::bitwise::Or<Enum>(e, *flag);
 }
 /// @brief Removes flag
 template <typename Enum>
-static inline void removeFlag(const Enum& e, base::type::EnumType* flag) {
+static inline void removeFlag(Enum e, base::type::EnumType* flag) {
     *flag = base::utils::bitwise::Not<Enum>(e, *flag);
 }
 /// @brief Determines whether flag is set or not
 template <typename Enum>
-static inline bool hasFlag(const Enum& e, base::type::EnumType flag) {
+static inline bool hasFlag(Enum e, base::type::EnumType flag) {
     return base::utils::bitwise::And<Enum>(e, flag) > 0x0;
 }
 }  // namespace utils
@@ -3718,15 +3718,15 @@ public:
         return &m_commandLineArgs;
     }
 
-    inline void addFlag(const LoggingFlag& flag) {
+    inline void addFlag(LoggingFlag flag) {
         base::utils::addFlag(flag, &m_flags);
     }
 
-    inline void removeFlag(const LoggingFlag& flag) {
+    inline void removeFlag(LoggingFlag flag) {
         base::utils::removeFlag(flag, &m_flags);
     }
 
-    inline bool hasFlag(const LoggingFlag& flag) const {
+    inline bool hasFlag(LoggingFlag flag) const {
         return base::utils::hasFlag(flag, m_flags);
     }
 
@@ -5111,18 +5111,15 @@ public:
         ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
     }
     /// @brief Adds logging flag used internally.
-    /// @see el::LoggingFlag
-    static inline void addFlag(const el::LoggingFlag& flag) {
+    static inline void addFlag(el::LoggingFlag flag) {
         ELPP->addFlag(flag);
     }
     /// @brief Removes logging flag used internally.
-    /// @see el::LoggingFlag
-    static inline void removeFlag(const el::LoggingFlag& flag) {
+    static inline void removeFlag(el::LoggingFlag flag) {
         ELPP->removeFlag(flag);
     }
     /// @brief Determines whether or not certain flag is active
-    /// @see el::LoggingFlag
-    static inline bool hasFlag(const el::LoggingFlag& flag) {
+    static inline bool hasFlag(el::LoggingFlag flag) {
         return ELPP->hasFlag(flag);
     }
     /// @brief Overrides default crash handler and installs custom handler.
