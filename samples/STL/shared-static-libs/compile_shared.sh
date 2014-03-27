@@ -1,7 +1,7 @@
 rm -rf libmyLib.so lib/libmyLib.so lib/mylib.o lib/myLib.a myLib.a myapp logs ## Clean
 
-compiler=g++
-standard=c++11 ## If this does not work try c++0x (depends on your compiler)
+compiler=icpc
+standard=c++0x ## If this does not work try c++11 (depends on your compiler)
 macros="-D_ELPP_THREAD_SAFE -D_ELPP_STACKTRACE_ON_CRASH"  ## Macros for library
 
 cd lib/
