@@ -15,6 +15,7 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char** argv) {
     _START_EASYLOGGINGPP(argc, argv);
     el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+    el::Helpers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     
     LOG(INFO);
     LOG(DEBUG);
@@ -31,7 +32,8 @@ int main(int argc, char** argv) {
     DLOG(TRACE);
     DVLOG(1);
     DLOG(FATAL);
-
+    el::Helpers::removeFlag(el::LoggingFlag::ColoredTerminalOutput);
+    
     LOG_IF(true, INFO);
     LOG_IF(true, DEBUG);
     LOG_IF(true, WARNING);
