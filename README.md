@@ -484,8 +484,6 @@ CLOG(ERROR, "performance") << "This is info log using performance logger";
 
 Since ver. 9.42, there is new way introduced to use same macro i.e, `LOG` (and associated macros), this is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
 
-Since ver. 9.60, there is new way to write logs; i.e, by using Logger class directly. This feature is available on compilers that support variadic templates. You can explore more by looking at `samples/STL/logger-log-functions.cpp`.
-
 A quick example is here
 ```c++
 #ifndef _LOGGER
@@ -507,6 +505,7 @@ UpdateManager::UpdateManager {
 }
 ```
 
+Since ver. 9.60, there is new way to write logs; i.e, by using Logger class directly. This feature is available on compilers that support variadic templates. You can explore more by looking at `samples/STL/logger-log-functions.cpp`.
 
  [![top] Goto Top](#table-of-contents)
  
