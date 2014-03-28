@@ -27,7 +27,7 @@
 <a href="#introduction">Introduction</a>
     <a href="#why-yet-another-library">Why yet another library</a>
     <a href="#features-at-a-glance">Features at a glance</a>
-    <a href="#whats-new">What's new?</a>
+    <a href="#future">Future</a>
 <a href="#getting-started">Getting Started</a>
     <a href="#download">Download</a>
     <a href="#quick-start">Quick Start</a>
@@ -97,7 +97,7 @@ This manual is written as starting reference for version 9.0+. For older version
  [![top] Goto Top](#table-of-contents)
  
 ### Why yet another library
-If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts and performance and usability problems and improvements in mind. Code has been managed in such a way that everything (or most) is accessible within header itself.
+If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portibility, performance, usability, features and easy to setup).
 
 Why yet another library? Well, answer is pretty straight forward, use it as if you wrote it so you can fix issues (if any) as you go or raise them on github. In addition to that, I have not seen any logging library based on single-header with such a design where you can configure on the go and get the same performance. I have seen other single-header logging libraries for C++ but either they use external libraries, e.g, boost, Qt to support certain features like threading, regular expression or date etc. This library has everything built-in to prevent usage of external libraries, not that I don't like those libraries, in fact I love them, but because not all projects use these libraries, I couldn't take risk of depending on them.
 
@@ -122,16 +122,8 @@ Easylogging++ is feature-rich containing many features that a typical developer 
 
  [![top] Goto Top](#table-of-contents)
 
-### What's new?
-Easylogging++ 9.0 has been changed a lot from the first version and even from its previous major version, v8.x. Major changes were to improve performance and provide more features. v9.0 makes extensive use of C++11 features and is only supported by  C++11 compliant compilers that support strongly-typed enums, nullptr, lambda expressions, move semantics, smart pointers (unique_ptr and shared_ptr). std::thread is optional and can be suppressed either in favour of using wrappers or disabling threading support completely (disabled by default); in case of wrappers, *nix systems use pthreads and windows use CriticalSection from windows.h header.
-Applications that do not use C++11 may still use v8.x which is also efficient provided you have a look at issue 66 on github. This version also lack support for following features that were introduced post v8.x;
-* Log date/time patterns
-* Crash handling
-* Stacktrace on failures
-* Helper CHECK macros
-* Third-party library logging (except for Qt)
-
-Please note, most of the features can be disabled by defining macros. Details are given later in this manual. As far as upgrade from v8.x is concerned, you can refer to release notes on github to see what's deprecated and what's changed.
+### Future
+Easylogging++ has a bright future. Plans are to write extensions / wrappers of this library to use in other types of projects such as QtQuick (QML) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -491,6 +483,8 @@ CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
 Since ver. 9.42, there is new way introduced to use same macro i.e, `LOG` (and associated macros), this is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+
+Since ver. 9.60, there is new way to write logs; i.e, by using Logger class directly. This feature is available on compilers that support variadic templates. You can explore more by looking at `samples/STL/logger-log-functions.cpp`.
 
 A quick example is here
 ```c++
