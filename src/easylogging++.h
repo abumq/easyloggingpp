@@ -4665,22 +4665,22 @@ public:
     }
     template <typename T, typename... Args>
     void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
-        lock();
+        base::threading::lock_guard lock(mutex());
         log_(level, 0, s, value, args...);
     }
     template <typename T> 
     inline void Logger::log(Level level, const T& log) { 
-        lock();
+        base::threading::lock_guard lock(mutex());
         log_(level, 0, log);
     }
     template <typename T, typename... Args>
     void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
-        lock();
+        base::threading::lock_guard lock(mutex());
         log_(el::Level::Verbose, vlevel, s, value, args...);
     }
     template <typename T>
     inline void Logger::verbose(int vlevel, const T& log) {
-        lock();
+        base::threading::lock_guard lock(mutex());
         log_(el::Level::Verbose, vlevel, log);
     }
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
