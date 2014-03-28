@@ -5,6 +5,12 @@ Release type: Minor
 API changes: No
 
 ==========================
+=          FIXES         =
+==========================
+
+ - Log functions now uses `%v` instead of `%`
+
+==========================
 =       NEW FEATURES     =
 ==========================
 

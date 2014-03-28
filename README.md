@@ -123,7 +123,7 @@ Easylogging++ is feature-rich containing many features that a typical developer 
  [![top] Goto Top](#table-of-contents)
 
 ### Future
-Easylogging++ has a bright future. Plans are to write extensions / wrappers of this library to use in other types of projects such as QtQuick (QML) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
+Easylogging++ has a bright future. Plans are to write wrappers of this library to use in other types of C++ based projects etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  

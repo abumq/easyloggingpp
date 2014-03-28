@@ -28,9 +28,9 @@ void* write2(void* args){
 
   LOG(INFO) << "Writing from different function using macro [Thread #" << threadId << "]";
 
-  logger->info("Info log from [Thread #%]", threadId);
+  logger->info("Info log from [Thread #%v]", threadId);
   logger->info("Info log");
-  logger->verbose(2, "Verbose test [Thread #%]", threadId);
+  logger->verbose(2, "Verbose test [Thread #%v]", threadId);
   logger->verbose(2, "Verbose test");
   return NULL;
 }
@@ -69,7 +69,7 @@ void *write(void* thrId){
   CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET [Thread #" << threadId << "]"; // << -- NOTE THIS!
 
   el::Logger* logger = el::Loggers::getLogger("default");
-  logger->info("Info log from [Thread #%]", threadId);
+  logger->info("Info log from [Thread #%v]", threadId);
 
   // Check for log counters positions
   for (int i = 1; i <= 50; ++i) {

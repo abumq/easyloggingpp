@@ -21,10 +21,10 @@ int main(int argc, char** argv) {
     std::vector<int> i;
     i.push_back(1);
     i.push_back(2);
-    defaultLogger->info("My first ultimate log message % % %", 123, 222, i);
+    defaultLogger->info("My first ultimate log message %v %v %v", 123, 222, i);
 
     // Escaping
-    defaultLogger->info("My first ultimate log message %% % %", 123, 222);
+    defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222); // My first ultimate log message % %v 123 222
 
     return 0;
 }

@@ -680,7 +680,10 @@ namespace consts {
     static const char* kSysLogLoggerId                         =      "syslog";
     static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
-    static const char  kFormatSpecifierChar                       =      '%';
+    static const char  kFormatSpecifierChar                    =      '%';
+#if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+    static const char  kFormatSpecifierCharValue               =      'v';
+#endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
@@ -4638,9 +4641,12 @@ public:
                 if (*(s + 1) == base::consts::kFormatSpecifierChar) {
                     ++s;
                 } else {
-                    b << value;
-                    log_(level, vlevel, ++s, args...);
-                    return;
+                    if (*(s + 1) == base::consts::kFormatSpecifierCharValue) {
+                        ++s;
+                        b << value;
+                        log_(level, vlevel, ++s, args...);
+                        return;
+                    }
                 }
             }
             b << *s++;

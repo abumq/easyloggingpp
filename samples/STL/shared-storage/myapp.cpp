@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
               << "ARE BOTH STORAGES EQUAL: " << (bool)(MyLib::getEasyloggingStorage() == el::Helpers::storage());
     // See read me
     el::Logger* libLogger = CHECK_NOTNULL(el::Loggers::getLogger("mylib", false));
-    libLogger->info("This info log is using logger->info(...) with arg % and %", 1, 2);
+    libLogger->info("This info log is using logger->info(...) with arg %v and %v", 1, 2);
     CLOG(INFO, "mylib") << "A logger initialized in shared storage";
     CLOG(INFO, "default") << "Default, configuration from shared storage";
     return 0;
