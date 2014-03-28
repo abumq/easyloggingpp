@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.60
+//  Easylogging++ v9.60 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2014 Majid Khan
@@ -291,6 +291,7 @@
 #include <iostream>  // NOLINT
 #include <sstream>
 #include <memory>
+#include <type_traits>
 #if _ELPP_THREADING_ENABLED
 #   if _ELPP_USE_STD_THREADING
 #      include <mutex>
@@ -792,7 +793,8 @@ private:
 namespace utils {
 /// @brief Deletes memory safely and points to null
 template <typename T>
-static inline void safeDelete(T*& pointer) {  // NOLINT
+typename std::enable_if<std::is_pointer<T*>::value, void>::type
+static inline safeDelete(T*& pointer) {  // NOLINT
     if (pointer == nullptr)
         return;
     delete pointer;
