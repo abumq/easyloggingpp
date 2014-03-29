@@ -11,28 +11,27 @@
 #include <sstream>
 _INITIALIZE_EASYLOGGINGPP
 
-class Vehicle {
+class Vehicle : public el::Loggable {
     public:
         Vehicle(const std::string& make_, const std::string& model_, unsigned int year_ = 2013,
                     const std::string& version_ = "") :
             make_(make_), model_(model_), year_(year_), version_(version_) {}
+        virtual ~Vehicle() {}
 
         std::string toString(void) const {
             std::stringstream ss;
             ss << "[" << make_ << " " << model_ << " " << year_ << (version_.size() > 0 ? " " : "") << version_ << "]";
             return ss.str();
         }
-    friend std::ostream& operator<<(std::ostream& w, const Vehicle& v);
+        virtual void log(el::base::type::ostream_t& os) const {
+            os << "(" << make_.c_str() << " " << model_.c_str() << " " << year_ << (version_.size() > 0 ? " " : "") << version_.c_str() << ")"; 
+        }
     private:
         std::string make_;
         std::string model_;
         int year_;
         std::string version_;
 };
-std::ostream& operator<<(std::ostream& w, const Vehicle& v) {
-    w << "(" << v.make_ << " " << v.model_ << " " << v.year_ << (v.version_.size() > 0 ? " " : "") << v.version_ << ")";
-    return w;
-}
 void vectorLogs() {
   std::vector<std::string> stringVec;
   std::vector<Vehicle> vehicleVec;
