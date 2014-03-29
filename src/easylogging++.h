@@ -678,7 +678,6 @@ namespace consts {
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
     static const char* kSysLogLoggerId                         =      "syslog";
-    static const char* kInternalHelperLoggerId                 =      "el_internal_helper_logger";
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatSpecifierChar                    =      '%';
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
@@ -3678,10 +3677,6 @@ public:
 #else
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif  //  defined(_ELPP_SYSLOG)
-        // Register template helper test logger - see Helpers::convertTemplateToStdString(const T&)
-        Logger* templateHelperLogger = m_registeredLoggers->get(std::string(base::consts::kInternalHelperLoggerId));
-        templateHelperLogger->configurations()->setGlobally(ConfigurationType::Format, "[DO NOT USE THIS LOGGER '%logger']");
-        templateHelperLogger->reconfigure();
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
 #if defined(_ELPP_STRICT_SIZE_CHECK)
         addFlag(LoggingFlag::StrictLogFileSizeCheck);
@@ -5190,15 +5185,18 @@ public:
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
-        ELPP->registeredLoggers()->get(el::base::consts::kInternalHelperLoggerId, true);
-        el::base::Writer w(el::Level::Unknown, "", 0, "", el::base::DispatchAction::None, 0);
-        w.construct(1, el::base::consts::kInternalHelperLoggerId);
-        w << templ;
+        base::MessageBuilder b;
+        el::Logger* logger = 
+            ELPP->registeredLoggers()->get(el::base::consts::kDefaultLoggerId);
+        b.initialize(logger, true);
+        b << templ;
 #if defined(_ELPP_UNICODE)
-        return std::string(w.m_logger->stream().str().begin(), w.m_logger->stream().str().end());
+        std::string s = std::string(logger->stream().str().begin(), logger->stream().str().end());
 #else
-        return w.m_logger->stream().str();
+        std::string s = logger->stream().str();
 #endif  // defined(_ELPP_UNICODE)
+        logger->stream().str(ELPP_LITERAL(""));
+        return s;
     }
     /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
