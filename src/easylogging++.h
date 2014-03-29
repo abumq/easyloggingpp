@@ -4222,19 +4222,19 @@ public:
     template <class First, class Second>
     inline MessageBuilder& operator<<(const std::pair<First, Second>& pair_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << "(";
+        m_logger->stream() << ELPP_LITERAL("(");
         operator << (static_cast<First>(pair_.first));
-        m_logger->stream() << ", ";
+        m_logger->stream() << ELPP_LITERAL(", ");
         operator << (static_cast<Second>(pair_.second));
-        m_logger->stream() << ")";
+        m_logger->stream() << ELPP_LITERAL(")");
         return *this;
     }
     template <std::size_t Size>
     inline MessageBuilder& operator<<(const std::bitset<Size>& bitset_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << "[";
-        m_logger->stream() << bitset_.to_string();
-        m_logger->stream() << "]";
+        m_logger->stream() << ELPP_LITERAL("[");
+        operator << (bitset_.to_string());
+        m_logger->stream() << ELPP_LITERAL("]");
         return *this;
     }
 #   if defined(_ELPP_LOG_STD_ARRAY)
@@ -4308,11 +4308,11 @@ public:
     template <typename First, typename Second>
     inline MessageBuilder& operator<<(const QPair<First, Second>& pair_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << "(";
+        m_logger->stream() << ELPP_LITERAL("(");
         operator << (static_cast<First>(pair_.first));
-        m_logger->stream() << ", ";
+        m_logger->stream() << ELPP_LITERAL(", ");
         operator << (static_cast<Second>(pair_.second));
-        m_logger->stream() << ")";
+        m_logger->stream() << ELPP_LITERAL(")");
         return *this;
     }
     template <typename K, typename V>
@@ -4346,23 +4346,23 @@ public:
     template <typename K, typename V>
     inline MessageBuilder& operator<<(const QHash<K, V>& hash_) {
         if (!m_proceed) { return *this; }
-        m_logger->stream() << "[";
+        m_logger->stream() << ELPP_LITERAL("[");
         QList<K> keys = hash_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
         typename QList<K>::const_iterator end = keys.end();
         int max_ = static_cast<int>(base::consts::kMaxLogPerContainer);  // prevent type warning
         for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
-            m_logger->stream() << "(";
+            m_logger->stream() << ELPP_LITERAL("(");
             operator << (static_cast<K>(*begin));
-            m_logger->stream() << ", ";
+            m_logger->stream() << ELPP_LITERAL(", ");
             operator << (static_cast<V>(hash_.value(*begin)));
-            m_logger->stream() << ")";
+            m_logger->stream() << ELPP_LITERAL(")");
             m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
         }
         if (begin != end) {
-            m_logger->stream() << "...";
+            m_logger->stream() << ELPP_LITERAL("...");
         }
-        m_logger->stream() << "]";
+        m_logger->stream() << ELPP_LITERAL("]");
         return *this;
     }
     template <typename K, typename V>
@@ -4414,7 +4414,7 @@ public:
 #   define ELPP_WX_PTR_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), *(*elem))
 #   define ELPP_WX_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), (*elem))
 #   define ELPP_WX_HASH_MAP_ENABLED(ContainerType) MAKE_CONTAINER_ELPP_FRIENDLY(ContainerType, size(), \
-        "(" << elem->first << ", " << elem->second << ")")
+        ELPP_LITERAL("(") << elem->first << ELPP_LITERAL(", ") << elem->second << ELPP_LITERAL(")")
 #else
 #   define ELPP_WX_PTR_ENABLED(ContainerType)
 #   define ELPP_WX_ENABLED(ContainerType)

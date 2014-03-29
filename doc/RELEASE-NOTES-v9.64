@@ -5,6 +5,12 @@ Release type: Minor
 API changes: No
 
 ==========================
+=      BUG FIXES         =
+==========================
+
+ - Fixes for some STL containers for unicode
+
+==========================
 =         NOTES          =
 ==========================
 
