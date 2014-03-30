@@ -2276,7 +2276,7 @@ public:
         m_value = value;
     }
 
-    virtual void log(el::base::type::ostream_t& os) const {
+    virtual inline void log(el::base::type::ostream_t& os) const {
         os << LevelHelper::convertToString(m_level)
             << ELPP_LITERAL(" ") << ConfigurationTypeHelper::convertToString(m_configurationType)
             << ELPP_LITERAL(" = ") << m_value.c_str();
@@ -3246,7 +3246,7 @@ public:
         base::utils::safeDelete(m_typedConfigurations);
     }
 
-    virtual void log(el::base::type::ostream_t& os) const {
+    virtual inline void log(el::base::type::ostream_t& os) const {
         os << m_id.c_str();
     }
 
@@ -4866,7 +4866,7 @@ private:
                 m_startTime, m_timestampUnit), m_timestampUnit);
     }
 
-    virtual void log(el::base::type::ostream_t& os) const {
+    virtual inline void log(el::base::type::ostream_t& os) const {
         os << getFormattedTimeTaken();
     }
 };
