@@ -9,6 +9,7 @@ API changes: No
 ==========================
 
  - Fixes for some STL containers for unicode
+ - Sample fixes for unicode 
 
 ==========================
 =         NOTES          =

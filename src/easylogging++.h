@@ -1979,8 +1979,23 @@ private:
 };
 
 }  // namespace utils
+} // namespace base
+/// @brief Base of Easylogging++ friendly class
+///
+/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
+class Loggable {
+public:
+    virtual void log(el::base::type::ostream_t&) const = 0;
+
+private:
+    friend inline el::base::type::ostream_t& operator<<(el::base::type::ostream_t& os, const Loggable& loggable) {
+        loggable.log(os);
+        return os;
+    }
+};
+namespace base {
 /// @brief Represents log format containing flags and date format. This is used internally to start initial log
-class LogFormat {
+class LogFormat : public Loggable {
 public:
     LogFormat(void) :
         m_level(Level::Unknown),
@@ -2101,9 +2116,8 @@ public:
         return base::utils::hasFlag(flag, m_flags);
     }
 
-    friend inline base::type::ostream_t& operator<<(base::type::ostream_t& os, const LogFormat& format) {
-        os << format.m_format;
-        return os;
+    virtual void log(el::base::type::ostream_t& os) const {
+        os << m_format;
     }
 
 protected:
@@ -2215,7 +2229,7 @@ private:
 ///   * el::Configuration confEnabledInfo(el::Level::Info, el::ConfigurationType::Enabled, "true");
 ///   * el::Configuration confMaxLogFileSizeInfo(el::Level::Info, el::ConfigurationType::MaxLogFileSize, "2048");
 ///   * el::Configuration confFilenameInfo(el::Level::Info, el::ConfigurationType::Filename, "/var/log/my.log");
-class Configuration {
+class Configuration : public Loggable {
 public:
     Configuration(const Configuration& c) :
             m_level(c.m_level),
@@ -2262,11 +2276,10 @@ public:
         m_value = value;
     }
 
-    friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const Configuration& c) {
-        os << LevelHelper::convertToString(c.m_level)
-            << ELPP_LITERAL(" ") << ConfigurationTypeHelper::convertToString(c.m_configurationType)
-            << ELPP_LITERAL(" = ") << c.m_value.c_str();
-        return os;
+    virtual void log(el::base::type::ostream_t& os) const {
+        os << LevelHelper::convertToString(m_level)
+            << ELPP_LITERAL(" ") << ConfigurationTypeHelper::convertToString(m_configurationType)
+            << ELPP_LITERAL(" = ") << m_value.c_str();
     }
 
     /// @brief Used to find configuration from configuration (pointers) repository. Avoid using it.
@@ -3185,7 +3198,7 @@ typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
-class Logger : public base::threading::ThreadSafe {
+class Logger : public base::threading::ThreadSafe, public Loggable {
 public:
     Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference) :
             m_id(id),
@@ -3233,9 +3246,8 @@ public:
         base::utils::safeDelete(m_typedConfigurations);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Logger& logger) {
-        os << logger.m_id;
-        return os;
+    virtual void log(el::base::type::ostream_t& os) const {
+        os << m_id.c_str();
     }
 
     /// @brief Configures the logger using specified configurations.
@@ -4753,7 +4765,7 @@ private:
 namespace base {
 /// @brief Represents trackable block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
-class Trackable : public base::threading::ThreadSafe {
+class Trackable : public base::threading::ThreadSafe, public Loggable {
 public:
     Trackable(const std::string& blockName,
             base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
@@ -4854,9 +4866,8 @@ private:
                 m_startTime, m_timestampUnit), m_timestampUnit);
     }
 
-    friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const Trackable& trackable) {
-        os << trackable.getFormattedTimeTaken();
-        return os;
+    virtual void log(el::base::type::ostream_t& os) const {
+        os << getFormattedTimeTaken();
     }
 };
 }  // namespace base
@@ -5083,19 +5094,6 @@ public:
     }
 };
 #define _INIT_SYSLOG(id, opt, fac) el::SysLogInitializer elSyslogInit(id, opt, fac)
-/// @brief Base of Easylogging++ friendly class
-///
-/// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
-class Loggable {
-public:
-    virtual void log(el::base::type::ostream_t&) const = 0;
-
-private:
-    friend inline el::base::type::ostream_t& operator<<(el::base::type::ostream_t& os, const Loggable& loggable) {
-        loggable.log(os);
-        return os;
-    }
-};
 /// @brief Static helpers for developers
 class Helpers : base::StaticClass {
 public:

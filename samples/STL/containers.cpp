@@ -24,7 +24,7 @@ class Vehicle : public el::Loggable {
             return ss.str();
         }
         virtual void log(el::base::type::ostream_t& os) const {
-            os << "(" << make_.c_str() << " " << model_.c_str() << " " << year_ << (version_.size() > 0 ? " " : "") << version_.c_str() << ")"; 
+            os << toString().c_str(); 
         }
     private:
         std::string make_;

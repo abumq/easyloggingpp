@@ -13,15 +13,15 @@ _INITIALIZE_EASYLOGGINGPP
 
 class MyClass : public el::Loggable {
 public:
-    MyClass(const char* name) : m_name(name) {}
+    MyClass(const std::string& name) : m_name(name) {}
 
-    virtual inline void log(std::ostream& os) const {
-        os << m_name;
+    virtual void log(el::base::type::ostream_t& os) const {
+        os << m_name.c_str();
     }
 
 
 private:
-    const char* m_name;
+    std::string m_name;
 };
 
 int main(void) {

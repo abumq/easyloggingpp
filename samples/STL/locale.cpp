@@ -6,8 +6,10 @@
  // Revision 1.1
  // @author mkhan3189
  //
+#ifndef _ELPP_UNICODE
+#   define _ELPP_UNICODE
+#endif
 
-#define _ELPP_UNICODE
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP

@@ -11,7 +11,8 @@
 
 _INITIALIZE_EASYLOGGINGPP
 void handler(const el::PerformanceTrackingData* data) {
-    std::cout << "I am from handler: " << *data->blockName() << " in " << *data->formattedTimeTaken() << std::endl;
+    // ELPP_COUT is cout when not using unicode otherwise wcout
+    ELPP_COUT << "I am from handler: " << data->blockName()->c_str() << " in " << *data->formattedTimeTaken() << std::endl;
 }
 
 int main(void) {

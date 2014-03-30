@@ -12,7 +12,7 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
-static std::vector<std::string> log_messages_dispatched;
+static std::vector<el::base::type::string_t> log_messages_dispatched;
 
 void handler(const el::LogMessage* msg) {
     // NOTE:

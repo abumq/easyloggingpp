@@ -19,7 +19,7 @@ class Vehicle : public el::Loggable {
                     const std::string& version_ = "") :
             make_(make_), model_(model_), year_(year_), version_(version_) {}
 
-        virtual void log(std::ostream& os) const;
+        virtual void log(el::base::type::ostream_t& os) const;
 
     private:
         std::string make_;
@@ -28,8 +28,8 @@ class Vehicle : public el::Loggable {
         std::string version_;
 };
 
-inline void Vehicle::log(std::ostream& os) const {
-    os << "(" << make_ << " " << model_ << " " << year_ << (version_.size() > 0 ? " " : "") << version_ << ")";
+void Vehicle::log(el::base::type::ostream_t& os) const {
+    os << "(" << make_.c_str() << " " << model_.c_str() << " " << year_ << (version_.size() > 0 ? " " : "") << version_.c_str() << ")";
 }
 
 int main(void) {
