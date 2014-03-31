@@ -79,10 +79,23 @@ void *write(void* thrId){
   return NULL;
 }
 
+// If you wish you can define your own way to get thread ID
+const char* getThreadId_CustomVersion(void) {
+    return "MyThreadId";
+}
 
 int main(int argc, char** argv)
 {
      _START_EASYLOGGINGPP(argc, argv);
+
+     // Your thread ID specification
+     el::CustomFormatSpecifier myThreadIdSpecifier("%mythreadId", getThreadId_CustomVersion);
+     el::Helpers::installCustomFormatSpecifier(myThreadIdSpecifier);
+
+     // Note your %mythreadId or built-in, both are logged
+     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level (%thread | %mythreadId) [%logger] [%func] [%loc] %msg");
+     el::Loggers::reconfigureAllLoggers(el::Level::Verbose, el::ConfigurationType::Format, "%datetime %level-%vlevel (%thread | %mythreadId) [%logger] [%func] [%loc] %msg");
+
      pthread_t thread1, thread2, thread3, thread4;
 
     /* Create independent threads each of which will execute function */
