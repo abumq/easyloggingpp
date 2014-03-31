@@ -4754,15 +4754,20 @@ public:
 #endif
 class PerformanceTrackingData {
 public:
+    enum class DataType : base::type::EnumType {
+        Checkpoint = 1, Complete = 2
+    };
     // Do not use constructor, will run into multiple definition error, use init(Trackable*)
-    explicit PerformanceTrackingData() : m_trackable(nullptr) {}
-    inline const std::string* blockName() const;
-    inline const struct timeval* startTime() const;
-    inline const struct timeval* endTime() const;
-    inline const base::type::string_t* formattedTimeTaken() const;
+    explicit PerformanceTrackingData(DataType dataType) : m_trackable(nullptr), m_dataType(dataType) {}
+    inline const std::string* blockName(void) const;
+    inline const struct timeval* startTime(void) const;
+    inline const struct timeval* endTime(void) const;
+    inline const base::type::string_t* formattedTimeTaken(void) const;
+    inline PerformanceTrackingData::DataType dataType(void) const;
 private:
     base::Trackable* m_trackable;
     base::type::string_t m_formattedTimeTaken;
+    PerformanceTrackingData::DataType m_dataType;
     inline void init(base::Trackable*);
 
     friend class el::base::Trackable;
@@ -4800,10 +4805,12 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
+#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
                 _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
                     << "Executed [" << m_blockName << "] in [" << *this << "]";
+#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
-                PerformanceTrackingData data;
+                PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
                 ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
@@ -4843,7 +4850,14 @@ public:
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
+#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
             el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
+#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
+#   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
+            PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
+            data.init(this);
+            ELPP->postPerformanceTrackingHandler()(&data);
+#   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
         }
 #else
         _ELPP_UNUSED(id)
@@ -4860,7 +4874,6 @@ private:
     const char* m_lastCheckpointId;
     bool m_enabled;
     struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
-
 
     Trackable(void);
 
@@ -4890,6 +4903,9 @@ inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken()
 }
 inline void PerformanceTrackingData::init(base::Trackable* trackable) {
     m_trackable = trackable; m_formattedTimeTaken = m_trackable->getFormattedTimeTaken();
+}
+inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
+    return m_dataType;
 }
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer

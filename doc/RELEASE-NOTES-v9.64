@@ -13,6 +13,13 @@ API changes: No
  - Fix to internal function for line:0 when using `log()` and friend functions
 
 ==========================
+=      NEW FEATURES      =
+==========================
+
+ - Ability to disable performance tracking dispatch by defining `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH`
+ - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
+
+==========================
 =         NOTES          =
 ==========================
 
