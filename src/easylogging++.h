@@ -129,7 +129,7 @@
 #   endif  // _ELPP_COMPILER_GCC
 #endif  // (defined(_ELPP_STACKTRACE_ON_CRASH))
 // Miscellaneous macros
-#define _ELPP_UNUSED(x) (void)x;
+#define _ELPP_UNUSED(x) (void)x
 #if _ELPP_OS_UNIX
 // Log file permissions for unix-based systems
 #   define _ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
@@ -1402,7 +1402,7 @@ public:
 extern std::string s_currentUser;
 extern std::string s_currentHost;
 extern bool s_termSupportsColor;
-#define INITIALIZE_BASIC_DECLARATIONS \
+#define _ELPP_INITI_BASIC_DECLR \
     namespace el {\
         namespace base {\
             namespace utils {\
@@ -4698,25 +4698,23 @@ public:
 #      endif // _ELPP_COMPILER_CLANG
 #   endif // _ELPP_COMPILER_MSVC
 #   define el_resolveVALength(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
-#   define runVariadic(variadicFunction, ...) variadicFunction(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #else
 #   define el_resolveVALength(...) (void(0))
-#   define el_getVALength(...) (void(0))
-#   define runVariadic(variadicFunction, ...) variadicFunction(1, __VA_ARGS__)
+#   define el_getVALength(...) 1
 #endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
-    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
+    writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG_EVERY_N(writer, occasion, level, dispatchAction, ...) \
     if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
-        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).runVariadic(construct, __VA_ARGS__)
+        writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #undef _CURRENT_FILE_PERFORMANCE_LOGGER_ID
 #if defined(_PERFORMANCE_LOGGER)
 #   define _CURRENT_FILE_PERFORMANCE_LOGGER_ID _PERFORMANCE_LOGGER
@@ -5048,7 +5046,7 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, con
         ss << std::endl << "    ======= Backtrace: =========" << std::endl << base::debug::StackTrace();
     }
 #else
-    _ELPP_UNUSED(stackTraceIfAvailable)
+    _ELPP_UNUSED(stackTraceIfAvailable);
 #endif  // _ELPP_STACKTRACE
     _ELPP_WRITE_LOG(el::base::Writer, level, base::DispatchAction::NormalLog, logger) << ss.str();
 }
@@ -5512,7 +5510,7 @@ public:
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE(writer, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel)) writer(\
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).runVariadic(construct, __VA_ARGS__)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #else
 #   define CVERBOSE(writer, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
@@ -5555,7 +5553,7 @@ public:
 #endif  // _ELPP_TRACE_LOG
 #if _ELPP_VERBOSE_LOG
 #   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) if (VLOG_IS_ON(vlevel) && (condition_)) writer( \
-       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).runVariadic(construct, __VA_ARGS__)
+       el::Level::Verbose, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction, vlevel).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #else
 #   define CVERBOSE_IF(writer, condition_, vlevel, dispatchAction, ...) el::base::NullWriter()
 #endif  // _ELPP_VERBOSE_LOG
@@ -6026,7 +6024,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #endif  // defined(_ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define _ELPP_CRASH_HANDLER_INIT
 #define _ELPP_INIT_EASYLOGGINGPP(val)\
-    INITIALIZE_BASIC_DECLARATIONS\
+    _ELPP_INITI_BASIC_DECLR\
     namespace el {\
         namespace base {\
             el::base::type::StoragePointer elStorage(val);\
@@ -6037,14 +6035,14 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #define _INITIALIZE_EASYLOGGINGPP\
     _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::api::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #define _INITIALIZE_NULL_EASYLOGGINGPP\
-    INITIALIZE_BASIC_DECLARATIONS\
+    _ELPP_INITI_BASIC_DECLR\
     namespace el {\
         namespace base {\
             el::base::type::StoragePointer elStorage;\
         }\
         el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
-// NOTE: no INITIALIZE_BASIC_DECLARATIONS when sharing - causes double free corruption on external symbols
+// NOTE: no _ELPP_INITI_BASIC_DECLR when sharing - causes double free corruption on external symbols
 #define _SHARE_EASYLOGGINGPP(initializedStorage)\
     namespace el {\
         namespace base {\
