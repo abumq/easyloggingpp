@@ -4663,6 +4663,7 @@ public:
             }
             b << *s++;
         }
+        ELPP_INTERNAL_ERROR("Too many arguments provided. Unable to handle. Please provide more format specifiers", false);
     }
     template <typename T> 
     inline void Logger::log_(Level level, int vlevel, const T& log) {

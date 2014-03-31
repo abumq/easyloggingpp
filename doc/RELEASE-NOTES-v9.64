@@ -11,6 +11,7 @@ API changes: No
  - Fixes for some STL containers for unicode
  - Sample fixes for unicode 
  - Fix to internal function for line:0 when using `log()` and friend functions
+ - Internal error when too many arguments provided in `log()` and friends
 
 ==========================
 =      NEW FEATURES      =
