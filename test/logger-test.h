@@ -13,7 +13,7 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
         Loggers::getLogger(ss.str());
         if (i % 1000) {
             ss.str("");
-            ss << "Registered [" << i "] loggers";
+            ss << "Registered [" << i << "] loggers";
             PERFORMANCE_CHECKPOINT_WITH_ID(timer, ss.str().c_str());
         }
     }
