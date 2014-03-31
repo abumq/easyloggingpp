@@ -11,7 +11,11 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
         std::stringstream ss;
         ss << "logger" << i;
         Loggers::getLogger(ss.str());
-        LOG_EVERY_N(1000, INFO) << "Registered " << i << " loggers";
+        if (i % 1000) {
+            ss.str("");
+            ss << "Registered [" << i "] loggers";
+            PERFORMANCE_CHECKPOINT_WITH_ID(timer, ss.str().c_str());
+        }
     }
     PERFORMANCE_CHECKPOINT_WITH_ID(timer, "10,000 loggers registered");
     CLOG(INFO, "logger8478") << "Writing using logger 'logger8478'";
