@@ -81,7 +81,7 @@ void *write(void* thrId){
 
 // If you wish you can define your own way to get thread ID
 const char* getThreadId_CustomVersion(void) {
-    return "MyThreadId";
+    return std::to_string(static_cast<long long>(pthread_self())).c_str();
 }
 
 int main(int argc, char** argv)
