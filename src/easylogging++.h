@@ -4762,6 +4762,7 @@ public:
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
+    inline const struct timeval* lastCheckpointTime(void) const;
     inline const base::type::string_t* formattedTimeTaken(void) const;
     inline PerformanceTrackingData::DataType dataType(void) const;
     inline const std::string& loggerId(void) const;
@@ -4915,6 +4916,9 @@ inline const struct timeval* PerformanceTrackingData::startTime() const {
 }
 inline const struct timeval* PerformanceTrackingData::endTime() const {
     return const_cast<const struct timeval*>(&m_trackable->m_endTime);
+}
+inline const struct timeval* PerformanceTrackingData::lastCheckpointTime() const {
+    return const_cast<const struct timeval*>(&m_trackable->m_lastCheckpointTime);
 }
 inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const {
     return &m_formattedTimeTaken;
