@@ -20,6 +20,12 @@ API changes: No
  - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
 
 ==========================
+=       REFACTORING      =
+==========================
+
+ - Renamed `Trackable` class to `PerformanceTracker`
+
+==========================
 =         NOTES          =
 ==========================
 

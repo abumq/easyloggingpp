@@ -360,7 +360,7 @@ class Helpers;
 namespace base {
 class Storage;
 class RegisteredLoggers;
-class Trackable;
+class PerformanceTracker;
 class MessageBuilder;
 class Writer;
 class PErrorWriter;
@@ -3377,7 +3377,7 @@ private:
     friend class el::base::Writer;
     friend class el::base::PErrorWriter;
     friend class el::base::Storage;
-    friend class el::base::Trackable;
+    friend class el::base::PerformanceTracker;
 
     Logger(void);
 
@@ -4757,8 +4757,8 @@ public:
     enum class DataType : base::type::EnumType {
         Checkpoint = 1, Complete = 2
     };
-    // Do not use constructor, will run into multiple definition error, use init(Trackable*)
-    explicit PerformanceTrackingData(DataType dataType) : m_trackable(nullptr), m_dataType(dataType) {}
+    // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
+    explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), m_dataType(dataType) {}
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
@@ -4768,20 +4768,20 @@ public:
     inline const std::string& loggerId(void) const;
     inline bool firstCheckpoint(void) const;
 private:
-    base::Trackable* m_trackable;
+    base::PerformanceTracker* m_performanceTracker;
     base::type::string_t m_formattedTimeTaken;
     PerformanceTrackingData::DataType m_dataType;
     bool m_firstCheckpoint;
-    inline void init(base::Trackable*, bool firstCheckpoint = false);
+    inline void init(base::PerformanceTracker*, bool firstCheckpoint = false);
 
-    friend class el::base::Trackable;
+    friend class el::base::PerformanceTracker;
 };
 namespace base {
-/// @brief Represents trackable block of code that conditionally adds performance status to log
+/// @brief Represents performanceTracker block of code that conditionally adds performance status to log
 ///        either when goes outside the scope of when checkpoint() is called
-class Trackable : public base::threading::ThreadSafe, public Loggable {
+class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
 public:
-    Trackable(const std::string& blockName,
+    PerformanceTracker(const std::string& blockName,
             base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
             const std::string& loggerId = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, 
             bool scopedLog = true, Level level = Level::Info) :
@@ -4798,12 +4798,12 @@ public:
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
     /// @brief Copy constructor
-    Trackable(const Trackable& t) :
+    PerformanceTracker(const PerformanceTracker& t) :
         m_blockName(t.m_blockName), m_timestampUnit(t.m_timestampUnit), m_loggerId(t.m_loggerId), m_scopedLog(t.m_scopedLog),
         m_level(t.m_level), m_hasChecked(t.m_hasChecked), m_lastCheckpointId(t.m_lastCheckpointId), m_enabled(t.m_enabled),
         m_startTime(t.m_startTime), m_endTime(t.m_endTime), m_lastCheckpointTime(t.m_lastCheckpointTime) {
     }
-    virtual ~Trackable(void) {
+    virtual ~PerformanceTracker(void) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
@@ -4825,7 +4825,7 @@ public:
         }
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
-    /// @brief A checkpoint for current trackable block.
+    /// @brief A checkpoint for current performanceTracker block.
     void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
@@ -4893,7 +4893,7 @@ private:
     bool m_enabled;
     struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
 
-    Trackable(void);
+    PerformanceTracker(void);
 
     friend class el::PerformanceTrackingData;
 
@@ -4908,29 +4908,29 @@ private:
 };
 }  // namespace base
 inline const std::string* PerformanceTrackingData::blockName() const {
-    return const_cast<const std::string*>(&m_trackable->m_blockName);
+    return const_cast<const std::string*>(&m_performanceTracker->m_blockName);
 }
 inline const struct timeval* PerformanceTrackingData::startTime() const {
-    return const_cast<const struct timeval*>(&m_trackable->m_startTime);
+    return const_cast<const struct timeval*>(&m_performanceTracker->m_startTime);
 }
 inline const struct timeval* PerformanceTrackingData::endTime() const {
-    return const_cast<const struct timeval*>(&m_trackable->m_endTime);
+    return const_cast<const struct timeval*>(&m_performanceTracker->m_endTime);
 }
 inline const struct timeval* PerformanceTrackingData::lastCheckpointTime() const {
-    return const_cast<const struct timeval*>(&m_trackable->m_lastCheckpointTime);
+    return const_cast<const struct timeval*>(&m_performanceTracker->m_lastCheckpointTime);
 }
 inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const {
     return &m_formattedTimeTaken;
 }
-inline void PerformanceTrackingData::init(base::Trackable* trackable, bool firstCheckpoint) {
-    m_trackable = trackable;
+inline void PerformanceTrackingData::init(base::PerformanceTracker* performanceTracker, bool firstCheckpoint) {
+    m_performanceTracker = performanceTracker;
     m_firstCheckpoint = firstCheckpoint;
 }
 inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
     return m_dataType;
 }
 inline const std::string& PerformanceTrackingData::loggerId(void) const {
-    return m_trackable->m_loggerId;
+    return m_performanceTracker->m_loggerId;
 }
 inline bool PerformanceTrackingData::firstCheckpoint(void) const {
     return m_firstCheckpoint;
@@ -5441,18 +5441,18 @@ public:
 ///        'performance' logger.
 ///
 /// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
-/// @see el::base::Trackable
-/// @see el::base::Trackable::checkpoint
+/// @see el::base::PerformanceTracker
+/// @see el::base::PerformanceTracker::checkpoint
 // Note: Do not surround this definition with null macro because of obj instance
-#define TIMED_SCOPE(obj, blockname) el::base::Trackable obj(blockname, _ELPP_MIN_UNIT)
-#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::Trackable timer; } obj = { 0, \
-    el::base::Trackable(blockName, _ELPP_MIN_UNIT) }; obj.i < 1; ++obj.i)
+#define TIMED_SCOPE(obj, blockname) el::base::PerformanceTracker obj(blockname, _ELPP_MIN_UNIT)
+#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::PerformanceTracker timer; } obj = { 0, \
+    el::base::PerformanceTracker(blockName, _ELPP_MIN_UNIT) }; obj.i < 1; ++obj.i)
 /// @brief Performance tracked function. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
 /// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
-/// @see el::base::Trackable
-/// @see el::base::Trackable::checkpoint
+/// @see el::base::PerformanceTracker
+/// @see el::base::PerformanceTracker::checkpoint
 #define TIMED_FUNC(obj) TIMED_SCOPE(obj, _ELPP_FUNC)
 #undef PERFORMANCE_CHECKPOINT
 #undef PERFORMANCE_CHECKPOINT_WITH_ID
