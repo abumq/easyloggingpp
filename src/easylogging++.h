@@ -4764,6 +4764,7 @@ public:
     inline const struct timeval* endTime(void) const;
     inline const base::type::string_t* formattedTimeTaken(void) const;
     inline PerformanceTrackingData::DataType dataType(void) const;
+    inline const base::Trackable* trackable(void) const;
 private:
     base::Trackable* m_trackable;
     base::type::string_t m_formattedTimeTaken;
@@ -4876,6 +4877,9 @@ public:
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
 
+    const std::string& loggerId(void) const {
+        return m_loggerId;
+    }
 private:
     std::string m_blockName;
     base::TimestampUnit m_timestampUnit;
@@ -4918,6 +4922,9 @@ inline void PerformanceTrackingData::init(base::Trackable* trackable) {
 }
 inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
     return m_dataType;
+}
+inline const base::Trackable* PerformanceTrackingData::trackable(void) const {
+    return m_trackable;
 }
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
