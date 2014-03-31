@@ -1258,7 +1258,12 @@ public:
     static inline char* convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bufLim, bool zeroPadded = true) {
         char localBuff[10] = "";
         char* p = localBuff + sizeof(localBuff) - 2;
-        for (; n > 0 && p > localBuff && len > 0; n /= 10, --len) *--p = static_cast<char>(n % 10 + '0');
+        if (n > 0) {
+            for (; n > 0 && p > localBuff && len > 0; n /= 10, --len)
+                *--p = static_cast<char>(n % 10 + '0');
+        } else {
+            *--p = '0';
+        }
         if (zeroPadded)
             while (p > localBuff && len-- > 0) *--p = static_cast<char>('0');
         return addToBuff(p, buf, bufLim);
