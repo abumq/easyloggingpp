@@ -4833,10 +4833,12 @@ public:
             }
             ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
 #      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
+            base::type::string_t formattedTime;
             if (m_hasChecked) {
-                ss << ELPP_LITERAL(" ([") << base::utils::DateTime::formatTime(
+                formattedTime = base::utils::DateTime::formatTime(
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                        m_timestampUnit) << ELPP_LITERAL("] from ");
+                        m_timestampUnit);
+                ss << ELPP_LITERAL(" ([") << formattedTime << ELPP_LITERAL("] from ");
                 if (m_lastCheckpointId.empty()) {
                     ss << ELPP_LITERAL("last checkpoint");
                 } else {
@@ -4857,9 +4859,9 @@ public:
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
             data.init(this);
-            data.m_formattedTimeTaken = base::utils::DateTime::formatTime(
-                base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                    m_timestampUnit);
+#      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
+            data.m_formattedTimeTaken = formattedTime;
+#   endif // !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
         }
