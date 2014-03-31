@@ -675,9 +675,9 @@ namespace consts {
 #if !defined(_ELPP_DISABLE_LOG_FILE_FROM_ARG)
     static const char* kDefaultLogFileParam                    =      "--default-log-file";
 #endif  // !defined(_ELPP_DISABLE_LOG_FILE_FROM_ARG)
-#if !defined(_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG)
+#if defined(_ELPP_LOGGING_FLAGS_FROM_ARG)
     static const char* kLoggingFlagsParam                      =      "--logging-flags";
-#endif  // !defined(_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG)
+#endif  // defined(_ELPP_LOGGING_FLAGS_FROM_ARG)
 #if _ELPP_OS_WINDOWS
     static const char* kFilePathSeperator                      =      "\\";
 #else
@@ -3822,11 +3822,11 @@ private:
             }
         }
 #endif  // !defined(_ELPP_DISABLE_LOG_FILE_FROM_ARG)
-#if !defined(_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG)
+#if defined(_ELPP_LOGGING_FLAGS_FROM_ARG)
         if (m_commandLineArgs.hasParamWithValue(base::consts::kLoggingFlagsParam)) {
             m_flags = atoi(m_commandLineArgs.getParamValue(base::consts::kLoggingFlagsParam));
         }
-#endif  // !defined(_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG)
+#endif  // defined(_ELPP_LOGGING_FLAGS_FROM_ARG)
     }
 
     inline void setApplicationArguments(int argc, const char** argv) {
