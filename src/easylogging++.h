@@ -75,7 +75,9 @@
 #   define _ELPP_OS_FREEBSD 1
 #endif
 // Unix
-#define _ELPP_OS_UNIX ((_ELPP_OS_LINUX || _ELPP_OS_MAC || _ELPP_OS_FREEBSD) && (!_ELPP_OS_WINDOWS))
+#if ((_ELPP_OS_LINUX || _ELPP_OS_MAC || _ELPP_OS_FREEBSD) && (!_ELPP_OS_WINDOWS))
+#   define _ELPP_OS_UNIX 1
+#endif  // ((_ELPP_OS_LINUX || _ELPP_OS_MAC || _ELPP_OS_FREEBSD) && (!_ELPP_OS_WINDOWS))
 // Android
 #if defined(__ANDROID__)
 #   define _ELPP_OS_ANDROID 1
