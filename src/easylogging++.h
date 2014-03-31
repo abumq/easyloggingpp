@@ -4812,6 +4812,7 @@ public:
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
+                data.m_formattedTimeTaken = getFormattedTimeTaken();
                 ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             }
@@ -4824,13 +4825,14 @@ public:
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);
+#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
             base::type::stringstream_t ss;
             ss << "Performance checkpoint";
             if (id != nullptr) {
                 ss << " [" << id << "]";
             }
             ss << " for block [" << m_blockName.c_str() << "] : [" << *this;
-#   if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
+#      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             if (m_hasChecked) {
                 ss << " ([" << base::utils::DateTime::formatTime(
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
@@ -4844,18 +4846,20 @@ public:
             } else {
                 ss << "]";
             }
-#   else
+#      else
          ss << "]";
-#   endif   // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
+#      endif   // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
+            el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
+#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
-#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-            el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
-#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
             data.init(this);
+            data.m_formattedTimeTaken = base::utils::DateTime::formatTime(
+                base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
+                    m_timestampUnit);
             ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
         }
@@ -4902,7 +4906,7 @@ inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken()
     return &m_formattedTimeTaken;
 }
 inline void PerformanceTrackingData::init(base::Trackable* trackable) {
-    m_trackable = trackable; m_formattedTimeTaken = m_trackable->getFormattedTimeTaken();
+    m_trackable = trackable;
 }
 inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
     return m_dataType;
