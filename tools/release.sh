@@ -50,6 +50,7 @@ if [ "$confirm" = "y" ]; then
   sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
   sed -i "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
+  sed -i "s/easyloggingpp\/blob\/v$CURR_VERSION\/README.md/easyloggingpp\/blob\/v$NEW_VERSION\/README.md/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
   sed -i "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm easyloggingpp_v$NEW_VERSION.zip
