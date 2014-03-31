@@ -4765,11 +4765,13 @@ public:
     inline const base::type::string_t* formattedTimeTaken(void) const;
     inline PerformanceTrackingData::DataType dataType(void) const;
     inline const std::string& loggerId(void) const;
+    inline bool firstCheckpoint(void) const;
 private:
     base::Trackable* m_trackable;
     base::type::string_t m_formattedTimeTaken;
     PerformanceTrackingData::DataType m_dataType;
-    inline void init(base::Trackable*);
+    bool m_firstCheckpoint;
+    inline void init(base::Trackable*, bool firstCheckpoint = false);
 
     friend class el::base::Trackable;
 };
@@ -4827,7 +4829,9 @@ public:
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
-            base::utils::DateTime::gettimeofday(&m_endTime);
+            base::utils::DateTime::gettimeofday(&m_endTime);            
+            base::type::string_t formattedTime;
+            _ELPP_UNUSED(formattedTime); // just in case
 #   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
             base::type::stringstream_t ss;
             ss << ELPP_LITERAL("Performance checkpoint");
@@ -4836,8 +4840,6 @@ public:
             }
             ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
 #      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            base::type::string_t formattedTime;
-            _ELPP_UNUSED(formattedTime); // just in case
             if (m_hasChecked) {
                 formattedTime = base::utils::DateTime::formatTime(
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
@@ -4853,21 +4855,25 @@ public:
                 ss << ELPP_LITERAL("]");
             }
 #      else
-         ss << ELPP_LITERAL("]");
+            ss << ELPP_LITERAL("]");
 #      endif   // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
+#   else
+            formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
+                base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
+                m_timestampUnit) : ELPP_LITERAL("");
 #   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-            base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
-            m_hasChecked = true;
-            m_lastCheckpointId = id;
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
-            data.init(this);
+            data.init(this, !m_hasChecked);
 #      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             data.m_formattedTimeTaken = formattedTime;
 #   endif // !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
+            base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
+            m_hasChecked = true;
+            m_lastCheckpointId = id;
         }
 #else
         _ELPP_UNUSED(id);
@@ -4913,14 +4919,18 @@ inline const struct timeval* PerformanceTrackingData::endTime() const {
 inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const {
     return &m_formattedTimeTaken;
 }
-inline void PerformanceTrackingData::init(base::Trackable* trackable) {
+inline void PerformanceTrackingData::init(base::Trackable* trackable, bool firstCheckpoint) {
     m_trackable = trackable;
+    m_firstCheckpoint = firstCheckpoint;
 }
 inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
     return m_dataType;
 }
 inline const std::string& PerformanceTrackingData::loggerId(void) const {
     return m_trackable->m_loggerId;
+}
+inline bool PerformanceTrackingData::firstCheckpoint(void) const {
+    return m_firstCheckpoint;
 }
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
