@@ -4805,14 +4805,16 @@ public:
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
+                base::type::string_t formattedTime = getFormattedTimeTaken();
+                _ELPP_UNUSED(formattedTime); // just in case
 #   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
                 _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
-                    << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << *this << ELPP_LITERAL("]");
+                    << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
 #   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
-                data.m_formattedTimeTaken = getFormattedTimeTaken();
+                data.m_formattedTimeTaken = formattedTime;
                 ELPP->postPerformanceTrackingHandler()(&data);
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
             }
@@ -4834,6 +4836,7 @@ public:
             ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
 #      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             base::type::string_t formattedTime;
+            _ELPP_UNUSED(formattedTime); // just in case
             if (m_hasChecked) {
                 formattedTime = base::utils::DateTime::formatTime(
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
