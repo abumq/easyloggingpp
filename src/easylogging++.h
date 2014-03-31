@@ -4876,12 +4876,11 @@ public:
             m_hasChecked = true;
             m_lastCheckpointId = id;
         }
-#else
+#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         _ELPP_UNUSED(id);
         _ELPP_UNUSED(file);
         _ELPP_UNUSED(line);
         _ELPP_UNUSED(func);
-#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
 private:
     std::string m_blockName;
