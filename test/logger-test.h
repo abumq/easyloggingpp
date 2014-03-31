@@ -11,7 +11,7 @@ TEST(LoggerTest, RegisterTenThousandLoggers) {
         std::stringstream ss;
         ss << "logger" << i;
         Loggers::getLogger(ss.str());
-        if (i % 1000) {
+        if (i % 1000 == 0) {
             ss.str("");
             ss << "Registered [" << i << "] loggers";
             PERFORMANCE_CHECKPOINT_WITH_ID(timer, ss.str().c_str());

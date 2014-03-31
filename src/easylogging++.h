@@ -4782,7 +4782,7 @@ public:
             const std::string& loggerId = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, 
             bool scopedLog = true, Level level = Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
-        m_level(level), m_hasChecked(false), m_lastCheckpointId(nullptr), m_enabled(false) {
+        m_level(level), m_hasChecked(false), m_lastCheckpointId(std::string()), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         // We store it locally so that if user happen to change configuration by the end of scope
         // or before calling checkpoint, we still depend on state of configuraton at time of construction
@@ -4807,7 +4807,7 @@ public:
                 base::utils::DateTime::gettimeofday(&m_endTime);
 #   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
                 _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
-                    << "Executed [" << m_blockName << "] in [" << *this << "]";
+                    << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << *this << ELPP_LITERAL("]");
 #   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
@@ -4820,34 +4820,34 @@ public:
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
     /// @brief A checkpoint for current trackable block.
-    void checkpoint(const char* id = nullptr, const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
+    void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);
 #   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
             base::type::stringstream_t ss;
-            ss << "Performance checkpoint";
-            if (id != nullptr) {
-                ss << " [" << id << "]";
+            ss << ELPP_LITERAL("Performance checkpoint");
+            if (!id.empty()) {
+                ss << ELPP_LITERAL(" [") << id.c_str() << ELPP_LITERAL("]");
             }
-            ss << " for block [" << m_blockName.c_str() << "] : [" << *this;
+            ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
 #      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             if (m_hasChecked) {
-                ss << " ([" << base::utils::DateTime::formatTime(
+                ss << ELPP_LITERAL(" ([") << base::utils::DateTime::formatTime(
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                        m_timestampUnit) << "] from ";
-                if (m_lastCheckpointId == nullptr) {
-                    ss << "last checkpoint";
+                        m_timestampUnit) << ELPP_LITERAL("] from ");
+                if (m_lastCheckpointId.empty()) {
+                    ss << ELPP_LITERAL("last checkpoint");
                 } else {
-                    ss << "checkpoint '" << m_lastCheckpointId << "'";
+                    ss << ELPP_LITERAL("checkpoint '") << m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
                 }
-                ss << ")]";
+                ss << ELPP_LITERAL(")]");
             } else {
-                ss << "]";
+                ss << ELPP_LITERAL("]");
             }
 #      else
-         ss << "]";
+         ss << ELPP_LITERAL("]");
 #      endif   // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
             el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
 #   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
@@ -4864,7 +4864,10 @@ public:
 #   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
         }
 #else
-        _ELPP_UNUSED(id)
+        _ELPP_UNUSED(id);
+        _ELPP_UNUSED(file);
+        _ELPP_UNUSED(line);
+        _ELPP_UNUSED(func);
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
 
@@ -4875,7 +4878,7 @@ private:
     bool m_scopedLog;
     el::Level m_level;
     bool m_hasChecked;
-    const char* m_lastCheckpointId;
+    std::string m_lastCheckpointId;
     bool m_enabled;
     struct timeval m_startTime, m_endTime, m_lastCheckpointTime;
 
