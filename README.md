@@ -337,7 +337,7 @@ You can customize format of logging using following specifiers:
 |     Specifier   |                 Replaced By                                                                 |
 |-----------------|---------------------------------------------------------------------------------------------|
 | `%logger`       | Logger ID                                                                                   |
-| `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
+| `%thread`       | Thread ID - Uses `std::thread` if available, otherwise `GetCurrentThreadId()` on windows. See `pthread.cpp` sample to see ways to use your own thread ID function instead. |
 | `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
 | `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |
 | `%datetime`     | Date and/or time - Pattern is customizable - see Date/Time Format Specifiers below          |
@@ -813,6 +813,8 @@ Notes:
 4. In order to access `el::base::Trackable` while in `TIMED_BLOCK`, you can use `timerObj.timer`
 
 5. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
+
+6. Since ver 9.64, you can change output format by using `PerformanceTrackingData` and `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH` combined. See `samples/STL/custom-performance-output.cpp` sample for details.
 
  [![top] Goto Top](#table-of-contents)
 
