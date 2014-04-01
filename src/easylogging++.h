@@ -3300,7 +3300,9 @@ public:
         m_logBuilder = logBuilder;
     }
 
-    inline void enabled(Level level) { return m_typedConfigurations->enabled(m_level); }
+    inline bool enabled(Level level) const {
+        return m_typedConfigurations->enabled(level);
+    }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
