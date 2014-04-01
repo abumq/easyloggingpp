@@ -9,22 +9,22 @@ void postLogHandler(const LogMessage* msg) {
     loggedMessages.push_back(msg->message());
 }
 
-TEST(PostLogDispatchHandlerTest, Installation) {
+TEST(LogDispatchCallbackTest, Installation) {
     LOG(INFO) << "Log before handler installed";
     EXPECT_TRUE(loggedMessages.empty());
     
     // Install handler
-    Helpers::installLogDispatchCallback(postLogHandler);
+    Helpers::installLogDispatchCallback(postLogHandler, false);
     LOG(INFO) << "Should be part of loggedMessages - 1";
     EXPECT_EQ(1, loggedMessages.size());
     type::string_t expectedMessage = ELPP_LITERAL("Should be part of loggedMessages - 1");
     EXPECT_EQ(expectedMessage, loggedMessages.at(0));
 }
 
-TEST(PostLogDispatchHandlerTest, Uninstallation) {
+TEST(LogDispatchCallbackTest, Uninstallation) {
     
     // Uninstall handler
-    Helpers::uninstallLogDispatchCallback();
+    Helpers::uninstallLogDispatchCallback(false);
     LOG(INFO) << "This is not in list";
     EXPECT_EQ(loggedMessages.end(), 
         std::find(loggedMessages.begin(), loggedMessages.end(), ELPP_LITERAL("This is not in list")));
