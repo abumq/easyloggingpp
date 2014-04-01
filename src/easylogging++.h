@@ -408,7 +408,6 @@ private:
 ///
 /// @detail Easylogging++ has different concept of level. Developers may disable or enable any level regardless of
 /// what the severity is
-/// @see el::LevelHelper
 enum class Level : base::type::EnumType {
         /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
         Global = 1,
@@ -480,11 +479,10 @@ public:
             return Level::Trace;
         return Level::Unknown;
     }
-    /// @brief Applies specified lambda to each level starting from startIndex
-    /// @param startIndex initial value to start the iteration from. This is passed by reference and 
-    ///        is incremented (left-shifted) so this can be used inside lambda function as well to represent current level.
-    /// @param fn function to apply with each level. 
-    ///        This bool represent whether or not to stop iterating through levels.
+    /// @brief Applies specified function to each level starting from startIndex
+    /// @param startIndex initial value to start the iteration from. This is passed as pointer and 
+    ///        is left-shifted so this can be used inside function (fn) to represent current level.
+    /// @param fn function to apply with each level. This bool represent whether or not to stop iterating through levels.
     static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType lIndexMax = LevelHelper::kMaxValid;
         do {
@@ -497,10 +495,6 @@ public:
 };
 /// @brief Represents enumeration of ConfigurationType used to configure or access certain aspect
 /// of logging
-///
-/// @detail NOTE: All the configurations for corresponding level also depend on loggers. You can use one
-/// configuration for one logger and different for other logger.
-/// @see el::ConfigurationTypeHelper
 enum class ConfigurationType : base::type::EnumType {
    /// @brief Determines whether or not corresponding level and logger of logging is enabled
    /// You may disable all logs by using el::Level::Global
@@ -530,7 +524,7 @@ enum class ConfigurationType : base::type::EnumType {
    /// @brief Represents unknown configuration
     Unknown = 1010
 };
-/// @brief Static class that contains conversion helper functions for el::ConfigurationType
+/// @brief Static class that contains helper functions for el::ConfigurationType
 class ConfigurationTypeHelper : base::StaticClass {
 public:
     /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
@@ -584,9 +578,9 @@ public:
             return ConfigurationType::LogFlushThreshold;
         return ConfigurationType::Unknown;
     }
-    /// @brief Applies specified lambda to each configuration type starting from startIndex
-    /// @param startIndex initial value to start the iteration from. This is passed by reference and bit is shifted
-    ///        so this can be used inside lambda function as well to represent current configuration type.
+    /// @brief Applies specified function to each configuration type starting from startIndex
+    /// @param startIndex initial value to start the iteration from. This is passed by pointer and is left-shifted
+    ///        so this can be used inside function (fn) to represent current configuration type.
     /// @param fn function to apply with each configuration type. 
     ///        This bool represent whether or not to stop iterating through configurations.
     static void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
