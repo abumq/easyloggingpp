@@ -20,6 +20,7 @@ API changes: Yes
 
  - Ability to disable performance tracking dispatch by defining `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH`
  - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
+ - Added `LoggingFlag::MultiLoggerSupport` and removed `_ELPP_MULTI_LOGGER_SUPPORT` macro
 
 ==========================
 =       REFACTORING      =
@@ -29,6 +30,7 @@ API changes: Yes
  - Renamed `Trackable` class to `PerformanceTracker`
  - A lot of internal refactoring for performance and size
  - Added internal error when too many arguments provided in `log()` and friends
+ - Moved `addFlag(LoggingFlag)`, `removeFlag(LoggingFlag)` and `hasFlag(LoggingFlag)` to `el::Loggers`
 
 ==========================
 =         NOTES          =

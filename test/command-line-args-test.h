@@ -34,20 +34,20 @@ TEST(CommandLineArgsTest, LoggingFlagsArg) {
 
     unsigned short currFlags = ELPP->flags(); // For resetting after test
 
-    EXPECT_FALSE(Helpers::hasFlag(LoggingFlag::NewLineForContainer));
-    EXPECT_FALSE(Helpers::hasFlag(LoggingFlag::LogDetailedCrashReason));
+    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
+    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
 
     Helpers::setArgs(2, c);
-    EXPECT_TRUE(Helpers::hasFlag(LoggingFlag::NewLineForContainer));
-    EXPECT_TRUE(Helpers::hasFlag(LoggingFlag::LogDetailedCrashReason));
+    EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
+    EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
 
     // Reset to original state
     std::stringstream resetter;
     resetter << "--logging-flags=" << currFlags;
     c[1] = resetter.str().c_str();
     Helpers::setArgs(2, c);
-    EXPECT_FALSE(Helpers::hasFlag(LoggingFlag::NewLineForContainer));
-    EXPECT_FALSE(Helpers::hasFlag(LoggingFlag::LogDetailedCrashReason));
+    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
+    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
 
 }
 

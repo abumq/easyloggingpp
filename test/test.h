@@ -31,14 +31,14 @@ static void reconfigureLoggersForTest(void) {
     // We do not want to reconfgure syslog with date/time
     Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %msg");
 
-    if (!Helpers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-        Helpers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
+    if (!Loggers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+        Loggers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
     }
-    if (!Helpers::hasFlag(LoggingFlag::ImmediateFlush)) {
-        Helpers::addFlag(LoggingFlag::ImmediateFlush);
+    if (!Loggers::hasFlag(LoggingFlag::ImmediateFlush)) {
+        Loggers::addFlag(LoggingFlag::ImmediateFlush);
     }
-    if (!Helpers::hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-        Helpers::addFlag(LoggingFlag::StrictLogFileSizeCheck);
+    if (!Loggers::hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
+        Loggers::addFlag(LoggingFlag::StrictLogFileSizeCheck);
     }
 }
 

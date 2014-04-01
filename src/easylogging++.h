@@ -619,7 +619,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Enables strict file rolling
     StrictLogFileSizeCheck = 32,
     /// @brief Make terminal output colorful for supported terminals
-    ColoredTerminalOutput = 64
+    ColoredTerminalOutput = 64,
+    /// @brief Supports use of multiple logging in same macro, e.g, CLOG(INFO, "default", "network")
+    MultiLoggerSupport = 128
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -4474,20 +4476,19 @@ public:
     }
 
     Writer& construct(int count, const char* loggerIds, ...) {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        va_list loggersList;
-        va_start(loggersList, loggerIds);
-        const char* id = loggerIds;
-        for (int i = 0; i < count; ++i) {
-            m_loggerIds.push_back(std::string(id));
-            id = va_arg(loggersList, const char*);
+        if (ELPP->hasFlag(LoggingFlag::MultiLoggerSupport)) {
+            va_list loggersList;
+            va_start(loggersList, loggerIds);
+            const char* id = loggerIds;
+            for (int i = 0; i < count; ++i) {
+                m_loggerIds.push_back(std::string(id));
+                id = va_arg(loggersList, const char*);
+            }
+            va_end(loggersList);
+            initializeLogger(m_loggerIds.at(0));
+        } else {
+            initializeLogger(loggerIds);
         }
-        va_end(loggersList);
-        initializeLogger(m_loggerIds.at(0));
-#else
-        _ELPP_UNUSED(count);
-        initializeLogger(loggerIds);
-#endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
         m_messageBuilder.initialize(m_logger);
         return *this;
     }
@@ -4502,9 +4503,7 @@ protected:
     base::MessageBuilder m_messageBuilder;
     base::DispatchAction m_dispatchAction;
     friend class el::Helpers;
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
     std::vector<std::string> m_loggerIds;
-#endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 
     void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
         if (lookup) {
@@ -4528,37 +4527,37 @@ protected:
     }
     
     void processDispatch() {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        bool firstDispatched = false;
-        base::type::string_t logMessage;
-        std::size_t i = 0;
-        do {
-            if (m_proceed) {
-                if (firstDispatched) {
-                    m_logger->stream() << logMessage;
-                } else {
-                    firstDispatched = true;
-                    if (m_loggerIds.size() > 1) {
-                        logMessage = m_logger->stream().str();
+        if (ELPP->hasFlag(LoggingFlag::MultiLoggerSupport)) {
+            bool firstDispatched = false;
+            base::type::string_t logMessage;
+            std::size_t i = 0;
+            do {
+                if (m_proceed) {
+                    if (firstDispatched) {
+                        m_logger->stream() << logMessage;
+                    } else {
+                        firstDispatched = true;
+                        if (m_loggerIds.size() > 1) {
+                            logMessage = m_logger->stream().str();
+                        }
                     }
+                    triggerDispatch();
+                } else if (m_logger != nullptr) {
+                    m_logger->stream().str(ELPP_LITERAL(""));
+                    m_logger->unlock();
                 }
+                if (i + 1 < m_loggerIds.size()) {
+                    initializeLogger(m_loggerIds.at(i + 1));
+                }
+            } while (++i < m_loggerIds.size());
+        } else {
+            if (m_proceed) {
                 triggerDispatch();
             } else if (m_logger != nullptr) {
                 m_logger->stream().str(ELPP_LITERAL(""));
                 m_logger->unlock();
             }
-            if (i + 1 < m_loggerIds.size()) {
-                initializeLogger(m_loggerIds.at(i + 1));
-            }
-        } while (++i < m_loggerIds.size());
-#else
-        if (m_proceed) {
-            triggerDispatch();
-        } else if (m_logger != nullptr) {
-            m_logger->stream().str(ELPP_LITERAL(""));
-            m_logger->unlock();
         }
-#endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
     }
 
     void triggerDispatch(void) {
@@ -4725,24 +4724,19 @@ public:
 #   undef LOGGER_LEVEL_WRITERS
 #   undef LOGGER_LEVEL_WRITERS_DISABLED
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
-#   if _ELPP_COMPILER_MSVC
-#      define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs
-#      define ELPP_VARIADIC_FUNC_MSVC_RUN(variadicFunction, ...) ELPP_VARIADIC_FUNC_MSVC(variadicFunction, (__VA_ARGS__))
-#      define el_getVALength(...) ELPP_VARIADIC_FUNC_MSVC_RUN(el_resolveVALength, 0, ## __VA_ARGS__,\
-          10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#   else
-#      if _ELPP_COMPILER_CLANG
-#         define el_getVALength(...) el_resolveVALength(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#      else
-#         define el_getVALength(...) el_resolveVALength(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#      endif // _ELPP_COMPILER_CLANG
-#   endif // _ELPP_COMPILER_MSVC
-#   define el_resolveVALength(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#if _ELPP_COMPILER_MSVC
+#   define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs
+#   define ELPP_VARIADIC_FUNC_MSVC_RUN(variadicFunction, ...) ELPP_VARIADIC_FUNC_MSVC(variadicFunction, (__VA_ARGS__))
+#   define el_getVALength(...) ELPP_VARIADIC_FUNC_MSVC_RUN(el_resolveVALength, 0, ## __VA_ARGS__,\
+       10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 #else
-#   define el_resolveVALength(...) (void(0))
-#   define el_getVALength(...) 1
-#endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
+#   if _ELPP_COMPILER_CLANG
+#      define el_getVALength(...) el_resolveVALength(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   else
+#      define el_getVALength(...) el_resolveVALength(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#   endif // _ELPP_COMPILER_CLANG
+#endif // _ELPP_COMPILER_MSVC
+#define el_resolveVALength(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define _ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
     writer(level, __FILE__, __LINE__, _ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define _ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
@@ -5156,42 +5150,30 @@ public:
 /// @brief Static helpers for developers
 class Helpers : base::StaticClass {
 public:
-   /// @brief Shares logging repository (base::Storage)
+    /// @brief Shares logging repository (base::Storage)
     static inline void setStorage(base::type::StoragePointer storage) {
         ELPP = storage;
     }
-   /// @return Main storage repository
+    /// @return Main storage repository
     static inline base::type::StoragePointer storage() {
         return ELPP;
     }
-   /// @brief Sets application arguments and figures out whats active for logging and whats not.
+    /// @brief Sets application arguments and figures out whats active for logging and whats not.
     static inline void setArgs(int argc, char** argv) {
         ELPP->setApplicationArguments(argc, argv);
     }
-   /// @copydoc setArgs(int argc, char** argv)
+    /// @copydoc setArgs(int argc, char** argv)
     static inline void setArgs(int argc, const char** argv) {
         ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
     }
-   /// @brief Adds logging flag used internally.
-    static inline void addFlag(el::LoggingFlag flag) {
-        ELPP->addFlag(flag);
-    }
-   /// @brief Removes logging flag used internally.
-    static inline void removeFlag(el::LoggingFlag flag) {
-        ELPP->removeFlag(flag);
-    }
-   /// @brief Determines whether or not certain flag is active
-    static inline bool hasFlag(el::LoggingFlag flag) {
-        return ELPP->hasFlag(flag);
-    }
-   /// @brief Overrides default crash handler and installs custom handler.
-   /// @param crashHandler A functor with no return type that takes single int argument.
-   ///        Handler is a typedef with specification: void (*Handler)(int)
+    /// @brief Overrides default crash handler and installs custom handler.
+    /// @param crashHandler A functor with no return type that takes single int argument.
+    ///        Handler is a typedef with specification: void (*Handler)(int)
     static inline void setCrashHandler(const el::base::debug::CrashHandler::Handler& crashHandler) {
         el::elCrashHandler.setHandler(crashHandler);
     }
-   /// @brief Abort due to crash with signal in parameter
-   /// @param sig Crash signal
+    /// @brief Abort due to crash with signal in parameter
+    /// @param sig Crash signal
     static inline void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {  // NOLINT
         std::stringstream ss;
         ss << base::debug::crashReason(sig).c_str();
@@ -5205,21 +5187,21 @@ public:
         }
         base::utils::abort(sig, ss.str().c_str());
     }
-   /// @brief Logs reason of crash as per sig
-   /// @param sig Crash signal
-   /// @param stackTraceIfAvailable Includes stack trace if available
-   /// @param level Logging level
-   /// @param logger Logger to use for logging
+    /// @brief Logs reason of crash as per sig
+    /// @param sig Crash signal
+    /// @param stackTraceIfAvailable Includes stack trace if available
+    /// @param level Logging level
+    /// @param logger Logger to use for logging
     static inline void logCrashReason(int sig, bool stackTraceIfAvailable = false,
             Level level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
-   /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out
-   ///        (can be useful for backing up)
+    /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out
+    ///        (can be useful for backing up)
     static inline void installPreRollOutHandler(const PreRollOutHandler& handler) {
         ELPP->setPreRollOutHandler(handler);
     }
-   /// @brief Uninstalls pre rollout handler
+    /// @brief Uninstalls pre rollout handler
     static inline void uninstallPreRollOutHandler(void) {
         ELPP->unsetPreRollOutHandler();
     }
@@ -5227,19 +5209,19 @@ public:
     static inline void installPostLogDispatchHandler(const PostLogDispatchHandler& handler) {
         ELPP->setPostLogDispatchHandler(handler);
     }
-   /// @brief Uninstalls post log dispatch
+    /// @brief Uninstalls post log dispatch
     static inline void uninstallPostLogDispatchHandler(void) {
         ELPP->unsetPostLogDispatchHandler();
     }
-   /// @brief Installs post performance tracking handler, this handler is triggered when performance tracking is finished
+    /// @brief Installs post performance tracking handler, this handler is triggered when performance tracking is finished
     static inline void installPostPerformanceTrackingHandler(const PostPerformanceTrackingHandler& handler) {
         ELPP->setPostPerformanceTrackingHandler(handler);
     }
-   /// @brief Uninstalls post performance tracking handler
+    /// @brief Uninstalls post performance tracking handler
     static inline void uninstallPostPerformanceTrackingHandler(void) {
         ELPP->unsetPostPerformanceTrackingHandler();
     }
-   /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
+    /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
     static inline std::string convertTemplateToStdString(const T& templ) {
         base::MessageBuilder b;
@@ -5255,19 +5237,19 @@ public:
         logger->stream().str(ELPP_LITERAL(""));
         return s;
     }
-   /// @brief Returns command line arguments (pointer) provided to easylogging++
+    /// @brief Returns command line arguments (pointer) provided to easylogging++
     static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
         return ELPP->commandLineArgs();
     }
-   /// @brief Installs user defined format specifier and handler
+    /// @brief Installs user defined format specifier and handler
     static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
         ELPP->installCustomFormatSpecifier(customFormatSpecifier);
     }
-   /// @brief Uninstalls user defined format specifier and handler
+    /// @brief Uninstalls user defined format specifier and handler
     static inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
         return ELPP->uninstallCustomFormatSpecifier(formatSpecifier);
     }
-   /// @brief Returns true if custom format specifier is installed
+    /// @brief Returns true if custom format specifier is installed
     static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
         return ELPP->hasCustomFormatSpecifier(formatSpecifier);
     }
@@ -5279,30 +5261,30 @@ public:
 /// @brief Static helpers to deal with loggers and their configurations
 class Loggers : base::StaticClass {
 public:
-   /// @brief Gets existing or registers new logger
+    /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
         return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
     }
-   /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
-   ///        loggers initialized / used by third-party libs.
+    /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
+    ///        loggers initialized / used by third-party libs.
     static inline bool unregisterLogger(const std::string& identity) {
         return ELPP->registeredLoggers()->remove(identity);
     }
-   /// @brief Whether or not logger with id is registered
+    /// @brief Whether or not logger with id is registered
     static inline bool hasLogger(const std::string& identity) {
         return ELPP->registeredLoggers()->has(identity);
     }
-   /// @brief Reconfigures specified logger with new configurations
+    /// @brief Reconfigures specified logger with new configurations
     static inline Logger* reconfigureLogger(Logger* logger, const Configurations& configurations) {
         if (!logger) return nullptr;
         logger->configure(configurations);
         return logger;
     }
-   /// @brief Reconfigures logger with new configurations after looking it up using identity
+    /// @brief Reconfigures logger with new configurations after looking it up using identity
     static inline Logger* reconfigureLogger(const std::string& identity, const Configurations& configurations) {
         return Loggers::reconfigureLogger(Loggers::getLogger(identity), configurations);
     }
-   /// @brief Reconfigures logger's single configuration
+    /// @brief Reconfigures logger's single configuration
     static inline Logger* reconfigureLogger(const std::string& identity, ConfigurationType configurationType,
             const std::string& value) {
         Logger* logger = Loggers::getLogger(identity);
@@ -5313,18 +5295,18 @@ public:
         logger->reconfigure();
         return logger;
     }
-   /// @brief Reconfigures all the existing loggers with new configurations
+    /// @brief Reconfigures all the existing loggers with new configurations
     static inline void reconfigureAllLoggers(const Configurations& configurations) {
         for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
                 it != ELPP->registeredLoggers()->end(); ++it) {
             Loggers::reconfigureLogger(it->second, configurations);
         }
     }
-   /// @brief Reconfigures single configuration for all the loggers
+    /// @brief Reconfigures single configuration for all the loggers
     static inline void reconfigureAllLoggers(ConfigurationType configurationType, const std::string& value) {
         reconfigureAllLoggers(Level::Global, configurationType, value);
     }
-   /// @brief Reconfigures single configuration for all the loggers for specified level
+    /// @brief Reconfigures single configuration for all the loggers for specified level
     static inline void reconfigureAllLoggers(Level level, ConfigurationType configurationType, 
             const std::string& value) {
         for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
@@ -5334,29 +5316,29 @@ public:
             logger->reconfigure();
         }
     }
-   /// @brief Sets default configurations. This configuration is used for future (and conditionally for existing) loggers
+    /// @brief Sets default configurations. This configuration is used for future (and conditionally for existing) loggers
     static inline void setDefaultConfigurations(const Configurations& configurations, bool reconfigureExistingLoggers = false) {
         ELPP->registeredLoggers()->setDefaultConfigurations(configurations);
         if (reconfigureExistingLoggers) {
             Loggers::reconfigureAllLoggers(configurations);
         }
     }
-   /// @brief Returns current default
+    /// @brief Returns current default
     static inline const Configurations* defaultConfigurations(void) {
         return ELPP->registeredLoggers()->defaultConfigurations();
     }
-   /// @brief Returns log stream reference pointer if needed by user
+    /// @brief Returns log stream reference pointer if needed by user
     static inline const base::LogStreamsReferenceMap* logStreamsReference(void) {
         return ELPP->registeredLoggers()->logStreamsReference();
     }
-   /// @brief Default typed configuration based on existing defaultConf
+    /// @brief Default typed configuration based on existing defaultConf
     static base::TypedConfigurations defaultTypedConfigurations(void) {
         return base::TypedConfigurations(
             ELPP->registeredLoggers()->defaultConfigurations(),
             ELPP->registeredLoggers()->logStreamsReference());
     }
-   /// @brief Populates all logger IDs in current repository.
-   /// @param [out] targetList List of fill up.
+    /// @brief Populates all logger IDs in current repository.
+    /// @param [out] targetList List of fill up.
     static inline std::vector<std::string>* populateAllLoggerIds(std::vector<std::string>* targetList) {
         targetList->clear();
         for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->list().begin();
@@ -5365,7 +5347,7 @@ public:
         }
         return targetList;
     }
-   /// @brief Sets configurations from global configuration file.
+    /// @brief Sets configurations from global configuration file.
     static void configureFromGlobal(const char* globalConfigurationFilePath) {
         std::ifstream gcfStream(globalConfigurationFilePath, std::ifstream::in);
         ELPP_ASSERT(gcfStream.is_open(), "Unable to open global configuration file [" << globalConfigurationFilePath 
@@ -5406,11 +5388,11 @@ public:
             configure();
         }
     }
-   /// @brief Configures loggers using command line arg. Ensure you have already set command line args, 
-   ///        see Helpers::setArgs(..)
-   /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger.
-   ///         If true is returned that does not mean it has been configured successfully, it only means that it
-   ///         has attempeted to configure logger using configuration file provided in argument
+    /// @brief Configures loggers using command line arg. Ensure you have already set command line args, 
+    ///        see Helpers::setArgs(..)
+    /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger.
+    ///         If true is returned that does not mean it has been configured successfully, it only means that it
+    ///         has attempeted to configure logger using configuration file provided in argument
     static inline bool configureFromArg(const char* argKey) {
 #if defined(_ELPP_DISABLE_CONFIGURATION_FROM_PROGRAM_ARGS)
         _ELPP_UNUSED(argKey);
@@ -5422,10 +5404,23 @@ public:
 #endif  // defined(_ELPP_DISABLE_CONFIGURATION_FROM_PROGRAM_ARGS)
         return true;
     }
-   /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
+    /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
     static inline void flushAll(void) {
         ELPP->registeredLoggers()->flushAll();
     }
+    /// @brief Adds logging flag used internally.
+    static inline void addFlag(el::LoggingFlag flag) {
+        ELPP->addFlag(flag);
+    }
+    /// @brief Removes logging flag used internally.
+    static inline void removeFlag(el::LoggingFlag flag) {
+        ELPP->removeFlag(flag);
+    }
+    /// @brief Determines whether or not certain flag is active
+    static inline bool hasFlag(el::LoggingFlag flag) {
+        return ELPP->hasFlag(flag);
+    }
+
 };
 class VersionInfo : base::StaticClass {
 public:

@@ -127,7 +127,7 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
     EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "main.cc", ELPP->flags())));
     EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main-file-for-prog.cc", ELPP->flags())));
 
-    el::Helpers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);  // Check strictly
+    el::Loggers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);  // Check strictly
 
     EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "tmain.cxx", ELPP->flags())));
 

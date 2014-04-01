@@ -44,7 +44,7 @@ TEST(WriteAllTest, VERBOSE) {
     Configurations cOld(*Loggers::getLogger("default")->configurations());
     Loggers::reconfigureAllLoggers(ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %level-%vlevel %msg");
 
-    el::Helpers::addFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified); // Accept all verbose levels; we already have vmodules!
+    el::Loggers::addFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified); // Accept all verbose levels; we already have vmodules!
 
     std::string s;
     for (int i = 1; i <= 6; ++i)
