@@ -396,42 +396,42 @@ private:
 /// what the severity is
 /// @see el::LevelHelper
 enum class Level : base::type::EnumType {
-       /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
+        /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
         Global = 1,
-       /// @brief Informational events most useful for developers to debug application
+        /// @brief Informational events most useful for developers to debug application
         Debug = 2,
-       /// @brief Mainly useful to represent current progress of application
+        /// @brief Mainly useful to represent current progress of application
         Info = 4,
-       /// @brief Useful when application has potentially harmful situtaions
+        /// @brief Useful when application has potentially harmful situtaions
         Warning = 8,
-       /// @brief Information representing errors in application but application will keep running
+        /// @brief Information representing errors in application but application will keep running
         Error = 16,
-       /// @brief Severe error information that will presumably abort application
+        /// @brief Severe error information that will presumably abort application
         Fatal = 32,
-       /// @brief Information that can be highly useful and vary with verbose logging level.
+        /// @brief Information that can be highly useful and vary with verbose logging level.
         Verbose = 64,
-       /// @brief Information that can be useful to back-trace certain events - mostly useful than debug logs.
+        /// @brief Information that can be useful to back-trace certain events - mostly useful than debug logs.
         Trace = 128,
-       /// @brief Represents unknown level
+        /// @brief Represents unknown level
         Unknown = 1010
 };
 /// @brief Static class that contains helper functions for el::Level
 class LevelHelper : base::StaticClass {
 public:
-   /// @brief Represents minimum valid level. Useful when iterating through enum.
+    /// @brief Represents minimum valid level. Useful when iterating through enum.
     static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(Level::Debug);
-   /// @brief Represents maximum valid level. This is used internally and you should not need it.
+    /// @brief Represents maximum valid level. This is used internally and you should not need it.
     static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(Level::Trace);
-   /// @brief Casts level to int, useful for iterating through enum.
+    /// @brief Casts level to int, useful for iterating through enum.
     static base::type::EnumType castToInt(Level level) {
         return static_cast<base::type::EnumType>(level);
     }
-   /// @brief Casts int(ushort) to level, useful for iterating through enum.
+    /// @brief Casts int(ushort) to level, useful for iterating through enum.
     static Level castFromInt(base::type::EnumType l) {
         return static_cast<Level>(l);
     }
-   /// @brief Converts level to associated const char*
-   /// @return Upper case string based level.
+    /// @brief Converts level to associated const char*
+    /// @return Upper case string based level.
     static const char* convertToString(Level level) {
        // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (level == Level::Global) return "GLOBAL";
@@ -444,9 +444,9 @@ public:
         if (level == Level::Trace) return "TRACE";
         return "UNKNOWN";
     }
-   /// @brief Converts from levelStr to Level
-   /// @param levelStr Upper case string based level.
-   ///        Lower case is also valid but providing upper case is recommended.
+    /// @brief Converts from levelStr to Level
+    /// @param levelStr Upper case string based level.
+    ///        Lower case is also valid but providing upper case is recommended.
     static Level convertFromString(const char* levelStr) {
         if ((strcmp(levelStr, "GLOBAL") == 0) || (strcmp(levelStr, "global") == 0))
             return Level::Global;
@@ -466,11 +466,11 @@ public:
             return Level::Trace;
         return Level::Unknown;
     }
-   /// @brief Applies specified lambda to each level starting from startIndex
-   /// @param startIndex initial value to start the iteration from. This is passed by reference and 
-   ///        is incremented (left-shifted) so this can be used inside lambda function as well to represent current level.
-   /// @param fn function to apply with each level. 
-   ///        This bool represent whether or not to stop iterating through levels.
+    /// @brief Applies specified lambda to each level starting from startIndex
+    /// @param startIndex initial value to start the iteration from. This is passed by reference and 
+    ///        is incremented (left-shifted) so this can be used inside lambda function as well to represent current level.
+    /// @param fn function to apply with each level. 
+    ///        This bool represent whether or not to stop iterating through levels.
     static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType lIndexMax = LevelHelper::kMaxValid;
         do {
@@ -519,22 +519,22 @@ enum class ConfigurationType : base::type::EnumType {
 /// @brief Static class that contains conversion helper functions for el::ConfigurationType
 class ConfigurationTypeHelper : base::StaticClass {
 public:
-   /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
+    /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
     static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(ConfigurationType::Enabled);
-   /// @brief Represents maximum valid configuration type. This is used internally and you should not need it.
+    /// @brief Represents maximum valid configuration type. This is used internally and you should not need it.
     static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(ConfigurationType::MaxLogFileSize);
-   /// @brief Casts configuration type to int, useful for iterating through enum.
+    /// @brief Casts configuration type to int, useful for iterating through enum.
     static base::type::EnumType castToInt(ConfigurationType configurationType) {
         return static_cast<base::type::EnumType>(configurationType);
     }
-   /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
+    /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
     static ConfigurationType castFromInt(base::type::EnumType c) {
         return static_cast<ConfigurationType>(c);
     }
-   /// @brief Converts configuration type to associated const char*
-   /// @returns Upper case string based configuration type.
+    /// @brief Converts configuration type to associated const char*
+    /// @returns Upper case string based configuration type.
     static const char* convertToString(ConfigurationType configurationType) {
-       // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
+        // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (configurationType == ConfigurationType::Enabled) return "ENABLED";
         if (configurationType == ConfigurationType::Filename) return "FILENAME";
         if (configurationType == ConfigurationType::Format) return "FORMAT";
@@ -546,9 +546,9 @@ public:
         if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
         return "UNKNOWN";
     }
-   /// @brief Converts from configStr to ConfigurationType
-   /// @param configStr Upper case string based configuration type.
-   ///        Lower case is also valid but providing upper case is recommended.
+    /// @brief Converts from configStr to ConfigurationType
+    /// @param configStr Upper case string based configuration type.
+    ///        Lower case is also valid but providing upper case is recommended.
     static ConfigurationType convertFromString(const char* configStr) {
         if ((strcmp(configStr, "ENABLED") == 0) || (strcmp(configStr, "enabled") == 0))
             return ConfigurationType::Enabled;
@@ -570,11 +570,11 @@ public:
             return ConfigurationType::LogFlushThreshold;
         return ConfigurationType::Unknown;
     }
-   /// @brief Applies specified lambda to each configuration type starting from startIndex
-   /// @param startIndex initial value to start the iteration from. This is passed by reference and bit is shifted
-   ///        so this can be used inside lambda function as well to represent current configuration type.
-   /// @param fn function to apply with each configuration type. 
-   ///        This bool represent whether or not to stop iterating through configurations.
+    /// @brief Applies specified lambda to each configuration type starting from startIndex
+    /// @param startIndex initial value to start the iteration from. This is passed by reference and bit is shifted
+    ///        so this can be used inside lambda function as well to represent current configuration type.
+    /// @param fn function to apply with each configuration type. 
+    ///        This bool represent whether or not to stop iterating through configurations.
     static void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType cIndexMax = ConfigurationTypeHelper::kMaxValid;
         do {
@@ -587,30 +587,30 @@ public:
 };
 /// @brief Flags used while writing logs. This flags are set by user
 enum class LoggingFlag : base::type::EnumType {
-   /// @brief Makes sure we have new line for each container log entry
+    /// @brief Makes sure we have new line for each container log entry
     NewLineForContainer = 1,
-   /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
-   /// logging is allowed via that module.
-   ///
-   /// @detail Say param was -vmodule=main*=3 and a verbose log is being written from a file
-   /// called something.cpp then if this flag is enabled, log will be written otherwise
-   /// it will be disallowed.
+    /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
+    /// logging is allowed via that module.
+    ///
+    /// @detail Say param was -vmodule=main*=3 and a verbose log is being written from a file
+    /// called something.cpp then if this flag is enabled, log will be written otherwise
+    /// it will be disallowed.
     AllowVerboseIfModuleNotSpecified = 2,
-   /// @brief When handling crashes by default, detailed crash reason will be logged as well
+    /// @brief When handling crashes by default, detailed crash reason will be logged as well
     LogDetailedCrashReason = 4,
-   /// @brief Allows to disable application abortion when logged using FATAL level
+    /// @brief Allows to disable application abortion when logged using FATAL level
     DisableApplicationAbortOnFatalLog = 8,
-   /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
+    /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
     ImmediateFlush = 16,
-   /// @brief Enables strict file rolling
+    /// @brief Enables strict file rolling
     StrictLogFileSizeCheck = 32,
-   /// @brief Make terminal output colorful for supported terminals
+    /// @brief Make terminal output colorful for supported terminals
     ColoredTerminalOutput = 64
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
 namespace consts {
-   // Level log values - These are values that are replaced in place of %level format specifier
+    // Level log values - These are values that are replaced in place of %level format specifier
     static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
     static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
     static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN ");
@@ -618,7 +618,7 @@ namespace consts {
     static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
     static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
     static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
-   // Format specifiers - These are used to define log format
+    // Format specifiers - These are used to define log format
     static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
     static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
     static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
@@ -633,7 +633,7 @@ namespace consts {
     static const base::type::char_t* kMessageFormatSpecifier          =      ELPP_LITERAL("%msg");
     static const base::type::char_t* kVerboseLevelFormatSpecifier     =      ELPP_LITERAL("%vlevel");
     static const char* kDateTimeFormatSpecifierForFilename            =      "%datetime";
-   // Date/time
+    // Date/time
     static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
     static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
@@ -644,7 +644,7 @@ namespace consts {
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
-   // Miscellaneous constants
+    // Miscellaneous constants
     static const char* kDefaultLoggerId                        =      "default";
     static const char* kPerformanceLoggerId                    =      "performance";
     static const char* kSysLogLoggerId                         =      "syslog";
@@ -652,7 +652,7 @@ namespace consts {
     static const char  kFormatSpecifierChar                    =      '%';
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     static const char  kFormatSpecifierCharValue               =      'v';
-#endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
+#endif  // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
@@ -708,7 +708,7 @@ namespace consts {
         const char* brief;
         const char* detail;
     } kCrashSignals[kMaxCrashSignals] = {
-       // NOTE: Do not re-order, if you do please check CrashHandler(bool) constructor and CrashHandler::setHandler(..)
+        // NOTE: Do not re-order, if you do please check CrashHandler(bool) constructor and CrashHandler::setHandler(..)
         { SIGABRT, "SIGABRT", "Abnormal termination",
                 "Program was abnormally terminated." },
         { SIGFPE, "SIGFPE", "Erroneous arithmetic operation",
