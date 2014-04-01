@@ -669,7 +669,7 @@ namespace consts {
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     static const char  kFormatSpecifierCharValue               =      'v';
 #endif  // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-    static const unsigned short kMaxLogPerContainer            =      100;  // NOLINT
+    static const unsigned int kMaxLogPerContainer              =      100;
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
     static const short kMaxVerboseLevel                        =      9;  // NOLINT
