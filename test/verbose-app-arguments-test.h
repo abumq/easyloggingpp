@@ -119,31 +119,31 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
     c[2] = "\0";
     el::Helpers::setArgs(2, c);
 
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main.h", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "main.c", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(5, "main.cpp", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cxx", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "main.cc", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main-file-for-prog.cc", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main.h")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "main.c")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(5, "main.cpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "main.cc")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main-file-for-prog.cc")));
 
     el::Loggers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);  // Check strictly
 
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "tmain.cxx", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "tmain.cxx")));
 
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cpp", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cxx", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hxx", ELPP->flags())));
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hpp", ELPP->flags())));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hpp")));
 
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cpp", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cxx", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hxx", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hpp", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cpp")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.cxx")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hxx")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy.hpp")));
 
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.cc", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.hh", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.h", ELPP->flags())));
-    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.c", ELPP->flags())));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.cc")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.hh")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.h")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.c")));
 }
 #endif // VMODULE_TESTS_H_
