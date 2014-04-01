@@ -3998,7 +3998,8 @@ private:
                         }
                     }
                 } else {
-                    ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE.", false);
+                    ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE. [Logger ID: " 
+                        << m_logMessage.logger()->id() << "]", false);
                 }
             }
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
