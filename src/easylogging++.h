@@ -4101,22 +4101,19 @@ private:
 class MessageBuilder {
 public:
     MessageBuilder(void) : m_logger(nullptr), m_proceed(false), m_containerLogSeperator(ELPP_LITERAL("")) {}
-    void initialize(Logger* logger, bool proceed) {
+    void initialize(Logger* logger) {
         m_logger = logger;
-        m_proceed = proceed;
         m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
             ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
     }
 
 #   define ELPP_SIMPLE_LOG(LOG_TYPE)\
     inline MessageBuilder& operator<<(LOG_TYPE msg) {\
-        if (!m_proceed) { return *this; }\
         m_logger->stream() << msg;\
         return *this;\
     }
 
     inline MessageBuilder& operator<<(const std::string& msg) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << msg.c_str();
         return *this;
     }
@@ -4135,11 +4132,9 @@ public:
     ELPP_SIMPLE_LOG(const void*)
     ELPP_SIMPLE_LOG(long double)
     inline MessageBuilder& operator<<(const std::wstring& msg) {
-        if (!m_proceed) { return *this; }
         return operator<<(msg.c_str());
     }
     inline MessageBuilder& operator<<(const wchar_t* msg) {
-        if (!m_proceed) { return *this; }
         if (msg == nullptr) {
             m_logger->stream() << base::consts::kNullPointer;
             return *this;
@@ -4155,38 +4150,32 @@ public:
     }
    // ostream manipulators
     inline MessageBuilder& operator<<(std::ostream& (*OStreamMani)(std::ostream&)) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << OStreamMani;
         return *this;
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(temp)                                                    \
     template <typename T>                                                                            \
-    inline MessageBuilder& operator<<(const temp<T>& template_inst) {                                        \
-        if (!m_proceed) { return *this; }                                                            \
+    inline MessageBuilder& operator<<(const temp<T>& template_inst) {                                \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG(temp)                                                    \
     template <typename T1, typename T2>                                                              \
-    inline MessageBuilder& operator<<(const temp<T1, T2>& template_inst) {                                   \
-        if (!m_proceed) { return *this; }                                                            \
+    inline MessageBuilder& operator<<(const temp<T1, T2>& template_inst) {                           \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(temp)                                                  \
     template <typename T1, typename T2, typename T3>                                                 \
-    inline MessageBuilder& operator<<(const temp<T1, T2, T3>& template_inst) {                               \
-        if (!m_proceed) { return *this; }                                                            \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3>& template_inst) {                       \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(temp)                                                   \
     template <typename T1, typename T2, typename T3, typename T4>                                    \
-    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4>& template_inst) {                           \
-        if (!m_proceed) { return *this; }                                                            \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4>& template_inst) {                   \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 #define ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(temp)                                                   \
     template <typename T1, typename T2, typename T3, typename T4, typename T5>                       \
-    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) {                       \
-        if (!m_proceed) { return *this; }                                                            \
+    inline MessageBuilder& operator<<(const temp<T1, T2, T3, T4, T5>& template_inst) {               \
         return writeIterator(template_inst.begin(), template_inst.end(), template_inst.size());      \
     }
 
@@ -4200,28 +4189,24 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::multimap)
     template <class T, class Container>
     inline MessageBuilder& operator<<(const std::queue<T, Container>& queue_) {
-        if (!m_proceed) { return *this; }
         base::workarounds::IterableQueue<T, Container> iterableQueue_ =
                 static_cast<base::workarounds::IterableQueue<T, Container> >(queue_);
         return writeIterator(iterableQueue_.begin(), iterableQueue_.end(), iterableQueue_.size());
     }
     template <class T, class Container>
     inline MessageBuilder& operator<<(const std::stack<T, Container>& stack_) {
-        if (!m_proceed) { return *this; }
         base::workarounds::IterableStack<T, Container> iterableStack_ =
                 static_cast<base::workarounds::IterableStack<T, Container> >(stack_);
         return writeIterator(iterableStack_.begin(), iterableStack_.end(), iterableStack_.size());
     }
     template <class T, class Container, class Comparator>
     inline MessageBuilder& operator<<(const std::priority_queue<T, Container, Comparator>& priorityQueue_) {
-        if (!m_proceed) { return *this; }
         base::workarounds::IterablePriorityQueue<T, Container, Comparator> iterablePriorityQueue_ =
                 static_cast<base::workarounds::IterablePriorityQueue<T, Container, Comparator> >(priorityQueue_);
         return writeIterator(iterablePriorityQueue_.begin(), iterablePriorityQueue_.end(), iterablePriorityQueue_.size());
     }
     template <class First, class Second>
     inline MessageBuilder& operator<<(const std::pair<First, Second>& pair_) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("(");
         operator << (static_cast<First>(pair_.first));
         m_logger->stream() << ELPP_LITERAL(", ");
@@ -4231,7 +4216,6 @@ public:
     }
     template <std::size_t Size>
     inline MessageBuilder& operator<<(const std::bitset<Size>& bitset_) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("[");
         operator << (bitset_.to_string());
         m_logger->stream() << ELPP_LITERAL("]");
@@ -4240,7 +4224,6 @@ public:
 #   if defined(_ELPP_LOG_STD_ARRAY)
     template <class T, std::size_t Size>
     inline MessageBuilder& operator<<(const std::array<T, Size>& array) {
-        if (!m_proceed) { return *this; }
         return writeIterator(array.begin(), array.end(), array.size());
     }
 #   endif  // defined(_ELPP_LOG_STD_ARRAY)
@@ -4255,7 +4238,6 @@ public:
 #endif  // defined(_ELPP_STL_LOGGING)
 #if defined(_ELPP_QT_LOGGING)
     inline MessageBuilder& operator<<(const QString& msg) {
-        if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << msg.toStdWString();
 #   else
@@ -4264,15 +4246,12 @@ public:
         return *this;
     }
     inline MessageBuilder& operator<<(const QByteArray& msg) {
-        if (!m_proceed) { return *this; }
         return operator << (QString(msg));
     }
     inline MessageBuilder& operator<<(const QStringRef& msg) {
-        if (!m_proceed) { return *this; }
         return operator<<(msg.toString());
     }
     inline MessageBuilder& operator<<(qint64 msg) {
-        if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << QString::number(msg).toStdWString();
 #   else
@@ -4281,7 +4260,6 @@ public:
         return *this;
     }
     inline MessageBuilder& operator<<(quint64 msg) {
-        if (!m_proceed) { return *this; }
 #   if defined(_ELPP_UNICODE)
         m_logger->stream() << QString::number(msg).toStdWString();
 #   else
@@ -4290,12 +4268,10 @@ public:
         return *this;
     }
     inline MessageBuilder& operator<<(QChar msg) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << msg.toLatin1();
         return *this;
     }
     inline MessageBuilder& operator<<(const QLatin1String& msg) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << msg.latin1();
         return *this;
     }
@@ -4307,7 +4283,6 @@ public:
     ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG(QStack)
     template <typename First, typename Second>
     inline MessageBuilder& operator<<(const QPair<First, Second>& pair_) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("(");
         operator << (static_cast<First>(pair_.first));
         m_logger->stream() << ELPP_LITERAL(", ");
@@ -4317,7 +4292,6 @@ public:
     }
     template <typename K, typename V>
     inline MessageBuilder& operator<<(const QMap<K, V>& map_) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("[");
         QList<K> keys = map_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -4339,13 +4313,11 @@ public:
     }
     template <typename K, typename V>
     inline MessageBuilder& operator<<(const QMultiMap<K, V>& map_) {
-        if (!m_proceed) { return *this; }
         operator << (static_cast<QMap<K, V>>(map_));
         return *this;
     }
     template <typename K, typename V>
     inline MessageBuilder& operator<<(const QHash<K, V>& hash_) {
-        if (!m_proceed) { return *this; }
         m_logger->stream() << ELPP_LITERAL("[");
         QList<K> keys = hash_.keys();
         typename QList<K>::const_iterator begin = keys.begin();
@@ -4367,7 +4339,6 @@ public:
     }
     template <typename K, typename V>
     inline MessageBuilder& operator<<(const QMultiHash<K, V>& multiHash_) {
-        if (!m_proceed) { return *this; }
         operator << (static_cast<QHash<K, V>>(multiHash_));
         return *this;
     }
@@ -4474,24 +4445,32 @@ public:
     }
 
     virtual ~Writer(void) {
+#if _ELPP_LOGGING_ENABLED
         processDispatch();
+#endif  // _ELPP_LOGGING_ENABLED
     }
 
     template <typename T>
     inline Writer& operator<<(const T& log) {
+#if _ELPP_LOGGING_ENABLED
+        if (!m_proceed) { return *this; }
         m_messageBuilder << log;
+#endif  // _ELPP_LOGGING_ENABLED
         return *this;
     }
 
     inline Writer& operator<<(std::ostream& (*log)(std::ostream&)) {
+#if _ELPP_LOGGING_ENABLED
+        if (!m_proceed) { return *this; }
         m_messageBuilder << log;
+#endif  // _ELPP_LOGGING_ENABLED
         return *this;
     }
 
     Writer& construct(Logger* logger, bool needLock = true) {
         m_logger = logger;
         initializeLogger(logger->id(), false, needLock);
-        m_messageBuilder.initialize(m_logger, m_proceed);
+        m_messageBuilder.initialize(m_logger);
         return *this;
     }
 
@@ -4819,24 +4798,24 @@ public:
             bool scopedLog = true, Level level = Level::Info) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(std::string()), m_enabled(false) {
-#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
-       // We store it locally so that if user happen to change configuration by the end of scope
-       // or before calling checkpoint, we still depend on state of configuraton at time of construction
+#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
+        // We store it locally so that if user happen to change configuration by the end of scope
+        // or before calling checkpoint, we still depend on state of configuraton at time of construction
         el::Logger* loggerPtr = elStorage->registeredLoggers()->get(loggerId, false);
         m_enabled = loggerPtr != nullptr && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
         if (m_enabled) {
             base::utils::DateTime::gettimeofday(&m_startTime);
         }
-#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
+#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
     }
-   /// @brief Copy constructor
+    /// @brief Copy constructor
     PerformanceTracker(const PerformanceTracker& t) :
         m_blockName(t.m_blockName), m_timestampUnit(t.m_timestampUnit), m_loggerId(t.m_loggerId), m_scopedLog(t.m_scopedLog),
         m_level(t.m_level), m_hasChecked(t.m_hasChecked), m_lastCheckpointId(t.m_lastCheckpointId), m_enabled(t.m_enabled),
         m_startTime(t.m_startTime), m_endTime(t.m_endTime), m_lastCheckpointTime(t.m_lastCheckpointTime) {
     }
     virtual ~PerformanceTracker(void) {
-#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
+#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
             if (m_scopedLog) {
@@ -4852,14 +4831,14 @@ public:
                 data.init(this);
                 data.m_formattedTimeTaken = formattedTime;
                 ELPP->postPerformanceTrackingHandler()(&data);
-#   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
+#   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
             }
         }
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
-   /// @brief A checkpoint for current performanceTracker block.
+    /// @brief A checkpoint for current performanceTracker block.
     void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
-#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
+#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
         if (m_enabled) {
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);            
@@ -4908,7 +4887,7 @@ public:
             m_hasChecked = true;
             m_lastCheckpointId = id;
         }
-#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
+#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
         _ELPP_UNUSED(id);
         _ELPP_UNUSED(file);
         _ELPP_UNUSED(line);
