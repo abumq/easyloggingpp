@@ -36,10 +36,6 @@ API changes: Yes
      - `_ELPP_STOP_ON_FIRST_ASSERTION` to `_ELPP_DEBUG_ASSERT_FAILURE`
      - `_ELPP_ENABLE_ERRORS` to `_ELPP_DEBUG_ERRORS`
      - `_ELPP_ENABLE_INFO` to `_ELPP_DEBUG_INFO`
- - Changed handlers name:
-     - `PreRollOutHandler` to `PreRollOutCallback`
-     - `PostLogDispatchHandler` to `LogDispatchCallback`
-     - `PostPerformanceTrackingHandler` to `PerformanceTrackingCallback`
 
 ==========================
 =         NOTES          =

@@ -14,7 +14,7 @@ TEST(PostLogDispatchHandlerTest, Installation) {
     EXPECT_TRUE(loggedMessages.empty());
     
     // Install handler
-    Helpers::installLogDispatchCallback(postLogHandler);
+    Helpers::installPostLogDispatchHandler(postLogHandler);
     LOG(INFO) << "Should be part of loggedMessages - 1";
     EXPECT_EQ(1, loggedMessages.size());
     type::string_t expectedMessage = ELPP_LITERAL("Should be part of loggedMessages - 1");
@@ -24,7 +24,7 @@ TEST(PostLogDispatchHandlerTest, Installation) {
 TEST(PostLogDispatchHandlerTest, Uninstallation) {
     
     // Uninstall handler
-    Helpers::uninstallLogDispatchCallback();
+    Helpers::uninstallPostLogDispatchHandler();
     LOG(INFO) << "This is not in list";
     EXPECT_EQ(loggedMessages.end(), 
         std::find(loggedMessages.begin(), loggedMessages.end(), ELPP_LITERAL("This is not in list")));

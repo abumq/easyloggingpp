@@ -7,6 +7,7 @@
  // @author mkhan3189
  //
 
+#define _ELPP_HANDLE_POST_LOG_DISPATCH
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
@@ -26,7 +27,7 @@ void handler(const el::LogMessage* msg) {
 
 int main(void) {
    
-    el::Helpers::installLogDispatchCallback(handler);
+    el::Helpers::installPostLogDispatchHandler(handler);
  
     LOG(INFO) << "This is my first message";
     LOG(INFO) << "I am second in the line";

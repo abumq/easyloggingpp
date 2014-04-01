@@ -9,5 +9,6 @@
 #define _ELPP_ENABLE_THREADING
 #define _ELPP_STACKTRACE_ON_CRASH
 #define _ELPP_SYSLOG
+#define _ELPP_HANDLE_POST_LOG_DISPATCH
 #include "../src/easylogging++.h"
 #endif // EASYLOGGING_FOR_SAMPLES_H

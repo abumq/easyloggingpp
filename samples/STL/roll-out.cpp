@@ -28,11 +28,11 @@ int main(int, char**) {
    el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Filename, "/tmp/logs/max-size.log");
    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::MaxLogFileSize, "100");
-   el::Helpers::installPreRollOutCallback(rolloutHandler);
+   el::Helpers::installPreRollOutHandler(rolloutHandler);
 
    for (int i = 0; i < 100; ++i)
        LOG(INFO) << "Test";
        
-   el::Helpers::uninstallPreRollOutCallback();
+   el::Helpers::uninstallPreRollOutHandler();
    return 0;
 }

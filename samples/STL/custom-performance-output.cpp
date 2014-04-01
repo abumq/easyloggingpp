@@ -1,6 +1,6 @@
  //
  // This file is part of Easylogging++ samples
- // PerformanceTrackingCallback sample to customize performance output
+ // PostPerformanceTrackingHandler sample to customize performance output
  //
  // Revision 1.0
  // @author mkhan3189
@@ -26,7 +26,7 @@ int main(void) {
 
     TIMED_BLOCK(mainBlock, "main");
 
-    el::Helpers::installPerformanceTrackingCallback(handler);
+    el::Helpers::installPostPerformanceTrackingHandler(handler);
 
     {
         TIMED_SCOPE(timer, "my-block");
