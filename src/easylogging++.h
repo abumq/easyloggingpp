@@ -200,24 +200,38 @@
 #endif  // (!defined(_ELPP_DISABLE_LOGS))
 #if (!defined(_ELPP_DISABLE_DEBUG_LOGS) && (_ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
 #   define _ELPP_DEBUG_LOG 1
+#else
+#   define _ELPP_DEBUG_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_DEBUG_LOGS) && (_ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
 #if (!defined(_ELPP_DISABLE_INFO_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_INFO_LOG 1
+#else
+#   define _ELPP_INFO_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_INFO_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!defined(_ELPP_DISABLE_WARNING_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_WARNING_LOG 1
+#else
+#   define _ELPP_WARNING_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_WARNING_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!defined(_ELPP_DISABLE_ERROR_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_ERROR_LOG 1
+#else
+#   define _ELPP_ERROR_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_ERROR_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!defined(_ELPP_DISABLE_FATAL_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_FATAL_LOG 1
+#else
+#   define _ELPP_FATAL_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_FATAL_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!defined(_ELPP_DISABLE_TRACE_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_TRACE_LOG 1
+#else
+#   define _ELPP_TRACE_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_TRACE_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!defined(_ELPP_DISABLE_VERBOSE_LOGS) && (_ELPP_LOGGING_ENABLED))
 #   define _ELPP_VERBOSE_LOG 1
+#else
+#   define _ELPP_VERBOSE_LOG 0
 #endif  // (!defined(_ELPP_DISABLE_VERBOSE_LOGS) && (_ELPP_LOGGING_ENABLED))
 #if (!(_ELPP_CXX0X || _ELPP_CXX11))
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
