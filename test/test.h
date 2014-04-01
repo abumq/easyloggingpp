@@ -6,6 +6,9 @@
 #define TEST_HELPERS_H_
 
 #include <gtest/gtest.h>
+
+#define _ELPP_LOGGING_FLAGS_FROM_ARG
+
 #include "easylogging++.h"
 
 using namespace el;
