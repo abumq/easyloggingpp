@@ -5408,7 +5408,9 @@ public:
     }
     /// @brief Removes logging flag used internally.
     static inline void removeFlag(el::LoggingFlag flag) {
-        ELPP->removeFlag(flag);
+        if (ELPP->hasFlag(flag)) {
+            ELPP->removeFlag(flag);
+        }
     }
     /// @brief Determines whether or not certain flag is active
     static inline bool hasFlag(el::LoggingFlag flag) {
