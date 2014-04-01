@@ -3305,12 +3305,6 @@ public:
     }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
-    template <typename T, typename... Args>
-    void log(Level, const char*, const T&, const Args&...);
-
-    template <typename T>
-    inline void log(Level, const T&);
-
 #   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME)\
     template <typename T, typename... Args>\
     inline void FUNCTION_NAME(const char*, const T&, const Args&...);\
@@ -3361,6 +3355,12 @@ private:
 
     template <typename T>
     inline void log_(Level, int, const T&);
+
+    template <typename T, typename... Args>
+    void log(Level, const char*, const T&, const Args&...);
+
+    template <typename T>
+    inline void log(Level, const T&);
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 
     void initUnflushedCount(void) {

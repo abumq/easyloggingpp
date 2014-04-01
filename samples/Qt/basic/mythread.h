@@ -33,7 +33,6 @@ protected:
         el::Logger* logger = el::Loggers::getLogger("default");
         logger->info("Info log from [Thread #%]", threadId);
         logger->info("Info log");
-        logger->log(el::Level::Info, "Test %", 123);
         logger->verbose(1, "test");
         logger->verbose(1, "test %", 123);
         logger->verbose(1, "test");

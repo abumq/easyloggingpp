@@ -10,6 +10,7 @@ API changes: Yes
 
  - Fixes for some STL containers for unicode
  - Sample fixes for unicode 
+ - Made `log()` private because some stuffs do not work properly (e.g, `_ELPP_{level}_LOGS` macros)
  - Fix line number to zero when using `log()` and friend functions
  - Fix log enabled/disabled for `_ELPP_INFO_LOG` and friends for `log()` and friends
 
