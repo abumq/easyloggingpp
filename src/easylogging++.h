@@ -5415,26 +5415,18 @@ public:
         return ELPP->hasFlag(flag);
     }
     /// @brief Adds flag and removes it when scope goes out
-    class scopedAddFlag {
+    class ScopedAddFlag {
     public:
-        scopedAddFlag(LoggingFlag flag) : m_flag(flag) {
-            Loggers::addFlag(m_flag);
-        }
-        ~scopedAddFlag(void) {
-            Loggers::removeFlag(m_flag);
-        }
+        ScopedAddFlag(LoggingFlag flag) : m_flag(flag) { Loggers::addFlag(m_flag); }
+        ~ScopedAddFlag(void) { Loggers::removeFlag(m_flag); }
     private:
         LoggingFlag m_flag;
     };
     /// @brief Removes flag and add it when scope goes out
-    class scopedRemoveFlag {
+    class ScopedRemoveFlag {
     public:
-        scopedRemoveFlag(LoggingFlag flag) : m_flag(flag) {
-            Loggers::removeFlag(m_flag);
-        }
-        ~scopedRemoveFlag(void) {
-            Loggers::addFlag(m_flag);
-        }
+        ScopedRemoveFlag(LoggingFlag flag) : m_flag(flag) { Loggers::removeFlag(m_flag); }
+        ~ScopedRemoveFlag(void) { Loggers::addFlag(m_flag); }
     private:
         LoggingFlag m_flag;
     };

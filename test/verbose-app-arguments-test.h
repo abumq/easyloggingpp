@@ -149,8 +149,8 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
 
 TEST(VerboseAppArgumentsTest, AppArgsVModulesExtension) {
 
-    el::Loggers::scopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
-    (void)scopedFlag;
+    el::Loggers::ScopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
+    _ELPP_UNUSED(scopedFlag);
     
     const char* c[10];
     c[0] = "myprog";
