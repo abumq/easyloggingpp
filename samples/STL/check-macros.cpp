@@ -13,7 +13,7 @@
 _INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
-    el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+    el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     
     // These checks should fail
     LOG(INFO) << "----- DONT WORRY ABOUT FOLLOWING CHECKS FAILING - THEY ARE EXPECTED";

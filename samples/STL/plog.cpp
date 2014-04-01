@@ -12,7 +12,7 @@
 _INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
-    el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
+    el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     std::fstream f("a file that does not exist", std::ifstream::in);    
     PLOG(INFO) << "A message with plog";
     PLOG_IF(true, INFO) << "A message with plog";
