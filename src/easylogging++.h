@@ -91,32 +91,32 @@
 #endif //  !_ELPP_OS_UNIX && !_ELPP_OS_WINDOWS && _ELPP_CYGWIN
 // Internal Assertions and errors
 #if !defined(_ELPP_DISABLE_ASSERT)
-#   if (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
+#   if (defined(_ELPP_DEBUG_ASSERT_FAILURE))
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
           std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
               << msg << "\"" << std::endl; base::utils::abort(1, \
-                  "ELPP Assertion failure, please define _ELPP_STOP_ON_FIRST_ASSERTION"); }
+                  "ELPP Assertion failure, please define _ELPP_DEBUG_ASSERT_FAILURE"); }
 #   else
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
         __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
-#   endif  // (defined(_ELPP_STOP_ON_FIRST_ASSERTION))
+#   endif  // (defined(_ELPP_DEBUG_ASSERT_FAILURE))
 #else
 #   define ELPP_ASSERT(x, y)
 #endif  //(!defined(_ELPP_DISABLE_ASSERT)
-#if defined(_ELPP_ENABLE_ERRORS)
+#if defined(_ELPP_DEBUG_ERRORS)
 #   define ELPP_INTERNAL_ERROR(msg, pe) std::cerr << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " << \
     msg << std::endl; if (pe) { std::cerr << "    "; perror(""); }
 #else
 #   define ELPP_INTERNAL_ERROR(msg, pe)
-#endif  // defined(_ELPP_ENABLE_ERRORS)
-#if (defined(_ELPP_ENABLE_INFO))
+#endif  // defined(_ELPP_DEBUG_ERRORS)
+#if (defined(_ELPP_DEBUG_INFO))
 #   if !(defined(_ELPP_INTERNAL_INFO_LEVEL))
 #      define _ELPP_INTERNAL_INFO_LEVEL 9
 #   endif  // !(defined(_ELPP_INTERNAL_INFO_LEVEL))
 #   define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= _ELPP_INTERNAL_INFO_LEVEL) std::cout << msg << std::endl; }
 #else
 #   define ELPP_INTERNAL_INFO(lvl, msg)
-#endif  // (defined(_ELPP_ENABLE_INFO))
+#endif  // (defined(_ELPP_DEBUG_INFO))
 #if defined(_ELPP_STACKTRACE_ON_CRASH)
 #   if (_ELPP_COMPILER_GCC && !_ELPP_MINGW)
 #      define _ELPP_STACKTRACE 1
@@ -2335,7 +2335,7 @@ public:
    /// @param configurationFile Full path to configuration file
    /// @param base Configurations to base new configuration repository off. This value is used when you want to use
    ///        existing Configurations to base all the values and then set rest of configuration via configuration file.
-   /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+   /// @return True if successfully parsed, false otherwise. You may define '_ELPP_DEBUG_ASSERT_FAILURE' to make sure you
    ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
         bool assertionPassed = false;
@@ -2355,7 +2355,7 @@ public:
    /// new line characters are provided.
    /// @param base Configurations to base new configuration repository off. This value is used when you want to use
    ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
-   /// @return True if successfully parsed, false otherwise. You may define '_STOP_ON_FIRST_ELPP_ASSERTION' to make sure you
+   /// @return True if successfully parsed, false otherwise. You may define '_ELPP_DEBUG_ASSERT_FAILURE' to make sure you
    ///         do not proceed without successful parse.
     inline bool parseFromText(const std::string& configurationsString, Configurations* base = nullptr) {
         bool success = Parser::parseFromText(configurationsString, this, base);

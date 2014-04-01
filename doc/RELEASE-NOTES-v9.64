@@ -32,6 +32,10 @@ API changes: Yes
  - A lot of internal refactoring for performance and size
  - Added internal error when too many arguments provided in `log()` and friends
  - Moved `addFlag(LoggingFlag)`, `removeFlag(LoggingFlag)` and `hasFlag(LoggingFlag)` to `el::Loggers`
+ - Renamed following macros:
+     - `_ELPP_STOP_ON_FIRST_ASSERTION` to `_ELPP_DEBUG_ASSERT_FAILURE`
+     - `_ELPP_ENABLE_ERRORS` to `_ELPP_DEBUG_ERRORS`
+     - `_ELPP_ENABLE_INFO` to `_ELPP_DEBUG_INFO`
 
 ==========================
 =         NOTES          =
