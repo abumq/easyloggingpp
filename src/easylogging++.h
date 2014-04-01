@@ -621,7 +621,11 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Disables comparing performance tracker's checkpoints
     DisablePerformanceTrackingCheckpointComparison = 512,
     /// @brief Enables callback
-    PerformanceTrackingCallback
+    PerformanceTrackingCallback = 1024,
+    /// @brief Disable VModules
+    DisableVModules = 2048,
+    /// @brief Disable VModules extensions
+    DisableVModulesExtensions = 4096
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -3486,7 +3490,7 @@ class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 public:
     typedef int VLevel;
 
-    explicit VRegistry(VLevel level) : m_level(level) {
+    explicit VRegistry(VLevel level, base::type::EnumType* flags) : m_level(level), m_flags(flags) {
     }
 
    /// @brief Sets verbose level. Accepted range is 0-9
@@ -3506,7 +3510,6 @@ public:
 
     void setModules(const char* modules) {
         base::threading::lock_guard lock(mutex());
-#if !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
         auto addSuffix = [](std::stringstream& ss, const char* sfx, const char* prev) {
             if (prev != nullptr && base::utils::Str::endsWith(ss.str(), prev)) {
                 std::string chr(ss.str().substr(0, ss.str().size() - strlen(prev)));
@@ -3520,25 +3523,24 @@ public:
             }
             ss << sfx;
         };  // NOLINT
-#endif  // !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
         auto insert = [&](std::stringstream& ss, VLevel level) {
-#if !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
-            addSuffix(ss, ".h", nullptr);
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".c", ".h");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".cpp", ".c");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".cc", ".cpp");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".cxx", ".cc");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".-inl.h", ".cxx");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".hxx", ".-inl.h");
-            m_modules.insert(std::make_pair(ss.str(), level));
-            addSuffix(ss, ".hpp", ".hxx");
-#endif  // !defined(_ELPP_DISABLE_VMODULES_EXTENSION)
+            if (!base::utils::hasFlag(LoggingFlag::DisableVModulesExtensions, *m_flags)) {
+                addSuffix(ss, ".h", nullptr);
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".c", ".h");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".cpp", ".c");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".cc", ".cpp");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".cxx", ".cc");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".-inl.h", ".cxx");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".hxx", ".-inl.h");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".hpp", ".hxx");
+            }
             m_modules.insert(std::make_pair(ss.str(), level));
         };  // NOLINT
         bool isMod = true;
@@ -3576,7 +3578,7 @@ public:
         }
     }
 
-    bool allowed(VLevel vlevel, const char* file, unsigned int flags = 0x0) {
+    bool allowed(VLevel vlevel, const char* file) {
         base::threading::lock_guard lock(mutex());
         if (m_modules.empty() || file == nullptr) {
             return vlevel <= m_level;
@@ -3587,7 +3589,7 @@ public:
                     return vlevel <= it->second;
                 }
             }
-            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, flags)) {
+            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, *m_flags)) {
                 return true;
             }
             return false;
@@ -3607,17 +3609,18 @@ public:
         } else if (commandLineArgs->hasParamWithValue("--V")) {
             setLevel(atoi(commandLineArgs->getParamValue("--V")));
         }
-#if (!defined(_ELPP_DISABLE_VMODULES))
-        else if (commandLineArgs->hasParamWithValue("-vmodule")) {
-            setModules(commandLineArgs->getParamValue("-vmodule"));
-        } else if (commandLineArgs->hasParamWithValue("-VMODULE")) {
-            setModules(commandLineArgs->getParamValue("-VMODULE"));
+        if (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags)) {
+            if (commandLineArgs->hasParamWithValue("-vmodule")) {
+                setModules(commandLineArgs->getParamValue("-vmodule"));
+            } else if (commandLineArgs->hasParamWithValue("-VMODULE")) {
+                setModules(commandLineArgs->getParamValue("-VMODULE"));
+            }
         }
-#endif  // (!defined(_ELPP_DISABLE_VMODULES))
     }
 
 private:
     VLevel m_level;
+    base::type::EnumType* m_flags;
     std::map<std::string, VLevel> m_modules;
 };
 }  // namespace base
@@ -3651,8 +3654,8 @@ public:
     explicit Storage(const api::LogBuilderPtr& defaultLogBuilder) :
         m_registeredHitCounters(new base::RegisteredHitCounters()),
         m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
-        m_vRegistry(new base::VRegistry(0)),
         m_flags(0x0),
+        m_vRegistry(new base::VRegistry(0, &m_flags)),
         m_preRollOutHandler(base::defaultPreRollOutHandler),
         m_postLogDispatchHandler(base::defaultPostLogDispatchHandler),
         m_postPerformanceTrackingHandler(base::defaultPostPerformanceTrackingHandler) {
@@ -3799,9 +3802,9 @@ public:
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
+    base::type::EnumType m_flags;
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
-    base::type::EnumType m_flags;
     PreRollOutHandler m_preRollOutHandler;
     PostLogDispatchHandler m_postLogDispatchHandler;
     PostPerformanceTrackingHandler m_postPerformanceTrackingHandler;
@@ -4627,7 +4630,7 @@ public:
     template <typename T> 
     inline void Logger::log_(Level level, int vlevel, const T& log) {
         if (level == Level::Verbose) {
-            if (ELPP->vRegistry()->allowed(vlevel, __FILE__, ELPP->flags())) {
+            if (ELPP->vRegistry()->allowed(vlevel, __FILE__)) {
                 base::Writer(Level::Verbose, "file", 0, "func", 
                     base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
             }
@@ -5422,7 +5425,7 @@ public:
 }  // namespace el
 #undef VLOG_IS_ON
 /// @brief Determines whether verbose logging is on for specified level current file.
-#define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__, ELPP->flags()))
+#define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__))
 #undef TIMED_BLOCK
 #undef TIMED_SCOPE
 #undef TIMED_FUNC
