@@ -3,4 +3,4 @@ build-*
 release.info
 bin/*
 logs/*
-experimental/*
+experiments/*
