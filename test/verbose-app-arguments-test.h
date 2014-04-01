@@ -131,7 +131,7 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
 
     EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "tmain.cxx")));
 
-    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cpp")));
+    EXPECT_TRUE(ELPP->vRegistry()->allowed(1, "easy.cpp"));
     EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cxx")));
     EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hxx")));
     EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hpp")));
