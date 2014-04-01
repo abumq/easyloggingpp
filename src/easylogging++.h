@@ -4489,7 +4489,7 @@ public:
         _ELPP_UNUSED(count);
         initializeLogger(loggerIds);
 #endif  // defined(_ELPP_MULTI_LOGGER_SUPPORT)
-        m_messageBuilder.initialize(m_logger, m_proceed);
+        m_messageBuilder.initialize(m_logger);
         return *this;
     }
 protected:
@@ -4614,7 +4614,7 @@ public:
     template <typename T, typename... Args>
     void Logger::log_(Level level, int vlevel, const char* s, const T& value, const Args&... args) {
         base::MessageBuilder b;
-        b.initialize(this, true);
+        b.initialize(this);
         while (*s) {
             if (*s == base::consts::kFormatSpecifierChar) {
                 if (*(s + 1) == base::consts::kFormatSpecifierChar) {
@@ -5246,7 +5246,7 @@ public:
         base::MessageBuilder b;
         el::Logger* logger = 
             ELPP->registeredLoggers()->get(el::base::consts::kDefaultLoggerId);
-        b.initialize(logger, true);
+        b.initialize(logger);
         b << templ;
 #if defined(_ELPP_UNICODE)
         std::string s = std::string(logger->stream().str().begin(), logger->stream().str().end());
