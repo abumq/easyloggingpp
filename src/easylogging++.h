@@ -4402,7 +4402,6 @@ public:
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
 private:
     Logger* m_logger;
-    bool m_proceed;
     const base::type::char_t* m_containerLogSeperator;
 
     template<class Iterator>
