@@ -3608,14 +3608,12 @@ public:
             setLevel(atoi(commandLineArgs->getParamValue("--v")));
         } else if (commandLineArgs->hasParamWithValue("--V")) {
             setLevel(atoi(commandLineArgs->getParamValue("--V")));
-        } else {
-            if (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags)) {
-                if (commandLineArgs->hasParamWithValue("-vmodule")) {
-                    setModules(commandLineArgs->getParamValue("-vmodule"));
-                } else if (commandLineArgs->hasParamWithValue("-VMODULE")) {
-                    setModules(commandLineArgs->getParamValue("-VMODULE"));
-                }
-            }
+        } else if ((commandLineArgs->hasParamWithValue("-vmodule"))
+                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags))) {
+            setModules(commandLineArgs->getParamValue("-vmodule"));
+        } else if (commandLineArgs->hasParamWithValue("-VMODULE") 
+                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags))) {
+            setModules(commandLineArgs->getParamValue("-VMODULE"));
         }
     }
 
