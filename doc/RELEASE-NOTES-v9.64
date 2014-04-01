@@ -10,8 +10,8 @@ API changes: Yes
 
  - Fixes for some STL containers for unicode
  - Sample fixes for unicode 
- - Fix to internal function for line:0 when using `log()` and friend functions
- - Internal error when too many arguments provided in `log()` and friends
+ - Fix line number to zero when using `log()` and friend functions
+ - Fix log enabled/disabled for `_ELPP_INFO_LOG` and friends for `log()` and friends
 
 ==========================
 =      NEW FEATURES      =
@@ -27,6 +27,7 @@ API changes: Yes
  - Changed `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` to `_ELPP_LOGGING_FLAGS_FROM_ARG` and inverted the logic
  - Renamed `Trackable` class to `PerformanceTracker`
  - A lot of internal refactoring for performance and size
+ - Added internal error when too many arguments provided in `log()` and friends
 
 ==========================
 =         NOTES          =

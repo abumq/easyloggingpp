@@ -3299,6 +3299,8 @@ public:
     inline void setLogBuilder(const api::LogBuilderPtr& logBuilder) {
         m_logBuilder = logBuilder;
     }
+
+    inline void enabled(Level level) { return m_typedConfigurations->enabled(m_level); }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
     template <typename T, typename... Args>
@@ -3314,7 +3316,7 @@ public:
     inline void FUNCTION_NAME(const T&);
 
     template <typename T, typename... Args> 
-    void verbose(int, const char*, const T&, const Args&...);
+    inline void verbose(int, const char*, const T&, const Args&...);
 
     template <typename T> 
     inline void verbose(int, const T&);
@@ -4527,7 +4529,7 @@ protected:
                 m_logger->lock();  // This should not be unlocked by checking m_proceed because
                                   // m_proceed can be changed by lines below
             }
-            m_proceed = m_logger->m_typedConfigurations->enabled(m_level);
+            m_proceed = m_logger->enabled(m_level);
         }
     }
     
@@ -4656,8 +4658,9 @@ public:
         base::threading::lock_guard lock(mutex());
         log_(level, 0, log);
     }
+#if _ELPP_VERBOSE_LOG
     template <typename T, typename... Args>
-    void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
+    inline void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
         base::threading::lock_guard lock(mutex());
         log_(el::Level::Verbose, vlevel, s, value, args...);
     }
@@ -4666,6 +4669,16 @@ public:
         base::threading::lock_guard lock(mutex());
         log_(el::Level::Verbose, vlevel, log);
     }
+#else
+    template <typename T, typename... Args>
+    inline void Logger::verbose(int, const char*, const T&, const Args&...) {
+        return;
+    }
+    template <typename T>
+    inline void Logger::verbose(int, const T&) {
+        return;
+    }
+#endif  // _ELPP_VERBOSE_LOG
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
     inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
@@ -4675,14 +4688,48 @@ public:
     inline void Logger::FUNCTION_NAME(const T& value) {\
         log(LOG_LEVEL, value);\
     }
+#   define LOGGER_LEVEL_WRITERS_DISABLED(FUNCTION_NAME, LOG_LEVEL)\
+    template <typename T, typename... Args>\
+    inline void Logger::FUNCTION_NAME(const char*, const T&, const Args&...) {\
+        return;\
+    }\
+    template <typename T>\
+    inline void Logger::FUNCTION_NAME(const T&) {\
+        return;\
+    }
 
+#if _ELPP_INFO_LOG
     LOGGER_LEVEL_WRITERS(info, Level::Info)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(info, Level::Info)
+#endif // _ELPP_INFO_LOG
+#if _ELPP_DEBUG_LOG
     LOGGER_LEVEL_WRITERS(debug, Level::Debug)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(debug, Level::Debug)
+#endif // _ELPP_DEBUG_LOG
+#if _ELPP_WARNING_LOG
     LOGGER_LEVEL_WRITERS(warn, Level::Warning)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(warn, Level::Warning)
+#endif // _ELPP_WARNING_LOG
+#if _ELPP_ERROR_LOG
     LOGGER_LEVEL_WRITERS(error, Level::Error)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(error, Level::Error)
+#endif // _ELPP_ERROR_LOG
+#if _ELPP_FATAL_LOG
     LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(fatal, Level::Fatal)
+#endif // _ELPP_FATAL_LOG
+#if _ELPP_TRACE_LOG
     LOGGER_LEVEL_WRITERS(trace, Level::Trace)
+#else
+    LOGGER_LEVEL_WRITERS_DISABLED(trace, Level::Trace)
+#endif // _ELPP_TRACE_LOG
 #   undef LOGGER_LEVEL_WRITERS
+#   undef LOGGER_LEVEL_WRITERS_DISABLED
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #if defined(_ELPP_MULTI_LOGGER_SUPPORT)
 #   if _ELPP_COMPILER_MSVC
