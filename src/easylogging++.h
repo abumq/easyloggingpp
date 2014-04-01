@@ -4100,7 +4100,7 @@ private:
 // Log message builder
 class MessageBuilder {
 public:
-    MessageBuilder(void) : m_logger(nullptr), m_proceed(false), m_containerLogSeperator(ELPP_LITERAL("")) {}
+    MessageBuilder(void) : m_logger(nullptr), m_containerLogSeperator(ELPP_LITERAL("")) {}
     void initialize(Logger* logger) {
         m_logger = logger;
         m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ? 
