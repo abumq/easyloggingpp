@@ -5402,7 +5402,9 @@ public:
     }
     /// @brief Adds logging flag used internally.
     static inline void addFlag(el::LoggingFlag flag) {
-        ELPP->addFlag(flag);
+        if (!ELPP->hasFlag(flag)) {
+            ELPP->addFlag(flag);
+        }
     }
     /// @brief Removes logging flag used internally.
     static inline void removeFlag(el::LoggingFlag flag) {

@@ -31,15 +31,10 @@ static void reconfigureLoggersForTest(void) {
     // We do not want to reconfgure syslog with date/time
     Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %msg");
 
-    if (!Loggers::hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-        Loggers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
-    }
-    if (!Loggers::hasFlag(LoggingFlag::ImmediateFlush)) {
-        Loggers::addFlag(LoggingFlag::ImmediateFlush);
-    }
-    if (!Loggers::hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-        Loggers::addFlag(LoggingFlag::StrictLogFileSizeCheck);
-    }
+    Loggers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
+    Loggers::addFlag(LoggingFlag::ImmediateFlush);
+    Loggers::addFlag(LoggingFlag::StrictLogFileSizeCheck);
+    Loggers::addFlag(LoggingFlag::DisableVModulesExtensions);
 }
 
 static std::string tail(unsigned int n, const char* filename = logfile) {
