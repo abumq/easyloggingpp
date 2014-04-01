@@ -21,6 +21,7 @@ API changes: Yes
  - Ability to disable performance tracking dispatch by defining `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH`
  - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
  - Added `LoggingFlag::MultiLoggerSupport` and removed `_ELPP_MULTI_LOGGER_SUPPORT` macro
+ - Added `LoggingFlag::PerformanceTrackingCallback` and removed need to define `_ELPP_HANDLE_POST_PERFORMANCE_TRACKING` macro
 
 ==========================
 =       REFACTORING      =

@@ -6,8 +6,6 @@
  // @author mkhan3189
  //
 
-#define _ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH // to stop default dispatch
-#define _ELPP_HANDLE_POST_PERFORMANCE_TRACKING // we need this!
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
@@ -23,6 +21,8 @@ void handler(const el::PerformanceTrackingData* data) {
 }
 
 int main(void) {
+
+    el::Loggers::addFlag(el::LoggingFlag::DisablePerformanceTrackingDispatch);
 
     TIMED_BLOCK(mainBlock, "main");
 

@@ -621,7 +621,13 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Make terminal output colorful for supported terminals
     ColoredTerminalOutput = 64,
     /// @brief Supports use of multiple logging in same macro, e.g, CLOG(INFO, "default", "network")
-    MultiLoggerSupport = 128
+    MultiLoggerSupport = 128,
+    /// @brief Disables log dispatch for performance tracking
+    DisablePerformanceTrackingDispatch = 256,
+    /// @brief Disables comparing performance tracker's checkpoints
+    DisablePerformanceTrackingCheckpointComparison = 512,
+    /// @brief Enables callback
+    PerformanceTrackingCallback
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -4814,17 +4820,16 @@ public:
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
                 base::type::string_t formattedTime = getFormattedTimeTaken();
-                _ELPP_UNUSED(formattedTime); // just in case
-#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-                _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
-                    << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
-#   endif  // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-#   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
-                PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
-                data.init(this);
-                data.m_formattedTimeTaken = formattedTime;
-                ELPP->postPerformanceTrackingHandler()(&data);
-#   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
+                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
+                    _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
+                        << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
+                }
+                if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
+                    PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
+                    data.init(this);
+                    data.m_formattedTimeTaken = formattedTime;
+                    ELPP->postPerformanceTrackingHandler()(&data);
+                }
             }
         }
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
@@ -4836,46 +4841,41 @@ public:
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);            
             base::type::string_t formattedTime;
-            _ELPP_UNUSED(formattedTime); // just in case
-#   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-            base::type::stringstream_t ss;
-            ss << ELPP_LITERAL("Performance checkpoint");
-            if (!id.empty()) {
-                ss << ELPP_LITERAL(" [") << id.c_str() << ELPP_LITERAL("]");
-            }
-            ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
-#      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            if (m_hasChecked) {
-                formattedTime = base::utils::DateTime::formatTime(
-                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                        m_timestampUnit);
-                ss << ELPP_LITERAL(" ([") << formattedTime << ELPP_LITERAL("] from ");
-                if (m_lastCheckpointId.empty()) {
-                    ss << ELPP_LITERAL("last checkpoint");
-                } else {
-                    ss << ELPP_LITERAL("checkpoint '") << m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
+            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
+                base::type::stringstream_t ss;
+                ss << ELPP_LITERAL("Performance checkpoint");
+                if (!id.empty()) {
+                    ss << ELPP_LITERAL(" [") << id.c_str() << ELPP_LITERAL("]");
                 }
-                ss << ELPP_LITERAL(")]");
+                ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
+                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && m_hasChecked) {
+                    formattedTime = base::utils::DateTime::formatTime(
+                        base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
+                            m_timestampUnit);
+                    ss << ELPP_LITERAL(" ([") << formattedTime << ELPP_LITERAL("] from ");
+                    if (m_lastCheckpointId.empty()) {
+                        ss << ELPP_LITERAL("last checkpoint");
+                    } else {
+                        ss << ELPP_LITERAL("checkpoint '") << m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
+                    }
+                    ss << ELPP_LITERAL(")]");
+                } else {
+                    ss << ELPP_LITERAL("]");
+                }
+                el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
             } else {
-                ss << ELPP_LITERAL("]");
+                formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
+                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
+                    m_timestampUnit) : ELPP_LITERAL("");
             }
-#      else
-            ss << ELPP_LITERAL("]");
-#      endif  // defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
-#   else
-            formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
-                base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                m_timestampUnit) : ELPP_LITERAL("");
-#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
-#   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
-            PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
-            data.init(this, !m_hasChecked);
-#      if !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            data.m_formattedTimeTaken = formattedTime;
-#   endif // !defined(_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS)
-            ELPP->postPerformanceTrackingHandler()(&data);
-#   endif  // defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
+            if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
+                PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
+                data.init(this, !m_hasChecked);
+                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison)) {
+                    data.m_formattedTimeTaken = formattedTime;
+                }
+                ELPP->postPerformanceTrackingHandler()(&data);
+            }
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
@@ -5215,10 +5215,12 @@ public:
     }
     /// @brief Installs post performance tracking handler, this handler is triggered when performance tracking is finished
     static inline void installPostPerformanceTrackingHandler(const PostPerformanceTrackingHandler& handler) {
+        ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
         ELPP->setPostPerformanceTrackingHandler(handler);
     }
     /// @brief Uninstalls post performance tracking handler
     static inline void uninstallPostPerformanceTrackingHandler(void) {
+        ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
         ELPP->unsetPostPerformanceTrackingHandler();
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
