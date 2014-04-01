@@ -3951,11 +3951,11 @@ public:
             m_logMessage.logger()->unlock();
         }
         ELPP->unlock();
-        if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
-            m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
-            m_logMessage.logger()->unlock();
-            ELPP->logDispatchCallback()(&m_logMessage);
-        }
+#if defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
+        m_logMessage.logger()->unlock();
+        ELPP->logDispatchCallback()(&m_logMessage);
+#endif  // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
     }
 
 private:
@@ -4810,7 +4810,7 @@ public:
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
                 base::type::string_t formattedTime = getFormattedTimeTaken();
-                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
+                if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
                     _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
                         << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
                 }
@@ -4831,7 +4831,7 @@ public:
             base::threading::lock_guard lock(mutex());
             base::utils::DateTime::gettimeofday(&m_endTime);            
             base::type::string_t formattedTime;
-            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
+            if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
                 base::type::stringstream_t ss;
                 ss << ELPP_LITERAL("Performance checkpoint");
                 if (!id.empty()) {
@@ -5196,17 +5196,13 @@ public:
         ELPP->unsetPreRollOutCallback();
     }
    /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
-    static inline void installLogDispatchCallback(const LogDispatchCallback& callback, bool addFlag = true) {
-        if (addFlag) {
-            ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
-        }
+    static inline void installLogDispatchCallback(const LogDispatchCallback& callback) {
+        ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
         ELPP->setLogDispatchCallback(callback);
     }
     /// @brief Uninstalls post log dispatch
-    static inline void uninstallLogDispatchCallback(bool removeFlag = true) {
-        if (removeFlag) {
-            ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
-        }
+    static inline void uninstallLogDispatchCallback(void) {
+        ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
         ELPP->unsetLogDispatchCallback();
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
