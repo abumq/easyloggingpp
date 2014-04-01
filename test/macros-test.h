@@ -4,7 +4,6 @@
 #include "test.h"
 
 TEST(MacrosTest, VaLength) {
-#if defined(_ELPP_MULTI_LOGGER_SUPPORT)
     EXPECT_EQ(10, el_getVALength("a", "b", "c", "d", "e", "f", "g", "h", "i", "j"));
     EXPECT_EQ(9, el_getVALength("a", "b", "c", "d", "e", "f", "g", "h", "i"));
     EXPECT_EQ(8, el_getVALength("a", "b", "c", "d", "e", "f", "g", "h"));
@@ -15,9 +14,6 @@ TEST(MacrosTest, VaLength) {
     EXPECT_EQ(3, el_getVALength("a", "b", "c"));
     EXPECT_EQ(2, el_getVALength("a", "b"));
     EXPECT_EQ(1, el_getVALength("a"));
-#else
-#   warning "Skipping [MacrosTest] for [_ELPP_MULTI_LOGGER_SUPPORT] not defined"
-#endif // defined(_ELPP_MULTI_LOGGER_SUPPORT)
 }
 
 #endif // MACROS_TEST_H_
