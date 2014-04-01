@@ -3540,6 +3540,8 @@ public:
                 addSuffix(ss, ".hxx", ".-inl.h");
                 m_modules.insert(std::make_pair(ss.str(), level));
                 addSuffix(ss, ".hpp", ".hxx");
+                m_modules.insert(std::make_pair(ss.str(), level));
+                addSuffix(ss, ".hh", ".hpp");
             }
             m_modules.insert(std::make_pair(ss.str(), level));
         };  // NOLINT
@@ -5401,18 +5403,41 @@ public:
         ELPP->registeredLoggers()->flushAll();
     }
     /// @brief Adds logging flag used internally.
-    static inline void addFlag(el::LoggingFlag flag) {
+    static inline void addFlag(LoggingFlag flag) {
         ELPP->addFlag(flag);
     }
     /// @brief Removes logging flag used internally.
-    static inline void removeFlag(el::LoggingFlag flag) {
+    static inline void removeFlag(LoggingFlag flag) {
         ELPP->removeFlag(flag);
     }
     /// @brief Determines whether or not certain flag is active
-    static inline bool hasFlag(el::LoggingFlag flag) {
+    static inline bool hasFlag(LoggingFlag flag) {
         return ELPP->hasFlag(flag);
     }
-
+    /// @brief Adds flag and removes it when scope goes out
+    class scopedAddFlag {
+    public:
+        scopedAddFlag(LoggingFlag flag) : m_flag(flag) {
+            Loggers::addFlag(m_flag);
+        }
+        ~scopedAddFlag(void) {
+            Loggers::removeFlag(m_flag);
+        }
+    private:
+        LoggingFlag m_flag;
+    };
+    /// @brief Removes flag and add it when scope goes out
+    class scopedRemoveFlag {
+    public:
+        scopedRemoveFlag(LoggingFlag flag) : m_flag(flag) {
+            Loggers::removeFlag(m_flag);
+        }
+        ~scopedRemoveFlag(void) {
+            Loggers::addFlag(m_flag);
+        }
+    private:
+        LoggingFlag m_flag;
+    };
 };
 class VersionInfo : base::StaticClass {
 public:

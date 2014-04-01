@@ -146,4 +146,36 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
     EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.h")));
     EXPECT_FALSE((ELPP->vRegistry()->allowed(1, "easy.c")));
 }
+
+TEST(VerboseAppArgumentsTest, AppArgsVModulesExtension) {
+
+    el::Loggers::scopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
+    (void)scopedFlag;
+    
+    const char* c[10];
+    c[0] = "myprog";
+    c[1] = "-vmodule=main*=3,easy*=1";
+    c[2] = "\0";
+    el::Helpers::setArgs(2, c);
+
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main.h")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(4, "main.c")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(5, "main.cpp")));
+    
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "main.cc")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(3, "main-file-for-prog.cc")));
+    EXPECT_TRUE(ELPP->vRegistry()->allowed(1, "easy.cpp"));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hxx")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.cc")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.hh")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.h")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy.c")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(3, "easy-vector.cc")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy-vector.cc")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy-vector.cc")));
+}
 #endif // VMODULE_TESTS_H_
