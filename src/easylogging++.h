@@ -4652,7 +4652,7 @@ public:
         base::threading::lock_guard lock(mutex());
         log_(level, 0, log);
     }
-#if _ELPP_VERBOSE_LOG
+#   if _ELPP_VERBOSE_LOG
     template <typename T, typename... Args>
     inline void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
         base::threading::lock_guard lock(mutex());
@@ -4663,7 +4663,7 @@ public:
         base::threading::lock_guard lock(mutex());
         log_(el::Level::Verbose, vlevel, log);
     }
-#else
+#   else
     template <typename T, typename... Args>
     inline void Logger::verbose(int, const char*, const T&, const Args&...) {
         return;
@@ -4672,7 +4672,7 @@ public:
     inline void Logger::verbose(int, const T&) {
         return;
     }
-#endif  // _ELPP_VERBOSE_LOG
+#   endif  // _ELPP_VERBOSE_LOG
 #   define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
     template <typename T, typename... Args>\
     inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
@@ -4692,36 +4692,36 @@ public:
         return;\
     }
 
-#if _ELPP_INFO_LOG
+#   if _ELPP_INFO_LOG
     LOGGER_LEVEL_WRITERS(info, Level::Info)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(info, Level::Info)
-#endif // _ELPP_INFO_LOG
-#if _ELPP_DEBUG_LOG
+#   endif // _ELPP_INFO_LOG
+#   if _ELPP_DEBUG_LOG
     LOGGER_LEVEL_WRITERS(debug, Level::Debug)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(debug, Level::Debug)
-#endif // _ELPP_DEBUG_LOG
-#if _ELPP_WARNING_LOG
+#   endif // _ELPP_DEBUG_LOG
+#   if _ELPP_WARNING_LOG
     LOGGER_LEVEL_WRITERS(warn, Level::Warning)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(warn, Level::Warning)
-#endif // _ELPP_WARNING_LOG
-#if _ELPP_ERROR_LOG
+#   endif // _ELPP_WARNING_LOG
+#   if _ELPP_ERROR_LOG
     LOGGER_LEVEL_WRITERS(error, Level::Error)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(error, Level::Error)
-#endif // _ELPP_ERROR_LOG
-#if _ELPP_FATAL_LOG
+#   endif // _ELPP_ERROR_LOG
+#   if _ELPP_FATAL_LOG
     LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(fatal, Level::Fatal)
-#endif // _ELPP_FATAL_LOG
-#if _ELPP_TRACE_LOG
+#   endif // _ELPP_FATAL_LOG
+#   if _ELPP_TRACE_LOG
     LOGGER_LEVEL_WRITERS(trace, Level::Trace)
-#else
+#   else
     LOGGER_LEVEL_WRITERS_DISABLED(trace, Level::Trace)
-#endif // _ELPP_TRACE_LOG
+#   endif // _ELPP_TRACE_LOG
 #   undef LOGGER_LEVEL_WRITERS
 #   undef LOGGER_LEVEL_WRITERS_DISABLED
 #endif // _ELPP_VARIADIC_TEMPLATES_SUPPORTED
@@ -4767,7 +4767,7 @@ public:
     enum class DataType : base::type::EnumType {
         Checkpoint = 1, Complete = 2
     };
-   // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
+    // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
     explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), m_dataType(dataType) {}
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
@@ -4824,7 +4824,7 @@ public:
 #   if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
                 _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
                     << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
-#   endif // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
+#   endif  // defined(_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH)
 #   if defined(_ELPP_HANDLE_POST_PERFORMANCE_TRACKING)
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
