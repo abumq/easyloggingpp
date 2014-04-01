@@ -26,7 +26,7 @@ int main(void) {
     // el::CustomFormatSpecifier("%ip_addr", getIp)
 
     // Configure loggers
-    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %log");
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
     LOG(INFO) << "This is after installed 'ip_addr' spec";
     // Uninstall custom format specifier
     el::Helpers::uninstallCustomFormatSpecifier("%ip_addr");

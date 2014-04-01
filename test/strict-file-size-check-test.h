@@ -16,7 +16,7 @@ TEST(StrictFileSizeCheckTest, HandlerCalled) {
     el::Loggers::getLogger("handler_check_logger");
     el::Loggers::reconfigureLogger("handler_check_logger", el::ConfigurationType::Filename, "/tmp/logs/max-size.log");
     el::Loggers::reconfigureLogger("handler_check_logger", el::ConfigurationType::MaxLogFileSize, "100");
-    el::Helpers::installPreRollOutHandler(handler);
+    el::Helpers::installPreRollOutCallback(handler);
     for (int i = 0; i < 100; ++i) {
         CLOG(INFO, "handler_check_logger") << "Test " << i;
     }

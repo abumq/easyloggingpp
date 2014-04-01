@@ -31,6 +31,7 @@ static void reconfigureLoggersForTest(void) {
     // We do not want to reconfgure syslog with date/time
     Loggers::reconfigureLogger(consts::kSysLogLoggerId, ConfigurationType::Format, "%level: %msg");
 
+    Loggers::addFlag(LoggingFlag::EnableLogDispatchCallback);
     Loggers::addFlag(LoggingFlag::DisableApplicationAbortOnFatalLog);
     Loggers::addFlag(LoggingFlag::ImmediateFlush);
     Loggers::addFlag(LoggingFlag::StrictLogFileSizeCheck);

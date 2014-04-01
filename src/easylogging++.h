@@ -599,10 +599,6 @@ enum class LoggingFlag : base::type::EnumType {
     NewLineForContainer = 1,
     /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
     /// logging is allowed via that module.
-    ///
-    /// @detail Say param was -vmodule=main*=3 and a verbose log is being written from a file
-    /// called something.cpp then if this flag is enabled, log will be written otherwise
-    /// it will be disallowed.
     AllowVerboseIfModuleNotSpecified = 2,
     /// @brief When handling crashes by default, detailed crash reason will be logged as well
     LogDetailedCrashReason = 4,
@@ -625,7 +621,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Disable VModules
     DisableVModules = 2048,
     /// @brief Disable VModules extensions
-    DisableVModulesExtensions = 4096
+    DisableVModulesExtensions = 4096,
+    /// Enables post log callback
+    EnableLogDispatchCallback = 8192
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -742,13 +740,13 @@ namespace consts {
     };
 }  // namespace consts
 }  // namespace base
-typedef std::function<void(const char*, std::size_t)> PreRollOutHandler;
-typedef std::function<void(const LogMessage* logMessage)> PostLogDispatchHandler;
-typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PostPerformanceTrackingHandler;
+typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
+typedef std::function<void(const LogMessage* logMessage)> LogDispatchCallback;
+typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
 namespace base {
-static inline void defaultPostLogDispatchHandler(const LogMessage*) {}
-static inline void defaultPreRollOutHandler(const char*, std::size_t) {}
-static inline void defaultPostPerformanceTrackingHandler(const PerformanceTrackingData*) {}
+static inline void defaultLogDispatchCallback(const LogMessage*) {}
+static inline void defaultPreRollOutCallback(const char*, std::size_t) {}
+static inline void defaultPerformanceTrackingCallback(const PerformanceTrackingData*) {}
 /// @brief Enum to represent timestamp unit
 enum class TimestampUnit : base::type::EnumType {
     Microsecond = 0, Millisecond = 1, Second = 2, Minute = 3, Hour = 4, Day = 5
@@ -2899,7 +2897,7 @@ private:
         for (std::vector<Configuration*>::iterator conf = withFileSizeLimit.begin();
                 conf != withFileSizeLimit.end(); ++conf) {
                 // This is not unsafe as mutex is locked in currect scope
-                unsafeValidateFileRolling((*conf)->level(), base::defaultPreRollOutHandler);
+                unsafeValidateFileRolling((*conf)->level(), base::defaultPreRollOutCallback);
         }
     }
 
@@ -2991,7 +2989,7 @@ private:
         }
     }
 
-    bool unsafeValidateFileRolling(Level level, const PreRollOutHandler& preRollOutHandler) {
+    bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
         base::type::fstream_t* fs = unsafeGetConfigByRef(level, &m_fileStreamMap, "fileStream").get();
         if (fs == nullptr) {
             return true;
@@ -3003,16 +3001,16 @@ private:
             ELPP_INTERNAL_INFO(1, "Truncating log file [" << fname << "] as a result of configurations for level ["
                     << LevelHelper::convertToString(level) << "]");
             fs->close();
-            preRollOutHandler(fname.c_str(), currFileSize);
+            PreRollOutCallback(fname.c_str(), currFileSize);
             fs->open(fname, std::fstream::out | std::fstream::trunc);
             return true;
         }
         return false;
     }
 
-    bool validateFileRolling(Level level, const PreRollOutHandler& preRollOutHandler) {
+    bool validateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
         base::threading::lock_guard lock(mutex());
-        return unsafeValidateFileRolling(level, preRollOutHandler);
+        return unsafeValidateFileRolling(level, PreRollOutCallback);
     }
 };
 /// @brief Class that keeps record of current line hit for occasional logging
@@ -3657,9 +3655,9 @@ public:
         m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
         m_flags(0x0),
         m_vRegistry(new base::VRegistry(0, &m_flags)),
-        m_preRollOutHandler(base::defaultPreRollOutHandler),
-        m_postLogDispatchHandler(base::defaultPostLogDispatchHandler),
-        m_postPerformanceTrackingHandler(base::defaultPostPerformanceTrackingHandler) {
+        m_preRollOutCallback(base::defaultPreRollOutCallback),
+        m_logDispatchCallback(base::defaultLogDispatchCallback),
+        m_performanceTrackingCallback(base::defaultPerformanceTrackingCallback) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
         // Register performance logger and reconfigure format
@@ -3735,40 +3733,40 @@ public:
         m_flags = flags;
     }
 
-    inline void setPreRollOutHandler(const PreRollOutHandler& handler) {
-        m_preRollOutHandler = handler;
+    inline void setPreRollOutCallback(const PreRollOutCallback& callback) {
+        m_preRollOutCallback = callback;
     }
 
-    inline void unsetPreRollOutHandler(void) {
-        m_preRollOutHandler = base::defaultPreRollOutHandler;
+    inline void unsetPreRollOutCallback(void) {
+        m_preRollOutCallback = base::defaultPreRollOutCallback;
     }
 
-    inline PreRollOutHandler& preRollOutHandler(void) {
-        return m_preRollOutHandler;
+    inline PreRollOutCallback& preRollOutCallback(void) {
+        return m_preRollOutCallback;
     }
 
-    inline void setPostLogDispatchHandler(const PostLogDispatchHandler& handler) {
-        m_postLogDispatchHandler = handler;
+    inline void setLogDispatchCallback(const LogDispatchCallback& callback) {
+        m_logDispatchCallback = callback;
     }
 
-    inline void unsetPostLogDispatchHandler(void) {
-        m_postLogDispatchHandler = base::defaultPostLogDispatchHandler;
+    inline void unsetLogDispatchCallback(void) {
+        m_logDispatchCallback = base::defaultLogDispatchCallback;
     }
 
-    inline PostLogDispatchHandler& postLogDispatchHandler(void) {
-        return m_postLogDispatchHandler;
+    inline LogDispatchCallback& logDispatchCallback(void) {
+        return m_logDispatchCallback;
     }
 
-    inline void setPostPerformanceTrackingHandler(const PostPerformanceTrackingHandler& handler) {
-        m_postPerformanceTrackingHandler = handler;
+    inline void setPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
+        m_performanceTrackingCallback = callback;
     }
 
-    inline void unsetPostPerformanceTrackingHandler(void) {
-        m_postPerformanceTrackingHandler = base::defaultPostPerformanceTrackingHandler;
+    inline void unsetPerformanceTrackingCallback(void) {
+        m_performanceTrackingCallback = base::defaultPerformanceTrackingCallback;
     }
 
-    inline PostPerformanceTrackingHandler postPerformanceTrackingHandler(void) {
-        return m_postPerformanceTrackingHandler;
+    inline PerformanceTrackingCallback performanceTrackingCallback(void) {
+        return m_performanceTrackingCallback;
     }
 
     inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
@@ -3806,9 +3804,9 @@ private:
     base::type::EnumType m_flags;
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
-    PreRollOutHandler m_preRollOutHandler;
-    PostLogDispatchHandler m_postLogDispatchHandler;
-    PostPerformanceTrackingHandler m_postPerformanceTrackingHandler;
+    PreRollOutCallback m_preRollOutCallback;
+    LogDispatchCallback m_logDispatchCallback;
+    PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
 
     friend class el::Helpers;
@@ -3945,7 +3943,7 @@ public:
         }
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-            tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutHandler());
+            tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
         }
         dispatch(std::move(m_logMessage.logger()->logBuilder()->build(&m_logMessage, 
             m_dispatchAction == base::DispatchAction::NormalLog)));
@@ -3953,11 +3951,11 @@ public:
             m_logMessage.logger()->unlock();
         }
         ELPP->unlock();
-#if defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
-        m_logMessage.logger()->unlock();
-        ELPP->postLogDispatchHandler()(&m_logMessage);
-#endif  // defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
+        if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
+            m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
+            m_logMessage.logger()->unlock();
+            ELPP->logDispatchCallback()(&m_logMessage);
+        }
     }
 
 private:
@@ -4563,14 +4561,14 @@ protected:
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
-#if !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
-        // If we don't handle post-log-dispatches, we need to unlock logger
-        // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
-        if (m_logger != nullptr) {
-            m_logger->stream().str(ELPP_LITERAL(""));
-            m_logger->unlock();
+        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
+            // If we don't handle post-log-dispatches, we need to unlock logger
+            // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
+            if (m_logger != nullptr) {
+                m_logger->stream().str(ELPP_LITERAL(""));
+                m_logger->unlock();
+            }
         }
-#endif  // !defined(_ELPP_HANDLE_POST_LOG_DISPATCH)
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
             base::Writer(Level::Warning, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
@@ -4820,7 +4818,7 @@ public:
                     PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                     data.init(this);
                     data.m_formattedTimeTaken = formattedTime;
-                    ELPP->postPerformanceTrackingHandler()(&data);
+                    ELPP->performanceTrackingCallback()(&data);
                 }
             }
         }
@@ -4866,7 +4864,7 @@ public:
                 if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison)) {
                     data.m_formattedTimeTaken = formattedTime;
                 }
-                ELPP->postPerformanceTrackingHandler()(&data);
+                ELPP->performanceTrackingCallback()(&data);
             }
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
@@ -5188,32 +5186,38 @@ public:
             Level level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
         el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
     }
-    /// @brief Installs pre rollout handler, this handler is triggered when log file is about to be rolled out
+    /// @brief Installs pre rollout callback, this callback is triggered when log file is about to be rolled out
     ///        (can be useful for backing up)
-    static inline void installPreRollOutHandler(const PreRollOutHandler& handler) {
-        ELPP->setPreRollOutHandler(handler);
+    static inline void installPreRollOutCallback(const PreRollOutCallback& callback) {
+        ELPP->setPreRollOutCallback(callback);
     }
-    /// @brief Uninstalls pre rollout handler
-    static inline void uninstallPreRollOutHandler(void) {
-        ELPP->unsetPreRollOutHandler();
+    /// @brief Uninstalls pre rollout callback
+    static inline void uninstallPreRollOutCallback(void) {
+        ELPP->unsetPreRollOutCallback();
     }
-   /// @brief Installs post log dispatch handler, this handler is triggered when log is dispatched
-    static inline void installPostLogDispatchHandler(const PostLogDispatchHandler& handler) {
-        ELPP->setPostLogDispatchHandler(handler);
+   /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
+    static inline void installLogDispatchCallback(const LogDispatchCallback& callback, bool addFlag = true) {
+        if (addFlag) {
+            ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
+        }
+        ELPP->setLogDispatchCallback(callback);
     }
     /// @brief Uninstalls post log dispatch
-    static inline void uninstallPostLogDispatchHandler(void) {
-        ELPP->unsetPostLogDispatchHandler();
+    static inline void uninstallLogDispatchCallback(bool removeFlag = true) {
+        if (removeFlag) {
+            ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
+        }
+        ELPP->unsetLogDispatchCallback();
     }
-    /// @brief Installs post performance tracking handler, this handler is triggered when performance tracking is finished
-    static inline void installPostPerformanceTrackingHandler(const PostPerformanceTrackingHandler& handler) {
+    /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
+    static inline void installPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
         ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
-        ELPP->setPostPerformanceTrackingHandler(handler);
+        ELPP->setPerformanceTrackingCallback(callback);
     }
     /// @brief Uninstalls post performance tracking handler
-    static inline void uninstallPostPerformanceTrackingHandler(void) {
+    static inline void uninstallPerformanceTrackingCallback(void) {
         ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
-        ELPP->unsetPostPerformanceTrackingHandler();
+        ELPP->unsetPerformanceTrackingCallback();
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
@@ -5249,7 +5253,7 @@ public:
     }
     static inline void validateFileRolling(Logger* logger, Level level) {
         if (logger == nullptr) return;
-        logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutHandler());
+        logger->m_typedConfigurations->validateFileRolling(level, ELPP->preRollOutCallback());
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
