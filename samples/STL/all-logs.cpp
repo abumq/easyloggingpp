@@ -16,7 +16,11 @@ int main(int argc, char** argv) {
     _START_EASYLOGGINGPP(argc, argv);
     el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
     el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
-    
+
+    // You can uncomment following lines to take advantage of hierarchical logging
+    // el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
+    // el::Loggers::setLoggingLevel(el::Level::Global);
+
     LOG(INFO);
     LOG(DEBUG);
     LOG(WARNING);

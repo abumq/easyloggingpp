@@ -18,6 +18,7 @@ API changes: Yes
 =      NEW FEATURES      =
 ==========================
 
+ - Ability to enable / disable hierarchical logging using `LoggingFlag::HierarchicalLogging` and `Loggers::setLoggingLevel`
  - Ability to disable performance tracking dispatch by defining `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH`
  - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
  - Added `LoggingFlag::MultiLoggerSupport` and removed `_ELPP_MULTI_LOGGER_SUPPORT` macro

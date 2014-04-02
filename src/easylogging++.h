@@ -105,7 +105,7 @@
 #endif  //(!defined(_ELPP_DISABLE_ASSERT)
 #if defined(_ELPP_DEBUG_ERRORS)
 #   define ELPP_INTERNAL_ERROR(msg, pe) std::cerr << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " << \
-    msg << std::endl; if (pe) { std::cerr << "    "; perror(""); }
+    msg << std::endl; if (pe) { std::cerr << "    "; perror(""); } (void)0
 #else
 #   define ELPP_INTERNAL_ERROR(msg, pe)
 #endif  // defined(_ELPP_DEBUG_ERRORS)
@@ -406,25 +406,25 @@ private:
 }  // namespace base
 /// @brief Represents enumeration for severity level used to determine level of logging
 ///
-/// @detail Easylogging++ has different concept of level. Developers may disable or enable any level regardless of
-/// what the severity is
+/// @detail With Easylogging++, developers may disable or enable any level regardless of
+/// what the severity is. Or they can choose to log using hierarchical logging flag
 enum class Level : base::type::EnumType {
         /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
         Global = 1,
+        /// @brief Information that can be useful to back-trace certain events - mostly useful than debug logs.
+        Trace = 2,
         /// @brief Informational events most useful for developers to debug application
-        Debug = 2,
-        /// @brief Mainly useful to represent current progress of application
-        Info = 4,
-        /// @brief Useful when application has potentially harmful situtaions
-        Warning = 8,
+        Debug = 4,
+        /// @brief Severe error information that will presumably abort application
+        Fatal = 8, 
         /// @brief Information representing errors in application but application will keep running
         Error = 16,
-        /// @brief Severe error information that will presumably abort application
-        Fatal = 32,
+        /// @brief Useful when application has potentially harmful situtaions
+        Warning = 32, 
         /// @brief Information that can be highly useful and vary with verbose logging level.
         Verbose = 64,
-        /// @brief Information that can be useful to back-trace certain events - mostly useful than debug logs.
-        Trace = 128,
+        /// @brief Mainly useful to represent current progress of application
+        Info = 128, 
         /// @brief Represents unknown level
         Unknown = 1010
 };
@@ -432,9 +432,9 @@ enum class Level : base::type::EnumType {
 class LevelHelper : base::StaticClass {
 public:
     /// @brief Represents minimum valid level. Useful when iterating through enum.
-    static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(Level::Debug);
+    static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(Level::Trace);
     /// @brief Represents maximum valid level. This is used internally and you should not need it.
-    static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(Level::Trace);
+    static const base::type::EnumType kMaxValid = static_cast<base::type::EnumType>(Level::Info);
     /// @brief Casts level to int, useful for iterating through enum.
     static base::type::EnumType castToInt(Level level) {
         return static_cast<base::type::EnumType>(level);
@@ -623,7 +623,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Disable VModules extensions
     DisableVModulesExtensions = 4096,
     /// Enables post log callback
-    EnableLogDispatchCallback = 8192
+    EnableLogDispatchCallback = 8192,
+    /// Enables hierarchical logging
+    HierarchicalLogging = 16384
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -3795,6 +3797,10 @@ public:
         return &m_customFormatSpecifiers;
     }
 
+    inline void setHierarchyLevel(Level level) {
+        m_hierarchyLevel = level;
+    }
+
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
@@ -3805,6 +3811,7 @@ private:
     LogDispatchCallback m_logDispatchCallback;
     PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
+    Level m_hierarchyLevel;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
@@ -4493,12 +4500,12 @@ protected:
 
     void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
         if (lookup) {
-            m_logger = elStorage->registeredLoggers()->get(loggerId, false);
+            m_logger = ELPP->registeredLoggers()->get(loggerId, false);
         }
         if (m_logger == nullptr) {
-            if (!elStorage->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
+            if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
-                elStorage->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
+                ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
             Writer(Level::Debug, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
@@ -4508,7 +4515,12 @@ protected:
                 m_logger->lock();  // This should not be unlocked by checking m_proceed because
                                    // m_proceed can be changed by lines below
             }
-            m_proceed = m_logger->enabled(m_level);
+            if (ELPP->hasFlag(LoggingFlag::HierarchicalLogging)) {
+                m_proceed = m_level == Level::Verbose ? m_logger->enabled(m_level) :
+                        LevelHelper::castToInt(m_level) >= LevelHelper::castToInt(ELPP->m_hierarchyLevel);
+            } else {
+                m_proceed = m_logger->enabled(m_level);
+            }
         }
     }
     
@@ -4787,7 +4799,7 @@ public:
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
         // We store it locally so that if user happen to change configuration by the end of scope
         // or before calling checkpoint, we still depend on state of configuraton at time of construction
-        el::Logger* loggerPtr = elStorage->registeredLoggers()->get(loggerId, false);
+        el::Logger* loggerPtr = ELPP->registeredLoggers()->get(loggerId, false);
         m_enabled = loggerPtr != nullptr && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
         if (m_enabled) {
             base::utils::DateTime::gettimeofday(&m_startTime);
@@ -5436,6 +5448,10 @@ public:
     private:
         LoggingFlag m_flag;
     };
+    /// @brief Sets hierarchy for logging. Needs to enable logging flag (HierarchicalLogging)
+    static inline void setLoggingLevel(Level level) {
+        ELPP->setHierarchyLevel(level);
+    }
 };
 class VersionInfo : base::StaticClass {
 public:
