@@ -980,7 +980,7 @@ public:
 #if defined(_ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
         fs->imbue(elppUnicodeLocale);
-#endif
+#endif  // defined(_ELPP_UNICODE)
         if (fs->is_open()) {
             fs->flush();
         } else {
@@ -3673,9 +3673,6 @@ public:
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif  //  defined(_ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
-#if defined(_ELPP_STRICT_SIZE_CHECK)
-        addFlag(LoggingFlag::StrictLogFileSizeCheck);
-#endif  // defined(_ELPP_STRICT_SIZE_CHECK)
         ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 
