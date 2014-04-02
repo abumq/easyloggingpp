@@ -23,6 +23,7 @@ API changes: Yes
  - Ability to check datatype for PostPerformanceTrackingData (using `PostPerformanceTrackingData::dataType()`)
  - Added `LoggingFlag::MultiLoggerSupport` and removed `_ELPP_MULTI_LOGGER_SUPPORT` macro (issue #166)
  - Added `LoggingFlag::PerformanceTrackingCallback` and removed need to define `_ELPP_HANDLE_POST_PERFORMANCE_TRACKING` macro (issue #166)
+ - Replaced macro `_ELPP_HANDLE_POST_LOG_DISPATCH` with `LoggingFlag::EnableLogDispatchCallback` (issue #166)
 
 ==========================
 =       REFACTORING      =
