@@ -3490,7 +3490,7 @@ class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 public:
     typedef int VLevel;
 
-    explicit VRegistry(VLevel level, base::type::EnumType* flags) : m_level(level), m_flags(flags) {
+    explicit VRegistry(VLevel level, base::type::EnumType* pFlags) : m_level(level), m_pFlags(pFlags) {
     }
 
    /// @brief Sets verbose level. Accepted range is 0-9
@@ -3524,7 +3524,7 @@ public:
             ss << sfx;
         };  // NOLINT
         auto insert = [&](std::stringstream& ss, VLevel level) {
-            if (!base::utils::hasFlag(LoggingFlag::DisableVModulesExtensions, *m_flags)) {
+            if (!base::utils::hasFlag(LoggingFlag::DisableVModulesExtensions, *m_pFlags)) {
                 addSuffix(ss, ".h", nullptr);
                 m_modules.insert(std::make_pair(ss.str(), level));
                 addSuffix(ss, ".c", ".h");
@@ -3591,7 +3591,7 @@ public:
                     return vlevel <= it->second;
                 }
             }
-            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, *m_flags)) {
+            if (base::utils::hasFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified, *m_pFlags)) {
                 return true;
             }
             return false;
@@ -3611,17 +3611,17 @@ public:
         } else if (commandLineArgs->hasParamWithValue("--V")) {
             setLevel(atoi(commandLineArgs->getParamValue("--V")));
         } else if ((commandLineArgs->hasParamWithValue("-vmodule"))
-                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags))) {
+                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_pFlags))) {
             setModules(commandLineArgs->getParamValue("-vmodule"));
         } else if (commandLineArgs->hasParamWithValue("-VMODULE") 
-                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_flags))) {
+                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_pFlags))) {
             setModules(commandLineArgs->getParamValue("-VMODULE"));
         }
     }
 
 private:
     VLevel m_level;
-    base::type::EnumType* m_flags;
+    base::type::EnumType* m_pFlags;
     std::map<std::string, VLevel> m_modules;
 };
 }  // namespace base
@@ -3797,8 +3797,8 @@ public:
         return &m_customFormatSpecifiers;
     }
 
-    inline void setHierarchyLevel(Level level) {
-        m_hierarchyLevel = level;
+    inline void setLoggingLevel(Level level) {
+        m_loggingLevel = level;
     }
 
 private:
@@ -3811,7 +3811,7 @@ private:
     LogDispatchCallback m_logDispatchCallback;
     PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
-    Level m_hierarchyLevel;
+    Level m_loggingLevel;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
@@ -4517,7 +4517,7 @@ protected:
             }
             if (ELPP->hasFlag(LoggingFlag::HierarchicalLogging)) {
                 m_proceed = m_level == Level::Verbose ? m_logger->enabled(m_level) :
-                        LevelHelper::castToInt(m_level) >= LevelHelper::castToInt(ELPP->m_hierarchyLevel);
+                        LevelHelper::castToInt(m_level) >= LevelHelper::castToInt(ELPP->m_loggingLevel);
             } else {
                 m_proceed = m_logger->enabled(m_level);
             }
@@ -5450,7 +5450,7 @@ public:
     };
     /// @brief Sets hierarchy for logging. Needs to enable logging flag (HierarchicalLogging)
     static inline void setLoggingLevel(Level level) {
-        ELPP->setHierarchyLevel(level);
+        ELPP->setLoggingLevel(level);
     }
 };
 class VersionInfo : base::StaticClass {
