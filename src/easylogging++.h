@@ -5221,11 +5221,15 @@ public:
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
-    static inline std::string convertTemplateToStdString(const T& templ) {
-        base::MessageBuilder b;
+    static std::string convertTemplateToStdString(const T& templ) {
         el::Logger* logger = 
             ELPP->registeredLoggers()->get(el::base::consts::kDefaultLoggerId);
+        if (logger == nullptr) {
+            return std::string();
+        }
+        base::MessageBuilder b;
         b.initialize(logger);
+        logger->lock();
         b << templ;
 #if defined(_ELPP_UNICODE)
         std::string s = std::string(logger->stream().str().begin(), logger->stream().str().end());
@@ -5233,6 +5237,7 @@ public:
         std::string s = logger->stream().str();
 #endif  // defined(_ELPP_UNICODE)
         logger->stream().str(ELPP_LITERAL(""));
+        logger->unlock();
         return s;
     }
     /// @brief Returns command line arguments (pointer) provided to easylogging++
