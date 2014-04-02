@@ -91,8 +91,8 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, log, simple) and portability. Its highly configurable and extremely useful for small to large size projects.
-This manual is written as starting reference for version 9.0+. For older versions please refer to corresponding [releases](https://github.com/easylogging/easyloggingpp/releases) on github.
+Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+This manual is for Easylogging++ v9.63. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -104,7 +104,7 @@ Why yet another library? Well, answer is pretty straight forward, use it as if y
  [![top] Goto Top](#table-of-contents)
  
 ### Features at a glance
-Easylogging++ is feature-rich containing many features that a typical developer will require while writing a software;
+Easylogging++ is feature-rich containing many features that both typical and advanced developer will require while writing a software;
  * Highly configurable
  * Extremely fast
  * Thread and type safe
@@ -123,23 +123,21 @@ Easylogging++ is feature-rich containing many features that a typical developer 
  [![top] Goto Top](#table-of-contents)
 
 ### Future
-Easylogging++ has a bright future. Plans are to write wrappers of this library to use in other types of C++ based projects etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
+We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](http://qml.easylogging.org) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
 # Getting Started
 ### Download
-Current stable release is always http://easylogging.org/latest.zip
+Download latest version from [http://easylogging.org/latest.zip](http://easylogging.org/latest.zip)
 
-Versioned releases can be downloaded from `http://easylogging.org/releases/easyloggingpp_v[MAJOR].[MINOR].zip` for example for v8.91, link will be `http://easylogging.org/releases/easyloggingpp_v8.91.zip` and corresponding release notes are `http://easylogging.org/releases/release-notes-v[MAJOR].[MINOR].txt`
-
-Minimum downloadable version is version 8.91 and minimum version with release notes is version 9+. If you wish to get an older version (up to v2.3) you can do so by going to [easylogging++ homepage](http://easylogging.org) and select version from top-right corner
+For other releases, please visit [homepage](http://easylogging.org). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Quick Start
 In order to get started with Easylogging++, you can follow three easy steps;
-* Download latest header
+* Download latest version
 * Include into your project
 * Initialize using single macro... and off you go!
 
@@ -154,21 +152,16 @@ int main(int argv, char* argc[]) {
 }
 ```
 
-That simple! Please note that `_INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. What this is actually, its an extern variable definition. This means it can be defined only once per application. Best place to put this initialization statement is in file where main function is defined, right after last include statement.
+That simple! Please note that `_INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `main(int, char**)` function is defined, right after last include statement.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Setting Application Arguments
-Some features of Easylogging++ require you to set application arguments, e.g, verbose logging to set verbose level or vmodules (explained later). In order to do that you can use helper macro or helper class;
+It is always recommended to pass application arguments to Easylogging++. Some features of Easylogging++ require you to set application arguments, e.g, verbose logging to set verbose level or vmodules (explained later). In order to do that you can use helper macro or helper class;
 
 ```c++
 int main(int argv, char* argc[]) {
    _START_EASYLOGGINGPP(argc, argv);
-   ...
-}
-// -- OR --
-int main(int argv, char* argc[]) {
-   el::Helpers::setArgs(argc, argv);
    ...
 }
 ```
@@ -337,7 +330,7 @@ You can customize format of logging using following specifiers:
 |     Specifier   |                 Replaced By                                                                 |
 |-----------------|---------------------------------------------------------------------------------------------|
 | `%logger`       | Logger ID                                                                                   |
-| `%thread`       | Thread ID - Uses `std::thread` if available, otherwise `GetCurrentThreadId()` on windows. See `pthread.cpp` sample to see ways to use your own thread ID function instead. |
+| `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
 | `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
 | `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |
 | `%datetime`     | Date and/or time - Pattern is customizable - see Date/Time Format Specifiers below          |
@@ -405,7 +398,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > Since ver. 9.64, you can set these flags by using `--logging-flags` command line arg when `_ELPP_LOGGING_FLAGS_FROM_ARG` is defined. (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
+ > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
 
@@ -426,33 +419,32 @@ Following table will explain all command line arguments that you may use to defi
 ### Configuration Macros
 Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `_ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with _ELPP_
 
-|   Macro Name                                  |                 Description                                                                                                                        |
-|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_STOP_ON_FIRST_ASSERTION`               | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
-| `_ELPP_UNICODE`                               | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
-| `_ELPP_THREAD_SAFE`                           | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
-| `_ELPP_FORCE_USE_STD_THREAD`                  | Forces to use C++ standard library for threading (Only useful when using `_ELPP_THREAD_SAFE` (since v9.63) |
-| `_ELPP_STACKTRACE_ON_CRASH`                   | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
-| `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`        | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
-| `_ELPP_DISABLE_LOGS`                          | Disables all logs - (preprocessing)                                                                                                                |
-| `_ELPP_DISABLE_DEBUG_LOGS`                    | Disables debug logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_INFO_LOGS`                     | Disables info logs - (preprocessing)                                                                                                               |
-| `_ELPP_DISABLE_WARNING_LOGS`                  | Disables warning logs - (preprocessing)                                                                                                            |
-| `_ELPP_DISABLE_ERROR_LOGS`                    | Disables error logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_FATAL_LOGS`                    | Disables fatal logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_VERBOSE_LOGS`                  | Disables verbose logs - (preprocessing)                                                                                                            |
-| `_ELPP_DISABLE_TRACE_LOGS`                    | Disables trace logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_VMODULES_EXTENSION`            | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.*=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '*' wildcards are supported                                                                                                                                                                                       |
-| `_ELPP_DISABLE_PERFORMANCE_TRACKING`          | Disables performance tracking - regardless of what logger is used - (preprocessing)                                                                |
-| `_ELPP_FORCE_ENV_VAR_FROM_BASH`               | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
-| `_ELPP_DEFAULT_LOG_FILE`                      | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
-| `_ELPP_NO_DEFAULT_LOG_FILE`                   | (since ver. 9.13) If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
-| `_ELPP_ENABLE_ERRORS`                         | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
-| `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS`      | Forcefully disables custom format specifiers                                                                                                       |
-| `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`        | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
-| `_ELPP_DISABLE_LOG_FILE_FROM_ARG`             | Forcefully disables ability to set default log file from command-line arguments                                                                    |
-| `_ELPP_MULTI_LOGGER_SUPPORT`                  | Enables using multiple loggers for single log, you can achieve this by logging e.g, `CLOG(INFO, "logger1", "logger2")`. See sample [multi-logger](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/multiple-loggers.cpp) for details                                                                    |
-| `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH` | Disables dispatching performance tracking. You can use PerformanceTrackingData to log this in your own pattern. (This also disables checkpoints)
+|   Macro Name                             |                 Description                                                                                                                        |
+|------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `_ELPP_STOP_ON_FIRST_ASSERTION`          | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
+| `_ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
+| `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
+| `_ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `_ELPP_THREAD_SAFE` (since v9.63) |
+| `_ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
+| `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
+| `_ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
+| `_ELPP_DISABLE_DEBUG_LOGS`               | Disables debug logs - (preprocessing)                                                                                                              |
+| `_ELPP_DISABLE_INFO_LOGS`                | Disables info logs - (preprocessing)                                                                                                               |
+| `_ELPP_DISABLE_WARNING_LOGS`             | Disables warning logs - (preprocessing)                                                                                                            |
+| `_ELPP_DISABLE_ERROR_LOGS`               | Disables error logs - (preprocessing)                                                                                                              |
+| `_ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
+| `_ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
+| `_ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
+| `_ELPP_DISABLE_VMODULES_EXTENSION`       | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.*=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '*' wildcards are supported                                                                                                                                                                                       |
+| `_ELPP_DISABLE_PERFORMANCE_TRACKING`     | Disables performance tracking - regardless of what logger is used - (preprocessing)                                                                |
+| `_ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
+| `_ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
+| `_ELPP_NO_DEFAULT_LOG_FILE`              | (since ver. 9.13) If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
+| `_ELPP_ENABLE_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
+| `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
+| `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
+| `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
+| `_ELPP_MULTI_LOGGER_SUPPORT`             | Enables using multiple loggers for single log, you can achieve this by logging e.g, `CLOG(INFO, "logger1", "logger2")`. See sample [multi-logger](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/multiple-loggers.cpp) for details                                                                    |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -813,8 +805,6 @@ Notes:
 4. In order to access `el::base::Trackable` while in `TIMED_BLOCK`, you can use `timerObj.timer`
 
 5. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
-
-6. Since ver 9.64, you can change output format by using `PerformanceTrackingData` and `_ELPP_DISABLE_PERFORMANCE_TRACKING_DISPATCH` combined. See `samples/STL/custom-performance-output.cpp` sample for details.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1280,4 +1270,3 @@ Icons used in this manual (in compatibility section) are solely for information 
   
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
-
