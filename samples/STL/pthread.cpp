@@ -25,6 +25,9 @@ void* write2(void* args){
   
   char* threadId = (char*)a->thrId;
   el::Logger* logger = (el::Logger*)a->logger;
+  CLOG(INFO, "default", "network") << "Triggering network log from default and network";
+
+#if 1
 
   LOG(INFO) << "Writing from different function using macro [Thread #" << threadId << "]";
 
@@ -32,6 +35,10 @@ void* write2(void* args){
   logger->info("Info log");
   logger->verbose(2, "Verbose test [Thread #%v]", threadId);
   logger->verbose(2, "Verbose test");
+
+
+  CLOG(INFO, "default", "network") << "Triggering network log from default and network";
+#endif 
   return NULL;
 }
 
@@ -39,7 +46,6 @@ void *write(void* thrId){
   char* threadId = (char*)thrId;
   // Following line will be logged with every thread
   LOG(INFO) << "This standard log is written by [Thread #" << threadId << "]";
-
   // Following line will be logged with every thread only when --v=2 argument 
   // is provided, i.e, ./bin/multithread_test.cpp.bin --v=2
   VLOG(2) << "This is verbose level 2 logging from [Thread #" << threadId << "]";
@@ -57,16 +63,18 @@ void *write(void* thrId){
   LOG_EVERY_N(1, INFO) << "This interval log will be logged with every thread, this one is from [Thread #" << threadId << "]";
 
   LOG_IF(strcmp(threadId, "2") == 0, INFO) << "This log is only for thread 2 and is ran by [Thread #" << threadId << "]";
-
+  
   // Register 5 vague loggers
   for (int i = 1; i <= 5; ++i) {
      std::stringstream ss;
      ss << "logger" << i;
-     el::Logger* logger = easyloggingpp::Loggers::getLogger(ss.str());
-     LOG(INFO) << "Registered logger [" << *logger << "] [Thread #" << threadId << "]";
+     el::Logger* logger = el::Loggers::getLogger(ss.str());
+     LOG(INFO) << "Registered logger [" << ss.str() << "] [Thread #" << threadId << "]";
+     CLOG(INFO, "default", "network") << "Triggering network log from default and network";
   }
   CLOG(INFO, "logger1") << "Logging using new logger [Thread #" << threadId << "]";
   CLOG(INFO, "no-logger") << "THIS SHOULD SAY LOGGER NOT REGISTERED YET [Thread #" << threadId << "]"; // << -- NOTE THIS!
+  CLOG(INFO, "default", "network") << "Triggering network log from default and network";
 
   el::Logger* logger = el::Loggers::getLogger("default");
   logger->info("Info log from [Thread #%v]", threadId);
@@ -92,13 +100,16 @@ int main(int argc, char** argv)
      el::CustomFormatSpecifier myThreadIdSpecifier("%mythreadId", getThreadId_CustomVersion);
      el::Helpers::installCustomFormatSpecifier(myThreadIdSpecifier);
 
+     el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
+
      // Note your %mythreadId or built-in, both are logged
      el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level (%thread | %mythreadId) [%logger] [%func] [%loc] %msg");
      el::Loggers::reconfigureAllLoggers(el::Level::Verbose, el::ConfigurationType::Format, "%datetime %level-%vlevel (%thread | %mythreadId) [%logger] [%func] [%loc] %msg");
+     el::Loggers::getLogger("network");
 
      pthread_t thread1, thread2, thread3, thread4;
 
-    /* Create independent threads each of which will execute function */
+     // Create independent threads each of which will execute function 
      pthread_create( &thread1, NULL, write, (void*)"1");
      pthread_create( &thread2, NULL, write, (void*)"2");
      pthread_create( &thread3, NULL, write, (void*)"3");

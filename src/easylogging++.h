@@ -1250,6 +1250,7 @@ public:
                 *--p = static_cast<char>(n % 10 + '0');
         } else {
             *--p = '0';
+            --len;
         }
         if (zeroPadded)
             while (p > localBuff && len-- > 0) *--p = static_cast<char>('0');
@@ -5275,15 +5276,18 @@ class Loggers : base::StaticClass {
 public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
+        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
     }
     /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
     ///        loggers initialized / used by third-party libs.
     static inline bool unregisterLogger(const std::string& identity) {
+        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->registeredLoggers()->remove(identity);
     }
     /// @brief Whether or not logger with id is registered
     static inline bool hasLogger(const std::string& identity) {
+        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->registeredLoggers()->has(identity);
     }
     /// @brief Reconfigures specified logger with new configurations
