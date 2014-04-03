@@ -27,8 +27,6 @@ void* write2(void* args){
   el::Logger* logger = (el::Logger*)a->logger;
   CLOG(INFO, "default", "network") << "Triggering network log from default and network";
 
-#if 1
-
   LOG(INFO) << "Writing from different function using macro [Thread #" << threadId << "]";
 
   logger->info("Info log from [Thread #%v]", threadId);
@@ -38,7 +36,6 @@ void* write2(void* args){
 
 
   CLOG(INFO, "default", "network") << "Triggering network log from default and network";
-#endif 
   return NULL;
 }
 
@@ -69,7 +66,7 @@ void *write(void* thrId){
      std::stringstream ss;
      ss << "logger" << i;
      el::Logger* logger = el::Loggers::getLogger(ss.str());
-     LOG(INFO) << "Registered logger [" << ss.str() << "] [Thread #" << threadId << "]";
+     LOG(INFO) << "Registered logger [" << *logger << "] [Thread #" << threadId << "]";
      CLOG(INFO, "default", "network") << "Triggering network log from default and network";
   }
   CLOG(INFO, "logger1") << "Logging using new logger [Thread #" << threadId << "]";
