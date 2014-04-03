@@ -199,20 +199,20 @@ Configuration can be done by file that is loaded at runtime by `Configurations` 
   ANOTHER CONFIG NAME = "VALUE"
 ```
 
-Level name starts with a star (*) and ends with colon (:). It is highly recommended to start your configuration file with GLOBAL level so that any configuration not specified in the file will automatically use configuration from GLOBAL. For example, if you set FILENAME in GLOBAL and you want all the levels to use same filename, do not set it explicitly for each level, API will use value from GLOBAL automatically.
+Level name starts with a star (*) and ends with colon (:). It is highly recommended to start your configuration file with `Global` level so that any configuration not specified in the file will automatically use configuration from `Global`. For example, if you set `Filename` in `Global` and you want all the levels to use same filename, do not set it explicitly for each level, library will use configuration value from `Global` automatically.
 Following table contains configurations supported by configuration file.
 
 |   Configuration Name  |   Type   |                 Description                                                                                                                                                 |
 |-----------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Enabled               |   bool   | Determines whether or not corresponding level for logger is enabled. You may disable all logs by using el::Level::Global                                                    |
-| To_File               |   bool   | Whether or not to write corresponding log to log file                                                                                                                       |
-| To_Standard_Output    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                             |
-| Format                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                    |
-| Filename              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                         |
-| Milliseconds_Width    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                               |
-| Performance_Tracking  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified. |
-| Max_Log_File_Size     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                   |
-| Log_Flush_Threshold   |  size_t  | Specifies number of log entries to hold until we flush pending log data |
+| `Enabled`               |   bool   | Determines whether or not corresponding level for logger is enabled. You may disable all logs by using el::Level::Global                                                    |
+| `To_File`               |   bool   | Whether or not to write corresponding log to log file                                                                                                                       |
+| `To_Standard_Output`    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                             |
+| `Format`                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                    |
+| `Filename`              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                         |
+| `Milliseconds_Width`    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                               |
+| `Performance_Tracking`  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified. |
+| `Max_Log_File_Size`     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                   |
+| `Log_Flush_Threshold`   |  size_t  | Specifies number of log entries to hold until we flush pending log data |
 	
 
 Please do not use double-quotes anywhere in comment, you might end up in unexpected behaviour.

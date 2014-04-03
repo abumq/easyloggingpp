@@ -382,6 +382,7 @@ typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
 typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
+typedef int VerboseLevel;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
@@ -676,7 +677,7 @@ namespace consts {
     static const unsigned int kMaxLogPerContainer              =      100;
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
-    static const short kMaxVerboseLevel                        =      9;  // NOLINT
+    static const int kMaxVerboseLevel                          =      9;
     static const char* kUnknownUser                            =      "user";
     static const char* kUnknownHost                            =      "unknown-host";
 #if defined(_ELPP_DEFAULT_LOG_FILE)
@@ -709,11 +710,11 @@ namespace consts {
     static const char* kConfigurationLoggerId                  =      "--";
     static const std::size_t kSourceFilenameMaxLength          =      100;
     static const std::size_t kSourceLineMaxLength              =      10;
-    static const int kMaxTimeFormats                           =      6;
+    static const Level kPerformanceTrackerDefaultLevel         =      Level::Info;
     const struct {
         double value;
         const base::type::char_t* unit;
-    } kTimeFormats[kMaxTimeFormats] = {
+    } kTimeFormats[] = {
        { 1000.0f, ELPP_LITERAL("mis") },
        { 1000.0f, ELPP_LITERAL("ms") },
        { 60.0f, ELPP_LITERAL("seconds") },
@@ -721,13 +722,13 @@ namespace consts {
        { 24.0f, ELPP_LITERAL("hours") },
        { 7.0f, ELPP_LITERAL("days") }
     };
-    static const int kMaxCrashSignals                          =      5;
+    static const int kTimeFormatsCount                           =      sizeof(kTimeFormats) / sizeof(kTimeFormats[0]);
     const struct {
         int numb;
         const char* name;
         const char* brief;
         const char* detail;
-    } kCrashSignals[kMaxCrashSignals] = {
+    } kCrashSignals[] = {
         // NOTE: Do not re-order, if you do please check CrashHandler(bool) constructor and CrashHandler::setHandler(..)
         { SIGABRT, "SIGABRT", "Abnormal termination",
                 "Program was abnormally terminated." },
@@ -740,6 +741,7 @@ namespace consts {
         { SIGINT, "SIGINT", "Interactive attention signal",
                  "Interruption generated (generally) by user or operating system." },
     };
+    static const int kCrashSignalsCount                          =      sizeof(kCrashSignals) / sizeof(kCrashSignals[0]);
 }  // namespace consts
 }  // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
@@ -1484,7 +1486,7 @@ public:
         double result = static_cast<double>(time);
         base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
         const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
-        for (base::type::EnumType i = start; i < base::consts::kMaxTimeFormats - 1; ++i) {
+        for (base::type::EnumType i = start; i < base::consts::kTimeFormatsCount - 1; ++i) {
             if (result <= base::consts::kTimeFormats[i].value) {
                 break;
             }
@@ -3487,13 +3489,11 @@ private:
 /// @brief Represents registries for verbose logging
 class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 public:
-    typedef int VLevel;
-
-    explicit VRegistry(VLevel level, base::type::EnumType* pFlags) : m_level(level), m_pFlags(pFlags) {
+    explicit VRegistry(base::type::VerboseLevel level, base::type::EnumType* pFlags) : m_level(level), m_pFlags(pFlags) {
     }
 
-   /// @brief Sets verbose level. Accepted range is 0-9
-    inline void setLevel(VLevel level) {
+    /// @brief Sets verbose level. Accepted range is 0-9
+    inline void setLevel(base::type::VerboseLevel level) {
         base::threading::lock_guard lock(mutex());
         if (level < 0)
             m_level = 0;
@@ -3503,7 +3503,7 @@ public:
             m_level = level;
     }
 
-    inline VLevel level(void) const {
+    inline base::type::VerboseLevel level(void) const {
         return m_level;
     }
 
@@ -3522,7 +3522,7 @@ public:
             }
             ss << sfx;
         };  // NOLINT
-        auto insert = [&](std::stringstream& ss, VLevel level) {
+        auto insert = [&](std::stringstream& ss, base::type::VerboseLevel level) {
             if (!base::utils::hasFlag(LoggingFlag::DisableVModulesExtensions, *m_pFlags)) {
                 addSuffix(ss, ".h", nullptr);
                 m_modules.insert(std::make_pair(ss.str(), level));
@@ -3568,7 +3568,7 @@ public:
                     ss << *modules;
                 } else if (isLevel) {
                     if (isdigit(*modules)) {
-                        level = static_cast<VLevel>(*modules) - 48;
+                        level = static_cast<base::type::VerboseLevel>(*modules) - 48;
                     }
                 }
                 break;
@@ -3579,12 +3579,12 @@ public:
         }
     }
 
-    bool allowed(VLevel vlevel, const char* file) {
+    bool allowed(base::type::VerboseLevel vlevel, const char* file) {
         base::threading::lock_guard lock(mutex());
         if (m_modules.empty() || file == nullptr) {
             return vlevel <= m_level;
         } else {
-            std::map<std::string, VLevel>::iterator it = m_modules.begin();
+            std::map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
             for (; it != m_modules.end(); ++it) {
                 if (base::utils::Str::wildCardMatch(file, it->first.c_str())) {
                     return vlevel <= it->second;
@@ -3597,7 +3597,7 @@ public:
         }
     }
 
-    inline const std::map<std::string, VLevel>& modules(void) const {
+    inline const std::map<std::string, base::type::VerboseLevel>& modules(void) const {
         return m_modules;
     }
 
@@ -3619,15 +3619,15 @@ public:
     }
 
 private:
-    VLevel m_level;
+    base::type::VerboseLevel m_level;
     base::type::EnumType* m_pFlags;
-    std::map<std::string, VLevel> m_modules;
+    std::map<std::string, base::type::VerboseLevel> m_modules;
 };
 }  // namespace base
 class LogMessage {
 public:
     LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
-                          base::VRegistry::VLevel verboseLevel, Logger* logger) :
+                          base::type::VerboseLevel verboseLevel, Logger* logger) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
     }
@@ -3635,7 +3635,7 @@ public:
     inline const std::string& file(void) const { return m_file; }
     inline unsigned long int line(void) const { return m_line; } // NOLINT
     inline const std::string& func(void) const { return m_func; }
-    inline base::VRegistry::VLevel verboseLevel(void) const { return m_verboseLevel; }
+    inline base::type::VerboseLevel verboseLevel(void) const { return m_verboseLevel; }
     inline Logger* logger(void) const { return m_logger; }
     inline const base::type::string_t& message(void) const { return m_message; }
 private:
@@ -3643,7 +3643,7 @@ private:
     std::string m_file;
     unsigned long int m_line;  // NOLINT
     std::string m_func;
-    base::VRegistry::VLevel m_verboseLevel;
+    base::type::VerboseLevel m_verboseLevel;
     Logger* m_logger;
     base::type::string_t m_message;
 };
@@ -4432,7 +4432,7 @@ class Writer : base::NoCopy {
 public:
     Writer(Level level, const char* file, unsigned long int line,  // NOLINT
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
-               base::VRegistry::VLevel verboseLevel = 0) :
+               base::type::VerboseLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
                    m_proceed(false), m_dispatchAction(dispatchAction) {
     }
@@ -4489,7 +4489,7 @@ protected:
     const char* m_file;
     const unsigned long int m_line;  // NOLINT
     const char* m_func;
-    base::VRegistry::VLevel m_verboseLevel;
+    base::type::VerboseLevel m_verboseLevel;
     Logger* m_logger;
     bool m_proceed;
     base::MessageBuilder m_messageBuilder;
@@ -4596,7 +4596,7 @@ class PErrorWriter : public base::Writer {
 public:
     PErrorWriter(Level level, const char* file, unsigned long int line,  // NOLINT
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
-               base::VRegistry::VLevel verboseLevel = 0) :
+               base::type::VerboseLevel verboseLevel = 0) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
     }
 
@@ -4794,7 +4794,7 @@ public:
     PerformanceTracker(const std::string& blockName,
             base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
             const std::string& loggerId = _CURRENT_FILE_PERFORMANCE_LOGGER_ID, 
-            bool scopedLog = true, Level level = Level::Info) :
+            bool scopedLog = true, Level level = base::consts::kPerformanceTrackerDefaultLevel) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(std::string()), m_enabled(false) {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
@@ -5053,7 +5053,7 @@ private:
 static std::string crashReason(int sig) {
     std::stringstream ss;
     bool foundReason = false;
-    for (int i = 0; i < base::consts::kMaxCrashSignals; ++i) {
+    for (int i = 0; i < base::consts::kCrashSignalsCount; ++i) {
         if (base::consts::kCrashSignals[i].numb == sig) {
             ss << "Application has crashed due to [" <<
                   base::consts::kCrashSignals[i].name <<
@@ -5115,7 +5115,7 @@ public:
 #else
             int i = 1;
 #endif  // defined(_ELPP_HANDLE_SIGABRT)
-        for (; i < base::consts::kMaxCrashSignals; ++i) {
+        for (; i < base::consts::kCrashSignalsCount; ++i) {
             m_handler = signal(base::consts::kCrashSignals[i].numb, cHandler);
         }
     }
