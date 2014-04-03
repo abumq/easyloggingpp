@@ -121,5 +121,22 @@ int main(int argc, char** argv)
      pthread_join(thread3, NULL); 
      pthread_join(thread4, NULL); 
 
+#if 0 // Change this to 1 for some serious multiple threads
+    int i = 5; // Last one we created was 4 so we dont want to confuse
+    const int max = i + 500;
+    for (; i <= max; ++i) {
+        pthread_t thread;
+        std::string s = std::to_string(static_cast<long long>(i));
+        if (i % 2 == 0)
+            pthread_create( &thread, NULL, write, (void*)s.c_str());
+        else {
+            args.thrId = s.c_str();
+            args.logger = logger;
+            pthread_create( &thread, NULL, write2, (void*)&args);
+        }
+        pthread_join(thread, NULL); 
+    }
+#endif
+
     exit(0);
 }
