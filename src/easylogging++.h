@@ -5401,7 +5401,6 @@ public:
         }
     }
     /// @brief Configures loggers using command line arg. Ensure you have already set command line args, 
-    ///        see Helpers::setArgs(..)
     /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger.
     ///         If true is returned that does not mean it has been configured successfully, it only means that it
     ///         has attempeted to configure logger using configuration file provided in argument
