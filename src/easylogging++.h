@@ -3158,7 +3158,6 @@ enum class DispatchAction : base::type::EnumType {
     None = 1, NormalLog = 2, SysLog = 4
 };
 }  // namespace base
-namespace api {
 class LogBuilder : base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
@@ -3176,7 +3175,6 @@ private:
     }
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
-}  // namespace api
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
 /// @detail This class does not write logs itself instead its used by writer to read configuations from.
@@ -3299,11 +3297,11 @@ public:
         });
     }
 
-    inline api::LogBuilder* logBuilder(void) const {
+    inline LogBuilder* logBuilder(void) const {
         return m_logBuilder.get();
     }
 
-    inline void setLogBuilder(const api::LogBuilderPtr& logBuilder) {
+    inline void setLogBuilder(const LogBuilderPtr& logBuilder) {
         m_logBuilder = logBuilder;
     }
 
@@ -3341,7 +3339,7 @@ private:
     Configurations m_configurations;
     std::map<Level, unsigned int> m_unflushedCount;
     base::LogStreamsReferenceMap* m_logStreamsReference;
-    api::LogBuilderPtr m_logBuilder;
+    LogBuilderPtr m_logBuilder;
 
     friend class el::LogMessage;
     friend class el::Loggers;
@@ -3412,7 +3410,7 @@ namespace base {
 /// @brief Loggers repository
 class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 public:
-    explicit RegisteredLoggers(const api::LogBuilderPtr& defaultLogBuilder) :
+    explicit RegisteredLoggers(const LogBuilderPtr& defaultLogBuilder) :
         m_defaultLogBuilder(defaultLogBuilder) {
         m_defaultConfigurations.setToDefault();
     }
@@ -3481,7 +3479,7 @@ public:
     }
 
 private:
-    api::LogBuilderPtr m_defaultLogBuilder;
+    LogBuilderPtr m_defaultLogBuilder;
     Configurations m_defaultConfigurations;
     base::LogStreamsReferenceMap m_logStreamsReference;
     friend class el::base::Storage;
@@ -3653,7 +3651,7 @@ namespace base {
 /// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
-    explicit Storage(const api::LogBuilderPtr& defaultLogBuilder) :
+    explicit Storage(const LogBuilderPtr& defaultLogBuilder) :
         m_registeredHitCounters(new base::RegisteredHitCounters()),
         m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
         m_flags(0x0),
@@ -3816,7 +3814,7 @@ private:
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
-    friend class el::api::LogBuilder;
+    friend class el::LogBuilder;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
 
@@ -3850,7 +3848,7 @@ extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
 }  // namespace base
 namespace base {
-class DefaultLogBuilder : public api::LogBuilder {
+class DefaultLogBuilder : public LogBuilder {
 public:
     base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const {
         base::TypedConfigurations* tc = logMessage->logger()->typedConfigurations();
@@ -6105,7 +6103,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
     }
 
 #define _INITIALIZE_EASYLOGGINGPP\
-    _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::api::LogBuilderPtr(new el::base::DefaultLogBuilder())))
+    _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #define _INITIALIZE_NULL_EASYLOGGINGPP\
     _ELPP_INITI_BASIC_DECLR\
     namespace el {\

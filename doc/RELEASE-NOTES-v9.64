@@ -45,6 +45,7 @@ API changes: Yes
      - `PreRollOutHandler` to `PreRollOutCallback`
      - `PostLogDispatchHandler` to `LogDispatchCallback`
      - `PostPerformanceTrackingHandler` to `PerformanceTrackingCallback`
+ - Moved `el::api::*` to `el::*`
 
 ==========================
 =         NOTES          =

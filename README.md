@@ -169,18 +169,19 @@ int main(int argv, char* argc[]) {
  
 # Configuration
 ### Level
-In order to start configuring your logging library, you must understand severity levels. Easylogging++ deliberately does not use hierarchical logging in order to fully control what's enabled and what's not. Developers may enable/disable any level regardless of what level is it. Easylogging++ has following levels
+In order to start configuring your logging library, you must understand severity levels. Easylogging++ deliberately does not use hierarchical logging in order to fully control what's enabled and what's not. That being said, there is still option to use hierarchical logging using `LoggingFlag::HierarchicalLogging`. Easylogging++ has following levels (ordered for hierarchical levels)
 
 |   Level  |                 Description                                                                                                                                   |
 |----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Global   | Generic level that represents all levels. Useful when setting global configuration for all levels.                                                            |
-| Debug    | Informational events most useful for developers to debug application. Only applicable if NDEBUG is not defined (for non-VC++) or _DEBUG is defined (for VC++).|
-| Info     | Mainly useful to represent current progress of application.                                                                                                   |
-| Warning  | Information representing errors in application but application will keep running.                                                                             |
-| Error    | Error information but will continue application to keep running.                                                                                              |
-| Fatal    | Very severe error event that will presumably lead the application to abort.                                                                                   |
-| Verbose  | Information that can be highly useful and vary with verbose logging level.                                                                                    |
 | Trace    | Information that can be useful to back-trace certain events - mostly useful than debug logs.                                                                  |
+| Debug    | Informational events most useful for developers to debug application. Only applicable if NDEBUG is not defined (for non-VC++) or _DEBUG is defined (for VC++).|
+| Fatal    | Very severe error event that will presumably lead the application to abort.                                                                                   |
+| Error    | Error information but will continue application to keep running.                                                                                              |
+| Warning  | Information representing errors in application but application will keep running.                                                                             |
+| Info     | Mainly useful to represent current progress of application.                                                                                                   |
+| Verbose  | Information that can be highly useful and vary with verbose logging level. Verbose logging is not applicable to hierarchical logging.                         |
+| Unknown  | Only applicable to hierarchical logging and is used to turn off logging completely.                                                                           |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -191,7 +192,7 @@ Easylogging++ is easy to configure. There are three possible ways to do so,
 * Using inline configuration
 
 #### Using Configuration File
-Configuration can be done by file that is loaded at runtime by Configurations class. This file has following format;
+Configuration can be done by file that is loaded at runtime by `Configurations` class. This file has following format;
 ```
 * LEVEL:
   CONFIGURATION NAME  = "VALUE" ## Comment
