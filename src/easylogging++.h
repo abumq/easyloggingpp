@@ -4504,10 +4504,12 @@ protected:
             m_logger = ELPP->registeredLoggers()->get(loggerId, false);
         }
         if (m_logger == nullptr) {
+            ELPP->lock();
             if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
                 // Somehow default logger has been unregistered. Not good! Register again
                 ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
             }
+            ELPP->unlock();  // Need to unlock it for next writer
             Writer(Level::Debug, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
                     << "Logger [" << loggerId << "] is not registered yet!";
             m_proceed = false;
