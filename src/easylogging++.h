@@ -5160,12 +5160,11 @@ public:
     }
     /// @brief Sets application arguments and figures out whats active for logging and whats not.
     static inline void setArgs(int argc, char** argv) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->setApplicationArguments(argc, argv);
     }
     /// @copydoc setArgs(int argc, char** argv)
     static inline void setArgs(int argc, const char** argv) {
-        Helpers::setArgs(argc, const_cast<char**>(argv));
+        ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
     }
     /// @brief Overrides default crash handler and installs custom handler.
     /// @param crashHandler A functor with no return type that takes single int argument.
@@ -5200,17 +5199,14 @@ public:
     /// @brief Installs pre rollout callback, this callback is triggered when log file is about to be rolled out
     ///        (can be useful for backing up)
     static inline void installPreRollOutCallback(const PreRollOutCallback& callback) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->setPreRollOutCallback(callback);
     }
     /// @brief Uninstalls pre rollout callback
     static inline void uninstallPreRollOutCallback(void) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->unsetPreRollOutCallback();
     }
    /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
     static inline void installLogDispatchCallback(const LogDispatchCallback& callback, bool addFlag = true) {
-        base::threading::lock_guard lock(ELPP->mutex());
         if (addFlag) {
             ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
         }
@@ -5218,7 +5214,6 @@ public:
     }
     /// @brief Uninstalls post log dispatch
     static inline void uninstallLogDispatchCallback(bool removeFlag = true) {
-        base::threading::lock_guard lock(ELPP->mutex());
         if (removeFlag) {
             ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
         }
@@ -5226,13 +5221,11 @@ public:
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
     static inline void installPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
         ELPP->setPerformanceTrackingCallback(callback);
     }
     /// @brief Uninstalls post performance tracking handler
     static inline void uninstallPerformanceTrackingCallback(void) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
         ELPP->unsetPerformanceTrackingCallback();
     }
@@ -5263,17 +5256,14 @@ public:
     }
     /// @brief Installs user defined format specifier and handler
     static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->installCustomFormatSpecifier(customFormatSpecifier);
     }
     /// @brief Uninstalls user defined format specifier and handler
     static inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
-        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->uninstallCustomFormatSpecifier(formatSpecifier);
     }
     /// @brief Returns true if custom format specifier is installed
     static inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
-        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->hasCustomFormatSpecifier(formatSpecifier);
     }
     static inline void validateFileRolling(Logger* logger, Level level) {
@@ -5344,7 +5334,6 @@ public:
     }
     /// @brief Sets default configurations. This configuration is used for future (and conditionally for existing) loggers
     static inline void setDefaultConfigurations(const Configurations& configurations, bool reconfigureExistingLoggers = false) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->registeredLoggers()->setDefaultConfigurations(configurations);
         if (reconfigureExistingLoggers) {
             Loggers::reconfigureAllLoggers(configurations);
@@ -5432,22 +5421,18 @@ public:
     }
     /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
     static inline void flushAll(void) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->registeredLoggers()->flushAll();
     }
     /// @brief Adds logging flag used internally.
     static inline void addFlag(LoggingFlag flag) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->addFlag(flag);
     }
     /// @brief Removes logging flag used internally.
     static inline void removeFlag(LoggingFlag flag) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->removeFlag(flag);
     }
     /// @brief Determines whether or not certain flag is active
     static inline bool hasFlag(LoggingFlag flag) {
-        base::threading::lock_guard lock(ELPP->mutex());
         return ELPP->hasFlag(flag);
     }
     /// @brief Adds flag and removes it when scope goes out
@@ -5468,7 +5453,6 @@ public:
     };
     /// @brief Sets hierarchy for logging. Needs to enable logging flag (HierarchicalLogging)
     static inline void setLoggingLevel(Level level) {
-        base::threading::lock_guard lock(ELPP->mutex());
         ELPP->setLoggingLevel(level);
     }
 };
