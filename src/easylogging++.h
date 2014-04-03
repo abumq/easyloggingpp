@@ -677,7 +677,7 @@ namespace consts {
     static const unsigned int kMaxLogPerContainer              =      100;
     static const unsigned int kMaxLogPerCounter                =      100000;
     static const unsigned int  kDefaultMillisecondsWidth       =      3;
-    static const int kMaxVerboseLevel                          =      9;
+    static const base::type::VerboseLevel kMaxVerboseLevel     =      9;
     static const char* kUnknownUser                            =      "user";
     static const char* kUnknownHost                            =      "unknown-host";
 #if defined(_ELPP_DEFAULT_LOG_FILE)
