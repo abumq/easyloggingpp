@@ -951,10 +951,10 @@ public:
 private:
     NoScopedLock(void);
 };
+} // namespace internal
 static inline std::string getCurrentThreadId(void) {
     return std::string();
 }
-} // namespace internal
 typedef base::threading::internal::NoMutex Mutex;
 typedef base::threading::internal::NoScopedLock<base::threading::Mutex> ScopedLock;
 #endif  // _ELPP_THREADING_ENABLED
