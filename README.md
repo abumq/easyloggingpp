@@ -152,7 +152,7 @@ int main(int argv, char* argc[]) {
 }
 ```
 
-That simple! Please note that `_INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `main(int, char**)` function is defined, right after last include statement.
+That simple! Please note that `_INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -204,15 +204,15 @@ Following table contains configurations supported by configuration file.
 
 |   Configuration Name  |   Type   |                 Description                                                                                                                                                 |
 |-----------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Enabled`               |   bool   | Determines whether or not corresponding level for logger is enabled. You may disable all logs by using el::Level::Global                                                    |
-| `To_File`               |   bool   | Whether or not to write corresponding log to log file                                                                                                                       |
-| `To_Standard_Output`    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                             |
-| `Format`                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                    |
-| `Filename`              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                         |
-| `Milliseconds_Width`    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                               |
-| `Performance_Tracking`  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified. |
-| `Max_Log_File_Size`     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                   |
-| `Log_Flush_Threshold`   |  size_t  | Specifies number of log entries to hold until we flush pending log data |
+| `Enabled`               |   bool   | Determines whether or not corresponding level for logger is enabled. You may disable all logs by using `el::Level::Global`                                                |
+| `To_File`               |   bool   | Whether or not to write corresponding log to log file                                                                                                                     |
+| `To_Standard_Output`    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                           |
+| `Format`                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                  |
+| `Filename`              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                       |
+| `Milliseconds_Width`    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                             |
+| `Performance_Tracking`  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified|
+| `Max_Log_File_Size`     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                 |
+| `Log_Flush_Threshold`   |  size_t  | Specifies number of log entries to hold until we flush pending log data                                                                                                   |
 	
 
 Please do not use double-quotes anywhere in comment, you might end up in unexpected behaviour.
@@ -234,7 +234,7 @@ Sample Configuration File
 ```
 
 ##### Explanation 
-Configuration file contents in above sample is straightforward. We start with `GLOBAL` level in order to override all the levels. Any explicitly defined subsequent level will override configuration from `GLOBAL` for that level. For example, all the levels except for `DEBUG` have the same format, i.e, datetime and log message. For `DEBUG` level, we have only date (with day and month), logging function and log message. The rest of configurations for DEBUG are used from GLOBAL. Also, notice {%d/%M} in DEBUG format above, if you do not specify date format, default format is used. Default values of date/time is `%d/%M/%Y %h:%m:%s,%g` For more information on these format specifiers, please refer to Date/Time Format Specifier section below
+Configuration file contents in above sample is straightforward. We start with `GLOBAL` level in order to override all the levels. Any explicitly defined subsequent level will override configuration from `GLOBAL`. For example, all the levels except for `DEBUG` have the same format, i.e, datetime and log message. For `DEBUG` level, we have only date (with day and month), source function and log message. The rest of configurations for `DEBUG` are used from `GLOBAL`. Also, notice `{%d/%M}` in `DEBUG` format above, if you do not specify date format, default format is used. Default values of date/time is `%d/%M/%Y %h:%m:%s,%g` For more information on these format specifiers, please refer to [Date/Time Format Specifier](#datetime-format-specifiers) section below
 
 ##### Usage
 ```c++
@@ -244,7 +244,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char** argv) {
     // Load configuration from file
-    el::Configurations conf("my-conf.conf");
+    el::Configurations conf("/path/to/my-conf.conf");
     // Reconfigure single logger
     el::Loggers::reconfigureLogger("default", conf);
     // Actually reconfigure all loggers instead
@@ -252,6 +252,8 @@ int main(int argc, const char** argv) {
     // Now all the loggers will use configuration from file
 }
 ```
+
+ > Your configuration file can be converted to `el::Configurations` object (using constructor) that can be used where ever it is needed (like in above example).
 
  [![top] Goto Top](#table-of-contents)
  
@@ -279,12 +281,12 @@ int main(int argc, const char** argv) {
 }
 ```
 
-Configuration just needs to be set once. If you are happy with default configuration, you may use it as well.
+ > Configuration just needs to be set once. If you are happy with default configuration, you may use it as well.
 
  [![top] Goto Top](#table-of-contents)
  
 #### Using In line Configurations
-Inline configuration means you can set configurations in std::string but make sure you add all the new line characters etc.
+Inline configuration means you can set configurations in `std::string` but make sure you add all the new line characters etc. This is not recommended because it's always messy.
 ```c++
 el::Configurations c;
 c.setToDefault();
