@@ -341,7 +341,7 @@ You can customize format of logging using following specifiers:
 | `%host`         | Computer name application is running on                                                     |
 | `%func`         | Logging function                                                                            |
 | `%loc`          | Source filename and line number of logging (separated by colon)                             |
-| `%msg`          | Actual log message, (before ver.9.25 it was `%log`)                                         |
+| `%msg`          | Actual log message                                         |
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
 You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
@@ -536,7 +536,7 @@ Helper macros end with `_EVERY_N`;
 * `CLOG_EVERY_N(n, LEVEL, logger ID)`
 
 #### Other Hit Counts Based Logging
-There are some other ways of logging as well based on hit counts, this was introduced in ver. 9.43. These useful macros are
+There are some other ways of logging as well based on hit counts. These useful macros are
 * `LOG_AFTER_N(n, LEVEL)`; Only logs when we have reached hit counts of `n`
 * `LOG_N_TIMES(n, LEVEL)`; Logs n times
 
