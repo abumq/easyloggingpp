@@ -407,9 +407,9 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `EnableLogDispatchCallback (8192)`                     | Enables your install log dispatch callback. See [Log Dispatch Callback](#log-dispatch-callback) for details.|
 | `HierarchicalLogging (16384)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
 
-You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
+You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > You can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
+ > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `_ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
 
@@ -432,7 +432,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_STOP_ON_FIRST_ASSERTION`          | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
+| `_ELPP_DEBUG_ASSERT_FAILURE`             | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
 | `_ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
 | `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `_ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `_ELPP_THREAD_SAFE`            |
@@ -449,7 +449,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
 | `_ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `_ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
-| `_ELPP_ENABLE_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
+| `_ELPP_DEBUG_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
 | `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
 | `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
 | `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
@@ -795,19 +795,17 @@ Following are some useful macros that you can define to change the behaviour
 |   Macro Name                                        |                 Description                                                                                                    |
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `_ELPP_DISABLE_PERFORMANCE_TRACKING`                | Disables performance tracking                                                                                                  |
-| `_ELPP_PERFORMANCE_MICROSECONDS`                    | Track up-to microseconds (this includes initializing of el::base::Trackable as well so might time not be 100% accurate)        |
+| `_ELPP_PERFORMANCE_MICROSECONDS`                    | Track up-to microseconds (this includes initializing of el::base::PerformanceTracker as well so might time not be 100% accurate)        |
 
 Notes:
 
-1. Performance tracking uses `performance` logger (INFO level) by default unless `el::base::Trackable` is constructed manually (not using macro - not recommended). When configuring other loggers, make sure you configure this one as well.
+1. Performance tracking uses `performance` logger (INFO level) by default unless `el::base::PerformanceTracker` is constructed manually (not using macro - not recommended). When configuring other loggers, make sure you configure this one as well.
 
-2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::Trackable` and `checkpoint()` can be accessed by `timerObj.checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
+2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::PerformanceTracker` and `checkpoint()` can be accessed by `timerObj.checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
 
-3. `TIMED_BLOCK` in older version (before ver 9.25) has been renamed to `TIMED_SCOPE` and functionality of `TIMED_BLOCK` is new
+3. In order to access `el::base::PerformanceTracker` while in `TIMED_BLOCK`, you can use `timerObj.timer`
 
-4. In order to access `el::base::Trackable` while in `TIMED_BLOCK`, you can use `timerObj.timer`
-
-5. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
+4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -823,10 +821,10 @@ In order to install this handler, you need a function with signature `void handl
 ### Log File Rolling
 Easylogging++ has ability to roll out (or throw away) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
-If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck` or alternatively you can define macro `_ELPP_STRICT_SIZE_CHECK` at compile-time to automatically add this while initializing.
+If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck`.
 
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
-This can be done by using `el::Helpers::installPreRollOutHandler(const PreRollOutHandler& handler)` where `PreRollOutHandler` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
+This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
 > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions. If you are sure that you are not going to log to same file and not using same logger, feel free to give it a try.
 
