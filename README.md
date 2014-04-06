@@ -409,7 +409,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > Since ver. 9.25, you can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
+ > You can set these flags by using `--logging-flags` command line arg. If you wish to force to disable this functionality define `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
 
@@ -446,8 +446,6 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
 | `_ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
 | `_ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_VMODULES_EXTENSION`       | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.*=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '*' wildcards are supported                                                                                                                                                                                       |
-| `_ELPP_DISABLE_PERFORMANCE_TRACKING`     | Disables performance tracking - regardless of what logger is used - (preprocessing)                                                                |
 | `_ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
 | `_ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `_ELPP_NO_DEFAULT_LOG_FILE`              | (since ver. 9.13) If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
@@ -455,8 +453,6 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
 | `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
 | `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
-| `_ELPP_MULTI_LOGGER_SUPPORT`             | Enables using multiple loggers for single log, you can achieve this by logging e.g, `CLOG(INFO, "logger1", "logger2")`. See sample [multi-logger](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/multiple-loggers.cpp) for details                                                                    |
-
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations
@@ -486,7 +482,7 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
-Since ver. 9.42, there is new way introduced to use same macro i.e, `LOG` (and associated macros), this is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
 
 A quick example is here
 ```c++
@@ -499,6 +495,7 @@ A quick example is here
 #include "easylogging++.h"
 UpdateManager::UpdateManager {
     _TRACE; // Logs using LOG(TRACE) provided logger is already registered - i.e, update_manager
+    LOG(INFO) << "This will log using update_manager logger as well";
 }
 ```
 
@@ -509,7 +506,7 @@ UpdateManager::UpdateManager {
 }
 ```
 
-Since ver. 9.60, there is new way to write logs; i.e, by using Logger class directly. This feature is available on compilers that support variadic templates. You can explore more by looking at `samples/STL/logger-log-functions.cpp`.
+ > You can also write logs by using `Logger` class directly. This feature is available on compilers that support variadic templates. You can explore more by looking at `samples/STL/logger-log-functions.cpp`.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -528,7 +525,7 @@ LOG_IF(false, WARNING) << "Never logged";
 CLOG_IF(true, INFO, "performance") << "Always logged (performance logger)"
 ```
 
-Same macros are available for verbose logging with V in the beginning, i.e, `VLOG_IF` and `CVLOG_IF`. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
+Same macros are available for verbose logging with `V` in the beginning, i.e, `VLOG_IF` and `CVLOG_IF`. see verbose logging section below for further information. You may have as complicated conditions as you want depending on your need.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -561,7 +558,7 @@ for (int i = 1; i <= 100; ++i) {
 // 3 logs writter; 1, 2, 3
 ```
 
-> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
+ > Same versions of macros are available for `DEBUG` only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DLOG` to log only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 
  [![top] Goto Top](#table-of-contents)
  
@@ -674,8 +671,6 @@ You may unregister loggers; any logger except for `default`. You should be reall
 
 To unregister logger, use `el::Loggers::unregisterLogger("logger-id")`
 
-> Since version 9.49
-
  [![top] Goto Top](#table-of-contents)
 
 ### Populating Existing Logger IDs
@@ -694,8 +689,6 @@ Let's say we have an application that uses easylogging++ and has it's own config
   Refer [this](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/shared-storage) for details
 
 After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs. A very good example is in `samples/VC++/DLLSample`
-
- > Since version 9.56
 
  [![top] Goto Top](#table-of-contents)
 
@@ -900,7 +893,7 @@ int main(void) {
  [![top] Goto Top](#table-of-contents)
 
 ### Stacktrace
-Easylogging++ 9.0+ supports stack trace printing for GCC compilers. You can print stack trace at anytime by calling `el::base::debug::StackTrace()`, formatting will be done automatically. Note, if you are using non-GCC compiler, you will end-up getting empty output.
+Easylogging++ supports stack trace printing for GCC compilers. You can print stack trace at anytime by calling `el::base::debug::StackTrace()`, formatting will be done automatically. Note, if you are using non-GCC compiler, you will end-up getting empty output.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -927,14 +920,12 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
 | `CHECK_STRCASENE(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_STRCASENE(username1, username2) << "Same username not allowed";`           |
 
-> Since ver. 9.18, same versions of macros are available for DEBUG only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
+> Same versions of macros are available for `DEBUG` only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 
  [![top] Goto Top](#table-of-contents)
  
 ### Logging perror()
 Easylogging++ supports `perror()` styled logging using `PLOG(LEVEL)`, `PLOG_IF(Condition, LEVEL)`, and `PCHECK()` using `default` logger; and for custom logger use `CPLOG(LEVEL, LoggerId)`, `CPLOG_IF(Condition, LEVEL, LoggerId)`. This will append `: log-error [errno]` in the end of log line.
-
-> Since version 9.23
 
  [![top] Goto Top](#table-of-contents)
 
@@ -965,8 +956,6 @@ Syslog support for Easylogging++ only supports following levels; each level is c
 
 Following levels are not supported and correspond to `LOG_NOTICE`: TRACE, whereas VERBOSE level is completely not supported
 
-> Since version 9.24
-
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
@@ -979,8 +968,6 @@ Following Qt classes and containers are supported by Easylogging++ v9.0+
 | `QString`     |  `QByteArray`             |  `QLatin`          |    `QList`         |    `QVector`       |    `QQueue`        |
 | `QSet`        |  `QPair`                  |  `QMap`            |    `QMultiMap`     |    `QHash`         |    `QMultiHash`    |
 | `QLinkedList` |  `QStack`                 |  `QChar`           |    `q[u]int[64]`   |                    |                    |
-
-`QBool` is not supported since it's been dropped from Qt 5+
 
 Similar to STL logging, Qt containers are also limit to log 100 entries per log, you can change this behaviour by changing base::consts::kMaxLogPerContainer from header but this is not recommended as this was done for performance purposes.
 
@@ -1000,8 +987,6 @@ Following table shows the templates supported.
 | `boost::container::set`             |  `boost::container::flat_set`            |
 | `boost::container::deque`           |  `boost::container::list`                |
 | `boost::container::string`          |                                          |
-
-> Since version 9.06
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1037,14 +1022,9 @@ ELPP_WX_HASH_MAP_ENABLED(MyHashMap)
 ```
 You may also have a look at wxWidgets sample
 
-> Since version 9.09
-
  [![top] Goto Top](#table-of-contents)
 
 ### Extending Library
-
-> This functionality has been improved since version 9.12. For older versions, please refer to [older manual](https://github.com/easylogging/easyloggingpp/blob/v9.11/README.md)
-
 #### Logging Your Own Class
 
 You can log your own classes by extending `el::Loggable` class and implementing pure-virtual function `void log(std::ostream& os) const`. Following example shows a good way to extend a class.
@@ -1112,7 +1092,7 @@ int main(void) {
 }
 ```
 
-Just be careful with this as having a time-consuming overloading of `log(std::ostream& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
+Just be careful with this as having a time-consuming overloading of `log(el::base::type::ostream_t& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1120,8 +1100,6 @@ Just be careful with this as having a time-consuming overloading of `log(std::os
 You can manually flush log files using `el::Logger::flush()` (to flush single logger with all referencing log files) or `el::Loggers::flushAll()` (to flush all log files for all levels).
 
 If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, you can manually check for log files that need rolling; by using `el::Helpers::validateFileRolling(el::Logger*, const el::Level&)`. 
-
- > Since ver. 9.25
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1136,7 +1114,7 @@ In order to install this handler, you need a function with signature `void handl
  
 # Contribution
 ### Submitting Patches
-Since ver. 9.25, we do not accept any patches. Contribution can only be done by report bugs. This is because Easylogging++ is based on single header file hence we run into conflicts a lot of times, which no developer likes.
+You can submit patches to `develop` branch and we will try and merge them. Since it's based on single header, it can be sometimes difficult to merge without having merge conflicts.
 
  [![top] Goto Top](#table-of-contents)
  
