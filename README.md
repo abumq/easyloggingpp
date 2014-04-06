@@ -80,7 +80,7 @@
         <a href="#logging-your-own-class">Logging Your Own Class</a>
         <a href="#logging-third-party-class">Logging Third-party Class</a>
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
-    <a href="#post-log-dispatch-handler">Post Log Dispatch Handler</a>
+    <a href="#log-dispatch-callback">Log Dispatch Callback</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -293,7 +293,7 @@ c.setToDefault();
 c.parseFromText("*GLOBAL:\n FORMAT = %level %msg");
 ```
 
-Please note, above code only sets Configurations object, you still need to re-configure logger/s using this configurations.
+ > Above code only sets Configurations object, you still need to re-configure logger/s using this configurations.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -323,7 +323,7 @@ int main(void) {
    return 0;
 }
 ```
-Please note, it is not possible to register new logger using global configuration without defining its configuration. You must define at least single configuration. Other ways to register loggers are discussed in Logging section below.
+Please note, it is not possible to register new logger using global configuration without defining its configuration. You must define at least single configuration. Other ways to register loggers are discussed in [Logging](#logging) section below.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -340,11 +340,11 @@ You can customize format of logging using following specifiers:
 | `%user`         | User currently running application                                                          |
 | `%host`         | Computer name application is running on                                                     |
 | `%func`         | Logging function                                                                            |
-| `%loc`          | Source filename and line number of logging                                                  |
+| `%loc`          | Source filename and line number of logging (separated by colon)                             |
 | `%msg`          | Actual log message, (before ver.9.25 it was `%log`)                                         |
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
-Since ver. 9.23, you can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCp server application;
+You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
 
 ```C++
 const char* getIp(void) {
@@ -389,15 +389,23 @@ Please note, date/time is limited to `30` characters at most.
 ###Logging flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
-|     Flag                                 |                 Description                                                                                                                   |
-|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `NewLineForContainer (1)`                | Makes sure we have new line for each container log entry                                                                                      |
-| `AllowVerboseIfModuleNotSpecified (2)`   | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
-| `LogDetailedCrashReason (4)`         | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                                |
-| `DisableApplicationAbortOnFatalLog (8)`  | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                               |
-| `ImmediateFlush (16)`                    | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
-| `StrictLogFileSizeCheck (32)`            | Makes sure log file size is checked with every log                                                                                            |
-| `ColoredTerminalOutput (64)`             | Terminal output will be colorful if supported by terminal.                                                                                            |
+|     Flag                                               |                 Description                                                                                                                   |
+|--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `NewLineForContainer (1)`                              | Makes sure we have new line for each container log entry                                                                                      |
+| `AllowVerboseIfModuleNotSpecified (2)`                 | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
+| `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                                |
+| `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                               |
+| `ImmediateFlush (16)`                                  | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
+| `StrictLogFileSizeCheck (32)`                          | Makes sure log file size is checked with every log                                                                                            |
+| `ColoredTerminalOutput (64)`                           | Terminal output will be colorful if supported by terminal.                                                                                            |
+| `MultiLoggerSupport (128)`                             | Enables support for using multiple loggers to log single message. (E.g, `CLOG(INFO, "default", "network") << This will be logged using default and network loggers;`) |
+| `DisablePerformanceTrackingDispatch (256)`             | Disables logging dispatch for performance tracking. This is useful when you wish to make use of `PerformanceTrackingData` |
+| `DisablePerformanceTrackingCheckpointComparison (512)` | Disables checkpoint comparison |
+| `PerformanceTrackingCallback (1024)`                   | Capture log message right after it is dispatched. See [Make Use of Performance Tracking Data](#make-use-of-performance-tracking-data) for further details. |
+| `DisableVModules (2048)`                               | Disables usage of vmodules
+| `DisableVModulesExtensions (4096)`                     | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '' wildcards are supported |
+| `EnableLogDispatchCallback (8192)`                     | Enables your install log dispatch callback. See [Log Dispatch Callback](#log-dispatch-callback) for details.|
+| `HierarchicalLogging (16384)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
 
 You can set/unset these flags by using static `el::Helpers::addFlag` and `el::Helpers::removeFlag`. You can check to see if certain flag is available by using `el::Helpers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
@@ -793,7 +801,6 @@ Following are some useful macros that you can define to change the behaviour
 
 |   Macro Name                                        |                 Description                                                                                                    |
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_PERFORMANCE_DISABLE_COMPARE_CHECKPOINTS`     | Disables checkpoint comparison                                                                                                 |
 | `_ELPP_DISABLE_PERFORMANCE_TRACKING`                | Disables performance tracking                                                                                                  |
 | `_ELPP_PERFORMANCE_MICROSECONDS`                    | Track up-to microseconds (this includes initializing of el::base::Trackable as well so might time not be 100% accurate)        |
 
@@ -812,13 +819,11 @@ Notes:
  [![top] Goto Top](#table-of-contents)
 
 #### Make Use of Performance Tracking Data
-If you wish to capture performance tracking data right after it is finished, you can do so by defining `_ELPP_HANDLE_POST_PERFORMANCE_TRACKING`, by doing so you are telling library to trigger an installed post log dispatch handler, called `PostPerformanceTrackingHandler` in `el` namespace.
+If you wish to capture performance tracking data right after it is finished, you can do so by adding flag `PerformanceTrackingCallback`, by doing so you are telling library to trigger an installed post tracking callback, called `PerformanceTrackingCallback` in `el` namespace.
 
-In order to install this handler, you need a function with signature `void handler(const el::PostLogDispatchHandler*)` and install it at anytime using `el::Helpers::installPostPerformanceTrackingHandler(handler)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPostPerformanceTrackingHandler()`
+In order to install this handler, you need a function with signature `void handler(const el::PostLogDispatchHandler*)` and install it at anytime using `el::Helpers::installPerformanceTrackingCallback(callback)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPerformanceTrackingCallback()`
 
  > It is strongly recommended to not use any performance tracking within this handler otherwise you will run into indefinite recursive loop of calling this handler.
- 
- > Since ver. 9.54
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1120,16 +1125,12 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 
  [![top] Goto Top](#table-of-contents)
 
-### Post Log Dispatch Handler
-If you wish to capture log message right after it is dispatched, you can do so by defining `_ELPP_HANDLE_POST_LOG_DISPATCH`, by doing so you are telling library to trigger an installed post log dispatch handler, called `PostLogDispatchHandler` in `el` namespace.
+### Log Dispatch Callback
+If you wish to capture log message right after it is dispatched, you can do so by adding flag `EnableLogDispatchCallback`, by doing so you are telling library to trigger an installed log dispatch callback, called `LogDispatchCallback` in `el` namespace.
 
-In order to install this handler, you need a function with signature `void handler(const el::LogMessage*)` and install it at anytime using `el::Helpers::installPostLogDispatchHandler(handler)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPostLogDispatchHandler()`
-
-Please note, if you are definitely not using this handler, it is always recommended to `#undef _ELPP_HANDLE_POST_LOG_DISPATCH`, so that if you are using a library that is using easylogging++ and has installed this handler is not triggering this anymore. (You may not know how expensive this handler is and hence blocking / delaying your log dispatches)
+In order to install this handler, you need a function with signature `void handler(const el::LogMessage*)` and install it at anytime using `el::Helpers::installLogDispatchCallback(callback)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallLogDispatchCallback()`
 
  > You should NEVER log anything in this function. This is because you can run into recursive log-dispatching conditions where you will keep on calling the handler again.
- 
- > Since ver. 9.26
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1238,7 +1239,7 @@ Icons used in this manual (in compatibility section) are solely for information 
 "Pencil +" icon is Easylogging++ logo and should only be used where giving credit to Easylogging++ library.
 
 
- [![top] Goto Top](#table-of-contents)
+ [![top] Goto Top](#table-of-contents)ddd
  
   [banner]: http://easylogging.org/images/banner.png?v=4
   [ubuntu]: http://www.easylogging.org/images/icons/ubuntu.png?v=2
