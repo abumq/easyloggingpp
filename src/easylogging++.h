@@ -623,10 +623,12 @@ enum class LoggingFlag : base::type::EnumType {
     DisableVModules = 2048,
     /// @brief Disable VModules extensions
     DisableVModulesExtensions = 4096,
-    /// Enables post log callback
+    /// @brief Enables post log callback
     EnableLogDispatchCallback = 8192,
-    /// Enables hierarchical logging
-    HierarchicalLogging = 16384
+    /// @brief Enables hierarchical logging
+    HierarchicalLogging = 16384,
+    /// @brief Creates logger automatically when not available
+    CreateLoggerAutomatically = 32768
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -4503,7 +4505,7 @@ protected:
 
     void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
         if (lookup) {
-            m_logger = ELPP->registeredLoggers()->get(loggerId, false);
+            m_logger = ELPP->registeredLoggers()->get(loggerId, ELPP->hasFlag(LoggingFlag::CreateLoggerAutomatically));
         }
         if (m_logger == nullptr) {
             ELPP->acquireLock();
