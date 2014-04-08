@@ -484,7 +484,7 @@ public:
     /// @param startIndex initial value to start the iteration from. This is passed as pointer and 
     ///        is left-shifted so this can be used inside function (fn) to represent current level.
     /// @param fn function to apply with each level. This bool represent whether or not to stop iterating through levels.
-    static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
+    static inline void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType lIndexMax = LevelHelper::kMaxValid;
         do {
             if (fn()) {
@@ -584,7 +584,7 @@ public:
     ///        so this can be used inside function (fn) to represent current configuration type.
     /// @param fn function to apply with each configuration type. 
     ///        This bool represent whether or not to stop iterating through configurations.
-    static void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
+    static inline void forEachConfigType(base::type::EnumType* startIndex, const std::function<bool(void)>& fn) {
         base::type::EnumType cIndexMax = ConfigurationTypeHelper::kMaxValid;
         do {
             if (fn()) {
