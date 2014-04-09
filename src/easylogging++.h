@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.65
+//  Easylogging++ v9.65 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2014 Majid Khan
@@ -4648,6 +4648,8 @@ public:
             if (ELPP->vRegistry()->allowed(vlevel, __FILE__)) {
                 base::Writer(Level::Verbose, "file", 0, "func", 
                     base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
+            } else {
+                stream().str(ELPP_LITERAL(""));
             }
         } else {
             base::Writer(level, "file", 0, "func").construct(this, false) << log;
