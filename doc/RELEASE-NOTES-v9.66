@@ -11,6 +11,12 @@ API changes: No
  - Verbose fix when using `Logger::verbose`
 
 ==========================
+=      IMPROVEMENTS      =
+==========================
+
+ - Changed `func` and `file` to `FUNCTION` and `FILE` respectively
+
+==========================
 =         NOTES          =
 ==========================
 

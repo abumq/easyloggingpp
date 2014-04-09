@@ -4646,13 +4646,13 @@ public:
     inline void Logger::log_(Level level, int vlevel, const T& log) {
         if (level == Level::Verbose) {
             if (ELPP->vRegistry()->allowed(vlevel, __FILE__)) {
-                base::Writer(Level::Verbose, "file", 0, "func", 
+                base::Writer(Level::Verbose, "FILE", 0, "FUNCTION", 
                     base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
             } else {
                 stream().str(ELPP_LITERAL(""));
             }
         } else {
-            base::Writer(level, "file", 0, "func").construct(this, false) << log;
+            base::Writer(level, "FILE", 0, "FUNCTION").construct(this, false) << log;
         }
     }
     template <typename T, typename... Args>
