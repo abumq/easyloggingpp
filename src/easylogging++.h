@@ -1312,21 +1312,18 @@ public:
 #endif  // _ELPP_OS_WINDOWS
 #if _ELPP_OS_ANDROID
     /// @brief Reads android property value
-    static inline char* getProperty(const char* prop) {
+    static inline std::string getProperty(const char* prop) {
         char propVal[PROP_VALUE_MAX + 1];
         int ret = __system_property_get(prop, propVal);
-        if (ret != 0) {
-            return propVal;
-        }
-        return nullptr;
+        return ret == 0 ? std::string() : std::string(propVal);
     }
 
     /// @brief Reads android device name
     static std::string getDeviceName(void) {
         std::stringstream ss;
-        char* manufacturer = getProperty("ro.product.manufacturer");
-        char* model = getProperty("ro.product.model");
-        if (manufacturer == nullptr || model == nullptr) {
+        std::string manufacturer = getProperty("ro.product.manufacturer");
+        std::string model = getProperty("ro.product.model");
+        if (manufacturer.empty() || model.empty()) {
             return std::string();
         }
         ss << manufacturer << "-" << model;
@@ -1398,6 +1395,7 @@ public:
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("USERNAME", base::consts::kUnknownUser);
 #elif _ELPP_OS_ANDROID
+        _ELPP_UNUSED(base::consts::kUnknownUser);
         return std::string("android");
 #else
         return std::string();
@@ -1413,6 +1411,7 @@ public:
 #elif _ELPP_OS_WINDOWS
         return getEnvironmentVariable("COMPUTERNAME", base::consts::kUnknownHost);
 #elif _ELPP_OS_ANDROID
+        _ELPP_UNUSED(base::consts::kUnknownHost);
         return getDeviceName();
 #else
         return std::string();
@@ -2979,12 +2978,14 @@ private:
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
                 base::type::fstream_t* fs = base::utils::File::newFileStream(resolvedFilename);
-                if (fs != nullptr) {
-                    m_filenameMap.insert(std::make_pair(level, resolvedFilename));
-                    m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
-                    m_logStreamsReference->insert(std::make_pair(resolvedFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
+                m_filenameMap.insert(std::make_pair(level, resolvedFilename));
+                m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
+                m_logStreamsReference->insert(std::make_pair(resolvedFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
+                if (fs == nullptr) {
+                    // We display bad file error from newFileStream()
+                    ELPP_INTERNAL_INFO(1, "Setting [TO_FILE] of [" << LevelHelper::convertToString(level) << "] to false");
+                    setValue(level, false, &m_toFileMap);
                 }
-                // else we already display error from File::newFileStream()
             } else {
                 // Woops! we have an existing one, share it!
                 m_filenameMap.insert(std::make_pair(level, filestreamIter->first));
