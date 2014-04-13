@@ -89,23 +89,55 @@
 #   define _ELPP_OS_UNIX 1
 #   define _ELPP_OS_LINUX 1
 #endif //  !_ELPP_OS_UNIX && !_ELPP_OS_WINDOWS && _ELPP_CYGWIN
+#if !defined(_ELPP_INTERNAL_DEBUGGING_OUT_INFO)
+#   define _ELPP_INTERNAL_DEBUGGING_OUT_INFO std::cout
+#endif // !defined(_ELPP_INTERNAL_DEBUGGING_OUT)
+#if !defined(_ELPP_INTERNAL_DEBUGGING_OUT_ERROR)
+#   define _ELPP_INTERNAL_DEBUGGING_OUT_ERROR std::cerr
+#endif // !defined(_ELPP_INTERNAL_DEBUGGING_OUT)
+#if !defined(_ELPP_INTERNAL_DEBUGGING_ENDL)
+#   define _ELPP_INTERNAL_DEBUGGING_ENDL std::endl
+#endif // !defined(_ELPP_INTERNAL_DEBUGGING_OUT)
+#if !defined(_ELPP_INTERNAL_DEBUGGING_MSG)
+#   define _ELPP_INTERNAL_DEBUGGING_MSG(msg) msg
+#endif // !defined(_ELPP_INTERNAL_DEBUGGING_OUT)
 // Internal Assertions and errors
 #if !defined(_ELPP_DISABLE_ASSERT)
 #   if (defined(_ELPP_DEBUG_ASSERT_FAILURE))
 #      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
-          std::cerr << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
-              << msg << "\"" << std::endl; base::utils::abort(1, \
+          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          _ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
+              << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
+              << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" << _ELPP_INTERNAL_DEBUGGING_ENDL; base::utils::abort(1, \
                   "ELPP Assertion failure, please define _ELPP_DEBUG_ASSERT_FAILURE"); }
 #   else
-#      define ELPP_ASSERT(expr, msg) if (!(expr)) { std::cerr << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " <<\
-        __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << msg << "\"" << std::endl; }
+#      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
+          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          _ELPP_INTERNAL_DEBUGGING_OUT_ERROR\
+             << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " \
+             << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" \
+             << _ELPP_INTERNAL_DEBUGGING_ENDL; }
 #   endif  // (defined(_ELPP_DEBUG_ASSERT_FAILURE))
 #else
 #   define ELPP_ASSERT(x, y)
 #endif  //(!defined(_ELPP_DISABLE_ASSERT)
+#if _ELPP_COMPILER_MSVC
+#   define _ELPP_INTERNAL_DEBUGGING_WRITE_PERROR \
+       { char buff[256]; strerror_s(buff, 256, errno); \
+       _ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << buff << " [" << errno << "]";} (void)0
+#else
+#   define _ELPP_INTERNAL_DEBUGGING_WRITE_PERROR \
+        _ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << strerror(errno) << " [" << errno << "]"; (void)0
+#endif
 #if defined(_ELPP_DEBUG_ERRORS)
-#   define ELPP_INTERNAL_ERROR(msg, pe) std::cerr << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " << \
-    msg << std::endl; if (pe) { std::cerr << "    "; perror(""); } (void)0
+#   if !defined(ELPP_INTERNAL_ERROR)
+#      define ELPP_INTERNAL_ERROR(msg, pe) { \
+          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          _ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
+          << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " \
+          << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << _ELPP_INTERNAL_DEBUGGING_ENDL; \
+          if (pe) { _ELPP_INTERNAL_DEBUGGING_OUT_ERROR << "    "; _ELPP_INTERNAL_DEBUGGING_WRITE_PERROR; }} (void)0
+#   endif
 #else
 #   define ELPP_INTERNAL_ERROR(msg, pe)
 #endif  // defined(_ELPP_DEBUG_ERRORS)
@@ -113,8 +145,14 @@
 #   if !(defined(_ELPP_INTERNAL_INFO_LEVEL))
 #      define _ELPP_INTERNAL_INFO_LEVEL 9
 #   endif  // !(defined(_ELPP_INTERNAL_INFO_LEVEL))
-#   define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= _ELPP_INTERNAL_INFO_LEVEL) std::cout << msg << std::endl; }
+#   if !defined(ELPP_INTERNAL_INFO)
+#      define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= _ELPP_INTERNAL_INFO_LEVEL) { \
+          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          _ELPP_INTERNAL_DEBUGGING_OUT_INFO << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) \
+             << _ELPP_INTERNAL_DEBUGGING_ENDL; }}
+#   endif
 #else
+#   undef ELPP_INTERNAL_INFO
 #   define ELPP_INTERNAL_INFO(lvl, msg)
 #endif  // (defined(_ELPP_DEBUG_INFO))
 #if defined(_ELPP_STACKTRACE_ON_CRASH)
@@ -364,7 +402,11 @@ namespace type {
 #if defined(_ELPP_UNICODE)
 #   define ELPP_LITERAL(txt) L##txt
 #   define ELPP_STRLEN wcslen
-#   define ELPP_COUT std::wcout
+#   if defined ELPP_CUSTOM_COUT
+#      define ELPP_COUT ELPP_CUSTOM_COUT
+#   else
+#      define ELPP_COUT std::wcout
+#   endif  // defined ELPP_CUSTOM_COUT
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
@@ -373,13 +415,22 @@ typedef std::wostream ostream_t;
 #else
 #   define ELPP_LITERAL(txt) txt
 #   define ELPP_STRLEN strlen
-#   define ELPP_COUT std::cout
+#   if defined ELPP_CUSTOM_COUT
+#      define ELPP_COUT ELPP_CUSTOM_COUT
+#   else
+#      define ELPP_COUT std::cout
+#   endif  // defined ELPP_CUSTOM_COUT
 typedef char char_t;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;
 typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
+#if defined(ELPP_CUSTOM_COUT_LINE)
+#   define ELPP_COUT_LINE(logLine) ELPP_CUSTOM_COUT_LINE(logLine)
+#else
+#   define ELPP_COUT_LINE(logLine) logLine << std::flush
+#endif // defined(ELPP_CUSTOM_COUT_LINE)
 typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
@@ -3264,7 +3315,6 @@ public:
         if (m_configurations != configurations) {
             m_configurations.setFromBase(const_cast<Configurations*>(&configurations));
         }
-        ELPP_INTERNAL_INFO(9, "Configuring logger [" << id() << "] with configurations [\n" << m_configurations << "]");
         base::utils::safeDelete(m_typedConfigurations);
         m_typedConfigurations = new base::TypedConfigurations(&m_configurations, m_logStreamsReference);
         resolveLoggerFormatSpec();
@@ -4008,7 +4058,7 @@ private:
             if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_logMessage.logger()->logBuilder()->convertToColoredOutput(&logLine, m_logMessage.level());
-                ELPP_COUT << logLine << std::flush;
+                ELPP_COUT << ELPP_COUT_LINE(logLine);
             }
         }
 #if defined(_ELPP_SYSLOG)
