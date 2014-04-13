@@ -87,6 +87,21 @@ TEST(TypedConfigurationsTest, SharedFileStreams) {
     });
 }
 
+
+TEST(TypedConfigurationsTest, NonExistentFileCreation) {
+    Configurations c(getConfFile());
+    c.set(Level::Info, ConfigurationType::ToFile, "true");
+    c.set(Level::Error, ConfigurationType::ToFile, "true");
+    c.set(Level::Info, ConfigurationType::Filename, "/a/file/not/possible/to/create/log.log");
+    c.set(Level::Error, ConfigurationType::Filename, "a/file/ok/to/create/log.log");
+    TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
+    EXPECT_TRUE(tConf.toFile(Level::Global));
+    EXPECT_FALSE(tConf.toFile(Level::Info));
+    EXPECT_TRUE(tConf.toFile(Level::Error));
+    EXPECT_EQ(nullptr, tConf.fileStream(Level::Info));  // nullptr
+    EXPECT_NE(nullptr, tConf.fileStream(Level::Error)); // Not null
+}
+
 TEST(TypedConfigurationsTest, WriteToFiles) {
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
