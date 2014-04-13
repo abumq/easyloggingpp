@@ -2992,13 +2992,9 @@ private:
                 m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(filestreamIter->second)));
             }
         };  // NOLINT
-        if (m_filenameMap.empty() && m_fileStreamMap.empty()) {
-           // If we dont have file conf for any level, create it for Level::Global first
-            create(Level::Global);
-        } else {
-           // Create a shared or new file stream depending on file path
-            create(level);
-        }
+        // If we dont have file conf for any level, create it for Level::Global first
+        // otherwise create for specified level
+        create(m_filenameMap.empty() && m_fileStreamMap.empty() ? Level::Global : level);
     }
 
     bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
