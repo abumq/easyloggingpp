@@ -2886,7 +2886,11 @@ private:
             } else if (conf->configurationType() == ConfigurationType::ToStandardOutput) {
                 setValue(conf->level(), getBool(conf->value()), &m_toStandardOutputMap);
             } else if (conf->configurationType() == ConfigurationType::Filename) {
-                insertFile(conf->level(), conf->value());
+                // We do not yet configure filename but we will configure in another
+                // loop. This is because if file cannot be created, we will force ToFile
+                // to be false. Because configuring logger is not necessarily performance
+                // sensative operation, we can live with another loop; (by the way this loop
+                // is not very heavy either)
             } else if (conf->configurationType() == ConfigurationType::Format) {
                 setValue(conf->level(), base::LogFormat(conf->level(), 
                     base::type::string_t(conf->value().begin(), conf->value().end())), &m_logFormatMap);
@@ -2902,6 +2906,13 @@ private:
 #endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
+            }
+        }
+        // As mentioned early, we will now set filename configuration in separate loop to deal with non-existent files
+        for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
+            Configuration* conf = *it;
+            if (conf->configurationType() == ConfigurationType::Filename) {
+                insertFile(conf->level(), conf->value());
             }
         }
         for (std::vector<Configuration*>::iterator conf = withFileSizeLimit.begin();
@@ -2975,21 +2986,24 @@ private:
         }
         auto create = [&](Level level) {
             base::LogStreamsReferenceMap::iterator filestreamIter = m_logStreamsReference->find(resolvedFilename);
+            base::type::fstream_t* fs = nullptr;
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
-                base::type::fstream_t* fs = base::utils::File::newFileStream(resolvedFilename);
+                fs = base::utils::File::newFileStream(resolvedFilename);
                 m_filenameMap.insert(std::make_pair(level, resolvedFilename));
                 m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
                 m_logStreamsReference->insert(std::make_pair(resolvedFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
-                if (fs == nullptr) {
-                    // We display bad file error from newFileStream()
-                    ELPP_INTERNAL_INFO(1, "Setting [TO_FILE] of [" << LevelHelper::convertToString(level) << "] to false");
-                    setValue(level, false, &m_toFileMap);
-                }
             } else {
                 // Woops! we have an existing one, share it!
                 m_filenameMap.insert(std::make_pair(level, filestreamIter->first));
                 m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(filestreamIter->second)));
+                fs = filestreamIter->second.get();
+            }
+            if (fs == nullptr) {
+                // We display bad file error from newFileStream()
+                ELPP_INTERNAL_ERROR("Setting [TO_FILE] of [" 
+                    << LevelHelper::convertToString(level) << "] to FALSE", false);
+                setValue(level, false, &m_toFileMap);
             }
         };  // NOLINT
         // If we dont have file conf for any level, create it for Level::Global first
@@ -3986,7 +4000,8 @@ private:
                         }
                     }
                 } else {
-                    ELPP_INTERNAL_ERROR("Log file has not been configured and TO_FILE is configured to TRUE. [Logger ID: " 
+                    ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(m_logMessage.level()) << "] "
+                        << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " 
                         << m_logMessage.logger()->id() << "]", false);
                 }
             }
