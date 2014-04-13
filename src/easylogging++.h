@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.67
+//  Easylogging++ v9.68
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2014 Majid Khan
@@ -128,7 +128,7 @@
 #else
 #   define _ELPP_INTERNAL_DEBUGGING_WRITE_PERROR \
         _ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << strerror(errno) << " [" << errno << "]"; (void)0
-#endif
+#endif  // _ELPP_COMPILER_MSVC
 #if defined(_ELPP_DEBUG_ERRORS)
 #   if !defined(ELPP_INTERNAL_ERROR)
 #      define ELPP_INTERNAL_ERROR(msg, pe) { \
@@ -139,6 +139,7 @@
           if (pe) { _ELPP_INTERNAL_DEBUGGING_OUT_ERROR << "    "; _ELPP_INTERNAL_DEBUGGING_WRITE_PERROR; }} (void)0
 #   endif
 #else
+#   undef ELPP_INTERNAL_INFO
 #   define ELPP_INTERNAL_ERROR(msg, pe)
 #endif  // defined(_ELPP_DEBUG_ERRORS)
 #if (defined(_ELPP_DEBUG_INFO))
@@ -5529,9 +5530,9 @@ public:
 class VersionInfo : base::StaticClass {
 public:
    /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.67"); }
+    static inline const std::string version(void) { return std::string("9.68"); }
    /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-04-2014 1503hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("13-04-2014 1721hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON
