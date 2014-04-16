@@ -4064,7 +4064,7 @@ public:
             for (const std::pair<std::string, base::type::LogDispatchCallbackPtr>& h 
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
-                if (callback->enabled()) {
+                if (callback != nullptr && callback->enabled()) {
                     ELPP->setCallingDispatchCallback(true);
                     callback->handle(&m_logMessage);
                     ELPP->setCallingDispatchCallback(false);

@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     
     HtmlHandler* htmlHandler = el::Helpers::logDispatchCallback<HtmlHandler>("HtmlHandler");
     htmlHandler->setEnabled(false);
-    
+
     LOG(INFO) << "Second log";
 #if 1
     bool runThreads = true;
