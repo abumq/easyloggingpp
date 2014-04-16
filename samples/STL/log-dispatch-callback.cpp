@@ -19,11 +19,8 @@ public:
 
 class MyHtmlHandler : public el::LogDispatchCallback {
 public:
-    MyHtmlHandler() { setCallbackCount(1); }
     void handle(const el::LogMessage* msg) {
-        // NEVER EVER DO THIS!
-        // 
-        //LOG(INFO) << "Other msg " << msg->message();
+        LOG(INFO) << "MY HTML HANDLER <b>" << msg->message() << "</b>";
     }
 };
 
@@ -32,7 +29,8 @@ int main(void) {
     el::Helpers::installLogDispatchCallback<MyHandler>("MyHandler");
     el::Helpers::installLogDispatchCallback<MyHtmlHandler>("MyHtmlHandler");
 
-    LOG(INFO) << "My first ultimate log message";
+    LOG(INFO) << "My first log message";
+    LOG(INFO) << "My second log message";
 
     return 0;
 }

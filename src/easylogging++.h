@@ -800,7 +800,7 @@ namespace consts {
 }  // namespace base
 class LogDispatchCallback {
 public:
-    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(-1), m_currentCallbackCountIndex(0) {} 
+    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(1), m_position(0) {} 
     virtual void handle(const LogMessage* logMessage) = 0;
     inline bool enabled(void) const {
         return m_enabled;
@@ -814,16 +814,16 @@ public:
     inline void setCallbackCount(int callbackCount) {
         m_callbackCount = callbackCount;
     }
-    inline int currentCallbackCountIndex(void) const {
-        return m_currentCallbackCountIndex;
+    inline int position(void) const {
+        return m_position;
     }
-    inline void setCurrentCallbackCountIndex(int currentCallbackCountIndex) {
-        m_currentCallbackCountIndex = currentCallbackCountIndex;
+    inline void setPosition(int position) {
+        m_position = position;
     }
 private:
     bool m_enabled;
     int m_callbackCount;
-    int m_currentCallbackCountIndex;
+    int m_position;
 };
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
@@ -4055,12 +4055,11 @@ public:
             for (const std::pair<std::string, std::shared_ptr<LogDispatchCallback>>& h : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback->enabled() 
-                        && (callback->currentCallbackCountIndex() < callback->callbackCount() || callback->callbackCount() < 0)) {
-                    std::cout << h.first << " " << callback->currentCallbackCountIndex() << "; " << callback->callbackCount() << std::endl;
+                        && (callback->position() < callback->callbackCount() || callback->callbackCount() < 0)) {
+                    callback->setPosition(callback->position() + 1);
                     callback->handle(&m_logMessage);
-                    callback->setCurrentCallbackCountIndex(callback->currentCallbackCountIndex() - 1);
                 }
-                callback->setCallbackCount(-1);
+                callback->setPosition(0);
             }
         }
     }
