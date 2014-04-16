@@ -801,6 +801,14 @@ namespace consts {
 class LogDispatchCallback {
 public:
     virtual void handle(const LogMessage* logMessage) const = 0;
+    inline bool enabled(void) const {
+        return m_enabled;
+    }
+    inline void setEnabled(bool enabled) {
+        m_enabled = enabled;
+    }
+private:
+    bool m_enabled;
 };
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
@@ -3867,11 +3875,10 @@ public:
     }
 
     template <typename T>
-    inline bool uninstallLogDispatchCallback(const std::string& id) {
+    inline void uninstallLogDispatchCallback(const std::string& id) {
         if (m_logDispatchCallbacks.find(id) != m_logDispatchCallbacks.end()) {
             m_logDispatchCallbacks.remove(id);
         }
-        return true;
     }
 
 private:
@@ -4031,8 +4038,10 @@ public:
         if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
             m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
             m_logMessage.logger()->releaseLock();
+            LogDispatchCallback* callback;
             for (const std::pair<std::string, std::shared_ptr<LogDispatchCallback>>& h : ELPP->m_logDispatchCallbacks) {
-                h.second->handle(&m_logMessage);
+                callback = h.second.get();
+                callback->handle(&m_logMessage);
             }
         }
     }
@@ -5286,11 +5295,11 @@ public:
     }
     /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
     template <typename T>
-    static inline void installLogDispatchCallback(const std::string& id, bool addFlag = true) {
+    static inline bool installLogDispatchCallback(const std::string& id, bool addFlag = true) {
         if (addFlag) {
             ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
         }
-        ELPP->installLogDispatchCallback<T>(id);
+        return ELPP->installLogDispatchCallback<T>(id);
     }
     /// @brief Uninstalls log dispatch callback
     template <typename T>
