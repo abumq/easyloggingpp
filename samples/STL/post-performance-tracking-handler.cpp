@@ -10,7 +10,7 @@
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
-class Handler : el::PerformanceTrackingCallback {
+class Handler : public el::PerformanceTrackingCallback {
 protected:
 void handle(const el::PerformanceTrackingData* data) {
     TIMED_SCOPE(handBlock, "handerBlock");
