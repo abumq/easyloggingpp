@@ -798,11 +798,13 @@ namespace consts {
     static const int kCrashSignalsCount                          =      sizeof(kCrashSignals) / sizeof(kCrashSignals[0]);
 }  // namespace consts
 }  // namespace base
+class LogDispatchCallback {
+public:
+    virtual void handle(const LogMessage* logMessage) const = 0;
+};
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
-typedef std::function<void(const LogMessage* logMessage)> LogDispatchCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
 namespace base {
-static inline void defaultLogDispatchCallback(const LogMessage*) {}
 static inline void defaultPreRollOutCallback(const char*, std::size_t) {}
 static inline void defaultPerformanceTrackingCallback(const PerformanceTrackingData*) {}
 /// @brief Enum to represent timestamp unit
@@ -3725,7 +3727,6 @@ public:
         m_flags(0x0),
         m_vRegistry(new base::VRegistry(0, &m_flags)),
         m_preRollOutCallback(base::defaultPreRollOutCallback),
-        m_logDispatchCallback(base::defaultLogDispatchCallback),
         m_performanceTrackingCallback(base::defaultPerformanceTrackingCallback) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
@@ -3811,18 +3812,6 @@ public:
         return m_preRollOutCallback;
     }
 
-    inline void setLogDispatchCallback(const LogDispatchCallback& callback) {
-        m_logDispatchCallback = callback;
-    }
-
-    inline void unsetLogDispatchCallback(void) {
-        m_logDispatchCallback = base::defaultLogDispatchCallback;
-    }
-
-    inline LogDispatchCallback& logDispatchCallback(void) {
-        return m_logDispatchCallback;
-    }
-
     inline void setPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
         m_performanceTrackingCallback = callback;
     }
@@ -3868,6 +3857,23 @@ public:
         m_loggingLevel = level;
     }
 
+    template <typename T>
+    inline bool installLogDispatchCallback(const std::string& id) {
+        if (m_logDispatchCallbacks.find(id) == m_logDispatchCallbacks.end()) {
+            m_logDispatchCallbacks.insert(std::make_pair(id, std::shared_ptr<T>(new T())));
+            return true;
+        }
+        return false;
+    }
+
+    template <typename T>
+    inline bool uninstallLogDispatchCallback(const std::string& id) {
+        if (m_logDispatchCallbacks.find(id) != m_logDispatchCallbacks.end()) {
+            m_logDispatchCallbacks.remove(id);
+        }
+        return true;
+    }
+
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
@@ -3875,7 +3881,7 @@ private:
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
     PreRollOutCallback m_preRollOutCallback;
-    LogDispatchCallback m_logDispatchCallback;
+    std::map<std::string, std::shared_ptr<LogDispatchCallback>> m_logDispatchCallbacks;
     PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     Level m_loggingLevel;
@@ -4025,7 +4031,9 @@ public:
         if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
             m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
             m_logMessage.logger()->releaseLock();
-            ELPP->logDispatchCallback()(&m_logMessage);
+            for (const std::pair<std::string, std::shared_ptr<LogDispatchCallback>>& h : ELPP->m_logDispatchCallbacks) {
+                h.second->handle(&m_logMessage);
+            }
         }
     }
 
@@ -5276,19 +5284,21 @@ public:
     static inline void uninstallPreRollOutCallback(void) {
         ELPP->unsetPreRollOutCallback();
     }
-   /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
-    static inline void installLogDispatchCallback(const LogDispatchCallback& callback, bool addFlag = true) {
+    /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
+    template <typename T>
+    static inline void installLogDispatchCallback(const std::string& id, bool addFlag = true) {
         if (addFlag) {
             ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
         }
-        ELPP->setLogDispatchCallback(callback);
+        ELPP->installLogDispatchCallback<T>(id);
     }
-    /// @brief Uninstalls post log dispatch
-    static inline void uninstallLogDispatchCallback(bool removeFlag = true) {
+    /// @brief Uninstalls log dispatch callback
+    template <typename T>
+    static inline void uninstallLogDispatchCallback(const std::string& id, bool removeFlag = true) {
         if (removeFlag) {
             ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
         }
-        ELPP->unsetLogDispatchCallback();
+        ELPP->uninstallLogDispatchCallback<T>(id);
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
     static inline void installPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
