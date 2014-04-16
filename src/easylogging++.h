@@ -828,6 +828,7 @@ private:
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
 namespace base {
+typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 static inline void defaultPreRollOutCallback(const char*, std::size_t) {}
 static inline void defaultPerformanceTrackingCallback(const PerformanceTrackingData*) {}
 /// @brief Enum to represent timestamp unit
@@ -3883,7 +3884,7 @@ public:
     template <typename T>
     inline bool installLogDispatchCallback(const std::string& id) {
         if (m_logDispatchCallbacks.find(id) == m_logDispatchCallbacks.end()) {
-            m_logDispatchCallbacks.insert(std::make_pair(id, std::shared_ptr<T>(new T())));
+            m_logDispatchCallbacks.insert(std::make_pair(id, LogDispatchCallbackPtr(new T())));
             return true;
         }
         return false;
@@ -3901,7 +3902,7 @@ private:
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
     PreRollOutCallback m_preRollOutCallback;
-    std::map<std::string, std::shared_ptr<LogDispatchCallback>> m_logDispatchCallbacks;
+    std::map<std::string, LogDispatchCallbackPtr> m_logDispatchCallbacks;
     PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     Level m_loggingLevel;

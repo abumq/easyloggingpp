@@ -5,7 +5,7 @@
 
 static std::vector<el::base::type::string_t> loggedMessages;
 
-class LogHandler : el::LogDispatchCallback {
+class LogHandler : public el::LogDispatchCallback {
 public:
     void handle(const LogMessage* msg) {
         loggedMessages.push_back(msg->message());
