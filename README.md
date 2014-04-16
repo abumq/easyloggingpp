@@ -811,11 +811,9 @@ Notes:
  [![top] Goto Top](#table-of-contents)
 
 #### Make Use of Performance Tracking Data
-If you wish to capture performance tracking data right after it is finished, you can do so by adding flag `PerformanceTrackingCallback`, by doing so you are telling library to trigger an installed post tracking callback, called `PerformanceTrackingCallback` in `el` namespace.
+If you wish to capture performance tracking data right after it is finished, you can do so by adding flag `PerformanceTrackingCallback`, by doing so you are telling library to trigger an installed post tracking callbacks that you can define by extending `el::PerformanceTrackingCallback`.
 
-In order to install this handler, you need a function with signature `void handler(const el::PerformanceTrackingCallback*)` and install it at anytime using `el::Helpers::installPerformanceTrackingCallback(callback)`. If you wish to uninstall a pre-installed handler, you can do so by using `el::Helpers::uninstallPerformanceTrackingCallback()`
-
- > It is strongly recommended to not use any performance tracking within this handler otherwise you will run into indefinite recursive loop of calling this handler.
+In order to install this handler, use `void Helpers::installPerformanceTrackingCallback<T>(const std::string& id)`. Where `T` is type of your handler. If you wish to uninstall a callback, you can do so by using `Helpers::uninstallPerformanceTrackingCallback<T>(const std::string& id)`. See samples for details
 
  [![top] Goto Top](#table-of-contents)
 

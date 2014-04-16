@@ -380,7 +380,9 @@ class LogMessage;
 class PerformanceTrackingData;
 class Loggers;
 class Helpers;
+template <typename T> class Callback;
 class LogDispatchCallback;
+class PerformanceTrackingCallback;
 namespace base {
 class Storage;
 class RegisteredLoggers;
@@ -437,6 +439,7 @@ typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
 typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
+typedef std::shared_ptr<PerformanceTrackingCallback> PerformanceTrackingCallbackPtr;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
@@ -801,10 +804,8 @@ namespace consts {
 }  // namespace consts
 }  // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
-typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
 namespace base {
 static inline void defaultPreRollOutCallback(const char*, std::size_t) {}
-static inline void defaultPerformanceTrackingCallback(const PerformanceTrackingData*) {}
 /// @brief Enum to represent timestamp unit
 enum class TimestampUnit : base::type::EnumType {
     Microsecond = 0, Millisecond = 1, Second = 2, Minute = 3, Hour = 4, Day = 5
@@ -2261,19 +2262,27 @@ private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
 };
-class LogDispatchCallback : public base::threading::ThreadSafe {
+template <typename T>
+class Callback : protected base::threading::ThreadSafe {
 public:
-    LogDispatchCallback(void) : m_enabled(true) {}
+    Callback(void) : m_enabled(true) {}
     inline bool enabled(void) const { return m_enabled; }
     inline void setEnabled(bool enabled) {
         base::threading::ScopedLock scopedLock(lock());
         m_enabled = enabled;
     }
 protected:
-    virtual void handle(const LogMessage* logMessage) = 0;
+    virtual void handle(const T* handlePtr) = 0;
 private:
     bool m_enabled;
+};
+class LogDispatchCallback : public Callback<LogMessage> {
+private:
     friend class base::LogDispatcher;
+};
+class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
+private:
+    friend class base::PerformanceTracker;
 };
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
@@ -3739,8 +3748,7 @@ public:
         m_flags(0x0),
         m_vRegistry(new base::VRegistry(0, &m_flags)),
         m_preRollOutCallback(base::defaultPreRollOutCallback),
-        m_performanceTrackingCallback(base::defaultPerformanceTrackingCallback),
-        m_callingDispatchCallback(false) {
+        m_callingLogDispatchCallback(false) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
         // Register performance logger and reconfigure format
@@ -3825,18 +3833,6 @@ public:
         return m_preRollOutCallback;
     }
 
-    inline void setPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
-        m_performanceTrackingCallback = callback;
-    }
-
-    inline void unsetPerformanceTrackingCallback(void) {
-        m_performanceTrackingCallback = base::defaultPerformanceTrackingCallback;
-    }
-
-    inline PerformanceTrackingCallback performanceTrackingCallback(void) {
-        return m_performanceTrackingCallback;
-    }
-
     inline bool hasCustomFormatSpecifier(const char* formatSpecifier) {
         base::threading::ScopedLock scopedLock(lock());
         return std::find(m_customFormatSpecifiers.begin(), m_customFormatSpecifiers.end(),
@@ -3870,28 +3866,60 @@ public:
         m_loggingLevel = level;
     }
 
-    template <typename T>
-    inline bool installLogDispatchCallback(const std::string& id) {
-        if (m_logDispatchCallbacks.find(id) == m_logDispatchCallbacks.end()) {
-            m_logDispatchCallbacks.insert(
-                std::make_pair(id, base::type::LogDispatchCallbackPtr(new T())));
+    template <typename T, typename TPtr>
+    inline bool installCallback(const std::string& id, 
+            std::map<std::string, TPtr>& mapT) {
+        if (mapT.find(id) == mapT.end()) {
+            mapT.insert(
+                std::make_pair(id, TPtr(new T())));
             return true;
         }
         return false;
     }
 
-    template <typename T>
-    inline void uninstallLogDispatchCallback(const std::string& id) {
-        m_logDispatchCallbacks.erase(id);
+    template <typename T, typename TPtr>
+    inline void uninstallCallback(const std::string& id, 
+            std::map<std::string, TPtr>& mapT) {
+        mapT.erase(id);
     }
-    template <typename T>
-    inline T* logDispatchCallback(const std::string& id) {
-        std::map<std::string, base::type::LogDispatchCallbackPtr>::iterator iter
-            = m_logDispatchCallbacks.find(id);
-        if (iter != m_logDispatchCallbacks.end()) {
+
+    template <typename T, typename TPtr>
+    inline T* callback(const std::string& id, 
+            std::map<std::string, TPtr>& mapT) {
+        std::map<std::string, TPtr>::iterator iter = mapT.find(id);
+        if (iter != mapT.end()) {
             return static_cast<T*>(iter->second.get());
         }
         return nullptr;
+    }
+
+    template <typename T>
+    inline bool installLogDispatchCallback(const std::string& id) {
+        return installCallback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+    }
+
+    template <typename T>
+    inline void uninstallLogDispatchCallback(const std::string& id) {
+        uninstallCallback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+    }
+    template <typename T>
+    inline T* logDispatchCallback(const std::string& id) {
+        return callback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+    }
+
+    template <typename T>
+    inline bool installPerformanceTrackingCallback(const std::string& id) {
+        return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
+    }
+
+    template <typename T>
+    inline void uninstallPerformanceTrackingCallback(const std::string& id) {
+         uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
+    }
+
+    template <typename T>
+    inline PerformanceTrackingCallback performanceTrackingCallback(void) {
+        return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
     }
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
@@ -3901,24 +3929,35 @@ private:
     base::utils::CommandLineArgs m_commandLineArgs;
     PreRollOutCallback m_preRollOutCallback;
     std::map<std::string, base::type::LogDispatchCallbackPtr> m_logDispatchCallbacks;
-    PerformanceTrackingCallback m_performanceTrackingCallback;
+    std::map<std::string, base::type::PerformanceTrackingCallbackPtr> m_performanceTrackingCallbacks;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     Level m_loggingLevel;
-    bool m_callingDispatchCallback;
+    bool m_callingLogDispatchCallback;
+    bool m_callingPerformanceTrackingCallback;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
     friend class el::LogBuilder;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
+    friend class el::base::PerformanceTracker;
 
-    inline bool callingDispatchCallback(void) const {
-        return m_callingDispatchCallback;
+    inline bool callingLogDispatchCallback(void) const {
+        return m_callingLogDispatchCallback;
     }
     
-    inline void setCallingDispatchCallback(bool val) {
+    inline void setCallingLogDispatchCallback(bool val) {
         base::threading::ScopedLock scopedLock(lock());
-        m_callingDispatchCallback = val;
+        m_callingLogDispatchCallback = val;
+    }
+
+    inline bool callingPerformanceTrackingCallback(void) const {
+        return m_callingPerformanceTrackingCallback;
+    }
+    
+    inline void setCallingPerformanceTrackingCallback(bool val) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_callingPerformanceTrackingCallback = val;
     }
 
     void setApplicationArguments(int argc, char** argv) {
@@ -4058,7 +4097,7 @@ public:
         }
         ELPP->releaseLock();
         if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)
-                && !ELPP->callingDispatchCallback()) {
+                && !ELPP->callingLogDispatchCallback()) {
             m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
             m_logMessage.logger()->releaseLock();
             LogDispatchCallback* callback = nullptr;
@@ -4066,9 +4105,11 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    ELPP->setCallingDispatchCallback(true);
+                    ELPP->setCallingLogDispatchCallback(true);
+                    callback->acquireLock();
                     callback->handle(&m_logMessage);
-                    ELPP->setCallingDispatchCallback(false);
+                    callback->releaseLock();
+                    ELPP->setCallingLogDispatchCallback(false);
                 }
             }
         }
@@ -4685,7 +4726,7 @@ protected:
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
-        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback) || ELPP->callingDispatchCallback()) {
+        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback) || ELPP->callingLogDispatchCallback()) {
             // If we don't handle post-log-dispatches, we need to unlock logger
             // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
             if (m_logger != nullptr) {
@@ -4940,11 +4981,23 @@ public:
                     _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
                         << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
                 }
-                if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
+                if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
+                        && !ELPP->callingPerformanceTrackingCallback()) {
                     PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                     data.init(this);
                     data.m_formattedTimeTaken = formattedTime;
-                    ELPP->performanceTrackingCallback()(&data);
+                    PerformanceTrackingCallback* callback = nullptr;
+                    for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
+                            : ELPP->m_performanceTrackingCallbacks) {
+                        callback = h.second.get();
+                        if (callback != nullptr && callback->enabled()) {
+                            ELPP->setCallingPerformanceTrackingCallback(true);
+                            callback->acquireLock();
+                            callback->handle(&data);
+                            callback->releaseLock();
+                            ELPP->setCallingPerformanceTrackingCallback(false);
+                        }
+                    }
                 }
             }
         }
@@ -4984,13 +5037,23 @@ public:
                     base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
                     m_timestampUnit) : ELPP_LITERAL("");
             }
-            if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
+            if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
+                    && !ELPP->callingPerformanceTrackingCallback()) {
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
-                data.init(this, !m_hasChecked);
-                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison)) {
-                    data.m_formattedTimeTaken = formattedTime;
+                data.init(this);
+                data.m_formattedTimeTaken = formattedTime;
+                PerformanceTrackingCallback* callback = nullptr;
+                for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
+                        : ELPP->m_performanceTrackingCallbacks) {
+                    callback = h.second.get();
+                    if (callback != nullptr && callback->enabled()) {
+                        ELPP->setCallingPerformanceTrackingCallback(true);
+                        callback->acquireLock();
+                        callback->handle(&data);
+                        callback->releaseLock();
+                        ELPP->setCallingPerformanceTrackingCallback(false);
+                    }
                 }
-                ELPP->performanceTrackingCallback()(&data);
             }
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
@@ -5342,14 +5405,24 @@ public:
         return ELPP->logDispatchCallback<T>(id);
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
-    static inline void installPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
-        ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
-        ELPP->setPerformanceTrackingCallback(callback);
+    template <typename T>
+    static inline bool installPerformanceTrackingCallback(const std::string& id, bool addFlag = true) {
+        if (addFlag) {
+            ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
+        }
+        return ELPP->installPerformanceTrackingCallback<T>(id);
     }
-    /// @brief Uninstalls post performance tracking handler
-    static inline void uninstallPerformanceTrackingCallback(void) {
-        ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
-        ELPP->unsetPerformanceTrackingCallback();
+   /// @brief Uninstalls post performance tracking handler
+    template <typename T>
+    static inline void uninstallPerformanceTrackingCallback(const std::string& id, bool removeFlag = true) {
+        if (removeFlag) {
+            ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
+        }
+        ELPP->uninstallPerformanceTrackingCallback<T>(id);
+    }
+    template <typename T>
+    static inline T* performanceTrackingCallback(const std::string& id) {
+        return ELPP->performanceTrackingCallback<T>(id);
     }
     /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
     template <typename T>
