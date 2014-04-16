@@ -3739,7 +3739,8 @@ public:
         m_flags(0x0),
         m_vRegistry(new base::VRegistry(0, &m_flags)),
         m_preRollOutCallback(base::defaultPreRollOutCallback),
-        m_performanceTrackingCallback(base::defaultPerformanceTrackingCallback) {
+        m_performanceTrackingCallback(base::defaultPerformanceTrackingCallback),
+        m_callingDispatchCallback(false) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
         // Register performance logger and reconfigure format
@@ -4070,9 +4071,6 @@ public:
                     ELPP->setCallingDispatchCallback(false);
                 }
             }
-        } else if (ELPP->callingDispatchCallback()) {
-            m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
-            m_logMessage.logger()->releaseLock();
         }
     }
 
@@ -4687,7 +4685,7 @@ protected:
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
-        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
+        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback) || ELPP->callingDispatchCallback()) {
             // If we don't handle post-log-dispatches, we need to unlock logger
             // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
             if (m_logger != nullptr) {

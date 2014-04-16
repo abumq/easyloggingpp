@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
     el::Helpers::installLogDispatchCallback<HtmlHandler>("HtmlHandler", true);
     LOG(INFO) << "First log";
     
-    HtmlHandler* htmlHandler = el::Helpers::logDispatchCallback<HtmlHandler>("HtmlHandler");
-    htmlHandler->setEnabled(false);
+    LogHandler* logHandler = el::Helpers::logDispatchCallback<LogHandler>("LogHandler");
+    logHandler->setEnabled(false);
 
     LOG(INFO) << "Second log";
 #if 1
