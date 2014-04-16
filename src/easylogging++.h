@@ -800,7 +800,7 @@ namespace consts {
 }  // namespace base
 class LogDispatchCallback {
 public:
-    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(1), m_position(0) {} 
+    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(-1), m_position(0) {} 
     virtual void handle(const LogMessage* logMessage) = 0;
     inline bool enabled(void) const {
         return m_enabled;
@@ -4059,7 +4059,6 @@ public:
                     callback->setPosition(callback->position() + 1);
                     callback->handle(&m_logMessage);
                 }
-                callback->setPosition(0);
             }
         }
     }
