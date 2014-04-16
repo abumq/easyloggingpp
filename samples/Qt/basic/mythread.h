@@ -31,10 +31,10 @@ protected:
         LOG_IF(threadId == 2, INFO) << "This log is only for thread 2 and is ran by thread #" << threadId;
 
         el::Logger* logger = el::Loggers::getLogger("default");
-        logger->info("Info log from [Thread #%]", threadId);
+        logger->info("Info log from [Thread #%v]", threadId);
         logger->info("Info log");
         logger->verbose(1, "test");
-        logger->verbose(1, "test %", 123);
+        logger->verbose(1, "test %v", 123);
         logger->verbose(1, "test");
     }
 };

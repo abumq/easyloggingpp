@@ -1106,7 +1106,6 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
 
  > You need to add flag `EnableLogDispatchCallback` if not already added. (`installLogDispatchCallback()` adds it automatically)
- > You should NEVER log anything in this function. This is because you can run into recursive log-dispatching conditions where you will keep on calling the handler again.
 
  [![top] Goto Top](#table-of-contents)
  

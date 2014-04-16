@@ -14,12 +14,37 @@
 
 _INITIALIZE_EASYLOGGINGPP
 
+class LogHandler : public el::LogDispatchCallback {
+public:
+    void handle(const el::LogMessage* msg) {
+        LOG(INFO) << "Test this msg";
+    }
+};
 
+class HtmlHandler : public el::LogDispatchCallback {
+public:
+    HtmlHandler() {
+        el::Loggers::getLogger("html");
+    }
+    void handle(const el::LogMessage* msg) {
+        CLOG(INFO, "html") << "<b>" << msg->message() << "</b>";
+    }
+};
+
+    
 int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv);
 
-    el::Helpers::removeFlag(el::LoggingFlag::NewLineForContainer);
-
+    el::Loggers::removeFlag(el::LoggingFlag::NewLineForContainer);
+    el::Helpers::installLogDispatchCallback<LogHandler>("LogHandler", true);
+    el::Helpers::installLogDispatchCallback<HtmlHandler>("HtmlHandler", true);
+    LOG(INFO) << "First log";
+    
+    HtmlHandler* htmlHandler = el::Helpers::logDispatchCallback<HtmlHandler>("HtmlHandler");
+    htmlHandler->setEnabled(false);
+    
+    LOG(INFO) << "Second log";
+#if 1
     bool runThreads = true;
 
     if (runThreads) {
@@ -89,6 +114,6 @@ int main(int argc, char* argv[]) {
     
     LOG(INFO) << "This is not unicode";
     LOG(INFO) << "This is unicode: " << L"世界，你好";
-    
+#endif
     return 0;
 }

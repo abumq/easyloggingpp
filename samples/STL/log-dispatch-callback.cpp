@@ -13,14 +13,18 @@ _INITIALIZE_EASYLOGGINGPP
 class MyHandler : public el::LogDispatchCallback {
 public:
     void handle(const el::LogMessage* msg) {
-        std::cout << "Test MyHandler" << std::endl;
+        LOG(INFO) << "Test MyHandler " << msg;
     }
 };
 
 class MyHtmlHandler : public el::LogDispatchCallback {
 public:
+    MyHtmlHandler() {
+        el::Loggers::getLogger("html"); // register
+        setCallbackCount(3);
+    }
     void handle(const el::LogMessage* msg) {
-        std::cout << "Test MyHtmlHandler" << std::endl;
+        CLOG(INFO, "html") << msg->message();
     }
 };
 

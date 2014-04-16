@@ -380,6 +380,7 @@ class LogMessage;
 class PerformanceTrackingData;
 class Loggers;
 class Helpers;
+class LogDispatchCallback;
 namespace base {
 class Storage;
 class RegisteredLoggers;
@@ -435,6 +436,7 @@ typedef std::ostream ostream_t;
 typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
+typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
@@ -798,37 +800,9 @@ namespace consts {
     static const int kCrashSignalsCount                          =      sizeof(kCrashSignals) / sizeof(kCrashSignals[0]);
 }  // namespace consts
 }  // namespace base
-class LogDispatchCallback {
-public:
-    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(-1), m_position(0) {} 
-    virtual void handle(const LogMessage* logMessage) = 0;
-    inline bool enabled(void) const {
-        return m_enabled;
-    }
-    inline void setEnabled(bool enabled) {
-        m_enabled = enabled;
-    }
-    inline int callbackCount(void) const {
-        return m_callbackCount;
-    }
-    inline void setCallbackCount(int callbackCount) {
-        m_callbackCount = callbackCount;
-    }
-    inline int position(void) const {
-        return m_position;
-    }
-    inline void setPosition(int position) {
-        m_position = position;
-    }
-private:
-    bool m_enabled;
-    int m_callbackCount;
-    int m_position;
-};
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
 namespace base {
-typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 static inline void defaultPreRollOutCallback(const char*, std::size_t) {}
 static inline void defaultPerformanceTrackingCallback(const PerformanceTrackingData*) {}
 /// @brief Enum to represent timestamp unit
@@ -2286,6 +2260,20 @@ public:
 private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
+};
+class LogDispatchCallback : public base::threading::ThreadSafe {
+public:
+    LogDispatchCallback(void) : m_enabled(true) {}
+    inline bool enabled(void) const { return m_enabled; }
+    inline void setEnabled(bool enabled) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_enabled = enabled;
+    }
+protected:
+    virtual void handle(const LogMessage* logMessage) = 0;
+private:
+    bool m_enabled;
+    friend class base::LogDispatcher;
 };
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
@@ -3884,7 +3872,8 @@ public:
     template <typename T>
     inline bool installLogDispatchCallback(const std::string& id) {
         if (m_logDispatchCallbacks.find(id) == m_logDispatchCallbacks.end()) {
-            m_logDispatchCallbacks.insert(std::make_pair(id, LogDispatchCallbackPtr(new T())));
+            m_logDispatchCallbacks.insert(
+                std::make_pair(id, base::type::LogDispatchCallbackPtr(new T())));
             return true;
         }
         return false;
@@ -3894,7 +3883,15 @@ public:
     inline void uninstallLogDispatchCallback(const std::string& id) {
         m_logDispatchCallbacks.erase(id);
     }
-
+    template <typename T>
+    inline T* logDispatchCallback(const std::string& id) {
+        std::map<std::string, base::type::LogDispatchCallbackPtr>::iterator iter
+            = m_logDispatchCallbacks.find(id);
+        if (iter != m_logDispatchCallbacks.end()) {
+            return static_cast<T*>(iter->second.get());
+        }
+        return nullptr;
+    }
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
@@ -3902,16 +3899,26 @@ private:
     base::VRegistry* m_vRegistry;
     base::utils::CommandLineArgs m_commandLineArgs;
     PreRollOutCallback m_preRollOutCallback;
-    std::map<std::string, LogDispatchCallbackPtr> m_logDispatchCallbacks;
+    std::map<std::string, base::type::LogDispatchCallbackPtr> m_logDispatchCallbacks;
     PerformanceTrackingCallback m_performanceTrackingCallback;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     Level m_loggingLevel;
+    bool m_callingDispatchCallback;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
     friend class el::LogBuilder;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
+
+    inline bool callingDispatchCallback(void) const {
+        return m_callingDispatchCallback;
+    }
+    
+    inline void setCallingDispatchCallback(bool val) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_callingDispatchCallback = val;
+    }
 
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
@@ -4049,18 +4056,23 @@ public:
             m_logMessage.logger()->releaseLock();
         }
         ELPP->releaseLock();
-        if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
+        if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)
+                && !ELPP->callingDispatchCallback()) {
             m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
             m_logMessage.logger()->releaseLock();
-            LogDispatchCallback* callback;
-            for (const std::pair<std::string, std::shared_ptr<LogDispatchCallback>>& h : ELPP->m_logDispatchCallbacks) {
+            LogDispatchCallback* callback = nullptr;
+            for (const std::pair<std::string, base::type::LogDispatchCallbackPtr>& h 
+                    : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
-                if (callback->enabled() 
-                        && (callback->position() < callback->callbackCount() || callback->callbackCount() < 0)) {
-                    callback->setPosition(callback->position() + 1);
+                if (callback->enabled()) {
+                    ELPP->setCallingDispatchCallback(true);
                     callback->handle(&m_logMessage);
+                    ELPP->setCallingDispatchCallback(false);
                 }
             }
+        } else if (ELPP->callingDispatchCallback()) {
+            m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
+            m_logMessage.logger()->releaseLock();
         }
     }
 
@@ -5326,6 +5338,10 @@ public:
             ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
         }
         ELPP->uninstallLogDispatchCallback<T>(id);
+    }
+    template <typename T>
+    static inline T* logDispatchCallback(const std::string& id) {
+        return ELPP->logDispatchCallback<T>(id);
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
     static inline void installPerformanceTrackingCallback(const PerformanceTrackingCallback& callback) {
