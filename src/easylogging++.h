@@ -800,15 +800,30 @@ namespace consts {
 }  // namespace base
 class LogDispatchCallback {
 public:
-    virtual void handle(const LogMessage* logMessage) const = 0;
+    LogDispatchCallback(void) : m_enabled(true), m_callbackCount(-1), m_currentCallbackCountIndex(0) {} 
+    virtual void handle(const LogMessage* logMessage) = 0;
     inline bool enabled(void) const {
         return m_enabled;
     }
     inline void setEnabled(bool enabled) {
         m_enabled = enabled;
     }
+    inline int callbackCount(void) const {
+        return m_callbackCount;
+    }
+    inline void setCallbackCount(int callbackCount) {
+        m_callbackCount = callbackCount;
+    }
+    inline int currentCallbackCountIndex(void) const {
+        return m_currentCallbackCountIndex;
+    }
+    inline void setCurrentCallbackCountIndex(int currentCallbackCountIndex) {
+        m_currentCallbackCountIndex = currentCallbackCountIndex;
+    }
 private:
     bool m_enabled;
+    int m_callbackCount;
+    int m_currentCallbackCountIndex;
 };
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
 typedef std::function<void(const PerformanceTrackingData* performanceTrackingData)> PerformanceTrackingCallback;
@@ -3876,9 +3891,7 @@ public:
 
     template <typename T>
     inline void uninstallLogDispatchCallback(const std::string& id) {
-        if (m_logDispatchCallbacks.find(id) != m_logDispatchCallbacks.end()) {
-            m_logDispatchCallbacks.remove(id);
-        }
+        m_logDispatchCallbacks.erase(id);
     }
 
 private:
@@ -4041,7 +4054,13 @@ public:
             LogDispatchCallback* callback;
             for (const std::pair<std::string, std::shared_ptr<LogDispatchCallback>>& h : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
-                callback->handle(&m_logMessage);
+                if (callback->enabled() 
+                        && (callback->currentCallbackCountIndex() < callback->callbackCount() || callback->callbackCount() < 0)) {
+                    std::cout << h.first << " " << callback->currentCallbackCountIndex() << "; " << callback->callbackCount() << std::endl;
+                    callback->handle(&m_logMessage);
+                    callback->setCurrentCallbackCountIndex(callback->currentCallbackCountIndex() - 1);
+                }
+                callback->setCallbackCount(-1);
             }
         }
     }

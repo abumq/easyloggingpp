@@ -12,17 +12,18 @@ _INITIALIZE_EASYLOGGINGPP
 
 class MyHandler : public el::LogDispatchCallback {
 public:
-    void handle(const el::LogMessage* msg) const {
+    void handle(const el::LogMessage* msg) {
         std::cout << "Handled by my handlers " << msg->message() << std::endl;
     }
 };
 
 class MyHtmlHandler : public el::LogDispatchCallback {
 public:
-    void handle(const el::LogMessage* msg) const {
+    MyHtmlHandler() { setCallbackCount(1); }
+    void handle(const el::LogMessage* msg) {
         // NEVER EVER DO THIS!
         // 
-        // LOG(INFO) << "Other msg " << msg->message();
+        //LOG(INFO) << "Other msg " << msg->message();
     }
 };
 
