@@ -9,6 +9,7 @@ API changes: Yes
 ===========================
 
  - Multiple log dispatch call backs by extending `el::LogDispatchCallback`
+ - Ability to log from `el::LogDispatchCallback` with no problems with recursive calls
 
 ==========================
 =         NOTES          =
