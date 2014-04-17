@@ -14,6 +14,13 @@
 #include "easylogging++.h"
 
 _INITIALIZE_EASYLOGGINGPP
+class MyHandler : public el::LogDispatchCallback {
+public:
+    void handle(const el::LogDispatchData* data) {
+        std::cout << "Test MyHandler " << std::endl;
+    }
+};
+
 
 struct Args {
   const char* thrId;
@@ -92,6 +99,8 @@ const char* getThreadId_CustomVersion(void) {
 int main(int argc, char** argv)
 {
      _START_EASYLOGGINGPP(argc, argv);
+
+      el::Helpers::installLogDispatchCallback<MyHandler>("MyHandler");
 
      // Your thread ID specification
      el::CustomFormatSpecifier myThreadIdSpecifier("%mythreadId", getThreadId_CustomVersion);

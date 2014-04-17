@@ -404,9 +404,8 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `PerformanceTrackingCallback (1024)`                   | Capture log message right after it is dispatched. See [Make Use of Performance Tracking Data](#make-use-of-performance-tracking-data) for further details. |
 | `DisableVModules (2048)`                               | Disables usage of vmodules
 | `DisableVModulesExtensions (4096)`                     | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '' wildcards are supported |
-| `EnableLogDispatchCallback (8192)`                     | Enables your install log dispatch callback. See [Log Dispatch Callback](#log-dispatch-callback) for details.|
-| `HierarchicalLogging (16384)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
-| `CreateLoggerAutomatically (32768)`                          | Creates logger automatically when not available. |
+| `HierarchicalLogging (8192)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
+| `CreateLoggerAutomatically (16384)`                          | Creates logger automatically when not available. |
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
@@ -1106,8 +1105,6 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 
 ### Log Dispatch Callback
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
-
- > You need to add flag `EnableLogDispatchCallback` if not already added. (`installLogDispatchCallback<T>(const std::string&)` adds it automatically)
 
  > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
 

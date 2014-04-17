@@ -383,6 +383,7 @@ class Helpers;
 template <typename T> class Callback;
 class LogDispatchCallback;
 class PerformanceTrackingCallback;
+class LogDispatchData;
 namespace base {
 class Storage;
 class RegisteredLoggers;
@@ -392,6 +393,7 @@ class Writer;
 class PErrorWriter;
 class LogDispatcher;
 class DefaultLogBuilder;
+class DefaultLogDispatchCallback;
 }  // namespace base
 }  // namespace el
 /// @brief Easylogging++ entry namespace
@@ -680,12 +682,10 @@ enum class LoggingFlag : base::type::EnumType {
     DisableVModules = 2048,
     /// @brief Disable VModules extensions
     DisableVModulesExtensions = 4096,
-    /// @brief Enables post log callback
-    EnableLogDispatchCallback = 8192,
     /// @brief Enables hierarchical logging
-    HierarchicalLogging = 16384,
+    HierarchicalLogging = 8192,
     /// @brief Creates logger automatically when not available
-    CreateLoggerAutomatically = 32768
+    CreateLoggerAutomatically = 16384
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -2262,28 +2262,6 @@ private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
 };
-template <typename T>
-class Callback : protected base::threading::ThreadSafe {
-public:
-    Callback(void) : m_enabled(true) {}
-    inline bool enabled(void) const { return m_enabled; }
-    inline void setEnabled(bool enabled) {
-        base::threading::ScopedLock scopedLock(lock());
-        m_enabled = enabled;
-    }
-protected:
-    virtual void handle(const T* handlePtr) = 0;
-private:
-    bool m_enabled;
-};
-class LogDispatchCallback : public Callback<LogMessage> {
-private:
-    friend class base::LogDispatcher;
-};
-class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
-private:
-    friend class base::PerformanceTracker;
-};
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
 /// @detail String based value means any value either its boolean, integer or string itself, it will be embedded inside quotes
@@ -2874,6 +2852,7 @@ private:
     friend class el::Helpers;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
+    friend class el::base::DefaultLogDispatchCallback;
     friend class el::base::LogDispatcher;
 
     template <typename Conf_T>
@@ -3252,12 +3231,47 @@ enum class DispatchAction : base::type::EnumType {
     None = 1, NormalLog = 2, SysLog = 4
 };
 }  // namespace base
+template <typename T>
+class Callback : protected base::threading::ThreadSafe {
+public:
+    Callback(void) : m_enabled(true) {}
+    inline bool enabled(void) const { return m_enabled; }
+    inline void setEnabled(bool enabled) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_enabled = enabled;
+    }
+protected:
+    virtual void handle(const T* handlePtr) = 0;
+private:
+    bool m_enabled;
+};
+class LogDispatchData {
+public:
+    LogDispatchData() : m_logMessage(nullptr), m_dispatchAction(base::DispatchAction::None) {}
+    inline const LogMessage* logMessage(void) const { return m_logMessage; }
+    inline base::DispatchAction dispatchAction(void) const { return m_dispatchAction; }
+private:
+    LogMessage* m_logMessage;
+    base::DispatchAction m_dispatchAction;
+    friend class base::LogDispatcher;
+
+    inline void setLogMessage(LogMessage* logMessage) { m_logMessage = logMessage; }
+    inline void setDispatchAction(base::DispatchAction dispatchAction) { m_dispatchAction = dispatchAction; }
+};
+class LogDispatchCallback : public Callback<LogDispatchData> {
+private:
+    friend class base::LogDispatcher;
+};
+class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
+private:
+    friend class base::PerformanceTracker;
+};
 class LogBuilder : base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
     virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
 private:
-    friend class el::base::LogDispatcher;
+    friend class el::base::DefaultLogDispatchCallback;
 
     void convertToColoredOutput(base::type::string_t* logLine, Level level) {
         if (!base::utils::s_termSupportsColor) return;
@@ -3401,6 +3415,16 @@ public:
     inline bool enabled(Level level) const {
         return m_typedConfigurations->enabled(level);
     }
+
+    inline virtual void acquireLock() {
+        ELPP_INTERNAL_INFO(9, "Locking [" << m_id << "]");
+        base::threading::ThreadSafe::acquireLock();
+    }
+
+    inline virtual void releaseLock() {
+        ELPP_INTERNAL_INFO(9, "Unlocking [" << m_id << "]");
+        base::threading::ThreadSafe::releaseLock();
+    }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME)\
@@ -3438,12 +3462,13 @@ private:
     friend class el::Loggers;
     friend class el::Helpers;
     friend class el::base::RegisteredLoggers;
-    friend class el::base::LogDispatcher;
+    friend class el::base::DefaultLogDispatchCallback;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
     friend class el::base::PErrorWriter;
     friend class el::base::Storage;
     friend class el::base::PerformanceTracker;
+    friend class el::base::LogDispatcher;
 
     Logger(void);
 
@@ -3739,6 +3764,13 @@ private:
     base::type::string_t m_message;
 };
 namespace base {
+class DefaultLogDispatchCallback : public LogDispatchCallback {
+protected:
+    void handle(const LogDispatchData* data);
+private:
+    const LogDispatchData* m_data;
+    void dispatch(base::type::string_t&& logLine);
+};
 /// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
@@ -3763,6 +3795,7 @@ public:
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif  //  defined(_ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+        installLogDispatchCallback<base::DefaultLogDispatchCallback>("DefaultLogDispatchCallback");
         ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 
@@ -3929,11 +3962,12 @@ private:
     Level m_loggingLevel;
 
     friend class el::Helpers;
-    friend class el::base::LogDispatcher;
+    friend class el::base::DefaultLogDispatchCallback;
     friend class el::LogBuilder;
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
     friend class el::base::PerformanceTracker;
+    friend class el::base::LogDispatcher;
 
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
@@ -3963,6 +3997,66 @@ private:
 };
 extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
+void DefaultLogDispatchCallback::handle(const LogDispatchData* data) {
+    m_data = data;
+    dispatch(std::move(m_data->logMessage()->logger()->logBuilder()->build(m_data->logMessage(), 
+        m_data->dispatchAction() == base::DispatchAction::NormalLog)));
+}
+
+void DefaultLogDispatchCallback::dispatch(base::type::string_t&& logLine) {
+    if (m_data->dispatchAction() == base::DispatchAction::NormalLog) {
+        if (m_data->logMessage()->logger()->m_typedConfigurations->toFile(m_data->logMessage()->level())) {
+            base::type::fstream_t* fs = m_data->logMessage()->logger()->m_typedConfigurations->fileStream(m_data->logMessage()->level());
+            if (fs != nullptr) {
+                fs->write(logLine.c_str(), logLine.size());
+                if (fs->fail()) {
+                    ELPP_INTERNAL_ERROR("Unable to write log to file ["
+                        << m_data->logMessage()->logger()->m_typedConfigurations->filename(m_data->logMessage()->level()) << "].\n"
+                            << "Few possible reasons (could be something else):\n" << "      * Permission denied\n"
+                            << "      * Disk full\n" << "      * Disk is not writable", true);
+                } else {
+                    if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (m_data->logMessage()->logger()->isFlushNeeded(m_data->logMessage()->level()))) {
+                        m_data->logMessage()->logger()->flush(m_data->logMessage()->level(), fs);
+                    }
+                }
+            } else {
+                ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(m_data->logMessage()->level()) << "] "
+                    << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " 
+                    << m_data->logMessage()->logger()->id() << "]", false);
+            }
+        }
+        if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
+            if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+                m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
+            ELPP_COUT << ELPP_COUT_LINE(logLine);
+         }
+    }
+#if defined(_ELPP_SYSLOG)
+    else if (m_data->dispatchAction() == base::DispatchAction::SysLog) {
+        // Determine syslog priority
+        int sysLogPriority = 0;
+        if (m_data->logMessage()->level() == Level::Fatal)
+            sysLogPriority = LOG_EMERG;
+        else if (m_data->logMessage()->level() == Level::Error)
+            sysLogPriority = LOG_ERR;
+        else if (m_data->logMessage()->level() == Level::Warning)
+            sysLogPriority = LOG_WARNING;
+        else if (m_data->logMessage()->level() == Level::Info)
+            sysLogPriority = LOG_INFO;
+        else if (m_data->logMessage()->level() == Level::Debug)
+            sysLogPriority = LOG_DEBUG;
+        else
+            sysLogPriority = LOG_NOTICE;
+#   if defined(_ELPP_UNICODE)
+        char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
+        syslog(sysLogPriority, "%s", line);
+        free(line);
+#   else
+        syslog(sysLogPriority, "%s", logLine.c_str());
+#   endif
+    }
+#endif  // defined(_ELPP_SYSLOG)
+}
 }  // namespace base
 namespace base {
 class DefaultLogBuilder : public LogBuilder {
@@ -4049,7 +4143,7 @@ public:
         m_dispatchAction(std::move(dispatchAction)) {
     }
 
-    void dispatch(bool lockLogger) {
+    void dispatch(void) {
         if (m_proceed && m_dispatchAction == base::DispatchAction::None) {
             m_proceed = false;
         }
@@ -4058,94 +4152,30 @@ public:
         }
         // We minimize the time of elStorage's lock - this lock is released after log is written
         ELPP->acquireLock();
-        if (lockLogger) {
-            m_logMessage.logger()->acquireLock();
-        }
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
             tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
         }
-        dispatch(std::move(m_logMessage.logger()->logBuilder()->build(&m_logMessage, 
-            m_dispatchAction == base::DispatchAction::NormalLog)));
-        if (lockLogger) {
-            m_logMessage.logger()->releaseLock();
-        }
-        ELPP->releaseLock();
-        if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
-            m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
-            m_logMessage.logger()->releaseLock();
-            LogDispatchCallback* callback = nullptr;
-            for (const std::pair<std::string, base::type::LogDispatchCallbackPtr>& h 
-                    : ELPP->m_logDispatchCallbacks) {
-                callback = h.second.get();
-                if (callback != nullptr && callback->enabled()) {
-                    callback->acquireLock();
-                    callback->handle(&m_logMessage);
-                    callback->releaseLock();
-                }
+        LogDispatchCallback* callback = nullptr;
+        LogDispatchData data;
+        for (const std::pair<std::string, base::type::LogDispatchCallbackPtr>& h 
+                : ELPP->m_logDispatchCallbacks) {
+            callback = h.second.get();
+            if (callback != nullptr && callback->enabled()) {
+                data.setLogMessage(&m_logMessage);
+                data.setDispatchAction(m_dispatchAction);
+                callback->acquireLock();
+                callback->handle(&data);
+                callback->releaseLock();
             }
         }
+        ELPP->releaseLock();
     }
 
 private:
     bool m_proceed;
     LogMessage m_logMessage;
     base::DispatchAction m_dispatchAction;
-
-    void dispatch(base::type::string_t&& logLine) {
-        if (m_dispatchAction == base::DispatchAction::NormalLog) {
-            if (m_logMessage.logger()->m_typedConfigurations->toFile(m_logMessage.level())) {
-                base::type::fstream_t* fs = m_logMessage.logger()->m_typedConfigurations->fileStream(m_logMessage.level());
-                if (fs != nullptr) {
-                    fs->write(logLine.c_str(), logLine.size());
-                    if (fs->fail()) {
-                        ELPP_INTERNAL_ERROR("Unable to write log to file ["
-                            << m_logMessage.logger()->m_typedConfigurations->filename(m_logMessage.level()) << "].\n"
-                                << "Few possible reasons (could be something else):\n" << "      * Permission denied\n"
-                                << "      * Disk full\n" << "      * Disk is not writable", true);
-                    } else {
-                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (m_logMessage.logger()->isFlushNeeded(m_logMessage.level()))) {
-                            m_logMessage.logger()->flush(m_logMessage.level(), fs);
-                        }
-                    }
-                } else {
-                    ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(m_logMessage.level()) << "] "
-                        << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " 
-                        << m_logMessage.logger()->id() << "]", false);
-                }
-            }
-            if (m_logMessage.logger()->m_typedConfigurations->toStandardOutput(m_logMessage.level())) {
-                if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                    m_logMessage.logger()->logBuilder()->convertToColoredOutput(&logLine, m_logMessage.level());
-                ELPP_COUT << ELPP_COUT_LINE(logLine);
-            }
-        }
-#if defined(_ELPP_SYSLOG)
-        else if (m_dispatchAction == base::DispatchAction::SysLog) {
-            // Determine syslog priority
-            int sysLogPriority = 0;
-            if (m_logMessage.level() == Level::Fatal)
-                sysLogPriority = LOG_EMERG;
-            else if (m_logMessage.level() == Level::Error)
-                sysLogPriority = LOG_ERR;
-            else if (m_logMessage.level() == Level::Warning)
-                sysLogPriority = LOG_WARNING;
-            else if (m_logMessage.level() == Level::Info)
-                sysLogPriority = LOG_INFO;
-            else if (m_logMessage.level() == Level::Debug)
-                sysLogPriority = LOG_DEBUG;
-            else
-                sysLogPriority = LOG_NOTICE;
-#   if defined(_ELPP_UNICODE)
-            char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
-            syslog(sysLogPriority, "%s", line);
-            free(line);
-#   else
-            syslog(sysLogPriority, "%s", logLine.c_str());
-#   endif
-        }
-#endif  // defined(_ELPP_SYSLOG)
-    }
 };
 #if defined(_ELPP_STL_LOGGING)
 /// @brief Workarounds to write some STL logs
@@ -4621,8 +4651,8 @@ protected:
     bool m_proceed;
     base::MessageBuilder m_messageBuilder;
     base::DispatchAction m_dispatchAction;
-    friend class el::Helpers;
     std::vector<std::string> m_loggerIds;
+    friend class el::Helpers;
 
     void initializeLogger(const std::string& loggerId, bool lookup = true, bool needLock = true) {
         if (lookup) {
@@ -4641,7 +4671,7 @@ protected:
         } else {
             if (needLock) {
                 m_logger->acquireLock();  // This should not be unlocked by checking m_proceed because
-                                   // m_proceed can be changed by lines below
+                                          // m_proceed can be changed by lines below
             }
             if (ELPP->hasFlag(LoggingFlag::HierarchicalLogging)) {
                 m_proceed = m_level == Level::Verbose ? m_logger->enabled(m_level) :
@@ -4696,15 +4726,11 @@ protected:
     void triggerDispatch(void) {
         if (m_proceed) {
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                          m_logger), m_dispatchAction).dispatch(false);
+                          m_logger), m_dispatchAction).dispatch();
         }
-        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)) {
-            // If we don't handle post-log-dispatches, we need to unlock logger
-            // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
-            if (m_logger != nullptr) {
-                m_logger->stream().str(ELPP_LITERAL(""));
-                m_logger->releaseLock();
-            }
+        if (m_logger != nullptr) {
+            m_logger->stream().str(ELPP_LITERAL(""));
+            m_logger->releaseLock();
         }
         if (m_proceed && m_level == Level::Fatal
                 && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
@@ -4713,7 +4739,7 @@ protected:
             std::stringstream reasonStream;
             reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
                 << " If you wish to disable 'abort on fatal log' please use "
-                    << "el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
+                << "el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
             base::utils::abort(1, reasonStream.str());
         }
         m_proceed = false;
@@ -5353,17 +5379,11 @@ public:
     /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
     template <typename T>
     static inline bool installLogDispatchCallback(const std::string& id, bool addFlag = true) {
-        if (addFlag) {
-            ELPP->addFlag(LoggingFlag::EnableLogDispatchCallback);
-        }
         return ELPP->installLogDispatchCallback<T>(id);
     }
     /// @brief Uninstalls log dispatch callback
     template <typename T>
     static inline void uninstallLogDispatchCallback(const std::string& id, bool removeFlag = true) {
-        if (removeFlag) {
-            ELPP->removeFlag(LoggingFlag::EnableLogDispatchCallback);
-        }
         ELPP->uninstallLogDispatchCallback<T>(id);
     }
     template <typename T>
