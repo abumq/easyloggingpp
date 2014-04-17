@@ -1480,6 +1480,8 @@ public:
 extern std::string s_currentUser;
 extern std::string s_currentHost;
 extern bool s_termSupportsColor;
+extern bool s_callingLogDispatchCallback;
+extern bool s_callingPerformanceTrackingCallback;
 #define _ELPP_INITI_BASIC_DECLR \
     namespace el {\
         namespace base {\
@@ -1487,6 +1489,8 @@ extern bool s_termSupportsColor;
                 std::string s_currentUser = el::base::utils::OS::currentUser(); \
                 std::string s_currentHost = el::base::utils::OS::currentHost(); \
                 bool s_termSupportsColor = el::base::utils::OS::termSupportsColor(); \
+                bool s_callingLogDispatchCallback = false; \
+                bool s_callingPerformanceTrackingCallback = false; \
             }\
         }\
    }
@@ -3747,8 +3751,7 @@ public:
         m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
         m_flags(0x0),
         m_vRegistry(new base::VRegistry(0, &m_flags)),
-        m_preRollOutCallback(base::defaultPreRollOutCallback),
-        m_callingLogDispatchCallback(false) {
+        m_preRollOutCallback(base::defaultPreRollOutCallback) {
         // Register default logger
         m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
         // Register performance logger and reconfigure format
@@ -3928,8 +3931,6 @@ private:
     std::map<std::string, base::type::PerformanceTrackingCallbackPtr> m_performanceTrackingCallbacks;
     std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
     Level m_loggingLevel;
-    bool m_callingLogDispatchCallback;
-    bool m_callingPerformanceTrackingCallback;
 
     friend class el::Helpers;
     friend class el::base::LogDispatcher;
@@ -3937,22 +3938,6 @@ private:
     friend class el::base::MessageBuilder;
     friend class el::base::Writer;
     friend class el::base::PerformanceTracker;
-
-    inline bool callingLogDispatchCallback(void) const {
-        return m_callingLogDispatchCallback;
-    }
-    
-    inline void setCallingLogDispatchCallback(bool val) {
-        m_callingLogDispatchCallback = val;
-    }
-
-    inline bool callingPerformanceTrackingCallback(void) const {
-        return m_callingPerformanceTrackingCallback;
-    }
-    
-    inline void setCallingPerformanceTrackingCallback(bool val) {
-        m_callingPerformanceTrackingCallback = val;
-    }
 
     void setApplicationArguments(int argc, char** argv) {
         m_commandLineArgs.setArgs(argc, argv);
@@ -4091,7 +4076,7 @@ public:
         }
         ELPP->releaseLock();
         if (ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback)
-                && !ELPP->callingLogDispatchCallback()) {
+                && !base::utils::s_callingLogDispatchCallback) {
             m_logMessage.logger()->stream().str(ELPP_LITERAL(""));
             m_logMessage.logger()->releaseLock();
             LogDispatchCallback* callback = nullptr;
@@ -4099,11 +4084,13 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    ELPP->setCallingLogDispatchCallback(true);
-                    //callback->acquireLock();
+                    //ELPP->setCallingLogDispatchCallback(true);
+                    base::utils::s_callingLogDispatchCallback = true;
+                    callback->acquireLock();
                     callback->handle(&m_logMessage);
-                    //callback->releaseLock();
-                    ELPP->setCallingLogDispatchCallback(false);
+                    callback->releaseLock();
+                    base::utils::s_callingLogDispatchCallback = false;
+                    //ELPP->setCallingLogDispatchCallback(false);
                 }
             }
         }
@@ -4720,7 +4707,7 @@ protected:
             base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
                           m_logger), m_dispatchAction).dispatch(false);
         }
-        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback) || ELPP->callingLogDispatchCallback()) {
+        if (!ELPP->hasFlag(LoggingFlag::EnableLogDispatchCallback) || base::utils::s_callingLogDispatchCallback) {
             // If we don't handle post-log-dispatches, we need to unlock logger
             // otherwise loggers do get unlocked before handler is triggered to prevent dead-locks
             if (m_logger != nullptr) {
@@ -4976,7 +4963,7 @@ public:
                         << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
                 }
                 if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
-                        && !ELPP->callingPerformanceTrackingCallback()) {
+                        && base::utils::s_callingPerformanceTrackingCallback) {
                     PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                     data.init(this);
                     data.m_formattedTimeTaken = formattedTime;
@@ -4985,11 +4972,11 @@ public:
                             : ELPP->m_performanceTrackingCallbacks) {
                         callback = h.second.get();
                         if (callback != nullptr && callback->enabled()) {
-                            ELPP->setCallingPerformanceTrackingCallback(true);
-                            //callback->acquireLock();
+                            base::utils::s_callingPerformanceTrackingCallback = true;
+                            callback->acquireLock();
                             callback->handle(&data);
-                            //callback->releaseLock();
-                            ELPP->setCallingPerformanceTrackingCallback(false);
+                            callback->releaseLock();
+                            base::utils::s_callingPerformanceTrackingCallback = false;
                         }
                     }
                 }
@@ -5032,7 +5019,7 @@ public:
                     m_timestampUnit) : ELPP_LITERAL("");
             }
             if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
-                    && !ELPP->callingPerformanceTrackingCallback()) {
+                    && base::utils::s_callingPerformanceTrackingCallback) {
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
                 data.init(this);
                 data.m_formattedTimeTaken = formattedTime;
@@ -5041,11 +5028,11 @@ public:
                         : ELPP->m_performanceTrackingCallbacks) {
                     callback = h.second.get();
                     if (callback != nullptr && callback->enabled()) {
-                        ELPP->setCallingPerformanceTrackingCallback(true);
-                        //callback->acquireLock();
+                        base::utils::s_callingPerformanceTrackingCallback = true;
+                        callback->acquireLock();
                         callback->handle(&data);
-                        //callback->releaseLock();
-                        ELPP->setCallingPerformanceTrackingCallback(false);
+                        callback->releaseLock();
+                        base::utils::s_callingPerformanceTrackingCallback = false;
                     }
                 }
             }
