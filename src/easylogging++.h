@@ -3886,7 +3886,7 @@ public:
     template <typename T, typename TPtr>
     inline T* callback(const std::string& id, 
             std::map<std::string, TPtr>& mapT) {
-        std::map<std::string, TPtr>::iterator iter = mapT.find(id);
+        typename std::map<std::string, TPtr>::iterator iter = mapT.find(id);
         if (iter != mapT.end()) {
             return static_cast<T*>(iter->second.get());
         }
