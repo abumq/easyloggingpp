@@ -13,10 +13,12 @@ _INITIALIZE_EASYLOGGINGPP
 class MyPerformanceTrackingOutput : public el::PerformanceTrackingCallback {
 public:
     MyPerformanceTrackingOutput() {
-        el::Loggers::addFlag(el::LoggingFlag::DisablePerformanceTrackingDispatch);
+        el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
+        defaultCallback->setEnabled(false);
     }
     virtual ~MyPerformanceTrackingOutput() {
-        el::Loggers::removeFlag(el::LoggingFlag::DisablePerformanceTrackingDispatch);
+        el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
+        defaultCallback->setEnabled(true);
     }
 protected:
     void handle(const el::PerformanceTrackingData* data) {

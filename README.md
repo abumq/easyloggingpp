@@ -399,13 +399,11 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `StrictLogFileSizeCheck (32)`                          | Makes sure log file size is checked with every log                                                                                            |
 | `ColoredTerminalOutput (64)`                           | Terminal output will be colorful if supported by terminal.                                                                                            |
 | `MultiLoggerSupport (128)`                             | Enables support for using multiple loggers to log single message. (E.g, `CLOG(INFO, "default", "network") << This will be logged using default and network loggers;`) |
-| `DisablePerformanceTrackingDispatch (256)`             | Disables logging dispatch for performance tracking. This is useful when you wish to make use of `PerformanceTrackingData` |
-| `DisablePerformanceTrackingCheckpointComparison (512)` | Disables checkpoint comparison |
-| `PerformanceTrackingCallback (1024)`                   | Capture log message right after it is dispatched. See [Make Use of Performance Tracking Data](#make-use-of-performance-tracking-data) for further details. |
-| `DisableVModules (2048)`                               | Disables usage of vmodules
-| `DisableVModulesExtensions (4096)`                     | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '' wildcards are supported |
-| `HierarchicalLogging (8192)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
-| `CreateLoggerAutomatically (16384)`                          | Creates logger automatically when not available. |
+| `DisablePerformanceTrackingCheckpointComparison (256)` | Disables checkpoint comparison |
+| `DisableVModules (512)`                               | Disables usage of vmodules
+| `DisableVModulesExtensions (1024)`                     | Disables vmodules extension. This means if you have a vmodule -vmodule=main*=4 it will cover everything starting with main, where as if you do not have this defined you will be covered for any file starting with main and ending with one of the following extensions; .h .c .cpp .cc .cxx .-inl-.h .hxx .hpp. Please note following vmodule is not correct -vmodule=main.=4 with this macro not defined because this will check for main..c, notice double dots. If you want this to be valid, have a look at logging flag above: AllowVerboseIfModuleNotSpecified '?' and '' wildcards are supported |
+| `HierarchicalLogging (2048)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
+| `CreateLoggerAutomatically (4096)`                          | Creates logger automatically when not available. |
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
@@ -810,11 +808,9 @@ Notes:
  [![top] Goto Top](#table-of-contents)
 
 #### Make Use of Performance Tracking Data
-If you wish to capture performance tracking data right after it is finished, you can do so by adding flag `PerformanceTrackingCallback`, by doing so you are telling library to trigger an installed post tracking callbacks that you can define by extending `el::PerformanceTrackingCallback`.
+If you wish to capture performance tracking data right after it is finished, you can do so by extending `el::PerformanceTrackingCallback`.
 
 In order to install this handler, use `void Helpers::installPerformanceTrackingCallback<T>(const std::string& id)`. Where `T` is type of your handler. If you wish to uninstall a callback, you can do so by using `Helpers::uninstallPerformanceTrackingCallback<T>(const std::string& id)`. See samples for details
-
- > You need to add flag `PerformanceTrackingCallback` if not already added. (`installPerformanceTrackingCallback<T>(const std::string&)` adds it automatically)
 
  > DO NOT TRACK PERFORMANCE IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
 

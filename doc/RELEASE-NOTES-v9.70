@@ -10,7 +10,14 @@ API changes: Yes
 
  - Improvements to `PerformanceTrackingCallback` - multiple callbacks
  - Removed ability to log from log dispatch and performance tracking callbacks since it causes issue in multi-threaded applications
+
+============================
+=        REMOVED           =
+============================
+
  - Removed `el::LoggingFlag::EnableLogDispatchCallback` as it is always enabled now since its used internally
+ - Removed `el::LoggingFlag::DisablePerformanceTrackingDispatch` as you can do it other way (see samples)
+ - Removed `el::LoggingFlag::PerformanceTrackingCallback` as it is always enabled now since its used internally
 
 ==========================
 =         NOTES          =

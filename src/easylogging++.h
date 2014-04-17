@@ -394,6 +394,7 @@ class PErrorWriter;
 class LogDispatcher;
 class DefaultLogBuilder;
 class DefaultLogDispatchCallback;
+class DefaultPerformanceTrackingCallback;
 }  // namespace base
 }  // namespace el
 /// @brief Easylogging++ entry namespace
@@ -672,20 +673,16 @@ enum class LoggingFlag : base::type::EnumType {
     ColoredTerminalOutput = 64,
     /// @brief Supports use of multiple logging in same macro, e.g, CLOG(INFO, "default", "network")
     MultiLoggerSupport = 128,
-    /// @brief Disables log dispatch for performance tracking
-    DisablePerformanceTrackingDispatch = 256,
     /// @brief Disables comparing performance tracker's checkpoints
-    DisablePerformanceTrackingCheckpointComparison = 512,
-    /// @brief Enables callback
-    PerformanceTrackingCallback = 1024,
+    DisablePerformanceTrackingCheckpointComparison = 256,
     /// @brief Disable VModules
-    DisableVModules = 2048,
+    DisableVModules = 512,
     /// @brief Disable VModules extensions
-    DisableVModulesExtensions = 4096,
+    DisableVModulesExtensions = 1024,
     /// @brief Enables hierarchical logging
-    HierarchicalLogging = 8192,
+    HierarchicalLogging = 2048,
     /// @brief Creates logger automatically when not available
-    CreateLoggerAutomatically = 16384
+    CreateLoggerAutomatically = 4096
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -3771,6 +3768,12 @@ private:
     const LogDispatchData* m_data;
     void dispatch(base::type::string_t&& logLine);
 };
+class DefaultPerformanceTrackingCallback : public PerformanceTrackingCallback {
+protected:
+    void handle(const PerformanceTrackingData* data);
+private:
+    const PerformanceTrackingData* m_data;
+};
 /// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
@@ -3796,6 +3799,7 @@ public:
 #endif  //  defined(_ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
         installLogDispatchCallback<base::DefaultLogDispatchCallback>("DefaultLogDispatchCallback");
+        installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
         ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 
@@ -4937,16 +4941,28 @@ public:
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
     inline const struct timeval* lastCheckpointTime(void) const;
-    inline const base::type::string_t* formattedTimeTaken(void) const;
-    inline PerformanceTrackingData::DataType dataType(void) const;
+    inline const base::PerformanceTracker* performanceTracker(void) const { return m_performanceTracker; }
+    inline PerformanceTrackingData::DataType dataType(void) const { return m_dataType; }
+    inline bool firstCheckpoint(void) const { return m_firstCheckpoint; }
+    inline std::string checkpointId(void) const { return m_checkpointId; }
+    inline const char* file(void) const { return m_file; }
+    inline unsigned long int line(void) const { return m_line; }
+    inline const char* func(void) const { return m_func; }
+    inline const base::type::string_t* formattedTimeTaken() const { return &m_formattedTimeTaken; }
     inline const std::string& loggerId(void) const;
-    inline bool firstCheckpoint(void) const;
 private:
     base::PerformanceTracker* m_performanceTracker;
     base::type::string_t m_formattedTimeTaken;
     PerformanceTrackingData::DataType m_dataType;
     bool m_firstCheckpoint;
-    inline void init(base::PerformanceTracker*, bool firstCheckpoint = false);
+    std::string m_checkpointId;
+    const char* m_file;
+    unsigned long int m_line;
+    const char* m_func;    
+    inline void init(base::PerformanceTracker* performanceTracker, bool firstCheckpoint = false) {
+        m_performanceTracker = performanceTracker;
+        m_firstCheckpoint = firstCheckpoint;
+    }
 
     friend class el::base::PerformanceTracker;
 };
@@ -4984,65 +5000,7 @@ public:
             if (m_scopedLog) {
                 base::utils::DateTime::gettimeofday(&m_endTime);
                 base::type::string_t formattedTime = getFormattedTimeTaken();
-                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
-                    _ELPP_WRITE_LOG(el::base::Writer, m_level, base::DispatchAction::NormalLog, m_loggerId.c_str()) 
-                        << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
-                }
-                if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
-                    PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
-                    data.init(this);
-                    data.m_formattedTimeTaken = formattedTime;
-                    PerformanceTrackingCallback* callback = nullptr;
-                    for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
-                            : ELPP->m_performanceTrackingCallbacks) {
-                        callback = h.second.get();
-                        if (callback != nullptr && callback->enabled()) {
-                            callback->acquireLock();
-                            callback->handle(&data);
-                            callback->releaseLock();
-                        }
-                    }
-                }
-            }
-        }
-#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
-    }
-    /// @brief A checkpoint for current performanceTracker block.
-    void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
-#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
-        if (m_enabled) {
-            base::threading::ScopedLock scopedLock(lock());
-            base::utils::DateTime::gettimeofday(&m_endTime);            
-            base::type::string_t formattedTime;
-            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingDispatch)) {
-                base::type::stringstream_t ss;
-                ss << ELPP_LITERAL("Performance checkpoint");
-                if (!id.empty()) {
-                    ss << ELPP_LITERAL(" [") << id.c_str() << ELPP_LITERAL("]");
-                }
-                ss << ELPP_LITERAL(" for block [") << m_blockName.c_str() << ELPP_LITERAL("] : [") << *this;
-                if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && m_hasChecked) {
-                    formattedTime = base::utils::DateTime::formatTime(
-                        base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                            m_timestampUnit);
-                    ss << ELPP_LITERAL(" ([") << formattedTime << ELPP_LITERAL("] from ");
-                    if (m_lastCheckpointId.empty()) {
-                        ss << ELPP_LITERAL("last checkpoint");
-                    } else {
-                        ss << ELPP_LITERAL("checkpoint '") << m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
-                    }
-                    ss << ELPP_LITERAL(")]");
-                } else {
-                    ss << ELPP_LITERAL("]");
-                }
-                el::base::Writer(m_level, file, line, func).construct(1, m_loggerId.c_str()) << ss.str();
-            } else {
-                formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
-                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                    m_timestampUnit) : ELPP_LITERAL("");
-            }
-            if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)) {
-                PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
+                PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
                 data.m_formattedTimeTaken = formattedTime;
                 PerformanceTrackingCallback* callback = nullptr;
@@ -5056,6 +5014,35 @@ public:
                     }
                 }
             }
+        }
+#endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
+    }
+    /// @brief A checkpoint for current performanceTracker block.
+    void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
+#if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
+        if (m_enabled) {
+            base::threading::ScopedLock scopedLock(lock());
+            base::utils::DateTime::gettimeofday(&m_endTime);            
+            base::type::string_t formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
+                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
+                    m_timestampUnit) : ELPP_LITERAL("");
+            PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
+            data.init(this);
+            data.m_checkpointId = id;
+            data.m_file = file;
+            data.m_line = line;
+            data.m_func = func;
+            data.m_formattedTimeTaken = formattedTime;
+            PerformanceTrackingCallback* callback = nullptr;
+            for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
+                    : ELPP->m_performanceTrackingCallbacks) {
+                callback = h.second.get();
+                if (callback != nullptr && callback->enabled()) {
+                    callback->acquireLock();
+                    callback->handle(&data);
+                    callback->releaseLock();
+                }
+            }
             base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
             m_hasChecked = true;
             m_lastCheckpointId = id;
@@ -5066,12 +5053,13 @@ public:
         _ELPP_UNUSED(line);
         _ELPP_UNUSED(func);
     }
+    inline Level level(void) const { return m_level; }
 private:
     std::string m_blockName;
     base::TimestampUnit m_timestampUnit;
     std::string m_loggerId;
     bool m_scopedLog;
-    el::Level m_level;
+    Level m_level;
     bool m_hasChecked;
     std::string m_lastCheckpointId;
     bool m_enabled;
@@ -5080,6 +5068,7 @@ private:
     PerformanceTracker(void);
 
     friend class el::PerformanceTrackingData;
+    friend class base::DefaultPerformanceTrackingCallback;
 
     const base::type::string_t getFormattedTimeTaken() const {
         return base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime,
@@ -5090,6 +5079,32 @@ private:
         os << getFormattedTimeTaken();
     }
 };
+void DefaultPerformanceTrackingCallback::handle(const PerformanceTrackingData* data) {
+    m_data = data;
+    if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
+        _ELPP_WRITE_LOG(el::base::Writer, m_data->performanceTracker()->level(), base::DispatchAction::NormalLog, data->loggerId().c_str()) 
+            << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
+    } else {
+        base::type::stringstream_t ss;
+        ss << ELPP_LITERAL("Performance checkpoint");
+        if (!m_data->checkpointId().empty()) {
+            ss << ELPP_LITERAL(" [") << m_data->checkpointId().c_str() << ELPP_LITERAL("]");
+        }
+        ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *data->performanceTracker();
+        if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && data->performanceTracker()->m_hasChecked) {
+            ss << ELPP_LITERAL(" ([") << m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
+            if (data->performanceTracker()->m_lastCheckpointId.empty()) {
+                ss << ELPP_LITERAL("last checkpoint");
+            } else {
+                ss << ELPP_LITERAL("checkpoint '") << data->performanceTracker()->m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
+            }
+            ss << ELPP_LITERAL(")]");
+        } else {
+            ss << ELPP_LITERAL("]");
+        }
+        el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
+    }
+}
 }  // namespace base
 inline const std::string* PerformanceTrackingData::blockName() const {
     return const_cast<const std::string*>(&m_performanceTracker->m_blockName);
@@ -5103,21 +5118,8 @@ inline const struct timeval* PerformanceTrackingData::endTime() const {
 inline const struct timeval* PerformanceTrackingData::lastCheckpointTime() const {
     return const_cast<const struct timeval*>(&m_performanceTracker->m_lastCheckpointTime);
 }
-inline const base::type::string_t* PerformanceTrackingData::formattedTimeTaken() const {
-    return &m_formattedTimeTaken;
-}
-inline void PerformanceTrackingData::init(base::PerformanceTracker* performanceTracker, bool firstCheckpoint) {
-    m_performanceTracker = performanceTracker;
-    m_firstCheckpoint = firstCheckpoint;
-}
-inline PerformanceTrackingData::DataType PerformanceTrackingData::dataType(void) const {
-    return m_dataType;
-}
 inline const std::string& PerformanceTrackingData::loggerId(void) const {
     return m_performanceTracker->m_loggerId;
-}
-inline bool PerformanceTrackingData::firstCheckpoint(void) const {
-    return m_firstCheckpoint;
 }
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
@@ -5401,18 +5403,12 @@ public:
     }
     /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
     template <typename T>
-    static inline bool installPerformanceTrackingCallback(const std::string& id, bool addFlag = true) {
-        if (addFlag) {
-            ELPP->addFlag(LoggingFlag::PerformanceTrackingCallback);
-        }
+    static inline bool installPerformanceTrackingCallback(const std::string& id) {
         return ELPP->installPerformanceTrackingCallback<T>(id);
     }
-   /// @brief Uninstalls post performance tracking handler
+    /// @brief Uninstalls post performance tracking handler
     template <typename T>
-    static inline void uninstallPerformanceTrackingCallback(const std::string& id, bool removeFlag = true) {
-        if (removeFlag) {
-            ELPP->removeFlag(LoggingFlag::PerformanceTrackingCallback);
-        }
+    static inline void uninstallPerformanceTrackingCallback(const std::string& id) {
         ELPP->uninstallPerformanceTrackingCallback<T>(id);
     }
     template <typename T>
