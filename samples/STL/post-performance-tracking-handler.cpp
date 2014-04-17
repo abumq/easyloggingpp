@@ -32,13 +32,12 @@ int main(void) {
 
     el::Helpers::installPerformanceTrackingCallback<Handler>("handler");
 
-    {
-        TIMED_SCOPE(timer, "my-block");
+    TIMED_BLOCK(obj, "my-block") {
         for (int i = 0; i <= 500; ++i) {
             // Spend time
             for (int j = 0; j < 10000; ++j) { std::string tmp; }
             if (i % 100 == 0) {
-                timer.checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
+                obj.timer.checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
             }
         }
     } 
