@@ -16,8 +16,9 @@ _INITIALIZE_EASYLOGGINGPP
 
 class LogHandler : public el::LogDispatchCallback {
 public:
-    void handle(const el::LogMessage* msg) {
-        LOG(INFO) << "Test this msg";
+    void handle(const el::LogDispatchData* data) {
+        // NEVER LOG ANYTHING HERE! NOT HAPPY WITH MULTI_THREADING
+        ELPP_COUT << "Test this " << data << std::endl;
     }
 };
 
@@ -26,8 +27,9 @@ public:
     HtmlHandler() {
         el::Loggers::getLogger("html");
     }
-    void handle(const el::LogMessage* msg) {
-        CLOG(INFO, "html") << "<b>" << msg->message() << "</b>";
+    void handle(const el::LogDispatchData* data) {
+        // NEVER LOG ANYTHING HERE! NOT HAPPY WITH MULTI_THREADING
+        ELPP_COUT << "<b>" << data->logMessage()->message() << "</b>" << std::endl;
     }
 };
 
@@ -36,10 +38,9 @@ int main(int argc, char* argv[]) {
     _START_EASYLOGGINGPP(argc, argv);
 
     el::Loggers::removeFlag(el::LoggingFlag::NewLineForContainer);
-    el::Helpers::installLogDispatchCallback<LogHandler>("LogHandler", true);
-    el::Helpers::installLogDispatchCallback<HtmlHandler>("HtmlHandler", true);
+    el::Helpers::installLogDispatchCallback<LogHandler>("LogHandler");
+    el::Helpers::installLogDispatchCallback<HtmlHandler>("HtmlHandler");
     LOG(INFO) << "First log";
-    
     LogHandler* logHandler = el::Helpers::logDispatchCallback<LogHandler>("LogHandler");
     logHandler->setEnabled(false);
 

@@ -3412,16 +3412,6 @@ public:
     inline bool enabled(Level level) const {
         return m_typedConfigurations->enabled(level);
     }
-
-    inline virtual void acquireLock() {
-        ELPP_INTERNAL_INFO(9, "Manual Locking [" << m_id << "] [Logger]");
-        base::threading::ThreadSafe::acquireLock();
-    }
-
-    inline virtual void releaseLock() {
-        ELPP_INTERNAL_INFO(9, "Manual Unlocking [" << m_id << "] [Logger]");
-        base::threading::ThreadSafe::releaseLock();
-    }
     
 #if _ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #   define LOGGER_LEVEL_WRITERS_SIGNATURES(FUNCTION_NAME)\
@@ -3761,19 +3751,6 @@ private:
     base::type::string_t m_message;
 };
 namespace base {
-class DefaultLogDispatchCallback : public LogDispatchCallback {
-protected:
-    void handle(const LogDispatchData* data);
-private:
-    const LogDispatchData* m_data;
-    void dispatch(base::type::string_t&& logLine);
-};
-class DefaultPerformanceTrackingCallback : public PerformanceTrackingCallback {
-protected:
-    void handle(const PerformanceTrackingData* data);
-private:
-    const PerformanceTrackingData* m_data;
-};
 /// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
@@ -3902,29 +3879,6 @@ public:
         m_loggingLevel = level;
     }
 
-    template <typename T, typename TPtr>
-    inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-        if (mapT->find(id) == mapT->end()) {
-            mapT->insert(std::make_pair(id, TPtr(new T())));
-            return true;
-        }
-        return false;
-    }
-
-    template <typename T, typename TPtr>
-    inline void uninstallCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-        mapT->erase(id);
-    }
-
-    template <typename T, typename TPtr>
-    inline T* callback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-        typename std::map<std::string, TPtr>::iterator iter = mapT->find(id);
-        if (iter != mapT->end()) {
-            return static_cast<T*>(iter->second.get());
-        }
-        return nullptr;
-    }
-
     template <typename T>
     inline bool installLogDispatchCallback(const std::string& id) {
         return installCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
@@ -3952,16 +3906,6 @@ public:
     template <typename T>
     inline T* performanceTrackingCallback(const std::string& id) {
         return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
-    }
-
-    inline virtual void acquireLock() {
-        ELPP_INTERNAL_INFO(9, "Manual Locking [Storage]");
-        base::threading::ThreadSafe::acquireLock();
-    }
-
-    inline virtual void releaseLock() {
-        ELPP_INTERNAL_INFO(9, "Manual Unlocking [Storage]");
-        base::threading::ThreadSafe::releaseLock();
     }
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
@@ -4008,69 +3952,96 @@ private:
     inline void setApplicationArguments(int argc, const char** argv) {
         setApplicationArguments(argc, const_cast<char**>(argv));
     }
+
+    template <typename T, typename TPtr>
+    inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        if (mapT->find(id) == mapT->end()) {
+            mapT->insert(std::make_pair(id, TPtr(new T())));
+            return true;
+        }
+        return false;
+    }
+
+    template <typename T, typename TPtr>
+    inline void uninstallCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        mapT->erase(id);
+    }
+
+    template <typename T, typename TPtr>
+    inline T* callback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        typename std::map<std::string, TPtr>::iterator iter = mapT->find(id);
+        if (iter != mapT->end()) {
+            return static_cast<T*>(iter->second.get());
+        }
+        return nullptr;
+    }
 };
 extern _ELPP_EXPORT base::type::StoragePointer elStorage;
 #define ELPP el::base::elStorage
-void DefaultLogDispatchCallback::handle(const LogDispatchData* data) {
-    m_data = data;
-    dispatch(std::move(m_data->logMessage()->logger()->logBuilder()->build(m_data->logMessage(), 
-        m_data->dispatchAction() == base::DispatchAction::NormalLog)));
-}
-
-void DefaultLogDispatchCallback::dispatch(base::type::string_t&& logLine) {
-    if (m_data->dispatchAction() == base::DispatchAction::NormalLog) {
-        if (m_data->logMessage()->logger()->m_typedConfigurations->toFile(m_data->logMessage()->level())) {
-            base::type::fstream_t* fs = m_data->logMessage()->logger()->m_typedConfigurations->fileStream(m_data->logMessage()->level());
-            if (fs != nullptr) {
-                fs->write(logLine.c_str(), logLine.size());
-                if (fs->fail()) {
-                    ELPP_INTERNAL_ERROR("Unable to write log to file ["
-                        << m_data->logMessage()->logger()->m_typedConfigurations->filename(m_data->logMessage()->level()) << "].\n"
-                            << "Few possible reasons (could be something else):\n" << "      * Permission denied\n"
-                            << "      * Disk full\n" << "      * Disk is not writable", true);
-                } else {
-                    if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (m_data->logMessage()->logger()->isFlushNeeded(m_data->logMessage()->level()))) {
-                        m_data->logMessage()->logger()->flush(m_data->logMessage()->level(), fs);
+class DefaultLogDispatchCallback : public LogDispatchCallback {
+protected:
+    void handle(const LogDispatchData* data) {
+        m_data = data;
+        dispatch(std::move(m_data->logMessage()->logger()->logBuilder()->build(m_data->logMessage(), 
+            m_data->dispatchAction() == base::DispatchAction::NormalLog)));
+    }
+private:
+    const LogDispatchData* m_data;
+    void dispatch(base::type::string_t&& logLine) {
+        if (m_data->dispatchAction() == base::DispatchAction::NormalLog) {
+            if (m_data->logMessage()->logger()->m_typedConfigurations->toFile(m_data->logMessage()->level())) {
+                base::type::fstream_t* fs = m_data->logMessage()->logger()->m_typedConfigurations->fileStream(m_data->logMessage()->level());
+                if (fs != nullptr) {
+                    fs->write(logLine.c_str(), logLine.size());
+                    if (fs->fail()) {
+                        ELPP_INTERNAL_ERROR("Unable to write log to file ["
+                            << m_data->logMessage()->logger()->m_typedConfigurations->filename(m_data->logMessage()->level()) << "].\n"
+                                << "Few possible reasons (could be something else):\n" << "      * Permission denied\n"
+                                << "      * Disk full\n" << "      * Disk is not writable", true);
+                    } else {
+                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (m_data->logMessage()->logger()->isFlushNeeded(m_data->logMessage()->level()))) {
+                            m_data->logMessage()->logger()->flush(m_data->logMessage()->level(), fs);
+                        }
                     }
+                } else {
+                    ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(m_data->logMessage()->level()) << "] "
+                        << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " 
+                        << m_data->logMessage()->logger()->id() << "]", false);
                 }
-            } else {
-                ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(m_data->logMessage()->level()) << "] "
-                    << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " 
-                    << m_data->logMessage()->logger()->id() << "]", false);
             }
+            if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
+                if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+                    m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
+                ELPP_COUT << ELPP_COUT_LINE(logLine);
+             }
         }
-        if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
-            if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
-            ELPP_COUT << ELPP_COUT_LINE(logLine);
-         }
-    }
 #if defined(_ELPP_SYSLOG)
-    else if (m_data->dispatchAction() == base::DispatchAction::SysLog) {
-        // Determine syslog priority
-        int sysLogPriority = 0;
-        if (m_data->logMessage()->level() == Level::Fatal)
-            sysLogPriority = LOG_EMERG;
-        else if (m_data->logMessage()->level() == Level::Error)
-            sysLogPriority = LOG_ERR;
-        else if (m_data->logMessage()->level() == Level::Warning)
-            sysLogPriority = LOG_WARNING;
-        else if (m_data->logMessage()->level() == Level::Info)
-            sysLogPriority = LOG_INFO;
-        else if (m_data->logMessage()->level() == Level::Debug)
-            sysLogPriority = LOG_DEBUG;
-        else
-            sysLogPriority = LOG_NOTICE;
+        else if (m_data->dispatchAction() == base::DispatchAction::SysLog) {
+            // Determine syslog priority
+            int sysLogPriority = 0;
+            if (m_data->logMessage()->level() == Level::Fatal)
+                sysLogPriority = LOG_EMERG;
+            else if (m_data->logMessage()->level() == Level::Error)
+                sysLogPriority = LOG_ERR;
+            else if (m_data->logMessage()->level() == Level::Warning)
+                sysLogPriority = LOG_WARNING;
+            else if (m_data->logMessage()->level() == Level::Info)
+                sysLogPriority = LOG_INFO;
+            else if (m_data->logMessage()->level() == Level::Debug)
+                sysLogPriority = LOG_DEBUG;
+            else
+                sysLogPriority = LOG_NOTICE;
 #   if defined(_ELPP_UNICODE)
-        char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
-        syslog(sysLogPriority, "%s", line);
-        free(line);
+            char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
+            syslog(sysLogPriority, "%s", line);
+            free(line);
 #   else
-        syslog(sysLogPriority, "%s", logLine.c_str());
+            syslog(sysLogPriority, "%s", logLine.c_str());
 #   endif
-    }
+        }
 #endif  // defined(_ELPP_SYSLOG)
-}
+    }
+};
 }  // namespace base
 namespace base {
 class DefaultLogBuilder : public LogBuilder {
@@ -5079,32 +5050,37 @@ private:
         os << getFormattedTimeTaken();
     }
 };
-void DefaultPerformanceTrackingCallback::handle(const PerformanceTrackingData* data) {
-    m_data = data;
-    if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
-        _ELPP_WRITE_LOG(el::base::Writer, m_data->performanceTracker()->level(), base::DispatchAction::NormalLog, data->loggerId().c_str()) 
-            << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
-    } else {
-        base::type::stringstream_t ss;
-        ss << ELPP_LITERAL("Performance checkpoint");
-        if (!m_data->checkpointId().empty()) {
-            ss << ELPP_LITERAL(" [") << m_data->checkpointId().c_str() << ELPP_LITERAL("]");
-        }
-        ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *data->performanceTracker();
-        if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && data->performanceTracker()->m_hasChecked) {
-            ss << ELPP_LITERAL(" ([") << *m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
-            if (data->performanceTracker()->m_lastCheckpointId.empty()) {
-                ss << ELPP_LITERAL("last checkpoint");
-            } else {
-                ss << ELPP_LITERAL("checkpoint '") << data->performanceTracker()->m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
-            }
-            ss << ELPP_LITERAL(")]");
+class DefaultPerformanceTrackingCallback : public PerformanceTrackingCallback {
+protected:
+    void handle(const PerformanceTrackingData* data) {
+        m_data = data;
+        if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
+            _ELPP_WRITE_LOG(el::base::Writer, m_data->performanceTracker()->level(), base::DispatchAction::NormalLog, data->loggerId().c_str()) 
+                << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
         } else {
-            ss << ELPP_LITERAL("]");
+            base::type::stringstream_t ss;
+            ss << ELPP_LITERAL("Performance checkpoint");
+            if (!m_data->checkpointId().empty()) {
+                ss << ELPP_LITERAL(" [") << m_data->checkpointId().c_str() << ELPP_LITERAL("]");
+            }
+            ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *data->performanceTracker();
+            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && data->performanceTracker()->m_hasChecked) {
+                ss << ELPP_LITERAL(" ([") << *m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
+                if (data->performanceTracker()->m_lastCheckpointId.empty()) {
+                    ss << ELPP_LITERAL("last checkpoint");
+                } else {
+                    ss << ELPP_LITERAL("checkpoint '") << data->performanceTracker()->m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
+                }
+                ss << ELPP_LITERAL(")]");
+            } else {
+                ss << ELPP_LITERAL("]");
+            }
+            el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
         }
-        el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
     }
-}
+private:
+    const PerformanceTrackingData* m_data;
+};
 }  // namespace base
 inline const std::string* PerformanceTrackingData::blockName() const {
     return const_cast<const std::string*>(&m_performanceTracker->m_blockName);
