@@ -5118,9 +5118,7 @@ inline const struct timeval* PerformanceTrackingData::endTime() const {
 inline const struct timeval* PerformanceTrackingData::lastCheckpointTime() const {
     return const_cast<const struct timeval*>(&m_performanceTracker->m_lastCheckpointTime);
 }
-inline const std::string& PerformanceTrackingData::loggerId(void) const {
-    return m_performanceTracker->m_loggerId;
-}
+inline const std::string& PerformanceTrackingData::loggerId(void) const { return m_performanceTracker->m_loggerId; }
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
