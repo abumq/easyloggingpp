@@ -12,7 +12,7 @@ _INITIALIZE_EASYLOGGINGPP
 
 class MyHandler : public el::LogDispatchCallback {
 public:
-    void handle(const el::LogDispatchData* msg) {
+    void handle(const el::LogDispatchData*) {
         // NEVER DO LOG FROM HANDLER!
         // LOG(INFO) << "Test MyHandler " << msg;
     }
@@ -23,7 +23,7 @@ public:
     MyHtmlHandler() {
         el::Loggers::getLogger("html"); // register
     }
-    void handle(const el::LogDispatchData* data) {
+    void handle(const el::LogDispatchData*) {
         // NEVER DO LOG FROM HANDLER!
        // CLOG(INFO, "html") << data->logMessage()->message();
        std::cout << "Test handler" << std::endl;

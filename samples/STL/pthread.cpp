@@ -16,7 +16,7 @@
 _INITIALIZE_EASYLOGGINGPP
 class MyHandler : public el::LogDispatchCallback {
 public:
-    void handle(const el::LogDispatchData* data) {
+    void handle(const el::LogDispatchData*) {
         std::cout << "Test MyHandler " << std::endl;
     }
 };
