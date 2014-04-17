@@ -3943,7 +3943,6 @@ private:
     }
     
     inline void setCallingLogDispatchCallback(bool val) {
-        base::threading::ScopedLock scopedLock(lock());
         m_callingLogDispatchCallback = val;
     }
 
@@ -3952,7 +3951,6 @@ private:
     }
     
     inline void setCallingPerformanceTrackingCallback(bool val) {
-        base::threading::ScopedLock scopedLock(lock());
         m_callingPerformanceTrackingCallback = val;
     }
 
@@ -4101,11 +4099,11 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    ELPP->setCallingLogDispatchCallback(true);
+                    //ELPP->setCallingLogDispatchCallback(true);
                     callback->acquireLock();
                     callback->handle(&m_logMessage);
                     callback->releaseLock();
-                    ELPP->setCallingLogDispatchCallback(false);
+                    //ELPP->setCallingLogDispatchCallback(false);
                 }
             }
         }
