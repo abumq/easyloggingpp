@@ -5387,7 +5387,7 @@ public:
     }
     /// @brief Installs post log dispatch callback, this callback is triggered when log is dispatched
     template <typename T>
-    static inline bool installLogDispatchCallback(const std::string& id, bool addFlag = true) {
+    static inline bool installLogDispatchCallback(const std::string& id) {
         return ELPP->installLogDispatchCallback<T>(id);
     }
     /// @brief Uninstalls log dispatch callback

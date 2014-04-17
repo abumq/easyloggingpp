@@ -17,7 +17,7 @@ TEST(LogDispatchCallbackTest, Installation) {
     EXPECT_TRUE(loggedMessages.empty());
     
     // Install handler
-    Helpers::installLogDispatchCallback<LogHandler>("LogHandler", false);
+    Helpers::installLogDispatchCallback<LogHandler>("LogHandler");
     LOG(INFO) << "Should be part of loggedMessages - 1";
     EXPECT_EQ(1, loggedMessages.size());
     type::string_t expectedMessage = ELPP_LITERAL("Should be part of loggedMessages - 1");
