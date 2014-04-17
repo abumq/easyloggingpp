@@ -14,7 +14,7 @@ class MyPerformanceTrackingOutput : public el::PerformanceTrackingCallback {
 public:
     MyPerformanceTrackingOutput() {
         el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
-        defaultCallback->setEnabled(false);
+//        defaultCallback->setEnabled(false);
     }
     virtual ~MyPerformanceTrackingOutput() {
         el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");

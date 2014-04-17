@@ -5092,7 +5092,7 @@ void DefaultPerformanceTrackingCallback::handle(const PerformanceTrackingData* d
         }
         ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *data->performanceTracker();
         if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && data->performanceTracker()->m_hasChecked) {
-            ss << ELPP_LITERAL(" ([") << m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
+            ss << ELPP_LITERAL(" ([") << *m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
             if (data->performanceTracker()->m_lastCheckpointId.empty()) {
                 ss << ELPP_LITERAL("last checkpoint");
             } else {
