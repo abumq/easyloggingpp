@@ -25,7 +25,7 @@ public:
     }
     void handle(const el::LogDispatchData* data) {
         // NEVER DO LOG FROM HANDLER!
-       //CLOG(INFO, "html") << data->logMessage()->message();
+       // CLOG(INFO, "html") << data->logMessage()->message();
        std::cout << "Test handler" << std::endl;
     }
 };

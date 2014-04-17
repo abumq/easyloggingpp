@@ -132,7 +132,7 @@
 #if defined(_ELPP_DEBUG_ERRORS)
 #   if !defined(ELPP_INTERNAL_ERROR)
 #      define ELPP_INTERNAL_ERROR(msg, pe) { \
-          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          std::stringstream internalInfoStream; internalInfoStream << "<ERROR> " << msg; \
           _ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
           << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " \
           << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << _ELPP_INTERNAL_DEBUGGING_ENDL; \
@@ -148,7 +148,7 @@
 #   endif  // !(defined(_ELPP_INTERNAL_INFO_LEVEL))
 #   if !defined(ELPP_INTERNAL_INFO)
 #      define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= _ELPP_INTERNAL_INFO_LEVEL) { \
-          std::stringstream internalInfoStream; internalInfoStream << msg; \
+          std::stringstream internalInfoStream; internalInfoStream << "<INFO> " << msg; \
           _ELPP_INTERNAL_DEBUGGING_OUT_INFO << _ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) \
              << _ELPP_INTERNAL_DEBUGGING_ENDL; }}
 #   endif
@@ -3417,12 +3417,12 @@ public:
     }
 
     inline virtual void acquireLock() {
-        ELPP_INTERNAL_INFO(9, "Locking [" << m_id << "]");
+        ELPP_INTERNAL_INFO(9, "Manual Locking [" << m_id << "] [Logger]");
         base::threading::ThreadSafe::acquireLock();
     }
 
     inline virtual void releaseLock() {
-        ELPP_INTERNAL_INFO(9, "Unlocking [" << m_id << "]");
+        ELPP_INTERNAL_INFO(9, "Manual Unlocking [" << m_id << "] [Logger]");
         base::threading::ThreadSafe::releaseLock();
     }
     
@@ -3949,6 +3949,16 @@ public:
     inline T* performanceTrackingCallback(const std::string& id) {
         return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
     }
+
+    inline virtual void acquireLock() {
+        ELPP_INTERNAL_INFO(9, "Manual Locking [Storage]");
+        base::threading::ThreadSafe::acquireLock();
+    }
+
+    inline virtual void releaseLock() {
+        ELPP_INTERNAL_INFO(9, "Manual Unlocking [Storage]");
+        base::threading::ThreadSafe::releaseLock();
+    }
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
     base::RegisteredLoggers* m_registeredLoggers;
@@ -4150,8 +4160,8 @@ public:
         if (!m_proceed) {
             return;
         }
-        // We minimize the time of elStorage's lock - this lock is released after log is written
-        ELPP->acquireLock();
+        // We minimize the time of ELPP's lock - this lock is released after log is written
+        base::threading::ScopedLock scopedLock(ELPP->lock());
         base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
         if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
             tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
@@ -4169,7 +4179,6 @@ public:
                 callback->releaseLock();
             }
         }
-        ELPP->releaseLock();
     }
 
 private:
