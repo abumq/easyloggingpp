@@ -3867,27 +3867,23 @@ public:
     }
 
     template <typename T, typename TPtr>
-    inline bool installCallback(const std::string& id, 
-            std::map<std::string, TPtr>& mapT) {
-        if (mapT.find(id) == mapT.end()) {
-            mapT.insert(
-                std::make_pair(id, TPtr(new T())));
+    inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        if (mapT->find(id) == mapT->end()) {
+            mapT->insert(std::make_pair(id, TPtr(new T())));
             return true;
         }
         return false;
     }
 
     template <typename T, typename TPtr>
-    inline void uninstallCallback(const std::string& id, 
-            std::map<std::string, TPtr>& mapT) {
-        mapT.erase(id);
+    inline void uninstallCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        mapT->erase(id);
     }
 
     template <typename T, typename TPtr>
-    inline T* callback(const std::string& id, 
-            std::map<std::string, TPtr>& mapT) {
-        typename std::map<std::string, TPtr>::iterator iter = mapT.find(id);
-        if (iter != mapT.end()) {
+    inline T* callback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+        typename std::map<std::string, TPtr>::iterator iter = mapT->find(id);
+        if (iter != mapT->end()) {
             return static_cast<T*>(iter->second.get());
         }
         return nullptr;
@@ -3895,31 +3891,31 @@ public:
 
     template <typename T>
     inline bool installLogDispatchCallback(const std::string& id) {
-        return installCallback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+        return installCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
     }
 
     template <typename T>
     inline void uninstallLogDispatchCallback(const std::string& id) {
-        uninstallCallback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+        uninstallCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
     }
     template <typename T>
     inline T* logDispatchCallback(const std::string& id) {
-        return callback<T, base::type::LogDispatchCallbackPtr>(id, m_logDispatchCallbacks);
+        return callback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
     }
 
     template <typename T>
     inline bool installPerformanceTrackingCallback(const std::string& id) {
-        return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
+        return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
     }
 
     template <typename T>
     inline void uninstallPerformanceTrackingCallback(const std::string& id) {
-         uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
+         uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
     }
 
     template <typename T>
-    inline PerformanceTrackingCallback performanceTrackingCallback(void) {
-        return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, m_performanceTrackingCallbacks);
+    inline T* performanceTrackingCallback(const std::string& id) {
+        return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
     }
 private:
     base::RegisteredHitCounters* m_registeredHitCounters;
