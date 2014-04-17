@@ -27,7 +27,7 @@ TEST(LogDispatchCallbackTest, Installation) {
 TEST(LogDispatchCallbackTest, Uninstallation) {
     
     // Uninstall handler
-    Helpers::uninstallLogDispatchCallback<LogHandler>("LogHandler", false);
+    Helpers::uninstallLogDispatchCallback<LogHandler>("LogHandler");
     LOG(INFO) << "This is not in list";
     EXPECT_EQ(loggedMessages.end(), 
         std::find(loggedMessages.begin(), loggedMessages.end(), ELPP_LITERAL("This is not in list")));
