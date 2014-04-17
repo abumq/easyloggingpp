@@ -1215,7 +1215,7 @@ Icons used in this manual (in compatibility section) are solely for information 
 "Pencil +" icon is Easylogging++ logo and should only be used where giving credit to Easylogging++ library.
 
 
- [![top] Goto Top](#table-of-contents)ddd
+ [![top] Goto Top](#table-of-contents)
  
   [banner]: http://easylogging.org/images/banner.png?v=4
   [ubuntu]: http://www.easylogging.org/images/icons/ubuntu.png?v=2
