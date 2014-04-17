@@ -130,7 +130,7 @@ int main(int argc, char** argv)
      pthread_join(thread3, NULL); 
      pthread_join(thread4, NULL); 
 
-#if 0 // Change this to 1 for some serious multiple threads
+#if 1 // Change this to 1 for some serious multiple threads
     int i = 5; // Last one we created was 4 so we dont want to confuse
     const int max = i + 500;
     for (; i <= max; ++i) {
