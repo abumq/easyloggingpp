@@ -13,11 +13,13 @@ _INITIALIZE_EASYLOGGINGPP
 class MyPerformanceTrackingOutput : public el::PerformanceTrackingCallback {
 public:
     MyPerformanceTrackingOutput() {
-        el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
-//        defaultCallback->setEnabled(false);
+        el::PerformanceTrackingCallback* defaultCallback = 
+            el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
+        defaultCallback->setEnabled(false);
     }
     virtual ~MyPerformanceTrackingOutput() {
-        el::PerformanceTrackingCallback* defaultCallback = el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
+        el::PerformanceTrackingCallback* defaultCallback = 
+            el::Helpers::performanceTrackingCallback<el::base::DefaultPerformanceTrackingCallback>("DefaultPerformanceTrackingCallback");
         defaultCallback->setEnabled(true);
     }
 protected:
