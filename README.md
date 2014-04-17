@@ -815,6 +815,10 @@ If you wish to capture performance tracking data right after it is finished, you
 
 In order to install this handler, use `void Helpers::installPerformanceTrackingCallback<T>(const std::string& id)`. Where `T` is type of your handler. If you wish to uninstall a callback, you can do so by using `Helpers::uninstallPerformanceTrackingCallback<T>(const std::string& id)`. See samples for details
 
+ > You need to add flag `PerformanceTrackingCallback` if not already added. (`installPerformanceTrackingCallback<T>(const std::string&)` adds it automatically)
+
+ > DO NOT TRACK PERFORMANCE IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
+
  [![top] Goto Top](#table-of-contents)
 
 ### Log File Rolling
@@ -1103,7 +1107,9 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 ### Log Dispatch Callback
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
 
- > You need to add flag `EnableLogDispatchCallback` if not already added. (`installLogDispatchCallback()` adds it automatically)
+ > You need to add flag `EnableLogDispatchCallback` if not already added. (`installLogDispatchCallback<T>(const std::string&)` adds it automatically)
+
+ > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
 
  [![top] Goto Top](#table-of-contents)
  

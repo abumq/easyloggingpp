@@ -9,7 +9,7 @@ API changes: Yes
 ===========================
 
  - Improvements to `PerformanceTrackingCallback` - multiple callbacks
- - Can track performance of `PerformanceTrackingCallback::handler` now
+ - Removed ability to log from log dispatch and performance tracking callbacks since it causes issue in multi-threaded applications
 
 ==========================
 =         NOTES          =
