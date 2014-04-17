@@ -53,5 +53,6 @@ int main(void) {
     LOG(INFO) << "By now, you should get performance result of above scope";
     el::Helpers::uninstallPerformanceTrackingCallback<MyPerformanceTrackingOutput>("MyPerformanceTrackingOutput");
     // You will get "main" block in normal format (default) 
+    // Now that we have uninstalled our custom callback we should get our default call back enabled (see destructor of MyPerformanceTrackingOutput above)
     return 0;
 }
