@@ -5392,7 +5392,7 @@ public:
     }
     /// @brief Uninstalls log dispatch callback
     template <typename T>
-    static inline void uninstallLogDispatchCallback(const std::string& id, bool removeFlag = true) {
+    static inline void uninstallLogDispatchCallback(const std::string& id) {
         ELPP->uninstallLogDispatchCallback<T>(id);
     }
     template <typename T>
