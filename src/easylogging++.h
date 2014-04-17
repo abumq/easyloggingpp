@@ -202,11 +202,11 @@
 #if (!_ELPP_MINGW && !_ELPP_COMPILER_CLANG) || defined(_ELPP_FORCE_USE_STD_THREAD)
 #   define _ELPP_USE_STD_THREADING 1
 #endif  // (!_ELPP_MINGW && !_ELPP_COMPILER_CLANG) || defined(_ELPP_FORCE_USE_STD_THREAD)
-#undef FINAL
+#undef ELPP_FINAL
 #if _ELPP_COMPILER_INTEL || (_ELPP_GCC_VERSION < 40702)
-#   define FINAL
+#   define ELPP_FINAL
 #else
-#   define FINAL final
+#   define ELPP_FINAL final
 #endif  // _ELPP_COMPILER_INTEL || (_ELPP_GCC_VERSION < 40702)
 #if defined(_ELPP_THREAD_SAFE)
 #   define _ELPP_THREADING_ENABLED 1
@@ -1003,7 +1003,7 @@ public:
 private:
     NoScopedLock(void);
 };
-} // namespace internal
+}  // namespace internal
 static inline std::string getCurrentThreadId(void) {
     return std::string();
 }
@@ -1013,15 +1013,9 @@ typedef base::threading::internal::NoScopedLock<base::threading::Mutex> ScopedLo
 /// @brief Base of thread safe class, this class is inheritable-only
 class ThreadSafe {
 public:
-    virtual inline void acquireLock(void) FINAL {
-        m_mutex.lock();
-    }
-    virtual inline void releaseLock(void) FINAL {
-        m_mutex.unlock();
-    }
-    virtual inline base::threading::Mutex& lock(void) FINAL {
-        return m_mutex;
-    }
+    virtual inline void acquireLock(void) ELPP_FINAL { m_mutex.lock(); }
+    virtual inline void releaseLock(void) ELPP_FINAL { m_mutex.unlock(); }
+    virtual inline base::threading::Mutex& lock(void) ELPP_FINAL { return m_mutex; }
 protected:
     ThreadSafe(void) {}
     virtual ~ThreadSafe(void) {}
@@ -1795,43 +1789,43 @@ public:
     }
 
     /// @return Iterator pointer from start of repository
-    virtual inline iterator begin(void) FINAL {
+    virtual inline iterator begin(void) ELPP_FINAL {
         return m_list.begin();
     }
 
     /// @return Iterator pointer from end of repository
-    virtual inline iterator end(void) FINAL {
+    virtual inline iterator end(void) ELPP_FINAL {
         return m_list.end();
     }
 
 
     /// @return Constant iterator pointer from start of repository
-    virtual inline const_iterator cbegin(void) const FINAL {
+    virtual inline const_iterator cbegin(void) const ELPP_FINAL {
         return m_list.cbegin();
     }
 
     /// @return End of repository
-    virtual inline const_iterator cend(void) const FINAL {
+    virtual inline const_iterator cend(void) const ELPP_FINAL {
         return m_list.cend();
     }
 
     /// @return Whether or not repository is empty
-    virtual inline bool empty(void) const FINAL {
+    virtual inline bool empty(void) const ELPP_FINAL {
         return m_list.empty();
     }
 
     /// @return Size of repository
-    virtual inline std::size_t size(void) const FINAL {
+    virtual inline std::size_t size(void) const ELPP_FINAL {
         return m_list.size();
     }
 
     /// @brief Returns underlying container by reference
-    virtual inline Container& list(void) FINAL {
+    virtual inline Container& list(void) ELPP_FINAL {
         return m_list;
     }
 
     /// @brief Returns underlying container by constant reference.
-    virtual inline const Container& list(void) const FINAL {
+    virtual inline const Container& list(void) const ELPP_FINAL {
         return m_list;
     }
 
@@ -1886,7 +1880,7 @@ public:
     }
 
 protected:
-    virtual inline void unregisterAll(void) FINAL {
+    virtual inline void unregisterAll(void) ELPP_FINAL {
         if (!this->empty()) {
             for (auto&& curr : this->list()) {
                 base::utils::safeDelete(curr.second);
@@ -1896,7 +1890,7 @@ protected:
     }
 
     /// @brief Registers new registry to repository.
-    virtual inline void registerNew(const T_Key& uniqKey, T_Ptr* ptr) FINAL {
+    virtual inline void registerNew(const T_Key& uniqKey, T_Ptr* ptr) ELPP_FINAL {
         unregister(uniqKey);
         this->list().insert(std::make_pair(uniqKey, ptr));
     }
@@ -1919,7 +1913,7 @@ protected:
     }
 
 private:
-    virtual inline void deepCopy(const AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>>& sr) FINAL {
+    virtual inline void deepCopy(const AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>>& sr) ELPP_FINAL {
         for (const_iterator it = sr.cbegin(); it != sr.cend(); ++it) {
             registerNew(it->first, new T_Ptr(*it->second));
         }
@@ -1970,7 +1964,7 @@ public:
     }
 
 protected:
-    virtual inline void unregisterAll(void) FINAL {
+    virtual inline void unregisterAll(void) ELPP_FINAL {
         if (!this->empty()) {
             for (auto&& curr : this->list()) {
                 base::utils::safeDelete(curr);
@@ -1979,7 +1973,7 @@ protected:
         }
     }
 
-    virtual void unregister(T_Ptr*& ptr) FINAL {  // NOLINT
+    virtual void unregister(T_Ptr*& ptr) ELPP_FINAL {  // NOLINT
         if (ptr) {
             iterator iter = this->begin();
             for (; iter != this->end(); ++iter) {
@@ -1994,7 +1988,7 @@ protected:
         }
     }
 
-    virtual inline void registerNew(T_Ptr* ptr) FINAL {
+    virtual inline void registerNew(T_Ptr* ptr) ELPP_FINAL {
         this->list().push_back(ptr);
     }
 
@@ -2163,7 +2157,7 @@ protected:
     /// @brief Updates date time format if available in currFormat.
     /// @param index Index where %datetime, %date or %time was found
     /// @param [in,out] currFormat current format that is being used to format
-    virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) FINAL {  // NOLINT
+    virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) ELPP_FINAL {  // NOLINT
         if (hasFlag(base::FormatFlags::DateTime)) {
             index += ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
         }
@@ -2191,7 +2185,7 @@ protected:
     }
 
     /// @brief Updates %level from format. This is so that we dont have to do it at log-writing-time. It uses m_format and m_level
-    virtual void updateFormatSpec(void) FINAL {
+    virtual void updateFormatSpec(void) ELPP_FINAL {
         // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
         if (m_level == Level::Debug) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
@@ -2937,11 +2931,11 @@ private:
             } else if (conf->configurationType() == ConfigurationType::ToStandardOutput) {
                 setValue(conf->level(), getBool(conf->value()), &m_toStandardOutputMap);
             } else if (conf->configurationType() == ConfigurationType::Filename) {
-                // We do not yet configure filename but we will configure in another
-                // loop. This is because if file cannot be created, we will force ToFile
-                // to be false. Because configuring logger is not necessarily performance
-                // sensative operation, we can live with another loop; (by the way this loop
-                // is not very heavy either)
+            // We do not yet configure filename but we will configure in another
+            // loop. This is because if file cannot be created, we will force ToFile
+            // to be false. Because configuring logger is not necessarily performance
+            // sensative operation, we can live with another loop; (by the way this loop
+            // is not very heavy either)
             } else if (conf->configurationType() == ConfigurationType::Format) {
                 setValue(conf->level(), base::LogFormat(conf->level(), 
                     base::type::string_t(conf->value().begin(), conf->value().end())), &m_logFormatMap);
@@ -2954,7 +2948,7 @@ private:
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_maxLogFileSizeMap);
 #if !defined(_ELPP_NO_DEFAULT_LOG_FILE)
                 withFileSizeLimit.push_back(conf);
-#endif // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
+#endif  // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
             } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
             }
@@ -4254,8 +4248,8 @@ public:
     }
     ELPP_SIMPLE_LOG(char)
     ELPP_SIMPLE_LOG(bool)
-    ELPP_SIMPLE_LOG(signed short) // NOLINT
-    ELPP_SIMPLE_LOG(unsigned short) // NOLINT
+    ELPP_SIMPLE_LOG(signed short)  // NOLINT
+    ELPP_SIMPLE_LOG(unsigned short)  // NOLINT
     ELPP_SIMPLE_LOG(signed int)
     ELPP_SIMPLE_LOG(unsigned int)
     ELPP_SIMPLE_LOG(signed long)
@@ -5211,9 +5205,7 @@ static std::string crashReason(int sig) {
     bool foundReason = false;
     for (int i = 0; i < base::consts::kCrashSignalsCount; ++i) {
         if (base::consts::kCrashSignals[i].numb == sig) {
-            ss << "Application has crashed due to [" <<
-                  base::consts::kCrashSignals[i].name <<
-                  "] signal";
+            ss << "Application has crashed due to [" << base::consts::kCrashSignals[i].name << "] signal";
             if (ELPP->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
                 ss << std::endl <<
                       "    " << base::consts::kCrashSignals[i].brief << std::endl <<
