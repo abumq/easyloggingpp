@@ -4084,11 +4084,11 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    base::utils::s_callingLogDispatchCallback = true;
+                    //base::utils::s_callingLogDispatchCallback = true;
                     callback->acquireLock();
                     callback->handle(&m_logMessage);
                     callback->releaseLock();
-                    base::utils::s_callingLogDispatchCallback = false;
+                    //base::utils::s_callingLogDispatchCallback = false;
                 }
             }
         }
@@ -4970,11 +4970,11 @@ public:
                             : ELPP->m_performanceTrackingCallbacks) {
                         callback = h.second.get();
                         if (callback != nullptr && callback->enabled()) {
-                            base::utils::s_callingPerformanceTrackingCallback = true;
+                            //base::utils::s_callingPerformanceTrackingCallback = true;
                             callback->acquireLock();
                             callback->handle(&data);
                             callback->releaseLock();
-                            base::utils::s_callingPerformanceTrackingCallback = false;
+                            //base::utils::s_callingPerformanceTrackingCallback = false;
                         }
                     }
                 }
@@ -5026,11 +5026,11 @@ public:
                         : ELPP->m_performanceTrackingCallbacks) {
                     callback = h.second.get();
                     if (callback != nullptr && callback->enabled()) {
-                        base::utils::s_callingPerformanceTrackingCallback = true;
+                        //base::utils::s_callingPerformanceTrackingCallback = true;
                         callback->acquireLock();
                         callback->handle(&data);
                         callback->releaseLock();
-                        base::utils::s_callingPerformanceTrackingCallback = false;
+                        //base::utils::s_callingPerformanceTrackingCallback = false;
                     }
                 }
             }

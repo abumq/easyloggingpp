@@ -13,7 +13,9 @@ _INITIALIZE_EASYLOGGINGPP
 class Handler : public el::PerformanceTrackingCallback {
 protected:
 void handle(const el::PerformanceTrackingData* data) {
-    TIMED_SCOPE(handBlock, "handerBlock");
+    // NEVER DO PERFORMANCE TRACKING FROM HANDLER
+    // TIMED_SCOPE(handBlock, "handerBlock");
+    
     // ELPP_COUT is cout when not using unicode otherwise wcout
     ELPP_COUT << "I am from handler: " << data->blockName()->c_str() << " in " << *data->formattedTimeTaken();
     if (data->dataType() == el::PerformanceTrackingData::DataType::Checkpoint) {
