@@ -4084,13 +4084,11 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    //ELPP->setCallingLogDispatchCallback(true);
                     base::utils::s_callingLogDispatchCallback = true;
                     callback->acquireLock();
                     callback->handle(&m_logMessage);
                     callback->releaseLock();
                     base::utils::s_callingLogDispatchCallback = false;
-                    //ELPP->setCallingLogDispatchCallback(false);
                 }
             }
         }
@@ -4963,7 +4961,7 @@ public:
                         << ELPP_LITERAL("Executed [") << m_blockName << ELPP_LITERAL("] in [") << formattedTime << ELPP_LITERAL("]");
                 }
                 if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
-                        && base::utils::s_callingPerformanceTrackingCallback) {
+                        && !base::utils::s_callingPerformanceTrackingCallback) {
                     PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                     data.init(this);
                     data.m_formattedTimeTaken = formattedTime;
@@ -5019,7 +5017,7 @@ public:
                     m_timestampUnit) : ELPP_LITERAL("");
             }
             if (ELPP->hasFlag(LoggingFlag::PerformanceTrackingCallback)
-                    && base::utils::s_callingPerformanceTrackingCallback) {
+                    && !base::utils::s_callingPerformanceTrackingCallback) {
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
                 data.init(this);
                 data.m_formattedTimeTaken = formattedTime;
