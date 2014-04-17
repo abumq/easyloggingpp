@@ -4099,11 +4099,11 @@ public:
                     : ELPP->m_logDispatchCallbacks) {
                 callback = h.second.get();
                 if (callback != nullptr && callback->enabled()) {
-                    //ELPP->setCallingLogDispatchCallback(true);
-                    callback->acquireLock();
+                    ELPP->setCallingLogDispatchCallback(true);
+                    //callback->acquireLock();
                     callback->handle(&m_logMessage);
-                    callback->releaseLock();
-                    //ELPP->setCallingLogDispatchCallback(false);
+                    //callback->releaseLock();
+                    ELPP->setCallingLogDispatchCallback(false);
                 }
             }
         }
@@ -4986,9 +4986,9 @@ public:
                         callback = h.second.get();
                         if (callback != nullptr && callback->enabled()) {
                             ELPP->setCallingPerformanceTrackingCallback(true);
-                            callback->acquireLock();
+                            //callback->acquireLock();
                             callback->handle(&data);
-                            callback->releaseLock();
+                            //callback->releaseLock();
                             ELPP->setCallingPerformanceTrackingCallback(false);
                         }
                     }
@@ -5042,9 +5042,9 @@ public:
                     callback = h.second.get();
                     if (callback != nullptr && callback->enabled()) {
                         ELPP->setCallingPerformanceTrackingCallback(true);
-                        callback->acquireLock();
+                        //callback->acquireLock();
                         callback->handle(&data);
-                        callback->releaseLock();
+                        //callback->releaseLock();
                         ELPP->setCallingPerformanceTrackingCallback(false);
                     }
                 }
