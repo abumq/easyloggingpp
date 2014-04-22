@@ -5647,7 +5647,7 @@ public:
 #define TIMED_FUNC(obj) TIMED_SCOPE(obj, _ELPP_FUNC)
 #undef PERFORMANCE_CHECKPOINT
 #undef PERFORMANCE_CHECKPOINT_WITH_ID
-#define PERFORMANCE_CHECKPOINT(obj) obj.checkpoint(nullptr, __FILE__, __LINE__, _ELPP_FUNC)
+#define PERFORMANCE_CHECKPOINT(obj) obj.checkpoint(std::string(), __FILE__, __LINE__, _ELPP_FUNC)
 #define PERFORMANCE_CHECKPOINT_WITH_ID(obj, id) obj.checkpoint(id, __FILE__, __LINE__, _ELPP_FUNC)
 #undef ELPP_COUNTER
 #undef ELPP_COUNTER_POS
