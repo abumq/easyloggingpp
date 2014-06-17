@@ -685,7 +685,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Enables hierarchical logging
     HierarchicalLogging = 2048,
     /// @brief Creates logger automatically when not available
-    CreateLoggerAutomatically = 4096
+    CreateLoggerAutomatically = 4096,
+    /// @brief Adds spaces b/w logs that separated by left-shift operator
+    AutoSpacing = 8192
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -4242,6 +4244,9 @@ public:
 #   define ELPP_SIMPLE_LOG(LOG_TYPE)\
     inline MessageBuilder& operator<<(LOG_TYPE msg) {\
         m_logger->stream() << msg;\
+        if (ELPP->hasFlag(LoggingFlag::AutoSpacing)) {\
+            m_logger->stream() << " ";\
+        }\
         return *this;\
     }
 
