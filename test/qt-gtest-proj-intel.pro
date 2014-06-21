@@ -1,6 +1,6 @@
 QT += core
 
-TARGET = qt-gtest-proj
+TARGET = qt-gtest-proj-intel
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++0x

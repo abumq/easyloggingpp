@@ -27,6 +27,7 @@
 #include "utilities-test.h"
 #include "verbose-app-arguments-test.h"
 #include "write-all-test.h"
+#include "format-specifier-test.h"
 
 TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
