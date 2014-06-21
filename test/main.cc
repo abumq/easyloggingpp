@@ -9,6 +9,7 @@
 #include "custom-format-specifier-test.h"
 #include "enum-helper-test.h"
 #include "file-utils-test.h"
+#include "format-specifier-test.h"
 #include "global-configurations-test.h"
 #include "helpers-test.h"
 #include "hit-counter-test.h"
@@ -27,7 +28,6 @@
 #include "utilities-test.h"
 #include "verbose-app-arguments-test.h"
 #include "write-all-test.h"
-#include "format-specifier-test.h"
 
 TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
