@@ -3,10 +3,7 @@
 
 #include "test.h"
 
-TEST(FormatSpecifierTest, TestInstall) {
-}
-
-TEST(FormatSpecifierTest, TestResolution) {
+TEST(FormatSpecifierTest, TestFBaseSpecifier) {
     Configurations c;
     c.setGlobally(el::ConfigurationType::Format, "%datetime{%a %b %d, %H:%m} %fbase: %msg");
     el::Loggers::reconfigureLogger(consts::kDefaultLoggerId, c);
@@ -15,9 +12,6 @@ TEST(FormatSpecifierTest, TestResolution) {
     EXPECT_EQ(s, tail(1));
     // Reset back
     reconfigureLoggersForTest();
-}
-
-TEST(FormatSpecifierTest, TestUnInstall) {
 }
 
 #endif // FORMAT_SPECIFIER_TEST_H
