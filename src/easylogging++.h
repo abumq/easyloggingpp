@@ -700,11 +700,19 @@ namespace consts {
     static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
     static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
     static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
+    static const base::type::char_t* kInfoLevelShortLogValue     =   ELPP_LITERAL("I");
+    static const base::type::char_t* kDebugLevelShortLogValue    =   ELPP_LITERAL("D");
+    static const base::type::char_t* kWarningLevelShortLogValue  =   ELPP_LITERAL("W");
+    static const base::type::char_t* kErrorLevelShortLogValue    =   ELPP_LITERAL("E");
+    static const base::type::char_t* kFatalLevelShortLogValue    =   ELPP_LITERAL("F");
+    static const base::type::char_t* kVerboseLevelShortLogValue  =   ELPP_LITERAL("V");
+    static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T");
     // Format specifiers - These are used to define log format
     static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
     static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
     static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
     static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
+    static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
     static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
     static const base::type::char_t* kLogFileFormatSpecifier          =      ELPP_LITERAL("%file");
     static const base::type::char_t* kLogFileBaseFormatSpecifier      =      ELPP_LITERAL("%fbase");
@@ -818,7 +826,8 @@ enum class FormatFlags : base::type::EnumType {
     DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
     User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
     Level = 8192, 
-    FileBase = 1<<14
+    FileBase = 1<<14,
+    LevelShort = 1<<15,
 };
 /// @brief A milliseconds width class containing actual width and offset for date/time
 class MillisecondsWidth {
@@ -2124,6 +2133,7 @@ public:
         };  // NOLINT
         conditionalAddFlag(base::consts::kAppNameFormatSpecifier, base::FormatFlags::AppName);
         conditionalAddFlag(base::consts::kSeverityLevelFormatSpecifier, base::FormatFlags::Level);
+        conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
         conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
         conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
         conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
@@ -2215,24 +2225,38 @@ protected:
         if (m_level == Level::Debug) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kDebugLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kDebugLevelShortLogValue);
         } else if (m_level == Level::Info) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kInfoLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kInfoLevelShortLogValue);
         } else if (m_level == Level::Warning) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kWarningLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kWarningLevelShortLogValue);
         } else if (m_level == Level::Error) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kErrorLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kErrorLevelShortLogValue);
         } else if (m_level == Level::Fatal) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kFatalLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kFatalLevelShortLogValue);
         } else if (m_level == Level::Verbose) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kVerboseLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kVerboseLevelShortLogValue);
         } else if (m_level == Level::Trace) {
             base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
                     base::consts::kTraceLevelLogValue);
+            base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
+                    base::consts::kTraceLevelShortLogValue);
         }
         if (hasFlag(base::FormatFlags::User)) {
             std::string s = base::utils::s_currentUser;
