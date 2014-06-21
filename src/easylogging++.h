@@ -707,6 +707,7 @@ namespace consts {
     static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
     static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
     static const base::type::char_t* kLogFileFormatSpecifier          =      ELPP_LITERAL("%file");
+    static const base::type::char_t* kLogFileBaseFormatSpecifier      =      ELPP_LITERAL("%fbase");
     static const base::type::char_t* kLogLineFormatSpecifier          =      ELPP_LITERAL("%line");
     static const base::type::char_t* kLogLocationFormatSpecifier      =      ELPP_LITERAL("%loc");
     static const base::type::char_t* kLogFunctionFormatSpecifier      =      ELPP_LITERAL("%func");
@@ -816,7 +817,8 @@ enum class TimestampUnit : base::type::EnumType {
 enum class FormatFlags : base::type::EnumType {
     DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
     User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
-    Level = 8192
+    Level = 8192, 
+    FileBase = 1<<14
 };
 /// @brief A milliseconds width class containing actual width and offset for date/time
 class MillisecondsWidth {
@@ -1135,6 +1137,23 @@ public:
     /// @brief builds stripped filename and puts it in buff
     static void buildStrippedFilename(const char* filename, char buff[], 
             std::size_t limit = base::consts::kSourceFilenameMaxLength) {
+        std::size_t sizeOfFilename = strlen(filename);
+        if (sizeOfFilename >= limit) {
+            filename += (sizeOfFilename - limit);
+            if (filename[0] != '.' && filename[1] != '.') {  // prepend if not already
+                filename += 3;  // 3 = '..'
+                STRCAT(buff, "..", limit);
+            }
+        }
+        STRCAT(buff, filename, limit);
+    }
+    /// @brief builds base filename and puts it in buff
+    static void buildBaseFilename(const std::string& fullPath, char buff[], 
+            std::size_t limit = base::consts::kSourceFilenameMaxLength,
+            const char* seperator = base::consts::kFilePathSeperator) {
+        const char *filename = fullPath.c_str();
+        std::size_t lastSlashAt = fullPath.find_last_of(seperator);
+        filename += lastSlashAt ? lastSlashAt+1 : 0;
         std::size_t sizeOfFilename = strlen(filename);
         if (sizeOfFilename >= limit) {
             filename += (sizeOfFilename - limit);
@@ -2108,6 +2127,7 @@ public:
         conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
         conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
         conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
+        conditionalAddFlag(base::consts::kLogFileBaseFormatSpecifier, base::FormatFlags::FileBase);
         conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
         conditionalAddFlag(base::consts::kLogLocationFormatSpecifier, base::FormatFlags::Location);
         conditionalAddFlag(base::consts::kLogFunctionFormatSpecifier, base::FormatFlags::Function);
@@ -4077,6 +4097,13 @@ public:
             base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
             base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, buff);
+        }
+        if (logFormat->hasFlag(base::FormatFlags::FileBase)) {
+           // File
+            char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
+            base::utils::File::buildBaseFilename(logMessage->file(), buff);
+            buf = base::utils::Str::addToBuff(buff, buf, bufLim);
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileBaseFormatSpecifier, buff);
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
            // Line
