@@ -21,6 +21,7 @@
 #include "plog-test.h"
 #include "post-log-dispatch-handler-test.h"
 #include "registry-test.h"
+#include "runtime-vmodule-config-change-test.h"
 #include "strict-file-size-check-test.h"
 #include "string-utils-test.h"
 #include "syslog-test.h"

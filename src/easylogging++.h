@@ -3629,6 +3629,10 @@ public:
         return m_level;
     }
 
+    void clearModules(void) {
+        m_modules.clear();
+    }
+
     void setModules(const char* modules) {
         base::threading::ScopedLock scopedLock(lock());
         auto addSuffix = [](std::stringstream& ss, const char* sfx, const char* prev) {
