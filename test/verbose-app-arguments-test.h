@@ -178,4 +178,26 @@ TEST(VerboseAppArgumentsTest, AppArgsVModulesExtension) {
     EXPECT_FALSE((ELPP->vRegistry()->allowed(2, "easy-vector.cc")));
     EXPECT_TRUE((ELPP->vRegistry()->allowed(1, "easy-vector.cc")));
 }
+
+TEST(VerboseAppArgumentsTest, VModulesClear) {
+
+    el::Loggers::ScopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
+    _ELPP_UNUSED(scopedFlag);
+
+    const char* c[10];
+    c[0] = "myprog";
+    c[1] = "-vmodule=main*=3,easy*=1";
+    c[2] = "--v=6";
+    c[3] = "\0";
+    el::Helpers::setArgs(3, c);
+
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(5, "main.cpp")));
+    ELPP->vRegistry()->clearModules();
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(2, "main.cpp")));
+    EXPECT_TRUE((ELPP->vRegistry()->allowed(5, "main.cpp")));
+    EXPECT_FALSE((ELPP->vRegistry()->allowed(7, "main.cpp")));
+    
+}
+
 #endif // VMODULE_TESTS_H_

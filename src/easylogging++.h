@@ -3653,7 +3653,7 @@ public:
         return m_level;
     }
 
-    void clearModules(void) {
+    inline void clearModules(void) {
         m_modules.clear();
     }
 
