@@ -18,6 +18,7 @@ int main(void) {
     el::Loggers::configureFromGlobal("../global.conf"); 
     
     LOG(INFO) << "Info log AFTER using global configuration";
+    LOG(ERROR) << "Error log AFTER using global configuration";
 
     return 0;
 }
