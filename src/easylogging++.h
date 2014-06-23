@@ -3652,6 +3652,7 @@ public:
     }
 
     inline void clearModules(void) {
+        base::threading::ScopedLock scopedLock(lock());
         m_modules.clear();
     }
 
