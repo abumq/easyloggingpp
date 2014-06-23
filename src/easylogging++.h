@@ -823,11 +823,9 @@ enum class TimestampUnit : base::type::EnumType {
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
 enum class FormatFlags : base::type::EnumType {
-    DateTime = 2, LoggerId = 4, File = 8, Line = 16, Location = 32, Function = 64,
-    User = 128, Host = 256, LogMessage = 512, VerboseLevel = 1024, AppName = 2048, ThreadId = 4096,
-    Level = 8192, 
-    FileBase = 1<<14,
-    LevelShort = 1<<15,
+    DateTime = 1<<1, LoggerId = 1<<2, File = 1<<3, Line = 1<<4, Location = 1<<5, Function = 1<<6,
+    User = 1<<7, Host = 1<<8, LogMessage = 1<<9, VerboseLevel = 1<<10, AppName = 1<<11, ThreadId = 1<<12,
+    Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15,
 };
 /// @brief A milliseconds width class containing actual width and offset for date/time
 class MillisecondsWidth {
