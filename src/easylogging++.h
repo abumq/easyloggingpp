@@ -2050,6 +2050,7 @@ private:
 /// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
 class Loggable {
 public:
+    virtual ~Loggable(void) {};
     virtual void log(el::base::type::ostream_t&) const = 0;
 
 private:
