@@ -493,7 +493,7 @@ enum class Level : base::type::EnumType {
         Unknown = 1010
 };
 /// @brief Static class that contains helper functions for el::Level
-class LevelHelper : base::StaticClass {
+class LevelHelper : private base::StaticClass {
 public:
     /// @brief Represents minimum valid level. Useful when iterating through enum.
     static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(Level::Trace);
@@ -589,7 +589,7 @@ enum class ConfigurationType : base::type::EnumType {
     Unknown = 1010
 };
 /// @brief Static class that contains helper functions for el::ConfigurationType
-class ConfigurationTypeHelper : base::StaticClass {
+class ConfigurationTypeHelper : private base::StaticClass {
 public:
     /// @brief Represents minimum valid configuration type. Useful when iterating through enum.
     static const base::type::EnumType kMinValid = static_cast<base::type::EnumType>(ConfigurationType::Enabled);
@@ -961,7 +961,7 @@ private:
 };
 /// @brief Scoped lock for compiler that dont yet support std::lock_guard
 template <typename M>
-class ScopedLock : base::NoCopy {
+class ScopedLock : private base::NoCopy {
 public:
     explicit ScopedLock(M& mutex) {  // NOLINT
         m_mutex = &mutex;
@@ -1008,7 +1008,7 @@ public:
 };
 /// @brief Lock guard wrapper used when multi-threading is disabled.
 template <typename Mutex>
-class NoScopedLock : base::NoCopy {
+class NoScopedLock : private base::NoCopy {
 public:
     explicit NoScopedLock(Mutex&) {
     }
@@ -1038,7 +1038,7 @@ private:
 };
 }  // namespace threading
 namespace utils {
-class File : base::StaticClass {
+class File : private base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
     /// @return Pointer to newly created fstream or nullptr
@@ -1173,7 +1173,7 @@ public:
     }
 };
 /// @brief String utilities helper class used internally. You should not use it.
-class Str : base::StaticClass {
+class Str : private base::StaticClass {
 public:
     /// @brief Checks if character is digit. Dont use libc implementation of it to prevent locale issues.
     static inline bool isDigit(char c) {
@@ -1369,7 +1369,7 @@ public:
     }
 };
 /// @brief Operating System helper static class used internally. You should not use it.
-class OS : base::StaticClass {
+class OS : private base::StaticClass {
 public:
 #if _ELPP_OS_WINDOWS
     /// @brief Gets environment variables for Windows based OS. 
@@ -1513,7 +1513,7 @@ extern bool s_termSupportsColor;
         }\
    }
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
-class DateTime : base::StaticClass {
+class DateTime : private base::StaticClass {
 public:
     /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current millisecond.
     ///
@@ -2601,7 +2601,7 @@ public:
     ///
     /// @detail This class makes use of base::utils::Str.
     /// You should not need this unless you are working on some tool for Easylogging++
-    class Parser : base::StaticClass {
+    class Parser : private base::StaticClass {
     public:
         /// @brief Parses configuration from file.
         /// @param configurationFile Full path to configuration file
@@ -3304,7 +3304,7 @@ class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
 private:
     friend class base::PerformanceTracker;
 };
-class LogBuilder : base::NoCopy {
+class LogBuilder : private base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
     virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
@@ -3631,7 +3631,7 @@ private:
     friend class el::base::Storage;
 };
 /// @brief Represents registries for verbose logging
-class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
+class VRegistry : private base::NoCopy, public base::threading::ThreadSafe {
 public:
     explicit VRegistry(base::type::VerboseLevel level, base::type::EnumType* pFlags) : m_level(level), m_pFlags(pFlags) {
     }
@@ -3798,7 +3798,7 @@ private:
 };
 namespace base {
 /// @brief Easylogging++ management storage
-class Storage : base::NoCopy, public base::threading::ThreadSafe {
+class Storage : private base::NoCopy, public base::threading::ThreadSafe {
 public:
     explicit Storage(const LogBuilderPtr& defaultLogBuilder) :
         m_registeredHitCounters(new base::RegisteredHitCounters()),
@@ -4173,7 +4173,7 @@ public:
     }
 };
 /// @brief Dispatches log messages
-class LogDispatcher : base::NoCopy {
+class LogDispatcher : private base::NoCopy {
 public:
     LogDispatcher(bool proceed, LogMessage&& logMessage, base::DispatchAction dispatchAction) :
         m_proceed(proceed),
@@ -4610,7 +4610,7 @@ private:
     }
 };
 /// @brief Writes nothing - Used when certain log is disabled
-class NullWriter : base::NoCopy {
+class NullWriter : private base::NoCopy {
 public:
     NullWriter(void) {}
 
@@ -4625,7 +4625,7 @@ public:
     }
 };
 /// @brief Main entry point of each logging
-class Writer : base::NoCopy {
+class Writer : private base::NoCopy {
 public:
     Writer(Level level, const char* file, unsigned long int line,  // NOLINT
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
@@ -5154,7 +5154,7 @@ inline const std::string& PerformanceTrackingData::loggerId(void) const { return
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
-class StackTrace : base::NoCopy {
+class StackTrace : private base::NoCopy {
 public:
     static const std::size_t kMaxStack = 64;
     static const std::size_t kStackStart = 2;  // We want to skip c'tor and StackTrace::generateNew()
@@ -5306,7 +5306,7 @@ static inline void defaultCrashHandler(int sig) {
     base::debug::crashAbort(sig);
 }
 /// @brief Handles unexpected crashes
-class CrashHandler : base::NoCopy {
+class CrashHandler : private base::NoCopy {
 public:
     typedef void (*Handler)(int);
 
@@ -5358,7 +5358,7 @@ public:
 };
 #define _INIT_SYSLOG(id, opt, fac) el::SysLogInitializer elSyslogInit(id, opt, fac)
 /// @brief Static helpers for developers
-class Helpers : base::StaticClass {
+class Helpers : private base::StaticClass {
 public:
     /// @brief Shares logging repository (base::Storage)
     static inline void setStorage(base::type::StoragePointer storage) {
@@ -5486,7 +5486,7 @@ public:
     }
 };
 /// @brief Static helpers to deal with loggers and their configurations
-class Loggers : base::StaticClass {
+class Loggers : private base::StaticClass {
 public:
     /// @brief Gets existing or registers new logger
     static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
@@ -5670,7 +5670,7 @@ public:
         ELPP->setLoggingLevel(level);
     }
 };
-class VersionInfo : base::StaticClass {
+class VersionInfo : private base::StaticClass {
 public:
    /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.73"); }
