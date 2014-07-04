@@ -553,7 +553,7 @@ public:
             if (fn()) {
                 break;
             }
-            *startIndex = *startIndex << 1;
+            *startIndex = (base::type::EnumType)(*startIndex << 1);
         } while (*startIndex <= lIndexMax);
     }
 };
@@ -653,7 +653,7 @@ public:
             if (fn()) {
                 break;
             }
-            *startIndex = *startIndex << 1;
+            *startIndex = (base::type::EnumType)(*startIndex << 1);
         } while (*startIndex <= cIndexMax);
     }
 };
@@ -882,15 +882,15 @@ static inline void abort(int status, const std::string& reason = std::string()) 
 namespace bitwise {
 template <typename Enum>
 static inline base::type::EnumType And(Enum e, base::type::EnumType flag) {
-    return static_cast<base::type::EnumType>(flag) & static_cast<base::type::EnumType>(e);
+    return static_cast<base::type::EnumType>((int)flag & (int)e);
 }
 template <typename Enum>
 static inline base::type::EnumType Not(Enum e, base::type::EnumType flag) {
-    return static_cast<base::type::EnumType>(flag) & ~(static_cast<base::type::EnumType>(e));
+    return static_cast<base::type::EnumType>((int)flag & ~((int)e));
 }
 template <typename Enum>
 static inline base::type::EnumType Or(Enum e, base::type::EnumType flag) {
-    return static_cast<base::type::EnumType>(flag) | static_cast<base::type::EnumType>(e);
+    return static_cast<base::type::EnumType>((int)flag | (int)e);
 }
 }  // namespace bitwise
 template <typename Enum>
@@ -3879,7 +3879,7 @@ public:
     }
 
     inline void setFlags(unsigned int flags) {
-        m_flags = flags;
+        m_flags = (base::type::EnumType)flags;
     }
 
     inline void setPreRollOutCallback(const PreRollOutCallback& callback) {
