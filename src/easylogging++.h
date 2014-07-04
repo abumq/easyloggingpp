@@ -3855,7 +3855,8 @@ public:
 #if defined(_ELPP_SYSLOG)
         // Register syslog logger and reconfigure format
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
-        sysLogLogger->configurations()->setGlobally(ConfigurationType::Format, "%level: %msg");
+        sysLogLogger->configurations()->setGlobally(ConfigurationType::Format, 
+                std::string( "%level: %msg") );
         sysLogLogger->reconfigure();
 #else
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
