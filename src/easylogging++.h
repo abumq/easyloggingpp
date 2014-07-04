@@ -853,8 +853,9 @@ private:
 namespace utils {
 /// @brief Deletes memory safely and points to null
 template <typename T>
+static inline
 typename std::enable_if<std::is_pointer<T*>::value, void>::type
-static inline safeDelete(T*& pointer) {  // NOLINT
+safeDelete(T*& pointer) {  // NOLINT
     if (pointer == nullptr)
         return;
     delete pointer;
