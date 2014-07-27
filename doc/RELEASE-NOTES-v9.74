@@ -13,6 +13,12 @@ API changes: No
  - `levshort` format specifier
 
 ==========================
+=      BUG FIXES         =
+==========================
+
+ - Fixes issue with `AutoSpacing` with timing facilities
+
+==========================
 =         NOTES          =
 ==========================
 
