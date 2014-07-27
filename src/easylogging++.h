@@ -5111,8 +5111,10 @@ protected:
     void handle(const PerformanceTrackingData* data) {
         m_data = data;
         if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
+            std::stringstream ssMessage;
+            ssMessage << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
             _ELPP_WRITE_LOG(el::base::Writer, m_data->performanceTracker()->level(), base::DispatchAction::NormalLog, data->loggerId().c_str()) 
-                << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
+                << ssMessage.str();
         } else {
             base::type::stringstream_t ss;
             ss << ELPP_LITERAL("Performance checkpoint");
