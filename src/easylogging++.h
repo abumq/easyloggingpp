@@ -5110,13 +5110,10 @@ class DefaultPerformanceTrackingCallback : public PerformanceTrackingCallback {
 protected:
     void handle(const PerformanceTrackingData* data) {
         m_data = data;
+        base::type::stringstream_t ss;
         if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
-            std::stringstream ssMessage;
-            ssMessage << "Executed [" << *m_data->blockName() << "] in [" << *m_data->formattedTimeTaken() << "]";
-            _ELPP_WRITE_LOG(el::base::Writer, m_data->performanceTracker()->level(), base::DispatchAction::NormalLog, data->loggerId().c_str()) 
-                << ssMessage.str();
+            ss << ELPP_LITERAL("Executed [") << m_data->blockName()->c_str() << ELPP_LITERAL("] in [") << *m_data->formattedTimeTaken() << ELPP_LITERAL("]");
         } else {
-            base::type::stringstream_t ss;
             ss << ELPP_LITERAL("Performance checkpoint");
             if (!m_data->checkpointId().empty()) {
                 ss << ELPP_LITERAL(" [") << m_data->checkpointId().c_str() << ELPP_LITERAL("]");
@@ -5133,8 +5130,8 @@ protected:
             } else {
                 ss << ELPP_LITERAL("]");
             }
-            el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
         }
+        el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
     }
 private:
     const PerformanceTrackingData* m_data;
