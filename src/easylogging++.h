@@ -910,7 +910,7 @@ namespace threading {
 #   if !_ELPP_USE_STD_THREADING
 namespace internal {
 /// @brief A mutex wrapper for compiler that dont yet support std::mutex
-class Mutex {
+class Mutex : base::NoCopy {
 public:
     Mutex(void) {
 #   if _ELPP_OS_UNIX
@@ -999,7 +999,7 @@ typedef std::lock_guard<std::mutex> ScopedLock;
 #else
 namespace internal {
 /// @brief Mutex wrapper used when multi-threading is disabled.
-class NoMutex {
+class NoMutex : base::NoCopy {
 public:
     NoMutex(void) {}
     inline void lock(void) {}
