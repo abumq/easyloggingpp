@@ -3876,7 +3876,7 @@ public:
         return m_flags;
     }
 
-    inline void setFlags(unsigned int flags) {
+    inline void setFlags(base::type::EnumType flags) {
         m_flags = flags;
     }
 
