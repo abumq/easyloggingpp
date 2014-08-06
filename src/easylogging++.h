@@ -825,7 +825,7 @@ enum class TimestampUnit : base::type::EnumType {
 enum class FormatFlags : base::type::EnumType {
     DateTime = 1<<1, LoggerId = 1<<2, File = 1<<3, Line = 1<<4, Location = 1<<5, Function = 1<<6,
     User = 1<<7, Host = 1<<8, LogMessage = 1<<9, VerboseLevel = 1<<10, AppName = 1<<11, ThreadId = 1<<12,
-    Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15,
+    Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15
 };
 /// @brief A milliseconds width class containing actual width and offset for date/time
 class MillisecondsWidth {
@@ -5029,6 +5029,7 @@ public:
                 base::type::string_t formattedTime = getFormattedTimeTaken();
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
+                data.m_func = "";
                 data.m_formattedTimeTaken = formattedTime;
                 PerformanceTrackingCallback* callback = nullptr;
                 for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
@@ -5111,27 +5112,27 @@ protected:
     void handle(const PerformanceTrackingData* data) {
         m_data = data;
         base::type::stringstream_t ss;
-        if (data->dataType() == PerformanceTrackingData::DataType::Complete) {
+        if (m_data->dataType() == PerformanceTrackingData::DataType::Complete) {
             ss << ELPP_LITERAL("Executed [") << m_data->blockName()->c_str() << ELPP_LITERAL("] in [") << *m_data->formattedTimeTaken() << ELPP_LITERAL("]");
         } else {
             ss << ELPP_LITERAL("Performance checkpoint");
             if (!m_data->checkpointId().empty()) {
                 ss << ELPP_LITERAL(" [") << m_data->checkpointId().c_str() << ELPP_LITERAL("]");
             }
-            ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *data->performanceTracker();
-            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && data->performanceTracker()->m_hasChecked) {
+            ss << ELPP_LITERAL(" for block [") << m_data->blockName()->c_str() << ELPP_LITERAL("] : [") << *m_data->performanceTracker();
+            if (!ELPP->hasFlag(LoggingFlag::DisablePerformanceTrackingCheckpointComparison) && m_data->performanceTracker()->m_hasChecked) {
                 ss << ELPP_LITERAL(" ([") << *m_data->formattedTimeTaken() << ELPP_LITERAL("] from ");
-                if (data->performanceTracker()->m_lastCheckpointId.empty()) {
+                if (m_data->performanceTracker()->m_lastCheckpointId.empty()) {
                     ss << ELPP_LITERAL("last checkpoint");
                 } else {
-                    ss << ELPP_LITERAL("checkpoint '") << data->performanceTracker()->m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
+                    ss << ELPP_LITERAL("checkpoint '") << m_data->performanceTracker()->m_lastCheckpointId.c_str() << ELPP_LITERAL("'");
                 }
                 ss << ELPP_LITERAL(")]");
             } else {
                 ss << ELPP_LITERAL("]");
             }
         }
-        el::base::Writer(data->performanceTracker()->m_level, data->file(), data->line(), data->func()).construct(1, data->loggerId().c_str()) << ss.str();
+        el::base::Writer(m_data->performanceTracker()->level(), m_data->file(), m_data->line(), m_data->func()).construct(1, m_data->loggerId().c_str()) << ss.str();
     }
 private:
     const PerformanceTrackingData* m_data;
