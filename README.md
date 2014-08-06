@@ -1155,18 +1155,19 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 
 Operating systems that have been tested are shown in table below. Easylogging++ should work on other major operating systems that are not in the list.
 
-| *****     | Operating System       |   Notes                                                                             |
-|-----------|------------------------|-------------------------------------------------------------------------------------|
-|![win8]    | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
-|![win7]    | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
-|![winxp]   | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
-|![mac]     | Mac OSX                | Clang++ 3.1, g++ (You need `-std=c++11 -stdlib=libc++` to successfully compile)|
-|![sl]      | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
-|![mint]    | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
-|![fedora]  | Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
-|![ubuntu]  | Ubuntu 13.04           | 64-bit, using g++ 4.7.3 (libstdc++6-4.7-dev)                                        |
-|![freebsd] | FreeBSD                | (from github user)                                                                  |
-|![android] | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
+| *****         | Operating System       |   Notes                                                                             |
+|---------------|------------------------|-------------------------------------------------------------------------------------|
+|![win8]        | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
+|![win7]        | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
+|![winxp]       | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
+|![mac]         | Mac OSX                | Clang++ 3.1, g++ (You need `-std=c++11 -stdlib=libc++` to successfully compile)     |
+|![sl]          | Scientific Linux 6.2   | Tested using Intel C++ 13.1.3 (gcc version 4.4.6 compatibility)                     |
+|![mint]        | Linux Mint 14          | 64-bit, mainly developed on this machine using all compatible linux compilers       |
+|![fedora]      | Fedora 19              | 64-bit, using g++ 4.8.1                                                             |
+|![ubuntu]      | Ubuntu 13.04           | 64-bit, using g++ 4.7.3 (libstdc++6-4.7-dev)                                        |
+|![freebsd]     | FreeBSD                | (from github user)                                                                  |
+|![android]     | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
+|![raspberrypi] | RaspberryPi 7.6        | Tested with 7.6.2-1.1 (gcc version 4.9.1 (Raspbian 4.9.1-1)) by contributor         |
 
 Easylogging++ has also been tested with following C++ libraries;
 
@@ -1232,6 +1233,8 @@ Icons used in this manual (in compatibility section) are solely for information 
   [devcpp]: http://www.easylogging.org/images/icons/devcpp.png?v=3
   [gtkmm]: http://www.easylogging.org/images/icons/gtkmm.png?v=3
   [tdm]: http://www.easylogging.org/images/icons/tdm.png?v=3
+  [raspberrypi]: http://www.easylogging.org/images/icons/raspberry-pi.png?v=3
+
 
   [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
   [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
