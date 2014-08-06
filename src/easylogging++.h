@@ -4963,7 +4963,8 @@ public:
         Checkpoint = 1, Complete = 2
     };
     // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
-    explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), m_dataType(dataType) {}
+    explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), 
+        m_dataType(dataType), m_file(""), m_line(0), m_func("") {}
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
@@ -5029,7 +5030,6 @@ public:
                 base::type::string_t formattedTime = getFormattedTimeTaken();
                 PerformanceTrackingData data(PerformanceTrackingData::DataType::Complete);
                 data.init(this);
-                data.m_func = "";
                 data.m_formattedTimeTaken = formattedTime;
                 PerformanceTrackingCallback* callback = nullptr;
                 for (const std::pair<std::string, base::type::PerformanceTrackingCallbackPtr>& h
