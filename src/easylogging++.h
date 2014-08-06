@@ -3547,8 +3547,7 @@ private:
         LevelHelper::forEachLevel(&lIndex, [&](void) -> bool {
             base::LogFormat* logFormat = 
                 const_cast<base::LogFormat*>(&m_typedConfigurations->logFormat(LevelHelper::castFromInt(lIndex)));
-            base::utils::Str::replaceFirstWithEscape(logFormat->m_format,
-                    std::string(base::consts::kLoggerIdFormatSpecifier), m_id);
+            base::utils::Str::replaceFirstWithEscape(logFormat->m_format, base::consts::kLoggerIdFormatSpecifier, m_id);
             return false;
         });
     }
@@ -4101,44 +4100,44 @@ public:
         const char* bufLim = buff + sizeof(buff);
         if (logFormat->hasFlag(base::FormatFlags::AppName)) {
             // App name
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kAppNameFormatSpecifier),
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
                     logMessage->logger()->parentApplicationName());
         }
         if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
             // Thread ID
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kThreadIdFormatSpecifier),
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
                     base::threading::getCurrentThreadId());
         }
         if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
             // DateTime
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kDateTimeFormatSpecifier),
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
                     base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(), 
                         &tc->millisecondsWidth(logMessage->level())));
         }
         if (logFormat->hasFlag(base::FormatFlags::Function)) {
             // Function
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kLogFunctionFormatSpecifier), logMessage->func());
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFunctionFormatSpecifier, logMessage->func());
         }
         if (logFormat->hasFlag(base::FormatFlags::File)) {
             // File
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
             base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kLogFileFormatSpecifier), std::string(buff));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::FileBase)) {
             // FileBase
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceFilenameMaxLength);
             base::utils::File::buildBaseFilename(logMessage->file(), buff);
             buf = base::utils::Str::addToBuff(buff, buf, bufLim);
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kLogFileBaseFormatSpecifier), std::string(buff));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogFileBaseFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::Line)) {
             // Line
             char* buf = base::utils::Str::clearBuff(buff, base::consts::kSourceLineMaxLength);
             buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), 
                 base::consts::kSourceLineMaxLength, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kLogLineFormatSpecifier), std::string(buff));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLineFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::Location)) {
             // Location
@@ -4149,13 +4148,13 @@ public:
             buf = base::utils::Str::addToBuff(":", buf, bufLim);
             buf = base::utils::Str::convertAndAddToBuff(logMessage->line(), 
                 base::consts::kSourceLineMaxLength, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kLogLocationFormatSpecifier), std::string(buff));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kLogLocationFormatSpecifier, std::string(buff));
         }
         if (logMessage->level() == Level::Verbose && logFormat->hasFlag(base::FormatFlags::VerboseLevel)) {
             // Verbose level
             char* buf = base::utils::Str::clearBuff(buff, 1);
             buf = base::utils::Str::convertAndAddToBuff(logMessage->verboseLevel(), 1, buf, bufLim, false);
-            base::utils::Str::replaceFirstWithEscape(logLine, std::string(base::consts::kVerboseLevelFormatSpecifier), std::string(buff));
+            base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kVerboseLevelFormatSpecifier, std::string(buff));
         }
         if (logFormat->hasFlag(base::FormatFlags::LogMessage)) {
             // Log message
