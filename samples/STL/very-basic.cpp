@@ -2,7 +2,7 @@
  // This file is part of Easylogging++ samples
  // Very basic sample
  //
- // Revision 1.0
+ // Revision 1.2
  // @author mkhan3189
  //
 
@@ -16,6 +16,6 @@ int main(void) {
 
     LOG(INFO) << "This" << "is" << "log" << "without" << "spaces";
     el::Loggers::addFlag(el::LoggingFlag::AutoSpacing);
-    LOG(INFO) << "This" << "is" << "log" << "without" << "spaces";
+    LOG(INFO) << "This" << "is" << "log" << "with" << "spaces";
     return 0;
 }

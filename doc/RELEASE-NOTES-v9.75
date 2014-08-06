@@ -11,6 +11,7 @@ API changes: No
  - Makes Mutex non-copyable (issue #191)
  - Fixes issue with `DefaultPerformanceTrackingCallback` (issue #190)
  - Fix build for VS2013 under high warnings [warning level 4] (issue #194)
+ - Fixes a lot of reference to temporary warnings
 
 ==========================
 =         NOTES          =
