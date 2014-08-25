@@ -289,7 +289,9 @@
 #include <cstdarg>
 #if defined(_ELPP_UNICODE)
 #   include <locale>
-#   include <codecvt>
+#   if _ELPP_OS_WINDOWS
+#      include <codecvt>
+#   endif // _ELPP_OS_WINDOWS
 #endif  // defined(_ELPP_UNICODE)
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
