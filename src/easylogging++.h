@@ -289,6 +289,7 @@
 #include <cstdarg>
 #if defined(_ELPP_UNICODE)
 #   include <locale>
+#   include <codecvt>
 #endif  // defined(_ELPP_UNICODE)
 #if _ELPP_STACKTRACE
 #   include <cxxabi.h>
@@ -1048,6 +1049,10 @@ public:
             base::type::fstream_t::out | base::type::fstream_t::app);
 #if defined(_ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
+#if _ELPP_OS_WINDOWS
+        std::locale elppUnicodeLocaleWindows(elppUnicodeLocale, new std::codecvt_utf8_utf16<wchar_t>);
+        elppUnicodeLocale = elppUnicodeLocaleWindows;
+#endif
         fs->imbue(elppUnicodeLocale);
 #endif  // defined(_ELPP_UNICODE)
         if (fs->is_open()) {
