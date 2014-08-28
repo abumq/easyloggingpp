@@ -12,6 +12,7 @@ TIMED_SCOPE(benchmark, "benchmark");
 int main(int argc, char *argv[])
 {
     AsyncLogDispatchCallback::removeDefaultAndInstall();
+    // _INIT_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
 
     std::cout << "Starting program..." << std::endl;
     int MAX_LOOP = 10000;
@@ -19,17 +20,10 @@ int main(int argc, char *argv[])
         LOG(INFO) << "Log message " << i;
         ELPP_COUT << "Added async log " << i << std::endl;
     }
-    usleep(10000); // 10 sec
-    for (int i = 0; i <= MAX_LOOP; ++i) {
-        LOG(INFO) << "Log message PART 2 [" << i << "]";
-        ELPP_COUT << "Added async log PART 2 [" << i << "]" << std::endl;
-    }
     int result = MyMath::sum(1, 2);
     result = MyMath::sum(1, 3);
-    usleep(10000); // 10 sec
-    for (int i = 0; i <= MAX_LOOP; ++i) {
-        LOG(INFO) << "Log message PART 3 [" << i << "]";
-        ELPP_COUT << "Added async log PART 3" << "[" << i << "]" << std::endl;
-    }
+
+    // SYSLOG(INFO) << "This is syslog - read it from /var/log/syslog";
+
     return asyncDispatchWorker.clean();
 }
