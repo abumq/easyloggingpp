@@ -15,26 +15,42 @@ using namespace el;
 class AsyncLogItem {
 public:
     explicit AsyncLogItem(LogMessage logMessage, LogDispatchData data) : m_logMessage(logMessage), m_dispatchData(data) {}
+
     virtual ~AsyncLogItem() {}
-    inline LogMessage* logMessage() {
+
+    inline LogMessage* logMessage(void) {
         return &m_logMessage;
     }
-    inline LogDispatchData* data() {
+
+    inline LogDispatchData* data(void) {
         return &m_dispatchData;
     }
 private:
     LogMessage m_logMessage;
     LogDispatchData m_dispatchData;
 };
-// FIXME: Inherit std::queue? no virtual d'tor! Add wrapper instead?
-class AsyncLogQueue : public std::queue<AsyncLogItem>, base::threading::ThreadSafe {
+class AsyncLogQueue : base::threading::ThreadSafe {
 public:
-    AsyncLogItem next() {
+    inline AsyncLogItem next(void) {
         base::threading::ScopedLock scopedLock(lock());
-        AsyncLogItem result = front();
-        pop();
+        AsyncLogItem result = m_queue.front();
+        m_queue.pop();
         return result;
     }
+
+    inline void push(const AsyncLogItem& item) {
+        m_queue.push(item);
+    }
+
+    inline void push(AsyncLogItem&& item) {
+        m_queue.push(item);
+    }
+
+    inline bool empty(void) const {
+        return m_queue.empty();
+    }
+private:
+    std::queue<AsyncLogItem> m_queue;
 };
 extern _ELPP_EXPORT AsyncLogQueue logQueue;
 
@@ -70,7 +86,7 @@ public:
         base::TypedConfigurations* conf = logger->typedConfigurations();
         base::type::string_t logLine = logger->logBuilder()->build(logMessage, data->dispatchAction() == base::DispatchAction::NormalLog);
         if (data->dispatchAction() == base::DispatchAction::NormalLog) {
-            if (conf->toFile(logMessage->level())) { // TODO: Do we need to check again? Queued only when this is true, may just ditch this check
+            if (conf->toFile(logMessage->level())) {
                 base::type::fstream_t* fs = conf->fileStream(logMessage->level());
                 if (fs != nullptr) {
                     fs->write(logLine.c_str(), logLine.size());
@@ -90,7 +106,31 @@ public:
                 }
             }
         }
-        // TODO: Handle other dispatch actions
+#if defined(_ELPP_SYSLOG)
+        else if (data->dispatchAction() == base::DispatchAction::SysLog) {
+            // Determine syslog priority
+            int sysLogPriority = 0;
+            if (logMessage->level() == Level::Fatal)
+                sysLogPriority = LOG_EMERG;
+            else if (logMessage->level() == Level::Error)
+                sysLogPriority = LOG_ERR;
+            else if (logMessage->level() == Level::Warning)
+                sysLogPriority = LOG_WARNING;
+            else if (logMessage->level() == Level::Info)
+                sysLogPriority = LOG_INFO;
+            else if (logMessage->level() == Level::Debug)
+                sysLogPriority = LOG_DEBUG;
+            else
+                sysLogPriority = LOG_NOTICE;
+#   if defined(_ELPP_UNICODE)
+            char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
+            syslog(sysLogPriority, "%s", line);
+            free(line);
+#   else
+            syslog(sysLogPriority, "%s", logLine.c_str());
+#   endif
+        }
+#endif  // defined(_ELPP_SYSLOG)
     }
 
     void* run() {
@@ -124,7 +164,7 @@ protected:
         }
         // Save resources and only queue if we want to write to file otherwise just ignore handler
         if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
-            logQueue.push(AsyncLogItem(*(data->logMessage()), *data));
+            logQueue.push(std::move(AsyncLogItem(*(data->logMessage()), *data)));
         }
     }
 };
