@@ -50,7 +50,7 @@ public:
 
     inline int clean() {
         // TODO: Add wait mechanism so we flush all logs to file
-        // pthread_join(m_thread, 0);
+        //pthread_join(m_thread, 0);
         emptyQueue();
         return logQueue.empty() ? 0 : 1;
     }

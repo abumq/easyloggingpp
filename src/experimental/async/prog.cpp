@@ -5,16 +5,16 @@
 
 _INITIALIZE_EASYLOGGINGPP
 AsyncLogQueue logQueue;
+AsyncDispatchWorker asyncDispatchWorker;
 
 //TIMED_SCOPE(test, "test");
 
 int main(int argc, char *argv[])
 {
     AsyncLogDispatchCallback::removeDefaultAndInstall();
-    AsyncDispatchWorker asyncDispatchWorker;
 
     std::cout << "Starting program..." << std::endl;
-    int MAX_LOOP = 1000000;
+    int MAX_LOOP = 100;
     for (int i = 0; i <= MAX_LOOP; ++i) {
         LOG(INFO) << "Log message " << i;
         ELPP_COUT << "Added async log " << i << std::endl;
