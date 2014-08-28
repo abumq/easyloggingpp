@@ -6,6 +6,7 @@
 
 #include <pthread.h>
 #include <queue>
+#include <condition_variable>
 
 #include "easylogging++.h"
 #include <unistd.h>
@@ -54,11 +55,12 @@ private:
 };
 extern _ELPP_EXPORT AsyncLogQueue logQueue;
 
-class AsyncDispatchWorker {
+class AsyncDispatchWorker : base::threading::ThreadSafe {
 public:
     AsyncDispatchWorker() {
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
-        Loggers::addFlag(LoggingFlag::ImmediateFlush);
+        //Loggers::addFlag(LoggingFlag::ImmediateFlush);
+        //pthread_join(m_thread, 0);
     }
 
     virtual ~AsyncDispatchWorker() {
@@ -66,8 +68,12 @@ public:
 
     inline int clean() {
         // TODO: Add wait mechanism so we flush all logs to file
-        //pthread_join(m_thread, 0);
+        std::mutex m;
+        std::unique_lock<std::mutex> lk(m);
+        cv.wait(lk, []{ return !logQueue.empty(); });
         emptyQueue();
+        lk.unlock();
+        cv.notify_one();
         return logQueue.empty() ? 0 : 1;
     }
 
@@ -146,6 +152,7 @@ public:
     }
 private:
     pthread_t m_thread;
+    std::condition_variable cv;
 };
 
 class AsyncLogDispatchCallback : public LogDispatchCallback {
