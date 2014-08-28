@@ -1,12 +1,18 @@
 Easylogging++ v9.76 RELEASE NOTES
 ---------------------------------
 
-Release type: Minor
+Release type: Major
 API changes: No
 
 ==========================
 =      BUG FIXES         =
 ==========================
+
+==========================
+=     API CHANGES        =
+==========================
+
+ - `Logger::flush(Level, base::type::fstream_t)` and `Logger::isFlushNeeded(Level)` made public 
 
 ==========================
 =         NOTES          =
