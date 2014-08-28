@@ -3316,9 +3316,6 @@ class LogBuilder : base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
     virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
-private:
-    friend class el::base::DefaultLogDispatchCallback;
-
     void convertToColoredOutput(base::type::string_t* logLine, Level level) {
         if (!base::utils::s_termSupportsColor) return;
         const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
@@ -3327,6 +3324,8 @@ private:
         else if (level == Level::Warning)
             *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
     }
+private:
+    friend class el::base::DefaultLogDispatchCallback;
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @brief Represents a logger holding ID and configurations we need to write logs
@@ -3450,6 +3449,20 @@ public:
         });
     }
 
+    inline void flush(Level level, base::type::fstream_t* fs) {
+        if (fs == nullptr && m_typedConfigurations->toFile(level)) {
+            fs = m_typedConfigurations->fileStream(level);
+        }
+        if (fs != nullptr) {
+            fs->flush();
+            m_unflushedCount.find(level)->second = 0;
+        }
+    }
+
+    inline bool isFlushNeeded(Level level) {
+        return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
+    }
+
     inline LogBuilder* logBuilder(void) const {
         return m_logBuilder.get();
     }
@@ -3533,20 +3546,6 @@ private:
 
     inline base::type::stringstream_t& stream(void) {
         return m_stream;
-    }
-
-    inline void flush(Level level, base::type::fstream_t* fs) {
-        if (fs == nullptr && m_typedConfigurations->toFile(level)) {
-            fs = m_typedConfigurations->fileStream(level);
-        }
-        if (fs != nullptr) {
-            fs->flush();
-            m_unflushedCount.find(level)->second = 0;
-        }
-    }
-
-    inline bool isFlushNeeded(Level level) {
-        return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
     }
 
     void resolveLoggerFormatSpec(void) const {
