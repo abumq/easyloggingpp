@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     AsyncDispatchWorker asyncDispatchWorker;
 
     std::cout << "Starting program..." << std::endl;
-    int MAX_LOOP = 10;
+    int MAX_LOOP = 1000000;
     for (int i = 0; i <= MAX_LOOP; ++i) {
         LOG(INFO) << "Log message " << i;
         ELPP_COUT << "Added async log " << i << std::endl;

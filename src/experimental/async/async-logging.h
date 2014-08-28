@@ -2,6 +2,8 @@
 #ifndef ASYNC_LOGGING_H
 #define ASYNC_LOGGING_H
 
+#define _ELPP_THREAD_SAFE // Needed?
+
 #include <pthread.h>
 #include <queue>
 
@@ -25,9 +27,10 @@ private:
     LogDispatchData m_dispatchData;
 };
 // FIXME: Inherit std::queue? no virtual d'tor! Add wrapper instead?
-class AsyncLogQueue : public std::queue<AsyncLogItem> {
+class AsyncLogQueue : public std::queue<AsyncLogItem>, base::threading::ThreadSafe {
 public:
     AsyncLogItem next() {
+        base::threading::ScopedLock scopedLock(lock());
         AsyncLogItem result = front();
         pop();
         return result;
@@ -67,7 +70,7 @@ public:
         base::TypedConfigurations* conf = logger->typedConfigurations();
         base::type::string_t logLine = logger->logBuilder()->build(logMessage, data->dispatchAction() == base::DispatchAction::NormalLog);
         if (data->dispatchAction() == base::DispatchAction::NormalLog) {
-            if (conf->toFile(logMessage->level())) {
+            if (conf->toFile(logMessage->level())) { // TODO: Do we need to check again? Queued only when this is true, may just ditch this check
                 base::type::fstream_t* fs = conf->fileStream(logMessage->level());
                 if (fs != nullptr) {
                     fs->write(logLine.c_str(), logLine.size());
@@ -86,11 +89,6 @@ public:
                         << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " << logger->id() << "]", false);
                 }
             }
-            if (conf->toStandardOutput(logMessage->level())) {
-                if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                    logger->logBuilder()->convertToColoredOutput(&logLine, logMessage->level());
-                ELPP_COUT << ELPP_COUT_LINE(logLine);
-             }
         }
         // TODO: Handle other dispatch actions
     }
@@ -118,9 +116,16 @@ public:
     }
 protected:
     void handle(const LogDispatchData* data) {
-        // TODO: Add only if writing to file
-        // Check if writing to std out, if yes, do it right away instead of async
-        logQueue.push(AsyncLogItem(*(data->logMessage()), *data));
+        if (data->dispatchAction() == base::DispatchAction::NormalLog && data->logMessage()->logger()->typedConfigurations()->toStandardOutput(data->logMessage()->level())) {
+            base::type::string_t logLine = data->logMessage()->logger()->logBuilder()->build(data->logMessage(), true);
+            if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+                data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, data->logMessage()->level());
+            ELPP_COUT << ELPP_COUT_LINE(logLine);
+        }
+        // Save resources and only queue if we want to write to file otherwise just ignore handler
+        if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
+            logQueue.push(AsyncLogItem(*(data->logMessage()), *data));
+        }
     }
 };
 
