@@ -1,10 +1,10 @@
+// THIS HAS A LOT OF ISSUES HENCE LEAVING IT AS EXPERIMENTAL AT THIS STAGE
 #ifndef ASYNC_LOGGING_H
 #define ASYNC_LOGGING_H
 
-#define _ELPP_THREAD_SAFE
-
 #include <pthread.h>
 #include <queue>
+
 #include "easylogging++.h"
 #include <unistd.h>
 
@@ -24,10 +24,10 @@ private:
     LogMessage m_logMessage;
     LogDispatchData m_dispatchData;
 };
-class AsyncLogQueue : public std::queue<AsyncLogItem>, base::threading::ThreadSafe {
+// FIXME: Inherit std::queue? no virtual d'tor! Add wrapper instead?
+class AsyncLogQueue : public std::queue<AsyncLogItem> {
 public:
     AsyncLogItem next() {
-        base::threading::ScopedLock scopedLock(lock());
         AsyncLogItem result = front();
         pop();
         return result;
@@ -46,6 +46,7 @@ public:
     }
 
     inline int clean() {
+        // TODO: Add wait mechanism so we flush all logs to file
         // pthread_join(m_thread, 0);
         emptyQueue();
         return logQueue.empty() ? 0 : 1;
@@ -91,6 +92,7 @@ public:
                 ELPP_COUT << ELPP_COUT_LINE(logLine);
              }
         }
+        // TODO: Handle other dispatch actions
     }
 
     void* run() {
@@ -116,6 +118,8 @@ public:
     }
 protected:
     void handle(const LogDispatchData* data) {
+        // TODO: Add only if writing to file
+        // Check if writing to std out, if yes, do it right away instead of async
         logQueue.push(AsyncLogItem(*(data->logMessage()), *data));
     }
 };
