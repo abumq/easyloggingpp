@@ -4247,7 +4247,7 @@ public:
     }
     
     virtual inline void start() {
-        usleep(3000); // Wait extra few seconds
+        usleep(5000); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
         //pthread_join(m_thread, 0);
@@ -4312,7 +4312,7 @@ public:
     void run() {
         while (continueRunning()) {
             emptyQueue();
-            usleep(5000);
+            usleep(500);
         }
     }
 
