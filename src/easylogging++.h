@@ -334,6 +334,7 @@
 #if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #   include <unistd.h>
 #   include <pthread.h>
+#   include <thread>
 #   include <queue>
 #   include <condition_variable>
 #endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
@@ -4243,11 +4244,12 @@ public:
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
             usleep(100);
+            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     
     virtual inline void start() {
-        usleep(5000); // Wait extra few seconds
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
         //pthread_join(m_thread, 0);
@@ -4312,7 +4314,7 @@ public:
     void run() {
         while (continueRunning()) {
             emptyQueue();
-            usleep(500);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 
