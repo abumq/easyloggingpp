@@ -14,17 +14,18 @@ int main(int argc, char *argv[])
     AsyncLogDispatchCallback::removeDefaultAndInstall();
     // _INIT_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
     Loggers::reconfigureAllLoggers(ConfigurationType::ToStandardOutput, "false");
+    TIMED_BLOCK(loggingPerformance, "loggingPerformance") {
+        base::MillisecondsWidth mwidth(3);
+        std::cout << "Starting program " << base::utils::DateTime::getDateTime("%h:%m:%s", &mwidth) << std::endl;
+        int MAX_LOOP = 1000000;
+        for (int i = 0; i <= MAX_LOOP; ++i) {
+            LOG(INFO) << "Log message " << i;
+        }
+        int result = MyMath::sum(1, 2);
+        result = MyMath::sum(1, 3);
 
-    std::cout << "Starting program" << std::endl;
-    int MAX_LOOP = 1000000;
-    for (int i = 0; i <= MAX_LOOP; ++i) {
-        LOG(INFO) << "Log message " << i;
+        std::cout << "Finished program - cleaning! " << base::utils::DateTime::getDateTime("%h:%m:%s", &mwidth) << std::endl;
     }
-    int result = MyMath::sum(1, 2);
-    result = MyMath::sum(1, 3);
-
-    std::cout << "Finished program - now cleaning..." << std::endl;
-
     // SYSLOG(INFO) << "This is syslog - read it from /var/log/syslog";
 
     return asyncDispatchWorker.clean();

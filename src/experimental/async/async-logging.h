@@ -15,7 +15,8 @@ using namespace el;
 
 class AsyncLogItem {
 public:
-    explicit AsyncLogItem(LogMessage logMessage, LogDispatchData data) : m_logMessage(logMessage), m_dispatchData(data) {}
+    explicit AsyncLogItem(const LogMessage& logMessage, const LogDispatchData& data, const base::type::string_t& logLine)
+        : m_logMessage(logMessage), m_dispatchData(data), m_logLine(logLine) {}
 
     virtual ~AsyncLogItem() {}
 
@@ -26,9 +27,14 @@ public:
     inline LogDispatchData* data(void) {
         return &m_dispatchData;
     }
+
+    inline base::type::string_t* logLine(void) {
+        return &m_logLine;
+    }
 private:
     LogMessage m_logMessage;
     LogDispatchData m_dispatchData;
+    base::type::string_t m_logLine; // We need log line at time of contructing message otherwise time of log will be messed up
 };
 class AsyncLogQueue : base::threading::ThreadSafe {
 public:
@@ -67,7 +73,6 @@ public:
     }
 
     inline int clean() {
-        // TODO: Add wait mechanism so we flush all logs to file
         std::mutex m;
         std::unique_lock<std::mutex> lk(m);
         cv.wait(lk, []{ return !logQueue.empty(); });
@@ -90,12 +95,12 @@ public:
         LogMessage* logMessage = logItem->logMessage();
         Logger* logger = logMessage->logger();
         base::TypedConfigurations* conf = logger->typedConfigurations();
-        base::type::string_t logLine = logger->logBuilder()->build(logMessage, data->dispatchAction() == base::DispatchAction::NormalLog);
+        base::type::string_t* logLine = logItem->logLine();
         if (data->dispatchAction() == base::DispatchAction::NormalLog) {
             if (conf->toFile(logMessage->level())) {
                 base::type::fstream_t* fs = conf->fileStream(logMessage->level());
                 if (fs != nullptr) {
-                    fs->write(logLine.c_str(), logLine.size());
+                    fs->write(logLine->c_str(), logLine->size());
                     if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file ["
                             << conf->filename(logMessage->level()) << "].\n"
@@ -129,11 +134,11 @@ public:
             else
                 sysLogPriority = LOG_NOTICE;
 #   if defined(_ELPP_UNICODE)
-            char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
+            char* line = base::utils::Str::wcharPtrToCharPtr(logLine->c_str());
             syslog(sysLogPriority, "%s", line);
             free(line);
 #   else
-            syslog(sysLogPriority, "%s", logLine.c_str());
+            syslog(sysLogPriority, "%s", logLine->c_str());
 #   endif
         }
 #endif  // defined(_ELPP_SYSLOG)
@@ -163,15 +168,15 @@ public:
     }
 protected:
     void handle(const LogDispatchData* data) {
+        base::type::string_t logLine = data->logMessage()->logger()->logBuilder()->build(data->logMessage(), data->dispatchAction() == base::DispatchAction::NormalLog);
         if (data->dispatchAction() == base::DispatchAction::NormalLog && data->logMessage()->logger()->typedConfigurations()->toStandardOutput(data->logMessage()->level())) {
-            base::type::string_t logLine = data->logMessage()->logger()->logBuilder()->build(data->logMessage(), true);
             if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                 data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, data->logMessage()->level());
             ELPP_COUT << ELPP_COUT_LINE(logLine);
         }
         // Save resources and only queue if we want to write to file otherwise just ignore handler
         if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
-            logQueue.push(std::move(AsyncLogItem(*(data->logMessage()), *data)));
+            logQueue.push(std::move(AsyncLogItem(*(data->logMessage()), *data, logLine)));
         }
     }
 };
