@@ -83,6 +83,7 @@
         <a href="#logging-third-party-class">Logging Third-party Class</a>
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
     <a href="#log-dispatch-callback">Log Dispatch Callback</a>
+    <a href="#asynchronous-logging">Asynchronous Logging</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -1110,6 +1111,11 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
 
  > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
+
+ [![top] Goto Top](#table-of-contents)
+ 
+### Asynchronous Logging
+Asynchronous logging is in experimental stages and they are not widely promoted. Once they are stable across all supported platforms, they will be promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC_LOGGING` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
  [![top] Goto Top](#table-of-contents)
  
