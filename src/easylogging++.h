@@ -3940,10 +3940,12 @@ public:
     inline base::VRegistry* vRegistry(void) const {
         return m_vRegistry;
     }
-    
+
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
     inline base::AsyncLogQueue* asyncLogQueue(void) const {
         return m_asyncLogQueue;
     }
+#endif
 
     inline const base::utils::CommandLineArgs* commandLineArgs(void) const {
         return &m_commandLineArgs;
