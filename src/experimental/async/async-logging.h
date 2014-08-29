@@ -159,6 +159,7 @@ private:
     pthread_t m_thread;
     std::condition_variable cv;
 };
+extern _ELPP_EXPORT AsyncDispatchWorker asyncDispatchWorker;
 
 class AsyncLogDispatchCallback : public LogDispatchCallback {
 public:

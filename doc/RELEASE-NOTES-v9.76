@@ -9,6 +9,12 @@ API changes: No
 ==========================
 
 ==========================
+=     NEW FEATURES       =
+==========================
+
+ - Experimental asynchronous logging using `_ELPP_EXPERIMENTAL_ASYNC_LOGGING` (issue #202)
+
+==========================
 =     API CHANGES        =
 ==========================
 

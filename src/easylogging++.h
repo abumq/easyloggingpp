@@ -208,9 +208,9 @@
 #else
 #   define ELPP_FINAL final
 #endif  // _ELPP_COMPILER_INTEL || (_ELPP_GCC_VERSION < 40702)
-#if defined(_ELPP_THREAD_SAFE)
+#if defined(_ELPP_THREAD_SAFE) || defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #   define _ELPP_THREADING_ENABLED 1
-#endif  // defined(_ELPP_THREAD_SAFE)
+#endif  // defined(_ELPP_THREAD_SAFE) || defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 // Function macro _ELPP_FUNC
 #undef _ELPP_FUNC
 #if _ELPP_COMPILER_MSVC  // Visual C++
@@ -331,6 +331,11 @@
 #      endif  // _ELPP_OS_UNIX
 #   endif  // _ELPP_USE_STD_THREADING
 #endif  // _ELPP_THREADING_ENABLED
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+#   include <pthread.h>
+#   include <queue>
+#   include <condition_variable>
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #if defined(_ELPP_STL_LOGGING)
 // For logging STL based templates
 #   include <list>
@@ -400,6 +405,9 @@ class PErrorWriter;
 class LogDispatcher;
 class DefaultLogBuilder;
 class DefaultLogDispatchCallback;
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+class AsyncLogDispatchCallback;
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 class DefaultPerformanceTrackingCallback;
 }  // namespace base
 }  // namespace el
@@ -3803,6 +3811,36 @@ private:
     base::type::string_t m_message;
 };
 namespace base {
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+class AsyncLogItem {
+public:
+    explicit AsyncLogItem(const LogMessage& logMessage, const LogDispatchData& data, const base::type::string_t& logLine)
+        : m_logMessage(logMessage), m_dispatchData(data), m_logLine(logLine) {}
+
+    virtual ~AsyncLogItem() {}
+    inline LogMessage* logMessage(void) { return &m_logMessage; }
+    inline LogDispatchData* data(void) { return &m_dispatchData; }
+    inline base::type::string_t* logLine(void) { return &m_logLine; }
+private:
+    LogMessage m_logMessage;
+    LogDispatchData m_dispatchData;
+    base::type::string_t m_logLine;
+};
+class AsyncLogQueue : public base::threading::ThreadSafe {
+public:
+    inline AsyncLogItem next(void) {
+        base::threading::ScopedLock scopedLock(lock());
+        AsyncLogItem result = m_queue.front();
+        m_queue.pop();
+        return result;
+    }
+    inline void push(const AsyncLogItem& item) { m_queue.push(item); }
+    inline void push(AsyncLogItem&& item) { m_queue.push(item); }
+    inline bool empty(void) const { return m_queue.empty(); }
+private:
+    std::queue<AsyncLogItem> m_queue;
+};
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 /// @brief Easylogging++ management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
 public:
@@ -3827,7 +3865,11 @@ public:
         _ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif  //  defined(_ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+        installLogDispatchCallback<AsyncLogDispatchCallback>(std::string("AsyncLogDispatchCallback"));
+#else
         installLogDispatchCallback<base::DefaultLogDispatchCallback>(std::string("DefaultLogDispatchCallback"));
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
         installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>(std::string("DefaultPerformanceTrackingCallback"));
         ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
@@ -4029,6 +4071,9 @@ private:
     }
 };
 extern _ELPP_EXPORT base::type::StoragePointer elStorage;
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+extern _ELPP_EXPORT base::AsyncLogQueue elLogQueue;
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #define ELPP el::base::elStorage
 class DefaultLogDispatchCallback : public LogDispatchCallback {
 protected:
@@ -4094,6 +4139,123 @@ private:
 #endif  // defined(_ELPP_SYSLOG)
     }
 };
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+class AsyncLogDispatchCallback : public LogDispatchCallback {
+protected:
+    void handle(const LogDispatchData* data) {
+        base::type::string_t logLine = data->logMessage()->logger()->logBuilder()->build(data->logMessage(), data->dispatchAction() == base::DispatchAction::NormalLog);
+        if (data->dispatchAction() == base::DispatchAction::NormalLog && data->logMessage()->logger()->typedConfigurations()->toStandardOutput(data->logMessage()->level())) {
+            if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+                data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, data->logMessage()->level());
+            ELPP_COUT << ELPP_COUT_LINE(logLine);
+        }
+        // Save resources and only queue if we want to write to file otherwise just ignore handler
+        if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
+            elLogQueue.push(std::move(AsyncLogItem(*(data->logMessage()), *data, logLine)));
+        }
+    }
+};
+class AsyncDispatchWorker : public base::threading::ThreadSafe {
+public:
+    AsyncDispatchWorker() {
+        pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
+        //Loggers::addFlag(LoggingFlag::ImmediateFlush);
+        //pthread_join(m_thread, 0);
+    }
+
+    virtual ~AsyncDispatchWorker() {
+        clean();
+    }
+
+    inline int clean() {
+        std::mutex m;
+        std::unique_lock<std::mutex> lk(m);
+        cv.wait(lk, []{ return !elLogQueue.empty(); });
+        emptyQueue();
+        lk.unlock();
+        cv.notify_one();
+        return elLogQueue.empty() ? 0 : 1;
+    }
+
+    inline void emptyQueue() {
+        while (!elLogQueue.empty()) {
+            AsyncLogItem data = elLogQueue.next();
+            handle(&data);
+            usleep(100);
+        }
+    }
+
+    void handle(AsyncLogItem* logItem) {
+        LogDispatchData* data = logItem->data();
+        LogMessage* logMessage = logItem->logMessage();
+        Logger* logger = logMessage->logger();
+        base::TypedConfigurations* conf = logger->typedConfigurations();
+        base::type::string_t* logLine = logItem->logLine();
+        if (data->dispatchAction() == base::DispatchAction::NormalLog) {
+            if (conf->toFile(logMessage->level())) {
+                base::type::fstream_t* fs = conf->fileStream(logMessage->level());
+                if (fs != nullptr) {
+                    fs->write(logLine->c_str(), logLine->size());
+                    if (fs->fail()) {
+                        ELPP_INTERNAL_ERROR("Unable to write log to file ["
+                            << conf->filename(logMessage->level()) << "].\n"
+                                << "Few possible reasons (could be something else):\n" << "      * Permission denied\n"
+                                << "      * Disk full\n" << "      * Disk is not writable", true);
+                    } else {
+                        if (ELPP->hasFlag(LoggingFlag::ImmediateFlush) || (logger->isFlushNeeded(logMessage->level()))) {
+                            logger->flush(logMessage->level(), fs);
+                        }
+                    }
+                } else {
+                    ELPP_INTERNAL_ERROR("Log file for [" << LevelHelper::convertToString(logMessage->level()) << "] "
+                        << "has not been configured but [TO_FILE] is configured to TRUE. [Logger ID: " << logger->id() << "]", false);
+                }
+            }
+        }
+#   if defined(_ELPP_SYSLOG)
+        else if (data->dispatchAction() == base::DispatchAction::SysLog) {
+            // Determine syslog priority
+            int sysLogPriority = 0;
+            if (logMessage->level() == Level::Fatal)
+                sysLogPriority = LOG_EMERG;
+            else if (logMessage->level() == Level::Error)
+                sysLogPriority = LOG_ERR;
+            else if (logMessage->level() == Level::Warning)
+                sysLogPriority = LOG_WARNING;
+            else if (logMessage->level() == Level::Info)
+                sysLogPriority = LOG_INFO;
+            else if (logMessage->level() == Level::Debug)
+                sysLogPriority = LOG_DEBUG;
+            else
+                sysLogPriority = LOG_NOTICE;
+#      if defined(_ELPP_UNICODE)
+            char* line = base::utils::Str::wcharPtrToCharPtr(logLine->c_str());
+            syslog(sysLogPriority, "%s", line);
+            free(line);
+#      else
+            syslog(sysLogPriority, "%s", logLine->c_str());
+#      endif
+        }
+#   endif  // defined(_ELPP_SYSLOG)
+    }
+
+    void* run() {
+        while(1) {
+            emptyQueue();
+            usleep(500);
+        }
+        return NULL;
+    }
+
+    static void *runner(void *context) {
+        return ((AsyncDispatchWorker *)context)->run();
+    }
+private:
+    pthread_t m_thread;
+    std::condition_variable cv;
+};
+extern _ELPP_EXPORT base::AsyncDispatchWorker elAyncDispatchWorker;
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 }  // namespace base
 namespace base {
 class DefaultLogBuilder : public LogBuilder {
@@ -6322,8 +6484,20 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
         el::base::debug::CrashHandler elCrashHandler(_ELPP_USE_DEF_CRASH_HANDLER);\
     }
 
-#define _INITIALIZE_EASYLOGGINGPP\
-    _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
+#if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
+#   define _INITIALIZE_EASYLOGGINGPP\
+       _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))\
+       namespace el {\
+           namespace base {\
+               el::base::AsyncLogQueue elLogQueue;\
+               el::base::AsyncDispatchWorker elAyncDispatchWorker;\
+           }\
+       }
+       
+#else
+#   define _INITIALIZE_EASYLOGGINGPP\
+       _ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
+#endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #define _INITIALIZE_NULL_EASYLOGGINGPP\
     _ELPP_INITI_BASIC_DECLR\
     namespace el {\
