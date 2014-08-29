@@ -333,6 +333,7 @@
 #endif  // _ELPP_THREADING_ENABLED
 #if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #   include <pthread.h>
+#   include <unistd.h>
 #   include <queue>
 #   include <condition_variable>
 #endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
