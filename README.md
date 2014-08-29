@@ -4,7 +4,7 @@
 
 ##### YOU ARE CURRENTLY BROWSING `develop` BRANCH. PLEASE SWITCH TO [`master`](https://github.com/easylogging/easyloggingpp) BRANCH IF YOU ARE NOT CONTRIBUTOR
 
-> **Manual For v9.75**
+> **Manual For v9.75 (development / unreleased version)**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
