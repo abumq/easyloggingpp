@@ -333,8 +333,8 @@
 #endif  // _ELPP_THREADING_ENABLED
 #if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #   include <unistd.h>
+#   include <pthread.h>
 #   include <queue>
-#   include <thread>
 #   include <condition_variable>
 #endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
 #if defined(_ELPP_STL_LOGGING)
@@ -3840,11 +3840,22 @@ public:
         return result;
     }
     
-    // inline void push(const AsyncLogItem& item) { m_queue.push(item); }
-    inline void push(const AsyncLogItem& item) { m_queue.push(item); }
-    inline void pop(void) { m_queue.pop(); }
-    inline AsyncLogItem front(void) { return m_queue.front(); }
-    inline bool empty(void) const { return m_queue.empty(); }
+    inline void push(const AsyncLogItem& item) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_queue.push(item);
+    }
+    inline void pop(void) {
+        base::threading::ScopedLock scopedLock(lock());
+        m_queue.pop();
+    }
+    inline AsyncLogItem front(void) {
+        base::threading::ScopedLock scopedLock(lock());
+        return m_queue.front();
+    }
+    inline bool empty(void) {
+        base::threading::ScopedLock scopedLock(lock());
+        return m_queue.empty();
+    }
 private:
     std::queue<AsyncLogItem> m_queue;
 };
@@ -3891,11 +3902,11 @@ public:
 #else
         installLogDispatchCallback<base::DefaultLogDispatchCallback>(std::string("DefaultLogDispatchCallback"));
 #endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
-        installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>(std::string("DefaultPerformanceTrackingCallback"));
+            installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>(std::string("DefaultPerformanceTrackingCallback"));
+            ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
 #if defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
         m_asyncDispatchWorker->start();
 #endif // defined(_ELPP_EXPERIMENTAL_ASYNC_LOGGING)
-        ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
     }
 
     virtual ~Storage(void) {
@@ -4236,6 +4247,7 @@ public:
     }
     
     virtual inline void start() {
+        usleep(3000); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
         //pthread_join(m_thread, 0);
