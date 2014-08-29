@@ -4160,7 +4160,6 @@ class AsyncDispatchWorker : public base::threading::ThreadSafe {
 public:
     AsyncDispatchWorker() {
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
-        //Loggers::addFlag(LoggingFlag::ImmediateFlush);
         //pthread_join(m_thread, 0);
     }
 
