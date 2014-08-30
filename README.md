@@ -1115,7 +1115,7 @@ If you wish to capture log message right after it is dispatched, you can do so b
  [![top] Goto Top](#table-of-contents)
  
 ### Asynchronous Logging
-Asynchronous logging is in experimental stages and they are not widely promoted. Once they are stable across all supported platforms, they will be promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC_LOGGING` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+Asynchronous logging is in experimental stages and they are not widely promoted. Once they are stable across all supported platforms, they will be promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
  [![top] Goto Top](#table-of-contents)
  
