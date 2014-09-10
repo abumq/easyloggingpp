@@ -4249,7 +4249,7 @@ public:
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
             usleep(100);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     
@@ -4257,7 +4257,7 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
-        //pthread_join(m_thread, 0);
+        pthread_join(m_thread, 0);
         //std::thread t1(&AsyncDispatchWorker::runner, this);
         //t1.join();
     }
@@ -4333,7 +4333,6 @@ public:
         m_continueRunning = value;
     }
     bool continueRunning(void) {
-        //base::threading::ScopedLock scopedLock(m_continueRunningMutex);
         return m_continueRunning;
     }
 private:
