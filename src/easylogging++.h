@@ -337,7 +337,7 @@
 #   endif  // _ELPP_USE_STD_THREADING
 #endif  // _ELPP_THREADING_ENABLED
 #if _ELPP_ASYNC_LOGGING
-#   include <unistd.h>
+#   include <unistd.h> // for usleep - make more flexible
 #   include <pthread.h>
 #   include <thread>
 #   include <queue>
@@ -1004,6 +1004,9 @@ static inline std::string getCurrentThreadId(void) {
 #      endif  // (_ELPP_OS_WINDOWS)
     return ss.str();
 }
+static inline void sleep(int ms) {
+    // ::usleep(ms);
+}
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
 #   else
@@ -1012,6 +1015,9 @@ static inline std::string getCurrentThreadId(void) {
     std::stringstream ss;
     ss << std::this_thread::get_id();
     return ss.str();
+}
+static inline void sleep(int ms) {
+   // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -1041,6 +1047,7 @@ private:
 static inline std::string getCurrentThreadId(void) {
     return std::string();
 }
+static inline void sleep(int) {}
 typedef base::threading::internal::NoMutex Mutex;
 typedef base::threading::internal::NoScopedLock<base::threading::Mutex> ScopedLock;
 #endif  // _ELPP_THREADING_ENABLED
@@ -4249,12 +4256,11 @@ public:
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
             usleep(100);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     
     virtual inline void start() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000)); // Wait extra few seconds
+        base::threading::sleep(5000); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
         pthread_join(m_thread, 0);
@@ -4319,7 +4325,7 @@ public:
     void run() {
         while (continueRunning()) {
             emptyQueue();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            base::threading::sleep(1); // Wait extra few seconds
         }
     }
 
