@@ -55,5 +55,21 @@ int main(void) {
     std::fstream fstr("a/file/that/does/not/exist", std::fstream::in);
     PCHECK(fstr.is_open());
     DPCHECK(fstr.is_open());
+
+    int min = 1;
+    int max = 5;
+    CHECK_BOUNDS(1, min, max) << "Index out of bounds";
+    CHECK_BOUNDS(2, min, max) << "Index out of bounds";
+    CHECK_BOUNDS(3, min, max) << "Index out of bounds";
+    CHECK_BOUNDS(4, min, max) << "Index out of bounds";
+    CHECK_BOUNDS(5, min, max) << "Index out of bounds";
+    CHECK_BOUNDS(6, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(1, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(2, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(3, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(4, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(5, min, max) << "Index out of bounds";
+    DCHECK_BOUNDS(6, min, max) << "Index out of bounds";
+
     return 0;
 }

@@ -6452,6 +6452,7 @@ public:
 #undef CCHECK_GT
 #undef CCHECK_LE
 #undef CCHECK_GE
+#undef CCHECK_BOUNDS
 #undef CCHECK_NOTNULL
 #undef CCHECK_STRCASEEQ
 #undef CCHECK_STRCASENE
@@ -6463,6 +6464,7 @@ public:
 #undef CHECK_GT
 #undef CHECK_LE
 #undef CHECK_GE
+#undef CHECK_BOUNDS
 #undef CHECK_NOTNULL
 #undef CHECK_STRCASEEQ
 #undef CHECK_STRCASENE
@@ -6476,12 +6478,14 @@ public:
 #define CCHECK_GT(a, b, ...) CCHECK(a > b, __VA_ARGS__)
 #define CCHECK_LE(a, b, ...) CCHECK(a <= b, __VA_ARGS__)
 #define CCHECK_GE(a, b, ...) CCHECK(a >= b, __VA_ARGS__)
+#define CCHECK_BOUNDS(val, min, max, ...) CCHECK(val >= min && val <= max, __VA_ARGS__)
 #define CHECK_EQ(a, b) CCHECK_EQ(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_NE(a, b) CCHECK_NE(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_LT(a, b) CCHECK_LT(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_GT(a, b) CCHECK_GT(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_LE(a, b) CCHECK_LE(a, b, _CURRENT_FILE_LOGGER_ID)
 #define CHECK_GE(a, b) CCHECK_GE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define CHECK_BOUNDS(val, min, max) CCHECK_BOUNDS(val, min, max, _CURRENT_FILE_LOGGER_ID)
 namespace el {
 namespace base {
 namespace utils {
@@ -6514,6 +6518,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #undef DCCHECK_GT
 #undef DCCHECK_LE
 #undef DCCHECK_GE
+#undef DCCHECK_BOUNDS
 #undef DCCHECK_NOTNULL
 #undef DCCHECK_STRCASEEQ
 #undef DCCHECK_STRCASENE
@@ -6525,6 +6530,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #undef DCHECK_GT
 #undef DCHECK_LE
 #undef DCHECK_GE
+#undef DCHECK_BOUNDS_
 #undef DCHECK_NOTNULL
 #undef DCHECK_STRCASEEQ
 #undef DCHECK_STRCASENE
@@ -6536,6 +6542,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #define DCCHECK_GT(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_GT(a, b, __VA_ARGS__)
 #define DCCHECK_LE(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_LE(a, b, __VA_ARGS__)
 #define DCCHECK_GE(a, b, ...) if (_ELPP_DEBUG_LOG) CCHECK_GE(a, b, __VA_ARGS__)
+#define DCCHECK_BOUNDS(val, min, max, ...) if (_ELPP_DEBUG_LOG) CCHECK_BOUNDS(val, min, max, __VA_ARGS__)
 #define DCCHECK_NOTNULL(ptr, ...) if (_ELPP_DEBUG_LOG) CCHECK_NOTNULL(ptr, __VA_ARGS__)
 #define DCCHECK_STREQ(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STREQ(str1, str2, __VA_ARGS__)
 #define DCCHECK_STRNE(str1, str2, ...) if (_ELPP_DEBUG_LOG) CCHECK_STRNE(str1, str2, __VA_ARGS__)
@@ -6549,6 +6556,7 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #define DCHECK_GT(a, b) DCCHECK_GT(a, b, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_LE(a, b) DCCHECK_LE(a, b, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_GE(a, b) DCCHECK_GE(a, b, _CURRENT_FILE_LOGGER_ID)
+#define DCHECK_BOUNDS(val, min, max) DCCHECK_BOUNDS(val, min, max, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_NOTNULL(ptr) DCCHECK_NOTNULL(ptr, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STREQ(str1, str2) DCCHECK_STREQ(str1, str2, _CURRENT_FILE_LOGGER_ID)
 #define DCHECK_STRNE(str1, str2) DCCHECK_STRNE(str1, str2, _CURRENT_FILE_LOGGER_ID)

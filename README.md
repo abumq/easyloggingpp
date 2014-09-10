@@ -923,6 +923,7 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_STRNE(str1, str2)`                   | C-string inequality (case-sensitive) e.g, `CHECK_STRNE(username1, username2) << "Usernames cannot be same";`                    |
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
 | `CHECK_STRCASENE(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_STRCASENE(username1, username2) << "Same username not allowed";`           |
+| `CHECK_BOUNDS(val, min, max)`               | Checks that `val` falls under the `min` and `max` range e.g, `CHECK_BOUNDS(i, 0, list.size() - 1) << "Index out of bounds";`    |
 
 > Same versions of macros are available for `DEBUG` only mode, these macros start with `D` (for debug) followed by the same name. e.g, `DCHECK` to check only in debug mode (i.e, when `_DEBUG` is defined or `NDEBUG` is undefined)
 

@@ -13,6 +13,7 @@ API changes: No
 ==========================
 
  - Experimental asynchronous logging using `_ELPP_EXPERIMENTAL_ASYNC_LOGGING` (issue #202)
+ - `CHECK_BOUNDS` macro to check boundaries (issue #204)
 
 ==========================
 =     API CHANGES        =
