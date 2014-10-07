@@ -304,7 +304,7 @@
 #   include <direct.h>
 #   include <Windows.h>
 #   if defined(WIN32_LEAN_AND_MEAN)
-#      include <winsock2.h>
+#      include <winsock.h>
 #   endif // defined(WIN32_LEAN_AND_MEAN)
 #endif  // _ELPP_OS_UNIX
 #include <string>
