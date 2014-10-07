@@ -437,13 +437,11 @@ namespace type {
 #   else
 #      define ELPP_COUT std::wcout
 #   endif  // defined ELPP_CUSTOM_COUT
-#   if defined(_ELPP_ERROR_TO_CERR)
-#      if defined ELPP_CUSTOM_CERR
-#         define ELPP_CERR ELPP_CUSTOM_CERR
-#      else
-#         define ELPP_CERR std::wcerr
-#      endif  // defined ELPP_CUSTOM_CERR
-#   endif // _ELPP_ERROR_TO_CERR
+#   if defined ELPP_CUSTOM_CERR
+#      define ELPP_CERR ELPP_CUSTOM_CERR
+#   else
+#      define ELPP_CERR std::wcerr
+#   endif  // defined ELPP_CUSTOM_CERR
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
