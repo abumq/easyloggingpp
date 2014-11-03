@@ -730,8 +730,8 @@ namespace consts {
     static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
             "September", "October", "November", "December" };
     static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %H:%m:%s,%g";
-    static const char* kDefaultDateTimeFormatInFilename =      "%d-%M-%Y_%H-%m";
+    static const char* kDefaultDateTimeFormat           =      "%Y-%M-%d %H:%m:%s,%g";
+    static const char* kDefaultDateTimeFormatInFilename =      "%Y-%M-%d_%H-%m";
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
