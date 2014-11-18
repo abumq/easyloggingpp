@@ -15,8 +15,6 @@
   [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.75)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.75/samples)
-  
-  [![www] Project Homepage](http://easylogging.org/)
 
   [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
@@ -1226,38 +1224,38 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: http://easylogging.org/images/banner.png?v=4
-  [ubuntu]: http://www.easylogging.org/images/icons/ubuntu.png?v=2
-  [mint]: http://www.easylogging.org/images/icons/linux-mint.png?v=2
-  [freebsd]: http://www.easylogging.org/images/icons/free-bsd.png?v=2
-  [sl]: http://www.easylogging.org/images/icons/scientific-linux.png?v=2
-  [fedora]: http://www.easylogging.org/images/icons/fedora.png?v=3
-  [mac]: http://www.easylogging.org/images/icons/mac-osx.png?v=2
-  [winxp]: http://www.easylogging.org/images/icons/windowsxp.png?v=2
-  [win7]: http://www.easylogging.org/images/icons/windows7.png?v=2
-  [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
-  [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
-  [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
-  [wxwidgets]: http://www.easylogging.org/images/icons/wxwidgets.png?v=3
-  [devcpp]: http://www.easylogging.org/images/icons/devcpp.png?v=3
-  [gtkmm]: http://www.easylogging.org/images/icons/gtkmm.png?v=3
-  [tdm]: http://www.easylogging.org/images/icons/tdm.png?v=3
-  [raspberrypi]: http://www.easylogging.org/images/icons/raspberry-pi.png?v=3
+  [banner]: https://raw.githubusercontent.com/easylogging/homepage/master/images/banner.png?v=4
+  [ubuntu]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/ubuntu.png?v=2
+  [mint]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/linux-mint.png?v=2
+  [freebsd]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/free-bsd.png?v=2
+  [sl]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/scientific-linux.png?v=2
+  [fedora]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/fedora.png?v=3
+  [mac]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mac-osx.png?v=2
+  [winxp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windowsxp.png?v=2
+  [win7]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows7.png?v=2
+  [win8]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows8.png?v=2
+  [qt]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/qt.png?v=3
+  [boost]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/boost.png?v=3
+  [wxwidgets]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/devcpp.png?v=3
+  [gtkmm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gtkmm.png?v=3
+  [tdm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/tdm.png?v=3
+  [raspberrypi]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/raspberry-pi.png?v=3
 
 
-  [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
-  [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
-  [cygwin]: http://www.easylogging.org/images/icons/cygwin.png?v=2
-  [vcpp]: http://www.easylogging.org/images/icons/vcpp.png?v=2
-  [llvm]: http://www.easylogging.org/images/icons/llvm.png?v=2
-  [intel]: http://www.easylogging.org/images/icons/intel.png?v=2
-  [android]: http://www.easylogging.org/images/icons/android.png?v=2
-  [manual]: http://easylogging.org/images/help.png?v=3
-  [download]: http://easylogging.org/images/download.png?v=2
-  [samples]: http://easylogging.org/images/sample.png?v=2
-  [notes]: http://easylogging.org/images/notes.png?v=4
-  [top]: http://easylogging.org/images/up.png?v=4
-  [www]: http://easylogging.org/images/logo-www.png?v=6
+  [gcc]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gcc.png?v=4
+  [mingw]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mingw.png?v=2
+  [cygwin]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/cygwin.png?v=2
+  [vcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/vcpp.png?v=2
+  [llvm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/llvm.png?v=2
+  [intel]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/intel.png?v=2
+  [android]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/android.png?v=2
+  [manual]: https://raw.githubusercontent.com/easylogging/homepage/master/images/help.png?v=3
+  [download]: https://raw.githubusercontent.com/easylogging/homepage/master/images/download.png?v=2
+  [samples]: https://raw.githubusercontent.com/easylogging/homepage/master/images/sample.png?v=2
+  [notes]: https://raw.githubusercontent.com/easylogging/homepage/master/images/notes.png?v=4
+  [top]: https://raw.githubusercontent.com/easylogging/homepage/master/images/up.png?v=4
+  [www]: https://raw.githubusercontent.com/easylogging/homepage/master/images/logo-www.png?v=6
   
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
