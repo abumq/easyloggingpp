@@ -5,10 +5,9 @@
 //  Copyright (c) 2014 Majid Khan
 //
 //  This library is released under the MIT Licence.
-//  http://www.easylogging.org/licence.php
+//  https://github.com/easylogging/easyloggingpp/blob/master/LICENCE
 //
 //  support@easylogging.org
-//  http://easylogging.org
 //  https://github.com/easylogging/easyloggingpp
 //
 #ifndef EASYLOGGINGPP_H  // NOLINT
