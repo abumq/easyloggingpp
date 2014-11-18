@@ -10,7 +10,7 @@
 
 ### Quick Links
 
-  [![download] Download Latest](http://easylogging.org/latest.zip)
+  [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
   [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.75)
  
@@ -124,15 +124,15 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  [![top] Goto Top](#table-of-contents)
 
 ### Future
-We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](http://qml.easylogging.org) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
+We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
 # Getting Started
 ### Download
-Download latest version from [http://easylogging.org/latest.zip](http://easylogging.org/latest.zip)
+Download latest version from [Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
 
-For other releases, please visit [homepage](http://easylogging.org). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
+For other releases, please visit [releases page](https://github.com/easylogging/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1137,7 +1137,7 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 ### Donation
 
-Easylogging++ is free to use but it costs money to maintain the project and to run website (easylogging.org), so donations are very well accepted on your will. You can donate by visiting http://easylogging.org or by clicking on one of the links below.
+Easylogging++ is free to use but it costs money to maintain the project, so donations are very well accepted on your will. You can donate by clicking on one of the links below.
 
 [![pledgie]](http://www.pledgie.com/campaigns/22070)
 
@@ -1192,7 +1192,8 @@ Easylogging++ has also been tested with following C++ libraries;
 The MIT License (MIT)
 
 Copyright (c) 2014 Majid Khan
-http://easylogging.org/
+http://github.com/easylogging/easyloggingpp
+http://muflihun.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
