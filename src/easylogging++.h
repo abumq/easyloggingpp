@@ -5,10 +5,11 @@
 //  Copyright (c) 2014 Majid Khan
 //
 //  This library is released under the MIT Licence.
-//  https://github.com/easylogging/easyloggingpp/blob/master/LICENCE
+//  https://raw.githubusercontent.com/easylogging/easyloggingpp/master/LICENCE
 //
 //  support@easylogging.org
 //  https://github.com/easylogging/easyloggingpp
+//  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H  // NOLINT
 #define EASYLOGGINGPP_H
@@ -1003,8 +1004,9 @@ static inline std::string getCurrentThreadId(void) {
 #      endif  // (_ELPP_OS_WINDOWS)
     return ss.str();
 }
-static inline void sleep(int ms) {
-    // ::usleep(ms);
+static inline void sleep(int) {
+    // Implement this as this is part of experimental async so this would
+    // not stop us releasing new versions
 }
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
@@ -1015,8 +1017,10 @@ static inline std::string getCurrentThreadId(void) {
     ss << std::this_thread::get_id();
     return ss.str();
 }
-static inline void sleep(int ms) {
-   // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+static inline void sleep(int) {
+    // Implement this as this is part of experimental async so this would
+    // not stop us releasing new versions
+    // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -4259,6 +4263,8 @@ public:
     }
     
     virtual inline void start() {
+        // Works across all platforms?
+        // Part of experimental async so this would not stop us releasing new versions
         base::threading::sleep(5000); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
