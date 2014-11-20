@@ -5,6 +5,12 @@ Release type: Major
 API changes: No
 
 ==========================
+=      BUG FIXES         =
+==========================
+
+ - Using _ELPP_DISABLE_ASSERT breaks config file parsing (issue #218)
+
+==========================
 =     NEW FEATURES       =
 ==========================
 

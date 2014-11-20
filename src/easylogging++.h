@@ -2457,7 +2457,9 @@ public:
     /// @return True if successfully parsed, false otherwise. You may define '_ELPP_DEBUG_ASSERT_FAILURE' to make sure you
     ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
-        bool assertionPassed = false;
+		// We initial assertion with true because if we have assertion diabled, we want to pass this
+		// check and if assertion is enabled we will have values re-assigned any way.
+        bool assertionPassed = true;
         ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
                 "Configuration file [" << configurationFile << "] does not exist!");
         if (!assertionPassed) {
