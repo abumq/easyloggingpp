@@ -706,7 +706,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Creates logger automatically when not available
     CreateLoggerAutomatically = 4096,
     /// @brief Adds spaces b/w logs that separated by left-shift operator
-    AutoSpacing = 8192
+    AutoSpacing = 8192,
+	/// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
+	FixedTimeFormat = 16384
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -5316,9 +5318,7 @@ public:
         if (m_enabled) {
             base::threading::ScopedLock scopedLock(lock());
             base::utils::DateTime::gettimeofday(&m_endTime);            
-            base::type::string_t formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
-                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                    m_timestampUnit) : ELPP_LITERAL("");
+            base::type::string_t formattedTime = m_hasChecked ? getFormattedTimeTaken(m_lastCheckpointTime) : ELPP_LITERAL("");
             PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
             data.init(this);
             data.m_checkpointId = id;
@@ -5363,9 +5363,19 @@ private:
     friend class el::PerformanceTrackingData;
     friend class base::DefaultPerformanceTrackingCallback;
 
-    const base::type::string_t getFormattedTimeTaken() const {
+    const inline base::type::string_t getFormattedTimeTaken() const {
+		return getFormattedTimeTaken(m_startTime);
+    }
+	
+    const base::type::string_t getFormattedTimeTaken(struct timeval startTime) const {
+		if (ELPP->hasFlag(LoggingFlag::FixedTimeFormat)) {
+			base::type::stringstream_t ss;
+			ss << base::utils::DateTime::getTimeDifference(m_endTime,
+                startTime, m_timestampUnit) << " " << base::consts::kTimeFormats[static_cast<base::type::EnumType>(m_timestampUnit)].unit;
+			return ss.str();
+		}
         return base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime,
-                m_startTime, m_timestampUnit), m_timestampUnit);
+                startTime, m_timestampUnit), m_timestampUnit);
     }
 
     virtual inline void log(el::base::type::ostream_t& os) const {

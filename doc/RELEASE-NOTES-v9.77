@@ -5,6 +5,12 @@ Release type: Major
 API changes: No
 
 ==========================
+=     NEW FEATURES       =
+==========================
+
+ - Support for unique unit of measure in performance tracking (issue #208)
+
+==========================
 =         BUILD FIX      =
 ==========================
 

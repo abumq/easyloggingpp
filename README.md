@@ -408,6 +408,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `HierarchicalLogging (2048)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
 | `CreateLoggerAutomatically (4096)`                          | Creates logger automatically when not available. |
 | `AutoSpacing (8192)`                          | Automatically adds spaces. E.g, `LOG(INFO) << "DODGE" << "THIS!";` will output "DODGE THIS!"|
+| `FixedTimeFormat (16384)`                          | Applicable to performace tracking only - this prevents formatting time. E.g, `1001 ms` will be logged as is, instead of formatting it as `1.01 sec`|
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
