@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     _START_EASYLOGGINGPP(argc, argv);
    
     TIMED_BLOCK(t, "my-block") {
-        for (long i = 0; i <= 114300; ++i) {
+        for (long i = 0; i <= 300; ++i) {
             LOG(INFO) << "This is for-block 1";
         }
         t.timer.checkpoint("checkpoint-1"); // Note t.timer to access el::base::Trackable
