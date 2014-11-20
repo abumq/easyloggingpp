@@ -16,9 +16,7 @@
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.76/samples)
 
-  [![pledgie]](http://www.pledgie.com/campaigns/22070)
-
-  [![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LHKWCCZKWHLYW&lc=AU&item_name=Easylogging%2b%2b&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest)
+  [![paypal]](http://muflihun.com/donation/)
 
 ---
 
@@ -42,7 +40,7 @@
     <a href="#global-configurations">Global Configurations</a>
     <a href="#logging-format-specifiers">Logging Format Specifiers</a>
     <a href="#datetime-format-specifiers">Date/Time Format Specifiers</a>
-    <a href="#logging-flags">Logging flags</a>
+    <a href="#logging-flags">Logging Flags</a>
     <a href="#application-arguments">Application Arguments</a>
     <a href="#configuration-macros">Configuration Macros</a>
     <a href="#reading-configurations">Reading Configurations</a>
@@ -391,7 +389,7 @@ Please note, date/time is limited to `30` characters at most.
 
  [![top] Goto Top](#table-of-contents)
  
-###Logging flags
+###Logging Flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
 |     Flag                                               |                 Description                                                                                                                   |
@@ -1137,11 +1135,9 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 ### Donation
 
-Easylogging++ is free to use but it costs money to maintain the project, so donations are very well accepted on your will. You can donate by clicking on one of the links below.
+Easylogging++ is free to use. You can check the details on where do donations go by clicking link below.
 
-[![pledgie]](http://www.pledgie.com/campaigns/22070)
-
-[![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LHKWCCZKWHLYW&lc=AU&item_name=Easylogging%2b%2b&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest)
+[![paypal]](http://muflihun.com/donation/)
 
  [![top] Goto Top](#table-of-contents)
 
