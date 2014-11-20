@@ -8,15 +8,15 @@ TEST(LogFormatResolutionTest, NormalFormat) {
     EXPECT_EQ(ELPP_LITERAL("%logger %thread"), format.format());
     EXPECT_EQ("", format.dateTimeFormat());
 
-    LogFormat format2(Level::Info, ELPP_LITERAL("%logger %datetime{%d/%M/%Y %h:%m:%s  } %thread"));
-    EXPECT_EQ(ELPP_LITERAL("%logger %datetime{%d/%M/%Y %h:%m:%s  } %thread"), format2.userFormat());
+    LogFormat format2(Level::Info, ELPP_LITERAL("%logger %datetime{%Y-%M-%d %h:%m:%s  } %thread"));
+    EXPECT_EQ(ELPP_LITERAL("%logger %datetime{%Y-%M-%d %h:%m:%s  } %thread"), format2.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), format2.format());
-    EXPECT_EQ("%d/%M/%Y %h:%m:%s  ", format2.dateTimeFormat());
+    EXPECT_EQ("%Y-%M-%d %h:%m:%s  ", format2.dateTimeFormat());
 
-    LogFormat format3(Level::Info, ELPP_LITERAL("%logger %datetime{%d/%M/%Y} %thread"));
-    EXPECT_EQ(ELPP_LITERAL("%logger %datetime{%d/%M/%Y} %thread"), format3.userFormat());
+    LogFormat format3(Level::Info, ELPP_LITERAL("%logger %datetime{%Y-%M-%d} %thread"));
+    EXPECT_EQ(ELPP_LITERAL("%logger %datetime{%Y-%M-%d} %thread"), format3.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), format3.format());
-    EXPECT_EQ("%d/%M/%Y", format3.dateTimeFormat());
+    EXPECT_EQ("%Y-%M-%d", format3.dateTimeFormat());
 }
 
 TEST(LogFormatResolutionTest, DefaultFormat) {
@@ -24,17 +24,17 @@ TEST(LogFormatResolutionTest, DefaultFormat) {
     LogFormat defaultFormat(Level::Info, ELPP_LITERAL("%logger %datetime %thread"));
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), defaultFormat.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), defaultFormat.format());
-    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat.dateTimeFormat());
+    EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", defaultFormat.dateTimeFormat());
 
     LogFormat defaultFormat2(Level::Info, ELPP_LITERAL("%logger %datetime %thread"));
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), defaultFormat2.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), defaultFormat2.format());
-    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat2.dateTimeFormat());
+    EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", defaultFormat2.dateTimeFormat());
 
     LogFormat defaultFormat4(Level::Verbose, ELPP_LITERAL("%logger %level-%vlevel %datetime %thread"));
     EXPECT_EQ(ELPP_LITERAL("%logger %level-%vlevel %datetime %thread"), defaultFormat4.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger VER-%vlevel %datetime %thread"), defaultFormat4.format());
-    EXPECT_EQ("%d/%M/%Y %H:%m:%s,%g", defaultFormat4.dateTimeFormat());
+    EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", defaultFormat4.dateTimeFormat());
 }
 
 TEST(LogFormatResolutionTest, EscapedFormat) {
