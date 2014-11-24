@@ -1,15 +1,15 @@
 //
-//  Easylogging++ v9.75  (development / unreleased version)
+//  Easylogging++ v9.77 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2014 Majid Khan
 //
 //  This library is released under the MIT Licence.
-//  http://www.easylogging.org/licence.php
+//  https://raw.githubusercontent.com/easylogging/easyloggingpp/master/LICENCE
 //
 //  support@easylogging.org
-//  http://easylogging.org
 //  https://github.com/easylogging/easyloggingpp
+//  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H  // NOLINT
 #define EASYLOGGINGPP_H
@@ -733,7 +733,9 @@ enum class LoggingFlag : base::type::EnumType {
     /// @brief Creates logger automatically when not available
     CreateLoggerAutomatically = 4096,
     /// @brief Adds spaces b/w logs that separated by left-shift operator
-    AutoSpacing = 8192
+    AutoSpacing = 8192,
+	/// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
+	FixedTimeFormat = 16384
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -776,8 +778,8 @@ namespace consts {
     static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
             "September", "October", "November", "December" };
     static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    static const char* kDefaultDateTimeFormat           =      "%d/%M/%Y %H:%m:%s,%g";
-    static const char* kDefaultDateTimeFormatInFilename =      "%d-%M-%Y_%H-%m";
+    static const char* kDefaultDateTimeFormat           =      "%Y-%M-%d %H:%m:%s,%g";
+    static const char* kDefaultDateTimeFormatInFilename =      "%Y-%M-%d_%H-%m";
     static const int kYearBase                          =      1900;
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
@@ -1031,8 +1033,9 @@ static inline std::string getCurrentThreadId(void) {
 #      endif  // (_ELPP_OS_WINDOWS)
     return ss.str();
 }
-static inline void sleep(int ms) {
-    // ::usleep(ms);
+static inline void sleep(int) {
+    // Implement this as this is part of experimental async so this would
+    // not stop us releasing new versions
 }
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
@@ -1043,8 +1046,10 @@ static inline std::string getCurrentThreadId(void) {
     ss << std::this_thread::get_id();
     return ss.str();
 }
-static inline void sleep(int ms) {
-   // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+static inline void sleep(int) {
+    // Implement this as this is part of experimental async so this would
+    // not stop us releasing new versions
+    // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -2479,7 +2484,9 @@ public:
     /// @return True if successfully parsed, false otherwise. You may define '_ELPP_DEBUG_ASSERT_FAILURE' to make sure you
     ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
-        bool assertionPassed = false;
+		// We initial assertion with true because if we have assertion diabled, we want to pass this
+		// check and if assertion is enabled we will have values re-assigned any way.
+        bool assertionPassed = true;
         ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
                 "Configuration file [" << configurationFile << "] does not exist!");
         if (!assertionPassed) {
@@ -4300,6 +4307,8 @@ public:
     }
     
     virtual inline void start() {
+        // Works across all platforms?
+        // Part of experimental async so this would not stop us releasing new versions
         base::threading::sleep(5000); // Wait extra few seconds
         setContinueRunning(true);
         pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
@@ -5351,9 +5360,7 @@ public:
         if (m_enabled) {
             base::threading::ScopedLock scopedLock(lock());
             base::utils::DateTime::gettimeofday(&m_endTime);            
-            base::type::string_t formattedTime = m_hasChecked ? base::utils::DateTime::formatTime(
-                    base::utils::DateTime::getTimeDifference(m_endTime, m_lastCheckpointTime, m_timestampUnit), 
-                    m_timestampUnit) : ELPP_LITERAL("");
+            base::type::string_t formattedTime = m_hasChecked ? getFormattedTimeTaken(m_lastCheckpointTime) : ELPP_LITERAL("");
             PerformanceTrackingData data(PerformanceTrackingData::DataType::Checkpoint);
             data.init(this);
             data.m_checkpointId = id;
@@ -5398,9 +5405,19 @@ private:
     friend class el::PerformanceTrackingData;
     friend class base::DefaultPerformanceTrackingCallback;
 
-    const base::type::string_t getFormattedTimeTaken() const {
+    const inline base::type::string_t getFormattedTimeTaken() const {
+		return getFormattedTimeTaken(m_startTime);
+    }
+	
+    const base::type::string_t getFormattedTimeTaken(struct timeval startTime) const {
+		if (ELPP->hasFlag(LoggingFlag::FixedTimeFormat)) {
+			base::type::stringstream_t ss;
+			ss << base::utils::DateTime::getTimeDifference(m_endTime,
+                startTime, m_timestampUnit) << " " << base::consts::kTimeFormats[static_cast<base::type::EnumType>(m_timestampUnit)].unit;
+			return ss.str();
+		}
         return base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime,
-                m_startTime, m_timestampUnit), m_timestampUnit);
+                startTime, m_timestampUnit), m_timestampUnit);
     }
 
     virtual inline void log(el::base::type::ostream_t& os) const {
@@ -5973,9 +5990,9 @@ public:
 class VersionInfo : base::StaticClass {
 public:
    /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.75"); }
+    static inline const std::string version(void) { return std::string("9.77"); }
    /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("06-08-2014 1303hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("21-11-2014 0915hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON

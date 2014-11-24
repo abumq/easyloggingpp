@@ -2,25 +2,21 @@
 
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
-##### YOU ARE CURRENTLY BROWSING `develop` BRANCH. PLEASE SWITCH TO [`master`](https://github.com/easylogging/easyloggingpp) BRANCH IF YOU ARE NOT CONTRIBUTOR
+-##### YOU ARE CURRENTLY BROWSING `develop` BRANCH. PLEASE SWITCH TO [`master`](https://github.com/easylogging/easyloggingpp) BRANCH IF YOU ARE NOT CONTRIBUTOR
 
-> **Manual For v9.75 (development / unreleased version)**
+> **Manual For v9.77 (development / unreleased version)**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
 ### Quick Links
 
-  [![download] Download Latest](http://easylogging.org/latest.zip)
+  [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.75)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.77)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.75/samples)
-  
-  [![www] Project Homepage](http://easylogging.org/)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.77/samples)
 
-  [![pledgie]](http://www.pledgie.com/campaigns/22070)
-
-  [![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LHKWCCZKWHLYW&lc=AU&item_name=Easylogging%2b%2b&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest)
+  [![paypal]](http://muflihun.com/donation/)
 
 ---
 
@@ -44,7 +40,7 @@
     <a href="#global-configurations">Global Configurations</a>
     <a href="#logging-format-specifiers">Logging Format Specifiers</a>
     <a href="#datetime-format-specifiers">Date/Time Format Specifiers</a>
-    <a href="#logging-flags">Logging flags</a>
+    <a href="#logging-flags">Logging Flags</a>
     <a href="#application-arguments">Application Arguments</a>
     <a href="#configuration-macros">Configuration Macros</a>
     <a href="#reading-configurations">Reading Configurations</a>
@@ -95,7 +91,7 @@
 
 # Introduction
 Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.75. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.77. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -126,15 +122,15 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  [![top] Goto Top](#table-of-contents)
 
 ### Future
-We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](http://qml.easylogging.org) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
+We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
 # Getting Started
 ### Download
-Download latest version from [http://easylogging.org/latest.zip](http://easylogging.org/latest.zip)
+Download latest version from [Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
 
-For other releases, please visit [homepage](http://easylogging.org). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
+For other releases, please visit [releases page](https://github.com/easylogging/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -393,7 +389,7 @@ Please note, date/time is limited to `30` characters at most.
 
  [![top] Goto Top](#table-of-contents)
  
-###Logging flags
+###Logging Flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
 |     Flag                                               |                 Description                                                                                                                   |
@@ -412,6 +408,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `HierarchicalLogging (2048)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
 | `CreateLoggerAutomatically (4096)`                          | Creates logger automatically when not available. |
 | `AutoSpacing (8192)`                          | Automatically adds spaces. E.g, `LOG(INFO) << "DODGE" << "THIS!";` will output "DODGE THIS!"|
+| `FixedTimeFormat (16384)`                          | Applicable to performace tracking only - this prevents formatting time. E.g, `1001 ms` will be logged as is, instead of formatting it as `1.01 sec`|
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
@@ -1139,11 +1136,9 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 ### Donation
 
-Easylogging++ is free to use but it costs money to maintain the project and to run website (easylogging.org), so donations are very well accepted on your will. You can donate by visiting http://easylogging.org or by clicking on one of the links below.
+Easylogging++ is free to use. You can check the details on where do donations go by clicking link below.
 
-[![pledgie]](http://www.pledgie.com/campaigns/22070)
-
-[![paypal]](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=LHKWCCZKWHLYW&lc=AU&item_name=Easylogging%2b%2b&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHostedGuest)
+[![paypal]](http://muflihun.com/donation/)
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1194,7 +1189,8 @@ Easylogging++ has also been tested with following C++ libraries;
 The MIT License (MIT)
 
 Copyright (c) 2014 Majid Khan
-http://easylogging.org/
+http://github.com/easylogging/easyloggingpp
+http://muflihun.com
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -1226,38 +1222,38 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: http://easylogging.org/images/banner.png?v=4
-  [ubuntu]: http://www.easylogging.org/images/icons/ubuntu.png?v=2
-  [mint]: http://www.easylogging.org/images/icons/linux-mint.png?v=2
-  [freebsd]: http://www.easylogging.org/images/icons/free-bsd.png?v=2
-  [sl]: http://www.easylogging.org/images/icons/scientific-linux.png?v=2
-  [fedora]: http://www.easylogging.org/images/icons/fedora.png?v=3
-  [mac]: http://www.easylogging.org/images/icons/mac-osx.png?v=2
-  [winxp]: http://www.easylogging.org/images/icons/windowsxp.png?v=2
-  [win7]: http://www.easylogging.org/images/icons/windows7.png?v=2
-  [win8]: http://www.easylogging.org/images/icons/windows8.png?v=2
-  [qt]: http://www.easylogging.org/images/icons/qt.png?v=3
-  [boost]: http://www.easylogging.org/images/icons/boost.png?v=3
-  [wxwidgets]: http://www.easylogging.org/images/icons/wxwidgets.png?v=3
-  [devcpp]: http://www.easylogging.org/images/icons/devcpp.png?v=3
-  [gtkmm]: http://www.easylogging.org/images/icons/gtkmm.png?v=3
-  [tdm]: http://www.easylogging.org/images/icons/tdm.png?v=3
-  [raspberrypi]: http://www.easylogging.org/images/icons/raspberry-pi.png?v=3
+  [banner]: https://raw.githubusercontent.com/easylogging/homepage/master/images/banner.png?v=4
+  [ubuntu]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/ubuntu.png?v=2
+  [mint]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/linux-mint.png?v=2
+  [freebsd]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/free-bsd.png?v=2
+  [sl]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/scientific-linux.png?v=2
+  [fedora]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/fedora.png?v=3
+  [mac]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mac-osx.png?v=2
+  [winxp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windowsxp.png?v=2
+  [win7]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows7.png?v=2
+  [win8]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows8.png?v=2
+  [qt]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/qt.png?v=3
+  [boost]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/boost.png?v=3
+  [wxwidgets]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/devcpp.png?v=3
+  [gtkmm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gtkmm.png?v=3
+  [tdm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/tdm.png?v=3
+  [raspberrypi]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/raspberry-pi.png?v=3
 
 
-  [gcc]: http://www.easylogging.org/images/icons/gcc.png?v=4
-  [mingw]: http://www.easylogging.org/images/icons/mingw.png?v=2
-  [cygwin]: http://www.easylogging.org/images/icons/cygwin.png?v=2
-  [vcpp]: http://www.easylogging.org/images/icons/vcpp.png?v=2
-  [llvm]: http://www.easylogging.org/images/icons/llvm.png?v=2
-  [intel]: http://www.easylogging.org/images/icons/intel.png?v=2
-  [android]: http://www.easylogging.org/images/icons/android.png?v=2
-  [manual]: http://easylogging.org/images/help.png?v=3
-  [download]: http://easylogging.org/images/download.png?v=2
-  [samples]: http://easylogging.org/images/sample.png?v=2
-  [notes]: http://easylogging.org/images/notes.png?v=4
-  [top]: http://easylogging.org/images/up.png?v=4
-  [www]: http://easylogging.org/images/logo-www.png?v=6
+  [gcc]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gcc.png?v=4
+  [mingw]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mingw.png?v=2
+  [cygwin]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/cygwin.png?v=2
+  [vcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/vcpp.png?v=2
+  [llvm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/llvm.png?v=2
+  [intel]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/intel.png?v=2
+  [android]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/android.png?v=2
+  [manual]: https://raw.githubusercontent.com/easylogging/homepage/master/images/help.png?v=3
+  [download]: https://raw.githubusercontent.com/easylogging/homepage/master/images/download.png?v=2
+  [samples]: https://raw.githubusercontent.com/easylogging/homepage/master/images/sample.png?v=2
+  [notes]: https://raw.githubusercontent.com/easylogging/homepage/master/images/notes.png?v=4
+  [top]: https://raw.githubusercontent.com/easylogging/homepage/master/images/up.png?v=4
+  [www]: https://raw.githubusercontent.com/easylogging/homepage/master/images/logo-www.png?v=6
   
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
