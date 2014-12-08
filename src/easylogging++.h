@@ -470,10 +470,10 @@ typedef std::stringstream stringstream_t;
 typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
-#define ELPP_COUT_FAILBIT ELPP_COUT.fail();
-#define ELPP_COUT_CLEAR ELPP_COUT.clear();
-#define ELPP_CERR_FAILBIT ELPP_CERR.fail();
-#define ELPP_CERR_CLEAR ELPP_CERR.clear();
+#define ELPP_COUT_FAILBIT ELPP_COUT.fail()
+#define ELPP_COUT_CLEAR ELPP_COUT.clear()
+#define ELPP_CERR_FAILBIT ELPP_CERR.fail()
+#define ELPP_CERR_CLEAR ELPP_CERR.clear()
 #if defined(ELPP_CUSTOM_COUT_LINE)
 #   define ELPP_COUT_LINE(logLine) ELPP_CUSTOM_COUT_LINE(logLine)
 #else
