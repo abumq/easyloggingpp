@@ -470,6 +470,10 @@ typedef std::stringstream stringstream_t;
 typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
+#define ELPP_COUT_FAILBIT ELPP_COUT.fail();
+#define ELPP_COUT_CLEAR ELPP_COUT.clear();
+#define ELPP_CERR_FAILBIT ELPP_CERR.fail();
+#define ELPP_CERR_CLEAR ELPP_CERR.clear();
 #if defined(ELPP_CUSTOM_COUT_LINE)
 #   define ELPP_COUT_LINE(logLine) ELPP_CUSTOM_COUT_LINE(logLine)
 #else
@@ -4223,9 +4227,15 @@ private:
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
                 ELPP_COUT << ELPP_COUT_LINE(logLine);
+                if (EPP_COUT_FAILBIT) {
+                  ELPP_COUT_CLEAR;
+                }
             }
             if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardError(m_data->logMessage()->level())) {
                 ELPP_CERR << ELPP_CERR_LINE(logLine);
+                if (EPP_CERR_FAILBIT) {
+                  ELPP_CERR_CLEAR;
+                }
             }
 
         }
