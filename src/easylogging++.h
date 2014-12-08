@@ -4227,13 +4227,13 @@ private:
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
                 ELPP_COUT << ELPP_COUT_LINE(logLine);
-                if (EPP_COUT_FAILBIT) {
+                if (ELPP_COUT_FAILBIT) {
                   ELPP_COUT_CLEAR;
                 }
             }
             if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardError(m_data->logMessage()->level())) {
                 ELPP_CERR << ELPP_CERR_LINE(logLine);
-                if (EPP_CERR_FAILBIT) {
+                if (ELPP_CERR_FAILBIT) {
                   ELPP_CERR_CLEAR;
                 }
             }
