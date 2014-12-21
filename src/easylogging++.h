@@ -310,7 +310,7 @@
 #   include <sys/time.h>
 #elif _ELPP_OS_WINDOWS
 #   include <direct.h>
-#   include <Windows.h>
+#   include <windows.h>
 #   if defined(WIN32_LEAN_AND_MEAN)
 #      include <winsock.h>
 #   endif // defined(WIN32_LEAN_AND_MEAN)
