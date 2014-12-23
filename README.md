@@ -1043,8 +1043,8 @@ public:
         return *this;
     }
     // Following line does the trick!
-    // Note: el::base::types::ostream_t is either std::wostream or std::ostream depending on unicode enabled or not
-    virtual void log(el::base::types::ostream_t& os) const {
+    // Note: el::base::type::ostream_t is either std::wostream or std::ostream depending on unicode enabled or not
+    virtual void log(el::base::type::ostream_t& os) const {
         os << m_underlyingInt;
     }
 private:
