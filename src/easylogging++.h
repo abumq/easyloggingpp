@@ -5962,13 +5962,13 @@ public:
         return ELPP->vRegistry()->level();
     }
 	/// @brief Sets vmodules as specified (on the fly)
-    static inline void setVerboseVModules(const char* modules) {
+    static inline void setVModules(const char* modules) {
         if (ELPP->vRegistry()->vModulesEnabled()) {
             ELPP->vRegistry()->setModules(modules);
         }
     }
 	/// @brief Clears vmodules
-    static inline void clearVerboseVModules(void) {
+    static inline void clearVModules(void) {
         ELPP->vRegistry()->clearModules();
     }
 };
