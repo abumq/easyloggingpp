@@ -1144,7 +1144,7 @@ public:
         currPath = STRTOK(currPath, base::consts::kFilePathSeperator, 0);
 #elif _ELPP_OS_WINDOWS
         // Use secure functions API
-        char* nextTok_;
+        char* nextTok_ = nullptr;
         currPath = STRTOK(currPath, base::consts::kFilePathSeperator, &nextTok_);
         _ELPP_UNUSED(nextTok_);
 #endif  // _ELPP_OS_UNIX
