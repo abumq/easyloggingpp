@@ -5,13 +5,11 @@ Release type: Minor
 API changes: No
 
 ==========================
-=      BUG FIXES         =
-==========================
-
-==========================
 =     NEW FEATURES       =
 ==========================
 
+ - Ability to add, clear verbose modules on the fly (issue #219)
+ - Ability to set verbose logging level on the fly (issue #238)
  - Solaris support
 
 ==========================

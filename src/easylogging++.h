@@ -711,8 +711,8 @@ enum class LoggingFlag : base::type::EnumType {
     CreateLoggerAutomatically = 4096,
     /// @brief Adds spaces b/w logs that separated by left-shift operator
     AutoSpacing = 8192,
-	/// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
-	FixedTimeFormat = 16384
+    /// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
+    FixedTimeFormat = 16384
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -2461,8 +2461,8 @@ public:
     /// @return True if successfully parsed, false otherwise. You may define '_ELPP_DEBUG_ASSERT_FAILURE' to make sure you
     ///         do not proceed without successful parse.
     inline bool parseFromFile(const std::string& configurationFile, Configurations* base = nullptr) {
-		// We initial assertion with true because if we have assertion diabled, we want to pass this
-		// check and if assertion is enabled we will have values re-assigned any way.
+        // We initial assertion with true because if we have assertion diabled, we want to pass this
+        // check and if assertion is enabled we will have values re-assigned any way.
         bool assertionPassed = true;
         ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
                 "Configuration file [" << configurationFile << "] does not exist!");
@@ -3798,13 +3798,16 @@ public:
             setLevel(atoi(commandLineArgs->getParamValue("--v")));
         } else if (commandLineArgs->hasParamWithValue("--V")) {
             setLevel(atoi(commandLineArgs->getParamValue("--V")));
-        } else if ((commandLineArgs->hasParamWithValue("-vmodule"))
-                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_pFlags))) {
+        } else if ((commandLineArgs->hasParamWithValue("-vmodule")) && vModulesEnabled()) {
             setModules(commandLineArgs->getParamValue("-vmodule"));
-        } else if (commandLineArgs->hasParamWithValue("-VMODULE") 
-                && (!base::utils::hasFlag(LoggingFlag::DisableVModules, *m_pFlags))) {
+        } else if (commandLineArgs->hasParamWithValue("-VMODULE") && vModulesEnabled()) {
             setModules(commandLineArgs->getParamValue("-VMODULE"));
         }
+    }
+    
+    /// @brief Whether or not vModules enabled
+    inline bool vModulesEnabled(void) {
+        return !base::utils::hasFlag(LoggingFlag::DisableVModules, *m_pFlags);
     }
 
 private:
@@ -5370,16 +5373,16 @@ private:
     friend class base::DefaultPerformanceTrackingCallback;
 
     const inline base::type::string_t getFormattedTimeTaken() const {
-		return getFormattedTimeTaken(m_startTime);
+        return getFormattedTimeTaken(m_startTime);
     }
-	
+    
     const base::type::string_t getFormattedTimeTaken(struct timeval startTime) const {
-		if (ELPP->hasFlag(LoggingFlag::FixedTimeFormat)) {
-			base::type::stringstream_t ss;
-			ss << base::utils::DateTime::getTimeDifference(m_endTime,
+        if (ELPP->hasFlag(LoggingFlag::FixedTimeFormat)) {
+            base::type::stringstream_t ss;
+            ss << base::utils::DateTime::getTimeDifference(m_endTime,
                 startTime, m_timestampUnit) << " " << base::consts::kTimeFormats[static_cast<base::type::EnumType>(m_timestampUnit)].unit;
-			return ss.str();
-		}
+            return ss.str();
+        }
         return base::utils::DateTime::formatTime(base::utils::DateTime::getTimeDifference(m_endTime,
                 startTime, m_timestampUnit), m_timestampUnit);
     }
@@ -5950,12 +5953,30 @@ public:
     static inline void setLoggingLevel(Level level) {
         ELPP->setLoggingLevel(level);
     }
+    /// @brief Sets verbose level on the fly
+    static inline void setVerboseLevel(base::type::VerboseLevel level) {
+        ELPP->vRegistry()->setLevel(level);
+    }
+    /// @brief Gets current verbose level
+    static inline base::type::VerboseLevel verboseLevel(void) {
+        return ELPP->vRegistry()->level();
+    }
+	/// @brief Sets vmodules as specified (on the fly)
+    static inline void setVerboseVModules(const char* modules) {
+        if (ELPP->vRegistry()->vModulesEnabled()) {
+            ELPP->vRegistry()->setModules(modules);
+        }
+    }
+	/// @brief Clears vmodules
+    static inline void clearVerboseVModules(void) {
+        ELPP->vRegistry()->clearModules();
+    }
 };
 class VersionInfo : base::StaticClass {
 public:
-   /// @brief Current version number
+    /// @brief Current version number
     static inline const std::string version(void) { return std::string("9.77"); }
-   /// @brief Release date of current version
+    /// @brief Release date of current version
     static inline const std::string releaseDate(void) { return std::string("21-11-2014 0915hrs"); }
 };
 }  // namespace el
