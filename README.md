@@ -590,6 +590,8 @@ Verbose logging also has conditional and occasional logging aspects i.e,
 #### Verbose-Level
 Verbose level is level of verbosity that can have range of 1-9. Verbose level will not be active unless you either set application arguments for it. Please read through [Application Arguments](#application-arguments) section to understand more about verbose logging.
 
+In order to change verbose level on the fly, please use `Loggers::setVerboseLevel(base::type::VerboseLevel)` aka `Loggers::setVerboseLevel(int)` function. (You can check current verbose level by `Loggers::verboseLevel()`
+
  [![top] Goto Top](#table-of-contents)
  
 #### Check If Verbose Logging Is On
@@ -603,9 +605,9 @@ if (VLOG_IS_ON(2)) {
  [![top] Goto Top](#table-of-contents)
  
 #### VModule
-VModule is functionality for verbose logging (as mentioned in above table) where you can specify verbosity by modules/source file. Following are some examples with explanation; Any of vmodule below starts with `-vmodule=` and `_ELPP_DISABLE_VMODULES_EXTENSION` not defined
+VModule is functionality for verbose logging (as mentioned in above table) where you can specify verbosity by modules/source file. Following are some examples with explanation; Any of vmodule below starts with `-vmodule=` and `LoggingFlag::DisableVModulesExtensions` flag not set. Vmodule can completely be disabled by adding flag `LoggingFlag::DisableVModules`
 
-Example with `AllowVerboseIfModuleNotSpecified` flag;
+Example with `LoggingFlag::AllowVerboseIfModuleNotSpecified` flag;
 
 `main=3,parser*=4`:
  * A bad example but good enough for explanation;
@@ -614,10 +616,12 @@ Example with `AllowVerboseIfModuleNotSpecified` flag;
     `parser{.h, .c, .cpp, .cc, .cxx, -inl.h, .hxx, .hpp}`
  * No other file will be logged for verbose level
 
-Example with no `AllowVerboseIfModuleNotSpecified` flag;
+Example with no `LoggingFlag::AllowVerboseIfModuleNotSpecified` flag;
 
 `main=3,parser*=4`:
  Same explanation but any other file that does not fall under specified modules will have verbose logging enabled.
+
+In order to change vmodules on the fly (instead of via command line args) - use `Loggers::setVModules(const char*)` where `const char*` represents the modules e.g, `main=3,parser*=4` (as per above example)
 
  [![top] Goto Top](#table-of-contents)
  
