@@ -24,5 +24,8 @@ int main(int argc, char** argv) {
     // Escaping
     defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222); // My first ultimate log message % %v 123 222
 
+    defaultLogger->verbose(1, "test verbose");
+    defaultLogger->verbose(1, "test verbose with args %v", 2);
+
     return 0;
 }

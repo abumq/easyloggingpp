@@ -48,6 +48,7 @@
     <a href="#basic">Basic</a>
     <a href="#conditional-logging">Conditional Logging</a>
     <a href="#occasional-logging">Occasional Logging</a>
+    <a href="#printf-like-logging">printf Like Logging</a>
     <a href="#verbose-logging">Verbose Logging</a>
         <a href="#basic-1">Basic</a>
         <a href="#conditional-and-occasional">Conditional and Occasional</a>
@@ -565,6 +566,42 @@ for (int i = 1; i <= 100; ++i) {
 
  [![top] Goto Top](#table-of-contents)
  
+### printf Like Logging
+For compilers that support C++11's variadic templates, ability to log like "printf" is available. This is done by using `Logger` class. This feature is thread and type safe (as we do not use any macros like `LOG(INFO)` etc)
+
+This is done in two steps:
+ 1. Pulling registered logger using `el::Loggers::getLogger(<logger_id>);`
+ 2. Using one of logging functions
+ 
+The only difference from `printf` is that logging using these functions require `%v` for each arg; instead of custom format specifiers. You can escape this by `%%v`
+
+Following are various function signatures:
+ * `info(const char*, const T&, const Args&...)`
+ * `warn(const char*, const T&, const Args&...)`
+ * `error(const char*, const T&, const Args&...)`
+ * `debug(const char*, const T&, const Args&...)`
+ * `fatal(const char*, const T&, const Args&...)`
+ * `trace(const char*, const T&, const Args&...)`
+ * `verbose(int vlevel, const char*, const T&, const Args&...)`
+ 
+#### Simple example:
+
+```c++
+// Use default logger
+el::Logger* defaultLogger = el::Loggers::getLogger("default");
+
+// STL logging (`_ELPP_STL_LOGGING` should be defined)
+std::vector<int> i;
+i.push_back(1);
+defaultLogger->warn("My first ultimate log message %v %v %v", 123, 222, i);
+
+// Escaping
+defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222);
+
+```
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Verbose Logging
 #### Basic
 Verbose logging is useful in every software to record more information than usual. Very useful for troubleshooting. Following are verbose logging specific macros;
