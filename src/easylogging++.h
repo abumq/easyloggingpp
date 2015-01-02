@@ -432,6 +432,7 @@ namespace type {
 #undef ELPP_LITERAL
 #undef ELPP_STRLEN
 #undef ELPP_COUT
+#undef ELPP_CERR
 #if defined(_ELPP_UNICODE)
 #   define ELPP_LITERAL(txt) L##txt
 #   define ELPP_STRLEN wcslen
@@ -440,6 +441,11 @@ namespace type {
 #   else
 #      define ELPP_COUT std::wcout
 #   endif  // defined ELPP_CUSTOM_COUT
+#   if defined ELPP_CUSTOM_CERR
+#      define ELPP_CERR ELPP_CUSTOM_CERR
+#   else
+#      define ELPP_CERR std::wcerr
+#   endif  // defined ELPP_CUSTOM_CERR
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
@@ -453,17 +459,31 @@ typedef std::wostream ostream_t;
 #   else
 #      define ELPP_COUT std::cout
 #   endif  // defined ELPP_CUSTOM_COUT
+#   if defined ELPP_CUSTOM_CERR
+#      define ELPP_CERR ELPP_CUSTOM_CERR
+#   else
+#      define ELPP_CERR std::cerr
+#   endif  // defined ELPP_CUSTOM_CERR
 typedef char char_t;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;
 typedef std::fstream fstream_t;
 typedef std::ostream ostream_t;
 #endif  // defined(_ELPP_UNICODE)
+#define ELPP_COUT_FAILBIT ELPP_COUT.fail()
+#define ELPP_COUT_CLEAR ELPP_COUT.clear()
+#define ELPP_CERR_FAILBIT ELPP_CERR.fail()
+#define ELPP_CERR_CLEAR ELPP_CERR.clear()
 #if defined(ELPP_CUSTOM_COUT_LINE)
 #   define ELPP_COUT_LINE(logLine) ELPP_CUSTOM_COUT_LINE(logLine)
 #else
 #   define ELPP_COUT_LINE(logLine) logLine << std::flush
 #endif // defined(ELPP_CUSTOM_COUT_LINE)
+#if defined(ELPP_CUSTOM_CERR_LINE)
+#   define ELPP_CERR_LINE(logLine) ELPP_CUSTOM_CERR_LINE(logLine)
+#else
+#   define ELPP_CERR_LINE(logLine) logLine << std::flush
+#endif // defined(ELPP_CUSTOM_CERR_LINE)
 typedef unsigned short EnumType;  // NOLINT
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
@@ -589,7 +609,7 @@ enum class ConfigurationType : base::type::EnumType {
    /// @brief Whether or not to write corresponding log to log file
     ToFile = 2,
    /// @brief Whether or not to write corresponding level and logger log to standard output.
-   /// By standard output meaning termnal, command prompt etc
+   /// By standard output meaning terminal, command prompt etc
     ToStandardOutput = 4,
    /// @brief Determines format of logging corresponding level and logger.
     Format = 8,
@@ -608,6 +628,10 @@ enum class ConfigurationType : base::type::EnumType {
     MaxLogFileSize = 128,
    /// @brief Specifies number of log entries to hold until we flush pending log data
     LogFlushThreshold = 256,
+   /// @brief Whether or not to write corresponding level logger log to standard error.
+   /// By standard error meaning terminal std::cerr
+    ToStandardError = 512,
+
    /// @brief Represents unknown configuration
     Unknown = 1010
 };
@@ -635,6 +659,7 @@ public:
         if (configurationType == ConfigurationType::Format) return "FORMAT";
         if (configurationType == ConfigurationType::ToFile) return "TO_FILE";
         if (configurationType == ConfigurationType::ToStandardOutput) return "TO_STANDARD_OUTPUT";
+        if (configurationType == ConfigurationType::ToStandardError) return "TO_STANDARD_ERROR";
         if (configurationType == ConfigurationType::MillisecondsWidth) return "MILLISECONDS_WIDTH";
         if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
         if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
@@ -651,6 +676,8 @@ public:
             return ConfigurationType::ToFile;
         if ((strcmp(configStr, "TO_STANDARD_OUTPUT") == 0) || (strcmp(configStr, "to_standard_output") == 0))
             return ConfigurationType::ToStandardOutput;
+        if ((strcmp(configStr, "ERROR_TO_STANDARD_ERROR") == 0) || (strcmp(configStr, "error_to_standard_error") == 0))
+            return ConfigurationType::ToStandardError;
         if ((strcmp(configStr, "FORMAT") == 0) || (strcmp(configStr, "format") == 0))
             return ConfigurationType::Format;
         if ((strcmp(configStr, "FILENAME") == 0) || (strcmp(configStr, "filename") == 0))
@@ -2597,6 +2624,7 @@ public:
 #endif  // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         setGlobally(ConfigurationType::ToFile, std::string("true"), true);
         setGlobally(ConfigurationType::ToStandardOutput, std::string("true"), true);
+        setGlobally(ConfigurationType::ToStandardError, std::string("false"), true);
         setGlobally(ConfigurationType::MillisecondsWidth, std::string("3"), true);
         setGlobally(ConfigurationType::PerformanceTracking, std::string("true"), true);
         setGlobally(ConfigurationType::MaxLogFileSize, std::string("0"), true);
@@ -2626,6 +2654,7 @@ public:
 #endif  // !defined(_ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, std::string("true"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
+        unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardError, std::string("false"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, std::string("3"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MaxLogFileSize, std::string("0"));
@@ -2891,6 +2920,10 @@ public:
         return getConfigByVal<bool>(level, &m_toStandardOutputMap, "toStandardOutput");
     }
 
+    inline bool toStandardError(Level level) {
+        return getConfigByVal<bool>(level, &m_toStandardErrorMap, "toStandardError");
+    }
+
     inline const base::LogFormat& logFormat(Level level) {
         return getConfigByRef<base::LogFormat>(level, &m_logFormatMap, "logFormat");
     }
@@ -2921,6 +2954,7 @@ private:
     std::map<Level, bool> m_toFileMap;
     std::map<Level, std::string> m_filenameMap;
     std::map<Level, bool> m_toStandardOutputMap;
+    std::map<Level, bool> m_toStandardErrorMap;
     std::map<Level, base::LogFormat> m_logFormatMap;
     std::map<Level, base::MillisecondsWidth> m_millisecondsWidthMap;
     std::map<Level, bool> m_performanceTrackingMap;
@@ -3019,6 +3053,8 @@ private:
                 setValue(conf->level(), getBool(conf->value()), &m_toFileMap);
             } else if (conf->configurationType() == ConfigurationType::ToStandardOutput) {
                 setValue(conf->level(), getBool(conf->value()), &m_toStandardOutputMap);
+            } else if (conf->configurationType() == ConfigurationType::ToStandardError) {
+                setValue(conf->level(), getBool(conf->value()), &m_toStandardErrorMap);
             } else if (conf->configurationType() == ConfigurationType::Filename) {
             // We do not yet configure filename but we will configure in another
             // loop. This is because if file cannot be created, we will force ToFile
@@ -4194,7 +4230,17 @@ private:
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
                     m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
                 ELPP_COUT << ELPP_COUT_LINE(logLine);
-             }
+                if (ELPP_COUT_FAILBIT) {
+                  ELPP_COUT_CLEAR;
+                }
+            }
+            if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardError(m_data->logMessage()->level())) {
+                ELPP_CERR << ELPP_CERR_LINE(logLine);
+                if (ELPP_CERR_FAILBIT) {
+                  ELPP_CERR_CLEAR;
+                }
+            }
+
         }
 #if defined(_ELPP_SYSLOG)
         else if (m_data->dispatchAction() == base::DispatchAction::SysLog) {
