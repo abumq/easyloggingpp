@@ -852,6 +852,8 @@ Notes:
 
 4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
+ > You may be interested in [python script to parse performance logs](https://github.com/easylogging/easyloggingpp/issues/206)
+
  [![top] Goto Top](#table-of-contents)
 
 #### Make Use of Performance Tracking Data
