@@ -1150,7 +1150,7 @@ inline MAKE_LOGGABLE(std::chrono::system_clock::time_point, when, os) {
 
 This may not be practically best implementation but you get the point.
 
-Just be careful with this as having a time-consuming overloading of `log(el::base::type::ostream_t& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
+ > Just be careful with this as having a time-consuming overloading of `log(el::base::type::ostream_t& os)` and `MAKE_LOGGABLE`, they get called everytime class is being logged.
 
  [![top] Goto Top](#table-of-contents)
 
