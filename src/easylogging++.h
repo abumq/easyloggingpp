@@ -7,11 +7,13 @@
 //  This library is released under the MIT Licence.
 //  https://raw.githubusercontent.com/easylogging/easyloggingpp/master/LICENCE
 //
-//  support@easylogging.org
+//  majid@muflihun.com
 //  https://github.com/easylogging/easyloggingpp
-//  http://muflihun.com
 //
-#ifndef EASYLOGGINGPP_H  // NOLINT
+//  http://muflihun.com
+//  http://muflihun.com/donation
+//
+#ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
 #if defined(__GNUC__)
@@ -197,10 +199,10 @@
 #   define STRCAT(a, b, len) strcat_s(a, len, b)
 #   define STRCPY(a, b, len) strcpy_s(a, len, b)
 #else
-#   define STRTOK(a, b, c) strtok(a, b)  // NOLINT
+#   define STRTOK(a, b, c) strtok(a, b)
 #   define STRERROR(a, b, c) strerror(c)
-#   define STRCAT(a, b, len) strcat(a, b)  // NOLINT
-#   define STRCPY(a, b, len) strcpy(a, b)  // NOLINT
+#   define STRCAT(a, b, len) strcat(a, b)
+#   define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
 #if (!_ELPP_MINGW && !_ELPP_COMPILER_CLANG) || defined(_ELPP_FORCE_USE_STD_THREAD)
@@ -325,8 +327,8 @@
 #include <utility>
 #include <functional>
 #include <algorithm>
-#include <fstream>  // NOLINT
-#include <iostream>  // NOLINT
+#include <fstream>
+#include <iostream>
 #include <sstream>
 #include <memory>
 #include <type_traits>
@@ -464,7 +466,7 @@ typedef std::ostream ostream_t;
 #else
 #   define ELPP_COUT_LINE(logLine) logLine << std::flush
 #endif // defined(ELPP_CUSTOM_COUT_LINE)
-typedef unsigned short EnumType;  // NOLINT
+typedef unsigned short EnumType;
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
 typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
@@ -880,7 +882,7 @@ namespace utils {
 template <typename T>
 static inline
 typename std::enable_if<std::is_pointer<T*>::value, void>::type
-safeDelete(T*& pointer) {  // NOLINT
+safeDelete(T*& pointer) {
     if (pointer == nullptr)
         return;
     delete pointer;
@@ -989,7 +991,7 @@ private:
 template <typename M>
 class ScopedLock : base::NoCopy {
 public:
-    explicit ScopedLock(M& mutex) {  // NOLINT
+    explicit ScopedLock(M& mutex) {
         m_mutex = &mutex;
         m_mutex->lock();
     }
@@ -1248,21 +1250,21 @@ public:
 
     /// @brief Trims string from start
     /// @param [in,out] str String to trim
-    static inline std::string& ltrim(std::string& str) {  // NOLINT
+    static inline std::string& ltrim(std::string& str) {
         str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(&std::isspace))));
         return str;
     }
 
     /// @brief Trim string from end
     /// @param [in,out] str String to trim
-    static inline std::string& rtrim(std::string& str) {  // NOLINT
+    static inline std::string& rtrim(std::string& str) {
         str.erase(std::find_if(str.rbegin(), str.rend(), std::not1(std::ptr_fun<int, int>(&std::isspace))).base(), str.end());
         return str;
     }
 
     /// @brief Trims string from left and right
     /// @param [in,out] str String to trim
-    static inline std::string& trim(std::string& str) {  // NOLINT
+    static inline std::string& trim(std::string& str) {
         return ltrim(rtrim(str));
     }
 
@@ -1287,7 +1289,7 @@ public:
     /// @param replaceWhat Character to replace
     /// @param replaceWith Character to replace with
     /// @return Modified version of str
-    static inline std::string& replaceAll(std::string& str, char replaceWhat, char replaceWith) {  // NOLINT
+    static inline std::string& replaceAll(std::string& str, char replaceWhat, char replaceWith) {
         std::replace(str.begin(), str.end(), replaceWhat, replaceWith);
         return str;
     }
@@ -1330,7 +1332,7 @@ public:
     /// @brief Converts string to uppercase
     /// @param str String to convert
     /// @return Uppercase string
-    static inline std::string& toUpper(std::string& str) {  // NOLINT
+    static inline std::string& toUpper(std::string& str) {
         std::transform(str.begin(), str.end(), str.begin(), ::toupper);
         return str;
     }
@@ -1568,7 +1570,7 @@ public:
             const unsigned __int64 delta_ = 11644473600000000ULL;
 #   endif  // _ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
             const double secOffSet = 0.000001;
-            const unsigned long usecOffSet = 1000000;  // NOLINT
+            const unsigned long usecOffSet = 1000000;
             FILETIME fileTime;
             GetSystemTimeAsFileTime(&fileTime);
             unsigned __int64 present = 0;
@@ -1578,8 +1580,8 @@ public:
             present /= 10;  // mic-sec
            // Subtract the difference
             present -= delta_;
-            tv->tv_sec = static_cast<long>(present * secOffSet);  // NOLINT
-            tv->tv_usec = static_cast<long>(present % usecOffSet);  // NOLINT
+            tv->tv_sec = static_cast<long>(present * secOffSet);
+            tv->tv_usec = static_cast<long>(present % usecOffSet);
         }
 #else
         ::gettimeofday(tv, nullptr);
@@ -1602,7 +1604,7 @@ public:
     }
 
     /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
-    static base::type::string_t formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {  // NOLINT
+    static base::type::string_t formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {
         double result = static_cast<double>(time);
         base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
         const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
@@ -1619,12 +1621,12 @@ public:
     }
 
     /// @brief Gets time difference in milli/micro second depending on timestampUnit
-    static inline unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime, base::TimestampUnit timestampUnit) {  // NOLINT
+    static inline unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime, base::TimestampUnit timestampUnit) {
         if (timestampUnit == base::TimestampUnit::Microsecond) {
-            return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -  // NOLINT
-                    static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));  // NOLINT
+            return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
+                    static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
         } else {
-            return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);  // NOLINT
+            return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000000) + (endTime.tv_usec - startTime.tv_usec)) / 1000);
         }
     }
 
@@ -1643,8 +1645,8 @@ private:
         return timeInfo;
 #   else
         // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
-        time_t rawTime = currTime->tv_sec;  // NOLINT
-        struct tm* tmInf = localtime(&rawTime);  // NOLINT
+        time_t rawTime = currTime->tv_sec;
+        struct tm* tmInf = localtime(&rawTime);
         *timeInfo = *tmInf;
         return timeInfo;
 #   endif  // _ELPP_COMPILER_MSVC
@@ -2044,7 +2046,7 @@ protected:
         }
     }
 
-    virtual void unregister(T_Ptr*& ptr) ELPP_FINAL {  // NOLINT
+    virtual void unregister(T_Ptr*& ptr) ELPP_FINAL {
         if (ptr) {
             iterator iter = this->begin();
             for (; iter != this->end(); ++iter) {
@@ -2168,7 +2170,7 @@ public:
                     if (!hasFlag(flag)) addFlag(flag);
                 }
             }
-        };  // NOLINT
+        };
         conditionalAddFlag(base::consts::kAppNameFormatSpecifier, base::FormatFlags::AppName);
         conditionalAddFlag(base::consts::kSeverityLevelFormatSpecifier, base::FormatFlags::Level);
         conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
@@ -2230,7 +2232,7 @@ protected:
     /// @brief Updates date time format if available in currFormat.
     /// @param index Index where %datetime, %date or %time was found
     /// @param [in,out] currFormat current format that is being used to format
-    virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) ELPP_FINAL {  // NOLINT
+    virtual void updateDateFormat(std::size_t index, base::type::string_t& currFormat) ELPP_FINAL {
         if (hasFlag(base::FormatFlags::DateTime)) {
             index += ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
         }
@@ -3056,7 +3058,7 @@ private:
         }
     }
 
-    unsigned long getULong(std::string confVal) {  // NOLINT
+    unsigned long getULong(std::string confVal) {
         bool valid = true;
         base::utils::Str::trim(confVal);
         valid = !confVal.empty() && std::find_if(confVal.begin(), confVal.end(),
@@ -3139,7 +3141,7 @@ private:
                     << LevelHelper::convertToString(level) << "] to FALSE", false);
                 setValue(level, false, &m_toFileMap);
             }
-        };  // NOLINT
+        };
         // If we dont have file conf for any level, create it for Level::Global first
         // otherwise create for specified level
         create(m_filenameMap.empty() && m_fileStreamMap.empty() ? Level::Global : level);
@@ -3178,7 +3180,7 @@ public:
         m_hitCounts(0) {
     }
 
-    HitCounter(const char* filename, unsigned long int lineNumber) :  // NOLINT
+    HitCounter(const char* filename, unsigned long int lineNumber) :
         m_filename(filename),
         m_lineNumber(lineNumber),
         m_hitCounts(0) {
@@ -3201,7 +3203,7 @@ public:
     }
 
     /// @brief Resets location of current hit counter
-    inline void resetLocation(const char* filename, unsigned long int lineNumber) {  // NOLINT
+    inline void resetLocation(const char* filename, unsigned long int lineNumber) {
         m_filename = filename;
         m_lineNumber = lineNumber;
     }
@@ -3218,7 +3220,7 @@ public:
         return m_filename;
     }
 
-    inline unsigned long int lineNumber(void) const {  // NOLINT
+    inline unsigned long int lineNumber(void) const {
         return m_lineNumber;
     }
 
@@ -3232,7 +3234,7 @@ public:
 
     class Predicate {
     public:
-        Predicate(const char* filename, unsigned long int lineNumber)  // NOLINT
+        Predicate(const char* filename, unsigned long int lineNumber)
             : m_filename(filename),
               m_lineNumber(lineNumber) {
         }
@@ -3244,12 +3246,12 @@ public:
 
     private:
         const char* m_filename;
-        unsigned long int m_lineNumber;  // NOLINT
+        unsigned long int m_lineNumber;
     };
 
 private:
     const char* m_filename;
-    unsigned long int m_lineNumber;  // NOLINT
+    unsigned long int m_lineNumber;
     std::size_t m_hitCounts;
 };
 /// @brief Repository for hit counters used across the application
@@ -3257,7 +3259,7 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
 public:
     /// @brief Validates counter for every N, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-    bool validateEveryN(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
+    bool validateEveryN(const char* filename, unsigned long int lineNumber, std::size_t n) {
         base::threading::ScopedLock scopedLock(lock());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
@@ -3270,7 +3272,7 @@ public:
 
     /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-    bool validateAfterN(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
+    bool validateAfterN(const char* filename, unsigned long int lineNumber, std::size_t n) {
         base::threading::ScopedLock scopedLock(lock());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
@@ -3287,7 +3289,7 @@ public:
 
     /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
     /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-    bool validateNTimes(const char* filename, unsigned long int lineNumber, std::size_t n) {  // NOLINT
+    bool validateNTimes(const char* filename, unsigned long int lineNumber, std::size_t n) {
         base::threading::ScopedLock scopedLock(lock());
         base::HitCounter* counter = get(filename, lineNumber);
         if (counter == nullptr) {
@@ -3301,7 +3303,7 @@ public:
     }
 
     /// @brief Gets hit counter registered at specified position
-    inline const base::HitCounter* getCounter(const char* filename, unsigned long int lineNumber) {  // NOLINT
+    inline const base::HitCounter* getCounter(const char* filename, unsigned long int lineNumber) {
         base::threading::ScopedLock scopedLock(lock());
         return get(filename, lineNumber);
     }
@@ -3645,7 +3647,7 @@ public:
         return get(id, false) != nullptr;
     }
 
-    inline void unregister(Logger*& logger) {  // NOLINT
+    inline void unregister(Logger*& logger) {
         base::threading::ScopedLock scopedLock(lock());
         base::utils::Registry<Logger, std::string>::unregister(logger->id());
     }
@@ -3710,7 +3712,7 @@ public:
                 ss << chr;
             }
             ss << sfx;
-        };  // NOLINT
+        };
         auto insert = [&](std::stringstream& ss, base::type::VerboseLevel level) {
             if (!base::utils::hasFlag(LoggingFlag::DisableVModulesExtensions, *m_pFlags)) {
                 addSuffix(ss, ".h", nullptr);
@@ -3732,7 +3734,7 @@ public:
                 addSuffix(ss, ".hh", ".hpp");
             }
             m_modules.insert(std::make_pair(ss.str(), level));
-        };  // NOLINT
+        };
         bool isMod = true;
         bool isLevel = false;
         std::stringstream ss;
@@ -3818,7 +3820,7 @@ private:
 }  // namespace base
 class LogMessage {
 public:
-    LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,  // NOLINT
+    LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,
                           base::type::VerboseLevel verboseLevel, Logger* logger) :
                   m_level(level), m_file(file), m_line(line), m_func(func),
                   m_verboseLevel(verboseLevel), m_logger(logger), m_message(std::move(logger->stream().str())) {
@@ -3833,7 +3835,7 @@ public:
 private:
     Level m_level;
     std::string m_file;
-    unsigned long int m_line;  // NOLINT
+    unsigned long int m_line;
     std::string m_func;
     base::type::VerboseLevel m_verboseLevel;
     Logger* m_logger;
@@ -3955,7 +3957,7 @@ public:
         base::utils::safeDelete(m_vRegistry);
     }
 
-    inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {  // NOLINT
+    inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {
         return hitCounters()->validateEveryN(filename, lineNumber, occasion);
     }
 
@@ -4585,8 +4587,8 @@ public:
     }
     ELPP_SIMPLE_LOG(char)
     ELPP_SIMPLE_LOG(bool)
-    ELPP_SIMPLE_LOG(signed short)  // NOLINT
-    ELPP_SIMPLE_LOG(unsigned short)  // NOLINT
+    ELPP_SIMPLE_LOG(signed short)
+    ELPP_SIMPLE_LOG(unsigned short)
     ELPP_SIMPLE_LOG(signed int)
     ELPP_SIMPLE_LOG(unsigned int)
     ELPP_SIMPLE_LOG(signed long)
@@ -4908,7 +4910,7 @@ public:
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
 public:
-    Writer(Level level, const char* file, unsigned long int line,  // NOLINT
+    Writer(Level level, const char* file, unsigned long int line,
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::type::VerboseLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
@@ -4965,7 +4967,7 @@ public:
 protected:
     Level m_level;
     const char* m_file;
-    const unsigned long int m_line;  // NOLINT
+    const unsigned long int m_line;
     const char* m_func;
     base::type::VerboseLevel m_verboseLevel;
     Logger* m_logger;
@@ -5068,7 +5070,7 @@ protected:
 };
 class PErrorWriter : public base::Writer {
 public:
-    PErrorWriter(Level level, const char* file, unsigned long int line,  // NOLINT
+    PErrorWriter(Level level, const char* file, unsigned long int line,
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::type::VerboseLevel verboseLevel = 0) :
         base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
@@ -5327,7 +5329,7 @@ public:
 #endif  // !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING)
     }
     /// @brief A checkpoint for current performanceTracker block.
-    void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {  // NOLINT
+    void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__, const char* func = "") {
 #if !defined(_ELPP_DISABLE_PERFORMANCE_TRACKING) && _ELPP_LOGGING_ENABLED
         if (m_enabled) {
             base::threading::ScopedLock scopedLock(lock());
@@ -5673,7 +5675,7 @@ public:
     }
     /// @brief Abort due to crash with signal in parameter
     /// @param sig Crash signal
-    static inline void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {  // NOLINT
+    static inline void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {
         std::stringstream ss;
         ss << base::debug::crashReason(sig).c_str();
         ss << " - [Called el::Helpers::crashAbort(" << sig << ")]";
@@ -5880,7 +5882,7 @@ public:
             Configurations c;
             c.parseFromText(ss.str());
             logger->configure(c);
-        };  // NOLINT
+        };
         while (gcfStream.good()) {
            std::getline(gcfStream, line);
            ELPP_INTERNAL_INFO(1, "Parsing line: " << line);
@@ -6662,6 +6664,4 @@ static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
 #else
 #   define _START_EASYLOGGINGPP(argc, argv) el::Helpers::setArgs(argc, argv)
 #endif  // defined(_ELPP_UNICODE)
-// For minimal backward compatibility
-namespace easyloggingpp = el;
-#endif // EASYLOGGINGPP_H  // NOLINT
+#endif // EASYLOGGINGPP_H
