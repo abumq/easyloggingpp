@@ -4581,8 +4581,7 @@ public:
     }
 
     inline MessageBuilder& operator<<(const std::string& msg) {
-        m_logger->stream() << msg.c_str();
-        return *this;
+        return operator<<(msg.c_str());
     }
     ELPP_SIMPLE_LOG(char)
     ELPP_SIMPLE_LOG(bool)
@@ -4613,6 +4612,9 @@ public:
         m_logger->stream() << buff_;
         free(buff_);
 #   endif
+        if (ELPP->hasFlag(LoggingFlag::AutoSpacing)) {
+            m_logger->stream() << " ";
+        }
         return *this;
     }
     // ostream manipulators
@@ -4882,6 +4884,9 @@ private:
             m_logger->stream() << ELPP_LITERAL("...");
         }
         m_logger->stream() << ELPP_LITERAL("]");
+        if (ELPP->hasFlag(LoggingFlag::AutoSpacing)) {
+            m_logger->stream() << " ";
+        }
         return *this;
     }
 };

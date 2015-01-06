@@ -13,10 +13,16 @@ API changes: No
  - Solaris support added
 
 ==========================
-=         BUILD FIX      =
+=       BUILD FIX        =
 ==========================
 
  - Warning for `nextTok_` in VS2013 (issue #237)
+
+==========================
+=        BUG FIX         =
+==========================
+
+ - `LoggingFlag::AutoSpacing` does not work with some types (issue #220)
 
 ==========================
 =         NOTES          =
