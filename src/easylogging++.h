@@ -343,8 +343,6 @@
 #   endif  // _ELPP_USE_STD_THREADING
 #endif  // _ELPP_THREADING_ENABLED
 #if _ELPP_ASYNC_LOGGING
-#   include <unistd.h> // for usleep - make more flexible
-#   include <pthread.h>
 #   include <thread>
 #   include <queue>
 #   include <condition_variable>
@@ -1012,9 +1010,8 @@ static inline std::string getCurrentThreadId(void) {
 #      endif  // (_ELPP_OS_WINDOWS)
     return ss.str();
 }
-static inline void sleep(int) {
-    // Implement this as this is part of experimental async so this would
-    // not stop us releasing new versions
+static inline void msleep(int) {
+    // No implementation for non std::thread version
 }
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
@@ -1025,10 +1022,11 @@ static inline std::string getCurrentThreadId(void) {
     ss << std::this_thread::get_id();
     return ss.str();
 }
-static inline void sleep(int) {
-    // Implement this as this is part of experimental async so this would
-    // not stop us releasing new versions
-    // std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+static inline void msleep(int ms) {
+    // Only when async logging enabled - this is because async is strict on compiler
+#if _ELPP_ASYNC_LOGGING
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#endif  // _ELPP_ASYNC_LOGGING
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -1058,7 +1056,9 @@ private:
 static inline std::string getCurrentThreadId(void) {
     return std::string();
 }
-static inline void sleep(int) {}
+static inline void msleep(int) {
+    // No custom implementation
+}
 typedef base::threading::internal::NoMutex Mutex;
 typedef base::threading::internal::NoScopedLock<base::threading::Mutex> ScopedLock;
 #endif  // _ELPP_THREADING_ENABLED
@@ -4237,8 +4237,6 @@ protected:
         }
         // Save resources and only queue if we want to write to file otherwise just ignore handler
         if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
-            //ELPP_INTERNAL_INFO(9, "Adding message to queue");
-            //TODO: use std::move?
             ELPP->asyncLogQueue()->push(AsyncLogItem(*(data->logMessage()), *data, logLine));
         }
     }
@@ -4251,7 +4249,6 @@ public:
 
     virtual ~AsyncDispatchWorker() {
         setContinueRunning(false);
-        //pthread_cancel(m_thread);
         ELPP_INTERNAL_INFO(6, "Stopping dispatch worker - Cleaning log queue");
         clean();
         ELPP_INTERNAL_INFO(6, "Log queue cleaned");
@@ -4271,19 +4268,15 @@ public:
         while (!ELPP->asyncLogQueue()->empty()) {
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
-            usleep(100);
+            base::threading::msleep(100);
         }
     }
     
     virtual inline void start() {
-        // Works across all platforms?
-        // Part of experimental async so this would not stop us releasing new versions
-        base::threading::sleep(5000); // Wait extra few seconds
+        base::threading::msleep(5000); // Wait extra few seconds
         setContinueRunning(true);
-        pthread_create(&m_thread, NULL, &AsyncDispatchWorker::runner, this);
-        pthread_join(m_thread, 0);
-        //std::thread t1(&AsyncDispatchWorker::runner, this);
-        //t1.join();
+        std::thread t1(&AsyncDispatchWorker::runner, this);
+        t1.join();
     }
 
     void handle(AsyncLogItem* logItem) {
@@ -4343,7 +4336,7 @@ public:
     void run() {
         while (continueRunning()) {
             emptyQueue();
-            base::threading::sleep(1); // Wait extra few seconds
+            base::threading::msleep(10); // 10ms
         }
     }
 
@@ -4360,7 +4353,6 @@ public:
         return m_continueRunning;
     }
 private:
-    pthread_t m_thread;
     std::condition_variable cv;
     bool m_continueRunning;
     base::threading::Mutex m_continueRunningMutex;

@@ -1154,7 +1154,12 @@ If you wish to capture log message right after it is dispatched, you can do so b
  [![top] Goto Top](#table-of-contents)
  
 ### Asynchronous Logging
-Asynchronous logging is in experimental stages and they are not widely promoted. Once they are stable across all supported platforms, they will be promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+
+Please note:
+* Asynchronous will only work with few compilers (it purely uses `std::thread`)
+* Compiler should support `std::this_thread::sleep_for`. This restriction may (or may not) be removed in future (stable) version of asynchronous logging.
+* You should not rely on asynchronous logging in production, this is because feature is in experiemental stages.
 
  [![top] Goto Top](#table-of-contents)
  

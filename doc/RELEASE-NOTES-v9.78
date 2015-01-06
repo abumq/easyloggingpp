@@ -28,6 +28,7 @@ API changes: No
 =         NOTES          =
 ==========================
 
+ - Experimental async logging only for specific compilers
  - Removed `easyloggingpp` as namespace
  - Changed support email address
  - See https://github.com/easylogging/easyloggingpp/blob/v9.77/README.md for manual for this release
