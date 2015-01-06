@@ -1,10 +1,10 @@
-#define _ELPP_AS_DLL // Tells Easylogging++ that it's used for DLL
-#define _ELPP_EXPORT_SYMBOLS // Tells Easylogging++ to export symbols
+#define ELPP_AS_DLL // Tells Easylogging++ that it's used for DLL
+#define ELPP_EXPORT_SYMBOLS // Tells Easylogging++ to export symbols
 #define MYMATHS_EXPORTS
 
 #include "MyMaths.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 el::base::type::StoragePointer sharedLoggingRepository() {
 	return el::Helpers::storage();

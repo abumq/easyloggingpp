@@ -6,7 +6,7 @@
 #include <sigc++/sigc++.h>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 class AsyncConnector {
 public:

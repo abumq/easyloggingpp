@@ -9,7 +9,7 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 using namespace el;
 

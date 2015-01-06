@@ -4,19 +4,19 @@
 
 // There are two ways to share repository
 // one way is:
-// _SHARE_EASYLOGGINGPP(sharedLoggingRepository())
+// SHARE_EASYLOGGINGPP(sharedLoggingRepository())
 
 // Other way is
-// _INITIALIZE_NULL_EASYLOGGINGPP
+// INITIALIZE_NULL_EASYLOGGINGPP
 // and in main function:
 // int main(int argc, char** argv) {
 //     el::Helpers::setStorage(sharedLoggingRepository());
 //     ...
-//     _START_EASYLOGGINGPP(argc, argv);
+//     START_EASYLOGGINGPP(argc, argv);
 //     ...
 // }
 
-_INITIALIZE_NULL_EASYLOGGINGPP
+INITIALIZE_NULL_EASYLOGGINGPP
 
 int main() {
 	el::Helpers::setStorage(sharedLoggingRepository());

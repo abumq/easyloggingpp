@@ -9,7 +9,7 @@
 
 #include "easylogging++.h"
 #include <sstream>
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 class Vehicle : public el::Loggable {
     public:

@@ -1,7 +1,7 @@
 #include "easylogging++.h"
 #include <glibmm/ustring.h>
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
  
 int main(int, char**){
 

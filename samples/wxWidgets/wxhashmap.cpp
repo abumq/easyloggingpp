@@ -1,7 +1,7 @@
 #include <wx/hashmap.h>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 WX_DECLARE_STRING_HASH_MAP( wxString, MyHashMap);
 

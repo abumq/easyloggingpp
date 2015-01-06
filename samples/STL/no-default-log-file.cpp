@@ -7,15 +7,15 @@
  // @author mkhan3189
  //
 
-#define _ELPP_NO_DEFAULT_LOG_FILE
+#define ELPP_NO_DEFAULT_LOG_FILE
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
 
-    // If we log before configuration, we will end up with heaps of internal errors because _ELPP_NO_DEFAULT_LOG_FILE is defined before include
+    // If we log before configuration, we will end up with heaps of internal errors because ELPP_NO_DEFAULT_LOG_FILE is defined before include
     el::Configurations confFromFile("../default-logger.conf");
 
     el::Loggers::reconfigureAllLoggers(confFromFile); 

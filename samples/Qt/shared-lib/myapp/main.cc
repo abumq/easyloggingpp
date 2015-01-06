@@ -2,7 +2,7 @@
 #include "mylib.hh"
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char *argv[])
 {

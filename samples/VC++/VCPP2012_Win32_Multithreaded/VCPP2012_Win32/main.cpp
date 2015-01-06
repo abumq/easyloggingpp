@@ -7,14 +7,14 @@
  * @author mkhan3189
  */
 
-#define _ELPP_STL_LOGGING
+#define ELPP_STL_LOGGING
 
-#define _ELPP_THREAD_SAFE
+#define ELPP_THREAD_SAFE
 
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 

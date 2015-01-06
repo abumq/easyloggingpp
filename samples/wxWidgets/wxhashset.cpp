@@ -1,7 +1,7 @@
 #include <wx/hashset.h>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 WX_DECLARE_HASH_SET( int, wxIntegerHash, wxIntegerEqual, IntHashSet );
 WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, StringHashSet );

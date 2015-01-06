@@ -7,13 +7,13 @@
 #include "joinercore.h"
 #include "partprocessor.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 void split(int argc, char** argv);
 void merge(int argc, char** argv);
 
 int main(int argc, char** argv) {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
 
     // TODO: Use getopt with following params
     //         -p : process_type

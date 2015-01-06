@@ -150,7 +150,7 @@ TEST(VerboseAppArgumentsTest, AppArgsVModules) {
 TEST(VerboseAppArgumentsTest, AppArgsVModulesExtension) {
 
     el::Loggers::ScopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
-    _ELPP_UNUSED(scopedFlag);
+    ELPP_UNUSED(scopedFlag);
     
     const char* c[10];
     c[0] = "myprog";
@@ -182,7 +182,7 @@ TEST(VerboseAppArgumentsTest, AppArgsVModulesExtension) {
 TEST(VerboseAppArgumentsTest, VModulesClear) {
 
     el::Loggers::ScopedRemoveFlag scopedFlag(LoggingFlag::DisableVModulesExtensions);
-    _ELPP_UNUSED(scopedFlag);
+    ELPP_UNUSED(scopedFlag);
 
     const char* c[10];
     c[0] = "myprog";

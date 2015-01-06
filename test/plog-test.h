@@ -17,8 +17,8 @@ TEST(PLogTest, WriteLog) {
 
 TEST(PLogTest, DebugVersionLogs) {
     // Test enabled
-    #undef _ELPP_DEBUG_LOG
-    #define _ELPP_DEBUG_LOG 0
+    #undef ELPP_DEBUG_LOG
+    #define ELPP_DEBUG_LOG 0
 
     std::string currentTail = tail(1);
 
@@ -31,8 +31,8 @@ TEST(PLogTest, DebugVersionLogs) {
     DCPLOG(INFO, "performance") << "No DPLOG should be resolved";
     EXPECT_EQ(currentTail, tail(1));
     // Reset
-    #undef _ELPP_DEBUG_LOG
-    #define _ELPP_DEBUG_LOG 1
+    #undef ELPP_DEBUG_LOG
+    #define ELPP_DEBUG_LOG 1
 
     // Now test again
     DPLOG(INFO) << "DPLOG should be resolved";

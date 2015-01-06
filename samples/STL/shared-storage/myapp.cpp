@@ -1,7 +1,7 @@
 #include <mylib.hpp>
 #include "easylogging++.h"
 
-_SHARE_EASYLOGGINGPP(MyLib::getEasyloggingStorage())
+SHARE_EASYLOGGINGPP(MyLib::getEasyloggingStorage())
 
 int main(int argc, char** argv) {
     LOG(INFO) << "User: " << el::base::utils::s_currentUser;

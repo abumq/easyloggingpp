@@ -8,11 +8,11 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
 
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
    
     TIMED_BLOCK(t, "my-block") {
         for (long i = 0; i <= 300; ++i) {

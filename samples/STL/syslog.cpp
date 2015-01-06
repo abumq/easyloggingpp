@@ -6,14 +6,14 @@
  // @author mkhan3189
  //
 
-#define _ELPP_SYSLOG
+#define ELPP_SYSLOG
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
    
-    _INIT_SYSLOG("syslog_sample", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
+    ELPP_INITIALIZE_SYSLOG("syslog_sample", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
  
     SYSLOG(INFO) << "My first easylogging++ syslog message";
 

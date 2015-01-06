@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#define _ELPP_LOGGING_FLAGS_FROM_ARG
+#define ELPP_LOGGING_FLAGS_FROM_ARG
 
 #include "easylogging++.h"
 
@@ -85,7 +85,7 @@ static void cleanFile(const char* filename = logfile, el::base::type::fstream_t*
         if (f.is_open()) {
             f.close();
         }
-        _ELPP_UNUSED(f);
+        ELPP_UNUSED(f);
     }
 }
 

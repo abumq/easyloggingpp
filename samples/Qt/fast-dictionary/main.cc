@@ -2,13 +2,13 @@
 #include <QApplication>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 TIMED_SCOPE(app, "app");
 
 int main(int argc, char *argv[])
 {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime{%d/%M/%y} %msg");
     QApplication a(argc, argv);
     MainWindow w;

@@ -1,16 +1,16 @@
  //
  // This file is part of Easylogging++ samples
- // Demonstration of STL array (std::array) logging, this requires _ELPP_LOG_STD_ARRAY macro (recommended to define it in Makefile)
+ // Demonstration of STL array (std::array) logging, this requires ELPP_LOG_STD_ARRAY macro (recommended to define it in Makefile)
  //
  // Revision 1.1
  // @author mkhan3189
  //
 
-#define _ELPP_LOG_STD_ARRAY
+#define ELPP_LOG_STD_ARRAY
 #include "easylogging++.h"
 #include <array>
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main (void) {
 

@@ -11,11 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = file-splitter-and-joiner
 TEMPLATE = app
 
-DEFINES += _ELPP_QT_LOGGING    \
-          _ELPP_STL_LOGGING   \
-          _ELPP_STRICT_SIZE_CHECK \
-          _ELPP_STACKTRACE_ON_CRASH \
-          _ELPP_THREAD_SAFE
+DEFINES += ELPP_QT_LOGGING    \
+          ELPP_STL_LOGGING   \
+          ELPP_STRICT_SIZE_CHECK \
+          ELPP_STACKTRACE_ON_CRASH \
+          ELPP_THREAD_SAFE
 
 COMPILER = g++
 QMAKE_CC = $$COMPILER

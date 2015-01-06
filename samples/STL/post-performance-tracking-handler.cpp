@@ -6,10 +6,10 @@
  // @author mkhan3189
  //
 
-#define _ELPP_HANDLE_POST_PERFORMANCE_TRACKING // we need this!
+#define ELPP_HANDLE_POST_PERFORMANCE_TRACKING // we need this!
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 class Handler : public el::PerformanceTrackingCallback {
 protected:
 void handle(const el::PerformanceTrackingData* data) {

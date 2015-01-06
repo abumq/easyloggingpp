@@ -1,14 +1,14 @@
 #include "mylib.hpp"
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 MyLib::MyLib() {
     LOG(INFO) << "---MyLib Constructor () ---";
 }
 
 MyLib::MyLib(int argc, char** argv) {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
     LOG(INFO) << "---MyLib Constructor(int, char**) ---";
 }
 

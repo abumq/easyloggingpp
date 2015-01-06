@@ -11,7 +11,7 @@
 #include <vector>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 class Vehicle : public el::Loggable {
     public:

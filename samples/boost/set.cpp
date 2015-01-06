@@ -3,7 +3,7 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
    boost::container::set<int> s;

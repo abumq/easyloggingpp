@@ -9,7 +9,7 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 void configureFromArg() {
     // Configures globally using "--logging" param value
@@ -26,7 +26,7 @@ void flush() {
 }
 
 int main(int argc, char** argv) {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
 
     configureFromArg();
     

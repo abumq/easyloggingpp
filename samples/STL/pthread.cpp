@@ -4,7 +4,7 @@
 // Demonstration of multithreaded application using pthread
 // 
 // Compile this program using (if using gcc-c++ or intel or clang++):
-//     [icpc | g++ | clang++] ./pthread.cpp -o bin/./pthread.cpp.bin -D_ELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
+//     [icpc | g++ | clang++] ./pthread.cpp -o bin/./pthread.cpp.bin -DELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
 // 
 // Revision: 1.1
 // @author mkhan3189
@@ -13,7 +13,7 @@
 #include <pthread.h>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 class MyHandler : public el::LogDispatchCallback {
 public:
     void handle(const el::LogDispatchData*) {
@@ -100,7 +100,7 @@ const char* getThreadId_CustomVersion(void) {
 
 int main(int argc, char** argv)
 {
-     _START_EASYLOGGINGPP(argc, argv);
+     START_EASYLOGGINGPP(argc, argv);
 
       el::Helpers::installLogDispatchCallback<MyHandler>("MyHandler");
 

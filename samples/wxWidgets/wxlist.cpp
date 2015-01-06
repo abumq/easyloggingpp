@@ -2,7 +2,7 @@
 #include <wx/listimpl.cpp>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 WX_DECLARE_LIST(int, MyList);
 

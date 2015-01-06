@@ -1,7 +1,7 @@
 #include <GL/gl.h>
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(void) {
 

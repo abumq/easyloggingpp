@@ -9,7 +9,7 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 void myCrashHandler(int sig) {
     LOG(ERROR) << "Woops! Crashed!";

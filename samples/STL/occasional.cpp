@@ -8,10 +8,10 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
-  _START_EASYLOGGINGPP(argc, argv);
+  START_EASYLOGGINGPP(argc, argv);
 
   for (int i = 1;i < 1000; ++i) {
      LOG_EVERY_N(20, INFO) << "LOG_EVERY_N i = " << i;

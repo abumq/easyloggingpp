@@ -1,7 +1,7 @@
 #include "mylib.hpp"
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int MyLib::runOnceHelper = runOnce();
 
@@ -16,7 +16,7 @@ MyLib::MyLib() {
 }
 
 MyLib::MyLib(int argc, char** argv) {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
     LOG(INFO) << "---MyLib Constructor(int, char**) ---";
 }
 

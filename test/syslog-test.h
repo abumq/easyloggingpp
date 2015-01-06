@@ -1,7 +1,7 @@
 #ifndef SYSLOG_TEST_H
 #define SYSLOG_TEST_H
 
-#if defined(_ELPP_SYSLOG)
+#if defined(ELPP_SYSLOG)
 
 #include "test.h"
 
@@ -28,8 +28,8 @@ TEST(SysLogTest, DebugVersionLogs) {
         return;
     }
     // Test enabled
-    #undef _ELPP_DEBUG_LOG
-    #define _ELPP_DEBUG_LOG 0
+    #undef ELPP_DEBUG_LOG
+    #define ELPP_DEBUG_LOG 0
 
     std::string currentTail = tail(1, kSysLogFile);
 
@@ -50,8 +50,8 @@ TEST(SysLogTest, DebugVersionLogs) {
     EXPECT_TRUE(Str::endsWith(currentTail, tail(1, kSysLogFile)));
 
     // Reset
-    #undef _ELPP_DEBUG_LOG
-    #define _ELPP_DEBUG_LOG 1
+    #undef ELPP_DEBUG_LOG
+    #define ELPP_DEBUG_LOG 1
 
     // Now test again
     DSYSLOG(INFO) << "DSYSLOG should be resolved";
@@ -76,7 +76,7 @@ TEST(SysLogTest, DebugVersionLogs) {
 }
 
 #else
-#   warning "Skipping [SysLogTest] for [_ELPP_SYSLOG] not defined"
-#endif // defined(_ELPP_SYSLOG)
+#   warning "Skipping [SysLogTest] for [ELPP_SYSLOG] not defined"
+#endif // defined(ELPP_SYSLOG)
 
 #endif // SYSLOG_TEST_H

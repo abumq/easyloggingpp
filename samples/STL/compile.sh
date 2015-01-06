@@ -2,14 +2,14 @@
 
 FILE=$1
 
-macro="$macro -D_ELPP_DEBUG_ERRORS"
-macro="$macro -D_ELPP_THREAD_SAFE"
-macro="$macro -D_ELPP_STL_LOGGING"
-macro="$macro -D_ELPP_LOG_UNORDERED_SET"
-macro="$macro -D_ELPP_LOG_UNORDERED_MAP"
-macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
-macro="$macro -D_ELPP_LOGGING_FLAGS_FROM_ARG"
-# macro="$macro -D_ELPP_DEFAULT_LOG_FILE=\"/a/path/that/does/not/exist/f.log\""
+macro="$macro -DELPP_DEBUG_ERRORS"
+macro="$macro -DELPP_THREAD_SAFE"
+macro="$macro -DELPP_STL_LOGGING"
+macro="$macro -DELPP_LOG_UNORDERED_SET"
+macro="$macro -DELPP_LOG_UNORDERED_MAP"
+macro="$macro -DELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_LOGGING_FLAGS_FROM_ARG"
+# macro="$macro -DELPP_DEFAULT_LOG_FILE=\"/a/path/that/does/not/exist/f.log\""
 
 if [ "$2" = "" ];then
   COMPILER=g++

@@ -2,11 +2,11 @@
 
 FILE=$1
 
-macro="$macro -D_ELPP_THREAD_SAFE"
-macro="$macro -D_ELPP_STL_LOGGING"
-macro="$macro -D_ELPP_LOG_UNORDERED_SET"
-macro="$macro -D_ELPP_LOG_UNORDERED_MAP"
-macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_THREAD_SAFE"
+macro="$macro -DELPP_STL_LOGGING"
+macro="$macro -DELPP_LOG_UNORDERED_SET"
+macro="$macro -DELPP_LOG_UNORDERED_MAP"
+macro="$macro -DELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
   COMPILER=g++

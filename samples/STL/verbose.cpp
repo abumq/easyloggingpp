@@ -8,10 +8,10 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
-  _START_EASYLOGGINGPP(argc, argv);
+  START_EASYLOGGINGPP(argc, argv);
   LOG(INFO) << "This is demo for verbose logs";
   VLOG(1) << "This will be printed when program is started using argument --v=1";
   VLOG(2) << "This will be printed when program is started using argument --v=2";

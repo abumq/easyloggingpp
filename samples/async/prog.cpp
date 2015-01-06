@@ -2,13 +2,13 @@
 #include "easylogging++.h"
 #include "mymath.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 TIMED_SCOPE(benchmark, "benchmark-program");
 
 int main(int argc, char *argv[])
 {
-    // _INIT_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
+    // ELPP_INITIALIZE_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "false");
     TIMED_BLOCK(loggingPerformance, "benchmark-block") {
         el::base::MillisecondsWidth mwidth(3);

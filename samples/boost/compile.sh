@@ -2,10 +2,10 @@
 
 FILE=$1
 
-macro="$macro -D_ELPP_THREAD_SAFE"
-macro="$macro -D_ELPP_STL_LOGGING"
-macro="$macro -D_ELPP_BOOST_LOGGING"
-macro="$macro -D_ELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_THREAD_SAFE"
+macro="$macro -DELPP_STL_LOGGING"
+macro="$macro -DELPP_BOOST_LOGGING"
+macro="$macro -DELPP_STACKTRACE_ON_CRASH"
 
 if [ "$2" = "" ];then
   COMPILER=g++

@@ -12,7 +12,7 @@
 
 #include "imageloader.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
@@ -170,7 +170,7 @@ void update(int value) {
 
 int main(int argc, char** argv) {
 
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
 
     LOG(INFO) << "Source base taken from http://www.videotutorialsrock.com";
 

@@ -8,7 +8,7 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 /// @brief Not a very fast log builder but good enough for sample
 class MyLogBuilder : public el::LogBuilder {

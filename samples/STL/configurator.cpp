@@ -9,10 +9,10 @@
 
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv) {
-    _START_EASYLOGGINGPP(argc, argv);
+    START_EASYLOGGINGPP(argc, argv);
     LOG(INFO) << "Info log using 'default' logger before using configuration";
    
     el::Configurations confFromFile("../default-logger.conf");
