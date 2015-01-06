@@ -15,7 +15,7 @@ using namespace el;
 using namespace el::base;
 using namespace el::base::utils;
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 static const char* logfile = "/tmp/logs/el.gtest.log";
 
