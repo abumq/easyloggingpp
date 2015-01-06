@@ -10,13 +10,13 @@ API changes: No
 
  - Ability to add, clear verbose modules on the fly (issue #219)
  - Ability to set verbose logging level on the fly (issue #238)
- - Solaris support
+ - Solaris support added
 
 ==========================
 =         BUILD FIX      =
 ==========================
 
- - Warning for `nextTok_` in VS2013
+ - Warning for `nextTok_` in VS2013 (issue #237)
 
 ==========================
 =         NOTES          =
