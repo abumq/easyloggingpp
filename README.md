@@ -144,7 +144,7 @@ In order to get started with Easylogging++, you can follow three easy steps;
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argv, char* argc[]) {
    LOG(INFO) << "My first info log using default logger";
@@ -152,7 +152,7 @@ int main(int argv, char* argc[]) {
 }
 ```
 
-That simple! Please note that `_INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
+That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -240,7 +240,7 @@ Configuration file contents in above sample is straightforward. We start with `G
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char** argv) {
     // Load configuration from file
@@ -262,7 +262,7 @@ You can set configurations or reset configurations;
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, const char** argv) {
    el::Configurations defaultConf;
@@ -413,7 +413,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `_ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
+ > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
 
@@ -427,36 +427,36 @@ Following table will explain all command line arguments that you may use to defi
 | `--verbose`                | Activates maximum verbosity                                                             |
 | `-vmodule=MODULE_NAME`     | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma. Please note vmodules are last in order of precedence of checking arguments for verbose logging, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.                                                                                                               |
 | `--logging-flags=3`        | Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
-| `--default-log-file=FILE`  |Sets default log file for existing and future loggers. You may want to consider defining `_ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                           |
+| `--default-log-file=FILE`  |Sets default log file for existing and future loggers. You may want to consider defining `ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                           |
 
  [![top] Goto Top](#table-of-contents)
 
 ### Configuration Macros
-Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `_ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with _ELPP_
+Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with ELPP_
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_DEBUG_ASSERT_FAILURE`             | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
-| `_ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
-| `_ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
-| `_ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `_ELPP_THREAD_SAFE`            |
-| `_ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
-| `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
-| `_ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
-| `_ELPP_DISABLE_DEBUG_LOGS`               | Disables debug logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_INFO_LOGS`                | Disables info logs - (preprocessing)                                                                                                               |
-| `_ELPP_DISABLE_WARNING_LOGS`             | Disables warning logs - (preprocessing)                                                                                                            |
-| `_ELPP_DISABLE_ERROR_LOGS`               | Disables error logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
-| `_ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
-| `_ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
-| `_ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
-| `_ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-D_ELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
-| `_ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
-| `_ELPP_DEBUG_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
-| `_ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
-| `_ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
-| `_ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
+| `ELPP_DEBUG_ASSERT_FAILURE`             | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
+| `ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
+| `ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
+| `ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `ELPP_THREAD_SAFE`            |
+| `ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
+| `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
+| `ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
+| `ELPP_DISABLE_DEBUG_LOGS`               | Disables debug logs - (preprocessing)                                                                                                              |
+| `ELPP_DISABLE_INFO_LOGS`                | Disables info logs - (preprocessing)                                                                                                               |
+| `ELPP_DISABLE_WARNING_LOGS`             | Disables warning logs - (preprocessing)                                                                                                            |
+| `ELPP_DISABLE_ERROR_LOGS`               | Disables error logs - (preprocessing)                                                                                                              |
+| `ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
+| `ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
+| `ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
+| `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
+| `ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-DELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
+| `ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
+| `ELPP_DEBUG_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
+| `ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
+| `ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
+| `ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations
@@ -486,15 +486,15 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
-There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `_LOGGER` and `_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `ELPP_DEFAULT_LOGGER` and `ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
 
 A quick example is here
 ```c++
-#ifndef _LOGGER
-#   define _LOGGER "update_manager"
+#ifndef ELPP_DEFAULT_LOGGER
+#   define ELPP_DEFAULT_LOGGER "update_manager"
 #endif
-#ifndef _PERFORMANCE_LOGGER
-#   define _PERFORMANCE_LOGGER _LOGGER
+#ifndef ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID
+#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID ELPP_DEFAULT_LOGGER
 #endif
 #include "easylogging++.h"
 UpdateManager::UpdateManager {
@@ -506,7 +506,7 @@ UpdateManager::UpdateManager {
 ```c++
 #include "easylogging++.h"
 UpdateManager::UpdateManager {
-    _TRACE; // Logs using LOG(TRACE) using default logger because no _LOGGER is defined unless you have it in makefile
+    _TRACE; // Logs using LOG(TRACE) using default logger because no `ELPP_DEFAULT_LOGGER` is defined unless you have it in makefile
 }
 ```
 
@@ -590,7 +590,7 @@ Following are various function signatures:
 // Use default logger
 el::Logger* defaultLogger = el::Loggers::getLogger("default");
 
-// STL logging (`_ELPP_STL_LOGGING` should be defined)
+// STL logging (`ELPP_STL_LOGGING` should be defined)
 std::vector<int> i;
 i.push_back(1);
 defaultLogger->warn("My first ultimate log message %v %v %v", 123, 222, i);
@@ -663,7 +663,7 @@ In order to change vmodules on the fly (instead of via command line args) - use 
  [![top] Goto Top](#table-of-contents)
  
 ### STL Logging
-As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `_ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
+As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
 For performance, containers are limited to log maximum of 100 entries. This behaviour can be changed by changed header file (base::consts::kMaxLogPerContainer) but not recommended as in order to log, writer has to go through each entry causing potential delays. But if you are not really concerned with performance, you may change this value.
 
  [![top] Goto Top](#table-of-contents)
@@ -677,15 +677,15 @@ Following templates are supported as part of STL Logging; note: basic and primit
 | std::stack  |  std::priority_queue    |  std::set        |    std::multiset |
 | std::pair   |  std::bitset            |  std::map        |    std::multimap |
 
-Some C++11 specific templates are supported by further explicit macro definitions; note these also need `_ELPP_STL_LOGGING`
+Some C++11 specific templates are supported by further explicit macro definitions; note these also need `ELPP_STL_LOGGING`
 
 |   Template              |     Macro Needed            |
 |-------------------------|-----------------------------|
-| std::array              | `_ELPP_LOG_STD_ARRAY`       |
-| std::unordered_map      | `_ELPP_LOG_UNORDERED_MAP`   |
-| std::unordered_multimap | `_ELPP_LOG_UNORDERED_MAP`   |
-| std::unordered_set      | `_ELPP_LOG_UNORDERED_SET`   |
-| std::unordered_multiset | `_ELPP_LOG_UNORDERED_SET`   |
+| std::array              | `ELPP_LOG_STD_ARRAY`       |
+| std::unordered_map      | `ELPP_LOG_UNORDERED_MAP`   |
+| std::unordered_multimap | `ELPP_LOG_UNORDERED_MAP`   |
+| std::unordered_set      | `ELPP_LOG_UNORDERED_SET`   |
+| std::unordered_multiset | `ELPP_LOG_UNORDERED_SET`   |
 
 Standard manipulators are also supported, in addition std::stringstream is also supported.
 
@@ -697,7 +697,7 @@ Loggers are unique in logger repository by ID. You can register new logger the s
 By default, Easylogging++ registers three loggers (+ an internal logger);
 * Default logger (ID: `default`)
 * Performance logger (ID: `performance`)
-* Syslog logger (if `_ELPP_SYSLOG` macro is defined) (ID: `syslog`)
+* Syslog logger (if `ELPP_SYSLOG` macro is defined) (ID: `syslog`)
 
 If you wish to register a new logger, say e.g, with ID `business`
 ```c++
@@ -727,8 +727,8 @@ For advance logging, you can share your logging repositories to shared or static
 
 Let's say we have an application that uses easylogging++ and has it's own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
 
- * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_SHARE_EASYLOGGINGPP(access-function-to-repository)`
- * Instead of using `_INITIALIZE_EASYLOGGINGPP` you use `_INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
+ * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `SHARE_EASYLOGGINGPP(access-function-to-repository)`
+ * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
  
   Refer [this](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/shared-storage) for details
 
@@ -838,8 +838,8 @@ Following are some useful macros that you can define to change the behaviour
 
 |   Macro Name                                        |                 Description                                                                                                    |
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_DISABLE_PERFORMANCE_TRACKING`                | Disables performance tracking                                                                                                  |
-| `_ELPP_PERFORMANCE_MICROSECONDS`                    | Track up-to microseconds (this includes initializing of el::base::PerformanceTracker as well so might time not be 100% accurate)        |
+| `ELPP_DISABLE_PERFORMANCE_TRACKING`                | Disables performance tracking                                                                                                  |
+| `ELPP_PERFORMANCE_MICROSECONDS`                    | Track up-to microseconds (this includes initializing of el::base::PerformanceTracker as well so might time not be 100% accurate)        |
 
 Notes:
 
@@ -875,16 +875,16 @@ This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollO
  [![top] Goto Top](#table-of-contents)
 
 ### Crash Handling
-Easylogging++ provides ability to handle unexpected crashes for GCC compilers. This is active by default and can be disabled by defining macro `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`. By doing so you are telling library not to handle any crashes. Later on if you wish to handle crash yourself, you can assign crash handler of type void func(int) where int is signal caught. 
+Easylogging++ provides ability to handle unexpected crashes for GCC compilers. This is active by default and can be disabled by defining macro `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`. By doing so you are telling library not to handle any crashes. Later on if you wish to handle crash yourself, you can assign crash handler of type void func(int) where int is signal caught. 
 
 Following signals are handled;
-* SIGABRT (If `_ELPP_HANDLE_SIGABRT` macro is defined)
+* SIGABRT (If `ELPP_HANDLE_SIGABRT` macro is defined)
 * SIGFPE
 * SIGILL
 * SIGSEGV
 * SIGINT
 
-Stacktraces are not printed by default, in order to do so define macro `_ELPP_STACKTRACE_ON_CRASH`. Remember, stack trace is only available for GCC compiler.
+Stacktraces are not printed by default, in order to do so define macro `ELPP_STACKTRACE_ON_CRASH`. Remember, stack trace is only available for GCC compiler.
 
 > Default handler and stack trace uses `default` logger.
 
@@ -892,8 +892,8 @@ Following are some useful macros that you can define to change the behaviour
 
 |   Macro Name                                        |                 Description                                                                                                    |
 |-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| `_ELPP_DISABLE_DEFAULT_CRASH_HANDLING`              | Disables default crash handling.                                                                                               |
-| `_ELPP_HANDLE_SIGABRT`                              | Enables handling `SIGABRT`. This is disabled by default to prevent annoying `CTRL + C` behaviour when you wish to abort.       |
+| `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`              | Disables default crash handling.                                                                                               |
+| `ELPP_HANDLE_SIGABRT`                              | Enables handling `SIGABRT`. This is disabled by default to prevent annoying `CTRL + C` behaviour when you wish to abort.       |
 
  [![top] Goto Top](#table-of-contents)
 
@@ -906,7 +906,7 @@ Here is a good example of your own handler
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 void myCrashHandler(int sig) {
     LOG(ERROR) << "Woops! Crashed!";     
@@ -940,7 +940,7 @@ Easylogging++ supports stack trace printing for GCC compilers. You can print sta
  [![top] Goto Top](#table-of-contents)
  
 ### Multi-threading
-Easylogging++ is thread-safe. By default thread-safety is disabled. You can enable it by defining `_ELPP_THREAD_SAFE` otherwise you will see unexpected results. This is intentional to make library efficient for single threaded application.
+Easylogging++ is thread-safe. By default thread-safety is disabled. You can enable it by defining `ELPP_THREAD_SAFE` otherwise you will see unexpected results. This is intentional to make library efficient for single threaded application.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -973,15 +973,15 @@ Easylogging++ supports `perror()` styled logging using `PLOG(LEVEL)`, `PLOG_IF(C
  [![top] Goto Top](#table-of-contents)
 
 ### Syslog
-Easylogging++ supports syslog for platforms that have `syslog.h` header. In order to enable it, you need to define `_ELPP_SYSLOG`. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
+Easylogging++ supports syslog for platforms that have `syslog.h` header. In order to enable it, you need to define `ELPP_SYSLOG`. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
 
 Syslog in Easylogging++ supports C++ styled streams logging, following example;
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 int main(void) {
-    _INIT_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER) // This is optional, you may not add it if you dont want to specify options
+    ELPP_INITIALIZE_SYSLOG("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER) // This is optional, you may not add it if you dont want to specify options
     // Alternatively you may do
     // el::SysLogInitializer elSyslogInit("my_proc", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
     SYSLOG(INFO) << "This is syslog - read it from /var/log/syslog"
@@ -1002,7 +1002,7 @@ Following levels are not supported and correspond to `LOG_NOTICE`: TRACE, wherea
  [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
-Easylogging++ has complete logging support for Qt core library. define `_ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
+Easylogging++ has complete logging support for Qt core library. define `ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
 
 Following Qt classes and containers are supported by Easylogging++ v9.0+
 
@@ -1019,7 +1019,7 @@ Also note, if you are logging a container that contains custom class, make sure 
  [![top] Goto Top](#table-of-contents)
 
 ### Boost Logging
-Easylogging++ supports some of boost templates. In order to enable boost logging, define macro `_ELPP_BOOST_LOGGING`
+Easylogging++ supports some of boost templates. In order to enable boost logging, define macro `ELPP_BOOST_LOGGING`
 
 Following table shows the templates supported.
 
@@ -1034,7 +1034,7 @@ Following table shows the templates supported.
  [![top] Goto Top](#table-of-contents)
 
 ### wxWidgets Logging
-Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets logging, define macro `_ELPP_WXWIDGETS_LOGGING`
+Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets logging, define macro `ELPP_WXWIDGETS_LOGGING`
 
 Following table shows the templates supported.
 
@@ -1074,7 +1074,7 @@ You can log your own classes by extending `el::Loggable` class and implementing 
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 class Integer : public el::Loggable {
 public:
     Integer(int i) : m_underlyingInt(i) {
@@ -1108,7 +1108,7 @@ Following sample shows a good usage:
 ```c++
 #include "easylogging++.h"
 
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 class Integer {
 public:
@@ -1154,7 +1154,7 @@ If you wish to capture log message right after it is dispatched, you can do so b
  [![top] Goto Top](#table-of-contents)
  
 ### Asynchronous Logging
-Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `_ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
 Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)

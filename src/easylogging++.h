@@ -5226,11 +5226,11 @@ public:
 #define ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
     if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
         writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
-#undef ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID
+#undef ELPP_CURR_FILE_PERFORMANCE_LOGGER
 #if defined(ELPP_PERFORMANCE_LOGGER)
-#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID ELPP_PERFORMANCE_LOGGER
+#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER ELPP_PERFORMANCE_LOGGER
 #else
-#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID el::base::consts::kPerformanceLoggerId
+#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER el::base::consts::kPerformanceLoggerId
 #endif
 class PerformanceTrackingData {
 public:
@@ -5276,7 +5276,7 @@ class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
 public:
     PerformanceTracker(const std::string& blockName,
             base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
-            const std::string& loggerId = std::string(ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID), 
+            const std::string& loggerId = std::string(ELPP_CURR_FILE_PERFORMANCE_LOGGER), 
             bool scopedLog = true, Level level = base::consts::kPerformanceTrackerDefaultLevel) :
         m_blockName(blockName), m_timestampUnit(timestampUnit), m_loggerId(loggerId), m_scopedLog(scopedLog),
         m_level(level), m_hasChecked(false), m_lastCheckpointId(std::string()), m_enabled(false) {
@@ -6325,7 +6325,7 @@ public:
 #undef VLOG_N_TIMES
 #undef ELPP_CURR_FILE_LOGGER_ID
 #if defined(ELPP_DEFAULT_LOGGER)
-#   define ELPP_CURR_FILE_LOGGER_ID ELPP_DEFAULT__LOGGER
+#   define ELPP_CURR_FILE_LOGGER_ID ELPP_DEFAULT_LOGGER
 #else
 #   define ELPP_CURR_FILE_LOGGER_ID el::base::consts::kDefaultLoggerId
 #endif
