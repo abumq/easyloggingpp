@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 
     START_EASYLOGGINGPP(argc, argv);
 
-    LOG(INFO) << "Source base taken from http://www.videotutorialsrock.com";
+    LOG(INFO) << "Source base taken from http://www.muflihun.com";
 
     LOG_IF(!VLOG_IS_ON(1), INFO) << "Try using --v=1 or --v=2 or --verbose command line arguments as well";
 
