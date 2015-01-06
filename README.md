@@ -1218,6 +1218,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![freebsd]     | FreeBSD                | (from github user)                                                                  |
 |![android]     | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
 |![raspberrypi] | RaspberryPi 7.6        | Tested with 7.6.2-1.1 (gcc version 4.9.1 (Raspbian 4.9.1-1)) by contributor         |
+|![solaris]     | Solaris i86 and Spark  | Tested by contributor                                                               |
 
 Easylogging++ has also been tested with following C++ libraries;
 
@@ -1285,6 +1286,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [gtkmm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gtkmm.png?v=3
   [tdm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/tdm.png?v=3
   [raspberrypi]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/solaris.png?v=3
 
 
   [gcc]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gcc.png?v=4
