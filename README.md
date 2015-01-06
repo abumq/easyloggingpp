@@ -161,7 +161,7 @@ It is always recommended to pass application arguments to Easylogging++. Some fe
 
 ```c++
 int main(int argv, char* argc[]) {
-   _START_EASYLOGGINGPP(argc, argv);
+   START_EASYLOGGINGPP(argc, argv);
    ...
 }
 ```
@@ -413,12 +413,12 @@ Form some parts of logging you can set logging flags; here are flags supported:
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
 
- > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `_START_EASYLOGGINGPP(argc, argv)` to configure arguments).
+ > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
  [![top] Goto Top](#table-of-contents)
 
 ### Application Arguments
-Following table will explain all command line arguments that you may use to define certain behaviour; You will need to initialize application arguments by using `_START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function.
+Following table will explain all command line arguments that you may use to define certain behaviour; You will need to initialize application arguments by using `START_EASYLOGGINGPP(argc, argv)` in your `main(int, char**)` function.
 
 |        Argument            |                                      Description                                        |
 |----------------------------|-----------------------------------------------------------------------------------------|
@@ -437,7 +437,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `ELPP_DEBUG_ASSERT_FAILURE`             | Aborts application on first assertion failure. This assertion is due to invalid input e.g, invalid configuration file etc.                         |
-| `ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `_START_EASYLOGGINGPP`                 |
+| `ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `START_EASYLOGGINGPP`                 |
 | `ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `ELPP_THREAD_SAFE`            |
 | `ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
@@ -1218,7 +1218,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![freebsd]     | FreeBSD                | (from github user)                                                                  |
 |![android]     | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
 |![raspberrypi] | RaspberryPi 7.6        | Tested with 7.6.2-1.1 (gcc version 4.9.1 (Raspbian 4.9.1-1)) by contributor         |
-|![solaris]     | Solaris i86 and Spark  | Tested by contributor                                                               |
+|![solaris]     | Solaris i86            | Tested by contributor                                                               |
 
 Easylogging++ has also been tested with following C++ libraries;
 
@@ -1238,6 +1238,7 @@ The MIT License (MIT)
 Copyright (c) 2014 Majid Khan
 http://github.com/easylogging/easyloggingpp
 http://muflihun.com
+http://muflihun.com/donation
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
