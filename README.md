@@ -457,6 +457,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
 | `ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
 | `ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
+| `ELPP_WINSOCK2`        | On windows system force to use `winsock2.h` instead of `winsock.h` when `WIN32_LEAN_AND_MEAN` is defined                                                                    |
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations

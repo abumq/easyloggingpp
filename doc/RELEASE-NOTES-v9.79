@@ -5,6 +5,12 @@ Release type: Major
 API changes: Yes
 
 ==========================
+=      NEW FEATURES      =
+==========================
+
+ - Ability to use `winsock2.h` when `ELPP_WINSOCK2` defined
+
+==========================
 =       API CHANGES      =
 ==========================
 
