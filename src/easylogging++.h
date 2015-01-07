@@ -2,16 +2,17 @@
 //  Easylogging++ v9.79 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2014 Majid Khan
+//  Copyright (c) 2015 Majid Khan
 //
 //  This library is released under the MIT Licence.
 //  https://raw.githubusercontent.com/easylogging/easyloggingpp/master/LICENCE
 //
-//  majid@muflihun.com
-//  https://github.com/easylogging/easyloggingpp
+//  easylogging@muflihun.com
 //
-//  http://muflihun.com
+//  https://github.com/easylogging/easyloggingpp
+//  http://easylogging.muflihun.com
 //  http://muflihun.com/donation
+//  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
