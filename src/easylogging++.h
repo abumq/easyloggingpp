@@ -5,7 +5,7 @@
 //  Copyright (c) 2015 Majid Khan
 //
 //  This library is released under the MIT Licence.
-//  https://raw.githubusercontent.com/easylogging/easyloggingpp/master/LICENCE
+//  http://easylogging.muflihun.com/licence.php
 //
 //  easylogging@muflihun.com
 //
