@@ -5481,6 +5481,9 @@ private:
                     case ')':
                         addr = c;
                         break;
+                    default:
+                        addr = "";
+                        break;
                     }
                 }
                 // Perform demangling if parsed properly

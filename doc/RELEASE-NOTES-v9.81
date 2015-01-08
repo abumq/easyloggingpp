@@ -9,6 +9,7 @@ API changes: No
 ==========================
 
  - Fix with `-Wundef` compiler flag (issue #221)
+ - Fix with `-Wswitch-default` compiler flag (issue #221)
 
 ==========================
 =         NOTES          =
