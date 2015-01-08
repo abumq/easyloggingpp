@@ -16,9 +16,9 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
+#define ELPP_COMPILER_GCC (defined(__GNUC__))
 #if defined(__GNUC__)
-#   define ELPP_COMPILER_GCC 1
-#   define ELPP_GCC_VERSION (__GNUC__ * 10000 \
+#    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
                                + __GNUC_MINOR__ * 100 \
                                + __GNUC_PATCHLEVEL__)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -28,9 +28,9 @@
 #   endif  // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif  // defined(__GNUC__)
 // Visual C++
+#define ELPP_COMPILER_MSVC (defined(_MSC_VER))
+#define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
 #if defined(_MSC_VER)
-#   define ELPP_COMPILER_MSVC 1
-#   define ELPP_CRT_DBG_WARNINGS 1
 #   if (_MSC_VER == 1600)
 #      define ELPP_CXX0X 1
 #   elif(_MSC_VER >= 1700)
@@ -38,8 +38,8 @@
 #   endif  // (_MSC_VER == 1600)
 #endif  // defined(_MSC_VER)
 // Clang++
+#define ELPP_COMPILER_CLANG (defined(__clang__) && (__clang__ == 1))
 #if defined(__clang__) && (__clang__ == 1)
-#   define ELPP_COMPILER_CLANG 1
 #   define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
                                 + __clang_minor__ * 100 \
                                 + __clang_patchlevel__)
@@ -47,47 +47,22 @@
 #      define ELPP_CXX11 1
 #   endif  // (ELPP_CLANG_VERSION >= 30300)
 #endif  // defined(__clang__) && (__clang__ == 1)
-// MinGW
-#if defined(__MINGW32__) || defined(__MINGW64__)
-#   define ELPP_MINGW 1
-#endif  // defined(__MINGW32__) || defined(__MINGW64__)
-// Cygwin
-#if defined(__CYGWIN__) && (__CYGWIN__ == 1)
-#   define ELPP_CYGWIN 1
-#endif  // defined(__CYGWIN__) && (__CYGWIN__ == 1)
-// Intel C++
-#if defined(__INTEL_COMPILER)
-#   define ELPP_COMPILER_INTEL 1
-#endif
+#define ELPP_MINGW (defined(__MINGW32__) || defined(__MINGW64__))
+#define ELPP_CYGWIN (defined(__CYGWIN__) && (__CYGWIN__ == 1))
+#define ELPP_COMPILER_INTEL (defined(__INTEL_COMPILER))
 // Operating System Evaluation
 // Windows
-#if defined(_WIN32) || defined(_WIN64)
-#   define ELPP_OS_WINDOWS 1
-#endif  // defined(_WIN32) || defined(_WIN64)
+#define ELPP_OS_WINDOWS (defined(_WIN32) || defined(_WIN64))  
 // Linux
-#if (defined(__linux) || defined(__linux__))
-#   define ELPP_OS_LINUX 1
-#endif  // (defined(__linux) || defined(__linux__))
-// Mac
-#if defined(__APPLE__)
-#   define ELPP_OS_MAC 1
-#endif  // defined(__APPLE__)
-// FreeBSD
-#if defined(__FreeBSD__)
-#   define ELPP_OS_FREEBSD 1
-#endif
-// Solaris
-#if defined(__sun)
-#   define ELPP_OS_SOLARIS 1
-#endif
+#define ELPP_OS_LINUX (defined(__linux) || defined(__linux__))
+#define ELPP_OS_MAC (defined(__APPLE__))
+#define ELPP_OS_FREEBSD (defined(__FreeBSD__))
+#define ELPP_OS_SOLARIS (defined(__sun))
 // Unix
 #if ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
 #   define ELPP_OS_UNIX 1
 #endif  // ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
-// Android
-#if defined(__ANDROID__)
-#   define ELPP_OS_ANDROID 1
-#endif  // defined(__ANDROID__)
+#define ELPP_OS_ANDROID (defined(__ANDROID__))
 // Evaluating Cygwin as *nix OS
 #if !ELPP_OS_UNIX && !ELPP_OS_WINDOWS && ELPP_CYGWIN
 #   undef ELPP_OS_UNIX
@@ -320,7 +295,7 @@
 #   if defined(WIN32_LEAN_AND_MEAN)
 #      if defined(ELPP_WINSOCK2)
 #         include <winsock2.h>
-#	   else
+#      else
 #         include <winsock.h>
 #      endif // defined(ELPP_WINSOCK2)
 #   endif // defined(WIN32_LEAN_AND_MEAN)

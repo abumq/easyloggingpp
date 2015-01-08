@@ -5,6 +5,12 @@ Release type: Minor
 API changes: No
 
 ==========================
+=      BUILD FIX         =
+==========================
+
+ - Fix with `-Wundef` compiler flag (issue #221)
+
+==========================
 =         NOTES          =
 ==========================
 
