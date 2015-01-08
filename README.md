@@ -567,14 +567,14 @@ for (int i = 1; i <= 100; ++i) {
 
  [![top] Goto Top](#table-of-contents)
  
-### printf Like Logging
+### `printf` Like Logging
 For compilers that support C++11's variadic templates, ability to log like "printf" is available. This is done by using `Logger` class. This feature is thread and type safe (as we do not use any macros like `LOG(INFO)` etc)
 
 This is done in two steps:
  1. Pulling registered logger using `el::Loggers::getLogger(<logger_id>);`
  2. Using one of logging functions
  
-The only difference from `printf` is that logging using these functions require `%v` for each arg; instead of custom format specifiers. You can escape this by `%%v`
+The only difference from `printf` is that logging using these functions require `%v` for each arg (This is for type-safety); instead of custom format specifiers. You can escape this by `%%v`
 
 Following are various function signatures:
  * `info(const char*, const T&, const Args&...)`
@@ -600,6 +600,8 @@ defaultLogger->warn("My first ultimate log message %v %v %v", 123, 222, i);
 defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222);
 
 ```
+
+ > `%file`, `%func` `%line` and `%loc` format specifiers will not work with `printf` like logging.
 
  [![top] Goto Top](#table-of-contents)
 

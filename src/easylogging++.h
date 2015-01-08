@@ -1053,10 +1053,10 @@ public:
             base::type::fstream_t::out | base::type::fstream_t::app);
 #if defined(ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
-#if ELPP_OS_WINDOWS
+#   if ELPP_OS_WINDOWS
         std::locale elppUnicodeLocaleWindows(elppUnicodeLocale, new std::codecvt_utf8_utf16<wchar_t>);
         elppUnicodeLocale = elppUnicodeLocaleWindows;
-#endif
+#   endif // ELPP_OS_WINDOWS
         fs->imbue(elppUnicodeLocale);
 #endif  // defined(ELPP_UNICODE)
         if (fs->is_open()) {
