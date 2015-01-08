@@ -17,7 +17,7 @@
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
 #define ELPP_COMPILER_GCC (defined(__GNUC__))
-#if defined(__GNUC__)
+#if ELPP_COMPILER_GCC
 #    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
                                + __GNUC_MINOR__ * 100 \
                                + __GNUC_PATCHLEVEL__)
@@ -30,7 +30,7 @@
 // Visual C++
 #define ELPP_COMPILER_MSVC (defined(_MSC_VER))
 #define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
-#if defined(_MSC_VER)
+#if ELPP_COMPILER_MSVC
 #   if (_MSC_VER == 1600)
 #      define ELPP_CXX0X 1
 #   elif(_MSC_VER >= 1700)
@@ -39,7 +39,7 @@
 #endif  // defined(_MSC_VER)
 // Clang++
 #define ELPP_COMPILER_CLANG (defined(__clang__) && (__clang__ == 1))
-#if defined(__clang__) && (__clang__ == 1)
+#if ELPP_COMPILER_CLANG
 #   define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
                                 + __clang_minor__ * 100 \
                                 + __clang_patchlevel__)
