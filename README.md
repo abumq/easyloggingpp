@@ -25,7 +25,6 @@
 <a href="#introduction">Introduction</a>
     <a href="#why-yet-another-library">Why yet another library</a>
     <a href="#features-at-a-glance">Features at a glance</a>
-    <a href="#future">Future</a>
 <a href="#getting-started">Getting Started</a>
     <a href="#download">Download</a>
     <a href="#quick-start">Quick Start</a>
@@ -81,6 +80,7 @@
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
     <a href="#log-dispatch-callback">Log Dispatch Callback</a>
     <a href="#asynchronous-logging">Asynchronous Logging</a>
+    <a href="#helper-classes">Helper Classes</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -119,11 +119,6 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  * Third-party library logging (Qt, boost, wxWidgets etc)
  * Extensible (Logging your own class or third-party class)
  * And many more...
-
- [![top] Goto Top](#table-of-contents)
-
-### Future
-We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1183,6 +1178,16 @@ Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
 * Compiler should support `std::this_thread::sleep_for`. This restriction may (or may not) be removed in future (stable) version of asynchronous logging.
 * You should not rely on asynchronous logging in production, this is because feature is in experiemental stages.
+
+ [![top] Goto Top](#table-of-contents)
+ 
+### Helper Classes
+There are static helper classes available to make it easy to do stuffs;
+
+ * `el::Helpers`
+ * `el::Loggers`
+
+You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/easylogging/easyloggingpp/issues/210) for instance.
 
  [![top] Goto Top](#table-of-contents)
  
