@@ -12,6 +12,12 @@ API changes: No
  - Fix with `-Wswitch-default` compiler flag (issue #221)
 
 ==========================
+=      NEW FEATURES      =
+==========================
+
+ - `ELPP_CUSTOM_COUT` to define custom standard output (e.g, `std::cerr`) (issue #201)`
+
+==========================
 =         NOTES          =
 ==========================
 
