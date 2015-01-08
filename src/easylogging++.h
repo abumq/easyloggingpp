@@ -26,7 +26,7 @@
 #   elif(ELPP_GCC_VERSION >= 40801)
 #      define ELPP_CXX11 1
 #   endif  // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#endif  // defined(__GNUC__)
+#endif  // ELPP_COMPILER_GCC
 // Visual C++
 #define ELPP_COMPILER_MSVC (defined(_MSC_VER))
 #define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
@@ -36,7 +36,7 @@
 #   elif(_MSC_VER >= 1700)
 #      define ELPP_CXX11 1
 #   endif  // (_MSC_VER == 1600)
-#endif  // defined(_MSC_VER)
+#endif  // ELPP_COMPILER_MSVC
 // Clang++
 #define ELPP_COMPILER_CLANG (defined(__clang__) && (__clang__ == 1))
 #if ELPP_COMPILER_CLANG
@@ -46,7 +46,7 @@
 #   if (ELPP_CLANG_VERSION >= 30300)
 #      define ELPP_CXX11 1
 #   endif  // (ELPP_CLANG_VERSION >= 30300)
-#endif  // defined(__clang__) && (__clang__ == 1)
+#endif  // ELPP_COMPILER_CLANG
 #define ELPP_MINGW (defined(__MINGW32__) || defined(__MINGW64__))
 #define ELPP_CYGWIN (defined(__CYGWIN__) && (__CYGWIN__ == 1))
 #define ELPP_COMPILER_INTEL (defined(__INTEL_COMPILER))
