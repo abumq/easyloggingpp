@@ -4,7 +4,7 @@ TARGET = qt-gtest-proj-intel
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++0x
-QMAKE_CXXFLAGS += 
+QMAKE_CXXFLAGS += -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors -Wundef
 
 COMPILER = icpc
 QMAKE_CC = $$COMPILER
