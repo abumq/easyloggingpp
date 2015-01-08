@@ -180,23 +180,15 @@
 #   define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#if (!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD)
-#   define ELPP_USE_STD_THREADING 1
-#endif  // (!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD)
+#define ELPP_USE_STD_THREADING ((!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD))
 #undef ELPP_FINAL
 #if ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
 #   define ELPP_FINAL
 #else
 #   define ELPP_FINAL final
 #endif  // ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
-#if defined(ELPP_EXPERIMENTAL_ASYNC)
-#   define ELPP_ASYNC_LOGGING 1
-#else
-#   define ELPP_ASYNC_LOGGING 0
-#endif  // defined(ELPP_EXPERIMENTAL_ASYNC)
-#if defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
-#   define ELPP_THREADING_ENABLED 1
-#endif  // defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
+#define ELPP_ASYNC_LOGGING (defined(ELPP_EXPERIMENTAL_ASYNC))
+#define ELPP_THREADING_ENABLED (defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING)
 // Function macro ELPP_FUNC
 #undef ELPP_FUNC
 #if ELPP_COMPILER_MSVC  // Visual C++
@@ -220,44 +212,14 @@
 #   define ELPP_VARIADIC_TEMPLATES_SUPPORTED 1
 #endif  // ELPP_COMPILER_GCC || ELPP_COMPILER_CLANG || ELPP_COMPILER_INTEL || (ELPP_COMPILER_MSVC && _MSC_VER >= 1800)
 // Logging Enable/Disable macros
-#if (!defined(ELPP_DISABLE_LOGS))
-#   define ELPP_LOGGING_ENABLED 1
-#endif  // (!defined(ELPP_DISABLE_LOGS))
-#if (!defined(ELPP_DISABLE_DEBUG_LOGS) && (ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
-#   define ELPP_DEBUG_LOG 1
-#else
-#   define ELPP_DEBUG_LOG 0
-#endif  // (!defined(ELPP_DISABLE_DEBUG_LOGS) && (ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
-#if (!defined(ELPP_DISABLE_INFO_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_INFO_LOG 1
-#else
-#   define ELPP_INFO_LOG 0
-#endif  // (!defined(ELPP_DISABLE_INFO_LOGS) && (ELPP_LOGGING_ENABLED))
-#if (!defined(ELPP_DISABLE_WARNING_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_WARNING_LOG 1
-#else
-#   define ELPP_WARNING_LOG 0
-#endif  // (!defined(ELPP_DISABLE_WARNING_LOGS) && (ELPP_LOGGING_ENABLED))
-#if (!defined(ELPP_DISABLE_ERROR_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_ERROR_LOG 1
-#else
-#   define ELPP_ERROR_LOG 0
-#endif  // (!defined(ELPP_DISABLE_ERROR_LOGS) && (ELPP_LOGGING_ENABLED))
-#if (!defined(ELPP_DISABLE_FATAL_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_FATAL_LOG 1
-#else
-#   define ELPP_FATAL_LOG 0
-#endif  // (!defined(ELPP_DISABLE_FATAL_LOGS) && (ELPP_LOGGING_ENABLED))
-#if (!defined(ELPP_DISABLE_TRACE_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_TRACE_LOG 1
-#else
-#   define ELPP_TRACE_LOG 0
-#endif  // (!defined(ELPP_DISABLE_TRACE_LOGS) && (ELPP_LOGGING_ENABLED))
-#if (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
-#   define ELPP_VERBOSE_LOG 1
-#else
-#   define ELPP_VERBOSE_LOG 0
-#endif  // (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_LOGGING_ENABLED (!defined(ELPP_DISABLE_LOGS))
+#define ELPP_DEBUG_LOG (!defined(ELPP_DISABLE_DEBUG_LOGS) && (ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
+#define ELPP_INFO_LOG (!defined(ELPP_DISABLE_INFO_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_WARNING_LOG (!defined(ELPP_DISABLE_WARNING_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_ERROR_LOG (!defined(ELPP_DISABLE_ERROR_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_FATAL_LOG (!defined(ELPP_DISABLE_FATAL_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_TRACE_LOG (!defined(ELPP_DISABLE_TRACE_LOGS) && (ELPP_LOGGING_ENABLED))
+#define ELPP_VERBOSE_LOG (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
 #if (!(ELPP_CXX0X || ELPP_CXX11))
 #   error "Easylogging++ 9.0+ is only compatible with C++0x (or higher) compliant compiler"
 #endif  // (!(ELPP_CXX0X || ELPP_CXX11))
