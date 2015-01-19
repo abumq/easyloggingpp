@@ -10,6 +10,8 @@ API changes: No
 
  - Fix with `-Wundef` compiler flag (issue #221)
  - Fix with `-Wswitch-default` compiler flag (issue #221)
+ - Warning fix for some unused variables
+ - syslog constant is no longer defined unless `ELPP_SYSLOG` is defined
 
 ==========================
 =      NEW FEATURES      =

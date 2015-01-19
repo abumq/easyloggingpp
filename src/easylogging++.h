@@ -729,9 +729,13 @@ namespace consts {
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
     // Miscellaneous constants
+#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kDefaultLoggerId                        =      "default";
+#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kPerformanceLoggerId                    =      "performance";
+#if defined(ELPP_SYSLOG)
     static const char* kSysLogLoggerId                         =      "syslog";
+#endif  // defined(ELPP_SYSLOG)
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatSpecifierChar                    =      '%';
 #if ELPP_VARIADIC_TEMPLATES_SUPPORTED
@@ -992,9 +996,11 @@ static inline std::string getCurrentThreadId(void) {
 }
 static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
-#if ELPP_ASYNC_LOGGING
+#      if ELPP_ASYNC_LOGGING
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-#endif  // ELPP_ASYNC_LOGGING
+#      else
+    ELPP_UNUSED(ms);
+#      endif  // ELPP_ASYNC_LOGGING
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -3890,8 +3896,6 @@ public:
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
         sysLogLogger->configurations()->setGlobally(ConfigurationType::Format, std::string("%level: %msg"));
         sysLogLogger->reconfigure();
-#else
-        ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif //  defined(ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
 #if ELPP_ASYNC_LOGGING
