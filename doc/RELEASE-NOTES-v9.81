@@ -12,6 +12,7 @@ API changes: No
  - Fix with `-Wswitch-default` compiler flag (issue #221)
  - Warning fix for some unused variables
  - syslog constant is no longer defined unless `ELPP_SYSLOG` is defined
+ - use unistd.h -> usleep for async if `std::this_thread::sleep_for` not available by defining `ELPP_NO_SLEEP_FOR` (Only async logging)
 
 ==========================
 =      NEW FEATURES      =

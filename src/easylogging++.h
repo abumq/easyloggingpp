@@ -311,6 +311,9 @@
 #   endif  // ELPP_USE_STD_THREADING
 #endif  // ELPP_THREADING_ENABLED
 #if ELPP_ASYNC_LOGGING
+#   if defined(ELPP_NO_SLEEP_FOR)
+#      include <unistd.h>
+#   endif  // defined(ELPP_NO_SLEEP_FOR)
 #   include <thread>
 #   include <queue>
 #   include <condition_variable>
@@ -997,7 +1000,11 @@ static inline std::string getCurrentThreadId(void) {
 static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
 #      if ELPP_ASYNC_LOGGING
+#         if defined(ELPP_NO_SLEEP_FOR)
+    usleep(ms * 1000);
+#         else
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#         endif  // defined(ELPP_NO_SLEEP_FOR)
 #      else
     ELPP_UNUSED(ms);
 #      endif  // ELPP_ASYNC_LOGGING
