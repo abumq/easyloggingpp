@@ -5476,7 +5476,7 @@ private:
             for (std::size_t i = kStackStart; i < size; ++i) {
                 char* mangName = nullptr;
                 char* hex = nullptr;
-                char* addr = nullptr;
+                char* addr = "";
                 for (char* c = strings[i]; *c; ++c) {
                     switch (*c) {
                     case '(':
@@ -5489,7 +5489,6 @@ private:
                         addr = c;
                         break;
                     default:
-                        addr = "";
                         break;
                     }
                 }
