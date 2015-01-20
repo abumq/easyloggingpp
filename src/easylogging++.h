@@ -4226,7 +4226,7 @@ public:
         ELPP_INTERNAL_INFO(6, "Log queue cleaned");
     }
 
-    inline bool clean() {
+    inline bool clean(void) {
         std::mutex m;
         std::unique_lock<std::mutex> lk(m);
         cv.wait(lk, []{ return !ELPP->asyncLogQueue()->empty(); });
@@ -4236,7 +4236,7 @@ public:
         return ELPP->asyncLogQueue()->empty();
     }
 
-    inline void emptyQueue() {
+    inline void emptyQueue(void) {
         while (!ELPP->asyncLogQueue()->empty()) {
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
@@ -4244,10 +4244,10 @@ public:
         }
     }
     
-    virtual inline void start() {
-        base::threading::msleep(5000); // Wait extra few seconds
+    virtual inline void start(void) {
+        base::threading::msleep(5000); // 5s (why?)
         setContinueRunning(true);
-        std::thread t1(&AsyncDispatchWorker::runner, this);
+        std::thread t1(&AsyncDispatchWorker::run, this);
         t1.join();
     }
 
@@ -4305,23 +4305,19 @@ public:
 #   endif  // defined(ELPP_SYSLOG)
     }
 
-    void run() {
+    void run(void) {
         while (continueRunning()) {
             emptyQueue();
             base::threading::msleep(10); // 10ms
         }
     }
 
-    static void* runner(void *context) {
-        static_cast<AsyncDispatchWorker*>(context)->run();
-        return NULL;
-    }
-    
     void setContinueRunning(bool value) {
         base::threading::ScopedLock scopedLock(m_continueRunningMutex);
         m_continueRunning = value;
     }
-    bool continueRunning(void) {
+
+    bool continueRunning(void) const {
         return m_continueRunning;
     }
 private:
