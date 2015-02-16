@@ -2708,7 +2708,7 @@ public:
         static inline bool isConfig(const std::string& line) {
             std::size_t assignment = line.find('=');
             return line != "" &&
-                    (line[0] >= 65 || line[0] <= 90 || line[0] >= 97 || line[0] <= 122) &&
+                    ((line[0] >= 65 && line[0] <= 90) || (line[0] >= 97 && line[0] <= 122)) &&
                     (assignment != std::string::npos) &&
                     (line.size() > assignment);
         }
