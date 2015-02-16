@@ -1,5 +1,5 @@
 //
-//  Easylogging++ v9.80
+//  Easylogging++ v9.80 (development / unreleased version)
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2015 muflihun.com
@@ -16,9 +16,9 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
-#if defined(__GNUC__)
-#   define ELPP_COMPILER_GCC 1
-#   define ELPP_GCC_VERSION (__GNUC__ * 10000 \
+#define ELPP_COMPILER_GCC (defined(__GNUC__))
+#if ELPP_COMPILER_GCC
+#    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
                                + __GNUC_MINOR__ * 100 \
                                + __GNUC_PATCHLEVEL__)
 #   if defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -26,68 +26,43 @@
 #   elif(ELPP_GCC_VERSION >= 40801)
 #      define ELPP_CXX11 1
 #   endif  // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#endif  // defined(__GNUC__)
+#endif  // ELPP_COMPILER_GCC
 // Visual C++
-#if defined(_MSC_VER)
-#   define ELPP_COMPILER_MSVC 1
-#   define ELPP_CRT_DBG_WARNINGS 1
+#define ELPP_COMPILER_MSVC (defined(_MSC_VER))
+#define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
+#if ELPP_COMPILER_MSVC
 #   if (_MSC_VER == 1600)
 #      define ELPP_CXX0X 1
 #   elif(_MSC_VER >= 1700)
 #      define ELPP_CXX11 1
 #   endif  // (_MSC_VER == 1600)
-#endif  // defined(_MSC_VER)
+#endif  // ELPP_COMPILER_MSVC
 // Clang++
-#if defined(__clang__) && (__clang__ == 1)
-#   define ELPP_COMPILER_CLANG 1
+#define ELPP_COMPILER_CLANG (defined(__clang__) && (__clang__ == 1))
+#if ELPP_COMPILER_CLANG
 #   define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
                                 + __clang_minor__ * 100 \
                                 + __clang_patchlevel__)
 #   if (ELPP_CLANG_VERSION >= 30300)
 #      define ELPP_CXX11 1
 #   endif  // (ELPP_CLANG_VERSION >= 30300)
-#endif  // defined(__clang__) && (__clang__ == 1)
-// MinGW
-#if defined(__MINGW32__) || defined(__MINGW64__)
-#   define ELPP_MINGW 1
-#endif  // defined(__MINGW32__) || defined(__MINGW64__)
-// Cygwin
-#if defined(__CYGWIN__) && (__CYGWIN__ == 1)
-#   define ELPP_CYGWIN 1
-#endif  // defined(__CYGWIN__) && (__CYGWIN__ == 1)
-// Intel C++
-#if defined(__INTEL_COMPILER)
-#   define ELPP_COMPILER_INTEL 1
-#endif
+#endif  // ELPP_COMPILER_CLANG
+#define ELPP_MINGW (defined(__MINGW32__) || defined(__MINGW64__))
+#define ELPP_CYGWIN (defined(__CYGWIN__) && (__CYGWIN__ == 1))
+#define ELPP_COMPILER_INTEL (defined(__INTEL_COMPILER))
 // Operating System Evaluation
 // Windows
-#if defined(_WIN32) || defined(_WIN64)
-#   define ELPP_OS_WINDOWS 1
-#endif  // defined(_WIN32) || defined(_WIN64)
+#define ELPP_OS_WINDOWS (defined(_WIN32) || defined(_WIN64))  
 // Linux
-#if (defined(__linux) || defined(__linux__))
-#   define ELPP_OS_LINUX 1
-#endif  // (defined(__linux) || defined(__linux__))
-// Mac
-#if defined(__APPLE__)
-#   define ELPP_OS_MAC 1
-#endif  // defined(__APPLE__)
-// FreeBSD
-#if defined(__FreeBSD__)
-#   define ELPP_OS_FREEBSD 1
-#endif
-// Solaris
-#if defined(__sun)
-#   define ELPP_OS_SOLARIS 1
-#endif
+#define ELPP_OS_LINUX (defined(__linux) || defined(__linux__))
+#define ELPP_OS_MAC (defined(__APPLE__))
+#define ELPP_OS_FREEBSD (defined(__FreeBSD__))
+#define ELPP_OS_SOLARIS (defined(__sun))
 // Unix
 #if ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
 #   define ELPP_OS_UNIX 1
 #endif  // ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
-// Android
-#if defined(__ANDROID__)
-#   define ELPP_OS_ANDROID 1
-#endif  // defined(__ANDROID__)
+#define ELPP_OS_ANDROID (defined(__ANDROID__))
 // Evaluating Cygwin as *nix OS
 #if !ELPP_OS_UNIX && !ELPP_OS_WINDOWS && ELPP_CYGWIN
 #   undef ELPP_OS_UNIX
@@ -205,23 +180,15 @@
 #   define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#if (!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD)
-#   define ELPP_USE_STD_THREADING 1
-#endif  // (!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD)
+#define ELPP_USE_STD_THREADING ((!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD))
 #undef ELPP_FINAL
 #if ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
 #   define ELPP_FINAL
 #else
 #   define ELPP_FINAL final
 #endif  // ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
-#if defined(ELPP_EXPERIMENTAL_ASYNC)
-#   define ELPP_ASYNC_LOGGING 1
-#else
-#   define ELPP_ASYNC_LOGGING 0
-#endif  // defined(ELPP_EXPERIMENTAL_ASYNC)
-#if defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
-#   define ELPP_THREADING_ENABLED 1
-#endif  // defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
+#define ELPP_ASYNC_LOGGING (defined(ELPP_EXPERIMENTAL_ASYNC))
+#define ELPP_THREADING_ENABLED (defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING)
 // Function macro ELPP_FUNC
 #undef ELPP_FUNC
 #if ELPP_COMPILER_MSVC  // Visual C++
@@ -241,13 +208,10 @@
 #endif  // defined(_MSC_VER)
 #undef ELPP_VARIADIC_TEMPLATES_SUPPORTED
 // Keep following line commented until features are fixed
-#if ELPP_COMPILER_GCC || ELPP_COMPILER_CLANG || ELPP_COMPILER_INTEL || (ELPP_COMPILER_MSVC && _MSC_VER >= 1800)
-#   define ELPP_VARIADIC_TEMPLATES_SUPPORTED 1
-#endif  // ELPP_COMPILER_GCC || ELPP_COMPILER_CLANG || ELPP_COMPILER_INTEL || (ELPP_COMPILER_MSVC && _MSC_VER >= 1800)
+#define ELPP_VARIADIC_TEMPLATES_SUPPORTED \
+   (ELPP_COMPILER_GCC || ELPP_COMPILER_CLANG || ELPP_COMPILER_INTEL || (ELPP_COMPILER_MSVC && _MSC_VER >= 1800))
 // Logging Enable/Disable macros
-#if (!defined(ELPP_DISABLE_LOGS))
-#   define ELPP_LOGGING_ENABLED 1
-#endif  // (!defined(ELPP_DISABLE_LOGS))
+#define ELPP_LOGGING_ENABLED (!defined(ELPP_DISABLE_LOGS))
 #if (!defined(ELPP_DISABLE_DEBUG_LOGS) && (ELPP_LOGGING_ENABLED) && ((defined(_DEBUG)) || (!defined(NDEBUG))))
 #   define ELPP_DEBUG_LOG 1
 #else
@@ -320,7 +284,7 @@
 #   if defined(WIN32_LEAN_AND_MEAN)
 #      if defined(ELPP_WINSOCK2)
 #         include <winsock2.h>
-#	   else
+#      else
 #         include <winsock.h>
 #      endif // defined(ELPP_WINSOCK2)
 #   endif // defined(WIN32_LEAN_AND_MEAN)
@@ -347,6 +311,9 @@
 #   endif  // ELPP_USE_STD_THREADING
 #endif  // ELPP_THREADING_ENABLED
 #if ELPP_ASYNC_LOGGING
+#   if defined(ELPP_NO_SLEEP_FOR)
+#      include <unistd.h>
+#   endif  // defined(ELPP_NO_SLEEP_FOR)
 #   include <thread>
 #   include <queue>
 #   include <condition_variable>
@@ -765,9 +732,13 @@ namespace consts {
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
     // Miscellaneous constants
+#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kDefaultLoggerId                        =      "default";
+#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kPerformanceLoggerId                    =      "performance";
+#if defined(ELPP_SYSLOG)
     static const char* kSysLogLoggerId                         =      "syslog";
+#endif  // defined(ELPP_SYSLOG)
     static const char* kNullPointer                            =      "nullptr";
     static const char  kFormatSpecifierChar                    =      '%';
 #if ELPP_VARIADIC_TEMPLATES_SUPPORTED
@@ -1028,9 +999,15 @@ static inline std::string getCurrentThreadId(void) {
 }
 static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
-#if ELPP_ASYNC_LOGGING
+#      if ELPP_ASYNC_LOGGING
+#         if defined(ELPP_NO_SLEEP_FOR)
+    usleep(ms * 1000);
+#         else
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-#endif  // ELPP_ASYNC_LOGGING
+#         endif  // defined(ELPP_NO_SLEEP_FOR)
+#      else
+    ELPP_UNUSED(ms);
+#      endif  // ELPP_ASYNC_LOGGING
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
@@ -1089,10 +1066,10 @@ public:
             base::type::fstream_t::out | base::type::fstream_t::app);
 #if defined(ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
-#if ELPP_OS_WINDOWS
+#   if ELPP_OS_WINDOWS
         std::locale elppUnicodeLocaleWindows(elppUnicodeLocale, new std::codecvt_utf8_utf16<wchar_t>);
         elppUnicodeLocale = elppUnicodeLocaleWindows;
-#endif
+#   endif // ELPP_OS_WINDOWS
         fs->imbue(elppUnicodeLocale);
 #endif  // defined(ELPP_UNICODE)
         if (fs->is_open()) {
@@ -2731,7 +2708,7 @@ public:
         static inline bool isConfig(const std::string& line) {
             std::size_t assignment = line.find('=');
             return line != "" &&
-                    (line[0] >= 65 || line[0] <= 90 || line[0] >= 97 || line[0] <= 122) &&
+                    ((line[0] >= 65 && line[0] <= 90) || (line[0] >= 97 && line[0] <= 122)) &&
                     (assignment != std::string::npos) &&
                     (line.size() > assignment);
         }
@@ -3926,8 +3903,6 @@ public:
         Logger* sysLogLogger = m_registeredLoggers->get(std::string(base::consts::kSysLogLoggerId));
         sysLogLogger->configurations()->setGlobally(ConfigurationType::Format, std::string("%level: %msg"));
         sysLogLogger->reconfigure();
-#else
-        ELPP_UNUSED(base::consts::kSysLogLoggerId);
 #endif //  defined(ELPP_SYSLOG)
         addFlag(LoggingFlag::AllowVerboseIfModuleNotSpecified);
 #if ELPP_ASYNC_LOGGING
@@ -4258,7 +4233,7 @@ public:
         ELPP_INTERNAL_INFO(6, "Log queue cleaned");
     }
 
-    inline bool clean() {
+    inline bool clean(void) {
         std::mutex m;
         std::unique_lock<std::mutex> lk(m);
         cv.wait(lk, []{ return !ELPP->asyncLogQueue()->empty(); });
@@ -4268,7 +4243,7 @@ public:
         return ELPP->asyncLogQueue()->empty();
     }
 
-    inline void emptyQueue() {
+    inline void emptyQueue(void) {
         while (!ELPP->asyncLogQueue()->empty()) {
             AsyncLogItem data = ELPP->asyncLogQueue()->next();
             handle(&data);
@@ -4276,10 +4251,10 @@ public:
         }
     }
     
-    virtual inline void start() {
-        base::threading::msleep(5000); // Wait extra few seconds
+    virtual inline void start(void) {
+        base::threading::msleep(5000); // 5s (why?)
         setContinueRunning(true);
-        std::thread t1(&AsyncDispatchWorker::runner, this);
+        std::thread t1(&AsyncDispatchWorker::run, this);
         t1.join();
     }
 
@@ -4337,23 +4312,19 @@ public:
 #   endif  // defined(ELPP_SYSLOG)
     }
 
-    void run() {
+    void run(void) {
         while (continueRunning()) {
             emptyQueue();
             base::threading::msleep(10); // 10ms
         }
     }
 
-    static void* runner(void *context) {
-        static_cast<AsyncDispatchWorker*>(context)->run();
-        return NULL;
-    }
-    
     void setContinueRunning(bool value) {
         base::threading::ScopedLock scopedLock(m_continueRunningMutex);
         m_continueRunning = value;
     }
-    bool continueRunning(void) {
+
+    bool continueRunning(void) const {
         return m_continueRunning;
     }
 private:
@@ -5516,6 +5487,8 @@ private:
                         break;
                     case ')':
                         addr = c;
+                        break;
+                    default:
                         break;
                     }
                 }

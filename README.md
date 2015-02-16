@@ -2,8 +2,9 @@
 
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
+##### YOU ARE CURRENTLY BROWSING `develop` BRANCH. PLEASE SWITCH TO [`master`](https://github.com/easylogging/easyloggingpp) BRANCH IF YOU ARE NOT CONTRIBUTOR
 
-> **Manual For v9.80**
+> **Manual For v9.80 (development / unreleased version)**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -24,7 +25,6 @@
 <a href="#introduction">Introduction</a>
     <a href="#why-yet-another-library">Why yet another library</a>
     <a href="#features-at-a-glance">Features at a glance</a>
-    <a href="#future">Future</a>
 <a href="#getting-started">Getting Started</a>
     <a href="#download">Download</a>
     <a href="#quick-start">Quick Start</a>
@@ -80,6 +80,7 @@
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
     <a href="#log-dispatch-callback">Log Dispatch Callback</a>
     <a href="#asynchronous-logging">Asynchronous Logging</a>
+    <a href="#helper-classes">Helper Classes</a>
 <a href="#contribution">Contribution</a>
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
@@ -118,11 +119,6 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  * Third-party library logging (Qt, boost, wxWidgets etc)
  * Extensible (Logging your own class or third-party class)
  * And many more...
-
- [![top] Goto Top](#table-of-contents)
-
-### Future
-We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -457,6 +453,9 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_DISABLE_LOGGING_FLAGS_FROM_ARG`   | Forcefully disables ability to set logging flags using command-line arguments                                                                      |
 | `ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
 | `ELPP_WINSOCK2`        | On windows system force to use `winsock2.h` instead of `winsock.h` when `WIN32_LEAN_AND_MEAN` is defined                                                                    |
+| `ELPP_CUSTOM_COUT` (advanced)     | Resolves to a value e.g, `#define ELPP_CUSTOM_COUT qDebug()` or `#define ELPP_CUSTOM_COUT std::cerr`. This will use the value for standard output (instead of using `std::cout`|
+| `ELPP_CUSTOM_COUT_LINE` (advanced) | Used with `ELPP_CUSTOM_COUT` to define how to write a log line with custom cout. e.g, `#define ELPP_CUSTOM_COUT_LINE(msg) QString::fromStdString(msg).trimmed()` |
+
  [![top] Goto Top](#table-of-contents)
  
 ### Reading Configurations
@@ -566,14 +565,14 @@ for (int i = 1; i <= 100; ++i) {
 
  [![top] Goto Top](#table-of-contents)
  
-### printf Like Logging
+### `printf` Like Logging
 For compilers that support C++11's variadic templates, ability to log like "printf" is available. This is done by using `Logger` class. This feature is thread and type safe (as we do not use any macros like `LOG(INFO)` etc)
 
 This is done in two steps:
  1. Pulling registered logger using `el::Loggers::getLogger(<logger_id>);`
  2. Using one of logging functions
  
-The only difference from `printf` is that logging using these functions require `%v` for each arg; instead of custom format specifiers. You can escape this by `%%v`
+The only difference from `printf` is that logging using these functions require `%v` for each arg (This is for type-safety); instead of custom format specifiers. You can escape this by `%%v`
 
 Following are various function signatures:
  * `info(const char*, const T&, const Args&...)`
@@ -599,6 +598,8 @@ defaultLogger->warn("My first ultimate log message %v %v %v", 123, 222, i);
 defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222);
 
 ```
+
+ > `%file`, `%func` `%line` and `%loc` format specifiers will not work with `printf` like logging.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1177,6 +1178,16 @@ Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
 * Compiler should support `std::this_thread::sleep_for`. This restriction may (or may not) be removed in future (stable) version of asynchronous logging.
 * You should not rely on asynchronous logging in production, this is because feature is in experiemental stages.
+
+ [![top] Goto Top](#table-of-contents)
+ 
+### Helper Classes
+There are static helper classes available to make it easy to do stuffs;
+
+ * `el::Helpers`
+ * `el::Loggers`
+
+You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/easylogging/easyloggingpp/issues/210) for instance.
 
  [![top] Goto Top](#table-of-contents)
  

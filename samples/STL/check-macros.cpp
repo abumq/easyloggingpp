@@ -25,9 +25,7 @@ int main(void) {
     CHECK_STRCASEEQ("abc", "ABCD") << " :p";
     CHECK_STRCASENE("abc", "ABC") << " B)";
     int* f = new int;
-    int* toF = CHECK_NOTNULL(f);
-
-    (void)toF; // Unused warning suppression
+    CHECK_NOTNULL(f);
 
     delete f;
     f = nullptr;
