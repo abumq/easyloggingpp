@@ -122,7 +122,7 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  [![top] Goto Top](#table-of-contents)
 
 ### Future
-We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fasion.
+We see Easylogging++ with bright future. Plans are to write wrappers of this library to use in other types of C++ based projects, e.g, [QML Logging](https://github.com/easylogging/qmllogging) etc. Since we are low on resources, it may take some time, but it will certainly be available and would be worked on in regular fashion.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -135,7 +135,7 @@ For other releases, please visit [releases page](https://github.com/easylogging/
  [![top] Goto Top](#table-of-contents)
  
 ### Quick Start
-In order to get started with Easylogging++, you can follow three easy steps;
+In order to get started with Easylogging++, you can follow three easy steps:
 * Download latest version
 * Include into your project
 * Initialize using single macro... and off you go!
