@@ -131,7 +131,7 @@ For other releases, please visit [releases page](https://github.com/easylogging/
  [![top] Goto Top](#table-of-contents)
  
 ### Quick Start
-In order to get started with Easylogging++, you can follow three easy steps;
+In order to get started with Easylogging++, you can follow three easy steps:
 * Download latest version
 * Include into your project
 * Initialize using single macro... and off you go!
