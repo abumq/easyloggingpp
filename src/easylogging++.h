@@ -3363,6 +3363,10 @@ public:
             *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
         else if (level == Level::Warning)
             *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
+        else if (level == Level::Debug)
+            *logLine = ELPP_LITERAL("\x1b[32m") + *logLine + resetColor;
+        else if (level == Level::Info)
+            *logLine = ELPP_LITERAL("\x1b[36m") + *logLine + resetColor;
     }
 private:
     friend class el::base::DefaultLogDispatchCallback;
