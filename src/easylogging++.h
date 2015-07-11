@@ -1542,7 +1542,8 @@ public:
     static inline bool termSupportsColor(void) {
         std::string term = getEnvironmentVariable("TERM", "");
         return term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
-                              term == "screen" || term == "linux" || term == "cygwin";
+                              term == "screen" || term == "screen-256color" || 
+                              term == "linux" || term == "cygwin";
     }
 };
 extern std::string s_currentUser;
