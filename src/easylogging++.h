@@ -4138,6 +4138,21 @@ private:
         setApplicationArguments(argc, const_cast<char**>(argv));
     }
 
+    inline void setApplicationArguments(int argc, wchar_t** argv) {
+        char** mbArgv = new char*[argc];
+        for (int i = 0; i < argc; ++i) {
+            size_t nCharConverted;
+            size_t mbStrSz = sizeof(wchar_t) * wcslen((const wchar_t*)(argv[i]));
+            char* mbStr = new char[mbStrSz];
+            wcstombs_s(&nCharConverted, mbStr, mbStrSz, (const wchar_t*)(argv[i]), _TRUNCATE);
+            mbArgv[i] = mbStr;
+        }
+        setApplicationArguments(argc, mbArgv);
+        for (int i = 0; i < argc; ++i)
+            delete mbArgv[i];
+        delete mbArgv;
+    }
+
     template <typename T, typename TPtr>
     inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
         if (mapT->find(id) == mapT->end()) {
@@ -5662,6 +5677,10 @@ public:
     /// @copydoc setArgs(int argc, char** argv)
     static inline void setArgs(int argc, const char** argv) {
         ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
+    }
+    /// @copydoc setArgs(int argc, char** argv)
+    static inline void setArgs(int argc, wchar_t** argv) {
+        ELPP->setApplicationArguments(argc, argv);
     }
     /// @brief Overrides default crash handler and installs custom handler.
     /// @param crashHandler A functor with no return type that takes single int argument.
