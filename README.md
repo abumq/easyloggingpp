@@ -145,7 +145,7 @@ In order to get started with Easylogging++, you can follow three easy steps;
 
 INITIALIZE_EASYLOGGINGPP
 
-int main(int argv, char* argc[]) {
+int main(int argc, char* argv[]) {
    LOG(INFO) << "My first info log using default logger";
    return 0;
 }
@@ -159,7 +159,7 @@ That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and
 It is always recommended to pass application arguments to Easylogging++. Some features of Easylogging++ require you to set application arguments, e.g, verbose logging to set verbose level or vmodules (explained later). In order to do that you can use helper macro or helper class;
 
 ```c++
-int main(int argv, char* argc[]) {
+int main(int argc, char* argv[]) {
    START_EASYLOGGINGPP(argc, argv);
    ...
 }
