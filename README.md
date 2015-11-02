@@ -63,7 +63,7 @@
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
         <a href="#make-use-of-performance-tracking-data">Make Use of Performance Tracking Data</a>
-    <a href="#log-file-rolling">Log File Rolling</a>
+    <a href="#log-file-rotating">Log File Rotating</a>
     <a href="#crash-handling">Crash Handling</a>
         <a href="#installing-custom-crash-handlers">Installing Custom Crash Handlers</a>
     <a href="#stacktrace">Stacktrace</a>
@@ -865,13 +865,15 @@ In order to install this handler, use `void Helpers::installPerformanceTrackingC
 
  [![top] Goto Top](#table-of-contents)
 
-### Log File Rolling
-Easylogging++ has ability to roll out (or throw away) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
+### Log File Rotating
+Easylogging++ has ability to roll out (or throw away / rotate) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
 If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck`.
 
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
+
+There is a [sample](https://github.com/easylogging/easyloggingpp/tree/master/samples/STL/log-rotate) available that you can use as basis.
 
 > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions. If you are sure that you are not going to log to same file and not using same logger, feel free to give it a try.
 

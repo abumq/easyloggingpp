@@ -732,9 +732,7 @@ namespace consts {
     static const char* kAm                              =      "AM";
     static const char* kPm                              =      "PM";
     // Miscellaneous constants
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kDefaultLoggerId                        =      "default";
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
     static const char* kPerformanceLoggerId                    =      "performance";
 #if defined(ELPP_SYSLOG)
     static const char* kSysLogLoggerId                         =      "syslog";
