@@ -1214,7 +1214,7 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 |![gcc]   | GCC 4.7+                  | Stack trace logging. Very close to support GCC 4.6 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
 |![llvm]  | Clang++ 3.1+              | Stack trace logging only with gcc compliant.                                                                                                             |
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
-|![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013-Preview; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
+|![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.               |
 |![mingw] | MinGW                     | (gcc version 4.7+) Workarounds to support: Mutex wrapper, no stack trace logging. No thread ID on windows                                                |
 |![tdm]   | TDM-GCC 4.7.1             | Tested with TDM-GCC 4.7.1 32 and 64 bit compilers                                                                                                        |
 |![cygwin]| Cygwin                    | Tested with gcc version 4.8+                                                                                                                             |
@@ -1224,6 +1224,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 
 | *****         | Operating System       |   Notes                                                                             |
 |---------------|------------------------|-------------------------------------------------------------------------------------|
+|![win10]       | Windows 10             | Tested on 64-bit, should also work on 32-bit                                        |
 |![win8]        | Windows 8              | Tested on 64-bit, should also work on 32-bit                                        |
 |![win7]        | Windows 7              | Tested on 64-bit, should also work on 32-bit                                        |
 |![winxp]       | Windows XP             | Tested on 32-bit, should also work on 64-bit                                        |
@@ -1296,6 +1297,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [winxp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windowsxp.png?v=2
   [win7]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows7.png?v=2
   [win8]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows8.png?v=2
+  [win10]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows10.png?v=2
   [qt]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/qt.png?v=3
   [boost]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/boost.png?v=3
   [wxwidgets]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/wxwidgets.png?v=3
