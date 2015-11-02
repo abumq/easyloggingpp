@@ -4,7 +4,7 @@
 // Sample to show how to implement log rotate using easylogging++
 // Thanks to Darren for efforts (http://darrendev.blogspot.com.au/)
 //
-// Compile: g++ -std=c++11 -Wall -Werror logrotate.cc -lpthread -o logrotate
+// Compile: g++ -std=c++11 -Wall -Werror logrotate.cpp -lpthread -o logrotate
 //
 // Revision 1.0
 // @author Darren
