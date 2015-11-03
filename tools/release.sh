@@ -5,11 +5,11 @@
 # @author mkhan3189
 #
 # Usage:
-#        ./release.sh [repo-root] [homepage-repo-root] [new-version] [do-not-ask]
+#        ./release.sh [repo-root] [homepage-repo-root] [curr-version] [new-version] [do-not-ask]
 
 if [ "$1" = "" ];then
   echo
-  echo "Usage: $0 [repository-root] [homepage-root] [new-version] [do-not-ask]"
+  echo "Usage: $0 [repository-root] [homepage-root] [curr-version] [new-version] [do-not-ask]"
   echo
   exit 1
 fi
@@ -21,11 +21,12 @@ else
   exit 1
 fi
 
-CURR_VERSION=$(grep 'Easylogging++ v' $1/src/easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
+#CURR_VERSION=$(grep 'Easylogging++ v' $1/src/easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
+CURR_VERSION=$3
 CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.h)
 NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
-NEW_VERSION=$3
-DO_NOT_CONFIRM=$4
+NEW_VERSION=$4
+DO_NOT_CONFIRM=$5
 if [ "$NEW_VERSION" = "" ]; then
   echo 'Current Version  ' $CURR_VERSION
   echo '** No version provided **'
@@ -37,18 +38,18 @@ echo 'New Version      ' $NEW_VERSION  ' (' $NEW_RELEASE_DATE ')'
 if [ "$DO_NOT_CONFIRM" = "y" ]; then
   confirm="y"
 else
-  echo 'Are you sure you wish to release new version? (y/n)' 
+  echo "Are you sure you wish to release new version [$CURR_VERSION -> $NEW_VERSION]? (y/n)"
   read confirm
 fi
 
 if [ "$confirm" = "y" ]; then
-  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
-  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
+  #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
+  #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
   sed -i '/YOU ARE CURRENTLY BROWSING/d' $1/README.md
   sed -i "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
   sed -i "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
-  sed -i "s/ (development \/ unreleased version)//g" $1/src/easylogging++.h
-  sed -i "s/ (development \/ unreleased version)//g" $1/README.md
+  sed -i "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/src/easylogging++.h
+  sed -i "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/README.md
   sed -i "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
   sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
