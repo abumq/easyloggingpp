@@ -1217,7 +1217,6 @@ public:
                 if (*str && wildCardMatch(str + 1, pattern))
                     return true;
                 return false;
-                break;
             default:
                 if (*str++ != *pattern++)
                     return false;
