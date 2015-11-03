@@ -14,6 +14,7 @@ API changes: No
  - syslog constant is no longer defined unless `ELPP_SYSLOG` is defined
  - use unistd.h -> usleep for async if `std::this_thread::sleep_for` not available by defining `ELPP_NO_SLEEP_FOR` (Only async logging)
  - Fixes `std::move` obsolete warning for clang++ 3.7 (issue #315)
+ - Crash on exit for some platforms when CTRL+C pressed (issue #261)
 
 ==========================
 =      NEW FEATURES      =

@@ -3583,7 +3583,7 @@ public:
     }
 
     virtual ~RegisteredLoggers(void) {
-        flushAll();
+        unsafeFlushAll();
     }
 
     inline void setDefaultConfigurations(const Configurations& configurations) {
@@ -3636,13 +3636,8 @@ public:
     }
 
     inline void flushAll(void) {
-        ELPP_INTERNAL_INFO(1, "Flushing all log files");
         base::threading::ScopedLock scopedLock(lock());
-        for (base::LogStreamsReferenceMap::iterator it = m_logStreamsReference.begin();
-                it != m_logStreamsReference.end(); ++it) {
-            if (it->second.get() == nullptr) continue;
-            it->second->flush();
-        }
+        unsafeFlushAll();
     }
 
 private:
@@ -3650,6 +3645,15 @@ private:
     Configurations m_defaultConfigurations;
     base::LogStreamsReferenceMap m_logStreamsReference;
     friend class el::base::Storage;
+
+	inline void unsafeFlushAll(void) {
+        ELPP_INTERNAL_INFO(1, "Flushing all log files");
+		for (base::LogStreamsReferenceMap::iterator it = m_logStreamsReference.begin();
+                it != m_logStreamsReference.end(); ++it) {
+            if (it->second.get() == nullptr) continue;
+            it->second->flush();
+        }
+	}
 };
 /// @brief Represents registries for verbose logging
 class VRegistry : base::NoCopy, public base::threading::ThreadSafe {

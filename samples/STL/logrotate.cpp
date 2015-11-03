@@ -9,19 +9,19 @@
 // Revision 1.0
 // @author Darren
 //
+
 #define ELPP_NO_DEFAULT_LOG_FILE
 #include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
 
-namespace sc = std::chrono;
+INITIALIZE_EASYLOGGINGPP
 
 int main(int,char**){
     el::Loggers::configureFromGlobal("logrotate.conf");
     LOG(INFO)<<"The program has started!";
     
     std::thread logRotatorThread([](){
-        const sc::seconds wakeUpDelta = sc::seconds(20);
-        auto nextWakeUp = sc::system_clock::now() + wakeUpDelta;
+        const std::chrono::seconds wakeUpDelta = std::chrono::seconds(20);
+        auto nextWakeUp = std::chrono::system_clock::now() + wakeUpDelta;
         
         while(true){
             std::this_thread::sleep_until(nextWakeUp);
@@ -39,7 +39,7 @@ int main(int,char**){
     //Main thread
     for(int n = 0; n < 1000; ++n){
         LOG(TRACE) << n;
-        std::this_thread::sleep_for(sc::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
     LOG(INFO) << "Shutting down.";
