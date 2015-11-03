@@ -10,6 +10,7 @@
 // @author Darren
 //
 
+#include <thread>
 #define ELPP_NO_DEFAULT_LOG_FILE
 #include "easylogging++.h"
 
