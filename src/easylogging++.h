@@ -1516,8 +1516,9 @@ public:
     /// @brief Whether or not terminal supports colors
     static inline bool termSupportsColor(void) {
         std::string term = getEnvironmentVariable("TERM", "");
-        return term == "xterm" || term == "xterm-color" || term == "xterm-256color" ||
-                              term == "screen" || term == "linux" || term == "cygwin";
+        return term == "xterm" || term == "xterm-color" || term == "xterm-256color"
+                              || term == "screen" || term == "linux" || term == "cygwin"
+                              || term == "screen-256color";
     }
 };
 extern std::string s_currentUser;
@@ -3338,6 +3339,12 @@ public:
             *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
         else if (level == Level::Warning)
             *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
+        else if (level == Level::Debug)
+            *logLine = ELPP_LITERAL("\x1b[32m") + *logLine + resetColor;
+        else if (level == Level::Info)
+            *logLine = ELPP_LITERAL("\x1b[36m") + *logLine + resetColor;
+        else if (level == Level::Trace)
+            *logLine = ELPP_LITERAL("\x1b[35m") + *logLine + resetColor;
     }
 private:
     friend class el::base::DefaultLogDispatchCallback;

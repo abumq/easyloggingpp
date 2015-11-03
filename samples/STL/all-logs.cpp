@@ -4,7 +4,7 @@
  // Writes all logs (incl. debug version of logs i.e, DLOG etc) using default logger
  // We add logging flag `DisableApplicationAbortOnFatalLog` that prevents application abort on FATAL log
  //
- // Revision 1.1
+ // Revision 1.2
  // @author mkhan3189
  //
 
@@ -36,6 +36,8 @@ int main(int argc, char** argv) {
     DLOG(TRACE);
     DVLOG(1);
     DLOG(FATAL);
+
+    LOG(INFO) << "Turning off colored output";
     el::Loggers::removeFlag(el::LoggingFlag::ColoredTerminalOutput);
     
     LOG_IF(true, INFO);

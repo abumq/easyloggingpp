@@ -21,6 +21,7 @@ API changes: No
 ==========================
 
  - `ELPP_CUSTOM_COUT` to define custom standard output (e.g, `std::cerr`) (issue #201)`
+ - More terminal colors (for INFO, DEBUG and TRACE logs)
 
 ==========================
 =         NOTES          =
