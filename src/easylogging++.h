@@ -4180,9 +4180,32 @@ private:
                 }
             }
             if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
+#if defined(ELPP_OS_WINDOWS)
+				HANDLE hConsole;
+				hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+				{
+					if (m_data->logMessage()->level() == Level::Error || m_data->logMessage()->level() == Level::Fatal)
+					{
+						SetConsoleTextAttribute(hConsole, 0xC);
+					}
+					else if (m_data->logMessage()->level() == Level::Warning)
+					{
+						SetConsoleTextAttribute(hConsole, 0x6);
+					}
+				}
+				ELPP_COUT << ELPP_COUT_LINE(logLine);
+				if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+				{
+					SetConsoleTextAttribute(hConsole, 0x7);
+				}
+#else
+				if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
+				{
                     m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
-                ELPP_COUT << ELPP_COUT_LINE(logLine);
+				}
+				ELPP_COUT << ELPP_COUT_LINE(logLine);
+#endif
              }
         }
 #if defined(ELPP_SYSLOG)
