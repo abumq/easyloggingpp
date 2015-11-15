@@ -28,7 +28,11 @@
 #   endif  // defined(__GXX_EXPERIMENTAL_CXX0X__)
 #endif  // ELPP_COMPILER_GCC
 // Visual C++
-#define ELPP_COMPILER_MSVC (defined(_MSC_VER))
+#if defined(_MSC_VER)
+#define ELPP_COMPILER_MSVC 1
+#else
+#define ELPP_COMPILER_MSVC 0
+#endif
 #define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
 #if ELPP_COMPILER_MSVC
 #   if (_MSC_VER == 1600)
@@ -52,7 +56,11 @@
 #define ELPP_COMPILER_INTEL (defined(__INTEL_COMPILER))
 // Operating System Evaluation
 // Windows
-#define ELPP_OS_WINDOWS (defined(_WIN32) || defined(_WIN64))  
+#if (defined(_WIN32) || defined(_WIN64)) 
+#define ELPP_OS_WINDOWS 1
+#else
+#define ELPP_OS_WINDOWS 0  
+#endif
 // Linux
 #define ELPP_OS_LINUX (defined(__linux) || defined(__linux__))
 #define ELPP_OS_MAC (defined(__APPLE__))
