@@ -473,7 +473,7 @@ std::string format =
  [![top] Goto Top](#table-of-contents)
  
 # Logging
-Logging in easylogging++ is done using collection of macros. This is to make it easier for user and to prevent them knowing about unnecessary greater details of how things are done. If you further wish to know how things are done, refer to section "Design" below.
+Logging in easylogging++ is done using collection of macros. This is to make it easier for user and to prevent them knowing about unnecessary greater details of how things are done.
 
 ### Basic
 You are provided with two basic macros that you can use in order to write logs:
