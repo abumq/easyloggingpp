@@ -6521,18 +6521,7 @@ public:
 #define CHECK_LE(a, b) CCHECK_LE(a, b, ELPP_CURR_FILE_LOGGER_ID)
 #define CHECK_GE(a, b) CCHECK_GE(a, b, ELPP_CURR_FILE_LOGGER_ID)
 #define CHECK_BOUNDS(val, min, max) CCHECK_BOUNDS(val, min, max, ELPP_CURR_FILE_LOGGER_ID)
-namespace el {
-namespace base {
-namespace utils {
-template <typename T>
-static T* checkNotNull(T* ptr, const char* name, const char* loggers, ...) {
-    CLOG_IF(ptr == nullptr, FATAL, loggers) << "Check failed: [" << name << " != nullptr]";
-    return ptr;
-}
-}  // namespace utils
-}  // namespace base
-}  // namespace el
-#define CCHECK_NOTNULL(ptr, ...) el::base::utils::checkNotNull(ptr, #ptr, __VA_ARGS__)
+#define CCHECK_NOTNULL(ptr, ...) CCHECK(ptr != nullptr, __VA_ARGS__)
 #define CCHECK_STREQ(str1, str2, ...) CLOG_IF(!el::base::utils::Str::cStringEq(str1, str2), FATAL, __VA_ARGS__) \
                         << "Check failed: [" << #str1 << " == " << #str2 << "] "
 #define CCHECK_STRNE(str1, str2, ...) CLOG_IF(el::base::utils::Str::cStringEq(str1, str2), FATAL, __VA_ARGS__) \
