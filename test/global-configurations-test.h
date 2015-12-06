@@ -28,7 +28,8 @@ TEST(GlobalConfigurationTest, Parse) {
     << "    FORMAT               =  %datetime %level [%func] [%loc] %msg\n";
     confFile.close();
 
-    Logger* perfLogger = CHECK_NOTNULL(Loggers::getLogger("performance", false));
+    Logger* perfLogger = Loggers::getLogger("performance", false);
+    CHECK_NOTNULL(perfLogger);
 
     std::string perfFormatConf = perfLogger->configurations()->get(Level::Info, ConfigurationType::Format)->value();
     std::string perfFilenameConf = perfLogger->configurations()->get(Level::Info, ConfigurationType::Filename)->value();
