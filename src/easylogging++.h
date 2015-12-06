@@ -1,4 +1,6 @@
 //
+//  Bismillah ar-Rahmaan ar-Raheem
+// 
 //  Easylogging++ v9.81 (development / unreleased version / source is subject to change)
 //  Single-header only, cross-platform logging library for C++ applications
 //
