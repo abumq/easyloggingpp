@@ -1026,12 +1026,14 @@ static inline std::string getCurrentThreadId(void) {
     ss << std::this_thread::get_id();
     return ss.str();
 }
+#if ELPP_ASYNC_LOGGING
 static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
-#if ELPP_ASYNC_LOGGING
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-#endif  // ELPP_ASYNC_LOGGING
 }
+#else
+static inline void msleep(int) {}
+#endif  // ELPP_ASYNC_LOGGING
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
 #   endif  // !ELPP_USE_STD_THREADING
