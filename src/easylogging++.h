@@ -2708,8 +2708,8 @@ public:
             }
         }
         static inline bool isLevel(const std::string& line) {
-            return base::utils::Str::startsWith(line, std::string(base::consts::kConfigurationLevelStart))
-                   && base::utils::Str::endsWith(line, std::string(base::consts::kConfigurationLevelEnd)) 
+            return (base::utils::Str::startsWith(line, std::string(base::consts::kConfigurationLevelStart))
+                   && base::utils::Str::endsWith(line, std::string(base::consts::kConfigurationLevelEnd))) 
                    || base::utils::Str::startsWith(line, std::string(base::consts::kConfigurationLevel));
         }
 
