@@ -46,20 +46,20 @@ TEST(ConfigurationsTest, SetForAllLevels) {
 
 TEST(ConfigurationsTest, ParsingFromFile) {
     std::fstream confFile("/tmp/temp-test.conf", std::fstream::out);
-    confFile << " * GLOBAL:\n"
+    confFile << "[Global]\n"
     << "    FORMAT               =  %datetime %level %msg\n"
     << "* INFO:\n"
     // Following should be included in format because its inside the quotes
     << "    FORMAT               =  \"%datetime %level [%user@%host] [%func] [%loc] %msg## This should be included in format\" ## This should be excluded\n"
-    << "* DEBUG:\n"
+    << "[Global]\n"
     << "    FORMAT               =  %datetime %level [%user@%host] [%func] [%loc] %msg ## Comment before EOL char\n"
     << "## Comment on empty line\n"
     // WARNING is defined by GLOBAL
-    << "* ERROR:\n"
+    << "[Error]\n"
     << "    FORMAT               =  %datetime %level %msg\n"
     << "* FATAL:\n"
     << "    FORMAT               =  %datetime %level %msg\n"
-    << "* VERBOSE:\n"
+    << "[Verbose]\n"
     << "    FORMAT               =  %datetime %level-%vlevel %msg\n"
     << "* TRACE:\n"
     << "    FORMAT               =  %datetime %level [%func] [%loc] %msg\n";

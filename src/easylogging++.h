@@ -784,6 +784,7 @@ namespace consts {
 #endif  // ELPP_OS_WINDOWS
     static const char* kValidLoggerIdSymbols                   =      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
     static const char* kConfigurationComment                   =      "##";
+    static const char* kConfigurationLevel                     =      "*";
     static const char* kConfigurationLevelStart                =      "[";
     static const char* kConfigurationLevelEnd                  =      "]";
     static const char* kConfigurationLoggerId                  =      "--";
@@ -2708,7 +2709,8 @@ public:
         }
         static inline bool isLevel(const std::string& line) {
             return base::utils::Str::startsWith(line, std::string(base::consts::kConfigurationLevelStart))
-                   && base::utils::Str::endsWith(line, std::string(base::consts::kConfigurationLevelEnd));
+                   && base::utils::Str::endsWith(line, std::string(base::consts::kConfigurationLevelEnd)) 
+                   || base::utils::Str::startsWith(line, std::string(base::consts::kConfigurationLevel));
         }
 
         static inline bool isComment(const std::string& line) {
