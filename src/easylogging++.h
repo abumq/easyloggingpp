@@ -1030,6 +1030,8 @@ static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
 #if ELPP_ASYNC_LOGGING
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#else
+    (void)ms;
 #endif  // ELPP_ASYNC_LOGGING
 }
 typedef std::mutex Mutex;
