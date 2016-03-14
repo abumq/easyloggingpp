@@ -4910,7 +4910,7 @@ public:
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::type::VerboseLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(false), m_dispatchAction(dispatchAction) {
+                   m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
     }
 
     virtual ~Writer(void) {
@@ -5243,7 +5243,7 @@ public:
     };
     // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
     explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), 
-        m_dataType(dataType), m_file(""), m_line(0), m_func("") {}
+        m_dataType(dataType), m_firstCheckpoint(false), m_file(""), m_line(0), m_func("") {}
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
