@@ -1030,6 +1030,8 @@ static inline void msleep(int ms) {
     // Only when async logging enabled - this is because async is strict on compiler
 #if ELPP_ASYNC_LOGGING
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#else
+    (void)ms;
 #endif  // ELPP_ASYNC_LOGGING
 }
 typedef std::mutex Mutex;
@@ -2731,7 +2733,7 @@ public:
         static inline bool isConfig(const std::string& line) {
             std::size_t assignment = line.find('=');
             return line != "" &&
-                    (line[0] >= 65 || line[0] <= 90 || line[0] >= 97 || line[0] <= 122) &&
+                    ((line[0] >= 'A' && line[0] <= 'Z') || (line[0] >= 'a' && line[0] <= 'z')) &&
                     (assignment != std::string::npos) &&
                     (line.size() > assignment);
         }
@@ -4910,7 +4912,7 @@ public:
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::type::VerboseLevel verboseLevel = 0) :
                    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-                   m_proceed(false), m_dispatchAction(dispatchAction) {
+                   m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
     }
 
     virtual ~Writer(void) {
@@ -5243,7 +5245,7 @@ public:
     };
     // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
     explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr), 
-        m_dataType(dataType), m_file(""), m_line(0), m_func("") {}
+        m_dataType(dataType), m_firstCheckpoint(false), m_file(""), m_line(0), m_func("") {}
     inline const std::string* blockName(void) const;
     inline const struct timeval* startTime(void) const;
     inline const struct timeval* endTime(void) const;
