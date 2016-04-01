@@ -676,8 +676,8 @@ enum class LoggingFlag : base::type::EnumType {
     ImmediateFlush = 16,
     /// @brief Enables strict file rolling
     StrictLogFileSizeCheck = 32,
-    /// @brief Make terminal output colorful for supported terminals
-    ColoredTerminalOutput = 64,
+    /// @brief Cut any ANSI codes when writing to log file while keeping them only when outputting to terminals which can handle them.
+    SupportANSICodes = 64,
     /// @brief Supports use of multiple logging in same macro, e.g, CLOG(INFO, "default", "network")
     MultiLoggerSupport = 128,
     /// @brief Disables comparing performance tracker's checkpoints
@@ -3341,19 +3341,19 @@ class LogBuilder : base::NoCopy {
 public:
     virtual ~LogBuilder(void) { ELPP_INTERNAL_INFO(3, "Destroying log builder...")}
     virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
-    void convertToColoredOutput(base::type::string_t* logLine, Level level) {
-        if (!base::utils::s_termSupportsColor) return;
-        const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
-        if (level == Level::Error || level == Level::Fatal)
-            *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
-        else if (level == Level::Warning)
-            *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
-        else if (level == Level::Debug)
-            *logLine = ELPP_LITERAL("\x1b[32m") + *logLine + resetColor;
-        else if (level == Level::Info)
-            *logLine = ELPP_LITERAL("\x1b[36m") + *logLine + resetColor;
-        else if (level == Level::Trace)
-            *logLine = ELPP_LITERAL("\x1b[35m") + *logLine + resetColor;
+
+    /// @brief cut any valid ANSI Codes (used e.g. for colors in terminals) from a string.
+    void cutANSICodes(base::type::string_t &logline) {
+        typedef base::type::string_t string;
+
+        const string escapesequence = ELPP_LITERAL("\x1b["); // CSI code: 'Escape' + '['
+
+        for(string::size_type escpos = logline.find(escapesequence); escpos != string::npos; escpos = logline.find(escapesequence))
+            for(string::size_type curletter = escpos + 2; curletter < logline.length(); curletter++) // look for the final letter
+                if(logline[curletter] > '@' && logline[curletter] < '~') {
+                    logline.erase(escpos, curletter - escpos + 1); 
+                    break;
+                }
     }
 private:
     friend class el::base::DefaultLogDispatchCallback;
@@ -4172,6 +4172,8 @@ private:
             if (m_data->logMessage()->logger()->m_typedConfigurations->toFile(m_data->logMessage()->level())) {
                 base::type::fstream_t* fs = m_data->logMessage()->logger()->m_typedConfigurations->fileStream(m_data->logMessage()->level());
                 if (fs != nullptr) {
+                    if(ELPP->hasFlag(LoggingFlag::SupportANSICodes))
+                        m_data->logMessage()->logger()->logBuilder()->cutANSICodes(logLine);
                     fs->write(logLine.c_str(), logLine.size());
                     if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file ["
@@ -4190,8 +4192,8 @@ private:
                 }
             }
             if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
-                if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                    m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
+                if(ELPP->hasFlag(LoggingFlag::SupportANSICodes) && !base::utils::s_termSupportsColor)
+                    m_data->logMessage()->logger()->logBuilder()->cutANSICodes(logLine);
                 ELPP_COUT << ELPP_COUT_LINE(logLine);
              }
         }
@@ -4228,8 +4230,8 @@ protected:
     void handle(const LogDispatchData* data) {
         base::type::string_t logLine = data->logMessage()->logger()->logBuilder()->build(data->logMessage(), data->dispatchAction() == base::DispatchAction::NormalLog);
         if (data->dispatchAction() == base::DispatchAction::NormalLog && data->logMessage()->logger()->typedConfigurations()->toStandardOutput(data->logMessage()->level())) {
-            if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
-                data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, data->logMessage()->level());
+            if(ELPP->hasFlag(LoggingFlag::SupportANSICodes) && !base::utils::s_termSupportsColor)
+                data->logMessage()->logger()->logBuilder()->cutANSICodes(logLine);
             ELPP_COUT << ELPP_COUT_LINE(logLine);
         }
         // Save resources and only queue if we want to write to file otherwise just ignore handler
@@ -4286,6 +4288,8 @@ public:
             if (conf->toFile(logMessage->level())) {
                 base::type::fstream_t* fs = conf->fileStream(logMessage->level());
                 if (fs != nullptr) {
+                    if(ELPP->hasFlag(LoggingFlag::SupportANSICodes))
+                        logger->logBuilder()->cutANSICodes(logLine);
                     fs->write(logLine.c_str(), logLine.size());
                     if (fs->fail()) {
                         ELPP_INTERNAL_ERROR("Unable to write log to file ["

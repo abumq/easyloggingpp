@@ -12,10 +12,14 @@
 
 INITIALIZE_EASYLOGGINGPP
 
+#define ANSI_COLOR_GREEN  "\x1b[38;2;0;255;0m" // first part is the escape sequence, 38 specifies 256 color mode, 2 is foreground color, then RGB followed by m
+#define ANSI_COLOR_ORANGE "\x1b[38;2;255;128;0m"
+#define ANSI_UNDERLINE    "\x1b[4m"
+
 int main(int argc, char** argv) {
     START_EASYLOGGINGPP(argc, argv);
     el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog);
-    el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+    el::Loggers::addFlag(el::LoggingFlag::SupportANSICodes);
 
     // You can uncomment following lines to take advantage of hierarchical logging
     // el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
@@ -36,9 +40,11 @@ int main(int argc, char** argv) {
     DLOG(TRACE);
     DVLOG(1);
     DLOG(FATAL);
+    LOG(INFO) << ANSI_COLOR_ORANGE << "This is orange";
+    LOG(INFO) << ANSI_COLOR_GREEN << "This is green and " << ANSI_UNDERLINE << "this is additionally underlined";
 
-    LOG(INFO) << "Turning off colored output";
-    el::Loggers::removeFlag(el::LoggingFlag::ColoredTerminalOutput);
+    LOG(INFO) << "Turning off ANSI support";
+    el::Loggers::removeFlag(el::LoggingFlag::SupportANSICodes);
     
     LOG_IF(true, INFO);
     LOG_IF(true, DEBUG);
