@@ -13,6 +13,7 @@
 #include "global-configurations-test.h"
 #include "helpers-test.h"
 #include "hit-counter-test.h"
+#include "issues-test.h"
 #include "log-format-resolution-test.h"
 #include "loggable-test.h"
 #include "logger-test.h"

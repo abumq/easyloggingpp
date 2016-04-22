@@ -4562,6 +4562,17 @@ public:
         return *this;\
     }
 
+#   define ELPP_SIMPLE_LOG_PTR(LOG_TYPE)\
+    inline MessageBuilder& operator<<(LOG_TYPE msg) {\
+        if (msg) {\
+            m_logger->stream() << msg;\
+            if (ELPP->hasFlag(LoggingFlag::AutoSpacing)) {\
+                m_logger->stream() << " ";\
+            }\
+        }\
+        return *this;\
+    }
+
     inline MessageBuilder& operator<<(const std::string& msg) {
         return operator<<(msg.c_str());
     }
@@ -4575,8 +4586,8 @@ public:
     ELPP_SIMPLE_LOG(unsigned long)
     ELPP_SIMPLE_LOG(float)
     ELPP_SIMPLE_LOG(double)
-    ELPP_SIMPLE_LOG(char*)
-    ELPP_SIMPLE_LOG(const char*)
+    ELPP_SIMPLE_LOG_PTR(char*)
+    ELPP_SIMPLE_LOG_PTR(const char*)
     ELPP_SIMPLE_LOG(const void*)
     ELPP_SIMPLE_LOG(long double)
     inline MessageBuilder& operator<<(const std::wstring& msg) {
@@ -4845,6 +4856,7 @@ public:
     // Other classes
     template <class Class>
     ELPP_SIMPLE_LOG(const Class&)
+#undef ELPP_SIMPLE_LOG_PTR
 #undef ELPP_SIMPLE_LOG
 #undef ELPP_ITERATOR_CONTAINER_LOG_ONE_ARG
 #undef ELPP_ITERATOR_CONTAINER_LOG_TWO_ARG
