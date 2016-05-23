@@ -335,14 +335,15 @@ You can customize format of logging using following specifiers:
 | `%datetime`     | Date and/or time - Pattern is customizable - see Date/Time Format Specifiers below          |
 | `%user`         | User currently running application                                                          |
 | `%host`         | Computer name application is running on                                                     |
-| `%file`         | File name of source file (Full path)                                                        |
+| `%file`         | File name of source file (Full path) - This feature is subject to availability of `__FILE__` macro of compiler                                                        |
 | `%fbase`        | File name of source file (Only base name)                                                   |
-| `%line`         | Source line number                                                                          |
+| `%line`         | Source line number - This feature is subject to availability of `__LINE__` macro of compile |
 | `%func`         | Logging function                                                                            |
 | `%loc`          | Source filename and line number of logging (separated by colon)                             |
 | `%msg`          | Actual log message                                                                          |
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
+ 
 You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
 
 ```C++
