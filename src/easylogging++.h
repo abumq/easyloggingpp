@@ -1007,10 +1007,12 @@ private:
 };
 } // namespace internal
 /// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
-static inline std::string getCurrentThreadId(void) {
+static inline std::string getCurrentThreadId(void) {  
     std::stringstream ss;
 #      if (ELPP_OS_WINDOWS)
     ss << GetCurrentThreadId();
+#      elif (ELPP_COMPILER_CLANG)   
+        ss << pthread_self();
 #      endif  // (ELPP_OS_WINDOWS)
     return ss.str();
 }
@@ -1021,7 +1023,7 @@ typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
 #   else
 /// @brief Gets ID of currently running threading using std::this_thread::get_id()
-static inline std::string getCurrentThreadId(void) {
+static inline std::string getCurrentThreadId(void) {  
     std::stringstream ss;
     ss << std::this_thread::get_id();
     return ss.str();
@@ -1058,7 +1060,13 @@ private:
 };
 }  // namespace internal
 static inline std::string getCurrentThreadId(void) {
-    return std::string();
+      std::stringstream ss;
+#      if (ELPP_OS_WINDOWS)
+      ss << GetCurrentThreadId();
+#      elif (ELPP_COMPILER_CLANG)   
+        ss << pthread_self();
+#      endif  // (ELPP_OS_WINDOWS)
+    return ss.str();    
 }
 static inline void msleep(int) {
     // No custom implementation
