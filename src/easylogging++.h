@@ -589,6 +589,8 @@ enum class ConfigurationType : base::type::EnumType {
     MaxLogFileSize = 128,
    /// @brief Specifies number of log entries to hold until we flush pending log data
     LogFlushThreshold = 256,
+   /// @brief Specifies if the log file should be truncated when created
+    LogFileTruncate = 512,
    /// @brief Represents unknown configuration
     Unknown = 1010
 };
@@ -620,6 +622,7 @@ public:
         if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
         if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
         if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
+        if (configurationType == ConfigurationType::LogFileTruncate) return "LOG_FILE_TRUNCATE";
         return "UNKNOWN";
     }
     /// @brief Converts from configStr to ConfigurationType
@@ -644,6 +647,8 @@ public:
             return ConfigurationType::MaxLogFileSize;
         if ((strcmp(configStr, "LOG_FLUSH_THRESHOLD") == 0) || (strcmp(configStr, "log_flush_threshold") == 0))
             return ConfigurationType::LogFlushThreshold;
+        if ((strcmp(configStr, "LOG_FILE_TRUNCATE") == 0) || (strcmp(configStr, "log_file_truncate") == 0))
+            return ConfigurationType::LogFileTruncate;
         return ConfigurationType::Unknown;
     }
     /// @brief Applies specified function to each configuration type starting from startIndex
@@ -1069,9 +1074,10 @@ class File : base::StaticClass {
 public:
     /// @brief Creates new out file stream for specified filename.
     /// @return Pointer to newly created fstream or nullptr
-    static base::type::fstream_t* newFileStream(const std::string& filename) {
+    static base::type::fstream_t* newFileStream(const std::string& filename, bool truncate) {
+		 int trunc_flag = (truncate == true) ? (base::type::fstream_t::trunc) : 0;
         base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(), 
-            base::type::fstream_t::out | base::type::fstream_t::app);
+            base::type::fstream_t::out | base::type::fstream_t::app | trunc_flag);
 #if defined(ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
 #   if ELPP_OS_WINDOWS
@@ -2592,6 +2598,7 @@ public:
         setGlobally(ConfigurationType::PerformanceTracking, std::string("true"), true);
         setGlobally(ConfigurationType::MaxLogFileSize, std::string("0"), true);
         setGlobally(ConfigurationType::LogFlushThreshold, std::string("0"), true);
+        setGlobally(ConfigurationType::LogFileTruncate, std::string("0"), true);
 
         setGlobally(ConfigurationType::Format, std::string("%datetime %level [%logger] %msg"), true);
         set(Level::Debug, ConfigurationType::Format, std::string("%datetime %level [%logger] [%user@%host] [%func] [%loc] %msg"));
@@ -2906,6 +2913,9 @@ public:
         return getConfigByVal<std::size_t>(level, &m_logFlushThresholdMap, "logFlushThreshold");
     }
 
+    inline std::size_t logFileTruncate(Level level) {
+        return getConfigByVal<bool>(level, &m_logFileTruncateMap, "logFileTruncate");
+    }
 private:
     Configurations* m_configurations;
     std::map<Level, bool> m_enabledMap;
@@ -2918,6 +2928,7 @@ private:
     std::map<Level, base::FileStreamPtr> m_fileStreamMap;
     std::map<Level, std::size_t> m_maxLogFileSizeMap;
     std::map<Level, std::size_t> m_logFlushThresholdMap;
+	 std::map<Level, bool> m_logFileTruncateMap;
     base::LogStreamsReferenceMap* m_logStreamsReference;
 
     friend class el::Helpers;
@@ -3031,7 +3042,9 @@ private:
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
             } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
                 setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
-            }
+            } else if (conf->configurationType() == ConfigurationType::LogFileTruncate) {
+                setValue(conf->level(), getBool(conf->value()), &m_logFileTruncateMap);
+				}
         }
         // As mentioned early, we will now set filename configuration in separate loop to deal with non-existent files
         for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
@@ -3114,7 +3127,7 @@ private:
             base::type::fstream_t* fs = nullptr;
             if (filestreamIter == m_logStreamsReference->end()) {
                 // We need a completely new stream, nothing to share with
-                fs = base::utils::File::newFileStream(resolvedFilename);
+                fs = base::utils::File::newFileStream(resolvedFilename, m_logFileTruncateMap.at(level));
                 m_filenameMap.insert(std::make_pair(level, resolvedFilename));
                 m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(fs)));
                 m_logStreamsReference->insert(std::make_pair(resolvedFilename, base::FileStreamPtr(m_fileStreamMap.at(level))));
@@ -3129,7 +3142,15 @@ private:
                 ELPP_INTERNAL_ERROR("Setting [TO_FILE] of [" 
                     << LevelHelper::convertToString(level) << "] to FALSE", false);
                 setValue(level, false, &m_toFileMap);
-            }
+            } else {
+					// possibly truncate the log file
+					bool truncate = unsafeGetConfigByVal(level, &m_logFileTruncateMap, "logFileTruncate");
+					if (truncate == true) {
+						std::string fname = unsafeGetConfigByRef(level, &m_filenameMap, "filename");
+						fs->close();
+						fs->open(fname, std::fstream::out | std::fstream::trunc);
+					}
+				}
         };
         // If we dont have file conf for any level, create it for Level::Global first
         // otherwise create for specified level
