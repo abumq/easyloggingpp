@@ -645,7 +645,7 @@ public:
         if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
         if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
         if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
-        if (configurationType == ConfigurationType::LogFileTruncate) return "LOG_FLUSH_TRUNCATE";
+        if (configurationType == ConfigurationType::LogFileTruncate) return "LOG_FILE_TRUNCATE";
         return "UNKNOWN";
     }
     /// @brief Converts from configStr to ConfigurationType
@@ -670,7 +670,7 @@ public:
             return ConfigurationType::MaxLogFileSize;
         if ((strcmp(configStr, "LOG_FLUSH_THRESHOLD") == 0) || (strcmp(configStr, "log_flush_threshold") == 0))
             return ConfigurationType::LogFlushThreshold;
-        if ((strcmp(configStr, "LOG_FLUSH_TRUNCATE") == 0) || (strcmp(configStr, "log_flush_truncate") == 0))
+        if ((strcmp(configStr, "LOG_FILE_TRUNCATE") == 0) || (strcmp(configStr, "log_file_truncate") == 0))
             return ConfigurationType::LogFileTruncate;
         return ConfigurationType::Unknown;
     }
