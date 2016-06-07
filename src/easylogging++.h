@@ -1074,7 +1074,7 @@ public:
     /// @brief Creates new out file stream for specified filename.
     /// @return Pointer to newly created fstream or nullptr
     static base::type::fstream_t* newFileStream(const std::string& filename, bool truncate) {
-		 int trunc_flag = (truncate == true) ? (base::type::fstream_t::trunc) : 0;
+		 std::ios_base::openmode trunc_flag = (truncate == true) ? (base::type::fstream_t::trunc) : 0;
         base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(), 
             base::type::fstream_t::out | base::type::fstream_t::app | trunc_flag);
 #if defined(ELPP_UNICODE)
