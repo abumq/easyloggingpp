@@ -1071,7 +1071,11 @@ public:
     /// @return Pointer to newly created fstream or nullptr
     static base::type::fstream_t* newFileStream(const std::string& filename) {
         base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(), 
-            base::type::fstream_t::out | base::type::fstream_t::app);
+            base::type::fstream_t::out
+#if !defined(ELPP_FRESH_LOG_FILE)
+            | base::type::fstream_t::app
+#endif
+        );
 #if defined(ELPP_UNICODE)
         std::locale elppUnicodeLocale("");
 #   if ELPP_OS_WINDOWS
