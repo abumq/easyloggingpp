@@ -2644,7 +2644,9 @@ public:
 #else
         ELPP_UNUSED(base::consts::kDefaultLogFile);
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
-#if !defined(ELPP_NO_LOG_TO_FILE)
+#if defined(ELPP_NO_LOG_TO_FILE)
+        setGlobally(ConfigurationType::ToFile, std::string("false"), true);
+#else
         setGlobally(ConfigurationType::ToFile, std::string("true"), true);
 #endif  // !defined(ELPP_NO_LOG_TO_FILE)
         setGlobally(ConfigurationType::ToStandardOutput, std::string("true"), true);
@@ -2675,7 +2677,9 @@ public:
 #if !defined(ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
-#if !defined(ELPP_NO_LOG_TO_FILE)
+#if defined(ELPP_NO_LOG_TO_FILE)
+        unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, std::string("false"));
+#else
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, std::string("true"));
 #endif  // !defined(ELPP_NO_LOG_TO_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
