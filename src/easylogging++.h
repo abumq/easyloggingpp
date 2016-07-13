@@ -4,7 +4,7 @@
 //  Easylogging++ v9.81
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2015 muflihun.com
+//  Copyright (c) 2016 muflihun.com
 //
 //  This library is released under the MIT Licence.
 //  http://easylogging.muflihun.com/licence.php
@@ -18,7 +18,11 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
-#define ELPP_COMPILER_GCC (defined(__GNUC__))
+#if (defined(__GNUC__))
+#   define ELPP_COMPILER_GCC 1
+#else
+#   define ELPP_COMPILER_GCC 0
+#endif
 #if ELPP_COMPILER_GCC
 #    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
                                + __GNUC_MINOR__ * 100 \
@@ -27,13 +31,13 @@
 #      define ELPP_CXX0X 1
 #   elif(ELPP_GCC_VERSION >= 40801)
 #      define ELPP_CXX11 1
-#   endif  // defined(__GXX_EXPERIMENTAL_CXX0X__)
-#endif  // ELPP_COMPILER_GCC
+#   endif
+#endif
 // Visual C++
 #if defined(_MSC_VER)
-#define ELPP_COMPILER_MSVC 1
+#   define ELPP_COMPILER_MSVC 1
 #else
-#define ELPP_COMPILER_MSVC 0
+#   define ELPP_COMPILER_MSVC 0
 #endif
 #define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
 #if ELPP_COMPILER_MSVC
@@ -41,10 +45,14 @@
 #      define ELPP_CXX0X 1
 #   elif(_MSC_VER >= 1700)
 #      define ELPP_CXX11 1
-#   endif  // (_MSC_VER == 1600)
-#endif  // ELPP_COMPILER_MSVC
+#   endif
+#endif
 // Clang++
-#define ELPP_COMPILER_CLANG (defined(__clang__) && (__clang__ == 1))
+#if (defined(__clang__) && (__clang__ == 1))
+#   define ELPP_COMPILER_CLANG 1
+#else
+#   define ELPP_COMPILER_CLANG 0
+#endif
 #if ELPP_COMPILER_CLANG
 #   define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
                                 + __clang_minor__ * 100 \
@@ -52,27 +60,61 @@
 #   if (ELPP_CLANG_VERSION >= 30300)
 #      define ELPP_CXX11 1
 #   endif  // (ELPP_CLANG_VERSION >= 30300)
-#endif  // ELPP_COMPILER_CLANG
-#define ELPP_MINGW (defined(__MINGW32__) || defined(__MINGW64__))
-#define ELPP_CYGWIN (defined(__CYGWIN__) && (__CYGWIN__ == 1))
-#define ELPP_COMPILER_INTEL (defined(__INTEL_COMPILER))
+#endif
+#if (defined(__MINGW32__) || defined(__MINGW64__))
+#   define ELPP_MINGW 1
+#else
+#   define ELPP_MINGW 0
+#endif
+#if (defined(__CYGWIN__) && (__CYGWIN__ == 1))
+#   define ELPP_CYGWIN 1
+#else
+#   define ELPP_CYGWIN 0
+#endif
+#if (defined(__INTEL_COMPILER))
+#   define ELPP_COMPILER_INTEL 1
+#else
+#   define ELPP_COMPILER_INTEL 0
+#endif
 // Operating System Evaluation
 // Windows
 #if (defined(_WIN32) || defined(_WIN64)) 
-#define ELPP_OS_WINDOWS 1
+#   define ELPP_OS_WINDOWS 1
 #else
-#define ELPP_OS_WINDOWS 0  
+#   define ELPP_OS_WINDOWS 0  
 #endif
 // Linux
-#define ELPP_OS_LINUX (defined(__linux) || defined(__linux__))
-#define ELPP_OS_MAC (defined(__APPLE__))
-#define ELPP_OS_FREEBSD (defined(__FreeBSD__))
-#define ELPP_OS_SOLARIS (defined(__sun))
+#if (defined(__linux) || defined(__linux__))
+#   define ELPP_OS_LINUX 1
+#else
+#   define ELPP_OS_LINUX 0
+#endif
+#if (defined(__APPLE__))
+#   define ELPP_OS_MAC 1
+#else
+#   define ELPP_OS_MAC 0
+#endif
+#if (defined(__FreeBSD__))
+#   define ELPP_OS_FREEBSD 1
+#else
+#   define ELPP_OS_FREEBSD 0
+#endif					
+#if (defined(__sun))		
+#   define ELPP_OS_SOLARIS 1
+#else
+#   define ELPP_OS_SOLARIS 0
+#endif
 // Unix
 #if ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
 #   define ELPP_OS_UNIX 1
-#endif  // ((ELPP_OS_LINUX || ELPP_OS_MAC || ELPP_OS_FREEBSD || ELPP_OS_SOLARIS) && (!ELPP_OS_WINDOWS))
-#define ELPP_OS_ANDROID (defined(__ANDROID__))
+#else
+#   define ELPP_OS_UNIX 0
+#endif 
+#if (defined(__ANDROID__))
+#   define ELPP_OS_ANDROID 1
+#else
+#   define ELPP_OS_ANDROID 0
+#endif								
 // Evaluating Cygwin as *nix OS
 #if !ELPP_OS_UNIX && !ELPP_OS_WINDOWS && ELPP_CYGWIN
 #   undef ELPP_OS_UNIX
@@ -190,15 +232,27 @@
 #   define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#define ELPP_USE_STD_THREADING ((!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD))
+#if ((!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD))
+#   define ELPP_USE_STD_THREADING 1
+#else
+#   define ELPP_USE_STD_THREADING 0
+#endif
 #undef ELPP_FINAL
 #if ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
 #   define ELPP_FINAL
 #else
 #   define ELPP_FINAL final
 #endif  // ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
-#define ELPP_ASYNC_LOGGING (defined(ELPP_EXPERIMENTAL_ASYNC))
-#define ELPP_THREADING_ENABLED (defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING)
+#if defined(ELPP_EXPERIMENTAL_ASYNC)
+#   define ELPP_ASYNC_LOGGING 1
+#else
+#   define ELPP_ASYNC_LOGGING 0
+#endif // defined(ELPP_EXPERIMENTAL_ASYNC)
+#if defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
+#   define ELPP_THREADING_ENABLED 1
+#else
+#   define ELPP_THREADING_ENABLED 0
+#endif  // defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
 // Function macro ELPP_FUNC
 #undef ELPP_FUNC
 #if ELPP_COMPILER_MSVC  // Visual C++
