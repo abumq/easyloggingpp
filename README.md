@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.81**
+> **Manual For v9.82**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,9 +11,9 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.81)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.82)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.81/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.82/samples)
 
   [![paypal]](http://muflihun.com/donation/)
 
@@ -91,7 +91,7 @@
 
 # Introduction
 Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.81. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.82. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  

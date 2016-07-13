@@ -6022,9 +6022,9 @@ public:
 class VersionInfo : base::StaticClass {
 public:
     /// @brief Current version number
-    static inline const std::string version(void) { return std::string("9.81"); }
+    static inline const std::string version(void) { return std::string("9.82"); }
     /// @brief Release date of current version
-    static inline const std::string releaseDate(void) { return std::string("13-07-2016 0950hrs"); }
+    static inline const std::string releaseDate(void) { return std::string("14-07-2016 0857hrs"); }
 };
 }  // namespace el
 #undef VLOG_IS_ON
