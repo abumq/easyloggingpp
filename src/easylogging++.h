@@ -2644,7 +2644,11 @@ public:
 #else
         ELPP_UNUSED(base::consts::kDefaultLogFile);
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
+#if defined(ELPP_NO_LOG_TO_FILE)
+        setGlobally(ConfigurationType::ToFile, std::string("false"), true);
+#else
         setGlobally(ConfigurationType::ToFile, std::string("true"), true);
+#endif  // !defined(ELPP_NO_LOG_TO_FILE)
         setGlobally(ConfigurationType::ToStandardOutput, std::string("true"), true);
         setGlobally(ConfigurationType::MillisecondsWidth, std::string("3"), true);
         setGlobally(ConfigurationType::PerformanceTracking, std::string("true"), true);
@@ -2665,7 +2669,7 @@ public:
     /// @detail By remaining, it means that the level/type a configuration does not exist for.
     /// This function is useful when you want to minimize chances of failures, e.g, if you have a configuration file that sets
     /// configuration for all the configurations except for Enabled or not, we use this so that ENABLED is set to default i.e,
-    /// true. If you dont do this explicitley (either by calling this function or by using second param in Constructor
+    /// true. If you dont do this explicitly (either by calling this function or by using second param in Constructor
     /// and try to access a value, an error is thrown
     void setRemainingToDefault(void) {
         base::threading::ScopedLock scopedLock(lock());
@@ -2673,7 +2677,11 @@ public:
 #if !defined(ELPP_NO_DEFAULT_LOG_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
+#if defined(ELPP_NO_LOG_TO_FILE)
+        unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, std::string("false"));
+#else
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToFile, std::string("true"));
+#endif  // !defined(ELPP_NO_LOG_TO_FILE)
         unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, std::string("3"));
         unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
