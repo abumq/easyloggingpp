@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.83
+//  Easylogging++ v9.84
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2016 muflihun.com
@@ -6022,9 +6022,9 @@ el::base::type::ostream_t& operator<<(el::base::type::ostream_t& OutputStreamIns
     class VersionInfo : base::StaticClass {
     public:
         /// @brief Current version number
-        static inline const std::string version(void) { return std::string("9.83"); }
+        static inline const std::string version(void) { return std::string("9.84"); }
         /// @brief Release date of current version
-        static inline const std::string releaseDate(void) { return std::string("21-07-2016 1442hrs"); }
+        static inline const std::string releaseDate(void) { return std::string("29-07-2016 1221hrs"); }
     };
 }  // namespace el
 #undef VLOG_IS_ON
