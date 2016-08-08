@@ -753,9 +753,9 @@ namespace el {
                     /// @brief Namespace containing constants used internally.
                     namespace consts {
                         // Level log values - These are values that are replaced in place of %level format specifier
-                        static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
+                        static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO");
                         static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
-                        static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN ");
+                        static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN");
                         static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
                         static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
                         static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
