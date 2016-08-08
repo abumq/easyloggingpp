@@ -758,7 +758,7 @@ namespace el {
                         static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN ");
                         static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
                         static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
-                        static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
+                        static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VERBOSE");
                         static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
                         static const base::type::char_t* kInfoLevelShortLogValue     =   ELPP_LITERAL("I");
                         static const base::type::char_t* kDebugLevelShortLogValue    =   ELPP_LITERAL("D");
