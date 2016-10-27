@@ -782,7 +782,7 @@ The result of above execution for iter = 10, is as following
 06:22:31,460 INFO Executed [void performHeavyTask(int)] in [106 ms]
 ```
 
-In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object name timerObj and line-7 we have TIMED_SCOPE with object name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_BLOC` with block name = function name)
+In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object pointer name timerObj and line-7 we have TIMED_SCOPE with object pointer name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_SCOPE` with block name = function name)
 
 You might wonder why do we need object name. Well easylogging++ performance tracking feature takes it further and provides ability to add, what's called checkpoints. 
 Checkpoints have two macros:
@@ -808,7 +808,7 @@ void performHeavyTask(int iter) {
 }
 ```
 
-Notice macro on line-11 (also note comment on line-8. It's checkpoint for heavy-iter block. Now notice following output
+Notice macro on line-11 (also note comment on line-8). It's checkpoint for heavy-iter block. Now notice following output
 ```
 06:33:07,558 INFO Executed [heavy-iter] in [9 ms]
 06:33:07,566 INFO Performance checkpoint for block [heavy-iter] : [8 ms]
@@ -850,15 +850,27 @@ Notes:
 
 1. Performance tracking uses `performance` logger (INFO level) by default unless `el::base::PerformanceTracker` is constructed manually (not using macro - not recommended). When configuring other loggers, make sure you configure this one as well.
 
-2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::PerformanceTracker` and `checkpoint()` can be accessed by `timerObj.checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
+2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::type::PerformanceTrackerPtr`. The `checkpoint()` routine of the `el::base::PerformanceTracker` can be accessed by `timerObj->checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
 
-3. In order to access `el::base::PerformanceTracker` while in `TIMED_BLOCK`, you can use `timerObj.timer`
+3. In order to access `el::base::type::PerformanceTrackerPtr` while in `TIMED_BLOCK`, you can use `timerObj.timer`
 
 4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
  > You may be interested in [python script to parse performance logs](https://github.com/easylogging/easyloggingpp/issues/206)
 
  [![top] Goto Top](#table-of-contents)
+
+#### Conditional Performance Tracking
+If you want to enable performance tracking for certain conditions only, e.g. based on a certain verbosity level, you can use the variants `TIMED_FUNC_IF` or `TIMED_SCOPE_IF`.
+
+A verbosity level example is given below
+```c++
+void performHeavyTask(int iter) {
+   // enable performance tracking for verbosity level 4 or higher
+   TIMED_FUNC_IF( timerObj, VLOG_IS_ON(4) );
+   // Some more heavy tasks
+}
+```
 
 #### Make Use of Performance Tracking Data
 If you wish to capture performance tracking data right after it is finished, you can do so by extending `el::PerformanceTrackingCallback`.
