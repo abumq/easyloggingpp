@@ -93,7 +93,7 @@ static void cleanFile(const char* filename = logfile, el::base::type::fstream_t*
 #define BUILD_STR(strb) [&]() -> std::string { std::stringstream ssb; ssb << strb; return ssb.str(); }()
 
 static void removeFile(const char* path) {
-    system(BUILD_STR("rm -rf " << path).c_str());
+    (void)(system(BUILD_STR("rm -rf " << path).c_str())+1); // (void)(...+1) -> ignore result for gcc 4.6+
 }
 
 static const char* kSysLogIdent = "qt-gtest-proj";
