@@ -1297,14 +1297,14 @@ namespace el {
                                     /// @brief Trims string from start
                                     /// @param [in,out] str String to trim
                                     static inline std::string& ltrim(std::string& str) {
-                                        str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(&std::isspace))));
+                                        str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](char c) { return !isspace(c); }));
                                         return str;
                                     }
                                     
                                     /// @brief Trim string from end
                                     /// @param [in,out] str String to trim
                                     static inline std::string& rtrim(std::string& str) {
-                                        str.erase(std::find_if(str.rbegin(), str.rend(), std::not1(std::ptr_fun<int, int>(&std::isspace))).base(), str.end());
+                                        str.erase(std::find_if(str.rbegin(), str.rend(), [](char c) { return !isspace(c); }).base(), str.end());
                                         return str;
                                     }
                                     
