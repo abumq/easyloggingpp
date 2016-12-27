@@ -25,11 +25,11 @@
 #    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
 + __GNUC_MINOR__ * 100 \
 + __GNUC_PATCHLEVEL__)
-#   if defined(__GXX_EXPERIMENTAL_CXX0X__)
-#      define ELPP_CXX0X 1
-#   elif(ELPP_GCC_VERSION >= 40801)
-#      define ELPP_CXX11 1
-#   endif
+#  if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#    define ELPP_CXX0X 1
+#  elif(ELPP_GCC_VERSION >= 40801)
+#    define ELPP_CXX11 1
+#  endif
 #endif
 // Visual C++
 #if defined(_MSC_VER)
@@ -39,11 +39,11 @@
 #endif
 #define ELPP_CRT_DBG_WARNINGS ELPP_COMPILER_MSVC
 #if ELPP_COMPILER_MSVC
-#   if (_MSC_VER == 1600)
-#      define ELPP_CXX0X 1
-#   elif(_MSC_VER >= 1700)
-#      define ELPP_CXX11 1
-#   endif
+#  if (_MSC_VER == 1600)
+#    define ELPP_CXX0X 1
+#  elif(_MSC_VER >= 1700)
+#    define ELPP_CXX11 1
+#  endif
 #endif
 // Clang++
 #if (defined(__clang__) && (__clang__ == 1))
@@ -55,9 +55,9 @@
 #  define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
 + __clang_minor__ * 100 \
 + __clang_patchlevel__)
-#   if (ELPP_CLANG_VERSION >= 30300)
-#      define ELPP_CXX11 1
-#   endif  // (ELPP_CLANG_VERSION >= 30300)
+#  if (ELPP_CLANG_VERSION >= 30300)
+#    define ELPP_CXX11 1
+#  endif  // (ELPP_CLANG_VERSION >= 30300)
 #endif
 #if (defined(__MINGW32__) || defined(__MINGW64__))
 #  define ELPP_MINGW 1
@@ -115,8 +115,8 @@
 #endif
 // Evaluating Cygwin as *nix OS
 #if !ELPP_OS_UNIX && !ELPP_OS_WINDOWS && ELPP_CYGWIN
-#   undef ELPP_OS_UNIX
-#   undef ELPP_OS_LINUX
+#  undef ELPP_OS_UNIX
+#  undef ELPP_OS_LINUX
 #  define ELPP_OS_UNIX 1
 #  define ELPP_OS_LINUX 1
 #endif //  !ELPP_OS_UNIX && !ELPP_OS_WINDOWS && ELPP_CYGWIN
@@ -134,21 +134,21 @@
 #endif // !defined(ELPP_INTERNAL_DEBUGGING_OUT)
 // Internal Assertions and errors
 #if !defined(ELPP_DISABLE_ASSERT)
-#   if (defined(ELPP_DEBUG_ASSERT_FAILURE))
-#      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
+#  if (defined(ELPP_DEBUG_ASSERT_FAILURE))
+#    define ELPP_ASSERT(expr, msg) if (!(expr)) { \
 std::stringstream internalInfoStream; internalInfoStream << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
 << "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
 << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" << ELPP_INTERNAL_DEBUGGING_ENDL; base::utils::abort(1, \
 "ELPP Assertion failure, please define ELPP_DEBUG_ASSERT_FAILURE"); }
-#   else
-#      define ELPP_ASSERT(expr, msg) if (!(expr)) { \
+#  else
+#    define ELPP_ASSERT(expr, msg) if (!(expr)) { \
 std::stringstream internalInfoStream; internalInfoStream << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR\
 << "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " \
 << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" \
 << ELPP_INTERNAL_DEBUGGING_ENDL; }
-#   endif  // (defined(ELPP_DEBUG_ASSERT_FAILURE))
+#  endif  // (defined(ELPP_DEBUG_ASSERT_FAILURE))
 #else
 #  define ELPP_ASSERT(x, y)
 #endif  //(!defined(ELPP_DISABLE_ASSERT)
@@ -161,42 +161,42 @@ ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << buff << " [" << errno << "]";} (voi
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << strerror(errno) << " [" << errno << "]"; (void)0
 #endif  // ELPP_COMPILER_MSVC
 #if defined(ELPP_DEBUG_ERRORS)
-#   if !defined(ELPP_INTERNAL_ERROR)
-#      define ELPP_INTERNAL_ERROR(msg, pe) { \
+#  if !defined(ELPP_INTERNAL_ERROR)
+#    define ELPP_INTERNAL_ERROR(msg, pe) { \
 std::stringstream internalInfoStream; internalInfoStream << "<ERROR> " << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
 << "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " \
 << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << ELPP_INTERNAL_DEBUGGING_ENDL; \
 if (pe) { ELPP_INTERNAL_DEBUGGING_OUT_ERROR << "    "; ELPP_INTERNAL_DEBUGGING_WRITE_PERROR; }} (void)0
-#   endif
+#  endif
 #else
-#   undef ELPP_INTERNAL_INFO
+#  undef ELPP_INTERNAL_INFO
 #  define ELPP_INTERNAL_ERROR(msg, pe)
 #endif  // defined(ELPP_DEBUG_ERRORS)
 #if (defined(ELPP_DEBUG_INFO))
-#   if !(defined(ELPP_INTERNAL_INFO_LEVEL))
-#      define ELPP_INTERNAL_INFO_LEVEL 9
-#   endif  // !(defined(ELPP_INTERNAL_INFO_LEVEL))
-#   if !defined(ELPP_INTERNAL_INFO)
-#      define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= ELPP_INTERNAL_INFO_LEVEL) { \
+#  if !(defined(ELPP_INTERNAL_INFO_LEVEL))
+#    define ELPP_INTERNAL_INFO_LEVEL 9
+#  endif  // !(defined(ELPP_INTERNAL_INFO_LEVEL))
+#  if !defined(ELPP_INTERNAL_INFO)
+#    define ELPP_INTERNAL_INFO(lvl, msg) { if (lvl <= ELPP_INTERNAL_INFO_LEVEL) { \
 std::stringstream internalInfoStream; internalInfoStream << "<INFO> " << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) \
 << ELPP_INTERNAL_DEBUGGING_ENDL; }}
-#   endif
+#  endif
 #else
-#   undef ELPP_INTERNAL_INFO
+#  undef ELPP_INTERNAL_INFO
 #  define ELPP_INTERNAL_INFO(lvl, msg)
 #endif  // (defined(ELPP_DEBUG_INFO))
 #if defined(ELPP_STACKTRACE_ON_CRASH)
-#   if (ELPP_COMPILER_GCC && !ELPP_MINGW)
-#      define ELPP_STACKTRACE 1
-#   else
+#  if (ELPP_COMPILER_GCC && !ELPP_MINGW)
+#    define ELPP_STACKTRACE 1
+#  else
 #      if ELPP_COMPILER_MSVC
 #         pragma message("Stack trace not available for this compiler")
 #      else
 #         warning "Stack trace not available for this compiler";
 #      endif  // ELPP_COMPILER_MSVC
-#   endif  // ELPP_COMPILER_GCC
+#  endif  // ELPP_COMPILER_GCC
 #endif  // (defined(ELPP_STACKTRACE_ON_CRASH))
 // Miscellaneous macros
 #define ELPP_UNUSED(x) (void)x
@@ -205,11 +205,11 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define ELPP_LOG_PERMS S_IRUSR | S_IWUSR | S_IXUSR | S_IWGRP | S_IRGRP | S_IXGRP | S_IWOTH | S_IXOTH
 #endif  // ELPP_OS_UNIX
 #if defined(ELPP_AS_DLL) && ELPP_COMPILER_MSVC
-#   if defined(ELPP_EXPORT_SYMBOLS)
-#      define ELPP_EXPORT __declspec(dllexport)
-#   else
-#      define ELPP_EXPORT __declspec(dllimport)
-#   endif  // defined(ELPP_EXPORT_SYMBOLS)
+#  if defined(ELPP_EXPORT_SYMBOLS)
+#    define ELPP_EXPORT __declspec(dllexport)
+#  else
+#    define ELPP_EXPORT __declspec(dllimport)
+#  endif  // defined(ELPP_EXPORT_SYMBOLS)
 #else
 #  define ELPP_EXPORT
 #endif  // defined(ELPP_AS_DLL) && ELPP_COMPILER_MSVC
@@ -262,11 +262,11 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #elif ELPP_COMPILER_CLANG  // Clang++
 #  define ELPP_FUNC __PRETTY_FUNCTION__
 #else
-#   if defined(__func__)
-#      define ELPP_FUNC __func__
-#   else
-#      define ELPP_FUNC ""
-#   endif  // defined(__func__)
+#  if defined(__func__)
+#    define ELPP_FUNC __func__
+#  else
+#    define ELPP_FUNC ""
+#  endif  // defined(__func__)
 #endif  // defined(_MSC_VER)
 #undef ELPP_VARIADIC_TEMPLATES_SUPPORTED
 // Keep following line commented until features are fixed
@@ -326,9 +326,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #include <cstdarg>
 #if defined(ELPP_UNICODE)
 #   include <locale>
-#   if ELPP_OS_WINDOWS
+#  if ELPP_OS_WINDOWS
 #      include <codecvt>
-#   endif // ELPP_OS_WINDOWS
+#  endif // ELPP_OS_WINDOWS
 #endif  // defined(ELPP_UNICODE)
 #if ELPP_STACKTRACE
 #   include <cxxabi.h>
@@ -343,13 +343,13 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #elif ELPP_OS_WINDOWS
 #   include <direct.h>
 #   include <windows.h>
-#   if defined(WIN32_LEAN_AND_MEAN)
+#  if defined(WIN32_LEAN_AND_MEAN)
 #      if defined(ELPP_WINSOCK2)
 #         include <winsock2.h>
 #      else
 #         include <winsock.h>
 #      endif // defined(ELPP_WINSOCK2)
-#   endif // defined(WIN32_LEAN_AND_MEAN)
+#  endif // defined(WIN32_LEAN_AND_MEAN)
 #endif  // ELPP_OS_UNIX
 #include <string>
 #include <vector>
@@ -363,19 +363,19 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #include <memory>
 #include <type_traits>
 #if ELPP_THREADING_ENABLED
-#   if ELPP_USE_STD_THREADING
+#  if ELPP_USE_STD_THREADING
 #      include <mutex>
 #      include <thread>
-#   else
+#  else
 #      if ELPP_OS_UNIX
 #         include <pthread.h>
 #      endif  // ELPP_OS_UNIX
-#   endif  // ELPP_USE_STD_THREADING
+#  endif  // ELPP_USE_STD_THREADING
 #endif  // ELPP_THREADING_ENABLED
 #if ELPP_ASYNC_LOGGING
-#   if defined(ELPP_NO_SLEEP_FOR)
+#  if defined(ELPP_NO_SLEEP_FOR)
 #      include <unistd.h>
-#   endif  // defined(ELPP_NO_SLEEP_FOR)
+#  endif  // defined(ELPP_NO_SLEEP_FOR)
 #   include <thread>
 #   include <queue>
 #   include <condition_variable>
@@ -388,15 +388,15 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #   include <set>
 #   include <bitset>
 #   include <stack>
-#   if defined(ELPP_LOG_STD_ARRAY)
+#  if defined(ELPP_LOG_STD_ARRAY)
 #      include <array>
-#   endif  // defined(ELPP_LOG_STD_ARRAY)
-#   if defined(ELPP_LOG_UNORDERED_MAP)
+#  endif  // defined(ELPP_LOG_STD_ARRAY)
+#  if defined(ELPP_LOG_UNORDERED_MAP)
 #      include <unordered_map>
-#   endif  // defined(ELPP_LOG_UNORDERED_MAP)
-#   if defined(ELPP_LOG_UNORDERED_SET)
+#  endif  // defined(ELPP_LOG_UNORDERED_MAP)
+#  if defined(ELPP_LOG_UNORDERED_SET)
 #      include <unordered_set>
-#   endif  // defined(ELPP_UNORDERED_SET)
+#  endif  // defined(ELPP_UNORDERED_SET)
 #endif  // defined(ELPP_STL_LOGGING)
 #if defined(ELPP_QT_LOGGING)
 // For logging Qt based classes & templates
@@ -468,11 +468,11 @@ namespace type {
 #if defined(ELPP_UNICODE)
 #  define ELPP_LITERAL(txt) L##txt
 #  define ELPP_STRLEN wcslen
-#   if defined ELPP_CUSTOM_COUT
-#      define ELPP_COUT ELPP_CUSTOM_COUT
-#   else
-#      define ELPP_COUT std::wcout
-#   endif  // defined ELPP_CUSTOM_COUT
+#  if defined ELPP_CUSTOM_COUT
+#    define ELPP_COUT ELPP_CUSTOM_COUT
+#  else
+#    define ELPP_COUT std::wcout
+#  endif  // defined ELPP_CUSTOM_COUT
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
@@ -481,11 +481,11 @@ typedef std::wostream ostream_t;
 #else
 #  define ELPP_LITERAL(txt) txt
 #  define ELPP_STRLEN strlen
-#   if defined ELPP_CUSTOM_COUT
-#      define ELPP_COUT ELPP_CUSTOM_COUT
-#   else
-#      define ELPP_COUT std::cout
-#   endif  // defined ELPP_CUSTOM_COUT
+#  if defined ELPP_CUSTOM_COUT
+#    define ELPP_COUT ELPP_CUSTOM_COUT
+#  else
+#    define ELPP_COUT std::cout
+#  endif  // defined ELPP_CUSTOM_COUT
 typedef char char_t;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;
@@ -814,15 +814,15 @@ static const char* kUnknownHost                            =      "unknown-host"
 #if defined(ELPP_DEFAULT_LOG_FILE)
 static const char* kDefaultLogFile                         =      ELPP_DEFAULT_LOG_FILE;
 #else
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
 #      if ELPP_OS_ANDROID
 static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      else
 static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
 #      endif  // ELPP_OS_ANDROID
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
 static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
 #endif  // defined(ELPP_DEFAULT_LOG_FILE)
 #if !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
 static const char* kDefaultLogFileParam                    =      "--default-log-file";
@@ -997,57 +997,57 @@ static inline bool hasFlag(Enum e, base::type::EnumType flag) {
 }  // namespace utils
 namespace threading {
 #if ELPP_THREADING_ENABLED
-#   if !ELPP_USE_STD_THREADING
+#  if !ELPP_USE_STD_THREADING
 namespace internal {
 /// @brief A mutex wrapper for compiler that dont yet support std::mutex
 class Mutex : base::NoCopy {
  public:
   Mutex(void) {
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
     pthread_mutex_init(&m_underlyingMutex, nullptr);
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
     InitializeCriticalSection(&m_underlyingMutex);
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
   }
 
   virtual ~Mutex(void) {
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
     pthread_mutex_destroy(&m_underlyingMutex);
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
     DeleteCriticalSection(&m_underlyingMutex);
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
   }
 
   inline void lock(void) {
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
     pthread_mutex_lock(&m_underlyingMutex);
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
     EnterCriticalSection(&m_underlyingMutex);
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
   }
 
   inline bool try_lock(void) {
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
     return (pthread_mutex_trylock(&m_underlyingMutex) == 0);
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
     return TryEnterCriticalSection(&m_underlyingMutex);
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
   }
 
   inline void unlock(void) {
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
     pthread_mutex_unlock(&m_underlyingMutex);
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
     LeaveCriticalSection(&m_underlyingMutex);
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
   }
 
  private:
-#   if ELPP_OS_UNIX
+#  if ELPP_OS_UNIX
   pthread_mutex_t m_underlyingMutex;
-#   elif ELPP_OS_WINDOWS
+#  elif ELPP_OS_WINDOWS
   CRITICAL_SECTION m_underlyingMutex;
-#   endif  // ELPP_OS_UNIX
+#  endif  // ELPP_OS_UNIX
 };
 /// @brief Scoped lock for compiler that dont yet support std::lock_guard
 template <typename M>
@@ -1079,7 +1079,7 @@ static inline void msleep(int) {
 }
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
-#   else
+#  else
 /// @brief Gets ID of currently running threading using std::this_thread::get_id()
 static inline std::string getCurrentThreadId(void) {
   std::stringstream ss;
@@ -1100,7 +1100,7 @@ static inline void msleep(int ms) {
 }
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
-#   endif  // !ELPP_USE_STD_THREADING
+#  endif  // !ELPP_USE_STD_THREADING
 #else
 namespace internal {
 /// @brief Mutex wrapper used when multi-threading is disabled.
@@ -1161,10 +1161,10 @@ class File : base::StaticClass {
                                                          );
 #if defined(ELPP_UNICODE)
     std::locale elppUnicodeLocale("");
-#   if ELPP_OS_WINDOWS
+#  if ELPP_OS_WINDOWS
     std::locale elppUnicodeLocaleWindows(elppUnicodeLocale, new std::codecvt_utf8_utf16<wchar_t>);
     elppUnicodeLocale = elppUnicodeLocaleWindows;
-#   endif // ELPP_OS_WINDOWS
+#  endif // ELPP_OS_WINDOWS
     fs->imbue(elppUnicodeLocale);
 #endif  // defined(ELPP_UNICODE)
     if (fs->is_open()) {
@@ -1639,11 +1639,11 @@ class DateTime : base::StaticClass {
   static void gettimeofday(struct timeval* tv) {
 #if ELPP_OS_WINDOWS
     if (tv != nullptr) {
-#   if ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
+#  if ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
       const unsigned __int64 delta_ = 11644473600000000Ui64;
-#   else
+#  else
       const unsigned __int64 delta_ = 11644473600000000ULL;
-#   endif  // ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
+#  endif  // ELPP_COMPILER_MSVC || defined(_MSC_EXTENSIONS)
       const double secOffSet = 0.000001;
       const unsigned long usecOffSet = 1000000;
       FILETIME fileTime;
@@ -1715,19 +1715,19 @@ class DateTime : base::StaticClass {
     ::localtime_r(&rawTime, timeInfo);
     return timeInfo;
 #else
-#   if ELPP_COMPILER_MSVC
+#  if ELPP_COMPILER_MSVC
     ELPP_UNUSED(currTime);
     time_t t;
     _time64(&t);
     localtime_s(timeInfo, &t);
     return timeInfo;
-#   else
+#  else
     // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
     time_t rawTime = currTime->tv_sec;
     struct tm* tmInf = localtime(&rawTime);
     *timeInfo = *tmInf;
     return timeInfo;
-#   endif  // ELPP_COMPILER_MSVC
+#  endif  // ELPP_COMPILER_MSVC
 #endif  // ELPP_OS_UNIX
   }
   static char* parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
@@ -2814,7 +2814,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
     static inline bool isConfig(const std::string& line) {
       std::size_t assignment = line.find('=');
       return line != "" &&
-             ((line[0] >= 65 && line[0] <= 90) || (line[0] >= 97 && line[0] <= 122)) &&
+             ((line[0] >= 'A' && line[0] <= 'Z') || (line[0] >= 'a' && line[0] <= 'z')) &&
              (assignment != std::string::npos) &&
              (line.size() > assignment);
     }
@@ -3638,7 +3638,7 @@ inline void FUNCTION_NAME(const T&);
   LOGGER_LEVEL_WRITERS_SIGNATURES(error)
   LOGGER_LEVEL_WRITERS_SIGNATURES(fatal)
   LOGGER_LEVEL_WRITERS_SIGNATURES(trace)
-#   undef LOGGER_LEVEL_WRITERS_SIGNATURES
+#  undef LOGGER_LEVEL_WRITERS_SIGNATURES
 #endif // ELPP_VARIADIC_TEMPLATES_SUPPORTED
  private:
   std::string m_id;
@@ -4348,13 +4348,13 @@ class DefaultLogDispatchCallback : public LogDispatchCallback {
         sysLogPriority = LOG_DEBUG;
       else
         sysLogPriority = LOG_NOTICE;
-#   if defined(ELPP_UNICODE)
+#  if defined(ELPP_UNICODE)
       char* line = base::utils::Str::wcharPtrToCharPtr(logLine.c_str());
       syslog(sysLogPriority, "%s", line);
       free(line);
-#   else
+#  else
       syslog(sysLogPriority, "%s", logLine.c_str());
-#   endif
+#  endif
     }
 #endif  // defined(ELPP_SYSLOG)
   }
@@ -4442,7 +4442,7 @@ class AsyncDispatchWorker : public base::IWorker, public base::threading::Thread
         }
       }
     }
-#   if defined(ELPP_SYSLOG)
+#  if defined(ELPP_SYSLOG)
     else if (data->dispatchAction() == base::DispatchAction::SysLog) {
       // Determine syslog priority
       int sysLogPriority = 0;
@@ -4466,7 +4466,7 @@ class AsyncDispatchWorker : public base::IWorker, public base::threading::Thread
       syslog(sysLogPriority, "%s", logLine.c_str());
 #      endif
     }
-#   endif  // defined(ELPP_SYSLOG)
+#  endif  // defined(ELPP_SYSLOG)
   }
 
   void run(void) {
@@ -4733,13 +4733,13 @@ return *this;\
       m_logger->stream() << base::consts::kNullPointer;
       return *this;
     }
-#   if defined(ELPP_UNICODE)
+#  if defined(ELPP_UNICODE)
     m_logger->stream() << msg;
-#   else
+#  else
     char* buff_ = base::utils::Str::wcharPtrToCharPtr(msg);
     m_logger->stream() << buff_;
     free(buff_);
-#   endif
+#  endif
     if (ELPP->hasFlag(LoggingFlag::AutoSpacing)) {
       m_logger->stream() << " ";
     }
@@ -4818,28 +4818,28 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
     m_logger->stream() << ELPP_LITERAL("]");
     return *this;
   }
-#   if defined(ELPP_LOG_STD_ARRAY)
+#  if defined(ELPP_LOG_STD_ARRAY)
   template <class T, std::size_t Size>
   inline MessageBuilder& operator<<(const std::array<T, Size>& array) {
     return writeIterator(array.begin(), array.end(), array.size());
   }
-#   endif  // defined(ELPP_LOG_STD_ARRAY)
-#   if defined(ELPP_LOG_UNORDERED_MAP)
+#  endif  // defined(ELPP_LOG_STD_ARRAY)
+#  if defined(ELPP_LOG_UNORDERED_MAP)
   ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(std::unordered_map)
   ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG(std::unordered_multimap)
-#   endif  // defined(ELPP_LOG_UNORDERED_MAP)
-#   if defined(ELPP_LOG_UNORDERED_SET)
+#  endif  // defined(ELPP_LOG_UNORDERED_MAP)
+#  if defined(ELPP_LOG_UNORDERED_SET)
   ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::unordered_set)
   ELPP_ITERATOR_CONTAINER_LOG_FOUR_ARG(std::unordered_multiset)
-#   endif  // defined(ELPP_LOG_UNORDERED_SET)
+#  endif  // defined(ELPP_LOG_UNORDERED_SET)
 #endif  // defined(ELPP_STL_LOGGING)
 #if defined(ELPP_QT_LOGGING)
   inline MessageBuilder& operator<<(const QString& msg) {
-#   if defined(ELPP_UNICODE)
+#  if defined(ELPP_UNICODE)
     m_logger->stream() << msg.toStdWString();
-#   else
+#  else
     m_logger->stream() << msg.toStdString();
-#   endif  // defined(ELPP_UNICODE)
+#  endif  // defined(ELPP_UNICODE)
     return *this;
   }
   inline MessageBuilder& operator<<(const QByteArray& msg) {
@@ -4849,19 +4849,19 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
     return operator<<(msg.toString());
   }
   inline MessageBuilder& operator<<(qint64 msg) {
-#   if defined(ELPP_UNICODE)
+#  if defined(ELPP_UNICODE)
     m_logger->stream() << QString::number(msg).toStdWString();
-#   else
+#  else
     m_logger->stream() << QString::number(msg).toStdString();
-#   endif  // defined(ELPP_UNICODE)
+#  endif  // defined(ELPP_UNICODE)
     return *this;
   }
   inline MessageBuilder& operator<<(quint64 msg) {
-#   if defined(ELPP_UNICODE)
+#  if defined(ELPP_UNICODE)
     m_logger->stream() << QString::number(msg).toStdWString();
-#   else
+#  else
     m_logger->stream() << QString::number(msg).toStdString();
-#   endif  // defined(ELPP_UNICODE)
+#  endif  // defined(ELPP_UNICODE)
     return *this;
   }
   inline MessageBuilder& operator<<(QChar msg) {
@@ -5040,7 +5040,7 @@ class Writer : base::NoCopy {
          const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
          base::type::VerboseLevel verboseLevel = 0) :
     m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
-    m_proceed(false), m_dispatchAction(dispatchAction) {
+    m_proceed(false), m_dispatchAction(dispatchAction), m_logger(nullptr) {
   }
 
   virtual ~Writer(void) {
@@ -5261,7 +5261,7 @@ inline void Logger::log(Level level, const T& log) {
   base::threading::ScopedLock scopedLock(lock());
   log_(level, 0, log);
 }
-#   if ELPP_VERBOSE_LOG
+#  if ELPP_VERBOSE_LOG
 template <typename T, typename... Args>
 inline void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
   base::threading::ScopedLock scopedLock(lock());
@@ -5272,7 +5272,7 @@ inline void Logger::verbose(int vlevel, const T& log) {
   base::threading::ScopedLock scopedLock(lock());
   log_(el::Level::Verbose, vlevel, log);
 }
-#   else
+#  else
 template <typename T, typename... Args>
 inline void Logger::verbose(int, const char*, const T&, const Args&...) {
   return;
@@ -5281,7 +5281,7 @@ template <typename T>
 inline void Logger::verbose(int, const T&) {
   return;
 }
-#   endif  // ELPP_VERBOSE_LOG
+#  endif  // ELPP_VERBOSE_LOG
 #  define LOGGER_LEVEL_WRITERS(FUNCTION_NAME, LOG_LEVEL)\
 template <typename T, typename... Args>\
 inline void Logger::FUNCTION_NAME(const char* s, const T& value, const Args&... args) {\
@@ -5301,38 +5301,38 @@ inline void Logger::FUNCTION_NAME(const T&) {\
 return;\
 }
 
-#   if ELPP_INFO_LOG
+#  if ELPP_INFO_LOG
 LOGGER_LEVEL_WRITERS(info, Level::Info)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(info, Level::Info)
-#   endif // ELPP_INFO_LOG
-#   if ELPP_DEBUG_LOG
+#  endif // ELPP_INFO_LOG
+#  if ELPP_DEBUG_LOG
 LOGGER_LEVEL_WRITERS(debug, Level::Debug)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(debug, Level::Debug)
-#   endif // ELPP_DEBUG_LOG
-#   if ELPP_WARNING_LOG
+#  endif // ELPP_DEBUG_LOG
+#  if ELPP_WARNING_LOG
 LOGGER_LEVEL_WRITERS(warn, Level::Warning)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(warn, Level::Warning)
-#   endif // ELPP_WARNING_LOG
-#   if ELPP_ERROR_LOG
+#  endif // ELPP_WARNING_LOG
+#  if ELPP_ERROR_LOG
 LOGGER_LEVEL_WRITERS(error, Level::Error)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(error, Level::Error)
-#   endif // ELPP_ERROR_LOG
-#   if ELPP_FATAL_LOG
+#  endif // ELPP_ERROR_LOG
+#  if ELPP_FATAL_LOG
 LOGGER_LEVEL_WRITERS(fatal, Level::Fatal)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(fatal, Level::Fatal)
-#   endif // ELPP_FATAL_LOG
-#   if ELPP_TRACE_LOG
+#  endif // ELPP_FATAL_LOG
+#  if ELPP_TRACE_LOG
 LOGGER_LEVEL_WRITERS(trace, Level::Trace)
-#   else
+#  else
 LOGGER_LEVEL_WRITERS_DISABLED(trace, Level::Trace)
-#   endif // ELPP_TRACE_LOG
-#   undef LOGGER_LEVEL_WRITERS
-#   undef LOGGER_LEVEL_WRITERS_DISABLED
+#  endif // ELPP_TRACE_LOG
+#  undef LOGGER_LEVEL_WRITERS
+#  undef LOGGER_LEVEL_WRITERS_DISABLED
 #endif // ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #if ELPP_COMPILER_MSVC
 #  define ELPP_VARIADIC_FUNC_MSVC(variadicFunction, variadicArgs) variadicFunction variadicArgs
@@ -5340,11 +5340,11 @@ LOGGER_LEVEL_WRITERS_DISABLED(trace, Level::Trace)
 #  define el_getVALength(...) ELPP_VARIADIC_FUNC_MSVC_RUN(el_resolveVALength, 0, ## __VA_ARGS__,\
 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 #else
-#   if ELPP_COMPILER_CLANG
-#      define el_getVALength(...) el_resolveVALength(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#   else
-#      define el_getVALength(...) el_resolveVALength(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#   endif // ELPP_COMPILER_CLANG
+#  if ELPP_COMPILER_CLANG
+#    define el_getVALength(...) el_resolveVALength(0, __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#  else
+#    define el_getVALength(...) el_resolveVALength(0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#  endif // ELPP_COMPILER_CLANG
 #endif // ELPP_COMPILER_MSVC
 #define el_resolveVALength(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define ELPP_WRITE_LOG(writer, level, dispatchAction, ...) \
@@ -5373,7 +5373,7 @@ class PerformanceTrackingData {
   };
   // Do not use constructor, will run into multiple definition error, use init(PerformanceTracker*)
   explicit PerformanceTrackingData(DataType dataType) : m_performanceTracker(nullptr),
-    m_dataType(dataType), m_file(""), m_line(0), m_func("") {}
+    m_dataType(dataType), m_firstCheckpoint(false), m_file(""), m_line(0), m_func("") {}
   inline const std::string* blockName(void) const;
   inline const struct timeval* startTime(void) const;
   inline const struct timeval* endTime(void) const;
