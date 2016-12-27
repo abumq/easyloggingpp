@@ -86,6 +86,7 @@
     <a href="#reporting-a-bug">Reporting a Bug</a>
     <a href="#donation">Donation</a>
 <a href="#compatibility">Compatibility</a>
+<a href="#contributors">Contributors</a>
 <a href="#licence">Licence</a>
 <a href="#disclaimer">Disclaimer</a>
 </pre>
