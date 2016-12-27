@@ -45,19 +45,19 @@ fi
 if [ "$confirm" = "y" ]; then
   #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
   #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
-  sed -i '/YOU ARE CURRENTLY BROWSING/d' $1/README.md
-  sed -i "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
-  sed -i "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
-  sed -i "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/src/easylogging++.h
+  sed -i '' -e '/YOU ARE CURRENTLY BROWSING/d' $1/README.md
+  sed -i '' -e "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
+  sed -i '' -e "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
+  sed -i '' -e "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/src/easylogging++.h
   astyle $1/src/easylogging++.h --style=google --indent=spaces=2 --max-code-length=120
   rm $1/src/easylogging++.h.orig
-  sed -i "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/README.md
-  sed -i "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
-  sed -i "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
-  sed -i "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
-  sed -i "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
-  sed -i "s/easyloggingpp\/blob\/v$CURR_VERSION\/README.md/easyloggingpp\/blob\/v$NEW_VERSION\/README.md/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
-  sed -i "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
+  sed -i '' -e "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/README.md
+  sed -i '' -e "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
+  sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
+  sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
+  sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
+  sed -i '' -e "s/easyloggingpp\/blob\/v$CURR_VERSION\/README.md/easyloggingpp\/blob\/v$NEW_VERSION\/README.md/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
+  sed -i '' -e "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm easyloggingpp_v$NEW_VERSION.zip
   fi
