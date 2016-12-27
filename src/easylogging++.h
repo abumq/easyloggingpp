@@ -2682,7 +2682,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
     ELPP_UNUSED(base::consts::kDefaultLogFile);
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
 #if defined(ELPP_NO_LOG_TO_FILE)
-	setGlobally(ConfigurationType::ToFile, std::string("false"), true);
+    setGlobally(ConfigurationType::ToFile, std::string("false"), true);
 #else
     setGlobally(ConfigurationType::ToFile, std::string("true"), true);
 #endif // defined(ELPP_NO_LOG_TO_FILE)
@@ -3952,7 +3952,7 @@ class LogMessage {
     return m_file;
   }
   inline unsigned long int line(void) const {
-    return m_line;   
+    return m_line;
   }
   inline const std::string& func(void) const {
     return m_func;
