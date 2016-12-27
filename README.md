@@ -15,7 +15,7 @@
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.84/samples)
 
-  [![paypal]](http://muflihun.com/donation/)
+  [![paypal]](http://muflihun.com/support/)
 
 ---
 
@@ -61,6 +61,7 @@
     <a href="#sharing-logging-repository">Sharing Logging Repository</a>
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
+        <a href="#conditional-performance-tracking">Conditional Performance Tracking</a>
         <a href="#make-use-of-performance-tracking-data">Make Use of Performance Tracking Data</a>
     <a href="#log-file-rotating">Log File Rotating</a>
     <a href="#crash-handling">Crash Handling</a>
