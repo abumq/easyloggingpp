@@ -9,7 +9,8 @@ API changes: No
 ==========================
 
  - C++17 Build fix
- - 
+ - Initialize uninitialized variables (cppcheck)
+ - Do not create any file when using `ELPP_NO_LOG_TO_FILE`
 
 ==========================
 =         NOTES          =
