@@ -502,6 +502,7 @@ typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef int VerboseLevel;
 typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 typedef std::shared_ptr<PerformanceTrackingCallback> PerformanceTrackingCallbackPtr;
+typedef std::unique_ptr<el::base::PerformanceTracker> PerformanceTrackerPtr;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
 ///
@@ -3106,7 +3107,6 @@ class TypedConfigurations : public base::threading::ThreadSafe {
       base::utils::Str::trim(boolStr);
       return (boolStr == "TRUE" || boolStr == "true" || boolStr == "1");
     };
-	setValue(Level::Global, base::FileStreamPtr(nullptr), &m_fileStreamMap);
     std::vector<Configuration*> withFileSizeLimit;
     for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
       Configuration* conf = *it;
@@ -6167,7 +6167,9 @@ class VersionInfo : base::StaticClass {
 #define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__))
 #undef TIMED_BLOCK
 #undef TIMED_SCOPE
+#undef TIMED_SCOPE_IF
 #undef TIMED_FUNC
+#undef TIMED_FUNC_IF
 #undef ELPP_MIN_UNIT
 #if defined(ELPP_PERFORMANCE_MICROSECONDS)
 #  define ELPP_MIN_UNIT el::base::TimestampUnit::Microsecond
@@ -6177,24 +6179,27 @@ class VersionInfo : base::StaticClass {
 /// @brief Performance tracked scope. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
-/// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
+/// @detail Please note in order to check the performance at a certain time you can use obj->checkpoint();
 /// @see el::base::PerformanceTracker
 /// @see el::base::PerformanceTracker::checkpoint
 // Note: Do not surround this definition with null macro because of obj instance
-#define TIMED_SCOPE(obj, blockname) el::base::PerformanceTracker obj(blockname, ELPP_MIN_UNIT)
-#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::PerformanceTracker timer; } obj = { 0, \
-el::base::PerformanceTracker(blockName, ELPP_MIN_UNIT) }; obj.i < 1; ++obj.i)
+#define TIMED_SCOPE_IF(obj, blockname, condition) el::base::type::PerformanceTrackerPtr obj( condition ? \
+  new el::base::PerformanceTracker(blockname, ELPP_MIN_UNIT) : nullptr )
+#define TIMED_SCOPE(obj, blockname) TIMED_SCOPE_IF(obj, blockname, true)
+#define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::type::PerformanceTrackerPtr timer; } obj = { 0, \
+  el::base::type::PerformanceTrackerPtr(new el::base::PerformanceTracker(blockName, ELPP_MIN_UNIT)) }; obj.i < 1; ++obj.i)
 /// @brief Performance tracked function. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
-/// @detail Please note in order to check the performance at a certain time you can use obj.checkpoint();
+/// @detail Please note in order to check the performance at a certain time you can use obj->checkpoint();
 /// @see el::base::PerformanceTracker
 /// @see el::base::PerformanceTracker::checkpoint
+#define TIMED_FUNC_IF(obj,condition) TIMED_SCOPE_IF(obj, ELPP_FUNC, condition)
 #define TIMED_FUNC(obj) TIMED_SCOPE(obj, ELPP_FUNC)
 #undef PERFORMANCE_CHECKPOINT
 #undef PERFORMANCE_CHECKPOINT_WITH_ID
-#define PERFORMANCE_CHECKPOINT(obj) obj.checkpoint(std::string(), __FILE__, __LINE__, ELPP_FUNC)
-#define PERFORMANCE_CHECKPOINT_WITH_ID(obj, id) obj.checkpoint(id, __FILE__, __LINE__, ELPP_FUNC)
+#define PERFORMANCE_CHECKPOINT(obj) obj->checkpoint(std::string(), __FILE__, __LINE__, ELPP_FUNC)
+#define PERFORMANCE_CHECKPOINT_WITH_ID(obj, id) obj->checkpoint(id, __FILE__, __LINE__, ELPP_FUNC)
 #undef ELPP_COUNTER
 #undef ELPP_COUNTER_POS
 /// @brief Gets hit counter for file/line

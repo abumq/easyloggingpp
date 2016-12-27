@@ -1,8 +1,10 @@
 Easylogging++ v9.85 RELEASE NOTES
 ---------------------------------
 
-Release type: Minor
+Release type: Major
 API changes: No
+Breaking Change: Yes
+  - Performance tracker changed from object to pointer
 
 ==========================
 =         FIXES          =
@@ -11,6 +13,13 @@ API changes: No
  - C++17 Build fix
  - Initialize uninitialized variables (cppcheck)
  - Do not create any file when using `ELPP_NO_LOG_TO_FILE`
+ - Fix bad memory access before opening any files
+ 
+==========================
+=      NEW FEATURES      =
+==========================
+
+ - Added conditional performance tracking via TIMED_FUNC_IF and TIMED_SCOPE_IF (#415)
 
 ==========================
 =         NOTES          =
