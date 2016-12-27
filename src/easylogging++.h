@@ -4,12 +4,10 @@
 //  Easylogging++ v9.84
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2016 muflihun.com
+//  Copyright (c) 2017 muflihun.com
 //
 //  This library is released under the MIT Licence.
 //  http://easylogging.muflihun.com/licence.php
-//
-//  easylogging@muflihun.com
 //
 //  https://github.com/easylogging/easyloggingpp
 //  http://easylogging.muflihun.com
@@ -1294,22 +1292,16 @@ namespace el {
                                         return !*str && !*pattern;
                                     }
                                     
-                                    /// @brief Trims string from start
-                                    /// @param [in,out] str String to trim
                                     static inline std::string& ltrim(std::string& str) {
-                                        str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(&std::isspace))));
+                                        str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](char c) { return !std::isspace(c); } ));
                                         return str;
                                     }
                                     
-                                    /// @brief Trim string from end
-                                    /// @param [in,out] str String to trim
                                     static inline std::string& rtrim(std::string& str) {
-                                        str.erase(std::find_if(str.rbegin(), str.rend(), std::not1(std::ptr_fun<int, int>(&std::isspace))).base(), str.end());
+                                        str.erase(std::find_if(str.rbegin(), str.rend(), [](char c) { return !std::isspace(c); }).base(), str.end());
                                         return str;
                                     }
                                     
-                                    /// @brief Trims string from left and right
-                                    /// @param [in,out] str String to trim
                                     static inline std::string& trim(std::string& str) {
                                         return ltrim(rtrim(str));
                                     }
