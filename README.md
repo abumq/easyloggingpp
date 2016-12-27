@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.84**
+> **Manual For v9.85**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,11 +11,11 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.84)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.85)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.84/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.85/samples)
 
-  [![paypal]](http://muflihun.com/donation/)
+  [![paypal]](http://muflihun.com/support/)
 
 ---
 
@@ -61,6 +61,7 @@
     <a href="#sharing-logging-repository">Sharing Logging Repository</a>
 <a href="#extra-features">Extra Features</a>
     <a href="#performance-tracking">Performance Tracking</a>
+        <a href="#conditional-performance-tracking">Conditional Performance Tracking</a>
         <a href="#make-use-of-performance-tracking-data">Make Use of Performance Tracking Data</a>
     <a href="#log-file-rotating">Log File Rotating</a>
     <a href="#crash-handling">Crash Handling</a>
@@ -85,18 +86,19 @@
     <a href="#reporting-a-bug">Reporting a Bug</a>
     <a href="#donation">Donation</a>
 <a href="#compatibility">Compatibility</a>
+<a href="#contributors">Contributors</a>
 <a href="#licence">Licence</a>
 <a href="#disclaimer">Disclaimer</a>
 </pre>
 
 # Introduction
 Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.84. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.85. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Why yet another library
-If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portibility, performance, usability, features and easy to setup).
+If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portability, performance, usability, features and easy to setup).
 
 Why yet another library? Well, answer is pretty straight forward, use it as if you wrote it so you can fix issues (if any) as you go or raise them on github. In addition to that, I have not seen any logging library based on single-header with such a design where you can configure on the go and get the same performance. I have seen other single-header logging libraries for C++ but either they use external libraries, e.g, boost, Qt to support certain features like threading, regular expression or date etc. This library has everything built-in to prevent usage of external libraries, not that I don't like those libraries, in fact I love them, but because not all projects use these libraries, I couldn't take risk of depending on them.
 
@@ -430,7 +432,7 @@ Following table will explain all command line arguments that you may use to defi
 ### Configuration Macros
 Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with `ELPP_`
 
-NOTE: All the macros either need to be defined before `#include "easylogging++"` - but this gets hard and unreadable if project is getting bigger so we recommend you define all these macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREADSAFE ...`
+NOTE: All the macros either need to be defined before `#include "easylogging++"` - but this gets hard and unreadable if project is getting bigger so we recommend you define all these macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREAD_SAFE ...`
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -782,7 +784,7 @@ The result of above execution for iter = 10, is as following
 06:22:31,460 INFO Executed [void performHeavyTask(int)] in [106 ms]
 ```
 
-In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object name timerObj and line-7 we have TIMED_SCOPE with object name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_BLOC` with block name = function name)
+In the above example, we have used both the macros. In line-2 we have `TIMED_FUNC` with object pointer name timerObj and line-7 we have TIMED_SCOPE with object pointer name `timerBlkObj` and block name `heavy-iter`. Notice how block name is thrown out to the logs with every hit.  (Note: `TIMED_FUNC` is `TIMED_SCOPE` with block name = function name)
 
 You might wonder why do we need object name. Well easylogging++ performance tracking feature takes it further and provides ability to add, what's called checkpoints. 
 Checkpoints have two macros:
@@ -808,7 +810,7 @@ void performHeavyTask(int iter) {
 }
 ```
 
-Notice macro on line-11 (also note comment on line-8. It's checkpoint for heavy-iter block. Now notice following output
+Notice macro on line-11 (also note comment on line-8). It's checkpoint for heavy-iter block. Now notice following output
 ```
 06:33:07,558 INFO Executed [heavy-iter] in [9 ms]
 06:33:07,566 INFO Performance checkpoint for block [heavy-iter] : [8 ms]
@@ -850,16 +852,31 @@ Notes:
 
 1. Performance tracking uses `performance` logger (INFO level) by default unless `el::base::PerformanceTracker` is constructed manually (not using macro - not recommended). When configuring other loggers, make sure you configure this one as well.
 
-2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::PerformanceTracker` and `checkpoint()` can be accessed by `timerObj.checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
+2. In above examples, `timerObj` and `timerBlkObj` is of type `el::base::type::PerformanceTrackerPtr`. The `checkpoint()` routine of the `el::base::PerformanceTracker` can be accessed by `timerObj->checkpoint()` but not recommended as this will override behaviour of using macros, behaviour like location of checkpoint.
 
-3. In order to access `el::base::PerformanceTracker` while in `TIMED_BLOCK`, you can use `timerObj.timer`
+3. In order to access `el::base::type::PerformanceTrackerPtr` while in `TIMED_BLOCK`, you can use `timerObj.timer`
 
 4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
  > You may be interested in [python script to parse performance logs](https://github.com/easylogging/easyloggingpp/issues/206)
 
  [![top] Goto Top](#table-of-contents)
+ 
+#### Conditional Performance Tracking
+If you want to enable performance tracking for certain conditions only, e.g. based on a certain verbosity level, you can use the variants `TIMED_FUNC_IF` or `TIMED_SCOPE_IF`.
+ 
+ A verbosity level example is given below
+ 
+```c++
+ void performHeavyTask(int iter) {
+    // enable performance tracking for verbosity level 4 or higher
+    TIMED_FUNC_IF( timerObj, VLOG_IS_ON(4) );
+    // Some more heavy tasks
+ }
+```
 
+ [![top] Goto Top](#table-of-contents)
+ 
 #### Make Use of Performance Tracking Data
 If you wish to capture performance tracking data right after it is finished, you can do so by extending `el::PerformanceTrackingCallback`.
 
@@ -1266,11 +1283,33 @@ Easylogging++ has also been tested with following C++ libraries;
 
  [![top] Goto Top](#table-of-contents)
  
+# Contributors
+Many people have contributed in this project but not all of them are visible in github. This is because we sometimes have to close pull-requests without merging them and copy their changes manually to prevent conflicts with rebased version. We may have missed some contributors but here is the list **in no specific order**.
+
+ * @mkhan3189
+ * @olehgol260
+ * @martin-mann
+ * @jas99
+ * @allender
+ * @LMDavid
+ * @sibbi77
+ * @a-teammate
+ * @neomantra
+ * @fengya90
+ * @rggjan
+ * @Oipo
+ * @neuront
+ * @LMolr
+ * @moneromooo-monero
+ * ...
+ 
+Note: If we have missed you please notify us with link to your contribution (e.g, PR). You can see more contributors by checking our [closed](https://github.com/easylogging/easyloggingpp/issues?q=is%3Apr+is%3Aclosed) or [opened](https://github.com/easylogging/easyloggingpp/pulls?q=is%3Aopen+is%3Apr) pull requests.
+ 
 # Licence
 ```
 The MIT License (MIT)
 
-Copyright (c) 2015 muflihun.com
+Copyright (c) 2017 muflihun.com
 
 https://github.com/easylogging/easyloggingpp
 http://easylogging.muflihun.com
