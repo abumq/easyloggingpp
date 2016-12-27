@@ -430,7 +430,7 @@ Following table will explain all command line arguments that you may use to defi
 ### Configuration Macros
 Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with `ELPP_`
 
-NOTE: All the macros either need to be defined before `#include "easylogging++"` - but this gets hard and unreadable if project is getting bigger so we recommend you define all these macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREADSAFE ...`
+NOTE: All the macros either need to be defined before `#include "easylogging++"` - but this gets hard and unreadable if project is getting bigger so we recommend you define all these macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREAD_SAFE ...`
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
