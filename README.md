@@ -96,7 +96,7 @@ This manual is for Easylogging++ v9.84. For other versions please refer to corre
  [![top] Goto Top](#table-of-contents)
  
 ### Why yet another library
-If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portibility, performance, usability, features and easy to setup).
+If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portability, performance, usability, features and easy to setup).
 
 Why yet another library? Well, answer is pretty straight forward, use it as if you wrote it so you can fix issues (if any) as you go or raise them on github. In addition to that, I have not seen any logging library based on single-header with such a design where you can configure on the go and get the same performance. I have seen other single-header logging libraries for C++ but either they use external libraries, e.g, boost, Qt to support certain features like threading, regular expression or date etc. This library has everything built-in to prevent usage of external libraries, not that I don't like those libraries, in fact I love them, but because not all projects use these libraries, I couldn't take risk of depending on them.
 
@@ -1281,11 +1281,33 @@ Easylogging++ has also been tested with following C++ libraries;
 
  [![top] Goto Top](#table-of-contents)
  
+# Contributors
+Many people have contributed in this project but not all of them are visible in github. This is because we sometimes have to close pull-requests without merging them and copy their changes manually to prevent conflicts with rebased version. We may have missed some contributors but here is the list **in no specific order**.
+
+ * @mkhan3189
+ * @olehgol260
+ * @martin-mann
+ * @jas99
+ * @allender
+ * @LMDavid
+ * @sibbi77
+ * @a-teammate
+ * @neomantra
+ * @fengya90
+ * @rggjan
+ * @Oipo
+ * @neuront
+ * @LMolr
+ * @moneromooo-monero
+ * ...
+ 
+Note: If we have missed you please notify us with link to your contribution (e.g, PR). You can see more contributors by checking our [closed](https://github.com/easylogging/easyloggingpp/issues?q=is%3Apr+is%3Aclosed) or [opened](https://github.com/easylogging/easyloggingpp/pulls?q=is%3Aopen+is%3Apr) pull requests.
+ 
 # Licence
 ```
 The MIT License (MIT)
 
-Copyright (c) 2015 muflihun.com
+Copyright (c) 2017 muflihun.com
 
 https://github.com/easylogging/easyloggingpp
 http://easylogging.muflihun.com

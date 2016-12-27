@@ -1373,7 +1373,7 @@ class Str : base::StaticClass {
   /// @param replaceWhat Character to replace
   /// @param replaceWith Character to replace with
   /// @return Modified (original) str
-  static inline std::string& replaceAll(std::string& str, const std::string& replaceWhat, // NOLINT
+  static inline std::string& replaceAll(std::string& str, const std::string& replaceWhat,
                                         const std::string& replaceWith) {
     if (replaceWhat == replaceWith)
       return str;
@@ -1384,7 +1384,7 @@ class Str : base::StaticClass {
     return str;
   }
 
-  static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat, // NOLINT
+  static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat,
                                      const base::type::string_t& replaceWith) {
     std::size_t foundAt = base::type::string_t::npos;
     while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos) {
@@ -1398,7 +1398,7 @@ class Str : base::StaticClass {
     }
   }
 #if defined(ELPP_UNICODE)
-  static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat, // NOLINT
+  static void replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat,
                                      const std::string& replaceWith) {
     replaceFirstWithEscape(str, replaceWhat, base::type::string_t(replaceWith.begin(), replaceWith.end()));
   }
@@ -3952,7 +3952,7 @@ class LogMessage {
     return m_file;
   }
   inline unsigned long int line(void) const {
-    return m_line;    // NOLINT
+    return m_line;   
   }
   inline const std::string& func(void) const {
     return m_func;
@@ -4100,11 +4100,11 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     return hitCounters()->validateEveryN(filename, lineNumber, occasion);
   }
 
-  inline bool validateAfterNCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
+  inline bool validateAfterNCounter(const char* filename, unsigned long int lineNumber, std::size_t n) {
     return hitCounters()->validateAfterN(filename, lineNumber, n);
   }
 
-  inline bool validateNTimesCounter(const char* filename, unsigned long int lineNumber, std::size_t n) { // NOLINT
+  inline bool validateNTimesCounter(const char* filename, unsigned long int lineNumber, std::size_t n) {
     return hitCounters()->validateNTimes(filename, lineNumber, n);
   }
 

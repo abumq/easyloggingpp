@@ -14,6 +14,7 @@ Breaking Change: Yes
  - Initialize uninitialized variables (cppcheck)
  - Do not create any file when using `ELPP_NO_LOG_TO_FILE`
  - Fix bad memory access before opening any files
+ - Documentation updated and fixed typos
  
 ==========================
 =      NEW FEATURES      =
