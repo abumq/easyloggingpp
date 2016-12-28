@@ -53,8 +53,6 @@
         <a href="#verbose-level">Verbose Level</a>
         <a href="#check-if-verbose-logging-is-on">Check If Verbose Logging Is On</a>
         <a href="#vmodule">VModule</a>
-    <a href="#stl-logging">STL Logging</a>
-        <a href="#supported-templates">Supported Templates</a>
     <a href="#registering-new-loggers">Registering New Loggers</a>
     <a href="#unregister-loggers">Unregister Loggers</a>
     <a href="#populating-existing-logger-ids">Populating Existing Logger IDs</a>
@@ -71,6 +69,8 @@
     <a href="#check-macros">CHECK Macros</a>
     <a href="#logging-perror">Logging perror()</a>
     <a href="#syslog">Using Syslog</a>
+    <a href="#stl-logging">STL Logging</a>
+        <a href="#supported-templates">Supported Templates</a>
     <a href="#qt-logging">Qt Logging</a>
     <a href="#boost-logging">Boost Logging</a>
     <a href="#wxwidgets-logging">wxWidgets Logging</a>
@@ -669,35 +669,6 @@ In order to change vmodules on the fly (instead of via command line args) - use 
 
  [![top] Goto Top](#table-of-contents)
  
-### STL Logging
-As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
-For performance, containers are limited to log maximum of 100 entries. This behaviour can be changed by changed header file (base::consts::kMaxLogPerContainer) but not recommended as in order to log, writer has to go through each entry causing potential delays. But if you are not really concerned with performance, you may change this value.
-
- [![top] Goto Top](#table-of-contents)
- 
-#### Supported Templates
-Following templates are supported as part of STL Logging; note: basic and primitive types e.g, std::string or long are not listed as they is supported anyway, following list only contains non-basic types e.g, containers or bitset etc.
-
-|     *       |          *              |       *          |       *          |
-|-------------|-------------------------|------------------|------------------|
-| std::vector |  std::list              |  std::deque      |    std::queue    |
-| std::stack  |  std::priority_queue    |  std::set        |    std::multiset |
-| std::pair   |  std::bitset            |  std::map        |    std::multimap |
-
-Some C++11 specific templates are supported by further explicit macro definitions; note these also need `ELPP_STL_LOGGING`
-
-|   Template              |     Macro Needed            |
-|-------------------------|-----------------------------|
-| std::array              | `ELPP_LOG_STD_ARRAY`       |
-| std::unordered_map      | `ELPP_LOG_UNORDERED_MAP`   |
-| std::unordered_multimap | `ELPP_LOG_UNORDERED_MAP`   |
-| std::unordered_set      | `ELPP_LOG_UNORDERED_SET`   |
-| std::unordered_multiset | `ELPP_LOG_UNORDERED_SET`   |
-
-Standard manipulators are also supported, in addition std::stringstream is also supported.
-
- [![top] Goto Top](#table-of-contents)
- 
 ### Registering New Loggers
 Loggers are unique in logger repository by ID. You can register new logger the same way as you would get logger. Using `getLogger(.., ..)` from `el::Loggers` helper class. This function takes two params, first being ID and second being boolean (optional) to whether or not to register new logger if does not already exist and returns pointer to existing (or newly created) el::Logger class. This second param is optional and defaults to true. If you set it to false and logger does not exist already, it will return nullptr.
 
@@ -1032,6 +1003,35 @@ Syslog support for Easylogging++ only supports following levels; each level is c
 Following levels are not supported and correspond to `LOG_NOTICE`: TRACE, whereas VERBOSE level is completely not supported
 
  [![top] Goto Top](#table-of-contents)
+ 
+### STL Logging
+As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
+For performance, containers are limited to log maximum of 100 entries. This behaviour can be changed by changed header file (base::consts::kMaxLogPerContainer) but not recommended as in order to log, writer has to go through each entry causing potential delays. But if you are not really concerned with performance, you may change this value.
+
+ [![top] Goto Top](#table-of-contents)
+
+#### Supported Templates
+Following templates are supported as part of STL Logging; note: basic and primitive types e.g, std::string or long are not listed as they is supported anyway, following list only contains non-basic types e.g, containers or bitset etc.
+
+|     *       |          *              |       *          |       *          |
+|-------------|-------------------------|------------------|------------------|
+| std::vector |  std::list              |  std::deque      |    std::queue    |
+| std::stack  |  std::priority_queue    |  std::set        |    std::multiset |
+| std::pair   |  std::bitset            |  std::map        |    std::multimap |
+
+Some C++11 specific templates are supported by further explicit macro definitions; note these also need `ELPP_STL_LOGGING`
+
+|   Template              |     Macro Needed            |
+|-------------------------|-----------------------------|
+| std::array              | `ELPP_LOG_STD_ARRAY`       |
+| std::unordered_map      | `ELPP_LOG_UNORDERED_MAP`   |
+| std::unordered_multimap | `ELPP_LOG_UNORDERED_MAP`   |
+| std::unordered_set      | `ELPP_LOG_UNORDERED_SET`   |
+| std::unordered_multiset | `ELPP_LOG_UNORDERED_SET`   |
+
+Standard manipulators are also supported, in addition std::stringstream is also supported.
+
+[![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
 Easylogging++ has complete logging support for Qt core library. define `ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
