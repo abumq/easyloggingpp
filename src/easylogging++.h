@@ -2770,7 +2770,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
     /// @detail This configuration string has same syntax as configuration file contents. Make sure all the necessary
     /// new line characters are provided. You may define '_STOP_ON_FIRSTELPP_ASSERTION' to make sure you
     /// do not proceed without successful parse (This is recommended)
-    /// @param configurationsString
+    /// @param configurationsString the configuration in plain text format
     /// @param sender Sender configurations pointer. Usually 'this' is used from calling class
     /// @param base Configurations to base new configuration repository off. This value is used when you want to use
     ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
@@ -3140,7 +3140,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
         setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
       }
     }
-    // As mentioned early, we will now set filename configuration in separate loop to deal with non-existent files
+    // As mentioned earlier, we will now set filename configuration in separate loop to deal with non-existent files
     for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
       Configuration* conf = *it;
       if (conf->configurationType() == ConfigurationType::Filename) {
@@ -3209,6 +3209,12 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   }
 
   void insertFile(Level level, const std::string& fullFilename) {
+#if defined(ELPP_NO_LOG_TO_FILE)
+      setValue(level, false, &m_toFileMap);
+      ELPP_UNUSED(fullFilename);
+      m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
+      return;
+#endif
     std::string resolvedFilename = resolveFilename(fullFilename);
     if (resolvedFilename.empty()) {
       std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["

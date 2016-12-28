@@ -65,9 +65,9 @@ if [ "$confirm" = "y" ]; then
     rm easyloggingpp.zip
   fi
   cp $1/src/easylogging++.h .
-  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h
-  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h
-  zip latest.zip easylogging++.h
+  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h LICENCE
+  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h LICENCE
+  cp easyloggingpp_v$NEW_VERSION.zip latest.zip
   mv latest.zip $2/
   mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   mv easyloggingpp_v$NEW_VERSION.tar.gz $2/releases/
