@@ -5083,6 +5083,10 @@ class Writer : base::NoCopy {
 #endif  // ELPP_LOGGING_ENABLED
     return *this;
   }
+    
+  inline operator bool() {
+    return true;
+  }
 
   Writer& construct(Logger* logger, bool needLock = true) {
     m_logger = logger;

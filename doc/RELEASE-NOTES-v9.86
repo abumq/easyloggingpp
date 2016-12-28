@@ -11,6 +11,7 @@ Breaking Change: Yes
 
  - Stack trace and crash report now requires `ELPP_FEATURE_CRASH_LOG` macro (#409)
  - Performance tracking now requires `ELPP_PERFORMANCE_TRACKING` macro defined (#409)
+ - do(something) || LOG(DEBUG) idiom (#426)
 
 ==========================
 =         FIXES          =
