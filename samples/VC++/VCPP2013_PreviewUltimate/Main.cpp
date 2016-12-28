@@ -1,3 +1,4 @@
+#define ELPP_FEATURE_ALL
 #include "easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP

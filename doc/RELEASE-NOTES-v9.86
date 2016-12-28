@@ -3,7 +3,14 @@ Easylogging++ v9.85 RELEASE NOTES
 
 Release type: Major
 API changes: No
-Breaking Change: No
+Breaking Change: Yes
+
+==========================
+=      NEW FEATURES      =
+==========================
+
+ - Stack trace and crash report now requires `ELPP_FEATURE_CRASH_LOG` macro (#409)
+ - Performance tracking now requires `ELPP_PERFORMANCE_TRACKING` macro defined (#409)
 
 ==========================
 =         FIXES          =

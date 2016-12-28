@@ -746,7 +746,11 @@ After you share repository, you can reconfigure the only repository (i.e, the on
 # Extra Features
 Easylogging++ is feature-rich logging library. Apart from features already mentioned above, here are some extra features. If code snippets don't make sense and further sample is needed, there are many samples available at github repository (samples). Feel free to browse around.
 
+Some features require you to define macros (marked as prerequisite in each section) to enable them. This is to reduce compile time. If you want to enable all features you can define `ELPP_FEATURE_ALL`.
+
 ### Performance Tracking
+Prerequisite: Define `ELPP_FEATURE_PERFORMANCE_TRACKING`
+
 One of the most notable features of Easylogging++ is its ability to track performance of your function or block of function. 
 Please note, this is not backward compatible as previously we had macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v8.91 ReadMe for older way of doing it)
 The new way of tracking performance is much easier and reliable. All you need to do is use one of two macros from where you want to start tracking.
@@ -901,6 +905,8 @@ There is a [sample](https://github.com/easylogging/easyloggingpp/tree/master/sam
  [![top] Goto Top](#table-of-contents)
 
 ### Crash Handling
+Prerequisite: Define `ELPP_FEATURE_CRASH_LOG`
+
 Easylogging++ provides ability to handle unexpected crashes for GCC compilers. This is active by default and can be disabled by defining macro `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`. By doing so you are telling library not to handle any crashes. Later on if you wish to handle crash yourself, you can assign crash handler of type void func(int) where int is signal caught. 
 
 Following signals are handled;
