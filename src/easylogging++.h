@@ -3210,10 +3210,10 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 
   void insertFile(Level level, const std::string& fullFilename) {
 #if defined(ELPP_NO_LOG_TO_FILE)
-      setValue(level, false, &m_toFileMap);
-      ELPP_UNUSED(fullFilename);
-      m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
-      return;
+    setValue(level, false, &m_toFileMap);
+    ELPP_UNUSED(fullFilename);
+    m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
+    return;
 #endif
     std::string resolvedFilename = resolveFilename(fullFilename);
     if (resolvedFilename.empty()) {
@@ -5050,7 +5050,7 @@ class NullWriter : base::NoCopy {
   inline NullWriter& operator<<(const T&) {
     return *this;
   }
-    
+
   inline operator bool() {
     return true;
   }
@@ -5087,7 +5087,7 @@ class Writer : base::NoCopy {
 #endif  // ELPP_LOGGING_ENABLED
     return *this;
   }
-    
+
   inline operator bool() {
     return true;
   }
@@ -5808,7 +5808,10 @@ class CrashHandler : base::NoCopy {
   Handler m_handler;
 };
 #else
-    class CrashHandler { public: explicit CrashHandler(bool) {} };
+class CrashHandler {
+ public:
+  explicit CrashHandler(bool) {}
+};
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
 }  // namespace debug
 }  // namespace base
