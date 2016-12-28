@@ -42,15 +42,14 @@ else
 fi
 
 if [ "$confirm" = "y" ]; then
-  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
-  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
-  sed -i '' -e '/YOU ARE CURRENTLY BROWSING/d' $1/README.md
-  sed -i '' -e "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
-  sed -i '' -e "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
-  sed -i '' -e "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/src/easylogging++.h
+  sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
+  sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
+  sed -i '' -e "s/return std::string(\"$CURR_VERSION\");/return std\:\:string(\"$NEW_VERSION\");/g" $1/src/easylogging++.h
+  sed -i '' -e "s/return std::string(\"$CURR_RELEASE_DATE\");/return std\:\:string(\"$NEW_RELEASE_DATE\");/g" $1/src/easylogging++.h
   astyle $1/src/easylogging++.h --style=google --indent=spaces=2 --max-code-length=120
-  rm $1/src/easylogging++.h.orig
-  sed -i '' -e "s/ (development \/ unreleased version \/ source is subject to change)//g" $1/README.md
+  if [ -f "$1/src/easylogging++.h.orig" ];then
+    rm $1/src/easylogging++.h.orig
+  fi
   sed -i '' -e "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
   sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
@@ -63,11 +62,10 @@ if [ "$confirm" = "y" ]; then
   if [ -f "easyloggingpp.zip" ]; then
     rm easyloggingpp.zip
   fi
+exit
   cp $1/src/easylogging++.h .
   zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h LICENCE
   tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h LICENCE
-  cp easyloggingpp_v$NEW_VERSION.zip latest.zip
-  mv latest.zip $2/
   mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   mv easyloggingpp_v$NEW_VERSION.tar.gz $2/releases/
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-latest.txt
