@@ -5050,6 +5050,10 @@ class NullWriter : base::NoCopy {
   inline NullWriter& operator<<(const T&) {
     return *this;
   }
+    
+  inline operator bool() {
+    return true;
+  }
 };
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
