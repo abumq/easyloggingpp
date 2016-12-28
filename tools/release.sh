@@ -21,7 +21,6 @@ else
   exit 1
 fi
 
-#CURR_VERSION=$(grep 'Easylogging++ v' $1/src/easylogging++.h | grep -o '[0-9].[0-9][0-9]*')
 CURR_VERSION=$3
 CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.h)
 NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
@@ -43,8 +42,8 @@ else
 fi
 
 if [ "$confirm" = "y" ]; then
-  #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
-  #sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
+  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
+  sed -i "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
   sed -i '' -e '/YOU ARE CURRENTLY BROWSING/d' $1/README.md
   sed -i '' -e "s/version(void) { return std::string(\"$CURR_VERSION\"); }/version(void) { return std\:\:string(\"$NEW_VERSION\"); }/g" $1/src/easylogging++.h
   sed -i '' -e "s/releaseDate(void) { return std::string(\"$CURR_RELEASE_DATE\"); }/releaseDate(void) { return std\:\:string(\"$NEW_RELEASE_DATE\"); }/g" $1/src/easylogging++.h
