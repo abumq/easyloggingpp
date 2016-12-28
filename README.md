@@ -720,7 +720,7 @@ Easylogging++ is feature-rich logging library. Apart from features already menti
 Some features require you to define macros (marked as prerequisite in each section) to enable them. This is to reduce compile time. If you want to enable all features you can define `ELPP_FEATURE_ALL`.
 
 ### Performance Tracking
-Prerequisite: Define `ELPP_FEATURE_PERFORMANCE_TRACKING`
+Prerequisite: Define macro `ELPP_FEATURE_PERFORMANCE_TRACKING`
 
 One of the most notable features of Easylogging++ is its ability to track performance of your function or block of function. 
 Please note, this is not backward compatible as previously we had macros that user must had defined in order to track performance and I am sure many users had avoided in doing so. (Read v8.91 ReadMe for older way of doing it)
@@ -876,7 +876,7 @@ There is a [sample](https://github.com/easylogging/easyloggingpp/tree/master/sam
  [![top] Goto Top](#table-of-contents)
 
 ### Crash Handling
-Prerequisite: Define `ELPP_FEATURE_CRASH_LOG`
+Prerequisite: Define macro `ELPP_FEATURE_CRASH_LOG`
 
 Easylogging++ provides ability to handle unexpected crashes for GCC compilers. This is active by default and can be disabled by defining macro `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`. By doing so you are telling library not to handle any crashes. Later on if you wish to handle crash yourself, you can assign crash handler of type void func(int) where int is signal caught. 
 
@@ -938,11 +938,15 @@ int main(void) {
  [![top] Goto Top](#table-of-contents)
 
 ### Stacktrace
+Prerequisite: Define macro `ELPP_FEATURE_CRASH_LOG`
+
 Easylogging++ supports stack trace printing for GCC compilers. You can print stack trace at anytime by calling `el::base::debug::StackTrace()`, formatting will be done automatically. Note, if you are using non-GCC compiler, you will end-up getting empty output.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Multi-threading
+Prerequisite: Define macro `ELPP_THREAD_SAFE`
+
 Easylogging++ is thread-safe. By default thread-safety is disabled. You can enable it by defining `ELPP_THREAD_SAFE` otherwise you will see unexpected results. This is intentional to make library efficient for single threaded application.
 
  [![top] Goto Top](#table-of-contents)
@@ -976,7 +980,9 @@ Easylogging++ supports `perror()` styled logging using `PLOG(LEVEL)`, `PLOG_IF(C
  [![top] Goto Top](#table-of-contents)
 
 ### Syslog
-Easylogging++ supports syslog for platforms that have `syslog.h` header. In order to enable it, you need to define `ELPP_SYSLOG`. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
+Prerequisite: Define macro `ELPP_SYSLOG`
+
+Easylogging++ supports syslog for platforms that have `syslog.h` header. If your platform does not have `syslog.h`, make sure you do not define this macro or you will end up in errors. Once you are ready to use syslog, you can do so by using one of `SYSLOG(LEVEL)`, `SYSLOG_IF(Condition, LEVEL)`, `SYSLOG_EVERY_N(n, LEVEL)` and uses logger ID: `syslog`. If you want to use custom logger you can do so by using `CSYSLOG(LEVEL, loggerId)` or `CSYSLOG_IF(Condition, LEVEL, loggerId)` or `CSYSLOG_EVERY_N(n, LEVEL, loggerId)`
 
 Syslog in Easylogging++ supports C++ styled streams logging, following example;
 ```c++
@@ -1005,6 +1011,8 @@ Following levels are not supported and correspond to `LOG_NOTICE`: TRACE, wherea
  [![top] Goto Top](#table-of-contents)
  
 ### STL Logging
+Prerequisite: Define macro `ELPP_STL_LOGGING`
+
 As mentioned earlier, with easylogging++, you can log your STL templates including most containers. In order to do so you will need to define `ELPP_STL_LOGGING` macro. This enables including all the necessary headers and defines all necessary functions.
 For performance, containers are limited to log maximum of 100 entries. This behaviour can be changed by changed header file (base::consts::kMaxLogPerContainer) but not recommended as in order to log, writer has to go through each entry causing potential delays. But if you are not really concerned with performance, you may change this value.
 
@@ -1034,7 +1042,9 @@ Standard manipulators are also supported, in addition std::stringstream is also 
 [![top] Goto Top](#table-of-contents)
  
 ### Qt Logging
-Easylogging++ has complete logging support for Qt core library. define `ELPP_QT_LOGGING` macro. This will include all the headers supported Qt logging. Once you did that, you should be good to go.
+Prerequisite: Define macro `ELPP_QT_LOGGING`
+
+Easylogging++ has complete logging support for Qt core library. When enabled, this will include all the headers supported Qt logging. Once you did that, you should be good to go.
 
 Following Qt classes and containers are supported by Easylogging++ v9.0+
 
@@ -1051,9 +1061,9 @@ Also note, if you are logging a container that contains custom class, make sure 
  [![top] Goto Top](#table-of-contents)
 
 ### Boost Logging
-Easylogging++ supports some of boost templates. In order to enable boost logging, define macro `ELPP_BOOST_LOGGING`
+Prerequisite: Define macro `ELPP_BOOST_LOGGING`
 
-Following table shows the templates supported.
+Easylogging++ supports some of boost templates. Following table shows the templates supported.
 
 |     *                               |          *                               |
 |-------------------------------------|------------------------------------------|
@@ -1066,7 +1076,9 @@ Following table shows the templates supported.
  [![top] Goto Top](#table-of-contents)
 
 ### wxWidgets Logging
-Easylogging++ supports some of wxWidgets templates. In order to enable wxWidgets logging, define macro `ELPP_WXWIDGETS_LOGGING`
+Prerequisite: Define macro `ELPP_WXWIDGETS_LOGGING`
+
+Easylogging++ supports some of wxWidgets templates.
 
 Following table shows the templates supported.
 
@@ -1201,6 +1213,8 @@ If you wish to capture log message right after it is dispatched, you can do so b
  [![top] Goto Top](#table-of-contents)
  
 ### Asynchronous Logging
+Prerequisite: Define macro `ELPP_EXPERIMENTAL_ASYNC`
+
 Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
 Please note:
@@ -1241,7 +1255,7 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 Easylogging++ is free to use. You can check the details on where do donations go by clicking link below.
 
-[![paypal]](http://muflihun.com/donation/)
+[![paypal]](http://muflihun.com/support/)
 
  [![top] Goto Top](#table-of-contents)
 
