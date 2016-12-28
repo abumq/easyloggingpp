@@ -54,6 +54,7 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
   sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
+  sed -i '' -e "s/Easylogging++ v$CURR_VERSION/Easylogging++ v$NEW_VERSION/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
   sed -i '' -e "s/easyloggingpp\/blob\/v$CURR_VERSION\/README.md/easyloggingpp\/blob\/v$NEW_VERSION\/README.md/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
   sed -i '' -e "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
@@ -62,13 +63,14 @@ if [ "$confirm" = "y" ]; then
   if [ -f "easyloggingpp.zip" ]; then
     rm easyloggingpp.zip
   fi
-exit
   cp $1/src/easylogging++.h .
-  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h LICENCE
-  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h LICENCE
+  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION RELEASE-NOTES.txt
+  cp LICENCE LICENCE.txt
+  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h LICENCE.txt RELEASE-NOTES.txt
+  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h LICENCE.txt RELEASE-NOTES.txt
   mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   mv easyloggingpp_v$NEW_VERSION.tar.gz $2/releases/
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-latest.txt
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/releases/release-notes-v$NEW_VERSION.txt
-  rm easylogging++.h
+  rm easylogging++.h RELEASE-NOTES.txt LICENCE.txt
 fi
