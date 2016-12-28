@@ -1,5 +1,6 @@
 compiler=$1
 macros=""
+macro="$macro -DELPP_FEATURE_ALL"
 if [ "$compiler" = "icpc" ];then
     macros="$macros -DELPP_NO_SLEEP_FOR"
 fi

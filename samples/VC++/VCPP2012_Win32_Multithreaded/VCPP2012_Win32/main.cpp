@@ -8,6 +8,7 @@
  */
 
 #define ELPP_STL_LOGGING
+#define ELPP_FEATURE_ALL
 
 #define ELPP_THREAD_SAFE
 

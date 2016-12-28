@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.85
+//  Easylogging++ v9.86
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -2770,7 +2770,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
     /// @detail This configuration string has same syntax as configuration file contents. Make sure all the necessary
     /// new line characters are provided. You may define '_STOP_ON_FIRSTELPP_ASSERTION' to make sure you
     /// do not proceed without successful parse (This is recommended)
-    /// @param configurationsString
+    /// @param configurationsString the configuration in plain text format
     /// @param sender Sender configurations pointer. Usually 'this' is used from calling class
     /// @param base Configurations to base new configuration repository off. This value is used when you want to use
     ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
@@ -3140,7 +3140,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
         setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
       }
     }
-    // As mentioned early, we will now set filename configuration in separate loop to deal with non-existent files
+    // As mentioned earlier, we will now set filename configuration in separate loop to deal with non-existent files
     for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
       Configuration* conf = *it;
       if (conf->configurationType() == ConfigurationType::Filename) {
@@ -3209,6 +3209,12 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   }
 
   void insertFile(Level level, const std::string& fullFilename) {
+#if defined(ELPP_NO_LOG_TO_FILE)
+    setValue(level, false, &m_toFileMap);
+    ELPP_UNUSED(fullFilename);
+    m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
+    return;
+#endif
     std::string resolvedFilename = resolveFilename(fullFilename);
     if (resolvedFilename.empty()) {
       std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
@@ -4069,8 +4075,10 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 #else
     installLogDispatchCallback<base::DefaultLogDispatchCallback>(std::string("DefaultLogDispatchCallback"));
 #endif  // ELPP_ASYNC_LOGGING
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
     installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>
     (std::string("DefaultPerformanceTrackingCallback"));
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
     ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
 #if ELPP_ASYNC_LOGGING
     m_asyncDispatchWorker->start();
@@ -4168,7 +4176,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
                      formatSpecifier) != m_customFormatSpecifiers.end();
   }
 
-  inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
+  void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
     if (hasCustomFormatSpecifier(customFormatSpecifier.formatSpecifier())) {
       return;
     }
@@ -4176,7 +4184,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     m_customFormatSpecifiers.push_back(customFormatSpecifier);
   }
 
-  inline bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
+  bool uninstallCustomFormatSpecifier(const char* formatSpecifier) {
     base::threading::ScopedLock scopedLock(lock());
     std::vector<CustomFormatSpecifier>::iterator it = std::find(m_customFormatSpecifiers.begin(),
         m_customFormatSpecifiers.end(), formatSpecifier);
@@ -4209,6 +4217,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     return callback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
   }
 
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   template <typename T>
   inline bool installPerformanceTrackingCallback(const std::string& id) {
     return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
@@ -4223,6 +4232,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
   inline T* performanceTrackingCallback(const std::string& id) {
     return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
   }
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
  private:
   base::RegisteredHitCounters* m_registeredHitCounters;
   base::RegisteredLoggers* m_registeredLoggers;
@@ -5040,6 +5050,10 @@ class NullWriter : base::NoCopy {
   inline NullWriter& operator<<(const T&) {
     return *this;
   }
+
+  inline operator bool() {
+    return true;
+  }
 };
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
@@ -5072,6 +5086,10 @@ class Writer : base::NoCopy {
     }
 #endif  // ELPP_LOGGING_ENABLED
     return *this;
+  }
+
+  inline operator bool() {
+    return true;
   }
 
   Writer& construct(Logger* logger, bool needLock = true) {
@@ -5374,6 +5392,7 @@ writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVAL
 #else
 #  define ELPP_CURR_FILE_PERFORMANCE_LOGGER el::base::consts::kPerformanceLoggerId
 #endif
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 class PerformanceTrackingData {
  public:
   enum class DataType : base::type::EnumType {
@@ -5602,9 +5621,11 @@ inline const struct timeval* PerformanceTrackingData::lastCheckpointTime() const
 inline const std::string& PerformanceTrackingData::loggerId(void) const {
   return m_performanceTracker->m_loggerId;
 }
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 namespace base {
 /// @brief Contains some internal debugging tools like crash handler and stack tracer
 namespace debug {
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
 class StackTrace : base::NoCopy {
  public:
   static const std::size_t kMaxStack = 64;
@@ -5786,6 +5807,12 @@ class CrashHandler : base::NoCopy {
  private:
   Handler m_handler;
 };
+#else
+class CrashHandler {
+ public:
+  explicit CrashHandler(bool) {}
+};
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
 }  // namespace debug
 }  // namespace base
 extern base::debug::CrashHandler elCrashHandler;
@@ -5829,6 +5856,7 @@ class Helpers : base::StaticClass {
   static inline void setArgs(int argc, const char** argv) {
     ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
   }
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.
   /// @param crashHandler A functor with no return type that takes single int argument.
   ///        Handler is a typedef with specification: void (*Handler)(int)
@@ -5837,7 +5865,7 @@ class Helpers : base::StaticClass {
   }
   /// @brief Abort due to crash with signal in parameter
   /// @param sig Crash signal
-  static inline void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {
+  static void crashAbort(int sig, const char* sourceFile = "", unsigned int long line = 0) {
     std::stringstream ss;
     ss << base::debug::crashReason(sig).c_str();
     ss << " - [Called el::Helpers::crashAbort(" << sig << ")]";
@@ -5859,6 +5887,7 @@ class Helpers : base::StaticClass {
                                     Level level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId) {
     el::base::debug::logCrashReason(sig, stackTraceIfAvailable, level, logger);
   }
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Installs pre rollout callback, this callback is triggered when log file is about to be rolled out
   ///        (can be useful for backing up)
   static inline void installPreRollOutCallback(const PreRollOutCallback& callback) {
@@ -5882,6 +5911,7 @@ class Helpers : base::StaticClass {
   static inline T* logDispatchCallback(const std::string& id) {
     return ELPP->logDispatchCallback<T>(id);
   }
+#if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
   template <typename T>
   static inline bool installPerformanceTrackingCallback(const std::string& id) {
@@ -5896,6 +5926,7 @@ class Helpers : base::StaticClass {
   static inline T* performanceTrackingCallback(const std::string& id) {
     return ELPP->performanceTrackingCallback<T>(id);
   }
+#endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   /// @brief Converts template to std::string - useful for loggable classes to log containers within log(std::ostream&) const
   template <typename T>
   static std::string convertTemplateToStdString(const T& templ) {
@@ -6154,11 +6185,11 @@ class VersionInfo : base::StaticClass {
  public:
   /// @brief Current version number
   static inline const std::string version(void) {
-    return std::string("9.85");
+    return std::string("9.86");
   }
   /// @brief Release date of current version
   static inline const std::string releaseDate(void) {
-    return std::string("28-12-2016 00:17hrs");
+    return std::string("28-12-2016 15:47hrs");
   }
 };
 }  // namespace el

@@ -9,6 +9,7 @@ macro="$macro -DELPP_LOG_UNORDERED_SET"
 macro="$macro -DELPP_LOG_UNORDERED_MAP"
 macro="$macro -DELPP_STACKTRACE_ON_CRASH"
 macro="$macro -DELPP_LOGGING_FLAGS_FROM_ARG"
+macro="$macro -DELPP_FEATURE_ALL"
 # macro="$macro -DELPP_DEFAULT_LOG_FILE=\"/a/path/that/does/not/exist/f.log\""
 
 if [ "$2" = "" ];then

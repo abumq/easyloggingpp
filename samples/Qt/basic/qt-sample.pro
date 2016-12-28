@@ -3,6 +3,7 @@ greaterThan(QT_MAJOR_VERSION, 4)
 
 CONFIG += static
 DEFINES += ELPP_QT_LOGGING    \
+          ELPP_FEATURE_ALL \
           ELPP_STL_LOGGING   \
           ELPP_STRICT_SIZE_CHECK ELPP_UNICODE \
           ELPP_MULTI_LOGGER_SUPPORT \
