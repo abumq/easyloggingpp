@@ -6189,7 +6189,7 @@ class VersionInfo : base::StaticClass {
   }
   /// @brief Release date of current version
   static inline const std::string releaseDate(void) {
-    return std::string("28-12-2016 15:47hrs");
+    return std::string("28-12-2016 1547hrs");
   }
 };
 }  // namespace el
