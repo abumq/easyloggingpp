@@ -5378,13 +5378,13 @@ writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVAL
 #define ELPP_WRITE_LOG_IF(writer, condition, level, dispatchAction, ...) if (condition) \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define ELPP_WRITE_LOG_EVERY_N(writer, occasion, level, dispatchAction, ...) \
-if (ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion)) \
+ELPP->validateEveryNCounter(__FILE__, __LINE__, occasion) && \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define ELPP_WRITE_LOG_AFTER_N(writer, n, level, dispatchAction, ...) \
-if (ELPP->validateAfterNCounter(__FILE__, __LINE__, n)) \
+ELPP->validateAfterNCounter(__FILE__, __LINE__, n) && \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #define ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
-if (ELPP->validateNTimesCounter(__FILE__, __LINE__, n)) \
+ELPP->validateNTimesCounter(__FILE__, __LINE__, n) && \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
 #undef ELPP_CURR_FILE_PERFORMANCE_LOGGER
 #if defined(ELPP_PERFORMANCE_LOGGER)
