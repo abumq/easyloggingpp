@@ -498,8 +498,9 @@ typedef std::ostream ostream_t;
 #  define ELPP_COUT_LINE(logLine) logLine << std::flush
 #endif // defined(ELPP_CUSTOM_COUT_LINE)
 typedef unsigned short EnumType;
+typedef unsigned short VerboseLevel;
+typedef unsigned long int LineNumber;
 typedef std::shared_ptr<base::Storage> StoragePointer;
-typedef int VerboseLevel;
 typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 typedef std::shared_ptr<PerformanceTrackingCallback> PerformanceTrackingCallbackPtr;
 typedef std::unique_ptr<el::base::PerformanceTracker> PerformanceTrackerPtr;
@@ -3284,7 +3285,7 @@ class HitCounter {
     m_hitCounts(0) {
   }
 
-  HitCounter(const char* filename, unsigned long int lineNumber) :
+  HitCounter(const char* filename, base::type::LineNumber lineNumber) :
     m_filename(filename),
     m_lineNumber(lineNumber),
     m_hitCounts(0) {
@@ -3307,7 +3308,7 @@ class HitCounter {
   }
 
   /// @brief Resets location of current hit counter
-  inline void resetLocation(const char* filename, unsigned long int lineNumber) {
+  inline void resetLocation(const char* filename, base::type::LineNumber lineNumber) {
     m_filename = filename;
     m_lineNumber = lineNumber;
   }
@@ -3324,7 +3325,7 @@ class HitCounter {
     return m_filename;
   }
 
-  inline unsigned long int lineNumber(void) const {
+  inline base::type::LineNumber lineNumber(void) const {
     return m_lineNumber;
   }
 
@@ -3338,7 +3339,7 @@ class HitCounter {
 
   class Predicate {
    public:
-    Predicate(const char* filename, unsigned long int lineNumber)
+    Predicate(const char* filename, base::type::LineNumber lineNumber)
       : m_filename(filename),
         m_lineNumber(lineNumber) {
     }
@@ -3350,12 +3351,12 @@ class HitCounter {
 
    private:
     const char* m_filename;
-    unsigned long int m_lineNumber;
+    base::type::LineNumber m_lineNumber;
   };
 
  private:
   const char* m_filename;
-  unsigned long int m_lineNumber;
+  base::type::LineNumber m_lineNumber;
   std::size_t m_hitCounts;
 };
 /// @brief Repository for hit counters used across the application
@@ -3363,7 +3364,7 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
  public:
   /// @brief Validates counter for every N, i.e, registers new if does not exist otherwise updates original one
   /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-  bool validateEveryN(const char* filename, unsigned long int lineNumber, std::size_t n) {
+  bool validateEveryN(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
     base::threading::ScopedLock scopedLock(lock());
     base::HitCounter* counter = get(filename, lineNumber);
     if (counter == nullptr) {
@@ -3376,7 +3377,7 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
 
   /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
   /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-  bool validateAfterN(const char* filename, unsigned long int lineNumber, std::size_t n) {
+  bool validateAfterN(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
     base::threading::ScopedLock scopedLock(lock());
     base::HitCounter* counter = get(filename, lineNumber);
     if (counter == nullptr) {
@@ -3393,7 +3394,7 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
 
   /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
   /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
-  bool validateNTimes(const char* filename, unsigned long int lineNumber, std::size_t n) {
+  bool validateNTimes(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
     base::threading::ScopedLock scopedLock(lock());
     base::HitCounter* counter = get(filename, lineNumber);
     if (counter == nullptr) {
@@ -3407,7 +3408,7 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
   }
 
   /// @brief Gets hit counter registered at specified position
-  inline const base::HitCounter* getCounter(const char* filename, unsigned long int lineNumber) {
+  inline const base::HitCounter* getCounter(const char* filename, base::type::LineNumber lineNumber) {
     base::threading::ScopedLock scopedLock(lock());
     return get(filename, lineNumber);
   }
@@ -3782,6 +3783,11 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
     base::threading::ScopedLock scopedLock(lock());
     unsafeFlushAll();
   }
+    
+  inline void setDefaultLogBuilder(LogBuilderPtr& logBuilderPtr) {
+    base::threading::ScopedLock scopedLock(lock());
+    m_defaultLogBuilder = logBuilderPtr;
+  }
 
  private:
   LogBuilderPtr m_defaultLogBuilder;
@@ -3807,9 +3813,7 @@ class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
   /// @brief Sets verbose level. Accepted range is 0-9
   inline void setLevel(base::type::VerboseLevel level) {
     base::threading::ScopedLock scopedLock(lock());
-    if (level < 0)
-      m_level = 0;
-    else if (level > 9)
+    if (level > 9)
       m_level = base::consts::kMaxVerboseLevel;
     else
       m_level = level;
@@ -3946,7 +3950,7 @@ class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 }  // namespace base
 class LogMessage {
  public:
-  LogMessage(Level level, const std::string& file, unsigned long int line, const std::string& func,
+  LogMessage(Level level, const std::string& file, base::type::LineNumber line, const std::string& func,
              base::type::VerboseLevel verboseLevel, Logger* logger) :
     m_level(level), m_file(file), m_line(line), m_func(func),
     m_verboseLevel(verboseLevel), m_logger(logger), m_message(logger->stream().str()) {
@@ -3957,7 +3961,7 @@ class LogMessage {
   inline const std::string& file(void) const {
     return m_file;
   }
-  inline unsigned long int line(void) const {
+  inline base::type::LineNumber line(void) const {
     return m_line;
   }
   inline const std::string& func(void) const {
@@ -3975,7 +3979,7 @@ class LogMessage {
  private:
   Level m_level;
   std::string m_file;
-  unsigned long int m_line;
+  base::type::LineNumber m_line;
   std::string m_func;
   base::type::VerboseLevel m_verboseLevel;
   Logger* m_logger;
@@ -4104,15 +4108,15 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     base::utils::safeDelete(m_vRegistry);
   }
 
-  inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {
+  inline bool validateEveryNCounter(const char* filename, base::type::LineNumber lineNumber, std::size_t occasion) {
     return hitCounters()->validateEveryN(filename, lineNumber, occasion);
   }
 
-  inline bool validateAfterNCounter(const char* filename, unsigned long int lineNumber, std::size_t n) {
+  inline bool validateAfterNCounter(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
     return hitCounters()->validateAfterN(filename, lineNumber, n);
   }
 
-  inline bool validateNTimesCounter(const char* filename, unsigned long int lineNumber, std::size_t n) {
+  inline bool validateNTimesCounter(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
     return hitCounters()->validateNTimes(filename, lineNumber, n);
   }
 
@@ -5058,7 +5062,7 @@ class NullWriter : base::NoCopy {
 /// @brief Main entry point of each logging
 class Writer : base::NoCopy {
  public:
-  Writer(Level level, const char* file, unsigned long int line,
+  Writer(Level level, const char* file, base::type::LineNumber line,
          const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
          base::type::VerboseLevel verboseLevel = 0) :
     m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
@@ -5119,7 +5123,7 @@ class Writer : base::NoCopy {
  protected:
   Level m_level;
   const char* m_file;
-  const unsigned long int m_line;
+  const base::type::LineNumber m_line;
   const char* m_func;
   base::type::VerboseLevel m_verboseLevel;
   Logger* m_logger;
@@ -5222,7 +5226,7 @@ class Writer : base::NoCopy {
 };
 class PErrorWriter : public base::Writer {
  public:
-  PErrorWriter(Level level, const char* file, unsigned long int line,
+  PErrorWriter(Level level, const char* file, base::type::LineNumber line,
                const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
                base::type::VerboseLevel verboseLevel = 0) :
     base::Writer(level, file, line, func, dispatchAction, verboseLevel) {
@@ -5420,7 +5424,7 @@ class PerformanceTrackingData {
   inline const char* file(void) const {
     return m_file;
   }
-  inline unsigned long int line(void) const {
+  inline base::type::LineNumber line(void) const {
     return m_line;
   }
   inline const char* func(void) const {
@@ -5437,7 +5441,7 @@ class PerformanceTrackingData {
   bool m_firstCheckpoint;
   std::string m_checkpointId;
   const char* m_file;
-  unsigned long int m_line;
+  base::type::LineNumber m_line;
   const char* m_func;
   inline void init(base::PerformanceTracker* performanceTracker, bool firstCheckpoint = false) {
     m_performanceTracker = performanceTracker;
@@ -5498,7 +5502,7 @@ class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
 #endif  // !defined(ELPP_DISABLE_PERFORMANCE_TRACKING)
   }
   /// @brief A checkpoint for current performanceTracker block.
-  void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, unsigned long int line = __LINE__,
+  void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, base::type::LineNumber line = __LINE__,
                   const char* func = "") {
 #if !defined(ELPP_DISABLE_PERFORMANCE_TRACKING) && ELPP_LOGGING_ENABLED
     if (m_enabled) {
@@ -5976,6 +5980,10 @@ class Loggers : base::StaticClass {
   static inline Logger* getLogger(const std::string& identity, bool registerIfNotAvailable = true) {
     base::threading::ScopedLock scopedLock(ELPP->lock());
     return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
+  }
+  /// @brief Changes default log builder for future loggers
+  static inline void setDefaultLogBuilder(el::LogBuilderPtr& logBuilderPtr) {
+    ELPP->registeredLoggers()->setDefaultLogBuilder(logBuilderPtr);
   }
   /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
   ///        loggers initialized / used by third-party libs.
