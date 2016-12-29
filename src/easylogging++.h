@@ -3814,6 +3814,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
   inline void uninstallLoggerRegistrationCallback(const std::string& id) {
     base::utils::Utils::uninstallCallback<T, base::type::LoggerRegistrationCallbackPtr>(id, &m_loggerRegistrationCallbacks);
   }
+
   template <typename T>
   inline T* loggerRegistrationCallback(const std::string& id) {
     return base::utils::Utils::callback<T, base::type::LoggerRegistrationCallbackPtr>(id, &m_loggerRegistrationCallbacks);
@@ -4289,17 +4290,19 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   template <typename T>
   inline bool installPerformanceTrackingCallback(const std::string& id) {
-    return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    return base::utils::Utils::installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id,
+           &m_performanceTrackingCallbacks);
   }
 
   template <typename T>
   inline void uninstallPerformanceTrackingCallback(const std::string& id) {
-    uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    base::utils::Utils::uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id,
+        &m_performanceTrackingCallbacks);
   }
 
   template <typename T>
   inline T* performanceTrackingCallback(const std::string& id) {
-    return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    return base::utils::Utils::callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
   }
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
  private:

@@ -79,6 +79,7 @@
         <a href="#logging-third-party-class">Logging Third-party Class</a>
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
     <a href="#log-dispatch-callback">Log Dispatch Callback</a>
+    <a href="#logger-registration-callback">Logger Registration Callback</a>
     <a href="#asynchronous-logging">Asynchronous Logging</a>
     <a href="#helper-classes">Helper Classes</a>
 <a href="#contribution">Contribution</a>
@@ -1209,6 +1210,13 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
 
  > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
+
+ [![top] Goto Top](#table-of-contents)
+
+### Logger Registration Callback
+If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
+
+ > DO NOT LOG ANYTHING IN THIS HANDLER
 
  [![top] Goto Top](#table-of-contents)
  
