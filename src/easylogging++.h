@@ -1669,14 +1669,20 @@ class DateTime : base::StaticClass {
   /// @param format User provided date/time format
   /// @param msWidth A pointer to base::MillisecondsWidth from configuration (non-null)
   /// @returns string based date time in specified format.
-  static inline std::string getDateTime(const char* format, const base::MillisecondsWidth* msWidth) {
+  static std::string getDateTime(const char* format, const base::MillisecondsWidth* msWidth) {
     struct timeval currTime;
     gettimeofday(&currTime);
+    return timevalToString(currTime, format, msWidth);
+  }
+
+  /// @brief Converts timeval (struct from ctime) to string using specified format and milliseconds width
+  static std::string timevalToString(struct timeval tval, const char* format,
+                                     const el::base::MillisecondsWidth* msWidth) {
     struct ::tm timeInfo;
-    buildTimeInfo(&currTime, &timeInfo);
+    buildTimeInfo(&tval, &timeInfo);
     const int kBuffSize = 30;
     char buff_[kBuffSize] = "";
-    parseFormat(buff_, kBuffSize, format, &timeInfo, static_cast<std::size_t>(currTime.tv_usec / msWidth->m_offset),
+    parseFormat(buff_, kBuffSize, format, &timeInfo, static_cast<std::size_t>(tval.tv_usec / msWidth->m_offset),
                 msWidth);
     return std::string(buff_);
   }
@@ -1709,6 +1715,7 @@ class DateTime : base::StaticClass {
                                               (endTime.tv_usec - startTime.tv_usec)) / 1000);
     }
   }
+
 
  private:
   static inline struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
@@ -3783,7 +3790,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
     base::threading::ScopedLock scopedLock(lock());
     unsafeFlushAll();
   }
-    
+
   inline void setDefaultLogBuilder(LogBuilderPtr& logBuilderPtr) {
     base::threading::ScopedLock scopedLock(lock());
     m_defaultLogBuilder = logBuilderPtr;
@@ -5502,7 +5509,8 @@ class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
 #endif  // !defined(ELPP_DISABLE_PERFORMANCE_TRACKING)
   }
   /// @brief A checkpoint for current performanceTracker block.
-  void checkpoint(const std::string& id = std::string(), const char* file = __FILE__, base::type::LineNumber line = __LINE__,
+  void checkpoint(const std::string& id = std::string(), const char* file = __FILE__,
+                  base::type::LineNumber line = __LINE__,
                   const char* func = "") {
 #if !defined(ELPP_DISABLE_PERFORMANCE_TRACKING) && ELPP_LOGGING_ENABLED
     if (m_enabled) {
