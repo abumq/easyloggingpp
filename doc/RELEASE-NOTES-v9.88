@@ -10,6 +10,7 @@ Breaking Change: No
 ==========================
 
  - Some type refactors for better results
+ - Exposing some functions for external use
 
 ==========================
 =         NOTES          =
