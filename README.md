@@ -87,7 +87,6 @@
     <a href="#reporting-a-bug">Reporting a Bug</a>
     <a href="#donation">Donation</a>
 <a href="#compatibility">Compatibility</a>
-<a href="#contributors">Contributors</a>
 <a href="#licence">Licence</a>
 <a href="#disclaimer">Disclaimer</a>
 </pre>
@@ -1310,28 +1309,6 @@ Easylogging++ has also been tested with following C++ libraries;
 |![gtkmm]     | gtkmm                  | Tested with gtkmm 2.4                                                               |
 
  [![top] Goto Top](#table-of-contents)
- 
-# Contributors
-Many people have contributed in this project but not all of them are visible in github. This is because we sometimes have to close pull-requests without merging them and copy their changes manually to prevent conflicts with rebased version. We may have missed some contributors but here is the list **in no specific order**.
-
- * @mkhan3189
- * @olehgol260
- * @martin-mann
- * @jas99
- * @allender
- * @LMDavid
- * @sibbi77
- * @a-teammate
- * @neomantra
- * @fengya90
- * @rggjan
- * @Oipo
- * @neuront
- * @LMolr
- * @moneromooo-monero
- * ...
- 
-Note: If we have missed you please notify us with link to your contribution (e.g, PR). You can see more contributors by checking our [closed](https://github.com/easylogging/easyloggingpp/issues?q=is%3Apr+is%3Aclosed) or [opened](https://github.com/easylogging/easyloggingpp/pulls?q=is%3Aopen+is%3Apr) pull requests.
  
 # Licence
 ```
