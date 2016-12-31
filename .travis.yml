@@ -1,13 +1,13 @@
 language: cpp
 compiler:
-  - clang
+  - g++
 before_install:
  - sudo apt-get -qq update
  - sudo apt-get install -y libgtest-dev
  - cd /usr/src/gtest
  - ls
- - sudo cmake .
- - sudo make
+ - cmake .
+ - make
  - sudo make install
  - cd "${TRAVIS_BUILD_DIR}"
 before_script:
