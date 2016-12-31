@@ -5,9 +5,8 @@
 
 cd bin
 echo "Building..."
-qmake-qt4 ../qt-gtest-proj-intel.pro
-make
+g++ ../*.cc -std=c++11 -pthread -lgtest -I/usr/local/include/gtest/ -DELPP_FEATURE_ALL -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors -Wundef -o easyloggingpp-test
 echo "Running..."
-./qt-gtest-proj-intel
+./easyloggingpp-test
 cd ..
 echo "Completed!"
