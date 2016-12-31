@@ -73,4 +73,5 @@ if [ "$confirm" = "y" ]; then
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-latest.txt
   cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/releases/release-notes-v$NEW_VERSION.txt
   rm easylogging++.h RELEASE-NOTES.txt LICENCE.txt
+  echo "\n---------- PLEASE CHANGE CMakeLists.txt MANUALLY ----------- \n"
 fi
