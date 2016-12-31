@@ -2,6 +2,7 @@
 #define TYPED_CONFIGURATIONS_TEST_H_
 
 #include "test.h"
+#include <cstdio>
 
 const char* getConfFile(void) {
     const char* file = "/tmp/temp-test.conf";
@@ -30,6 +31,10 @@ const char* getConfFile(void) {
 }
 
 TEST(TypedConfigurationsTest, Initialization) {
+
+    std::string testFile = "/tmp/my-test.log";
+    std::remove(testFile.c_str());
+
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
 
@@ -103,11 +108,12 @@ TEST(TypedConfigurationsTest, NonExistentFileCreation) {
 }
 
 TEST(TypedConfigurationsTest, WriteToFiles) {
+    std::string testFile = "/tmp/my-test.log";
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     {
         EXPECT_TRUE(tConf.fileStream(Level::Info)->is_open());
-        EXPECT_EQ("/tmp/my-test.log", tConf.filename(Level::Info));
+        EXPECT_EQ(testFile, tConf.filename(Level::Info));
         *tConf.fileStream(Level::Info) << "-Info";
         *tConf.fileStream(Level::Debug) << "-Debug";
         tConf.fileStream(Level::Debug)->flush();
