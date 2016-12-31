@@ -27,6 +27,7 @@
 <a href="#getting-started">Getting Started</a>
     <a href="#download">Download</a>
     <a href="#quick-start">Quick Start</a>
+    <a href="#install-optional">Install (Optional)</a>
     <a href="#setting-application-arguments">Setting Application Arguments</a>
 <a href="#configuration">Configuration</a>
     <a href="#level">Level</a>
@@ -149,6 +150,16 @@ int main(int argc, char* argv[]) {
 ```
 
 That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
+
+### Install (Optional)
+If you want to install this header system-wide, you can do so via:
+```
+mkdir build
+cd build
+cmake ../
+make
+make install
+```
 
  [![top] Goto Top](#table-of-contents)
  
