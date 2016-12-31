@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.88
+//  Easylogging++ v9.89
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -438,6 +438,7 @@ class Helpers;
 template <typename T> class Callback;
 class LogDispatchCallback;
 class PerformanceTrackingCallback;
+class LoggerRegistrationCallback;
 class LogDispatchData;
 namespace base {
 class Storage;
@@ -503,6 +504,7 @@ typedef unsigned long int LineNumber;
 typedef std::shared_ptr<base::Storage> StoragePointer;
 typedef std::shared_ptr<LogDispatchCallback> LogDispatchCallbackPtr;
 typedef std::shared_ptr<PerformanceTrackingCallback> PerformanceTrackingCallbackPtr;
+typedef std::shared_ptr<LoggerRegistrationCallback> LoggerRegistrationCallbackPtr;
 typedef std::unique_ptr<el::base::PerformanceTracker> PerformanceTrackerPtr;
 }  // namespace type
 /// @brief Internal helper class that prevent copy constructor for class
@@ -2170,7 +2172,33 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
     }
   }
 };
+class Utils {
+ public:
+  template <typename T, typename TPtr>
+  static inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+    if (mapT->find(id) == mapT->end()) {
+      mapT->insert(std::make_pair(id, TPtr(new T())));
+      return true;
+    }
+    return false;
+  }
 
+  template <typename T, typename TPtr>
+  static inline void uninstallCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+    if (mapT->find(id) != mapT->end()) {
+      mapT->erase(id);
+    }
+  }
+
+  template <typename T, typename TPtr>
+  static inline T* callback(const std::string& id, std::map<std::string, TPtr>* mapT) {
+    typename std::map<std::string, TPtr>::iterator iter = mapT->find(id);
+    if (iter != mapT->end()) {
+      return static_cast<T*>(iter->second.get());
+    }
+    return nullptr;
+  }
+};
 }  // namespace utils
 } // namespace base
 /// @brief Base of Easylogging++ friendly class
@@ -3470,6 +3498,10 @@ class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
  private:
   friend class base::PerformanceTracker;
 };
+class LoggerRegistrationCallback : public Callback<Logger> {
+ private:
+  friend class base::RegisteredLoggers;
+};
 class LogBuilder : base::NoCopy {
  public:
   virtual ~LogBuilder(void) {
@@ -3758,8 +3790,34 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
       logger_ = new Logger(id, m_defaultConfigurations, &m_logStreamsReference);
       logger_->m_logBuilder = m_defaultLogBuilder;
       registerNew(id, logger_);
+      LoggerRegistrationCallback* callback = nullptr;
+      for (const std::pair<std::string, base::type::LoggerRegistrationCallbackPtr>& h
+           : m_loggerRegistrationCallbacks) {
+        callback = h.second.get();
+        if (callback != nullptr && callback->enabled()) {
+          callback->acquireLock();
+          callback->handle(logger_);
+          callback->releaseLock();
+        }
+      }
     }
     return logger_;
+  }
+
+  template <typename T>
+  inline bool installLoggerRegistrationCallback(const std::string& id) {
+    return base::utils::Utils::installCallback<T, base::type::LoggerRegistrationCallbackPtr>(id,
+           &m_loggerRegistrationCallbacks);
+  }
+
+  template <typename T>
+  inline void uninstallLoggerRegistrationCallback(const std::string& id) {
+    base::utils::Utils::uninstallCallback<T, base::type::LoggerRegistrationCallbackPtr>(id, &m_loggerRegistrationCallbacks);
+  }
+
+  template <typename T>
+  inline T* loggerRegistrationCallback(const std::string& id) {
+    return base::utils::Utils::callback<T, base::type::LoggerRegistrationCallbackPtr>(id, &m_loggerRegistrationCallbacks);
   }
 
   bool remove(const std::string& id) {
@@ -3800,6 +3858,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
   LogBuilderPtr m_defaultLogBuilder;
   Configurations m_defaultConfigurations;
   base::LogStreamsReferenceMap m_logStreamsReference;
+  std::map<std::string, base::type::LoggerRegistrationCallbackPtr> m_loggerRegistrationCallbacks;
   friend class el::base::Storage;
 
   inline void unsafeFlushAll(void) {
@@ -4216,32 +4275,34 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 
   template <typename T>
   inline bool installLogDispatchCallback(const std::string& id) {
-    return installCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
+    return base::utils::Utils::installCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
   }
 
   template <typename T>
   inline void uninstallLogDispatchCallback(const std::string& id) {
-    uninstallCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
+    base::utils::Utils::uninstallCallback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
   }
   template <typename T>
   inline T* logDispatchCallback(const std::string& id) {
-    return callback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
+    return base::utils::Utils::callback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
   }
 
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   template <typename T>
   inline bool installPerformanceTrackingCallback(const std::string& id) {
-    return installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    return base::utils::Utils::installCallback<T, base::type::PerformanceTrackingCallbackPtr>(id,
+           &m_performanceTrackingCallbacks);
   }
 
   template <typename T>
   inline void uninstallPerformanceTrackingCallback(const std::string& id) {
-    uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    base::utils::Utils::uninstallCallback<T, base::type::PerformanceTrackingCallbackPtr>(id,
+        &m_performanceTrackingCallbacks);
   }
 
   template <typename T>
   inline T* performanceTrackingCallback(const std::string& id) {
-    return callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
+    return base::utils::Utils::callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
   }
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
  private:
@@ -4293,31 +4354,6 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 
   inline void setApplicationArguments(int argc, const char** argv) {
     setApplicationArguments(argc, const_cast<char**>(argv));
-  }
-
-  template <typename T, typename TPtr>
-  inline bool installCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-    if (mapT->find(id) == mapT->end()) {
-      mapT->insert(std::make_pair(id, TPtr(new T())));
-      return true;
-    }
-    return false;
-  }
-
-  template <typename T, typename TPtr>
-  inline void uninstallCallback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-    if (mapT->find(id) != mapT->end()) {
-      mapT->erase(id);
-    }
-  }
-
-  template <typename T, typename TPtr>
-  inline T* callback(const std::string& id, std::map<std::string, TPtr>* mapT) {
-    typename std::map<std::string, TPtr>::iterator iter = mapT->find(id);
-    if (iter != mapT->end()) {
-      return static_cast<T*>(iter->second.get());
-    }
-    return nullptr;
   }
 };
 extern ELPP_EXPORT base::type::StoragePointer elStorage;
@@ -5993,6 +6029,20 @@ class Loggers : base::StaticClass {
   static inline void setDefaultLogBuilder(el::LogBuilderPtr& logBuilderPtr) {
     ELPP->registeredLoggers()->setDefaultLogBuilder(logBuilderPtr);
   }
+  /// @brief Installs logger registration callback, this callback is triggered when new logger is registered
+  template <typename T>
+  static inline bool installLoggerRegistrationCallback(const std::string& id) {
+    return ELPP->registeredLoggers()->installLoggerRegistrationCallback<T>(id);
+  }
+  /// @brief Uninstalls log dispatch callback
+  template <typename T>
+  static inline void uninstallLoggerRegistrationCallback(const std::string& id) {
+    ELPP->registeredLoggers()->uninstallLoggerRegistrationCallback<T>(id);
+  }
+  template <typename T>
+  static inline T* loggerRegistrationCallback(const std::string& id) {
+    return ELPP->registeredLoggers()->loggerRegistrationCallback<T>(id);
+  }
   /// @brief Unregisters logger - use it only when you know what you are doing, you may unregister
   ///        loggers initialized / used by third-party libs.
   static inline bool unregisterLogger(const std::string& identity) {
@@ -6201,11 +6251,11 @@ class VersionInfo : base::StaticClass {
  public:
   /// @brief Current version number
   static inline const std::string version(void) {
-    return std::string("9.88");
+    return std::string("9.89");
   }
   /// @brief Release date of current version
   static inline const std::string releaseDate(void) {
-    return std::string("30-12-2016 0114hrs");
+    return std::string("31-12-2016 1531hrs");
   }
 };
 }  // namespace el

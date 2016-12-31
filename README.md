@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.88**
+> **Manual For v9.89**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,9 +11,9 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.88)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.89)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.88/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.89/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
@@ -27,6 +27,7 @@
 <a href="#getting-started">Getting Started</a>
     <a href="#download">Download</a>
     <a href="#quick-start">Quick Start</a>
+    <a href="#install-optional">Install (Optional)</a>
     <a href="#setting-application-arguments">Setting Application Arguments</a>
 <a href="#configuration">Configuration</a>
     <a href="#level">Level</a>
@@ -79,6 +80,7 @@
         <a href="#logging-third-party-class">Logging Third-party Class</a>
     <a href="#manually-flushing-and-rolling-log-files">Manually Flushing and Rolling Log Files</a>
     <a href="#log-dispatch-callback">Log Dispatch Callback</a>
+    <a href="#logger-registration-callback">Logger Registration Callback</a>
     <a href="#asynchronous-logging">Asynchronous Logging</a>
     <a href="#helper-classes">Helper Classes</a>
 <a href="#contribution">Contribution</a>
@@ -86,14 +88,13 @@
     <a href="#reporting-a-bug">Reporting a Bug</a>
     <a href="#donation">Donation</a>
 <a href="#compatibility">Compatibility</a>
-<a href="#contributors">Contributors</a>
 <a href="#licence">Licence</a>
 <a href="#disclaimer">Disclaimer</a>
 </pre>
 
 # Introduction
 Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.88. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.89. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -149,6 +150,16 @@ int main(int argc, char* argv[]) {
 ```
 
 That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
+
+### Install (Optional)
+If you want to install this header system-wide, you can do so via:
+```
+mkdir build
+cd build
+cmake ../
+make
+make install
+```
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1211,6 +1222,13 @@ If you wish to capture log message right after it is dispatched, you can do so b
  > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
 
  [![top] Goto Top](#table-of-contents)
+
+### Logger Registration Callback
+If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
+
+ > DO NOT LOG ANYTHING IN THIS HANDLER
+
+ [![top] Goto Top](#table-of-contents)
  
 ### Asynchronous Logging
 Prerequisite: Define macro `ELPP_EXPERIMENTAL_ASYNC`
@@ -1302,28 +1320,6 @@ Easylogging++ has also been tested with following C++ libraries;
 |![gtkmm]     | gtkmm                  | Tested with gtkmm 2.4                                                               |
 
  [![top] Goto Top](#table-of-contents)
- 
-# Contributors
-Many people have contributed in this project but not all of them are visible in github. This is because we sometimes have to close pull-requests without merging them and copy their changes manually to prevent conflicts with rebased version. We may have missed some contributors but here is the list **in no specific order**.
-
- * @mkhan3189
- * @olehgol260
- * @martin-mann
- * @jas99
- * @allender
- * @LMDavid
- * @sibbi77
- * @a-teammate
- * @neomantra
- * @fengya90
- * @rggjan
- * @Oipo
- * @neuront
- * @LMolr
- * @moneromooo-monero
- * ...
- 
-Note: If we have missed you please notify us with link to your contribution (e.g, PR). You can see more contributors by checking our [closed](https://github.com/easylogging/easyloggingpp/issues?q=is%3Apr+is%3Aclosed) or [opened](https://github.com/easylogging/easyloggingpp/pulls?q=is%3Aopen+is%3Apr) pull requests.
  
 # Licence
 ```

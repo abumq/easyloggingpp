@@ -4,7 +4,7 @@ compiler:
 before_install:
  - sudo apt-get -qq update
  - sudo apt-get install -y libgtest-dev
- - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
+ - "cd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libgtest* /usr/lib/ ; cd \"${TRAVIS_BUILD_DIR}\""
 before_script:
  - pwd
  - cd samples/STL/
