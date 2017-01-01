@@ -4287,6 +4287,17 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     return base::utils::Utils::callback<T, base::type::LogDispatchCallbackPtr>(id, &m_logDispatchCallbacks);
   }
 
+  inline void setThreadName(const char* name) {
+    m_threadNames[base::threading::getCurrentThreadId()] = name;
+  }
+
+  std::string getThreadName(const std::string& name) {
+    std::map<std::string, std::string>::const_iterator it = m_threadNames.find(name);
+    if (it == m_threadNames.end())
+      return name;
+    return it->second;
+  }
+
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   template <typename T>
   inline bool installPerformanceTrackingCallback(const std::string& id) {
@@ -4320,6 +4331,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
   std::map<std::string, base::type::PerformanceTrackingCallbackPtr> m_performanceTrackingCallbacks;
   std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
   Level m_loggingLevel;
+  std::map<std::string, std::string> m_threadNames;
 
   friend class el::Helpers;
   friend class el::base::DefaultLogDispatchCallback;
@@ -4573,7 +4585,7 @@ class DefaultLogBuilder : public LogBuilder {
     if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
       // Thread ID
       base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-          base::threading::getCurrentThreadId());
+          ELPP->getThreadName(base::threading::getCurrentThreadId()));
     }
     if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
       // DateTime
@@ -5958,6 +5970,10 @@ class Helpers : base::StaticClass {
   template <typename T>
   static inline T* logDispatchCallback(const std::string& id) {
     return ELPP->logDispatchCallback<T>(id);
+  }
+  /// @brief Sets current thread name
+  static inline void setThreadName(const char *name) {
+    ELPP->setThreadName(name);
   }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
   /// @brief Installs post performance tracking callback, this callback is triggered when performance tracking is finished
