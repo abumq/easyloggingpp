@@ -5,4 +5,5 @@ myLib.a
 libmyLib.so
 logs/*
 myapp
+myapp.dSYM/*
 
