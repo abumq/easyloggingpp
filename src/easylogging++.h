@@ -2372,15 +2372,21 @@ namespace base {
 }  // namespace base
 /// @brief Resolving function for format specifier
 typedef std::function<const char*(void)> FormatSpecifierValueResolver;
+/// @brief Resolving function for format specifier that provides LogMessage context
+typedef std::function<const char*(const LogMessage*)> FormatSpecifierValueResolverWithContext;
 /// @brief User-provided custom format specifier
 /// @see el::Helpers::installCustomFormatSpecifier
 /// @see FormatSpecifierValueResolver
 class CustomFormatSpecifier {
 public:
+    static const bool kPassLogMessage = true;
     CustomFormatSpecifier(const char* formatSpecifier, const FormatSpecifierValueResolver& resolver) :
     m_formatSpecifier(formatSpecifier), m_resolver(resolver) {}
+    CustomFormatSpecifier(const char* formatSpecifier, const FormatSpecifierValueResolverWithContext& resolver) :
+    m_formatSpecifier(formatSpecifier), m_resolverWithContext(resolver) {}
     inline const char* formatSpecifier(void) const { return m_formatSpecifier; }
     inline const FormatSpecifierValueResolver& resolver(void) const { return m_resolver; }
+    inline const FormatSpecifierValueResolverWithContext& resolverWithContext(void) const { return m_resolverWithContext; }
     inline bool operator==(const char* formatSpecifier) {
         return strcmp(m_formatSpecifier, formatSpecifier) == 0;
     }
@@ -2388,6 +2394,7 @@ public:
 private:
     const char* m_formatSpecifier;
     FormatSpecifierValueResolver m_resolver;
+    FormatSpecifierValueResolverWithContext m_resolverWithContext;
 };
 /// @brief Represents single configuration that has representing level, configuration type and a string based value.
 ///
@@ -2723,7 +2730,7 @@ public:
         /// @detail This configuration string has same syntax as configuration file contents. Make sure all the necessary
         /// new line characters are provided. You may define '_STOP_ON_FIRSTELPP_ASSERTION' to make sure you
         /// do not proceed without successful parse (This is recommended)
-        /// @param configurationsString
+        /// @param configurationsString The configuration
         /// @param sender Sender configurations pointer. Usually 'this' is used from calling class
         /// @param base Configurations to base new configuration repository off. This value is used when you want to use
         ///        existing Configurations to base all the values and then set rest of configuration via configuration text.
@@ -4481,7 +4488,14 @@ inline void FUNCTION_NAME(const T&);
                      it != ELPP->customFormatSpecifiers()->end(); ++it) {
                     std::string fs(it->formatSpecifier());
                     base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
-                    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, std::string(it->resolver()()));
+                    const FormatSpecifierValueResolver& resolver = it->resolver();
+                    std::string resolved;
+                    if (resolver) {
+                        resolved.assign(resolver());
+                    } else {
+                        resolved.assign(it->resolverWithContext()(logMessage));
+                    }
+                    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, resolved);
                 }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
                 if (appendNewLine) logLine += ELPP_LITERAL("\n");
