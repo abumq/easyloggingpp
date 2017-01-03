@@ -2362,7 +2362,7 @@ class LogFormat : public Loggable {
           ++count;  // In order to remove ending brace
           break;
         }
-        ss << *ptr;
+        ss << static_cast<char>(*ptr);
       }
       currFormat.erase(index, count);
       m_dateTimeFormat = ss.str();
