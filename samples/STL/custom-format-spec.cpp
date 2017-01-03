@@ -35,7 +35,7 @@ getSeverity(const el::LogMessage* message) {
 
 class HttpRequest {
 public:
-    const char* getIp(const el::LogMessage* message) {
+    const char* getIp(const el::LogMessage*) {
         return "192.168.1.1";
     }
 };
