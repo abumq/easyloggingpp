@@ -360,6 +360,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <memory>
 #include <type_traits>
 #if ELPP_THREADING_ENABLED
@@ -1087,7 +1088,7 @@ typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock
 /// @brief Gets ID of currently running threading using std::this_thread::get_id()
 static inline std::string getCurrentThreadId(void) {
   std::stringstream ss;
-  ss << std::this_thread::get_id();
+  ss << std::setfill(' ') << std::setw(16) << std::hex << std::this_thread::get_id();
   return ss.str();
 }
 static inline void msleep(int ms) {
