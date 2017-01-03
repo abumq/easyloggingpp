@@ -2439,7 +2439,7 @@ class LogFormat : public Loggable {
 };
 }  // namespace base
 /// @brief Resolving function for format specifier
-typedef std::function<const char*(const LogMessage&)> FormatSpecifierValueResolver;
+typedef std::function<const char*(const LogMessage*)> FormatSpecifierValueResolver;
 /// @brief User-provided custom format specifier
 /// @see el::Helpers::installCustomFormatSpecifier
 /// @see FormatSpecifierValueResolver
@@ -4629,7 +4629,7 @@ class DefaultLogBuilder : public LogBuilder {
          it != ELPP->customFormatSpecifiers()->end(); ++it) {
       std::string fs(it->formatSpecifier());
       base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
-      base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, std::string(it->resolver()(*logMessage)));
+      base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, std::string(it->resolver()(logMessage)));
     }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
     if (appendNewLine) logLine += ELPP_LITERAL("\n");
