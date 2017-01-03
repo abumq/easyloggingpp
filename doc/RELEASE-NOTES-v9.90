@@ -12,6 +12,15 @@ Breaking Change: Yes
  - Fix to custom datetime format in Unicode mode
 
 ==========================
+=      NEW FEATURES      =
+==========================
+
+ - The FormatSpecifierValueResolver function passed to the CustomFormatSpecifier constructor
+   now receives `const LogMessage&` as an argument. This allows you to access message-specific context
+   (such as the verbose level) within your custom formatting function. For an example, see
+   samples/STL/custom-format-spec.cpp.
+
+==========================
 =         NOTES          =
 ==========================
 
