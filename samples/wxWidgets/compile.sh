@@ -5,7 +5,7 @@ FILE=$1
 macro="$macro -DELPP_THREAD_SAFE"
 macro="$macro -DELPP_STL_LOGGING"
 macro="$macro -DELPP_WXWIDGETS_LOGGING"
-macro="$macro -DELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_FEATURE_CRASH_LOG"
 macro="$macro -DELPP_FEATURE_ALL"
 
 if [ "$2" = "" ];then
