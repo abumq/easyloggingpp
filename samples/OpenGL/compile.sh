@@ -7,7 +7,7 @@ macro="$macro -DELPP_STL_LOGGING"
 macro="$macro -DELPP_LOG_STD_ARRAY"
 macro="$macro -DELPP_LOG_UNORDERED_SET"
 macro="$macro -DELPP_LOG_UNORDERED_MAP"
-macro="$macro -DELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_FEATURE_CRASH_LOG"
 macro="$macro -DELPP_FEATURE_ALL"
 
 if [ "$2" = "" ];then
