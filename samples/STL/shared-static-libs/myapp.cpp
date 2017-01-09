@@ -1,7 +1,9 @@
 #include <mylib.hpp>
-
+#include "easylogging++.h"
+INITIALIZE_EASYLOGGINGPP
 int main(int argc, char** argv) {
     int result = 0;
+    LOG(INFO) << "Log from app";
     //
     // You can choose MyLib() constructor
     // but be aware this will cause vlog to not work because Easylogging++
