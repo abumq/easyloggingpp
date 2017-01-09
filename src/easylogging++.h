@@ -187,7 +187,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  undef ELPP_INTERNAL_INFO
 #  define ELPP_INTERNAL_INFO(lvl, msg)
 #endif  // (defined(ELPP_DEBUG_INFO))
-#if defined(ELPP_FEATURE_CRASH_LOG)
+#if (defined(ELPP_FEATURE_ALL)) || (defined(ELPP_FEATURE_CRASH_LOG))
 #  if (ELPP_COMPILER_GCC && !ELPP_MINGW)
 #    define ELPP_STACKTRACE 1
 #  else
@@ -196,8 +196,11 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #      else
 #         warning "Stack trace not available for this compiler";
 #      endif  // ELPP_COMPILER_MSVC
+#    define ELPP_STACKTRACE 0
 #  endif  // ELPP_COMPILER_GCC
-#endif  // (defined(ELPP_FEATURE_CRASH_LOG))
+#else
+#    define ELPP_STACKTRACE 0
+#endif  // (defined(ELPP_FEATURE_ALL)) || (defined(ELPP_FEATURE_CRASH_LOG))
 // Miscellaneous macros
 #define ELPP_UNUSED(x) (void)x
 #if ELPP_OS_UNIX
@@ -3508,8 +3511,8 @@ namespace debug {
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
 class StackTrace : base::NoCopy {
  public:
-  static const std::size_t kMaxStack = 64;
-  static const std::size_t kStackStart = 2;  // We want to skip c'tor and StackTrace::generateNew()
+  static const unsigned int kMaxStack = 64;
+  static const unsigned int kStackStart = 2;  // We want to skip c'tor and StackTrace::generateNew()
   class StackTraceEntry {
    public:
     StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex, const char* addr);

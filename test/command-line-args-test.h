@@ -33,11 +33,12 @@ TEST(CommandLineArgsTest, LoggingFlagsArg) {
     c[2] = "\0";
 
     unsigned short currFlags = ELPP->flags(); // For resetting after test
-
+	
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
 
     Helpers::setArgs(2, c);
+
     EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
     EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
 

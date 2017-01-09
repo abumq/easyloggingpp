@@ -2631,7 +2631,7 @@ void StackTrace::generateNew(void) {
 #if ELPP_STACKTRACE
   m_stack.clear();
   void* stack[kMaxStack];
-  int size = backtrace(stack, kMaxStack);
+  unsigned int size = backtrace(stack, kMaxStack);
   char** strings = backtrace_symbols(stack, size);
   if (size > kStackStart) {  // Skip StackTrace c'tor and generateNew
     for (std::size_t i = kStackStart; i < size; ++i) {
