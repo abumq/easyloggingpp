@@ -23,7 +23,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
+COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra"
 
 echo "    $COMPILE_LINE"
 

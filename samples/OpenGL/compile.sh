@@ -25,7 +25,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -lglut -lGLU -lGL -I/usr/include/x86_64-linux-gnu/c++/4.7/"
+COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -lglut -lGLU -lGL -I/usr/include/x86_64-linux-gnu/c++/4.7/"
 
 echo "    $COMPILE_LINE"
 
