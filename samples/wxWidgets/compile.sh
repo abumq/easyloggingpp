@@ -23,7 +23,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra `wx-config --cppflags` `wx-config --libs`"
+COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra `wx-config --cppflags` `wx-config --libs`"
 
 echo "    $COMPILE_LINE"
 
