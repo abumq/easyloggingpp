@@ -1442,7 +1442,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   updateFormatSpec();
 }
 
-void LogFormat::updateDateFormat(std::size_t index, base::type::string_t& currFormat) ELPP_FINAL {
+void LogFormat::updateDateFormat(std::size_t index, base::type::string_t& currFormat) {
   if (hasFlag(base::FormatFlags::DateTime)) {
     index += ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
   }
@@ -1469,7 +1469,7 @@ void LogFormat::updateDateFormat(std::size_t index, base::type::string_t& currFo
   }
 }
 
-void LogFormat::updateFormatSpec(void) ELPP_FINAL {
+void LogFormat::updateFormatSpec(void) {
   // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
   if (m_level == Level::Debug) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
