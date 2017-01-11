@@ -1144,7 +1144,6 @@ class OS : base::StaticClass {
   /// @brief Whether or not terminal supports colors
   static bool termSupportsColor(void);
 };
-#define ELPP_INITI_BASIC_DECLR
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
  public:
@@ -4456,7 +4455,6 @@ if (ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAc
 #endif  // defined(ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #define ELPP_CRASH_HANDLER_INIT
 #define ELPP_INIT_EASYLOGGINGPP(val) \
-ELPP_INITI_BASIC_DECLR \
 namespace el { \
 namespace base { \
 el::base::type::StoragePointer elStorage(val); \
@@ -4471,14 +4469,12 @@ new el::base::AsyncDispatchWorker()))
 #  define INITIALIZE_EASYLOGGINGPP ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #endif  // ELPP_ASYNC_LOGGING
 #define INITIALIZE_NULL_EASYLOGGINGPP\
-ELPP_INITI_BASIC_DECLR\
 namespace el {\
 namespace base {\
 el::base::type::StoragePointer elStorage;\
 }\
 el::base::debug::CrashHandler elCrashHandler(ELPP_USE_DEF_CRASH_HANDLER);\
 }
-// NOTE: no ELPP_INITI_BASIC_DECLR when sharing - causes double free corruption on external symbols
 #define SHARE_EASYLOGGINGPP(initializedStorage)\
 namespace el {\
 namespace base {\
