@@ -459,7 +459,7 @@ NOTE: All the macros either need to be defined before `#include "easylogging++"`
 | `ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `START_EASYLOGGINGPP`                 |
 | `ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `ELPP_THREAD_SAFE`            |
-| `ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
+| `ELPP_FEATURE_CRASH_LOG`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
 | `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
 | `ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
 | `ELPP_DISABLE_DEBUG_LOGS`               | Disables debug logs - (preprocessing)                                                                                                              |
@@ -906,7 +906,7 @@ Following signals are handled;
 * SIGSEGV
 * SIGINT
 
-Stacktraces are not printed by default, in order to do so define macro `ELPP_STACKTRACE_ON_CRASH`. Remember, stack trace is only available for GCC compiler.
+Stacktraces are not printed by default, in order to do so define macro `ELPP_FEATURE_CRASH_LOG`. Remember, stack trace is only available for GCC compiler.
 
 > Default handler and stack trace uses `default` logger.
 
