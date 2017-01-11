@@ -187,7 +187,8 @@ Configurations::Configurations(void) :
   m_isFromFile(false) {
 }
 
-Configurations::Configurations(const std::string& configurationFile, bool useDefaultsForRemaining, Configurations* base) :
+Configurations::Configurations(const std::string& configurationFile, bool useDefaultsForRemaining,
+                               Configurations* base) :
   m_configurationFile(configurationFile),
   m_isFromFile(false) {
   parseFromFile(configurationFile, base);
@@ -319,7 +320,8 @@ void Configurations::setRemainingToDefault(void) {
                       std::string("%datetime %level [%logger] [%func] [%loc] %msg"));
 }
 
-bool Configurations::Parser::parseFromFile(const std::string& configurationFile, Configurations* sender, Configurations* base) {
+bool Configurations::Parser::parseFromFile(const std::string& configurationFile, Configurations* sender,
+    Configurations* base) {
   sender->setFromBase(base);
   std::ifstream fileStream_(configurationFile.c_str(), std::ifstream::in);
   ELPP_ASSERT(fileStream_.is_open(), "Unable to open configuration file [" << configurationFile << "] for parsing.");
@@ -336,7 +338,8 @@ bool Configurations::Parser::parseFromFile(const std::string& configurationFile,
   return parsedSuccessfully;
 }
 
-bool Configurations::Parser::parseFromText(const std::string& configurationsString, Configurations* sender, Configurations* base) {
+bool Configurations::Parser::parseFromText(const std::string& configurationsString, Configurations* sender,
+    Configurations* base) {
   sender->setFromBase(base);
   bool parsedSuccessfully = false;
   std::stringstream ss(configurationsString);
@@ -386,7 +389,8 @@ bool Configurations::Parser::isConfig(const std::string& line) {
          (line.size() > assignment);
 }
 
-bool Configurations::Parser::parseLine(std::string* line, std::string* currConfigStr, std::string* currLevelStr, Level* currLevel,
+bool Configurations::Parser::parseLine(std::string* line, std::string* currConfigStr, std::string* currLevelStr,
+                                       Level* currLevel,
                                        Configurations* conf) {
   ConfigurationType currConfig = ConfigurationType::Unknown;
   std::string currValue = std::string();
@@ -464,7 +468,8 @@ void Configurations::unsafeSet(Level level, ConfigurationType configurationType,
   }
 }
 
-void Configurations::setGlobally(ConfigurationType configurationType, const std::string& value, bool includeGlobalLevel) {
+void Configurations::setGlobally(ConfigurationType configurationType, const std::string& value,
+                                 bool includeGlobalLevel) {
   if (includeGlobalLevel) {
     set(Level::Global, configurationType, value);
   }
@@ -475,7 +480,8 @@ void Configurations::setGlobally(ConfigurationType configurationType, const std:
   });
 }
 
-void Configurations::unsafeSetGlobally(ConfigurationType configurationType, const std::string& value, bool includeGlobalLevel) {
+void Configurations::unsafeSetGlobally(ConfigurationType configurationType, const std::string& value,
+                                       bool includeGlobalLevel) {
   if (includeGlobalLevel) {
     unsafeSet(Level::Global, configurationType, value);
   }
@@ -514,7 +520,8 @@ Logger::Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsRe
   initUnflushedCount();
 }
 
-Logger::Logger(const std::string& id, const Configurations& configurations, base::LogStreamsReferenceMap* logStreamsReference) :
+Logger::Logger(const std::string& id, const Configurations& configurations,
+               base::LogStreamsReferenceMap* logStreamsReference) :
   m_id(id),
   m_typedConfigurations(nullptr),
   m_parentApplicationName(std::string()),
@@ -818,7 +825,7 @@ std::string& Str::replaceAll(std::string& str, char replaceWhat, char replaceWit
 }
 
 std::string& Str::replaceAll(std::string& str, const std::string& replaceWhat,
-                                      const std::string& replaceWith) {
+                             const std::string& replaceWith) {
   if (replaceWhat == replaceWith)
     return str;
   std::size_t foundAt = std::string::npos;
@@ -829,7 +836,7 @@ std::string& Str::replaceAll(std::string& str, const std::string& replaceWhat,
 }
 
 void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat,
-                                   const base::type::string_t& replaceWith) {
+                                 const base::type::string_t& replaceWith) {
   std::size_t foundAt = base::type::string_t::npos;
   while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos) {
     if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatSpecifierChar) {
@@ -843,7 +850,7 @@ void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::st
 }
 #if defined(ELPP_UNICODE)
 void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat,
-                                   const std::string& replaceWith) {
+                                 const std::string& replaceWith) {
   replaceFirstWithEscape(str, replaceWhat, base::type::string_t(replaceWith.begin(), replaceWith.end()));
 }
 #endif  // defined(ELPP_UNICODE)
@@ -983,7 +990,7 @@ const std::string OS::getBashOutput(const char* command) {
 }
 
 std::string OS::getEnvironmentVariable(const char* variableName, const char* defaultVal,
-    const char* alternativeBashCommand) {
+                                       const char* alternativeBashCommand) {
 #if ELPP_OS_UNIX
   const char* val = getenv(variableName);
 #elif ELPP_OS_WINDOWS
@@ -1508,7 +1515,8 @@ void LogFormat::updateFormatSpec(void) ELPP_FINAL {
 
 // TypedConfigurations
 
-TypedConfigurations::TypedConfigurations(Configurations* configurations, base::LogStreamsReferenceMap* logStreamsReference) {
+TypedConfigurations::TypedConfigurations(Configurations* configurations,
+    base::LogStreamsReferenceMap* logStreamsReference) {
   m_configurations = configurations;
   m_logStreamsReference = logStreamsReference;
   build(m_configurations);
@@ -2552,7 +2560,8 @@ PerformanceTracker::~PerformanceTracker(void) {
 #endif  // !defined(ELPP_DISABLE_PERFORMANCE_TRACKING)
 }
 
-void PerformanceTracker::checkpoint(const std::string& id, const char* file, base::type::LineNumber line, const char* func) {
+void PerformanceTracker::checkpoint(const std::string& id, const char* file, base::type::LineNumber line,
+                                    const char* func) {
 #if !defined(ELPP_DISABLE_PERFORMANCE_TRACKING) && ELPP_LOGGING_ENABLED
   if (m_enabled) {
     base::threading::ScopedLock scopedLock(lock());
@@ -2605,7 +2614,8 @@ namespace debug {
 
 // StackTrace
 
-StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex, const char* addr) {
+StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex,
+    const char* addr) {
   m_index = index;
   m_location = std::string(loc);
   m_demangled = std::string(demang);
@@ -2831,7 +2841,7 @@ void Loggers::reconfigureAllLoggers(const Configurations& configurations) {
 }
 
 void Loggers::reconfigureAllLoggers(Level level, ConfigurationType configurationType,
-    const std::string& value) {
+                                    const std::string& value) {
   for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
        it != ELPP->registeredLoggers()->end(); ++it) {
     Logger* logger = it->second;

@@ -1181,7 +1181,7 @@ class DateTime : base::StaticClass {
 
   /// @brief Gets time difference in milli/micro second depending on timestampUnit
   static unsigned long long getTimeDifference(const struct timeval& endTime, const struct timeval& startTime,
-                                              base::TimestampUnit timestampUnit);
+      base::TimestampUnit timestampUnit);
 
 
  private:
@@ -2222,7 +2222,7 @@ class Logger : public base::threading::ThreadSafe, public Loggable {
   }
 
   static bool isValidId(const std::string& id);
-  
+
   /// @brief Flushes logger to sync all log files for all levels
   void flush(void);
 
@@ -2387,7 +2387,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
  public:
   explicit VRegistry(base::type::VerboseLevel level, base::type::EnumType* pFlags);
-  
+
   /// @brief Sets verbose level. Accepted range is 0-9
   void setLevel(base::type::VerboseLevel level);
 
@@ -3517,8 +3517,8 @@ class StackTrace : base::NoCopy {
    public:
     StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex, const char* addr);
     StackTraceEntry(std::size_t index, char* loc) :
-    m_index(index),
-    m_location(loc) {
+      m_index(index),
+      m_location(loc) {
     }
     std::size_t m_index;
     std::string m_location;
@@ -3827,7 +3827,7 @@ class VersionInfo : base::StaticClass {
  public:
   /// @brief Current version number
   static const std::string version(void);
-  
+
   /// @brief Release date of current version
   static const std::string releaseDate(void);
 };
