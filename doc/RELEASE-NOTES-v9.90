@@ -1,9 +1,11 @@
 Easylogging++ v9.90 RELEASE NOTES
 ---------------------------------
 
-Release type: Minor
+Release type: Major
 API changes: Yes
 Breaking Change: Yes
+
+This is a major release. We have seperated header file in to `easylogging++.h` and `easylogging++.cc`. Source file (`easylogging++.cc`) encompass source to speed up compile time. . Thanks to @aparajita.
 
 ==========================
 =         FIXES          =
@@ -15,10 +17,11 @@ Breaking Change: Yes
 =      NEW FEATURES      =
 ==========================
 
- - The FormatSpecifierValueResolver function passed to the CustomFormatSpecifier constructor
+ - The `FormatSpecifierValueResolver` function passed to the `CustomFormatSpecifier` constructor
    now receives `const LogMessage&` as an argument. This allows you to access message-specific context
    (such as the verbose level) within your custom formatting function. For an example, see
    samples/STL/custom-format-spec.cpp.
+ - Seperated header and source file (`easylogging++.h` and `easylogging++.cc`) (issue #445)
 
 ==========================
 =         NOTES          =
