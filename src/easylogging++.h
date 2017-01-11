@@ -1144,19 +1144,7 @@ class OS : base::StaticClass {
   /// @brief Whether or not terminal supports colors
   static bool termSupportsColor(void);
 };
-extern std::string s_currentUser;
-extern std::string s_currentHost;
-extern bool s_termSupportsColor;
-#define ELPP_INITI_BASIC_DECLR \
-namespace el {\
-namespace base {\
-namespace utils {\
-std::string s_currentUser = el::base::utils::OS::currentUser(); \
-std::string s_currentHost = el::base::utils::OS::currentHost(); \
-bool s_termSupportsColor = el::base::utils::OS::termSupportsColor(); \
-}\
-}\
-}
+#define ELPP_INITI_BASIC_DECLR
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
  public:
@@ -1615,6 +1603,8 @@ class LogFormat : public Loggable {
   base::type::string_t m_format;
   std::string m_dateTimeFormat;
   base::type::EnumType m_flags;
+  std::string m_currentUser;
+  std::string m_currentHost;
   friend class el::Logger;  // To resolve loggerId format specifier easily
 };
 }  // namespace base
@@ -2168,12 +2158,14 @@ class LoggerRegistrationCallback : public Callback<Logger> {
 };
 class LogBuilder : base::NoCopy {
  public:
+  LogBuilder() : m_termSupportsColor(base::utils::OS::termSupportsColor()) {}
   virtual ~LogBuilder(void) {
     ELPP_INTERNAL_INFO(3, "Destroying log builder...")
   }
   virtual base::type::string_t build(const LogMessage* logMessage, bool appendNewLine) const = 0;
   void convertToColoredOutput(base::type::string_t* logLine, Level level);
  private:
+  bool m_termSupportsColor;
   friend class el::base::DefaultLogDispatchCallback;
 };
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;

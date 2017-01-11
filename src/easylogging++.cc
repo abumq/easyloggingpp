@@ -492,7 +492,7 @@ void Configurations::unsafeSetGlobally(ConfigurationType configurationType, cons
 // LogBuilder
 
 void LogBuilder::convertToColoredOutput(base::type::string_t* logLine, Level level) {
-  if (!base::utils::s_termSupportsColor) return;
+  if (!m_termSupportsColor) return;
   const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
   if (level == Level::Error || level == Level::Fatal)
     *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
@@ -1342,11 +1342,14 @@ LogFormat::LogFormat(void) :
   m_userFormat(base::type::string_t()),
   m_format(base::type::string_t()),
   m_dateTimeFormat(std::string()),
-  m_flags(0x0) {
+  m_flags(0x0),
+  m_currentUser(base::utils::OS::currentUser()),
+  m_currentHost(base::utils::OS::currentHost()) {
 }
 
 LogFormat::LogFormat(Level level, const base::type::string_t& format)
-  : m_level(level), m_userFormat(format) {
+  : m_level(level), m_userFormat(format), m_currentUser(base::utils::OS::currentUser()),
+    m_currentHost(base::utils::OS::currentHost()) {
   parseFromFormat(m_userFormat);
 }
 
@@ -1355,7 +1358,9 @@ LogFormat::LogFormat(const LogFormat& logFormat):
   m_userFormat(logFormat.m_userFormat),
   m_format(logFormat.m_format),
   m_dateTimeFormat(logFormat.m_dateTimeFormat),
-  m_flags(logFormat.m_flags) {
+  m_flags(logFormat.m_flags),
+  m_currentUser(logFormat.m_currentUser),
+  m_currentHost(logFormat.m_currentHost) {
 }
 
 LogFormat::LogFormat(LogFormat&& logFormat) {
@@ -1364,6 +1369,8 @@ LogFormat::LogFormat(LogFormat&& logFormat) {
   m_format = std::move(logFormat.m_format);
   m_dateTimeFormat = std::move(logFormat.m_dateTimeFormat);
   m_flags = std::move(logFormat.m_flags);
+  m_currentUser = std::move(logFormat.m_currentUser);
+  m_currentHost = std::move(logFormat.m_currentHost);
 }
 
 LogFormat& LogFormat::operator=(const LogFormat& logFormat) {
@@ -1372,6 +1379,8 @@ LogFormat& LogFormat::operator=(const LogFormat& logFormat) {
     m_userFormat = logFormat.m_userFormat;
     m_dateTimeFormat = logFormat.m_dateTimeFormat;
     m_flags = logFormat.m_flags;
+    m_currentUser = logFormat.m_currentUser;
+    m_currentHost = logFormat.m_currentHost;
   }
   return *this;
 }
@@ -1499,13 +1508,12 @@ void LogFormat::updateFormatSpec(void) ELPP_FINAL {
     base::consts::kTraceLevelShortLogValue);
   }
   if (hasFlag(base::FormatFlags::User)) {
-    std::string s = base::utils::s_currentUser;
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentUserFormatSpecifier,
-    base::utils::s_currentUser);
+    m_currentUser);
   }
   if (hasFlag(base::FormatFlags::Host)) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentHostFormatSpecifier,
-    base::utils::s_currentHost);
+    m_currentHost);
   }
   // Ignore Level::Global and Level::Unknown
 }
