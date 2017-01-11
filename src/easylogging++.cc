@@ -16,11 +16,8 @@
 
 #include "easylogging++.h"
 
-#if defined(ELPP_AS_DLL)
-
-// For dylibs, create a shared instance of the storage
+#if defined(AUTO_INITIALIZE_EASYLOGGINGPP)
 INITIALIZE_EASYLOGGINGPP
-
 #endif
 
 namespace el {
