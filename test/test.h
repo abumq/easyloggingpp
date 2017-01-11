@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#define ELPP_LOGGING_FLAGS_FROM_ARG
-
 #include "easylogging++.h"
 
 using namespace el;
@@ -96,5 +94,5 @@ static void removeFile(const char* path) {
 	(void)(system(BUILD_STR("rm -rf " << path).c_str()) + 1); // (void)(...+1) -> ignore result for gcc 4.6+
 }
 
-static const char* kSysLogIdent = "qt-gtest-proj";
+static const char* kSysLogIdent = "easylogging++ unit test";
 #endif // TEST_HELPERS_H_
