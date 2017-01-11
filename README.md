@@ -93,7 +93,7 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
 This manual is for Easylogging++ v9.89. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
@@ -135,7 +135,7 @@ For other releases, please visit [releases page](https://github.com/easylogging/
 ### Quick Start
 In order to get started with Easylogging++, you can follow three easy steps:
 * Download latest version
-* Include into your project
+* Include into your project (`easylogging++.h` and `easylogging++.cc`)
 * Initialize using single macro... and off you go!
 
 ```c++
@@ -149,6 +149,12 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+Now compile using
+
+```
+g++ main.cc easylogging++.cc -o prog -std=c++11
+```
+
 That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
 
 ### Install (Optional)
@@ -160,6 +166,8 @@ cmake ../
 make
 make install
 ```
+
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
  
