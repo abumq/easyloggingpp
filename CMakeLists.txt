@@ -10,7 +10,9 @@ set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The d
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(FILES src/easylogging++.h
+install(FILES 
+    src/easylogging++.h
+    src/easylogging++.cc
     DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
     COMPONENT dev)
 
