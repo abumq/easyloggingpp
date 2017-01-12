@@ -22,6 +22,7 @@ This is a major release. We have seperated header file in to `easylogging++.h` a
    (such as the verbose level) within your custom formatting function. For an example, see
    samples/STL/custom-format-spec.cpp.
  - Seperated header and source file (`easylogging++.h` and `easylogging++.cc`) (issue #445)
+ - New `ELPP_DEFAULT_LOGGING_FLAGS` macro for setting initial logging flags
 
 ==========================
 =         NOTES          =
