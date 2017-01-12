@@ -2068,7 +2068,7 @@ void Storage::setApplicationArguments(int argc, char** argv) {
 #if defined(ELPP_LOGGING_FLAGS_FROM_ARG)
   if (m_commandLineArgs.hasParamWithValue(base::consts::kLoggingFlagsParam)) {
     int userInput = atoi(m_commandLineArgs.getParamValue(base::consts::kLoggingFlagsParam));
-    if (m_flags == 0x0) {
+    if (ELPP_DEFAULT_LOGGING_FLAGS == 0x0) {
       m_flags = userInput;
     } else {
       base::utils::addFlag<base::type::EnumType>(userInput, &m_flags);
