@@ -1959,6 +1959,9 @@ void VRegistry::setFromArgs(const base::utils::CommandLineArgs* commandLineArgs)
   }
 }
 
+#if !defined(ELPP_DEFAULT_LOGGING_FLAGS)
+#   define ELPP_DEFAULT_LOGGING_FLAGS 0x0
+#endif // !defined(ELPP_DEFAULT_LOGGING_FLAGS)
 // Storage
 #if ELPP_ASYNC_LOGGING
 Storage::Storage(const LogBuilderPtr& defaultLogBuilder, base::IWorker* asyncDispatchWorker) :
@@ -1967,7 +1970,7 @@ Storage::Storage(const LogBuilderPtr& defaultLogBuilder) :
 #endif  // ELPP_ASYNC_LOGGING
   m_registeredHitCounters(new base::RegisteredHitCounters()),
   m_registeredLoggers(new base::RegisteredLoggers(defaultLogBuilder)),
-  m_flags(0x0),
+  m_flags(ELPP_DEFAULT_LOGGING_FLAGS),
   m_vRegistry(new base::VRegistry(0, &m_flags)),
 #if ELPP_ASYNC_LOGGING
   m_asyncLogQueue(new base::AsyncLogQueue()),
@@ -2064,7 +2067,12 @@ void Storage::setApplicationArguments(int argc, char** argv) {
 #endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
 #if defined(ELPP_LOGGING_FLAGS_FROM_ARG)
   if (m_commandLineArgs.hasParamWithValue(base::consts::kLoggingFlagsParam)) {
-    m_flags = atoi(m_commandLineArgs.getParamValue(base::consts::kLoggingFlagsParam));
+    int userInput = atoi(m_commandLineArgs.getParamValue(base::consts::kLoggingFlagsParam));
+    if (m_flags == 0x0) {
+      m_flags = userInput;
+    } else {
+      base::utils::addFlag<base::type::EnumType>(userInput, &m_flags);
+    }
   }
 #endif  // defined(ELPP_LOGGING_FLAGS_FROM_ARG)
 }

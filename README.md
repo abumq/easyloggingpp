@@ -432,6 +432,8 @@ You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Lo
 
  > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
+ > You can also set default (initial) flags using `ELPP_DEFAULT_LOGGING_FLAGS` and set numerical value for initial flags
+
  [![top] Goto Top](#table-of-contents)
 
 ### Application Arguments
