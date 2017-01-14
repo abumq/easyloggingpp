@@ -105,25 +105,28 @@ const char* ConfigurationTypeHelper::convertToString(ConfigurationType configura
   return "UNKNOWN";
 }
 
+static struct ConfigurationStringToType {
+  const char* upperCaseStr;
+  const char* lowerCaseStr;
+  ConfigurationType configType;
+} configStringToType[] = {
+  { "ENABLED", "enabled", ConfigurationType::Enabled },
+  { "TO_FILE", "to_file", ConfigurationType::ToFile },
+  { "TO_STANDARD_OUTPUT", "to_standard_output", ConfigurationType::ToStandardOutput },
+  { "FORMAT", "format", ConfigurationType::Format },
+  { "FILENAME", "filename", ConfigurationType::Filename },
+  { "MILLISECONDS_WIDTH", "milliseconds_width", ConfigurationType::MillisecondsWidth },
+  { "PERFORMANCE_TRACKING", "performance_tracking", ConfigurationType::PerformanceTracking },
+  { "MAX_LOG_FILE_SIZE", "max_log_file_size", ConfigurationType::MaxLogFileSize },
+  { "LOG_FLUSH_THRESHOLD", "log_flush_threshold", ConfigurationType::LogFlushThreshold },
+};
+
 ConfigurationType ConfigurationTypeHelper::convertFromString(const char* configStr) {
-  if ((strcmp(configStr, "ENABLED") == 0) || (strcmp(configStr, "enabled") == 0))
-    return ConfigurationType::Enabled;
-  if ((strcmp(configStr, "TO_FILE") == 0) || (strcmp(configStr, "to_file") == 0))
-    return ConfigurationType::ToFile;
-  if ((strcmp(configStr, "TO_STANDARD_OUTPUT") == 0) || (strcmp(configStr, "to_standard_output") == 0))
-    return ConfigurationType::ToStandardOutput;
-  if ((strcmp(configStr, "FORMAT") == 0) || (strcmp(configStr, "format") == 0))
-    return ConfigurationType::Format;
-  if ((strcmp(configStr, "FILENAME") == 0) || (strcmp(configStr, "filename") == 0))
-    return ConfigurationType::Filename;
-  if ((strcmp(configStr, "MILLISECONDS_WIDTH") == 0) || (strcmp(configStr, "milliseconds_width") == 0))
-    return ConfigurationType::MillisecondsWidth;
-  if ((strcmp(configStr, "PERFORMANCE_TRACKING") == 0) || (strcmp(configStr, "performance_tracking") == 0))
-    return ConfigurationType::PerformanceTracking;
-  if ((strcmp(configStr, "MAX_LOG_FILE_SIZE") == 0) || (strcmp(configStr, "max_log_file_size") == 0))
-    return ConfigurationType::MaxLogFileSize;
-  if ((strcmp(configStr, "LOG_FLUSH_THRESHOLD") == 0) || (strcmp(configStr, "log_flush_threshold") == 0))
-    return ConfigurationType::LogFlushThreshold;
+  for (auto& item : configStringToType) {
+    if ((strcmp(configStr, item.upperCaseStr) == 0) || (strcmp(configStr, item.lowerCaseStr) == 0)) {
+      return item.configType;
+    }
+  }
   return ConfigurationType::Unknown;
 }
 
