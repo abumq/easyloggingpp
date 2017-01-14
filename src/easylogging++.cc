@@ -116,6 +116,7 @@ static struct ConfigurationStringToType {
   { "FORMAT", "format", ConfigurationType::Format },
   { "FILENAME", "filename", ConfigurationType::Filename },
   { "MILLISECONDS_WIDTH", "milliseconds_width", ConfigurationType::MillisecondsWidth },
+  { "SUBSECOND_PRECISION", "subsecond_precision", ConfigurationType::MillisecondsWidth },
   { "PERFORMANCE_TRACKING", "performance_tracking", ConfigurationType::PerformanceTracking },
   { "MAX_LOG_FILE_SIZE", "max_log_file_size", ConfigurationType::MaxLogFileSize },
   { "LOG_FLUSH_THRESHOLD", "log_flush_threshold", ConfigurationType::LogFlushThreshold },
