@@ -224,7 +224,7 @@ Following table contains configurations supported by configuration file.
 | `To_Standard_Output`    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                           |
 | `Format`                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                  |
 | `Filename`              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                       |
-| `Milliseconds_Width`    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                             |
+| `Subsecond_Precision`   |   uint   | Specifies subsecond precision (previously called 'milliseconds width'). Width can be within range (1-6)                                                                   |
 | `Performance_Tracking`  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified|
 | `Max_Log_File_Size`     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                 |
 | `Log_Flush_Threshold`   |  size_t  | Specifies number of log entries to hold until we flush pending log data                                                                                                   |
@@ -240,7 +240,7 @@ Sample Configuration File
    ENABLED              =  true
    TO_FILE              =  true
    TO_STANDARD_OUTPUT   =  true
-   MILLISECONDS_WIDTH   =  6
+   SUBSECOND_PRECISION  =  6
    PERFORMANCE_TRACKING =  true
    MAX_LOG_FILE_SIZE    =  2097152 ## 2MB - Comment starts with two hashes (##)
    LOG_FLUSH_THRESHOLD  =  100 ## Flush after every 100 logs
@@ -399,7 +399,7 @@ You can customize date/time format using following specifiers
 | `%H`            | Hour (24-hour format)                                                                                            |
 | `%m`            | Minute (zero-padded)                                                                                             |
 | `%s`            | Second (zero-padded)                                                                                             |
-| `%g`            | Milliseconds (width is configured by ConfigurationType::MillisecondsWidth)                                       |
+| `%g`            | Subsecond part (precision is configured by ConfigurationType::MillisecondsWidth)                                 |
 | `%F`            | AM/PM designation                                                                                                |
 | `%`             | Escape character                                                                                                 |
 
