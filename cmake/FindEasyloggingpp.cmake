@@ -9,6 +9,9 @@
 # $EASYLOGGINGPP_ROOT is an environment variable that
 # would correspond to the installation path.
 #
+# http://easylogging.muflihun.com
+# http://muflihun.com
+#
 
 set(EASYLOGGINGPP_PATHS	${EASYLOGGINGPP_ROOT} $ENV{EASYLOGGINGPP_ROOT})	
 

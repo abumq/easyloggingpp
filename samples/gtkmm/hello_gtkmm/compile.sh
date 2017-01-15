@@ -2,7 +2,7 @@
 
 macro="$macro -DELPP_THREAD_SAFE"
 macro="$macro -DELPP_STL_LOGGING"
-macro="$macro -DELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_FEATURE_CRASH_LOG"
 
 if [ "$1" = "" ];then
   COMPILER=g++

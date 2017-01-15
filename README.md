@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.89**
+> **Manual For v9.90**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,9 +11,9 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.89)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.90)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.89/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.90/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
@@ -93,8 +93,8 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header only, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.89. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+This manual is for Easylogging++ v9.90. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -135,7 +135,7 @@ For other releases, please visit [releases page](https://github.com/easylogging/
 ### Quick Start
 In order to get started with Easylogging++, you can follow three easy steps:
 * Download latest version
-* Include into your project
+* Include into your project (`easylogging++.h` and `easylogging++.cc`)
 * Initialize using single macro... and off you go!
 
 ```c++
@@ -149,6 +149,12 @@ int main(int argc, char* argv[]) {
 }
 ```
 
+Now compile using
+
+```
+g++ main.cc easylogging++.cc -o prog -std=c++11
+```
+
 That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
 
 ### Install (Optional)
@@ -160,6 +166,8 @@ cmake ../
 make
 make install
 ```
+
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -216,7 +224,7 @@ Following table contains configurations supported by configuration file.
 | `To_Standard_Output`    |   bool   | Whether or not to write logs to standard output e.g, terminal or command prompt                                                                                           |
 | `Format`                |   char*  | Determines format/pattern of logging for corresponding level and logger.                                                                                                  |
 | `Filename`              |   char*  | Determines log file (full path) to write logs to for corresponding level and logger                                                                                       |
-| `Milliseconds_Width`    |   uint   | Specifies milliseconds width. Width can be within range (1-6)                                                                                                             |
+| `Subsecond_Precision`   |   uint   | Specifies subsecond precision (previously called 'milliseconds width'). Width can be within range (1-6)                                                                   |
 | `Performance_Tracking`  |   bool   | Determines whether or not performance tracking is enabled. This does not depend on logger or level. Performance tracking always uses 'performance' logger unless specified|
 | `Max_Log_File_Size`     |   size_t | If log file size of corresponding level is >= specified size, log file will be truncated.                                                                                 |
 | `Log_Flush_Threshold`   |  size_t  | Specifies number of log entries to hold until we flush pending log data                                                                                                   |
@@ -232,7 +240,7 @@ Sample Configuration File
    ENABLED              =  true
    TO_FILE              =  true
    TO_STANDARD_OUTPUT   =  true
-   MILLISECONDS_WIDTH   =  6
+   SUBSECOND_PRECISION  =  6
    PERFORMANCE_TRACKING =  true
    MAX_LOG_FILE_SIZE    =  2097152 ## 2MB - Comment starts with two hashes (##)
    LOG_FLUSH_THRESHOLD  =  100 ## Flush after every 100 logs
@@ -391,7 +399,7 @@ You can customize date/time format using following specifiers
 | `%H`            | Hour (24-hour format)                                                                                            |
 | `%m`            | Minute (zero-padded)                                                                                             |
 | `%s`            | Second (zero-padded)                                                                                             |
-| `%g`            | Milliseconds (width is configured by ConfigurationType::MillisecondsWidth)                                       |
+| `%g`            | Subsecond part (precision is configured by ConfigurationType::MillisecondsWidth)                                 |
 | `%F`            | AM/PM designation                                                                                                |
 | `%`             | Escape character                                                                                                 |
 
@@ -424,6 +432,8 @@ You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Lo
 
  > You can set these flags by using `--logging-flags` command line arg. You need to enable this functionality by defining macro `ELPP_LOGGING_FLAGS_FROM_ARG` (You will need to make sure to use `START_EASYLOGGINGPP(argc, argv)` to configure arguments).
 
+ > You can also set default (initial) flags using `ELPP_DEFAULT_LOGGING_FLAGS` and set numerical value for initial flags
+
  [![top] Goto Top](#table-of-contents)
 
 ### Application Arguments
@@ -451,7 +461,7 @@ NOTE: All the macros either need to be defined before `#include "easylogging++"`
 | `ELPP_UNICODE`                          | Enables Unicode support when logging. Requires `START_EASYLOGGINGPP`                 |
 | `ELPP_THREAD_SAFE`                      | Enables thread-safety - make sure -lpthread linking for linux.                                                                                     |
 | `ELPP_FORCE_USE_STD_THREAD`             | Forces to use C++ standard library for threading (Only useful when using `ELPP_THREAD_SAFE`            |
-| `ELPP_STACKTRACE_ON_CRASH`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
+| `ELPP_FEATURE_CRASH_LOG`              | Applicable to GCC only. Enables stacktrace on application crash                                                                                    |
 | `ELPP_DISABLE_DEFAULT_CRASH_HANDLING`   | Disables default crash handling. You can use el::Helpers::setCrashHandler to use your own handler.                                                 |
 | `ELPP_DISABLE_LOGS`                     | Disables all logs - (preprocessing)                                                                                                                |
 | `ELPP_DISABLE_DEBUG_LOGS`               | Disables debug logs - (preprocessing)                                                                                                              |
@@ -719,8 +729,6 @@ Let's say we have an application that uses easylogging++ and has it's own config
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `SHARE_EASYLOGGINGPP(access-function-to-repository)`
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
  
-  Refer [this](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/shared-storage) for details
-
 After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs. A very good example is in `samples/VC++/DLLSample`
 
  [![top] Goto Top](#table-of-contents)
@@ -898,7 +906,7 @@ Following signals are handled;
 * SIGSEGV
 * SIGINT
 
-Stacktraces are not printed by default, in order to do so define macro `ELPP_STACKTRACE_ON_CRASH`. Remember, stack trace is only available for GCC compiler.
+Stacktraces are not printed by default, in order to do so define macro `ELPP_FEATURE_CRASH_LOG`. Remember, stack trace is only available for GCC compiler.
 
 > Default handler and stack trace uses `default` logger.
 

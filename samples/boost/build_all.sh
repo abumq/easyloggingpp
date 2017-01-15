@@ -4,7 +4,7 @@
 [ -d "bin" ] || mkdir "bin"
 rm -rf bin/*
 
-find -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $1 \;
+find . -maxdepth 1 -type f -name '*.cpp' -exec sh compile.sh {} $1 \;
 echo "Completed!"
 
 files=$(ls -l bin/)
