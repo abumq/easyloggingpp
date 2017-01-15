@@ -74,7 +74,7 @@ static struct StringToLevelItem stringToLevelMap[] = {
   { "verbose", Level::Verbose },
   { "trace", Level::Trace }
 };
-  
+
 Level LevelHelper::convertFromString(const char* levelStr) {
   for (auto& item : stringToLevelMap) {
     if (base::utils::Str::cStringCaseEq(levelStr, item.levelString)) {
@@ -876,19 +876,19 @@ bool Str::cStringEq(const char* s1, const char* s2) {
 bool Str::cStringCaseEq(const char* s1, const char* s2) {
   if (s1 == nullptr && s2 == nullptr) return true;
   if (s1 == nullptr || s2 == nullptr) return false;
-  
+
   // With thanks to cygwin for this code
   int d = 0;
-  
+
   while (true) {
     const int c1 = toupper(*s1++);
     const int c2 = toupper(*s2++);
-    
+
     if (((d = c1 - c2) != 0) || (c2 == '\0')) {
       break;
     }
   }
-  
+
   return d == 0;
 }
 
@@ -1490,47 +1490,47 @@ void LogFormat::updateFormatSpec(void) {
   // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
   if (m_level == Level::Debug) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kDebugLevelLogValue);
+        base::consts::kDebugLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kDebugLevelShortLogValue);
+        base::consts::kDebugLevelShortLogValue);
   } else if (m_level == Level::Info) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kInfoLevelLogValue);
+        base::consts::kInfoLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kInfoLevelShortLogValue);
+        base::consts::kInfoLevelShortLogValue);
   } else if (m_level == Level::Warning) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kWarningLevelLogValue);
+        base::consts::kWarningLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kWarningLevelShortLogValue);
+        base::consts::kWarningLevelShortLogValue);
   } else if (m_level == Level::Error) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kErrorLevelLogValue);
+        base::consts::kErrorLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kErrorLevelShortLogValue);
+        base::consts::kErrorLevelShortLogValue);
   } else if (m_level == Level::Fatal) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kFatalLevelLogValue);
+        base::consts::kFatalLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kFatalLevelShortLogValue);
+        base::consts::kFatalLevelShortLogValue);
   } else if (m_level == Level::Verbose) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kVerboseLevelLogValue);
+        base::consts::kVerboseLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kVerboseLevelShortLogValue);
+        base::consts::kVerboseLevelShortLogValue);
   } else if (m_level == Level::Trace) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
-    base::consts::kTraceLevelLogValue);
+        base::consts::kTraceLevelLogValue);
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelShortFormatSpecifier,
-    base::consts::kTraceLevelShortLogValue);
+        base::consts::kTraceLevelShortLogValue);
   }
   if (hasFlag(base::FormatFlags::User)) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentUserFormatSpecifier,
-    m_currentUser);
+        m_currentUser);
   }
   if (hasFlag(base::FormatFlags::Host)) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kCurrentHostFormatSpecifier,
-    m_currentHost);
+        m_currentHost);
   }
   // Ignore Level::Global and Level::Unknown
 }
@@ -2988,11 +2988,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.89");
+  return std::string("9.90");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("31-12-2016 1531hrs");
+  return std::string("16-01-2017 0614hrs");
 }
 
 } // namespace el

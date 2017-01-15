@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.89**
+> **Manual For v9.90**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,9 +11,9 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.89)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.90)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.89/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.90/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
@@ -94,7 +94,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.89. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.90. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -167,7 +167,7 @@ make
 make install
 ```
 
-With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.90](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
  
