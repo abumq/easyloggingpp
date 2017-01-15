@@ -312,6 +312,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #else
 #  define ELPP_VERBOSE_LOG 0
 #endif  // (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
+#if (!(ELPP_CXX0X || ELPP_CXX11))
+#   error "C++0x (or higher) support not detected! (Is `-std=c++11' missing?)"
+#endif  // (!(ELPP_CXX0X || ELPP_CXX11))
 // Headers
 #if defined(ELPP_SYSLOG)
 #   include <syslog.h>
