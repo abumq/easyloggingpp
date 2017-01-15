@@ -5,7 +5,7 @@ Release type: Major
 API changes: Yes
 Breaking Change: Yes
 
-This is a major release. We have seperated header file in to `easylogging++.h` and `easylogging++.cc`. Source file (`easylogging++.cc`) encompass source to speed up compile time. . Thanks to @aparajita.
+This is a major release. We have separated header file in to `easylogging++.h` and `easylogging++.cc`. Source file (`easylogging++.cc`) encompass source to speed up compile time. Thanks to @aparajita.
 
 ==========================
 =         FIXES          =
@@ -21,7 +21,7 @@ This is a major release. We have seperated header file in to `easylogging++.h` a
    now receives `const LogMessage&` as an argument. This allows you to access message-specific context
    (such as the verbose level) within your custom formatting function. For an example, see
    samples/STL/custom-format-spec.cpp.
- - Seperated header and source file (`easylogging++.h` and `easylogging++.cc`) (issue #445)
+ - Separated header and source file (`easylogging++.h` and `easylogging++.cc`) (issue #445)
  - New `ELPP_DEFAULT_LOGGING_FLAGS` macro for setting initial logging flags
  - C++11 detection is improved, and Clang uses `std::thread` by default if it is available
 
