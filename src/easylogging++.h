@@ -16,6 +16,9 @@
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
+#if __cplusplus >= 201103L
+#  define ELPP_CXX11 1
+#endif  // __cplusplus >= 201103L
 #if (defined(__GNUC__))
 #  define ELPP_COMPILER_GCC 1
 #else
@@ -27,8 +30,6 @@
 + __GNUC_PATCHLEVEL__)
 #  if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ELPP_CXX0X 1
-#  elif(ELPP_GCC_VERSION >= 40801)
-#    define ELPP_CXX11 1
 #  endif
 #endif
 // Visual C++
@@ -52,12 +53,9 @@
 #  define ELPP_COMPILER_CLANG 0
 #endif
 #if ELPP_COMPILER_CLANG
-#  define ELPP_CLANG_VERSION (__clang_major__ * 10000 \
-+ __clang_minor__ * 100 \
-+ __clang_patchlevel__)
-#  if (ELPP_CLANG_VERSION >= 30300)
-#    define ELPP_CXX11 1
-#  endif  // (ELPP_CLANG_VERSION >= 30300)
+#  if __has_include(<thread>)
+#    define ELPP_CLANG_HAS_THREAD
+#  endif  // __has_include(<thread>)
 #endif
 #if (defined(__MINGW32__) || defined(__MINGW64__))
 #  define ELPP_MINGW 1
@@ -233,7 +231,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#if ((!ELPP_MINGW && !ELPP_COMPILER_CLANG) || defined(ELPP_FORCE_USE_STD_THREAD))
+#if ((!ELPP_MINGW && \
+      !(ELPP_COMPILER_CLANG && !defined(ELPP_CLANG_HAS_THREAD))) || \
+     defined(ELPP_FORCE_USE_STD_THREAD))
 #  define ELPP_USE_STD_THREADING 1
 #else
 #  define ELPP_USE_STD_THREADING 0
@@ -312,6 +312,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #else
 #  define ELPP_VERBOSE_LOG 0
 #endif  // (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
+#if (!(ELPP_CXX0X || ELPP_CXX11))
+#   error "C++0x (or higher) support not detected! (Is `-std=c++11' missing?)"
+#endif  // (!(ELPP_CXX0X || ELPP_CXX11))
 // Headers
 #if defined(ELPP_SYSLOG)
 #   include <syslog.h>
