@@ -13,7 +13,7 @@
   
   [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.90)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/v9.90/samples)
+  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/9.90/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
