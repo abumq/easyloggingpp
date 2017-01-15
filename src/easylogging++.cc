@@ -59,23 +59,28 @@ const char* LevelHelper::convertToString(Level level) {
   return "UNKNOWN";
 }
 
+struct StringToLevelItem {
+  const char* levelString;
+  Level level;
+};
+
+static struct StringToLevelItem stringToLevelMap[] = {
+  { "global", Level::Global },
+  { "debug", Level::Debug },
+  { "info", Level::Info },
+  { "warning", Level::Warning },
+  { "error", Level::Error },
+  { "fatal", Level::Fatal },
+  { "verbose", Level::Verbose },
+  { "trace", Level::Trace }
+};
+  
 Level LevelHelper::convertFromString(const char* levelStr) {
-  if ((strcmp(levelStr, "GLOBAL") == 0) || (strcmp(levelStr, "global") == 0))
-    return Level::Global;
-  if ((strcmp(levelStr, "DEBUG") == 0) || (strcmp(levelStr, "debug") == 0))
-    return Level::Debug;
-  if ((strcmp(levelStr, "INFO") == 0) || (strcmp(levelStr, "info") == 0))
-    return Level::Info;
-  if ((strcmp(levelStr, "WARNING") == 0) || (strcmp(levelStr, "warning") == 0))
-    return Level::Warning;
-  if ((strcmp(levelStr, "ERROR") == 0) || (strcmp(levelStr, "error") == 0))
-    return Level::Error;
-  if ((strcmp(levelStr, "FATAL") == 0) || (strcmp(levelStr, "fatal") == 0))
-    return Level::Fatal;
-  if ((strcmp(levelStr, "VERBOSE") == 0) || (strcmp(levelStr, "verbose") == 0))
-    return Level::Verbose;
-  if ((strcmp(levelStr, "TRACE") == 0) || (strcmp(levelStr, "trace") == 0))
-    return Level::Trace;
+  for (auto& item : stringToLevelMap) {
+    if (base::utils::Str::cStringCaseEq(levelStr, item.levelString)) {
+      return item.level;
+    }
+  }
   return Level::Unknown;
 }
 
@@ -105,26 +110,27 @@ const char* ConfigurationTypeHelper::convertToString(ConfigurationType configura
   return "UNKNOWN";
 }
 
-static struct ConfigurationStringToType {
-  const char* upperCaseStr;
-  const char* lowerCaseStr;
+struct ConfigurationStringToTypeItem {
+  const char* configString;
   ConfigurationType configType;
-} configStringToType[] = {
-  { "ENABLED", "enabled", ConfigurationType::Enabled },
-  { "TO_FILE", "to_file", ConfigurationType::ToFile },
-  { "TO_STANDARD_OUTPUT", "to_standard_output", ConfigurationType::ToStandardOutput },
-  { "FORMAT", "format", ConfigurationType::Format },
-  { "FILENAME", "filename", ConfigurationType::Filename },
-  { "MILLISECONDS_WIDTH", "milliseconds_width", ConfigurationType::MillisecondsWidth },
-  { "SUBSECOND_PRECISION", "subsecond_precision", ConfigurationType::MillisecondsWidth },
-  { "PERFORMANCE_TRACKING", "performance_tracking", ConfigurationType::PerformanceTracking },
-  { "MAX_LOG_FILE_SIZE", "max_log_file_size", ConfigurationType::MaxLogFileSize },
-  { "LOG_FLUSH_THRESHOLD", "log_flush_threshold", ConfigurationType::LogFlushThreshold },
+};
+
+static struct ConfigurationStringToTypeItem configStringToTypeMap[] = {
+  { "enabled", ConfigurationType::Enabled },
+  { "to_file", ConfigurationType::ToFile },
+  { "to_standard_output", ConfigurationType::ToStandardOutput },
+  { "format", ConfigurationType::Format },
+  { "filename", ConfigurationType::Filename },
+  { "milliseconds_width", ConfigurationType::MillisecondsWidth },
+  { "subsecond_precision", ConfigurationType::MillisecondsWidth },
+  { "performance_tracking", ConfigurationType::PerformanceTracking },
+  { "max_log_file_size", ConfigurationType::MaxLogFileSize },
+  { "log_flush_threshold", ConfigurationType::LogFlushThreshold },
 };
 
 ConfigurationType ConfigurationTypeHelper::convertFromString(const char* configStr) {
-  for (auto& item : configStringToType) {
-    if ((strcmp(configStr, item.upperCaseStr) == 0) || (strcmp(configStr, item.lowerCaseStr) == 0)) {
+  for (auto& item : configStringToTypeMap) {
+    if (base::utils::Str::cStringCaseEq(configStr, item.configString)) {
       return item.configType;
     }
   }
@@ -870,13 +876,20 @@ bool Str::cStringEq(const char* s1, const char* s2) {
 bool Str::cStringCaseEq(const char* s1, const char* s2) {
   if (s1 == nullptr && s2 == nullptr) return true;
   if (s1 == nullptr || s2 == nullptr) return false;
-  if (strlen(s1) != strlen(s2)) return false;
-  while (*s1 != '\0' && *s2 != '\0') {
-    if (::toupper(*s1) != ::toupper(*s2)) return false;
-    ++s1;
-    ++s2;
+  
+  // With thanks to cygwin for this code
+  int d = 0;
+  
+  while (true) {
+    const int c1 = toupper(*s1++);
+    const int c2 = toupper(*s2++);
+    
+    if (((d = c1 - c2) != 0) || (c2 == '\0')) {
+      break;
+    }
   }
-  return true;
+  
+  return d == 0;
 }
 
 bool Str::contains(const char* str, char c) {
