@@ -23,6 +23,7 @@ This is a major release. We have seperated header file in to `easylogging++.h` a
    samples/STL/custom-format-spec.cpp.
  - Seperated header and source file (`easylogging++.h` and `easylogging++.cc`) (issue #445)
  - New `ELPP_DEFAULT_LOGGING_FLAGS` macro for setting initial logging flags
+ - C++11 detection is improved, and Clang uses `std::thread` by default if it is available
 
 ==========================
 =         NOTES          =
