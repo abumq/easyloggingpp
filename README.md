@@ -167,7 +167,7 @@ make
 make install
 ```
 
-With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.90](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
  
