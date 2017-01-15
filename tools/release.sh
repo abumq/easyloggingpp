@@ -22,7 +22,7 @@ else
 fi
 
 CURR_VERSION=$3
-CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.h)
+CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.cc)
 NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
 NEW_VERSION=$4
 DO_NOT_CONFIRM=$5
@@ -43,7 +43,7 @@ fi
 
 if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
-  sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
+  sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.cc
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
   sed -i '' -e "s/return std::string(\"$CURR_VERSION\");/return std\:\:string(\"$NEW_VERSION\");/g" $1/src/easylogging++.cc
   sed -i '' -e "s/return std::string(\"$CURR_RELEASE_DATE\");/return std\:\:string(\"$NEW_RELEASE_DATE\");/g" $1/src/easylogging++.cc
