@@ -779,7 +779,7 @@ const struct {
   double value;
   const base::type::char_t* unit;
 } kTimeFormats[] = {
-  { 1000.0f, ELPP_LITERAL("mis") },
+  { 1000.0f, ELPP_LITERAL("us") },
   { 1000.0f, ELPP_LITERAL("ms") },
   { 60.0f, ELPP_LITERAL("seconds") },
   { 60.0f, ELPP_LITERAL("minutes") },
