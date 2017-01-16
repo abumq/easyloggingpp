@@ -598,8 +598,10 @@ enum class ConfigurationType : base::type::EnumType {
   Format = 8,
   /// @brief Determines log file (full path) to write logs to for correponding level and logger
   Filename = 16,
-  /// @brief Specifies milliseconds width. Width can be within range (1-6)
-  MillisecondsWidth = 32,
+  /// @brief Specifies precision of the subsecond part. It should be within range (1-6).
+  SubsecondPrecision = 32,
+  /// @brief Alias of SubsecondPrecision (for backward compatibility)
+  MillisecondsWidth = SubsecondPrecision,
   /// @brief Determines whether or not performance tracking is enabled.
   ///
   /// @detail This does not depend on logger or level. Performance tracking always uses 'performance' logger
@@ -846,6 +848,8 @@ class MillisecondsWidth {
  private:
   void init(int width);
 };
+/// @brief Type alias of MillisecondsWidth
+typedef MillisecondsWidth SubsecondPrecision;
 /// @brief Namespace containing utility functions/static classes used internally
 namespace utils {
 /// @brief Deletes memory safely and points to null
@@ -1748,7 +1752,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
   /// @brief Sets value of configuration for specified level.
   ///
   /// @detail Any existing configuration for specified level will be replaced. Also note that configuration types
-  /// ConfigurationType::MillisecondsWidth and ConfigurationType::PerformanceTracking will be ignored if not set for
+  /// ConfigurationType::SubsecondPrecision and ConfigurationType::PerformanceTracking will be ignored if not set for
   /// Level::Global because these configurations are not dependant on level.
   /// @param level Level to set configuration for (el::Level).
   /// @param configurationType Type of configuration (el::ConfigurationType)

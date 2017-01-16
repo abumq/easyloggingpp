@@ -39,25 +39,25 @@ TEST(LogFormatResolutionTest, DefaultFormat) {
 
 TEST(LogFormatResolutionTest, EscapedFormat) {
 
-    MillisecondsWidth msWidth(3);
+    SubsecondPrecision ssPrec(3);
 
     LogFormat escapeTest(Level::Info, ELPP_LITERAL("%logger %datetime{%%H %H} %thread"));
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime{%%H %H} %thread"), escapeTest.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%logger %datetime %thread"), escapeTest.format());
     EXPECT_EQ("%%H %H", escapeTest.dateTimeFormat());
-    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &ssPrec), "%H"));
 
     LogFormat escapeTest2(Level::Info, ELPP_LITERAL("%%logger %%datetime{%%H %H %%H} %%thread %thread %%thread"));
     EXPECT_EQ(ELPP_LITERAL("%%logger %%datetime{%%H %H %%H} %%thread %thread %%thread"), escapeTest2.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%%logger %%datetime{%%H %H %%H} %%thread %thread %thread"), escapeTest2.format());
     EXPECT_EQ("", escapeTest2.dateTimeFormat()); // Date/time escaped
-    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &ssPrec), "%H"));
 
     LogFormat escapeTest3(Level::Info, ELPP_LITERAL("%%logger %datetime{%%H %H %%H} %%thread %thread %%thread"));
     EXPECT_EQ(ELPP_LITERAL("%%logger %datetime{%%H %H %%H} %%thread %thread %%thread"), escapeTest3.userFormat());
     EXPECT_EQ(ELPP_LITERAL("%%logger %datetime %%thread %thread %thread"), escapeTest3.format());
     EXPECT_EQ("%%H %H %%H", escapeTest3.dateTimeFormat()); // Date/time escaped
-    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &msWidth), "%H"));
+    EXPECT_TRUE(Str::startsWith(DateTime::getDateTime(escapeTest.dateTimeFormat().c_str(), &ssPrec), "%H"));
 }
 
 #endif // LOG_FORMAT_RESOLUTION_TEST_H

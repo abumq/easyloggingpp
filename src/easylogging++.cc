@@ -103,7 +103,7 @@ const char* ConfigurationTypeHelper::convertToString(ConfigurationType configura
   if (configurationType == ConfigurationType::Format) return "FORMAT";
   if (configurationType == ConfigurationType::ToFile) return "TO_FILE";
   if (configurationType == ConfigurationType::ToStandardOutput) return "TO_STANDARD_OUTPUT";
-  if (configurationType == ConfigurationType::MillisecondsWidth) return "MILLISECONDS_WIDTH";
+  if (configurationType == ConfigurationType::SubsecondPrecision) return "SUBSECOND_PRECISION";
   if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
   if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
   if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
@@ -121,8 +121,8 @@ static struct ConfigurationStringToTypeItem configStringToTypeMap[] = {
   { "to_standard_output", ConfigurationType::ToStandardOutput },
   { "format", ConfigurationType::Format },
   { "filename", ConfigurationType::Filename },
+  { "subsecond_precision", ConfigurationType::SubsecondPrecision },
   { "milliseconds_width", ConfigurationType::MillisecondsWidth },
-  { "subsecond_precision", ConfigurationType::MillisecondsWidth },
   { "performance_tracking", ConfigurationType::PerformanceTracking },
   { "max_log_file_size", ConfigurationType::MaxLogFileSize },
   { "log_flush_threshold", ConfigurationType::LogFlushThreshold },
@@ -287,7 +287,7 @@ void Configurations::setToDefault(void) {
   setGlobally(ConfigurationType::ToFile, std::string("true"), true);
 #endif // defined(ELPP_NO_LOG_TO_FILE)
   setGlobally(ConfigurationType::ToStandardOutput, std::string("true"), true);
-  setGlobally(ConfigurationType::MillisecondsWidth, std::string("3"), true);
+  setGlobally(ConfigurationType::SubsecondPrecision, std::string("3"), true);
   setGlobally(ConfigurationType::PerformanceTracking, std::string("true"), true);
   setGlobally(ConfigurationType::MaxLogFileSize, std::string("0"), true);
   setGlobally(ConfigurationType::LogFlushThreshold, std::string("0"), true);
@@ -313,7 +313,7 @@ void Configurations::setRemainingToDefault(void) {
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
-  unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, std::string("3"));
+  unsafeSetIfNotExist(Level::Global, ConfigurationType::SubsecondPrecision, std::string("3"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::MaxLogFileSize, std::string("0"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Format, std::string("%datetime %level [%logger] %msg"));
@@ -1615,7 +1615,7 @@ void TypedConfigurations::build(Configurations* configurations) {
     } else if (conf->configurationType() == ConfigurationType::Format) {
       setValue(conf->level(), base::LogFormat(conf->level(),
                                               base::type::string_t(conf->value().begin(), conf->value().end())), &m_logFormatMap);
-    } else if (conf->configurationType() == ConfigurationType::MillisecondsWidth) {
+    } else if (conf->configurationType() == ConfigurationType::SubsecondPrecision) {
       setValue(Level::Global,
                base::MillisecondsWidth(static_cast<int>(getULong(conf->value()))), &m_millisecondsWidthMap);
     } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
