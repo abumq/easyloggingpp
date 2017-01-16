@@ -1128,7 +1128,7 @@ unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, co
     return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
                                            static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
   } else {
-    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000000) +
+    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000) +
                                             (endTime.tv_usec - startTime.tv_usec)) / 1000);
   }
 }
