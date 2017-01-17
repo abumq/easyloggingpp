@@ -399,7 +399,7 @@ You can customize date/time format using following specifiers
 | `%H`            | Hour (24-hour format)                                                                                            |
 | `%m`            | Minute (zero-padded)                                                                                             |
 | `%s`            | Second (zero-padded)                                                                                             |
-| `%g`            | Subsecond part (precision is configured by ConfigurationType::MillisecondsWidth)                                 |
+| `%g`            | Subsecond part (precision is configured by ConfigurationType::SubsecondPrecision)                               |
 | `%F`            | AM/PM designation                                                                                                |
 | `%`             | Escape character                                                                                                 |
 

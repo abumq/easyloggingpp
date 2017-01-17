@@ -65,8 +65,8 @@ static std::string tail(unsigned int n, const char* filename = logfile) {
 }
 
 static std::string getDate(const char* format = "%a %b %d, %H:%m") {
-    MillisecondsWidth msWidth(3);
-    return DateTime::getDateTime(format, &msWidth);
+    SubsecondPrecision ssPrec(3);
+    return DateTime::getDateTime(format, &ssPrec);
 }
 
 static bool fileExists(const char* filename) {

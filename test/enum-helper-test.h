@@ -31,7 +31,7 @@ TEST(ConfigurationTypeTest, ConvertFromString) {
     EXPECT_EQ(ConfigurationType::ToStandardOutput, ConfigurationTypeHelper::convertFromString("TO_STANDARD_OUTPUT"));
     EXPECT_EQ(ConfigurationType::Format, ConfigurationTypeHelper::convertFromString("FORMAT"));
     EXPECT_EQ(ConfigurationType::Filename, ConfigurationTypeHelper::convertFromString("FILENAME"));
-    EXPECT_EQ(ConfigurationType::MillisecondsWidth, ConfigurationTypeHelper::convertFromString("MILLISECONDS_WIDTH"));
+    EXPECT_EQ(ConfigurationType::SubsecondPrecision, ConfigurationTypeHelper::convertFromString("SUBSECOND_PRECISION"));
     EXPECT_EQ(ConfigurationType::PerformanceTracking, ConfigurationTypeHelper::convertFromString("PERFORMANCE_TRACKING"));
     EXPECT_EQ(ConfigurationType::MaxLogFileSize, ConfigurationTypeHelper::convertFromString("MAX_LOG_FILE_SIZE"));
     EXPECT_EQ(ConfigurationType::LogFlushThreshold, ConfigurationTypeHelper::convertFromString("LOG_FLUSH_THRESHOLD"));
@@ -43,7 +43,7 @@ TEST(ConfigurationTypeTest, ConvertToString) {
     EXPECT_EQ("TO_STANDARD_OUTPUT", ConfigurationTypeHelper::convertToString(ConfigurationType::ToStandardOutput));
     EXPECT_EQ("FORMAT", ConfigurationTypeHelper::convertToString(ConfigurationType::Format));
     EXPECT_EQ("FILENAME", ConfigurationTypeHelper::convertToString(ConfigurationType::Filename));
-    EXPECT_EQ("MILLISECONDS_WIDTH", ConfigurationTypeHelper::convertToString(ConfigurationType::MillisecondsWidth));
+    EXPECT_EQ("SUBSECOND_PRECISION", ConfigurationTypeHelper::convertToString(ConfigurationType::SubsecondPrecision));
     EXPECT_EQ("PERFORMANCE_TRACKING", ConfigurationTypeHelper::convertToString(ConfigurationType::PerformanceTracking));
     EXPECT_EQ("MAX_LOG_FILE_SIZE", ConfigurationTypeHelper::convertToString(ConfigurationType::MaxLogFileSize));
     EXPECT_EQ("LOG_FLUSH_THRESHOLD", ConfigurationTypeHelper::convertToString(ConfigurationType::LogFlushThreshold));

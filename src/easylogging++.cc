@@ -103,7 +103,7 @@ const char* ConfigurationTypeHelper::convertToString(ConfigurationType configura
   if (configurationType == ConfigurationType::Format) return "FORMAT";
   if (configurationType == ConfigurationType::ToFile) return "TO_FILE";
   if (configurationType == ConfigurationType::ToStandardOutput) return "TO_STANDARD_OUTPUT";
-  if (configurationType == ConfigurationType::MillisecondsWidth) return "MILLISECONDS_WIDTH";
+  if (configurationType == ConfigurationType::SubsecondPrecision) return "SUBSECOND_PRECISION";
   if (configurationType == ConfigurationType::PerformanceTracking) return "PERFORMANCE_TRACKING";
   if (configurationType == ConfigurationType::MaxLogFileSize) return "MAX_LOG_FILE_SIZE";
   if (configurationType == ConfigurationType::LogFlushThreshold) return "LOG_FLUSH_THRESHOLD";
@@ -121,8 +121,8 @@ static struct ConfigurationStringToTypeItem configStringToTypeMap[] = {
   { "to_standard_output", ConfigurationType::ToStandardOutput },
   { "format", ConfigurationType::Format },
   { "filename", ConfigurationType::Filename },
+  { "subsecond_precision", ConfigurationType::SubsecondPrecision },
   { "milliseconds_width", ConfigurationType::MillisecondsWidth },
-  { "subsecond_precision", ConfigurationType::MillisecondsWidth },
   { "performance_tracking", ConfigurationType::PerformanceTracking },
   { "max_log_file_size", ConfigurationType::MaxLogFileSize },
   { "log_flush_threshold", ConfigurationType::LogFlushThreshold },
@@ -287,7 +287,7 @@ void Configurations::setToDefault(void) {
   setGlobally(ConfigurationType::ToFile, std::string("true"), true);
 #endif // defined(ELPP_NO_LOG_TO_FILE)
   setGlobally(ConfigurationType::ToStandardOutput, std::string("true"), true);
-  setGlobally(ConfigurationType::MillisecondsWidth, std::string("3"), true);
+  setGlobally(ConfigurationType::SubsecondPrecision, std::string("3"), true);
   setGlobally(ConfigurationType::PerformanceTracking, std::string("true"), true);
   setGlobally(ConfigurationType::MaxLogFileSize, std::string("0"), true);
   setGlobally(ConfigurationType::LogFlushThreshold, std::string("0"), true);
@@ -313,7 +313,7 @@ void Configurations::setRemainingToDefault(void) {
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
 #endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
-  unsafeSetIfNotExist(Level::Global, ConfigurationType::MillisecondsWidth, std::string("3"));
+  unsafeSetIfNotExist(Level::Global, ConfigurationType::SubsecondPrecision, std::string("3"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::MaxLogFileSize, std::string("0"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Format, std::string("%datetime %level [%logger] %msg"));
@@ -1089,20 +1089,20 @@ void DateTime::gettimeofday(struct timeval* tv) {
 #endif  // ELPP_OS_WINDOWS
 }
 
-std::string DateTime::getDateTime(const char* format, const base::MillisecondsWidth* msWidth) {
+std::string DateTime::getDateTime(const char* format, const base::SubsecondPrecision* ssPrec) {
   struct timeval currTime;
   gettimeofday(&currTime);
-  return timevalToString(currTime, format, msWidth);
+  return timevalToString(currTime, format, ssPrec);
 }
 
 std::string DateTime::timevalToString(struct timeval tval, const char* format,
-                                      const el::base::MillisecondsWidth* msWidth) {
+                                      const el::base::SubsecondPrecision* ssPrec) {
   struct ::tm timeInfo;
   buildTimeInfo(&tval, &timeInfo);
   const int kBuffSize = 30;
   char buff_[kBuffSize] = "";
-  parseFormat(buff_, kBuffSize, format, &timeInfo, static_cast<std::size_t>(tval.tv_usec / msWidth->m_offset),
-              msWidth);
+  parseFormat(buff_, kBuffSize, format, &timeInfo, static_cast<std::size_t>(tval.tv_usec / ssPrec->m_offset),
+              ssPrec);
   return std::string(buff_);
 }
 
@@ -1128,7 +1128,7 @@ unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, co
     return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
                                            static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
   } else {
-    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000000) +
+    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000) +
                                             (endTime.tv_usec - startTime.tv_usec)) / 1000);
   }
 }
@@ -1156,7 +1156,7 @@ struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* time
 }
 
 char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
-                            std::size_t msec, const base::MillisecondsWidth* msWidth) {
+                            std::size_t msec, const base::SubsecondPrecision* ssPrec) {
   const char* bufLim = buf + bufSz;
   for (; *format; ++format) {
     if (*format == base::consts::kFormatSpecifierChar) {
@@ -1202,9 +1202,9 @@ char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, co
       case 's':  // second
         buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_sec, 2, buf, bufLim);
         continue;
-      case 'z':  // milliseconds
+      case 'z':  // subsecond part
       case 'g':
-        buf = base::utils::Str::convertAndAddToBuff(msec, msWidth->m_width, buf, bufLim);
+        buf = base::utils::Str::convertAndAddToBuff(msec, ssPrec->m_width, buf, bufLim);
         continue;
       case 'F':  // AM/PM
         buf = base::utils::Str::addToBuff((tInfo->tm_hour >= 12) ? base::consts::kPm : base::consts::kAm, buf, bufLim);
@@ -1326,11 +1326,11 @@ static inline std::string getCurrentThreadId(void) {
 
 // el::base
 
-// MillisecondsWidth
+// SubsecondPrecision
 
-void MillisecondsWidth::init(int width) {
+void SubsecondPrecision::init(int width) {
   if (width < 1 || width > 6) {
-    width = base::consts::kDefaultMillisecondsWidth;
+    width = base::consts::kDefaultSubsecondPrecision;
   }
   m_width = width;
   switch (m_width) {
@@ -1570,8 +1570,12 @@ const base::LogFormat& TypedConfigurations::logFormat(Level level) {
   return getConfigByRef<base::LogFormat>(level, &m_logFormatMap, "logFormat");
 }
 
+const base::SubsecondPrecision& TypedConfigurations::subsecondPrecision(Level level) {
+  return getConfigByRef<base::SubsecondPrecision>(level, &m_subsecondPrecisionMap, "subsecondPrecision");
+}
+
 const base::MillisecondsWidth& TypedConfigurations::millisecondsWidth(Level level) {
-  return getConfigByRef<base::MillisecondsWidth>(level, &m_millisecondsWidthMap, "millisecondsWidth");
+  return getConfigByRef<base::MillisecondsWidth>(level, &m_subsecondPrecisionMap, "millisecondsWidth");
 }
 
 bool TypedConfigurations::performanceTracking(Level level) {
@@ -1615,9 +1619,9 @@ void TypedConfigurations::build(Configurations* configurations) {
     } else if (conf->configurationType() == ConfigurationType::Format) {
       setValue(conf->level(), base::LogFormat(conf->level(),
                                               base::type::string_t(conf->value().begin(), conf->value().end())), &m_logFormatMap);
-    } else if (conf->configurationType() == ConfigurationType::MillisecondsWidth) {
+    } else if (conf->configurationType() == ConfigurationType::SubsecondPrecision) {
       setValue(Level::Global,
-               base::MillisecondsWidth(static_cast<int>(getULong(conf->value()))), &m_millisecondsWidthMap);
+               base::SubsecondPrecision(static_cast<int>(getULong(conf->value()))), &m_subsecondPrecisionMap);
     } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
       setValue(Level::Global, getBool(conf->value()), &m_performanceTrackingMap);
     } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
@@ -1688,8 +1692,8 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
       } else {
         fmt = std::string(base::consts::kDefaultDateTimeFormatInFilename);
       }
-      base::MillisecondsWidth msWidth(3);
-      std::string now = base::utils::DateTime::getDateTime(fmt.c_str(), &msWidth);
+      base::SubsecondPrecision ssPrec(3);
+      std::string now = base::utils::DateTime::getDateTime(fmt.c_str(), &ssPrec);
       base::utils::Str::replaceAll(now, '/', '-'); // Replace path element since we are dealing with filename
       base::utils::Str::replaceAll(resultingFilename, dateTimeFormatSpecifierStr, now);
     }
@@ -2299,7 +2303,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     // DateTime
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kDateTimeFormatSpecifier,
         base::utils::DateTime::getDateTime(logFormat->dateTimeFormat().c_str(),
-                                           &tc->millisecondsWidth(logMessage->level())));
+                                           &tc->subsecondPrecision(logMessage->level())));
   }
   if (logFormat->hasFlag(base::FormatFlags::Function)) {
     // Function
