@@ -54,8 +54,11 @@
 #endif
 #if ELPP_COMPILER_CLANG
 #  if __has_include(<thread>)
-#    define ELPP_CLANG_HAS_THREAD
-#  endif  // __has_include(<thread>)
+#    include <cstddef> // Make __GLIBCXX__ defined when using libstdc++
+#    if !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
+#      define ELPP_CLANG_SUPPORTS_THREAD
+#    endif // !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
+#  endif // __has_include(<thread>)
 #endif
 #if (defined(__MINGW32__) || defined(__MINGW64__))
 #  define ELPP_MINGW 1
@@ -234,8 +237,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #if (ELPP_MINGW && !defined(ELPP_FORCE_USE_STD_THREAD))
 #  define ELPP_USE_STD_THREADING 0
 #else
-#  if ((ELPP_COMPILER_CLANG && defined(ELPP_CLANG_HAS_THREAD)) || \
-      defined(ELPP_FORCE_USE_STD_THREAD))
+#  if ((ELPP_COMPILER_CLANG && defined(ELPP_CLANG_SUPPORTS_THREAD)) || \
+       (!ELPP_COMPILER_CLANG && defined(ELPP_CXX11)) || \
+       defined(ELPP_FORCE_USE_STD_THREAD))
 #    define ELPP_USE_STD_THREADING 1
 #  else
 #    define ELPP_USE_STD_THREADING 0
