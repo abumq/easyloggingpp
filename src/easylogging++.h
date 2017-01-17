@@ -231,12 +231,15 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#if ((!ELPP_MINGW && \
-      !(ELPP_COMPILER_CLANG && !defined(ELPP_CLANG_HAS_THREAD))) || \
-     defined(ELPP_FORCE_USE_STD_THREAD))
-#  define ELPP_USE_STD_THREADING 1
-#else
+#if (ELPP_MINGW && !defined(ELPP_FORCE_USE_STD_THREAD))
 #  define ELPP_USE_STD_THREADING 0
+#else
+#  if ((ELPP_COMPILER_CLANG && defined(ELPP_CLANG_HAS_THREAD)) || \
+      defined(ELPP_FORCE_USE_STD_THREAD))
+#    define ELPP_USE_STD_THREADING 1
+#  else
+#    define ELPP_USE_STD_THREADING 0
+#  endif
 #endif
 #undef ELPP_FINAL
 #if ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
