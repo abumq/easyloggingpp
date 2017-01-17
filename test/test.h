@@ -5,7 +5,11 @@
 #ifndef TEST_HELPERS_H_
 #define TEST_HELPERS_H_
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundef"
+#pragma GCC diagnostic ignored "-Wsign-compare"
 #include <gtest/gtest.h>
+#pragma GCC diagnostic pop
 
 #include "easylogging++.h"
 
