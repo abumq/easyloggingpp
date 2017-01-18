@@ -1832,9 +1832,7 @@ Logger* RegisteredLoggers::get(const std::string& id, bool forceCreation) {
          : m_loggerRegistrationCallbacks) {
       callback = h.second.get();
       if (callback != nullptr && callback->enabled()) {
-        callback->acquireLock();
         callback->handle(logger_);
-        callback->releaseLock();
       }
     }
   }
@@ -2369,8 +2367,6 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
-  // We minimize the time of ELPP's lock - this lock is released after log is written
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
     tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
@@ -2383,9 +2379,7 @@ void LogDispatcher::dispatch(void) {
     if (callback != nullptr && callback->enabled()) {
       data.setLogMessage(&m_logMessage);
       data.setDispatchAction(m_dispatchAction);
-      callback->acquireLock();
       callback->handle(&data);
-      callback->releaseLock();
     }
   }
 }
@@ -2584,9 +2578,7 @@ PerformanceTracker::~PerformanceTracker(void) {
            : ELPP->m_performanceTrackingCallbacks) {
         callback = h.second.get();
         if (callback != nullptr && callback->enabled()) {
-          callback->acquireLock();
           callback->handle(&data);
-          callback->releaseLock();
         }
       }
     }
@@ -2613,9 +2605,7 @@ void PerformanceTracker::checkpoint(const std::string& id, const char* file, bas
          : ELPP->m_performanceTrackingCallbacks) {
       callback = h.second.get();
       if (callback != nullptr && callback->enabled()) {
-        callback->acquireLock();
         callback->handle(&data);
-        callback->releaseLock();
       }
     }
     base::utils::DateTime::gettimeofday(&m_lastCheckpointTime);
