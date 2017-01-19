@@ -689,6 +689,10 @@ enum class LoggingFlag : base::type::EnumType {
 namespace base {
 /// @brief Namespace containing constants used internally.
 namespace consts {
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 // Level log values - These are values that are replaced in place of %level format specifier
 static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
 static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
@@ -823,6 +827,9 @@ const struct {
   },
 };
 static const int kCrashSignalsCount                          =      sizeof(kCrashSignals) / sizeof(kCrashSignals[0]);
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 }  // namespace consts
 }  // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
