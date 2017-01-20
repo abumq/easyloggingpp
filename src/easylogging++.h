@@ -4480,7 +4480,7 @@ new el::base::AsyncDispatchWorker()))
 #else
 #  define INITIALIZE_EASYLOGGINGPP ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #endif  // ELPP_ASYNC_LOGGING
-#define INITIALIZE_NULL_EASYLOGGINGPP\
+#define INITIALIZE_NULL_EASYLOGGINGPP \
 namespace el {\
 namespace base {\
 el::base::type::StoragePointer elStorage;\
