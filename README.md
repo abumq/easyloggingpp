@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.90**
+> **Manual For v9.91**
 >
 > [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
 
@@ -11,7 +11,7 @@
 
   [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.90)
+  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.91)
  
   [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/9.90/samples)
 
@@ -94,7 +94,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.90. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.91. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -399,7 +399,7 @@ You can customize date/time format using following specifiers
 | `%H`            | Hour (24-hour format)                                                                                            |
 | `%m`            | Minute (zero-padded)                                                                                             |
 | `%s`            | Second (zero-padded)                                                                                             |
-| `%g`            | Subsecond part (precision is configured by ConfigurationType::MillisecondsWidth)                                 |
+| `%g`            | Subsecond part (precision is configured by ConfigurationType::SubsecondPrecision)                               |
 | `%F`            | AM/PM designation                                                                                                |
 | `%`             | Escape character                                                                                                 |
 

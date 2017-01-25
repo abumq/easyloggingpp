@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(Easyloggingpp CXX)
 
 set(ELPP_MAJOR_VERSION "9")
-set(ELPP_MINOR_VERSION "90")
+set(ELPP_MINOR_VERSION "91")
 set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}")
 
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")

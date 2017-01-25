@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.90
+//  Easylogging++ v9.91
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -54,8 +54,11 @@
 #endif
 #if ELPP_COMPILER_CLANG
 #  if __has_include(<thread>)
-#    define ELPP_CLANG_HAS_THREAD
-#  endif  // __has_include(<thread>)
+#    include <cstddef> // Make __GLIBCXX__ defined when using libstdc++
+#    if !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
+#      define ELPP_CLANG_SUPPORTS_THREAD
+#    endif // !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
+#  endif // __has_include(<thread>)
 #endif
 #if (defined(__MINGW32__) || defined(__MINGW64__))
 #  define ELPP_MINGW 1
@@ -231,12 +234,16 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define STRCPY(a, b, len) strcpy(a, b)
 #endif
 // Compiler specific support evaluations
-#if ((!ELPP_MINGW && \
-      !(ELPP_COMPILER_CLANG && !defined(ELPP_CLANG_HAS_THREAD))) || \
-     defined(ELPP_FORCE_USE_STD_THREAD))
-#  define ELPP_USE_STD_THREADING 1
-#else
+#if (ELPP_MINGW && !defined(ELPP_FORCE_USE_STD_THREAD))
 #  define ELPP_USE_STD_THREADING 0
+#else
+#  if ((ELPP_COMPILER_CLANG && defined(ELPP_CLANG_SUPPORTS_THREAD)) || \
+       (!ELPP_COMPILER_CLANG && defined(ELPP_CXX11)) || \
+       defined(ELPP_FORCE_USE_STD_THREAD))
+#    define ELPP_USE_STD_THREADING 1
+#  else
+#    define ELPP_USE_STD_THREADING 0
+#  endif
 #endif
 #undef ELPP_FINAL
 #if ELPP_COMPILER_INTEL || (ELPP_GCC_VERSION < 40702)
@@ -598,8 +605,10 @@ enum class ConfigurationType : base::type::EnumType {
   Format = 8,
   /// @brief Determines log file (full path) to write logs to for correponding level and logger
   Filename = 16,
-  /// @brief Specifies milliseconds width. Width can be within range (1-6)
-  MillisecondsWidth = 32,
+  /// @brief Specifies precision of the subsecond part. It should be within range (1-6).
+  SubsecondPrecision = 32,
+  /// @brief Alias of SubsecondPrecision (for backward compatibility)
+  MillisecondsWidth = SubsecondPrecision,
   /// @brief Determines whether or not performance tracking is enabled.
   ///
   /// @detail This does not depend on logger or level. Performance tracking always uses 'performance' logger
@@ -680,6 +689,10 @@ enum class LoggingFlag : base::type::EnumType {
 namespace base {
 /// @brief Namespace containing constants used internally.
 namespace consts {
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 // Level log values - These are values that are replaced in place of %level format specifier
 static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
 static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
@@ -737,7 +750,7 @@ static const char  kFormatSpecifierCharValue               =      'v';
 #endif  // ELPP_VARIADIC_TEMPLATES_SUPPORTED
 static const unsigned int kMaxLogPerContainer              =      100;
 static const unsigned int kMaxLogPerCounter                =      100000;
-static const unsigned int  kDefaultMillisecondsWidth       =      3;
+static const unsigned int kDefaultSubsecondPrecision       =      3;
 static const base::type::VerboseLevel kMaxVerboseLevel     =      9;
 static const char* kUnknownUser                            =      "user";
 static const char* kUnknownHost                            =      "unknown-host";
@@ -777,7 +790,7 @@ const struct {
   double value;
   const base::type::char_t* unit;
 } kTimeFormats[] = {
-  { 1000.0f, ELPP_LITERAL("mis") },
+  { 1000.0f, ELPP_LITERAL("us") },
   { 1000.0f, ELPP_LITERAL("ms") },
   { 60.0f, ELPP_LITERAL("seconds") },
   { 60.0f, ELPP_LITERAL("minutes") },
@@ -814,6 +827,9 @@ const struct {
   },
 };
 static const int kCrashSignalsCount                          =      sizeof(kCrashSignals) / sizeof(kCrashSignals[0]);
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 }  // namespace consts
 }  // namespace base
 typedef std::function<void(const char*, std::size_t)> PreRollOutCallback;
@@ -829,23 +845,25 @@ enum class FormatFlags : base::type::EnumType {
   User = 1<<7, Host = 1<<8, LogMessage = 1<<9, VerboseLevel = 1<<10, AppName = 1<<11, ThreadId = 1<<12,
   Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15
 };
-/// @brief A milliseconds width class containing actual width and offset for date/time
-class MillisecondsWidth {
+/// @brief A subsecond precision class containing actual width and offset of the subsecond part
+class SubsecondPrecision {
  public:
-  MillisecondsWidth(void) {
-    init(base::consts::kDefaultMillisecondsWidth);
+  SubsecondPrecision(void) {
+    init(base::consts::kDefaultSubsecondPrecision);
   }
-  explicit MillisecondsWidth(int width) {
+  explicit SubsecondPrecision(int width) {
     init(width);
   }
-  bool operator==(const MillisecondsWidth& msWidth) {
-    return m_width == msWidth.m_width && m_offset == msWidth.m_offset;
+  bool operator==(const SubsecondPrecision& ssPrec) {
+    return m_width == ssPrec.m_width && m_offset == ssPrec.m_offset;
   }
   int m_width;
   unsigned int m_offset;
  private:
   void init(int width);
 };
+/// @brief Type alias of SubsecondPrecision
+typedef SubsecondPrecision MillisecondsWidth;
 /// @brief Namespace containing utility functions/static classes used internally
 namespace utils {
 /// @brief Deletes memory safely and points to null
@@ -1147,21 +1165,21 @@ class OS : base::StaticClass {
 /// @brief Contains utilities for cross-platform date/time. This class make use of el::base::utils::Str
 class DateTime : base::StaticClass {
  public:
-  /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current millisecond.
+  /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current microsecond.
   ///
   /// @detail For unix system it uses gettimeofday(timeval*, timezone*) and for Windows, a seperate implementation is provided
   /// @param [in,out] tv Pointer that gets updated
   static void gettimeofday(struct timeval* tv);
 
-  /// @brief Gets current date and time with milliseconds.
+  /// @brief Gets current date and time with a subsecond part.
   /// @param format User provided date/time format
-  /// @param msWidth A pointer to base::MillisecondsWidth from configuration (non-null)
+  /// @param ssPrec A pointer to base::SubsecondPrecision from configuration (non-null)
   /// @returns string based date time in specified format.
-  static std::string getDateTime(const char* format, const base::MillisecondsWidth* msWidth);
+  static std::string getDateTime(const char* format, const base::SubsecondPrecision* ssPrec);
 
-  /// @brief Converts timeval (struct from ctime) to string using specified format and milliseconds width
+  /// @brief Converts timeval (struct from ctime) to string using specified format and subsecond precision
   static std::string timevalToString(struct timeval tval, const char* format,
-                                     const el::base::MillisecondsWidth* msWidth);
+                                     const el::base::SubsecondPrecision* ssPrec);
 
   /// @brief Formats time to get unit accordingly, units like second if > 1000 or minutes if > 60000 etc
   static base::type::string_t formatTime(unsigned long long time, base::TimestampUnit timestampUnit);
@@ -1174,7 +1192,7 @@ class DateTime : base::StaticClass {
  private:
   static struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo);
   static char* parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
-                           std::size_t msec, const base::MillisecondsWidth* msWidth);
+                           std::size_t msec, const base::SubsecondPrecision* ssPrec);
 };
 /// @brief Command line arguments for application if specified using el::Helpers::setArgs(..) or START_EASYLOGGINGPP(..)
 class CommandLineArgs {
@@ -1748,7 +1766,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
   /// @brief Sets value of configuration for specified level.
   ///
   /// @detail Any existing configuration for specified level will be replaced. Also note that configuration types
-  /// ConfigurationType::MillisecondsWidth and ConfigurationType::PerformanceTracking will be ignored if not set for
+  /// ConfigurationType::SubsecondPrecision and ConfigurationType::PerformanceTracking will be ignored if not set for
   /// Level::Global because these configurations are not dependant on level.
   /// @param level Level to set configuration for (el::Level).
   /// @param configurationType Type of configuration (el::ConfigurationType)
@@ -1890,6 +1908,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   const std::string& filename(Level level);
   bool toStandardOutput(Level level);
   const base::LogFormat& logFormat(Level level);
+  const base::SubsecondPrecision& subsecondPrecision(Level level = Level::Global);
   const base::MillisecondsWidth& millisecondsWidth(Level level = Level::Global);
   bool performanceTracking(Level level = Level::Global);
   base::type::fstream_t* fileStream(Level level);
@@ -1903,7 +1922,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   std::map<Level, std::string> m_filenameMap;
   std::map<Level, bool> m_toStandardOutputMap;
   std::map<Level, base::LogFormat> m_logFormatMap;
-  std::map<Level, base::MillisecondsWidth> m_millisecondsWidthMap;
+  std::map<Level, base::SubsecondPrecision> m_subsecondPrecisionMap;
   std::map<Level, bool> m_performanceTrackingMap;
   std::map<Level, base::FileStreamPtr> m_fileStreamMap;
   std::map<Level, std::size_t> m_maxLogFileSizeMap;
@@ -4468,7 +4487,7 @@ new el::base::AsyncDispatchWorker()))
 #else
 #  define INITIALIZE_EASYLOGGINGPP ELPP_INIT_EASYLOGGINGPP(new el::base::Storage(el::LogBuilderPtr(new el::base::DefaultLogBuilder())))
 #endif  // ELPP_ASYNC_LOGGING
-#define INITIALIZE_NULL_EASYLOGGINGPP\
+#define INITIALIZE_NULL_EASYLOGGINGPP \
 namespace el {\
 namespace base {\
 el::base::type::StoragePointer elStorage;\
