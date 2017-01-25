@@ -6,6 +6,12 @@ API changes: No
 Breaking Change: No
 
 ==========================
+=       NEW FEATURES     =
+==========================
+
+ - Deprecated MILLISECONDS_WIDTH and introduced SUBSECOND_PRECISION
+
+==========================
 =         NOTES          =
 ==========================
 
