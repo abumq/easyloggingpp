@@ -11,9 +11,9 @@
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/muflihun/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.92)
+  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.92)
  
-  [![samples] Samples](https://github.com/muflihun/easyloggingpp/tree/9.90/samples)
+  [![samples] Samples](/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
@@ -888,7 +888,7 @@ If you are having failure in log-rollout, you may have failed to add flag i.e, `
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
-There is a [sample](https://github.com/muflihun/easyloggingpp/tree/master/samples/STL/logrotate.cpp) available that you can use as basis.
+There is a [sample](/samples/STL/logrotate.cpp) available that you can use as basis.
 
 > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions. If you are sure that you are not going to log to same file and not using same logger, feel free to give it a try.
 
