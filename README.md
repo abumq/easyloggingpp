@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.91**
+> **Manual For v9.92**
 >
 > [![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
 
@@ -11,7 +11,7 @@
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/muflihun/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.91)
+  [![notes] Release Notes](https://github.com/muflihun/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.92)
  
   [![samples] Samples](https://github.com/muflihun/easyloggingpp/tree/9.90/samples)
 
@@ -94,7 +94,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.91. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.92. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1367,40 +1367,40 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: https://raw.githubusercontent.com/easylogging/homepage/master/images/banner.png?v=4
-  [ubuntu]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/ubuntu.png?v=2
-  [mint]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/linux-mint.png?v=2
-  [freebsd]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/free-bsd.png?v=2
-  [sl]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/scientific-linux.png?v=2
-  [fedora]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/fedora.png?v=3
-  [mac]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mac-osx.png?v=2
-  [winxp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windowsxp.png?v=2
-  [win7]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows7.png?v=2
-  [win8]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows8.png?v=2
-  [win10]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows10.png?v=2
-  [qt]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/qt.png?v=3
-  [boost]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/boost.png?v=3
-  [wxwidgets]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/wxwidgets.png?v=3
-  [devcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/devcpp.png?v=3
-  [gtkmm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gtkmm.png?v=3
-  [tdm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/tdm.png?v=3
-  [raspberrypi]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/raspberry-pi.png?v=3
-  [solaris]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/solaris.png?v=3
+  [banner]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/banner.png?v=4
+  [ubuntu]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/ubuntu.png?v=2
+  [mint]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/linux-mint.png?v=2
+  [freebsd]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/free-bsd.png?v=2
+  [sl]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/scientific-linux.png?v=2
+  [fedora]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/fedora.png?v=3
+  [mac]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mac-osx.png?v=2
+  [winxp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windowsxp.png?v=2
+  [win7]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows7.png?v=2
+  [win8]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows8.png?v=2
+  [win10]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows10.png?v=2
+  [qt]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/qt.png?v=3
+  [boost]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/boost.png?v=3
+  [wxwidgets]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/devcpp.png?v=3
+  [gtkmm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gtkmm.png?v=3
+  [tdm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/tdm.png?v=3
+  [raspberrypi]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/solaris.png?v=3
 
 
-  [gcc]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gcc.png?v=4
-  [mingw]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mingw.png?v=2
-  [cygwin]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/cygwin.png?v=2
-  [vcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/vcpp.png?v=2
-  [llvm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/llvm.png?v=2
-  [intel]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/intel.png?v=2
-  [android]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/android.png?v=2
-  [manual]: https://raw.githubusercontent.com/easylogging/homepage/master/images/help.png?v=3
-  [download]: https://raw.githubusercontent.com/easylogging/homepage/master/images/download.png?v=2
-  [samples]: https://raw.githubusercontent.com/easylogging/homepage/master/images/sample.png?v=2
-  [notes]: https://raw.githubusercontent.com/easylogging/homepage/master/images/notes.png?v=4
-  [top]: https://raw.githubusercontent.com/easylogging/homepage/master/images/up.png?v=4
-  [www]: https://raw.githubusercontent.com/easylogging/homepage/master/images/logo-www.png?v=6
+  [gcc]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gcc.png?v=4
+  [mingw]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mingw.png?v=2
+  [cygwin]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/cygwin.png?v=2
+  [vcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/vcpp.png?v=2
+  [llvm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/llvm.png?v=2
+  [intel]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/intel.png?v=2
+  [android]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/android.png?v=2
+  [manual]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/help.png?v=3
+  [download]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/download.png?v=2
+  [samples]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/sample.png?v=2
+  [notes]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/notes.png?v=4
+  [top]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/up.png?v=4
+  [www]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/logo-www.png?v=6
   
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
