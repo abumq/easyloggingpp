@@ -9,7 +9,7 @@
 //  This library is released under the MIT Licence.
 //  http://easylogging.muflihun.com/licence.php
 //
-//  https://github.com/easylogging/easyloggingpp
+//  https://github.com/muflihun/easyloggingpp
 //  http://easylogging.muflihun.com
 //  http://muflihun.com
 //
