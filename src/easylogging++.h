@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.91
+//  Easylogging++ v9.92
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -9,7 +9,7 @@
 //  This library is released under the MIT Licence.
 //  http://easylogging.muflihun.com/licence.php
 //
-//  https://github.com/easylogging/easyloggingpp
+//  https://github.com/muflihun/easyloggingpp
 //  http://easylogging.muflihun.com
 //  http://muflihun.com
 //

@@ -3,17 +3,17 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.91**
+> **Manual For v9.92**
 >
-> [![Build Status](https://travis-ci.org/easylogging/easyloggingpp.png?branch=develop)](https://travis-ci.org/easylogging/easyloggingpp)
+> [![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
 
 ### Quick Links
 
-  [![download] Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
+  [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](https://github.com/easylogging/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.91)
+  [![notes] Release Notes](https://github.com/muflihun/easyloggingpp/tree/master/doc/RELEASE-NOTES-v9.92)
  
-  [![samples] Samples](https://github.com/easylogging/easyloggingpp/tree/9.90/samples)
+  [![samples] Samples](https://github.com/muflihun/easyloggingpp/tree/9.90/samples)
 
   [![paypal]](http://muflihun.com/support/)
 
@@ -94,7 +94,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.91. For other versions please refer to corresponding [release](https://github.com/easylogging/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.92. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -126,9 +126,9 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  
 # Getting Started
 ### Download
-Download latest version from [Latest Release](https://github.com/easylogging/easyloggingpp/releases/latest)
+Download latest version from [Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
 
-For other releases, please visit [releases page](https://github.com/easylogging/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/easylogging/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
+For other releases, please visit [releases page](https://github.com/muflihun/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/muflihun/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -167,7 +167,7 @@ make
 make install
 ```
 
-With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/easylogging/easyloggingpp/releases/tag/9.89) and lower.
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/muflihun/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -414,8 +414,8 @@ Form some parts of logging you can set logging flags; here are flags supported:
 |--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | `NewLineForContainer (1)`                              | Makes sure we have new line for each container log entry                                                                                      |
 | `AllowVerboseIfModuleNotSpecified (2)`                 | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
-| `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/easylogging/easyloggingpp/issues/90))                                                                                                                                                                                |
-| `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/easylogging/easyloggingpp/issues/119))                                                                                                                                                                               |
+| `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/muflihun/easyloggingpp/issues/90))                                                                                                                                                                                |
+| `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/muflihun/easyloggingpp/issues/119))                                                                                                                                                                               |
 | `ImmediateFlush (16)`                                  | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
 | `StrictLogFileSizeCheck (32)`                          | Makes sure log file size is checked with every log                                                                                            |
 | `ColoredTerminalOutput (64)`                           | Terminal output will be colorful if supported by terminal.                                                                                            |
@@ -471,7 +471,7 @@ NOTE: All the macros either need to be defined before `#include "easylogging++"`
 | `ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
 | `ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
 | `ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
-| `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/easylogging/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
+| `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/muflihun/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
 | `ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-DELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
 | `ELPP_FRESH_LOG_FILE`              | Never appends log file whenever log file is created (Use with care as it may cause some unexpected result for some users)                                                  |
@@ -852,7 +852,7 @@ Notes:
 
 4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
- > You may be interested in [python script to parse performance logs](https://github.com/easylogging/easyloggingpp/issues/206)
+ > You may be interested in [python script to parse performance logs](https://github.com/muflihun/easyloggingpp/issues/206)
 
  [![top] Goto Top](#table-of-contents)
  
@@ -888,7 +888,7 @@ If you are having failure in log-rollout, you may have failed to add flag i.e, `
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
-There is a [sample](https://github.com/easylogging/easyloggingpp/tree/master/samples/STL/logrotate.cpp) available that you can use as basis.
+There is a [sample](https://github.com/muflihun/easyloggingpp/tree/master/samples/STL/logrotate.cpp) available that you can use as basis.
 
 > You should not log anything in this function. This is because logger would already be locked in multi-threaded application and you can run into dead lock conditions. If you are sure that you are not going to log to same file and not using same logger, feel free to give it a try.
 
@@ -1232,7 +1232,7 @@ If you wish to capture log message right after it is dispatched, you can do so b
  [![top] Goto Top](#table-of-contents)
 
 ### Logger Registration Callback
-If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/easylogging/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
+If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/muflihun/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
 
  > DO NOT LOG ANYTHING IN THIS HANDLER
 
@@ -1241,7 +1241,7 @@ If you wish to capture event of logger registration (and potentially want to rec
 ### Asynchronous Logging
 Prerequisite: Define macro `ELPP_EXPERIMENTAL_ASYNC`
 
-Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/easylogging/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/muflihun/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
 Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
@@ -1256,7 +1256,7 @@ There are static helper classes available to make it easy to do stuffs;
  * `el::Helpers`
  * `el::Loggers`
 
-You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/easylogging/easyloggingpp/issues/210) for instance.
+You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/muflihun/easyloggingpp/issues/210) for instance.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1267,7 +1267,7 @@ You can submit patches to `develop` branch and we will try and merge them. Since
  [![top] Goto Top](#table-of-contents)
  
 ### Reporting a Bug
-If you have found a bug and wish to report it, feel free to do so at [github issue tracker](https://github.com/easylogging/easyloggingpp/issues?state=open). I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
+If you have found a bug and wish to report it, feel free to do so at [github issue tracker](https://github.com/muflihun/easyloggingpp/issues?state=open). I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
 * Platform (OS, Compiler)
 * Log file location
 * Macros defined (on compilation) OR simple compilation 
@@ -1335,7 +1335,7 @@ The MIT License (MIT)
 
 Copyright (c) 2017 muflihun.com
 
-https://github.com/easylogging/easyloggingpp
+https://github.com/muflihun/easyloggingpp
 http://easylogging.muflihun.com
 http://muflihun.com
 
@@ -1367,40 +1367,40 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: https://raw.githubusercontent.com/easylogging/homepage/master/images/banner.png?v=4
-  [ubuntu]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/ubuntu.png?v=2
-  [mint]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/linux-mint.png?v=2
-  [freebsd]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/free-bsd.png?v=2
-  [sl]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/scientific-linux.png?v=2
-  [fedora]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/fedora.png?v=3
-  [mac]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mac-osx.png?v=2
-  [winxp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windowsxp.png?v=2
-  [win7]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows7.png?v=2
-  [win8]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows8.png?v=2
-  [win10]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/windows10.png?v=2
-  [qt]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/qt.png?v=3
-  [boost]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/boost.png?v=3
-  [wxwidgets]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/wxwidgets.png?v=3
-  [devcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/devcpp.png?v=3
-  [gtkmm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gtkmm.png?v=3
-  [tdm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/tdm.png?v=3
-  [raspberrypi]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/raspberry-pi.png?v=3
-  [solaris]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/solaris.png?v=3
+  [banner]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/banner.png?v=4
+  [ubuntu]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/ubuntu.png?v=2
+  [mint]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/linux-mint.png?v=2
+  [freebsd]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/free-bsd.png?v=2
+  [sl]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/scientific-linux.png?v=2
+  [fedora]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/fedora.png?v=3
+  [mac]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mac-osx.png?v=2
+  [winxp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windowsxp.png?v=2
+  [win7]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows7.png?v=2
+  [win8]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows8.png?v=2
+  [win10]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows10.png?v=2
+  [qt]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/qt.png?v=3
+  [boost]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/boost.png?v=3
+  [wxwidgets]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/devcpp.png?v=3
+  [gtkmm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gtkmm.png?v=3
+  [tdm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/tdm.png?v=3
+  [raspberrypi]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/solaris.png?v=3
 
 
-  [gcc]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/gcc.png?v=4
-  [mingw]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/mingw.png?v=2
-  [cygwin]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/cygwin.png?v=2
-  [vcpp]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/vcpp.png?v=2
-  [llvm]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/llvm.png?v=2
-  [intel]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/intel.png?v=2
-  [android]: https://raw.githubusercontent.com/easylogging/homepage/master/images/icons/android.png?v=2
-  [manual]: https://raw.githubusercontent.com/easylogging/homepage/master/images/help.png?v=3
-  [download]: https://raw.githubusercontent.com/easylogging/homepage/master/images/download.png?v=2
-  [samples]: https://raw.githubusercontent.com/easylogging/homepage/master/images/sample.png?v=2
-  [notes]: https://raw.githubusercontent.com/easylogging/homepage/master/images/notes.png?v=4
-  [top]: https://raw.githubusercontent.com/easylogging/homepage/master/images/up.png?v=4
-  [www]: https://raw.githubusercontent.com/easylogging/homepage/master/images/logo-www.png?v=6
+  [gcc]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gcc.png?v=4
+  [mingw]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mingw.png?v=2
+  [cygwin]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/cygwin.png?v=2
+  [vcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/vcpp.png?v=2
+  [llvm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/llvm.png?v=2
+  [intel]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/intel.png?v=2
+  [android]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/android.png?v=2
+  [manual]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/help.png?v=3
+  [download]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/download.png?v=2
+  [samples]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/sample.png?v=2
+  [notes]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/notes.png?v=4
+  [top]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/up.png?v=4
+  [www]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/logo-www.png?v=6
   
   [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
   [pledgie]: https://pledgie.com/campaigns/22070.png
