@@ -30,7 +30,7 @@ TEST(LoggerTest, CheckTenThousandLoggers) {
 
     TIMED_SCOPE(timer, "CheckTenThousandLoggers");
 
-    unsigned short lIndex = LevelHelper::kMinValid;
+    el::base::type::EnumType lIndex = LevelHelper::kMinValid;
     el::base::type::fstream_t* logger1Stream = el::Loggers::getLogger("logger1")->typedConfigurations()->fileStream(LevelHelper::castFromInt(lIndex));
     // Make sure all loggers for all levels have same file stream pointee
     for (unsigned int i = 1; i <= 10000; ++i) {

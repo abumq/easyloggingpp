@@ -20,14 +20,18 @@ int main(int,char**){
     el::Helpers::setThreadName("main-thread");
     
     std::thread thread1([](){
+		LOG(INFO) << "Setting thread name for thread1";
         el::Helpers::setThreadName("thread1");
+		LOG(INFO) << "Done setting thread name for thread1";
         for (int i = 0; i < 100; ++i) {
             LOG(INFO) << "Current i = " << i << " from thread1";
         }
     });
 
     std::thread thread2([](){
+		LOG(INFO) << "Setting thread name for thread2";
         el::Helpers::setThreadName("thread2");
+		LOG(INFO) << "Done setting thread name for thread2";
         for (int i = 0; i < 100; ++i) {
             LOG(INFO) << "Current i = " << i << " from thread2";
         }

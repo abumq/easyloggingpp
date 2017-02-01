@@ -2690,6 +2690,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
   /// @brief Sets thread name for current thread. Requires std::thread
   inline void setThreadName(const std::string& name) {
 	if (name.empty()) return;
+    base::threading::ScopedLock scopedLock(lock());
 	m_threadNames[base::threading::getCurrentThreadId()] = name;
   }
 
