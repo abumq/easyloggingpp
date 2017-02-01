@@ -39,6 +39,7 @@
     <a href="#global-configurations">Global Configurations</a>
     <a href="#logging-format-specifiers">Logging Format Specifiers</a>
     <a href="#datetime-format-specifiers">Date/Time Format Specifiers</a>
+    <a href="#custom-format-specifiers">Custom Format Specifiers</a>
     <a href="#logging-flags">Logging Flags</a>
     <a href="#application-arguments">Application Arguments</a>
     <a href="#configuration-macros">Configuration Macros</a>
@@ -93,7 +94,7 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind: performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
 This manual is for Easylogging++ v9.92. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
@@ -349,6 +350,7 @@ You can customize format of logging using following specifiers:
 |-----------------|---------------------------------------------------------------------------------------------|
 | `%logger`       | Logger ID                                                                                   |
 | `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
+| `%thread_name`  | Use `Helpers::setThreadName` to set name of current thread (where you run `setThreadName` from). See [/samples/STL/thread-names.cpp](Thread Names sample)|
 | `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
 | `%levshort`     | Severity level (Short version i.e, I for Info and respectively D, E, W, F, V, T)            |
 | `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |
@@ -364,21 +366,6 @@ You can customize format of logging using following specifiers:
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
 * Subject to compiler's availability of certain macros, e.g, `__LINE__`, `__FILE__` etc 
-
-You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
-
-```C++
-const char* getIp(void) {
-    return "192.168.1.1";
-}
-
-int main(void) {
-    el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
-    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
-    LOG(INFO) << "This is request from client";
-    return 0;
-}
-```
 
  [![top] Goto Top](#table-of-contents)
  
@@ -404,6 +391,25 @@ You can customize date/time format using following specifiers
 | `%`             | Escape character                                                                                                 |
 
 Please note, date/time is limited to `30` characters at most.
+
+ [![top] Goto Top](#table-of-contents)
+
+### Custom Format Specifiers
+
+You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
+
+```C++
+const char* getIp(void) {
+    return "192.168.1.1";
+}
+
+int main(void) {
+    el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
+    LOG(INFO) << "This is request from client";
+    return 0;
+}
+```
 
  [![top] Goto Top](#table-of-contents)
  

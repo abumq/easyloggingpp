@@ -508,7 +508,7 @@ typedef std::ostream ostream_t;
 #else
 #  define ELPP_COUT_LINE(logLine) logLine << std::flush
 #endif // defined(ELPP_CUSTOM_COUT_LINE)
-typedef unsigned short EnumType;
+typedef unsigned int EnumType;
 typedef unsigned short VerboseLevel;
 typedef unsigned long int LineNumber;
 typedef std::shared_ptr<base::Storage> StoragePointer;
@@ -712,6 +712,7 @@ static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T
 static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
 static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
 static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
+static const base::type::char_t* kThreadNameFormatSpecifier         =      ELPP_LITERAL("%thread_name");
 static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
 static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
 static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
@@ -841,9 +842,22 @@ enum class TimestampUnit : base::type::EnumType {
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
 enum class FormatFlags : base::type::EnumType {
-  DateTime = 1<<1, LoggerId = 1<<2, File = 1<<3, Line = 1<<4, Location = 1<<5, Function = 1<<6,
-  User = 1<<7, Host = 1<<8, LogMessage = 1<<9, VerboseLevel = 1<<10, AppName = 1<<11, ThreadId = 1<<12,
-  Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15
+  DateTime = 1 << 1,
+  LoggerId = 1 << 2,
+  File = 1 << 3,
+  Line = 1 << 4,
+  Location = 1 << 5,
+  Function = 1 << 6,
+  User = 1 << 7,
+  Host = 1 << 8,
+  LogMessage = 1 << 9,
+  VerboseLevel = 1 << 10,
+  AppName = 1 << 11,
+  ThreadId = 1 << 12,
+  Level = 1 << 13,
+  FileBase = 1 << 14,
+  LevelShort = 1 << 15,
+  ThreadName = 1 << 16
 };
 /// @brief A subsecond precision class containing actual width and offset of the subsecond part
 class SubsecondPrecision {
@@ -1021,6 +1035,30 @@ class ThreadSafe {
  private:
   base::threading::Mutex m_mutex;
 };
+
+#if ELPP_THREADING_ENABLED
+#  if !ELPP_USE_STD_THREADING
+/// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
+static std::string getCurrentThreadId(void) {
+  std::stringstream ss;
+#      if (ELPP_OS_WINDOWS)
+  ss << GetCurrentThreadId();
+#      endif  // (ELPP_OS_WINDOWS)
+  return ss.str();
+}
+#  else
+/// @brief Gets ID of currently running threading using std::this_thread::get_id()
+static std::string getCurrentThreadId(void) {
+  std::stringstream ss;
+  ss << std::this_thread::get_id();
+  return ss.str();
+}
+#  endif  // !ELPP_USE_STD_THREADING
+#else
+static inline std::string getCurrentThreadId(void) {
+  return std::string();
+}
+#endif  // ELPP_THREADING_ENABLED
 }  // namespace threading
 namespace utils {
 class File : base::StaticClass {
@@ -2648,6 +2686,19 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     return base::utils::Utils::callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
   }
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
+
+  /// @brief Sets thread name for current thread. Requires std::thread
+  inline void setThreadName(const std::string& name) {
+	if (name.empty()) return;
+	m_threadNames[base::threading::getCurrentThreadId()] = name;
+  }
+
+  inline std::string getThreadName(const std::string& threadId) {
+    std::map<std::string, std::string>::const_iterator it = m_threadNames.find(threadId);
+    if (it == m_threadNames.end())
+      return threadId;
+    return it->second;
+  }
  private:
   base::RegisteredHitCounters* m_registeredHitCounters;
   base::RegisteredLoggers* m_registeredLoggers;
@@ -2661,6 +2712,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
   PreRollOutCallback m_preRollOutCallback;
   std::map<std::string, base::type::LogDispatchCallbackPtr> m_logDispatchCallbacks;
   std::map<std::string, base::type::PerformanceTrackingCallbackPtr> m_performanceTrackingCallbacks;
+  std::map<std::string, std::string> m_threadNames;
   std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
   Level m_loggingLevel;
 
@@ -3621,6 +3673,10 @@ class Helpers : base::StaticClass {
   /// @copydoc setArgs(int argc, char** argv)
   static inline void setArgs(int argc, const char** argv) {
     ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
+  }
+  /// @brief Sets thread name for current thread. Requires std::thread
+  static inline void setThreadName(const std::string& name) {
+    ELPP->setThreadName(name);
   }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.

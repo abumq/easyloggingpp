@@ -1287,22 +1287,7 @@ base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineAr
 namespace threading {
 
 #if ELPP_THREADING_ENABLED
-#  if !ELPP_USE_STD_THREADING
-/// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
-static std::string getCurrentThreadId(void) {
-  std::stringstream ss;
-#      if (ELPP_OS_WINDOWS)
-  ss << GetCurrentThreadId();
-#      endif  // (ELPP_OS_WINDOWS)
-  return ss.str();
-}
-#  else
-/// @brief Gets ID of currently running threading using std::this_thread::get_id()
-static std::string getCurrentThreadId(void) {
-  std::stringstream ss;
-  ss << std::this_thread::get_id();
-  return ss.str();
-}
+#  if ELPP_USE_STD_THREADING
 #      if ELPP_ASYNC_LOGGING
 static void msleep(int ms) {
   // Only when async logging enabled - this is because async is strict on compiler
@@ -1435,6 +1420,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
   conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
   conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
+  conditionalAddFlag(base::consts::kThreadNameFormatSpecifier, base::FormatFlags::ThreadName);
   conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
   conditionalAddFlag(base::consts::kLogFileBaseFormatSpecifier, base::FormatFlags::FileBase);
   conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
@@ -2291,6 +2277,11 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     // App name
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
         logMessage->logger()->parentApplicationName());
+  }
+  if (logFormat->hasFlag(base::FormatFlags::ThreadName)) {
+    // Thread Name
+    base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadNameFormatSpecifier,
+        ELPP->getThreadName(base::threading::getCurrentThreadId()));
   }
   if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
     // Thread ID
