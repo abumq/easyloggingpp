@@ -2354,6 +2354,7 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
+  base::threading::ScopedLock scopedLock(ELPP->lock());
   base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
     tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());

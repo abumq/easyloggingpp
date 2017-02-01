@@ -6,6 +6,12 @@ API changes: No
 Breaking Change: No
 
 ==========================
+=         FIXES          =
+==========================
+
+ - Multithread storage lock fix
+
+==========================
 =        FEATURES        =
 ==========================
 
