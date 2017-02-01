@@ -1301,10 +1301,6 @@ static void msleep(int ms) {
 typedef std::mutex Mutex;
 typedef std::lock_guard<std::mutex> ScopedLock;
 #  endif  // !ELPP_USE_STD_THREADING
-#else
-static inline std::string getCurrentThreadId(void) {
-  return std::string();
-}
 #endif  // ELPP_THREADING_ENABLED
 
 } // namespace threading
