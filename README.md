@@ -350,7 +350,7 @@ You can customize format of logging using following specifiers:
 |-----------------|---------------------------------------------------------------------------------------------|
 | `%logger`       | Logger ID                                                                                   |
 | `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
-| `%thread_name`  | Use `Helpers::setThreadName` to set name of current thread (where you run `setThreadName` from). See [/samples/STL/thread-names.cpp](Thread Names sample)|
+| `%thread_name`  | Use `Helpers::setThreadName` to set name of current thread (where you run `setThreadName` from). See [Thread Names sample](/samples/STL/thread-names.cpp)|
 | `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
 | `%levshort`     | Severity level (Short version i.e, I for Info and respectively D, E, W, F, V, T)            |
 | `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |

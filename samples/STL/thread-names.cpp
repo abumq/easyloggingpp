@@ -25,8 +25,16 @@ int main(int,char**){
             LOG(INFO) << "Current i = " << i << " from thread1";
         }
     });
+
+    std::thread thread2([](){
+        el::Helpers::setThreadName("thread2");
+        for (int i = 0; i < 100; ++i) {
+            LOG(INFO) << "Current i = " << i << " from thread2";
+        }
+    });
     
-    thread1.detach();
+    thread1.join();
+    thread2.join();
     
     LOG(INFO) << "Shutting down.";
     return 0;
