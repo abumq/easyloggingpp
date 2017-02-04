@@ -5,9 +5,9 @@
 
 > **Manual For v9.93**
 
-[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) [Develop]
+[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp)
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp.svg)](https://travis-ci.org/muflihun/easyloggingpp) [Master]
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp.svg)](https://travis-ci.org/muflihun/easyloggingpp)
 
 [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
