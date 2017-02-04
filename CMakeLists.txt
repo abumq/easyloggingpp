@@ -41,6 +41,8 @@ if (test)
 	        endif()
 	endif()
 
+	set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
     find_package (gtest REQUIRED)
 
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
