@@ -164,8 +164,9 @@ If you want to install this header system-wide, you can do so via:
 ```
 mkdir build
 cd build
-cmake ../
+cmake -Dtest=ON ../
 make
+make test
 make install
 ```
 
