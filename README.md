@@ -4,8 +4,10 @@
 
 
 > **Manual For v9.93**
->
-> [![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
+
+[![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
 ### Quick Links
 
@@ -14,8 +16,6 @@
   [![notes] Release Notes](/doc/RELEASE-NOTES-v9.93)
  
   [![samples] Samples](/samples)
-
-  [![paypal]](http://muflihun.com/support/)
 
 ---
 
@@ -1285,14 +1285,6 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
  [![top] Goto Top](#table-of-contents)
 
-### Donation
-
-Easylogging++ is free to use. You can check the details on where do donations go by clicking link below.
-
-[![paypal]](http://muflihun.com/support/)
-
- [![top] Goto Top](#table-of-contents)
-
 # Compatibility
 
 Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
@@ -1410,5 +1402,3 @@ Icons used in this manual (in compatibility section) are solely for information 
   [top]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/up.png?v=4
   [www]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/logo-www.png?v=6
   
-  [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
-  [pledgie]: https://pledgie.com/campaigns/22070.png
