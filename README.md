@@ -3,7 +3,7 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.92**
+> **Manual For v9.93**
 >
 > [![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
 
@@ -11,7 +11,7 @@
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.92)
+  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.93)
  
   [![samples] Samples](/samples)
 
@@ -95,7 +95,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind: performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.92. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.93. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  

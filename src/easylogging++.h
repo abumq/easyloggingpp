@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.92
+//  Easylogging++ v9.93
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -2693,9 +2693,9 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 
   /// @brief Sets thread name for current thread. Requires std::thread
   inline void setThreadName(const std::string& name) {
-	if (name.empty()) return;
+    if (name.empty()) return;
     base::threading::ScopedLock scopedLock(lock());
-	m_threadNames[base::threading::getCurrentThreadId()] = name;
+    m_threadNames[base::threading::getCurrentThreadId()] = name;
   }
 
   inline std::string getThreadName(const std::string& threadId) {
