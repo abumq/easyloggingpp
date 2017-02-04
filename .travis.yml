@@ -1,10 +1,11 @@
 language: cpp
 compiler:
   - gcc
+os: linux
 dist: trusty
 before_install:
  - sudo apt-get -qq update
- - sudo apt-get install -y libgtest-dev
+ - sudo apt-get install -y libgtest-dev valgrind
  - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
  - sudo tar xf release-1.7.0.tar.gz
  - cd googletest-release-1.7.0
@@ -12,13 +13,14 @@ before_install:
  - sudo make
  - sudo cp -a include/gtest /usr/include
  - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
+ - which valgrind
  - cd "${TRAVIS_BUILD_DIR}"
 before_script:
  - cd test/
  - cmake -Dtest=ON ../
  - make
  - ls -l
-script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh"
+script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh && cd ../../test && valgrind ./easyloggingpp-unit-tests"
 branches:
   only:
     - master
