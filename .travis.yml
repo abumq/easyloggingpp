@@ -23,6 +23,7 @@ before_script:
 script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh"
 branches:
   only:
+    - master
     - develop
 notifications:
   recipients:
