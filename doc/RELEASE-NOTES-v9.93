@@ -10,6 +10,7 @@ Breaking Change: No
 ==========================
 
  - Multithread storage lock fix
+ - Dead lock fixes (#417) Thanks to @aparajita for tip
 
 ==========================
 =        FEATURES        =

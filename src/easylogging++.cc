@@ -1298,8 +1298,6 @@ static void msleep(int ms) {
 #         endif  // defined(ELPP_NO_SLEEP_FOR)
 }
 #      endif  // ELPP_ASYNC_LOGGING
-typedef std::mutex Mutex;
-typedef std::lock_guard<std::mutex> ScopedLock;
 #  endif  // !ELPP_USE_STD_THREADING
 #endif  // ELPP_THREADING_ENABLED
 

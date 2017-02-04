@@ -923,7 +923,7 @@ namespace threading {
 #if ELPP_THREADING_ENABLED
 #  if !ELPP_USE_STD_THREADING
 namespace internal {
-/// @brief A mutex wrapper for compiler that dont yet support std::mutex
+/// @brief A mutex wrapper for compiler that dont yet support std::recursive_mutex
 class Mutex : base::NoCopy {
  public:
   Mutex(void) {
@@ -997,8 +997,8 @@ class ScopedLock : base::NoCopy {
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
 #  else
-typedef std::mutex Mutex;
-typedef std::lock_guard<std::mutex> ScopedLock;
+typedef std::recursive_mutex Mutex;
+typedef std::lock_guard<base::threading::Mutex> ScopedLock;
 #  endif  // !ELPP_USE_STD_THREADING
 #else
 namespace internal {
