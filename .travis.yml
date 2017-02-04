@@ -17,7 +17,7 @@ before_script:
  - cd samples/STL/
  - pwd
  - which sh
-script: "sh ./.travis_build.sh && cd ../../test/ && sh ./.travis_build.sh"
+script: "sh ./.travis_build.sh && cd ../../test/ && cmake -Dtest=ON .. && make && ./easyloggingpp-unit-tests -v"
 branches:
   only:
     - develop
