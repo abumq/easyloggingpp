@@ -20,7 +20,7 @@ before_script:
  - cmake -Dtest=ON ../
  - make
  - ls -l
-script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh && cd ../../test && valgrind ./easyloggingpp-unit-tests"
+script: "./easyloggingpp-unit-tests -v && valgrind ./easyloggingpp-unit-tests && cd ../samples/STL && pwd && sh ./.travis_build.sh"
 branches:
   only:
     - master
