@@ -5,11 +5,15 @@
 
 > **Manual For v9.93**
 
-[![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
+[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp)
+
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp.svg)](https://travis-ci.org/muflihun/easyloggingpp)
 
 [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
+
+[![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 ### Quick Links
 
@@ -164,8 +168,9 @@ If you want to install this header system-wide, you can do so via:
 ```
 mkdir build
 cd build
-cmake ../
+cmake -Dtest=ON ../
 make
+make test
 make install
 ```
 
