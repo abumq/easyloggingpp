@@ -3,7 +3,6 @@ compiler:
   - gcc
 dist: trusty
 before_install:
- - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
  - sudo apt-get -qq update
  - sudo apt-get install -y libgtest-dev
  - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
@@ -16,10 +15,9 @@ before_install:
  - cd "${TRAVIS_BUILD_DIR}"
 before_script:
  - cd test/
- - ls -l
  - cmake -Dtest=ON ../
- - ls -l
  - make
+ - ls -l
 script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh"
 branches:
   only:
@@ -29,7 +27,7 @@ notifications:
   recipients:
     - mkhan3189@gmail.com
   email:
-    on_success: change
-    on_failure: always
+    on_success: never
+    on_failure: change
 rvm:
   - 9.00
