@@ -3,19 +3,21 @@
                                        ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
 
 
-> **Manual For v9.92**
->
-> [![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
+> **Manual For v9.93**
+
+[![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+
+[![Build Status](https://travis-ci.org/muflihun/easyloggingpp.png?branch=develop)](https://travis-ci.org/muflihun/easyloggingpp)
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
 ### Quick Links
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.92)
+  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.93)
  
   [![samples] Samples](/samples)
-
-  [![paypal]](http://muflihun.com/support/)
 
 ---
 
@@ -39,6 +41,7 @@
     <a href="#global-configurations">Global Configurations</a>
     <a href="#logging-format-specifiers">Logging Format Specifiers</a>
     <a href="#datetime-format-specifiers">Date/Time Format Specifiers</a>
+    <a href="#custom-format-specifiers">Custom Format Specifiers</a>
     <a href="#logging-flags">Logging Flags</a>
     <a href="#application-arguments">Application Arguments</a>
     <a href="#configuration-macros">Configuration Macros</a>
@@ -93,8 +96,8 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind; performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.92. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind: performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+This manual is for Easylogging++ v9.93. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -349,6 +352,7 @@ You can customize format of logging using following specifiers:
 |-----------------|---------------------------------------------------------------------------------------------|
 | `%logger`       | Logger ID                                                                                   |
 | `%thread`       | Thread ID - Uses std::thread if available, otherwise GetCurrentThreadId() on windows        |
+| `%thread_name`  | Use `Helpers::setThreadName` to set name of current thread (where you run `setThreadName` from). See [Thread Names sample](/samples/STL/thread-names.cpp)|
 | `%level`        | Severity level (Info, Debug, Error, Warning, Fatal, Verbose, Trace)                         |
 | `%levshort`     | Severity level (Short version i.e, I for Info and respectively D, E, W, F, V, T)            |
 | `%vlevel`       | Verbosity level (Applicable to verbose logging)                                             |
@@ -364,21 +368,6 @@ You can customize format of logging using following specifiers:
 | `%`             | Escape character (e.g, %%level will write %level)                                           |
 
 * Subject to compiler's availability of certain macros, e.g, `__LINE__`, `__FILE__` etc 
-
-You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
-
-```C++
-const char* getIp(void) {
-    return "192.168.1.1";
-}
-
-int main(void) {
-    el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
-    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
-    LOG(INFO) << "This is request from client";
-    return 0;
-}
-```
 
  [![top] Goto Top](#table-of-contents)
  
@@ -404,6 +393,25 @@ You can customize date/time format using following specifiers
 | `%`             | Escape character                                                                                                 |
 
 Please note, date/time is limited to `30` characters at most.
+
+ [![top] Goto Top](#table-of-contents)
+
+### Custom Format Specifiers
+
+You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
+
+```C++
+const char* getIp(void) {
+    return "192.168.1.1";
+}
+
+int main(void) {
+    el::Helpers::installCustomFormatSpecifier(el::CustomFormatSpecifier("%ip_addr", getIp));
+    el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
+    LOG(INFO) << "This is request from client";
+    return 0;
+}
+```
 
  [![top] Goto Top](#table-of-contents)
  
@@ -482,6 +490,8 @@ NOTE: All the macros either need to be defined before `#include "easylogging++"`
 | `ELPP_WINSOCK2`        | On windows system force to use `winsock2.h` instead of `winsock.h` when `WIN32_LEAN_AND_MEAN` is defined                                                                    |
 | `ELPP_CUSTOM_COUT` (advanced)     | Resolves to a value e.g, `#define ELPP_CUSTOM_COUT qDebug()` or `#define ELPP_CUSTOM_COUT std::cerr`. This will use the value for standard output (instead of using `std::cout`|
 | `ELPP_CUSTOM_COUT_LINE` (advanced) | Used with `ELPP_CUSTOM_COUT` to define how to write a log line with custom cout. e.g, `#define ELPP_CUSTOM_COUT_LINE(msg) QString::fromStdString(msg).trimmed()` |
+| `ELPP_NO_CHECK_MACROS`             | Do not define the *CHECK* macros                                                                                                                  |
+| `ELPP_NO_DEBUG_MACROS`             | Do not define the *DEBUG* macros                                                                                                                  |
 
  [![top] Goto Top](#table-of-contents)
  
@@ -1277,14 +1287,6 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
  [![top] Goto Top](#table-of-contents)
 
-### Donation
-
-Easylogging++ is free to use. You can check the details on where do donations go by clicking link below.
-
-[![paypal]](http://muflihun.com/support/)
-
- [![top] Goto Top](#table-of-contents)
-
 # Compatibility
 
 Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
@@ -1402,5 +1404,3 @@ Icons used in this manual (in compatibility section) are solely for information 
   [top]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/up.png?v=4
   [www]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/logo-www.png?v=6
   
-  [paypal]: https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif
-  [pledgie]: https://pledgie.com/campaigns/22070.png

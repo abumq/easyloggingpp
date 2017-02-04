@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.92
+//  Easylogging++ v9.93
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -508,7 +508,7 @@ typedef std::ostream ostream_t;
 #else
 #  define ELPP_COUT_LINE(logLine) logLine << std::flush
 #endif // defined(ELPP_CUSTOM_COUT_LINE)
-typedef unsigned short EnumType;
+typedef unsigned int EnumType;
 typedef unsigned short VerboseLevel;
 typedef unsigned long int LineNumber;
 typedef std::shared_ptr<base::Storage> StoragePointer;
@@ -712,6 +712,7 @@ static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T
 static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
 static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
 static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
+static const base::type::char_t* kThreadNameFormatSpecifier         =      ELPP_LITERAL("%thread_name");
 static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
 static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
 static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
@@ -841,9 +842,22 @@ enum class TimestampUnit : base::type::EnumType {
 };
 /// @brief Format flags used to determine specifiers that are active for performance improvements.
 enum class FormatFlags : base::type::EnumType {
-  DateTime = 1<<1, LoggerId = 1<<2, File = 1<<3, Line = 1<<4, Location = 1<<5, Function = 1<<6,
-  User = 1<<7, Host = 1<<8, LogMessage = 1<<9, VerboseLevel = 1<<10, AppName = 1<<11, ThreadId = 1<<12,
-  Level = 1<<13, FileBase = 1<<14, LevelShort = 1<<15
+  DateTime = 1 << 1,
+  LoggerId = 1 << 2,
+  File = 1 << 3,
+  Line = 1 << 4,
+  Location = 1 << 5,
+  Function = 1 << 6,
+  User = 1 << 7,
+  Host = 1 << 8,
+  LogMessage = 1 << 9,
+  VerboseLevel = 1 << 10,
+  AppName = 1 << 11,
+  ThreadId = 1 << 12,
+  Level = 1 << 13,
+  FileBase = 1 << 14,
+  LevelShort = 1 << 15,
+  ThreadName = 1 << 16
 };
 /// @brief A subsecond precision class containing actual width and offset of the subsecond part
 class SubsecondPrecision {
@@ -909,12 +923,16 @@ namespace threading {
 #if ELPP_THREADING_ENABLED
 #  if !ELPP_USE_STD_THREADING
 namespace internal {
-/// @brief A mutex wrapper for compiler that dont yet support std::mutex
+/// @brief A mutex wrapper for compiler that dont yet support std::recursive_mutex
 class Mutex : base::NoCopy {
  public:
   Mutex(void) {
 #  if ELPP_OS_UNIX
-    pthread_mutex_init(&m_underlyingMutex, nullptr);
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&m_underlyingMutex, &attr);
+    pthread_mutexattr_destroy(&attr);
 #  elif ELPP_OS_WINDOWS
     InitializeCriticalSection(&m_underlyingMutex);
 #  endif  // ELPP_OS_UNIX
@@ -979,8 +997,8 @@ class ScopedLock : base::NoCopy {
 typedef base::threading::internal::Mutex Mutex;
 typedef base::threading::internal::ScopedLock<base::threading::Mutex> ScopedLock;
 #  else
-typedef std::mutex Mutex;
-typedef std::lock_guard<std::mutex> ScopedLock;
+typedef std::recursive_mutex Mutex;
+typedef std::lock_guard<base::threading::Mutex> ScopedLock;
 #  endif  // !ELPP_USE_STD_THREADING
 #else
 namespace internal {
@@ -1021,6 +1039,30 @@ class ThreadSafe {
  private:
   base::threading::Mutex m_mutex;
 };
+
+#if ELPP_THREADING_ENABLED
+#  if !ELPP_USE_STD_THREADING
+/// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
+static std::string getCurrentThreadId(void) {
+  std::stringstream ss;
+#      if (ELPP_OS_WINDOWS)
+  ss << GetCurrentThreadId();
+#      endif  // (ELPP_OS_WINDOWS)
+  return ss.str();
+}
+#  else
+/// @brief Gets ID of currently running threading using std::this_thread::get_id()
+static std::string getCurrentThreadId(void) {
+  std::stringstream ss;
+  ss << std::this_thread::get_id();
+  return ss.str();
+}
+#  endif  // !ELPP_USE_STD_THREADING
+#else
+static inline std::string getCurrentThreadId(void) {
+  return std::string();
+}
+#endif  // ELPP_THREADING_ENABLED
 }  // namespace threading
 namespace utils {
 class File : base::StaticClass {
@@ -2648,6 +2690,20 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
     return base::utils::Utils::callback<T, base::type::PerformanceTrackingCallbackPtr>(id, &m_performanceTrackingCallbacks);
   }
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
+
+  /// @brief Sets thread name for current thread. Requires std::thread
+  inline void setThreadName(const std::string& name) {
+    if (name.empty()) return;
+    base::threading::ScopedLock scopedLock(lock());
+    m_threadNames[base::threading::getCurrentThreadId()] = name;
+  }
+
+  inline std::string getThreadName(const std::string& threadId) {
+    std::map<std::string, std::string>::const_iterator it = m_threadNames.find(threadId);
+    if (it == m_threadNames.end())
+      return threadId;
+    return it->second;
+  }
  private:
   base::RegisteredHitCounters* m_registeredHitCounters;
   base::RegisteredLoggers* m_registeredLoggers;
@@ -2661,6 +2717,7 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
   PreRollOutCallback m_preRollOutCallback;
   std::map<std::string, base::type::LogDispatchCallbackPtr> m_logDispatchCallbacks;
   std::map<std::string, base::type::PerformanceTrackingCallbackPtr> m_performanceTrackingCallbacks;
+  std::map<std::string, std::string> m_threadNames;
   std::vector<CustomFormatSpecifier> m_customFormatSpecifiers;
   Level m_loggingLevel;
 
@@ -3622,6 +3679,10 @@ class Helpers : base::StaticClass {
   static inline void setArgs(int argc, const char** argv) {
     ELPP->setApplicationArguments(argc, const_cast<char**>(argv));
   }
+  /// @brief Sets thread name for current thread. Requires std::thread
+  static inline void setThreadName(const std::string& name) {
+    ELPP->setThreadName(name);
+  }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.
   /// @param crashHandler A functor with no return type that takes single int argument.
@@ -4334,6 +4395,7 @@ if (ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAc
 //
 // Default Debug Only Loggers macro using CLOG(), CLOG_VERBOSE() and CVLOG() macros
 //
+#if !defined(ELPP_NO_DEBUG_MACROS)
 // undef existing
 #undef DLOG
 #undef DVLOG
@@ -4358,6 +4420,8 @@ if (ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAc
 #define DVLOG_AFTER_N(n, vlevel) DCVLOG_AFTER_N(n, vlevel, ELPP_CURR_FILE_LOGGER_ID)
 #define DLOG_N_TIMES(n, LEVEL) DCLOG_N_TIMES(n, LEVEL, ELPP_CURR_FILE_LOGGER_ID)
 #define DVLOG_N_TIMES(n, vlevel) DCVLOG_N_TIMES(n, vlevel, ELPP_CURR_FILE_LOGGER_ID)
+#endif // defined(ELPP_NO_DEBUG_MACROS)
+#if !defined(ELPP_NO_CHECK_MACROS)
 // Check macros
 #undef CCHECK
 #undef CPCHECK
@@ -4467,6 +4531,7 @@ if (ELPP_DEBUG_LOG) C##LEVEL##_EVERY_N(el::base::Writer, n, el::base::DispatchAc
 #define DCHECK_STRCASEEQ(str1, str2) DCCHECK_STRCASEEQ(str1, str2, ELPP_CURR_FILE_LOGGER_ID)
 #define DCHECK_STRCASENE(str1, str2) DCCHECK_STRCASENE(str1, str2, ELPP_CURR_FILE_LOGGER_ID)
 #define DPCHECK(condition) DCPCHECK(condition, ELPP_CURR_FILE_LOGGER_ID)
+#endif // defined(ELPP_NO_CHECK_MACROS)
 #if defined(ELPP_DISABLE_DEFAULT_CRASH_HANDLING)
 #  define ELPP_USE_DEF_CRASH_HANDLER false
 #else

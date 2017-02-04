@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.92
+//  Easylogging++ v9.93
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -1287,22 +1287,7 @@ base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineAr
 namespace threading {
 
 #if ELPP_THREADING_ENABLED
-#  if !ELPP_USE_STD_THREADING
-/// @brief Gets ID of currently running threading in windows systems. On unix, nothing is returned.
-static std::string getCurrentThreadId(void) {
-  std::stringstream ss;
-#      if (ELPP_OS_WINDOWS)
-  ss << GetCurrentThreadId();
-#      endif  // (ELPP_OS_WINDOWS)
-  return ss.str();
-}
-#  else
-/// @brief Gets ID of currently running threading using std::this_thread::get_id()
-static std::string getCurrentThreadId(void) {
-  std::stringstream ss;
-  ss << std::this_thread::get_id();
-  return ss.str();
-}
+#  if ELPP_USE_STD_THREADING
 #      if ELPP_ASYNC_LOGGING
 static void msleep(int ms) {
   // Only when async logging enabled - this is because async is strict on compiler
@@ -1313,13 +1298,7 @@ static void msleep(int ms) {
 #         endif  // defined(ELPP_NO_SLEEP_FOR)
 }
 #      endif  // ELPP_ASYNC_LOGGING
-typedef std::mutex Mutex;
-typedef std::lock_guard<std::mutex> ScopedLock;
 #  endif  // !ELPP_USE_STD_THREADING
-#else
-static inline std::string getCurrentThreadId(void) {
-  return std::string();
-}
 #endif  // ELPP_THREADING_ENABLED
 
 } // namespace threading
@@ -1435,6 +1414,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
   conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
   conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
+  conditionalAddFlag(base::consts::kThreadNameFormatSpecifier, base::FormatFlags::ThreadName);
   conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
   conditionalAddFlag(base::consts::kLogFileBaseFormatSpecifier, base::FormatFlags::FileBase);
   conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
@@ -2292,6 +2272,11 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
         logMessage->logger()->parentApplicationName());
   }
+  if (logFormat->hasFlag(base::FormatFlags::ThreadName)) {
+    // Thread Name
+    base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadNameFormatSpecifier,
+        ELPP->getThreadName(base::threading::getCurrentThreadId()));
+  }
   if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
     // Thread ID
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
@@ -2367,6 +2352,7 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
+  base::threading::ScopedLock scopedLock(ELPP->lock());
   base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
     tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
@@ -2982,11 +2968,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.92");
+  return std::string("9.93");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("30-01-2017 1523hrs");
+  return std::string("04-02-2017 1532hrs");
 }
 
 } // namespace el

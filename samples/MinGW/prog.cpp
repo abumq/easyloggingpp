@@ -12,7 +12,7 @@ TIMED_SCOPE(appTimer, "myapplication");
 
 
 int main(int argc, const char* argv[]) {
-    el::Helpers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);
+    el::Loggers::removeFlag(el::LoggingFlag::AllowVerboseIfModuleNotSpecified);
 
     TIMED_BLOCK(itr, "write-simple") {
         LOG(INFO) << "Test " << __FILE__;
