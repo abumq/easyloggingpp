@@ -2972,7 +2972,7 @@ const std::string VersionInfo::version(void) {
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("04-02-2017 1517hrs");
+  return std::string("04-02-2017 1532hrs");
 }
 
 } // namespace el
