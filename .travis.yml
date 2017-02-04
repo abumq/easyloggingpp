@@ -14,7 +14,9 @@ before_install:
  - cd "${TRAVIS_BUILD_DIR}"
 before_script:
  - cd test/
- - cmake -test=ON ../
+ - ls -l
+ - cmake -Dtest=ON ../
+ - ls -l
  - make
 script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh"
 branches:
