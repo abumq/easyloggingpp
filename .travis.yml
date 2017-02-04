@@ -13,11 +13,10 @@ before_install:
  - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
  - cd "${TRAVIS_BUILD_DIR}"
 before_script:
- - pwd
- - cd samples/STL/
- - pwd
- - which sh
-script: "sh ./.travis_build.sh && cd ../../test/ && cmake -Dtest=ON .. && make && ./easyloggingpp-unit-tests -v"
+ - cd test/
+ - cmake -test=ON ../
+ - make
+script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh"
 branches:
   only:
     - develop
