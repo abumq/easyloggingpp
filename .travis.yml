@@ -1,7 +1,9 @@
 language: cpp
 compiler:
   - gcc
+dist: trusty
 before_install:
+ - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
  - sudo apt-get -qq update
  - sudo apt-get install -y libgtest-dev
  - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
