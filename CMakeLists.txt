@@ -37,7 +37,7 @@ if (test)
 	            message ("-- CLang CXX (-std=c++11)")
 	            list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 	        else()
-	            message ("-- Ripe requires C++11. Your compiler does not support it.")
+	            message ("-- Easylogging++ requires C++11. Your compiler does not support it.")
 	        endif()
 	endif()
 
