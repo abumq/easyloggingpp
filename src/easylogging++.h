@@ -3420,12 +3420,6 @@ writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVAL
 #define ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
 ELPP->validateNTimesCounter(__FILE__, __LINE__, n) && \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
-#undef ELPP_CURR_FILE_PERFORMANCE_LOGGER
-#if defined(ELPP_PERFORMANCE_LOGGER)
-#  define ELPP_CURR_FILE_PERFORMANCE_LOGGER ELPP_PERFORMANCE_LOGGER
-#else
-#  define ELPP_CURR_FILE_PERFORMANCE_LOGGER el::base::consts::kPerformanceLoggerId
-#endif
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 class PerformanceTrackingData {
  public:
@@ -3487,7 +3481,7 @@ class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
  public:
   PerformanceTracker(const std::string& blockName,
                      base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
-                     const std::string& loggerId = std::string(ELPP_CURR_FILE_PERFORMANCE_LOGGER),
+                     const std::string& loggerId = std::string(el::base::consts::kPerformanceLoggerId),
                      bool scopedLog = true, Level level = base::consts::kPerformanceTrackerDefaultLevel);
   /// @brief Copy constructor
   PerformanceTracker(const PerformanceTracker& t) :
