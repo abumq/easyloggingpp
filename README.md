@@ -55,6 +55,7 @@
     <a href="#conditional-logging">Conditional Logging</a>
     <a href="#occasional-logging">Occasional Logging</a>
     <a href="#printf-like-logging">printf Like Logging</a>
+    <a href="#network-logging">Network Logging</a>
     <a href="#verbose-logging">Verbose Logging</a>
         <a href="#basic-1">Basic</a>
         <a href="#conditional-and-occasional">Conditional and Occasional</a>
@@ -645,6 +646,12 @@ defaultLogger->info("My first ultimate log message %% %%v %v %v", 123, 222);
 
  [![top] Goto Top](#table-of-contents)
 
+### Network Logging
+
+You can send your messages to network. But you will have to implement your own way using log dispatcher API. We have written fully working sample for this purpose. Please see [Send to Network sample](/samples/send-to-network)
+
+ [![top] Goto Top](#table-of-contents)
+
 ### Verbose Logging
 #### Basic
 Verbose logging is useful in every software to record more information than usual. Very useful for troubleshooting. Following are verbose logging specific macros;
@@ -744,7 +751,7 @@ Let's say we have an application that uses easylogging++ and has it's own config
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `SHARE_EASYLOGGINGPP(access-function-to-repository)`
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
  
-After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs. A very good example is in `samples/VC++/DLLSample`
+After you share repository, you can reconfigure the only repository (i.e, the one that is used by application and library both), and use both to write logs.
 
  [![top] Goto Top](#table-of-contents)
 
