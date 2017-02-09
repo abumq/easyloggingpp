@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    el::Helpers::uninstallLogDispatchCallback<LogTerminal>("LogTerminal");
     delete list;
     delete ui;
 }
@@ -70,7 +71,7 @@ void MainWindow::onSelectionMade(const QString &word)
 void MainWindow::initializeDictionary(const QString& wordsFile) {
     TIMED_FUNC(initializeDictionaryTimer);
 
-    QFile file("/Users/majid.khan/Projects/easyloggingpp/samples/Qt/fast-dictionary/" + wordsFile);
+    QFile file("<Words_file_path>/easyloggingpp/samples/Qt/fast-dictionary/" + wordsFile);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream inStream(&file);
         while (!file.atEnd()) {
