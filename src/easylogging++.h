@@ -739,8 +739,16 @@ static const int kYearBase                          =      1900;
 static const char* kAm                              =      "AM";
 static const char* kPm                              =      "PM";
 // Miscellaneous constants
+#ifdef ELPP_DEFAULT_LOGGER
+static const char* kDefaultLoggerId                        =      ELPP_DEFAULT_LOGGER;
+#else
 static const char* kDefaultLoggerId                        =      "default";
+#endif
+#ifdef ELPP_DEFAULT_PERFORMANCE_LOGGER
+static const char* kPerformanceLoggerId                    =      ELPP_DEFAULT_PERFORMANCE_LOGGER;
+#else
 static const char* kPerformanceLoggerId                    =      "performance";
+#endif
 #if defined(ELPP_SYSLOG)
 static const char* kSysLogLoggerId                         =      "syslog";
 #endif  // defined(ELPP_SYSLOG)

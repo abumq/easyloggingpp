@@ -1,0 +1,20 @@
+Easylogging++ v9.94 RELEASE NOTES
+---------------------------------
+
+Release type: Minor
+API changes: No
+Breaking Change: No
+
+==========================
+=        FEATURES        =
+==========================
+
+ - Restored `ELPP_DEFAULT_LOGGER` and `ELPP_DEFAULT_PERFORMANCE_LOGGER`
+
+==========================
+=         NOTES          =
+==========================
+
+ - See https://github.com/muflihun/easyloggingpp/blob/9.93/README.md for manual for this release
+ - See https://github.com/muflihun/easyloggingpp/tree/master/doc for other release notes
+ - Closed issues: https://github.com/muflihun/easyloggingpp/issues?page=1&state=closed

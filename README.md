@@ -528,15 +528,15 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
-There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `ELPP_DEFAULT_LOGGER` and `ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `ELPP_DEFAULT_LOGGER` and `ELPP_DEFAULT_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
 
 A quick example is here
 ```c++
 #ifndef ELPP_DEFAULT_LOGGER
 #   define ELPP_DEFAULT_LOGGER "update_manager"
 #endif
-#ifndef ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID
-#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID ELPP_DEFAULT_LOGGER
+#ifndef ELPP_DEFAULT_PERFORMANCE_LOGGER
+#   define ELPP_DEFAULT_PERFORMANCE_LOGGER ELPP_DEFAULT_LOGGER
 #endif
 #include "easylogging++.h"
 UpdateManager::UpdateManager {
