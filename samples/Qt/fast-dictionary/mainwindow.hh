@@ -8,6 +8,7 @@ class MainWindow;
 }
 
 class ListWithSearch;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

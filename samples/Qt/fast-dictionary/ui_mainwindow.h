@@ -19,6 +19,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QWidget>
+#include <QPlainTextEdit>
 
 QT_BEGIN_NAMESPACE
 
@@ -29,6 +30,7 @@ public:
     QLabel *wordLabel;
     QLabel *labelAbout;
     QPushButton *buttonInfo;
+    QPlainTextEdit *plainTextEdit;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -60,6 +62,9 @@ public:
         buttonInfo = new QPushButton(centralWidget);
         buttonInfo->setObjectName(QString::fromUtf8("buttonInfo"));
         buttonInfo->setGeometry(QRect(190, 250, 87, 27));
+
+        plainTextEdit = new QPlainTextEdit(centralWidget);
+
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
