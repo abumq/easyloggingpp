@@ -1107,30 +1107,35 @@ std::string DateTime::timevalToString(struct timeval tval, const char* format,
 }
 
 base::type::string_t DateTime::formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {
-  double result = static_cast<double>(time);
   base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
   const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
   for (base::type::EnumType i = start; i < base::consts::kTimeFormatsCount - 1; ++i) {
-    if (result <= base::consts::kTimeFormats[i].value) {
+    if (time <= base::consts::kTimeFormats[i].value) {
       break;
     }
-    result /= base::consts::kTimeFormats[i].value;
+    if (base::consts::kTimeFormats[i].value == 1000 && time / 1000.0f < 1.4f) {
+        break;
+    }
+    time /= static_cast<unsigned long long>(base::consts::kTimeFormats[i].value);
     unit = base::consts::kTimeFormats[i + 1].unit;
   }
   base::type::stringstream_t ss;
-  ss << result << " " << unit;
+  ss << time << " " << unit;
+  std::cout << time << " " << unit << std::endl;
   return ss.str();
 }
 
 unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, const struct timeval& startTime,
     base::TimestampUnit timestampUnit) {
-  if (timestampUnit == base::TimestampUnit::Microsecond) {
-    return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
-                                           static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
-  } else {
-    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000) +
-                                            (endTime.tv_usec - startTime.tv_usec)) / 1000);
-  }
+    if (timestampUnit == base::TimestampUnit::Microsecond) {
+        return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
+                                               static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
+    }
+    // milliseconds
+    auto conv = [](const struct timeval& tim) {
+        return static_cast<unsigned long long>((tim.tv_sec * 1000) + (tim.tv_usec / 1000));
+    };
+    return static_cast<unsigned long long>(conv(endTime) - conv(startTime));
 }
 
 struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {

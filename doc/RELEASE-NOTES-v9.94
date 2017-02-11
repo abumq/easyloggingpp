@@ -6,6 +6,12 @@ API changes: No
 Breaking Change: No
 
 ==========================
+=         FIXES          =
+==========================
+
+ - Fixed performance tracking time unit and calculations
+
+==========================
 =        FEATURES        =
 ==========================
 
