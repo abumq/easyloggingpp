@@ -7,7 +7,7 @@
 
 [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`develop`)
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
 
 [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 

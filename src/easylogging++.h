@@ -3686,7 +3686,7 @@ class Helpers : base::StaticClass {
     ELPP->setThreadName(name);
   }
   static inline std::string getThreadName() {
-    return ELPP->getThreadName();
+    return ELPP->getThreadName(base::threading::getCurrentThreadId());
   }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.
