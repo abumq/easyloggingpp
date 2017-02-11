@@ -3685,6 +3685,9 @@ class Helpers : base::StaticClass {
   static inline void setThreadName(const std::string& name) {
     ELPP->setThreadName(name);
   }
+  static inline std::string getThreadName() {
+    return ELPP->getThreadName();
+  }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.
   /// @param crashHandler A functor with no return type that takes single int argument.
