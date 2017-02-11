@@ -2343,7 +2343,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
        it != ELPP->customFormatSpecifiers()->end(); ++it) {
     std::string fs(it->formatSpecifier());
     base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
-    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, std::string(it->resolver()(logMessage)));
+    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()(logMessage));
   }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
   if (appendNewLine) logLine += ELPP_LITERAL("\n");

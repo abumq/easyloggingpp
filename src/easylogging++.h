@@ -1676,7 +1676,7 @@ class LogFormat : public Loggable {
 };
 }  // namespace base
 /// @brief Resolving function for format specifier
-typedef std::function<const char*(const LogMessage*)> FormatSpecifierValueResolver;
+typedef std::function<std::string(const LogMessage*)> FormatSpecifierValueResolver;
 /// @brief User-provided custom format specifier
 /// @see el::Helpers::installCustomFormatSpecifier
 /// @see FormatSpecifierValueResolver
