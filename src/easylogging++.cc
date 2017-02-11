@@ -1113,10 +1113,10 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
     if (time <= base::consts::kTimeFormats[i].value) {
       break;
     }
-    if (base::consts::kTimeFormats[i].value == 1000 && time / 1000.0f < 1.4f) {
+    if (base::consts::kTimeFormats[i].value == 1000.0f && time / 1000.0f < 1.9f) {
         break;
     }
-    time /= static_cast<unsigned long long>(base::consts::kTimeFormats[i].value);
+    time /= base::consts::kTimeFormats[i].value;
     unit = base::consts::kTimeFormats[i + 1].unit;
   }
   base::type::stringstream_t ss;
