@@ -1121,7 +1121,6 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
   }
   base::type::stringstream_t ss;
   ss << time << " " << unit;
-  std::cout << time << " " << unit << std::endl;
   return ss.str();
 }
 
