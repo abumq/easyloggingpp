@@ -32,8 +32,8 @@ TEST(UtilitiesTest, PerformanceTrackerTest) {
         std::this_thread::sleep_for(std::chrono::microseconds(20));
     }
     {
-        TIMED_SCOPE(timer, "999 milliseconds wait");
-        std::this_thread::sleep_for(std::chrono::milliseconds(999));
+        TIMED_SCOPE(timer, "886 milliseconds wait");
+        std::this_thread::sleep_for(std::chrono::milliseconds(886));
     }
     {
         TIMED_SCOPE(timer, "1500 milliseconds wait");
