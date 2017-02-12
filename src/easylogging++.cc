@@ -1418,7 +1418,6 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
   conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
   conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
-  conditionalAddFlag(base::consts::kThreadNameFormatSpecifier, base::FormatFlags::ThreadName);
   conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
   conditionalAddFlag(base::consts::kLogFileBaseFormatSpecifier, base::FormatFlags::FileBase);
   conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
@@ -2279,15 +2278,10 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
         logMessage->logger()->parentApplicationName());
   }
-  if (logFormat->hasFlag(base::FormatFlags::ThreadName)) {
-    // Thread Name
-    base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadNameFormatSpecifier,
-        ELPP->getThreadName(base::threading::getCurrentThreadId()));
-  }
   if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
     // Thread ID
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-        base::threading::getCurrentThreadId());
+        ELPP->getThreadName(base::threading::getCurrentThreadId()));
   }
   if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
     // DateTime

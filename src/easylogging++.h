@@ -712,7 +712,6 @@ static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T
 static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
 static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
 static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
-static const base::type::char_t* kThreadNameFormatSpecifier         =      ELPP_LITERAL("%thread_name");
 static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
 static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
 static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
@@ -864,8 +863,7 @@ enum class FormatFlags : base::type::EnumType {
   ThreadId = 1 << 12,
   Level = 1 << 13,
   FileBase = 1 << 14,
-  LevelShort = 1 << 15,
-  ThreadName = 1 << 16
+  LevelShort = 1 << 15
 };
 /// @brief A subsecond precision class containing actual width and offset of the subsecond part
 class SubsecondPrecision {
@@ -2708,8 +2706,9 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 
   inline std::string getThreadName(const std::string& threadId) {
     std::map<std::string, std::string>::const_iterator it = m_threadNames.find(threadId);
-    if (it == m_threadNames.end())
+    if (it == m_threadNames.end()) {
       return threadId;
+    }
     return it->second;
   }
  private:

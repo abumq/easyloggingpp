@@ -18,6 +18,7 @@ Breaking Change: No
  - Restored `ELPP_DEFAULT_LOGGER` and `ELPP_DEFAULT_PERFORMANCE_LOGGER`
  - Helpers::getThreadName for reading current thread's name
  - Custom format specifier now has to return `std::string` instead
+ - Merged `thread_name` with `thread` if thread name is available it's used otherwise ID is displayed
 
 ==========================
 =         NOTES          =
