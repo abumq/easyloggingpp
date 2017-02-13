@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     partprocessor.cpp \
     addsplittedfiledialog.cpp \
     joinercore.cpp \
-    about.cpp
+    about.cpp \
+    ../../../src/easylogging++.cc
 
 HEADERS  += mainwindow.h \
     easylogging++.h \

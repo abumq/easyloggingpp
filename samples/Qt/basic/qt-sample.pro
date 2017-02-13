@@ -12,7 +12,7 @@ DEFINES += ELPP_QT_LOGGING    \
 TARGET = main.cpp.bin
 TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
-SOURCES += main.cpp
+SOURCES += main.cpp ../../../src/easylogging++.cc
 HEADERS += \
            mythread.h \
     easylogging++.h
