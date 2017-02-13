@@ -24,6 +24,7 @@ fi
 CURR_VERSION=$3
 CURR_RELEASE_DATE=$(grep -o '[0-9][0-9]-[0-9][0-9]-201[2-9] [0-9][0-9][0-9][0-9]hrs' $1/src/easylogging++.cc)
 NEW_RELEASE_DATE=$(date +"%d-%m-%Y %H%Mhrs")
+NEW_RELEASE_DATE_SIMPLE=$(date +"%d-%m-%Y")
 NEW_VERSION=$4
 DO_NOT_CONFIRM=$5
 if [ "$NEW_VERSION" = "" ]; then
@@ -47,7 +48,7 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
   sed -i '' -e "s/return std::string(\"$CURR_VERSION\");/return std\:\:string(\"$NEW_VERSION\");/g" $1/src/easylogging++.cc
   sed -i '' -e "s/return std::string(\"$CURR_RELEASE_DATE\");/return std\:\:string(\"$NEW_RELEASE_DATE\");/g" $1/src/easylogging++.cc
-  sed -i '' -e "s/xx-xx-xxxx/$NEW_RELEASE_DATE/g" $1/CHANGELOG.md
+  sed -i '' -e "s/\[Unreleased\]/\[$NEW_VERSION\] - $NEW_RELEASE_DATE_SIMPLE/g" $1/CHANGELOG.md
   astyle $1/src/easylogging++.h --style=google --indent=spaces=2 --max-code-length=120
   astyle $1/src/easylogging++.cc --style=google --indent=spaces=2 --max-code-length=120
   if [ -f "$1/src/easylogging++.h.orig" ];then

@@ -19,7 +19,7 @@
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.93)
+  [![notes] Changelog](/CHANGELOG.md)
  
   [![samples] Samples](/samples)
 
