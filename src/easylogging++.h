@@ -7,10 +7,10 @@
 //  Copyright (c) 2017 muflihun.com
 //
 //  This library is released under the MIT Licence.
-//  http://easylogging.muflihun.com/licence.php
+//  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://easylogging.muflihun.com
+//  http://labs.muflihun.com/easyloggingpp
 //  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H
