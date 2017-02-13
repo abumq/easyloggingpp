@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.93
+//  Easylogging++ v9.94.0
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -1114,7 +1114,7 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
       break;
     }
     if (base::consts::kTimeFormats[i].value == 1000.0f && time / 1000.0f < 1.9f) {
-        break;
+      break;
     }
     time /= base::consts::kTimeFormats[i].value;
     unit = base::consts::kTimeFormats[i + 1].unit;
@@ -1126,15 +1126,15 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
 
 unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, const struct timeval& startTime,
     base::TimestampUnit timestampUnit) {
-    if (timestampUnit == base::TimestampUnit::Microsecond) {
-        return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
-                                               static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
-    }
-    // milliseconds
-    auto conv = [](const struct timeval& tim) {
-        return static_cast<unsigned long long>((tim.tv_sec * 1000) + (tim.tv_usec / 1000));
-    };
-    return static_cast<unsigned long long>(conv(endTime) - conv(startTime));
+  if (timestampUnit == base::TimestampUnit::Microsecond) {
+    return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
+                                           static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
+  }
+  // milliseconds
+  auto conv = [](const struct timeval& tim) {
+    return static_cast<unsigned long long>((tim.tv_sec * 1000) + (tim.tv_usec / 1000));
+  };
+  return static_cast<unsigned long long>(conv(endTime) - conv(startTime));
 }
 
 struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
@@ -2969,11 +2969,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.93");
+  return std::string("9.94.0");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("04-02-2017 1532hrs");
+  return std::string("14-02-2017 0946hrs");
 }
 
 } // namespace el

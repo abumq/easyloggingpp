@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.94.0] - 14-02-2017
 ### Fixed
  - Fixed performance tracking time unit and calculations
 
