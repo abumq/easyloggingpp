@@ -3,11 +3,11 @@
 
 ![banner]
 
-> **Manual For v9.93**
+> **Manual For v9.94.0**
 
 [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`develop`)
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
 
 [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
@@ -19,7 +19,7 @@
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
   
-  [![notes] Release Notes](/doc/RELEASE-NOTES-v9.93)
+  [![notes] Changelog](/CHANGELOG.md)
  
   [![samples] Samples](/samples)
 
@@ -101,7 +101,7 @@
 
 # Introduction
 Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind: performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
-This manual is for Easylogging++ v9.93. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.94.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -528,15 +528,15 @@ LOG(INFO) << "This is info log";
 CLOG(ERROR, "performance") << "This is info log using performance logger";
 ```
 
-There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `ELPP_DEFAULT_LOGGER` and `ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
+There is another way to use same macro i.e, `LOG` (and associated macros). This is that you define macro `ELPP_DEFAULT_LOGGER` and `ELPP_DEFAULT_PERFORMANCE_LOGGER` with logger ID that is already registered, and now when you use `LOG` macro, it automatically will use specified logger instead of `default` logger. Please note that this should be defined in source file instead of header file. This is so that when we include header we dont accidently use invalid logger.
 
 A quick example is here
 ```c++
 #ifndef ELPP_DEFAULT_LOGGER
 #   define ELPP_DEFAULT_LOGGER "update_manager"
 #endif
-#ifndef ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID
-#   define ELPP_CURR_FILE_PERFORMANCE_LOGGER_ID ELPP_DEFAULT_LOGGER
+#ifndef ELPP_DEFAULT_PERFORMANCE_LOGGER
+#   define ELPP_DEFAULT_PERFORMANCE_LOGGER ELPP_DEFAULT_LOGGER
 #endif
 #include "easylogging++.h"
 UpdateManager::UpdateManager {
@@ -1350,8 +1350,8 @@ The MIT License (MIT)
 Copyright (c) 2017 muflihun.com
 
 https://github.com/muflihun/easyloggingpp
-http://easylogging.muflihun.com
-http://muflihun.com
+https://labs.muflihun.com
+https://muflihun.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -1381,38 +1381,38 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/banner.png?v=4
-  [ubuntu]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/ubuntu.png?v=2
-  [mint]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/linux-mint.png?v=2
-  [freebsd]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/free-bsd.png?v=2
-  [sl]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/scientific-linux.png?v=2
-  [fedora]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/fedora.png?v=3
-  [mac]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mac-osx.png?v=2
-  [winxp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windowsxp.png?v=2
-  [win7]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows7.png?v=2
-  [win8]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows8.png?v=2
-  [win10]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/windows10.png?v=2
-  [qt]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/qt.png?v=3
-  [boost]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/boost.png?v=3
-  [wxwidgets]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/wxwidgets.png?v=3
-  [devcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/devcpp.png?v=3
-  [gtkmm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gtkmm.png?v=3
-  [tdm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/tdm.png?v=3
-  [raspberrypi]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/raspberry-pi.png?v=3
-  [solaris]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/solaris.png?v=3
+  [banner]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/banner.png?v=4
+  [ubuntu]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/ubuntu.png?v=2
+  [mint]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/linux-mint.png?v=2
+  [freebsd]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/free-bsd.png?v=2
+  [sl]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/scientific-linux.png?v=2
+  [fedora]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/fedora.png?v=3
+  [mac]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/mac-osx.png?v=2
+  [winxp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windowsxp.png?v=2
+  [win7]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows7.png?v=2
+  [win8]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows8.png?v=2
+  [win10]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows10.png?v=2
+  [qt]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/qt.png?v=3
+  [boost]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/boost.png?v=3
+  [wxwidgets]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/devcpp.png?v=3
+  [gtkmm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/gtkmm.png?v=3
+  [tdm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/tdm.png?v=3
+  [raspberrypi]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/solaris.png?v=3
 
 
-  [gcc]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/gcc.png?v=4
-  [mingw]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/mingw.png?v=2
-  [cygwin]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/cygwin.png?v=2
-  [vcpp]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/vcpp.png?v=2
-  [llvm]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/llvm.png?v=2
-  [intel]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/intel.png?v=2
-  [android]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/icons/android.png?v=2
-  [manual]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/help.png?v=3
-  [download]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/download.png?v=2
-  [samples]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/sample.png?v=2
-  [notes]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/notes.png?v=4
-  [top]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/up.png?v=4
-  [www]: https://raw.githubusercontent.com/muflihun/easylogging.muflihun.com/master/images/logo-www.png?v=6
+  [gcc]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/gcc.png?v=4
+  [mingw]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/mingw.png?v=2
+  [cygwin]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/cygwin.png?v=2
+  [vcpp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/vcpp.png?v=2
+  [llvm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/llvm.png?v=2
+  [intel]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/intel.png?v=2
+  [android]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/android.png?v=2
+  [manual]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/help.png?v=3
+  [download]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/download.png?v=2
+  [samples]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/sample.png?v=2
+  [notes]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/notes.png?v=4
+  [top]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/up.png?v=4
+  [www]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/logo-www.png?v=6
   

@@ -2,15 +2,14 @@
 # Locate easylogging++ library
 #
 # This module defines:
-# EASYLOGGINGPP_FOUND, if true, library is found
 # EASYLOGGINGPP_INCLUDE_DIR, directory path where to find
 # 	easylogging++ directory with all necessary headers.
 # 
 # $EASYLOGGINGPP_ROOT is an environment variable that
 # would correspond to the installation path.
 #
-# http://easylogging.muflihun.com
-# http://muflihun.com
+# https://labs.muflihun.com
+# https://muflihun.com
 #
 
 set(EASYLOGGINGPP_PATHS	${EASYLOGGINGPP_ROOT} $ENV{EASYLOGGINGPP_ROOT})	

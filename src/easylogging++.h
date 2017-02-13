@@ -1,16 +1,16 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.93
+//  Easylogging++ v9.94.0
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
 //
 //  This library is released under the MIT Licence.
-//  http://easylogging.muflihun.com/licence.php
+//  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://easylogging.muflihun.com
+//  http://labs.muflihun.com/easyloggingpp
 //  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H
@@ -712,7 +712,6 @@ static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T
 static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
 static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
 static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
-static const base::type::char_t* kThreadNameFormatSpecifier         =      ELPP_LITERAL("%thread_name");
 static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
 static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
 static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
@@ -739,8 +738,16 @@ static const int kYearBase                          =      1900;
 static const char* kAm                              =      "AM";
 static const char* kPm                              =      "PM";
 // Miscellaneous constants
+#ifdef ELPP_DEFAULT_LOGGER
+static const char* kDefaultLoggerId                        =      ELPP_DEFAULT_LOGGER;
+#else
 static const char* kDefaultLoggerId                        =      "default";
+#endif
+#ifdef ELPP_DEFAULT_PERFORMANCE_LOGGER
+static const char* kPerformanceLoggerId                    =      ELPP_DEFAULT_PERFORMANCE_LOGGER;
+#else
 static const char* kPerformanceLoggerId                    =      "performance";
+#endif
 #if defined(ELPP_SYSLOG)
 static const char* kSysLogLoggerId                         =      "syslog";
 #endif  // defined(ELPP_SYSLOG)
@@ -856,8 +863,7 @@ enum class FormatFlags : base::type::EnumType {
   ThreadId = 1 << 12,
   Level = 1 << 13,
   FileBase = 1 << 14,
-  LevelShort = 1 << 15,
-  ThreadName = 1 << 16
+  LevelShort = 1 << 15
 };
 /// @brief A subsecond precision class containing actual width and offset of the subsecond part
 class SubsecondPrecision {
@@ -1668,7 +1674,7 @@ class LogFormat : public Loggable {
 };
 }  // namespace base
 /// @brief Resolving function for format specifier
-typedef std::function<const char*(const LogMessage*)> FormatSpecifierValueResolver;
+typedef std::function<std::string(const LogMessage*)> FormatSpecifierValueResolver;
 /// @brief User-provided custom format specifier
 /// @see el::Helpers::installCustomFormatSpecifier
 /// @see FormatSpecifierValueResolver
@@ -2700,8 +2706,9 @@ class Storage : base::NoCopy, public base::threading::ThreadSafe {
 
   inline std::string getThreadName(const std::string& threadId) {
     std::map<std::string, std::string>::const_iterator it = m_threadNames.find(threadId);
-    if (it == m_threadNames.end())
+    if (it == m_threadNames.end()) {
       return threadId;
+    }
     return it->second;
   }
  private:
@@ -3412,12 +3419,6 @@ writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVAL
 #define ELPP_WRITE_LOG_N_TIMES(writer, n, level, dispatchAction, ...) \
 ELPP->validateNTimesCounter(__FILE__, __LINE__, n) && \
 writer(level, __FILE__, __LINE__, ELPP_FUNC, dispatchAction).construct(el_getVALength(__VA_ARGS__), __VA_ARGS__)
-#undef ELPP_CURR_FILE_PERFORMANCE_LOGGER
-#if defined(ELPP_PERFORMANCE_LOGGER)
-#  define ELPP_CURR_FILE_PERFORMANCE_LOGGER ELPP_PERFORMANCE_LOGGER
-#else
-#  define ELPP_CURR_FILE_PERFORMANCE_LOGGER el::base::consts::kPerformanceLoggerId
-#endif
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 class PerformanceTrackingData {
  public:
@@ -3479,7 +3480,7 @@ class PerformanceTracker : public base::threading::ThreadSafe, public Loggable {
  public:
   PerformanceTracker(const std::string& blockName,
                      base::TimestampUnit timestampUnit = base::TimestampUnit::Millisecond,
-                     const std::string& loggerId = std::string(ELPP_CURR_FILE_PERFORMANCE_LOGGER),
+                     const std::string& loggerId = std::string(el::base::consts::kPerformanceLoggerId),
                      bool scopedLog = true, Level level = base::consts::kPerformanceTrackerDefaultLevel);
   /// @brief Copy constructor
   PerformanceTracker(const PerformanceTracker& t) :
@@ -3682,6 +3683,9 @@ class Helpers : base::StaticClass {
   /// @brief Sets thread name for current thread. Requires std::thread
   static inline void setThreadName(const std::string& name) {
     ELPP->setThreadName(name);
+  }
+  static inline std::string getThreadName() {
+    return ELPP->getThreadName(base::threading::getCurrentThreadId());
   }
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
   /// @brief Overrides default crash handler and installs custom handler.

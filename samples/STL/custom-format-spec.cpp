@@ -28,14 +28,14 @@ static std::map<ELogLevel, std::string> sSeverityMap {
     { kLogLevel_Verbose, "loquacious" }
 };
 
-const char*
+std::string
 getSeverity(const el::LogMessage* message) {
     return sSeverityMap[static_cast<ELogLevel>(message->verboseLevel())].c_str();
 }
 
 class HttpRequest {
 public:
-    const char* getIp(const el::LogMessage*) {
+    std::string getIp(const el::LogMessage*) {
         return "192.168.1.1";
     }
 };

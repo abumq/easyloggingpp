@@ -6,13 +6,14 @@ option(test "Build all tests" OFF)
 
 set(ELPP_MAJOR_VERSION "9")
 set(ELPP_MINOR_VERSION "93")
-set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}")
+set(ELPP_PATCH_VERSION "0")
+set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(FILES 
+install(FILES
     src/easylogging++.h
     src/easylogging++.cc
     DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
@@ -23,25 +24,25 @@ export(PACKAGE ${PROJECT_NAME})
 
 ########################################## Unit Testing ###################################
 if (test)
-	# We need C++11
-	if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.0)
-	        # CMake 3.1 has built-in CXX standard checks.
-	        message("-- Setting C++11")
-	        set(CMAKE_CXX_STANDARD 11)
-	        set(CMAKE_CXX_STANDARD_REQUIRED on)
-	else()
-	        if (CMAKE_CXX_COMPILER_ID MATCHES "GCC")
-	            message ("-- GNU CXX (-std=c++11)")
-	            list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
-	        elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-	            message ("-- CLang CXX (-std=c++11)")
-	            list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
-	        else()
-	            message ("-- Easylogging++ requires C++11. Your compiler does not support it.")
-	        endif()
-	endif()
+        # We need C++11
+        if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.0)
+                # CMake 3.1 has built-in CXX standard checks.
+                message("-- Setting C++11")
+                set(CMAKE_CXX_STANDARD 11)
+                set(CMAKE_CXX_STANDARD_REQUIRED on)
+        else()
+                if (CMAKE_CXX_COMPILER_ID MATCHES "GCC")
+                    message ("-- GNU CXX (-std=c++11)")
+                    list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+                elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+                    message ("-- CLang CXX (-std=c++11)")
+                    list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+                else()
+                    message ("-- Easylogging++ requires C++11. Your compiler does not support it.")
+                endif()
+        endif()
 
-	set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+        set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
     find_package (gtest REQUIRED)
 
@@ -58,6 +59,7 @@ if (test)
         ELPP_FEATURE_ALL
         ELPP_LOGGING_FLAGS_FROM_ARG
         ELPP_NO_DEFAULT_LOG_FILE
+        ELPP_FRESH_LOG_FILE
     )
 
     # Standard linking to gtest stuff.

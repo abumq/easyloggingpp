@@ -1,16 +1,16 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.93
+//  Easylogging++ v9.94.0
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
 //
 //  This library is released under the MIT Licence.
-//  http://easylogging.muflihun.com/licence.php
+//  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://easylogging.muflihun.com
+//  http://labs.muflihun.com/easyloggingpp
 //  http://muflihun.com
 //
 
@@ -1107,18 +1107,20 @@ std::string DateTime::timevalToString(struct timeval tval, const char* format,
 }
 
 base::type::string_t DateTime::formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {
-  double result = static_cast<double>(time);
   base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
   const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
   for (base::type::EnumType i = start; i < base::consts::kTimeFormatsCount - 1; ++i) {
-    if (result <= base::consts::kTimeFormats[i].value) {
+    if (time <= base::consts::kTimeFormats[i].value) {
       break;
     }
-    result /= base::consts::kTimeFormats[i].value;
+    if (base::consts::kTimeFormats[i].value == 1000.0f && time / 1000.0f < 1.9f) {
+      break;
+    }
+    time /= base::consts::kTimeFormats[i].value;
     unit = base::consts::kTimeFormats[i + 1].unit;
   }
   base::type::stringstream_t ss;
-  ss << result << " " << unit;
+  ss << time << " " << unit;
   return ss.str();
 }
 
@@ -1127,10 +1129,12 @@ unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, co
   if (timestampUnit == base::TimestampUnit::Microsecond) {
     return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
                                            static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
-  } else {
-    return static_cast<unsigned long long>((((endTime.tv_sec - startTime.tv_sec) * 1000) +
-                                            (endTime.tv_usec - startTime.tv_usec)) / 1000);
   }
+  // milliseconds
+  auto conv = [](const struct timeval& tim) {
+    return static_cast<unsigned long long>((tim.tv_sec * 1000) + (tim.tv_usec / 1000));
+  };
+  return static_cast<unsigned long long>(conv(endTime) - conv(startTime));
 }
 
 struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
@@ -1414,7 +1418,6 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   conditionalAddFlag(base::consts::kSeverityLevelShortFormatSpecifier, base::FormatFlags::LevelShort);
   conditionalAddFlag(base::consts::kLoggerIdFormatSpecifier, base::FormatFlags::LoggerId);
   conditionalAddFlag(base::consts::kThreadIdFormatSpecifier, base::FormatFlags::ThreadId);
-  conditionalAddFlag(base::consts::kThreadNameFormatSpecifier, base::FormatFlags::ThreadName);
   conditionalAddFlag(base::consts::kLogFileFormatSpecifier, base::FormatFlags::File);
   conditionalAddFlag(base::consts::kLogFileBaseFormatSpecifier, base::FormatFlags::FileBase);
   conditionalAddFlag(base::consts::kLogLineFormatSpecifier, base::FormatFlags::Line);
@@ -1978,8 +1981,11 @@ Storage::Storage(const LogBuilderPtr& defaultLogBuilder) :
   m_preRollOutCallback(base::defaultPreRollOutCallback) {
   // Register default logger
   m_registeredLoggers->get(std::string(base::consts::kDefaultLoggerId));
+  // We register default logger anyway (worse case it's not going to register) just in case
+  m_registeredLoggers->get("default");
   // Register performance logger and reconfigure format
   Logger* performanceLogger = m_registeredLoggers->get(std::string(base::consts::kPerformanceLoggerId));
+  m_registeredLoggers->get("performance");
   performanceLogger->configurations()->setGlobally(ConfigurationType::Format, std::string("%datetime %level %msg"));
   performanceLogger->reconfigure();
 #if defined(ELPP_SYSLOG)
@@ -2272,15 +2278,10 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
         logMessage->logger()->parentApplicationName());
   }
-  if (logFormat->hasFlag(base::FormatFlags::ThreadName)) {
-    // Thread Name
-    base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadNameFormatSpecifier,
-        ELPP->getThreadName(base::threading::getCurrentThreadId()));
-  }
   if (logFormat->hasFlag(base::FormatFlags::ThreadId)) {
     // Thread ID
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kThreadIdFormatSpecifier,
-        base::threading::getCurrentThreadId());
+        ELPP->getThreadName(base::threading::getCurrentThreadId()));
   }
   if (logFormat->hasFlag(base::FormatFlags::DateTime)) {
     // DateTime
@@ -2336,7 +2337,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
        it != ELPP->customFormatSpecifiers()->end(); ++it) {
     std::string fs(it->formatSpecifier());
     base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
-    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, std::string(it->resolver()(logMessage)));
+    base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()(logMessage));
   }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
   if (appendNewLine) logLine += ELPP_LITERAL("\n");
@@ -2968,11 +2969,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.93");
+  return std::string("9.94.0");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("04-02-2017 1532hrs");
+  return std::string("14-02-2017 0946hrs");
 }
 
 } // namespace el
