@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Bash script that helps with releasing new versions of EasyLogging++
-# Revision: 1.3
+# Revision: 1.4
 # @author mkhan3189
 #
 # Usage:
@@ -47,6 +47,7 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
   sed -i '' -e "s/return std::string(\"$CURR_VERSION\");/return std\:\:string(\"$NEW_VERSION\");/g" $1/src/easylogging++.cc
   sed -i '' -e "s/return std::string(\"$CURR_RELEASE_DATE\");/return std\:\:string(\"$NEW_RELEASE_DATE\");/g" $1/src/easylogging++.cc
+  sed -i '' -e "s/xx-xx-xxxx/$NEW_RELEASE_DATE/g" $1/CHANGELOG.md
   astyle $1/src/easylogging++.h --style=google --indent=spaces=2 --max-code-length=120
   astyle $1/src/easylogging++.cc --style=google --indent=spaces=2 --max-code-length=120
   if [ -f "$1/src/easylogging++.h.orig" ];then
@@ -59,8 +60,6 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
   sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
-  sed -i '' -e "s/Easylogging++ v$CURR_VERSION/Easylogging++ v$NEW_VERSION/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
-  sed -i '' -e "s/easyloggingpp\/blob\/v$CURR_VERSION\/README.md/easyloggingpp\/blob\/v$NEW_VERSION\/README.md/g" $1/doc/RELEASE-NOTES-v$NEW_VERSION
   sed -i '' -e "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
     rm easyloggingpp_v$NEW_VERSION.zip
@@ -70,14 +69,12 @@ if [ "$confirm" = "y" ]; then
   fi
   cp $1/src/easylogging++.h .
   cp $1/src/easylogging++.cc .
-  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION RELEASE-NOTES.txt
-  cp LICENCE LICENCE.txt
-  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h easylogging++.cc LICENCE.txt RELEASE-NOTES.txt
-  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h easylogging++.cc LICENCE.txt RELEASE-NOTES.txt
+  cp $1/CHANGELOG.md CHANGELOG.txt
+  cp $1/LICENCE LICENCE.txt
+  zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h easylogging++.cc LICENCE.txt CHANGELOG.txt
+  tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h easylogging++.cc LICENCE.txt CHANGELOG.txt
   mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
   mv easyloggingpp_v$NEW_VERSION.tar.gz $2/releases/
-  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/release-notes-latest.txt
-  cp $1/doc/RELEASE-NOTES-v$NEW_VERSION $2/releases/release-notes-v$NEW_VERSION.txt
-  rm easylogging++.h easylogging++.cc RELEASE-NOTES.txt LICENCE.txt
+  rm easylogging++.h easylogging++.cc CHANGELOG.txt LICENCE.txt
   echo "\n---------- PLEASE CHANGE CMakeLists.txt MANUALLY ----------- \n"
 fi
