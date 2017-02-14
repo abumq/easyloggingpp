@@ -1116,7 +1116,7 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
     if (base::consts::kTimeFormats[i].value == 1000.0f && time / 1000.0f < 1.9f) {
       break;
     }
-    time /= base::consts::kTimeFormats[i].value;
+    time /= static_cast<decltype(time)>(base::consts::kTimeFormats[i].value);
     unit = base::consts::kTimeFormats[i + 1].unit;
   }
   base::type::stringstream_t ss;
@@ -1907,7 +1907,7 @@ void VRegistry::setModules(const char* modules) {
       isLevel = false;
       isMod = true;
       if (!ss.str().empty() && level != -1) {
-        insert(ss, level);
+        insert(ss, static_cast<base::type::VerboseLevel>(level));
         ss.str(std::string(""));
         level = -1;
       }
@@ -1924,7 +1924,7 @@ void VRegistry::setModules(const char* modules) {
     }
   }
   if (!ss.str().empty() && level != -1) {
-    insert(ss, level);
+    insert(ss, static_cast<base::type::VerboseLevel>(level));
   }
 }
 
@@ -1951,9 +1951,9 @@ void VRegistry::setFromArgs(const base::utils::CommandLineArgs* commandLineArgs)
       commandLineArgs->hasParam("-V") || commandLineArgs->hasParam("--VERBOSE")) {
     setLevel(base::consts::kMaxVerboseLevel);
   } else if (commandLineArgs->hasParamWithValue("--v")) {
-    setLevel(atoi(commandLineArgs->getParamValue("--v")));
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--v"))));
   } else if (commandLineArgs->hasParamWithValue("--V")) {
-    setLevel(atoi(commandLineArgs->getParamValue("--V")));
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--V"))));
   } else if ((commandLineArgs->hasParamWithValue("-vmodule")) && vModulesEnabled()) {
     setModules(commandLineArgs->getParamValue("-vmodule"));
   } else if (commandLineArgs->hasParamWithValue("-VMODULE") && vModulesEnabled()) {
