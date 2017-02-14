@@ -208,7 +208,7 @@ bool Configurations::parseFromFile(const std::string& configurationFile, Configu
   // We initial assertion with true because if we have assertion diabled, we want to pass this
   // check and if assertion is enabled we will have values re-assigned any way.
   bool assertionPassed = true;
-  ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
+  ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)) == true,
               "Configuration file [" << configurationFile << "] does not exist!");
   if (!assertionPassed) {
     return false;
