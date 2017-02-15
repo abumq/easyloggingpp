@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixed
+ - Fixes for /W4 level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))
+
 ## [9.94.0] - 14-02-2017
 ### Fixed
  - Fixed performance tracking time unit and calculations
