@@ -57,10 +57,7 @@ if [ "$confirm" = "y" ]; then
   if [ -f "$1/src/easylogging++.cc.orig" ];then
     rm $1/src/easylogging++.cc.orig
   fi
-  sed -i '' -e "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
-  sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
-  sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
-  sed -i '' -e "s/$CURR_VERSION \($CURR_RELEASE_DATE\)/$NEW_VERSION \($NEW_RELEASE_DATE\)/g" $2/index.html
+  sed -i '' -e "s/$CURR_VERSION ($CURR_RELEASE_DATE)/$NEW_VERSION ($NEW_RELEASE_DATE)/g" $2/index.html
   sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
   sed -i '' -e "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
