@@ -60,6 +60,7 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/\$currentVersion = \"$CURR_VERSION\"*/\$currentVersion = \"$NEW_VERSION\"/g" $2/version.php
   sed -i '' -e "s/\$releaseDate = \"$CURR_RELEASE_DATE\"*/\$releaseDate = \"$NEW_RELEASE_DATE\"/g" $2/version.php
   sed -i '' -e "s/$CURR_RELEASE_DATE/$NEW_RELEASE_DATE/g" $2/version.php
+  sed -i '' -e "s/$CURR_VERSION \($CURR_RELEASE_DATE\)/$NEW_VERSION \($NEW_RELEASE_DATE\)/g" $2/index.html
   sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/README.md
   sed -i '' -e "s/easyloggingpp_$CURR_VERSION.zip/easyloggingpp_$NEW_VERSION.zip/g" $1/README.md
   if [ -f "easyloggingpp_v$NEW_VERSION.zip" ]; then
@@ -74,8 +75,8 @@ if [ "$confirm" = "y" ]; then
   cp $1/LICENCE LICENCE.txt
   zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h easylogging++.cc LICENCE.txt CHANGELOG.txt
   tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h easylogging++.cc LICENCE.txt CHANGELOG.txt
-  mv easyloggingpp_v$NEW_VERSION.zip $2/releases/
-  mv easyloggingpp_v$NEW_VERSION.tar.gz $2/releases/
+  mv easyloggingpp_v$NEW_VERSION.zip $2/
+  mv easyloggingpp_v$NEW_VERSION.tar.gz $2/
   rm easylogging++.h easylogging++.cc CHANGELOG.txt LICENCE.txt
   echo "\n---------- PLEASE CHANGE CMakeLists.txt MANUALLY ----------- \n"
 fi
