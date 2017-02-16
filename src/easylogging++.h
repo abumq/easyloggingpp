@@ -10,7 +10,7 @@
 //  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://labs.muflihun.com/easyloggingpp
+//  https://muflihun.github.io/easyloggingpp
 //  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H
