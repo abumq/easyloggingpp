@@ -1727,7 +1727,7 @@ void TypedConfigurations::insertFile(Level level, const std::string& fullFilenam
   create(m_filenameMap.empty() && m_fileStreamMap.empty() ? Level::Global : level);
 }
 
-bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
+bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback) {
   base::type::fstream_t* fs = unsafeGetConfigByRef(level, &m_fileStreamMap, "fileStream").get();
   if (fs == nullptr) {
     return true;
@@ -1739,7 +1739,7 @@ bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOu
     ELPP_INTERNAL_INFO(1, "Truncating log file [" << fname << "] as a result of configurations for level ["
                        << LevelHelper::convertToString(level) << "]");
     fs->close();
-    PreRollOutCallback(fname.c_str(), currFileSize);
+    preRollOutCallback(fname.c_str(), currFileSize);
     fs->open(fname, std::fstream::out | std::fstream::trunc);
     return true;
   }
@@ -1823,7 +1823,7 @@ Logger* RegisteredLoggers::get(const std::string& id, bool forceCreation) {
 }
 
 bool RegisteredLoggers::remove(const std::string& id) {
-  if (id == "default") {
+  if (id == base::consts::kDefaultLoggerId) {
     return false;
   }
   Logger* logger = base::utils::Registry<Logger, std::string>::get(id);

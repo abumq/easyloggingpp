@@ -1944,7 +1944,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 
   TypedConfigurations(const TypedConfigurations& other);
 
-  ~TypedConfigurations(void) {
+  virtual ~TypedConfigurations(void) {
   }
 
   const Configurations* configurations(void) const {
@@ -2055,11 +2055,11 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   unsigned long getULong(std::string confVal);
   std::string resolveFilename(const std::string& filename);
   void insertFile(Level level, const std::string& fullFilename);
-  bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback);
+  bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback);
 
-  inline bool validateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
+  inline bool validateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback) {
     base::threading::ScopedLock scopedLock(lock());
-    return unsafeValidateFileRolling(level, PreRollOutCallback);
+    return unsafeValidateFileRolling(level, preRollOutCallback);
   }
 };
 /// @brief Class that keeps record of current line hit for occasional logging

@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 ### Fixed
- - Fixes for /W4 level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))
+ - Fixes for `/W4` level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))
+ - Fixes removing default logger if other than `default`
+
+### Changes
+ - Changed `TypedConfiguration` destructor to virtual
 
 ## [9.94.0] - 14-02-2017
 ### Fixed
