@@ -17,6 +17,8 @@
 
 [![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
+[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ)
+
 ### Quick Links
 
   [![download] Latest Release](https://github.com/muflihun/easyloggingpp/releases/latest)
