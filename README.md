@@ -11,6 +11,8 @@
 
 [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE)
+
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
 [![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
