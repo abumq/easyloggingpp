@@ -106,34 +106,39 @@
 </pre>
 
 # Introduction
-Easylogging++ is single header, feature-rich, efficient logging library for C++ applications. It has been written keeping three things in mind: performance, management (setup, configure, logging, simplicity) and portability. Its highly configurable and extremely useful for small to large sized projects.
+Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own sinks](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (referred to as `LogDispatchCallback`). Currently used by hundreds of open-source projects.
+
 This manual is for Easylogging++ v9.94.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Why yet another library
-If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and does not require linking or installation. You can import into your project as if its part of your project. This library has been designed with various thoughts in mind (i.e, portability, performance, usability, features and easy to setup).
+If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and only requires to link to single source file. (Originally it was header-only and was changed to use source file in [issue #445](https://github.com/muflihun/easyloggingpp/issues/445). You can still use header-only in [v9.89](https://github.com/muflihun/easyloggingpp/releases/tag/9.89)). 
 
-Why yet another library? Well, answer is pretty straight forward, use it as if you wrote it so you can fix issues (if any) as you go or raise them on github. In addition to that, I have not seen any logging library based on single-header with such a design where you can configure on the go and get the same performance. I have seen other single-header logging libraries for C++ but either they use external libraries, e.g, boost, Qt to support certain features like threading, regular expression or date etc. This library has everything built-in to prevent usage of external libraries, not that I don't like those libraries, in fact I love them, but because not all projects use these libraries, I couldn't take risk of depending on them.
+This library has been designed with various thoughts in mind (i.e, portability, performance, usability, features and easy to setup).
+
+Why yet another library? Well, answer is pretty straight forward, use it as you wrote it so you can fix issues (if any) as you go or raise them on github. In addition to that, I personally have not seen any logging library based on single-header with such a design where you can configure on the go, extend it to your needs and get fast performance. I have seen other single-header logging libraries for C++ but either they use external libraries, e.g, boost or Qt to support certain features like threading, regular expression or date etc. This library has everything built-in to prevent usage of external libraries, not that I don't like those libraries, in fact I love them, but because not all projects use these libraries, I couldn't take risk of depending on them.
 
  [![top] Goto Top](#table-of-contents)
  
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that both typical and advanced developer will require while writing a software;
- * Highly configurable
+ * [Highly configurable](#configuration)
+ * [Extendable](#log-dispatch-callback)
  * Extremely fast
- * Thread and type safe
- * Cross-platform
- * Custom log patterns
- * Conditional and occasional logging
- * Performance tracking
- * Verbose logging
- * Crash handling
- * Helper CHECK macros
- * STL logging
- * Third-party library logging (Qt, boost, wxWidgets etc)
- * Extensible (Logging your own class or third-party class)
- * And many more...
+ * [Thread](#multi-threading) and type safe
+ * [Cross-platform](#compatibility)
+ * [Custom log patterns](#logging-format-specifiers)
+ * [Conditional and occasional logging](#conditional-logging)
+ * [Performance tracking](#performance-tracking)
+ * [Verbose logging](#verbose-logging]
+ * [Crash handling](#crash-handling)
+ * [Helper CHECK macros](#check-macros)
+ * [STL logging](#stl-logging)
+ * [Send to Syslog](#syslog)
+ * [Third-party library logging (Qt, boost, wxWidgets etc)](#logging-third-party-class)
+ * [Extensible (Logging your own class or third-party class)](#logging-your-own-class)
+ * [And many more...](#extra-features)
 
  [![top] Goto Top](#table-of-contents)
  
