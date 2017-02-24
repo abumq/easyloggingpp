@@ -6,6 +6,9 @@
  - Fixed links
  - Fixes removing default logger if other than `default`
 
+### Changes
+ - Changed documentation to mention `easylogging++.cc` in introduction and added links to features
+
 ## [9.94.0] - 14-02-2017
 ### Fixed
  - Fixed performance tracking time unit and calculations
@@ -16,4 +19,4 @@
  - Custom format specifier now has to return `std::string` instead
  - Merged `thread_name` with `thread` if thread name is available it's used otherwise ID is displayed
 
-For older versions please refer to https://github.com/muflihun/easyloggingpp/tree/master/doc
+For older versions please refer to [https://github.com/muflihun/easyloggingpp/tree/master/doc](https://github.com/muflihun/easyloggingpp/tree/master/doc)
