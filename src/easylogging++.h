@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.0
+//  Easylogging++ v9.94.1
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -10,7 +10,7 @@
 //  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://labs.muflihun.com/easyloggingpp
+//  https://muflihun.github.io/easyloggingpp
 //  http://muflihun.com
 //
 #ifndef EASYLOGGINGPP_H
@@ -1944,7 +1944,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 
   TypedConfigurations(const TypedConfigurations& other);
 
-  ~TypedConfigurations(void) {
+  virtual ~TypedConfigurations(void) {
   }
 
   const Configurations* configurations(void) const {
@@ -2055,11 +2055,11 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   unsigned long getULong(std::string confVal);
   std::string resolveFilename(const std::string& filename);
   void insertFile(Level level, const std::string& fullFilename);
-  bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback);
+  bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback);
 
-  inline bool validateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
+  inline bool validateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback) {
     base::threading::ScopedLock scopedLock(lock());
-    return unsafeValidateFileRolling(level, PreRollOutCallback);
+    return unsafeValidateFileRolling(level, preRollOutCallback);
   }
 };
 /// @brief Class that keeps record of current line hit for occasional logging

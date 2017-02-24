@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.0
+//  Easylogging++ v9.94.1
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -10,7 +10,7 @@
 //  http://labs.muflihun.com/easyloggingpp/licence.php
 //
 //  https://github.com/muflihun/easyloggingpp
-//  http://labs.muflihun.com/easyloggingpp
+//  https://muflihun.github.io/easyloggingpp
 //  http://muflihun.com
 //
 
@@ -208,7 +208,7 @@ bool Configurations::parseFromFile(const std::string& configurationFile, Configu
   // We initial assertion with true because if we have assertion diabled, we want to pass this
   // check and if assertion is enabled we will have values re-assigned any way.
   bool assertionPassed = true;
-  ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)),
+  ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)) == true,
               "Configuration file [" << configurationFile << "] does not exist!");
   if (!assertionPassed) {
     return false;
@@ -1116,7 +1116,7 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
     if (base::consts::kTimeFormats[i].value == 1000.0f && time / 1000.0f < 1.9f) {
       break;
     }
-    time /= base::consts::kTimeFormats[i].value;
+    time /= static_cast<decltype(time)>(base::consts::kTimeFormats[i].value);
     unit = base::consts::kTimeFormats[i + 1].unit;
   }
   base::type::stringstream_t ss;
@@ -1727,7 +1727,7 @@ void TypedConfigurations::insertFile(Level level, const std::string& fullFilenam
   create(m_filenameMap.empty() && m_fileStreamMap.empty() ? Level::Global : level);
 }
 
-bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOutCallback& PreRollOutCallback) {
+bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback) {
   base::type::fstream_t* fs = unsafeGetConfigByRef(level, &m_fileStreamMap, "fileStream").get();
   if (fs == nullptr) {
     return true;
@@ -1739,7 +1739,7 @@ bool TypedConfigurations::unsafeValidateFileRolling(Level level, const PreRollOu
     ELPP_INTERNAL_INFO(1, "Truncating log file [" << fname << "] as a result of configurations for level ["
                        << LevelHelper::convertToString(level) << "]");
     fs->close();
-    PreRollOutCallback(fname.c_str(), currFileSize);
+    preRollOutCallback(fname.c_str(), currFileSize);
     fs->open(fname, std::fstream::out | std::fstream::trunc);
     return true;
   }
@@ -1823,7 +1823,7 @@ Logger* RegisteredLoggers::get(const std::string& id, bool forceCreation) {
 }
 
 bool RegisteredLoggers::remove(const std::string& id) {
-  if (id == "default") {
+  if (id == base::consts::kDefaultLoggerId) {
     return false;
   }
   Logger* logger = base::utils::Registry<Logger, std::string>::get(id);
@@ -1907,7 +1907,7 @@ void VRegistry::setModules(const char* modules) {
       isLevel = false;
       isMod = true;
       if (!ss.str().empty() && level != -1) {
-        insert(ss, level);
+        insert(ss, static_cast<base::type::VerboseLevel>(level));
         ss.str(std::string(""));
         level = -1;
       }
@@ -1924,7 +1924,7 @@ void VRegistry::setModules(const char* modules) {
     }
   }
   if (!ss.str().empty() && level != -1) {
-    insert(ss, level);
+    insert(ss, static_cast<base::type::VerboseLevel>(level));
   }
 }
 
@@ -1951,9 +1951,9 @@ void VRegistry::setFromArgs(const base::utils::CommandLineArgs* commandLineArgs)
       commandLineArgs->hasParam("-V") || commandLineArgs->hasParam("--VERBOSE")) {
     setLevel(base::consts::kMaxVerboseLevel);
   } else if (commandLineArgs->hasParamWithValue("--v")) {
-    setLevel(atoi(commandLineArgs->getParamValue("--v")));
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--v"))));
   } else if (commandLineArgs->hasParamWithValue("--V")) {
-    setLevel(atoi(commandLineArgs->getParamValue("--V")));
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--V"))));
   } else if ((commandLineArgs->hasParamWithValue("-vmodule")) && vModulesEnabled()) {
     setModules(commandLineArgs->getParamValue("-vmodule"));
   } else if (commandLineArgs->hasParamWithValue("-VMODULE") && vModulesEnabled()) {
@@ -2969,11 +2969,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.94.0");
+  return std::string("9.94.1");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("14-02-2017 0946hrs");
+  return std::string("25-02-2017 0813hrs");
 }
 
 } // namespace el
