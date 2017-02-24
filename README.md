@@ -3,7 +3,7 @@
 
 ![banner]
 
-> **Manual For v9.94.0**
+> **Manual For v9.94.1**
 
 [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`develop`)
 
@@ -108,7 +108,7 @@
 # Introduction
 Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own sinks](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (referred to as `LogDispatchCallback`). Currently used by hundreds of open-source projects.
 
-This manual is for Easylogging++ v9.94.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.94.1. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
  [![top] Goto Top](#table-of-contents)
  

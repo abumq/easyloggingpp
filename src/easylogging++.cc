@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.0
+//  Easylogging++ v9.94.1
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -2969,11 +2969,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.94.0");
+  return std::string("9.94.1");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("14-02-2017 0946hrs");
+  return std::string("25-02-2017 0813hrs");
 }
 
 } // namespace el
