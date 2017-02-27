@@ -2,29 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(Easyloggingpp CXX)
 
-option(test "Build all tests" OFF)
-
-set(ELPP_MAJOR_VERSION "9")
-set(ELPP_MINOR_VERSION "94")
-set(ELPP_PATCH_VERSION "1")
-set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
-
-set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-install(FILES
-    src/easylogging++.h
-    src/easylogging++.cc
-    DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
-    COMPONENT dev)
-
-export(PACKAGE ${PROJECT_NAME})
-
-
-########################################## Unit Testing ###################################
-if (test)
-        # We need C++11
+macro(require_cpp11)
         if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.0)
                 # CMake 3.1 has built-in CXX standard checks.
                 message("-- Setting C++11")
@@ -41,8 +19,43 @@ if (test)
                     message ("-- Easylogging++ requires C++11. Your compiler does not support it.")
                 endif()
         endif()
+endmacro()
 
-        set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+option(test "Build all tests" OFF)
+option(build_static_lib "Build easyloggingpp as a static library" OFF)
+
+set(ELPP_MAJOR_VERSION "9")
+set(ELPP_MINOR_VERSION "94")
+set(ELPP_PATCH_VERSION "1")
+set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
+
+set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+install(FILES
+    src/easylogging++.h
+    src/easylogging++.cc
+    DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
+    COMPONENT dev)
+
+if (build_static_lib)
+        require_cpp11()
+        add_library(easyloggingpp STATIC src/easylogging++.cc)
+
+        install(TARGETS
+            easyloggingpp
+            ARCHIVE DESTINATION lib)
+endif()
+
+export(PACKAGE ${PROJECT_NAME})
+
+
+########################################## Unit Testing ###################################
+if (test)
+    # We need C++11
+    require_cpp11()
+    set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
     find_package (gtest REQUIRED)
 
