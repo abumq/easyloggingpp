@@ -23,6 +23,7 @@ endmacro()
 
 option(test "Build all tests" OFF)
 option(build_static_lib "Build easyloggingpp as a static library" OFF)
+option(lib_utc_datetime "Build library with UTC date/time logging" OFF)
 
 set(ELPP_MAJOR_VERSION "9")
 set(ELPP_MINOR_VERSION "94")
@@ -40,6 +41,10 @@ install(FILES
     COMPONENT dev)
 
 if (build_static_lib)
+        if (lib_utc_datetime)
+                add_definitions(-DELPP_UTC_DATETIME)
+        endif()
+
         require_cpp11()
         add_library(easyloggingpp STATIC src/easylogging++.cc)
 

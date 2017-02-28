@@ -438,6 +438,15 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 // For logging wxWidgets based classes & templates
 #   include <wx/vector.h>
 #endif  // defined(ELPP_WXWIDGETS_LOGGING)
+#if defined(ELPP_UTC_DATETIME)
+#   define elpptime_r gmtime_r
+#   define elpptime_s gmtime_s
+#   define elpptime   gmtime
+#else
+#   define elpptime_r localtime_r
+#   define elpptime_s localtime_s
+#   define elpptime   localtime
+#endif  // defined(ELPP_UTC_DATETIME)
 // Forward declarations
 namespace el {
 class Logger;
