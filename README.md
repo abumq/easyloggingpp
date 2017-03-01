@@ -186,6 +186,11 @@ make test
 make install
 ```
 
+Following options are supported by Easylogging++ cmake and you can turn these options on using `-D<option>=ON`
+
+ * `lib_utc_datetime` - Defines `ELPP_UTC_DATETIME`
+ * `build_static_lib` - Builds static library for Easylogging++ 
+
 With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/muflihun/easyloggingpp/releases/tag/9.89) and lower.
 
  [![top] Goto Top](#table-of-contents)
@@ -509,6 +514,7 @@ NOTE: All the macros either need to be defined before `#include "easylogging++"`
 | `ELPP_CUSTOM_COUT_LINE` (advanced) | Used with `ELPP_CUSTOM_COUT` to define how to write a log line with custom cout. e.g, `#define ELPP_CUSTOM_COUT_LINE(msg) QString::fromStdString(msg).trimmed()` |
 | `ELPP_NO_CHECK_MACROS`             | Do not define the *CHECK* macros                                                                                                                  |
 | `ELPP_NO_DEBUG_MACROS`             | Do not define the *DEBUG* macros                                                                                                                  |
+| `ELPP_UTC_DATETIME`                | Uses UTC time instead of local time (essentially uses `gmtime` instead of `localtime` and family functions)
 
  [![top] Goto Top](#table-of-contents)
  

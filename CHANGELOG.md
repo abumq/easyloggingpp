@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+ - CMake option to create static lib (thanks to @romariorios)
+ - Ability to use UTC time using `ELPP_UTC_DATETIME` (thanks to @romariorios)
 
 ## [9.94.1] - 25-02-2017
 ### Fixed
