@@ -613,7 +613,10 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
   }
   if (fs != nullptr) {
     fs->flush();
-    m_unflushedCount.find(level)->second = 0;
+    std::map<Level, unsigned int>::iterator i = m_unflushedCount.find(level);
+    if (i != m_unflushedCount.end()) {
+      i->second = 0;
+    }
   }
 }
 
@@ -996,6 +999,9 @@ const std::string OS::getBashOutput(const char* command) {
     }
     return std::string(hBuff);
   }
+  else {
+    pclose(proc);
+  }
   return std::string();
 #else
   ELPP_UNUSED(command);
@@ -1260,7 +1266,9 @@ bool CommandLineArgs::hasParamWithValue(const char* paramKey) const {
 }
 
 const char* CommandLineArgs::getParamValue(const char* paramKey) const {
-  return m_paramsWithValue.find(std::string(paramKey))->second.c_str();
+  std::map<std::string, std::string>::const_iterator i =
+    m_paramsWithValue.find(std::string(paramKey));
+  return (i != m_paramsWithValue.end()) ? i->second.c_str() : "";
 }
 
 bool CommandLineArgs::hasParam(const char* paramKey) const {
