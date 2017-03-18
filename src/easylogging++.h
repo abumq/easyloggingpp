@@ -703,13 +703,14 @@ namespace consts {
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 // Level log values - These are values that are replaced in place of %level format specifier
-static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO ");
-static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
-static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARN ");
-static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
-static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
-static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VER");
-static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
+// Extra spaces after format specifiers are only for readability purposes in log files
+static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO     ");
+static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG    ");
+static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARNING  ");
+static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR    ");
+static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL    ");
+static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VERBOSE"); // will become VERBOSE-x where x = verbose level
+static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE    ");
 static const base::type::char_t* kInfoLevelShortLogValue     =   ELPP_LITERAL("I");
 static const base::type::char_t* kDebugLevelShortLogValue    =   ELPP_LITERAL("D");
 static const base::type::char_t* kWarningLevelShortLogValue  =   ELPP_LITERAL("W");

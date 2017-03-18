@@ -6,6 +6,9 @@
  - Ability to use UTC time using `ELPP_UTC_DATETIME` (thanks to @romariorios)
  - CMake module updated to support static lib
 
+### Changes
+ - Renamed long format specifiers to full names with padding for readbility
+
 ## [9.94.1] - 25-02-2017
 ### Fixed
  - Fixes for `/W4` level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))
