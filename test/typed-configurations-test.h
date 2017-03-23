@@ -41,7 +41,7 @@ TEST(TypedConfigurationsTest, Initialization) {
     EXPECT_TRUE(tConf.enabled(Level::Global));
 
     EXPECT_EQ(ELPP_LITERAL("%datetime %level %msg"), tConf.logFormat(Level::Info).userFormat());
-    EXPECT_EQ(ELPP_LITERAL("%datetime INFO  %msg"), tConf.logFormat(Level::Info).format());
+    EXPECT_EQ(ELPP_LITERAL("%datetime INFO %msg"), tConf.logFormat(Level::Info).format());
     EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
     EXPECT_EQ(ELPP_LITERAL("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg"), tConf.logFormat(Level::Debug).userFormat());
@@ -64,7 +64,7 @@ TEST(TypedConfigurationsTest, Initialization) {
     EXPECT_EQ("%h:%m", tConf.logFormat(Level::Trace).dateTimeFormat());
 
     EXPECT_EQ(ELPP_LITERAL("%%datetime{%h:%m} %datetime %level-%vlevel %msg"), tConf.logFormat(Level::Verbose).userFormat());
-    EXPECT_EQ(ELPP_LITERAL("%%datetime{%h:%m} %datetime VER-%vlevel %msg"), tConf.logFormat(Level::Verbose).format());
+    EXPECT_EQ(ELPP_LITERAL("%%datetime{%h:%m} %datetime VERBOSE-%vlevel %msg"), tConf.logFormat(Level::Verbose).format());
     EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", tConf.logFormat(Level::Verbose).dateTimeFormat());
 
     EXPECT_EQ(ELPP_LITERAL("%%logger %%logger %logger %%logger %msg"), tConf.logFormat(Level::Error).userFormat());
