@@ -863,7 +863,8 @@ void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::st
 #endif  // defined(ELPP_UNICODE)
 
 std::string& Str::toUpper(std::string& str) {
-  std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+  std::transform(str.begin(), str.end(), str.begin(), 
+        [](char c) { return static_cast<char>(::toupper(c)); });
   return str;
 }
 
