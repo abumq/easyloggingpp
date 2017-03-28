@@ -1,24 +1,35 @@
 language: cpp
 compiler:
-  - clang
+  - gcc
+os: linux
+dist: trusty
 before_install:
  - sudo apt-get -qq update
- - sudo apt-get install -y libgtest-dev
- - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
+ - sudo apt-get install -y libgtest-dev valgrind
+ - sudo wget https://github.com/google/googletest/archive/release-1.7.0.tar.gz
+ - sudo tar xf release-1.7.0.tar.gz
+ - cd googletest-release-1.7.0
+ - sudo cmake -DBUILD_SHARED_LIBS=ON .
+ - sudo make
+ - sudo cp -a include/gtest /usr/include
+ - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
+ - which valgrind
+ - cd "${TRAVIS_BUILD_DIR}"
 before_script:
- - pwd
- - cd samples/STL/
- - pwd
- - which sh
-script: "sh ./.travis_build.sh && cd ../../test/ && sh ./.travis_build.sh"
+ - cd test/
+ - cmake -Dtest=ON ../
+ - make
+ - ls -l
+script: "./easyloggingpp-unit-tests -v && cd ../samples/STL && pwd && sh ./.travis_build.sh && valgrind ./bin/very-basic.cpp.bin"
 branches:
   only:
+    - master
     - develop
 notifications:
   recipients:
     - mkhan3189@gmail.com
   email:
-    on_success: change
-    on_failure: always
+    on_success: never
+    on_failure: change
 rvm:
   - 9.00

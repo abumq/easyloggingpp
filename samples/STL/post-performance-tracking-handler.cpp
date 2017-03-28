@@ -6,7 +6,6 @@
  // @author mkhan3189
  //
 
-#define ELPP_HANDLE_POST_PERFORMANCE_TRACKING // we need this!
 #include "easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
@@ -37,7 +36,7 @@ int main(void) {
             // Spend time
             for (int j = 0; j < 10000; ++j) { std::string tmp; }
             if (i % 100 == 0) {
-                obj.timer.checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
+                obj.timer->checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
             }
         }
     } 

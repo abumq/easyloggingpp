@@ -8,6 +8,7 @@
 #include "configurations-test.h"
 #include "custom-format-specifier-test.h"
 #include "enum-helper-test.h"
+#include "date-utils-test.h"
 #include "file-utils-test.h"
 #include "format-specifier-test.h"
 #include "global-configurations-test.h"
@@ -32,9 +33,12 @@
 TIMED_SCOPE(testTimer, "Easylogging++ Unit Tests");
 
 int main(int argc, char** argv) {
+
+
     testing::InitGoogleTest(&argc, argv);
+
     ELPP_INITIALIZE_SYSLOG(kSysLogIdent, 0, 0);
-        
+
     reconfigureLoggersForTest();
     std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;
 

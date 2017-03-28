@@ -3,7 +3,7 @@
 
 #include "test.h"
 
-const char* getIp() {
+const char* getIp(const el::LogMessage*) {
     return "127.0.0.1";
 }
 

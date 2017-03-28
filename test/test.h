@@ -5,9 +5,11 @@
 #ifndef TEST_HELPERS_H_
 #define TEST_HELPERS_H_
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundef"
+#pragma GCC diagnostic ignored "-Wsign-compare"
 #include <gtest/gtest.h>
-
-#define ELPP_LOGGING_FLAGS_FROM_ARG
+#pragma GCC diagnostic pop
 
 #include "easylogging++.h"
 
@@ -67,8 +69,8 @@ static std::string tail(unsigned int n, const char* filename = logfile) {
 }
 
 static std::string getDate(const char* format = "%a %b %d, %H:%m") {
-    MillisecondsWidth msWidth(3);
-    return DateTime::getDateTime(format, &msWidth);
+    SubsecondPrecision ssPrec(3);
+    return DateTime::getDateTime(format, &ssPrec);
 }
 
 static bool fileExists(const char* filename) {
@@ -93,8 +95,8 @@ static void cleanFile(const char* filename = logfile, el::base::type::fstream_t*
 #define BUILD_STR(strb) [&]() -> std::string { std::stringstream ssb; ssb << strb; return ssb.str(); }()
 
 static void removeFile(const char* path) {
-    system(BUILD_STR("rm -rf " << path).c_str());
+        (void)(system(BUILD_STR("rm -rf " << path).c_str()) + 1); // (void)(...+1) -> ignore result for gcc 4.6+
 }
 
-static const char* kSysLogIdent = "qt-gtest-proj";
+static const char* kSysLogIdent = "easylogging++ unit test";
 #endif // TEST_HELPERS_H_

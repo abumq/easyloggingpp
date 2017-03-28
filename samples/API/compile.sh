@@ -6,7 +6,8 @@ macro="$macro -DELPP_THREAD_SAFE"
 macro="$macro -DELPP_STL_LOGGING"
 macro="$macro -DELPP_LOG_UNORDERED_SET"
 macro="$macro -DELPP_LOG_UNORDERED_MAP"
-macro="$macro -DELPP_STACKTRACE_ON_CRASH"
+macro="$macro -DELPP_FEATURE_CRASH_LOG"
+macro="$macro -DELPP_FEATURE_ALL"
 
 if [ "$2" = "" ];then
   COMPILER=g++
@@ -23,7 +24,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors"
+COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors"
 
 echo "    $COMPILE_LINE"
 

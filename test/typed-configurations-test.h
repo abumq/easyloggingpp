@@ -2,6 +2,7 @@
 #define TYPED_CONFIGURATIONS_TEST_H_
 
 #include "test.h"
+#include <cstdio>
 
 const char* getConfFile(void) {
     const char* file = "/tmp/temp-test.conf";
@@ -30,6 +31,10 @@ const char* getConfFile(void) {
 }
 
 TEST(TypedConfigurationsTest, Initialization) {
+
+    std::string testFile = "/tmp/my-test.log";
+    std::remove(testFile.c_str());
+
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
 
@@ -40,7 +45,7 @@ TEST(TypedConfigurationsTest, Initialization) {
     EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", tConf.logFormat(Level::Info).dateTimeFormat());
 
     EXPECT_EQ(ELPP_LITERAL("%datetime %%level %level [%user@%%host] [%func] [%loc] %msg"), tConf.logFormat(Level::Debug).userFormat());
-    std::string expected = BUILD_STR("%datetime %level DEBUG [" << s_currentUser << "@%%host] [%func] [%loc] %msg");
+    std::string expected = BUILD_STR("%datetime %level DEBUG [" << el::base::utils::OS::currentUser() << "@%%host] [%func] [%loc] %msg");
 #if defined(ELPP_UNICODE)
     char* orig = Str::wcharPtrToCharPtr(tConf.logFormat(Level::Debug).format().c_str());
 #else
@@ -71,7 +76,7 @@ TEST(TypedConfigurationsTest, SharedFileStreams) {
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     // Make sure we have only two unique file streams for ALL and ERROR
-    unsigned short lIndex = LevelHelper::kMinValid;
+    el::base::type::EnumType lIndex = LevelHelper::kMinValid;
     el::base::type::fstream_t* prev = nullptr;
     LevelHelper::forEachLevel(&lIndex, [&]() -> bool {
         if (prev == nullptr) {
@@ -103,11 +108,12 @@ TEST(TypedConfigurationsTest, NonExistentFileCreation) {
 }
 
 TEST(TypedConfigurationsTest, WriteToFiles) {
+    std::string testFile = "/tmp/my-test.log";
     Configurations c(getConfFile());
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     {
         EXPECT_TRUE(tConf.fileStream(Level::Info)->is_open());
-        EXPECT_EQ("/tmp/my-test.log", tConf.filename(Level::Info));
+        EXPECT_EQ(testFile, tConf.filename(Level::Info));
         *tConf.fileStream(Level::Info) << "-Info";
         *tConf.fileStream(Level::Debug) << "-Debug";
         tConf.fileStream(Level::Debug)->flush();

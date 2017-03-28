@@ -1,38 +1,69 @@
-#==============================================================================
-# Copyright (c) 2015 Frozen Team.
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation 
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-# and/or sell copies of the Software, and to permit persons to whom the 
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included 
-# in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
-# SOFTWARE.
-#==============================================================================
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(Easyloggingpp CXX)
 
+option(test "Build all tests" OFF)
+
 set(ELPP_MAJOR_VERSION "9")
-set(ELPP_MINOR_VERSION "80")
-set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}")
+set(ELPP_MINOR_VERSION "94")
+set(ELPP_PATCH_VERSION "1")
+set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(FILES src/easylogging++.h
+install(FILES
+    src/easylogging++.h
+    src/easylogging++.cc
     DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
     COMPONENT dev)
 
 export(PACKAGE ${PROJECT_NAME})
+
+
+########################################## Unit Testing ###################################
+if (test)
+        # We need C++11
+        if (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 3.0)
+                # CMake 3.1 has built-in CXX standard checks.
+                message("-- Setting C++11")
+                set(CMAKE_CXX_STANDARD 11)
+                set(CMAKE_CXX_STANDARD_REQUIRED on)
+        else()
+                if (CMAKE_CXX_COMPILER_ID MATCHES "GCC")
+                    message ("-- GNU CXX (-std=c++11)")
+                    list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+                elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+                    message ("-- CLang CXX (-std=c++11)")
+                    list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+                else()
+                    message ("-- Easylogging++ requires C++11. Your compiler does not support it.")
+                endif()
+        endif()
+
+        set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+    find_package (gtest REQUIRED)
+
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+    enable_testing()
+
+    add_executable(easyloggingpp-unit-tests
+        src/easylogging++.cc
+        test/main.cc
+    )
+
+    target_compile_definitions(easyloggingpp-unit-tests PUBLIC
+        ELPP_FEATURE_ALL
+        ELPP_LOGGING_FLAGS_FROM_ARG
+        ELPP_NO_DEFAULT_LOG_FILE
+        ELPP_FRESH_LOG_FILE
+    )
+
+    # Standard linking to gtest stuff.
+    target_link_libraries(easyloggingpp-unit-tests gtest gtest_main)
+
+    add_test(NAME easyloggingppUnitTests COMMAND easyloggingpp-unit-tests -v)
+endif()

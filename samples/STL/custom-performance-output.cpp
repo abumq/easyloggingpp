@@ -46,7 +46,7 @@ int main(void) {
             // Spend time
             for (int j = 0; j < 10000; ++j) { std::string tmp; }
             if (i % 100 == 0) {
-                timer.checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
+                timer->checkpoint(std::string(std::string("checkpoint at ") + std::to_string(static_cast<unsigned long long>(i))).c_str());
             }
         }
     } 

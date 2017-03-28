@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
         for (long i = 0; i <= 300; ++i) {
             LOG(INFO) << "This is for-block 1";
         }
-        t.timer.checkpoint("checkpoint-1"); // Note t.timer to access el::base::Trackable
+        t.timer->checkpoint("checkpoint-1"); // Note t.timer to access el::base::Trackable
         for (int i = 0; i <= 200; ++i) {
             LOG(INFO) << "This is for-block 2";
         }

@@ -15,38 +15,4 @@ TEST(PLogTest, WriteLog) {
     EXPECT_EQ(expected, actual);
 }
 
-TEST(PLogTest, DebugVersionLogs) {
-    // Test enabled
-    #undef ELPP_DEBUG_LOG
-    #define ELPP_DEBUG_LOG 0
-
-    std::string currentTail = tail(1);
-
-    DPLOG(INFO) << "No DPLOG should be resolved";
-    EXPECT_EQ(currentTail, tail(1));
-    DPLOG_IF(true, INFO) << "No DPLOG_IF should be resolved";
-    EXPECT_EQ(currentTail, tail(1));
-    DCPLOG(INFO, "performance") << "No DPLOG should be resolved";
-    EXPECT_EQ(currentTail, tail(1));
-    DCPLOG(INFO, "performance") << "No DPLOG should be resolved";
-    EXPECT_EQ(currentTail, tail(1));
-    // Reset
-    #undef ELPP_DEBUG_LOG
-    #define ELPP_DEBUG_LOG 1
-
-    // Now test again
-    DPLOG(INFO) << "DPLOG should be resolved";
-    std::string expected = BUILD_STR(getDate() << " DPLOG should be resolved: Success [0]\n");
-    EXPECT_EQ(expected, tail(1));
-    DPLOG_IF(true, INFO) << "DPLOG_IF should be resolved";
-    expected = BUILD_STR(getDate() << " DPLOG_IF should be resolved: Success [0]\n");
-    EXPECT_EQ(expected, tail(1));
-    DCPLOG(INFO, "default") << "DCPLOG should be resolved";
-    expected = BUILD_STR(getDate() << " DCPLOG should be resolved: Success [0]\n");
-    EXPECT_EQ(expected, tail(1));
-    DCPLOG(INFO, "default") << "DCPLOG should be resolved";
-    expected = BUILD_STR(getDate() << " DCPLOG should be resolved: Success [0]\n");
-    EXPECT_EQ(expected, tail(1));
-}
-
 #endif // PLOG_TEST_H

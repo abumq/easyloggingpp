@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
     bool runThreads = true;
 
     if (runThreads) {
-        for (int i = 1; i <= 100; ++i) {
+        for (int i = 1; i <= 10; ++i) {
             MyThread t(i);
             t.start();
             t.wait();
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     }
 
      TIMED_BLOCK(t, "whole-block") {
-        t.timer.checkpoint();
+        t.timer->checkpoint();
 
         LOG(WARNING) << "Starting Qt Logging";
 
