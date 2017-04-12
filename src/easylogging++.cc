@@ -966,7 +966,7 @@ std::string OS::getProperty(const char* prop) {
   return ret == 0 ? std::string() : std::string(propVal);
 }
 
-static std::string OS::getDeviceName(void) {
+std::string OS::getDeviceName(void) {
   std::stringstream ss;
   std::string manufacturer = getProperty("ro.product.manufacturer");
   std::string model = getProperty("ro.product.model");
