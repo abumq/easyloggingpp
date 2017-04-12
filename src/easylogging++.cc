@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.1
+//  Easylogging++ v9.94.2
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -863,7 +863,10 @@ void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::st
 #endif  // defined(ELPP_UNICODE)
 
 std::string& Str::toUpper(std::string& str) {
-  std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+  std::transform(str.begin(), str.end(), str.begin(),
+  [](char c) {
+    return static_cast<char>(::toupper(c));
+  });
   return str;
 }
 
@@ -966,7 +969,7 @@ std::string OS::getProperty(const char* prop) {
   return ret == 0 ? std::string() : std::string(propVal);
 }
 
-static std::string OS::getDeviceName(void) {
+std::string OS::getDeviceName(void) {
   std::stringstream ss;
   std::string manufacturer = getProperty("ro.product.manufacturer");
   std::string model = getProperty("ro.product.model");
@@ -1140,19 +1143,19 @@ unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, co
 struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo) {
 #if ELPP_OS_UNIX
   time_t rawTime = currTime->tv_sec;
-  ::localtime_r(&rawTime, timeInfo);
+  ::elpptime_r(&rawTime, timeInfo);
   return timeInfo;
 #else
 #  if ELPP_COMPILER_MSVC
   ELPP_UNUSED(currTime);
   time_t t;
   _time64(&t);
-  localtime_s(timeInfo, &t);
+  elpptime_s(timeInfo, &t);
   return timeInfo;
 #  else
   // For any other compilers that don't have CRT warnings issue e.g, MinGW or TDM GCC- we use different method
   time_t rawTime = currTime->tv_sec;
-  struct tm* tmInf = localtime(&rawTime);
+  struct tm* tmInf = elpptime(&rawTime);
   *timeInfo = *tmInf;
   return timeInfo;
 #  endif  // ELPP_COMPILER_MSVC
@@ -2969,11 +2972,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.94.1");
+  return std::string("9.94.2");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("25-02-2017 0813hrs");
+  return std::string("12-04-2017 1621hrs");
 }
 
 } // namespace el

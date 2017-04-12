@@ -28,12 +28,12 @@ TEST(FormatSpecifierTest, TestLevShortSpecifier) {
     c.set(el::Level::Verbose, el::ConfigurationType::Format, "%level-%vlevel %msg");
     el::Loggers::reconfigureLogger(consts::kDefaultLoggerId, c);
     {
-        std::string levelINFO  = "INFO  hello world\n";
+        std::string levelINFO  = "INFO hello world\n";
         std::string levelDEBUG = "DEBUG hello world\n";
-        std::string levelWARN  = "WARN  hello world\n";
+        std::string levelWARN  = "WARNING hello world\n";
         std::string levelERROR = "ERROR hello world\n";
         std::string levelFATAL = "FATAL hello world\n";
-        std::string levelVER   = "VER-2 hello world\n";
+        std::string levelVER   = "VERBOSE-2 hello world\n";
         std::string levelTRACE = "TRACE hello world\n";
         LOG(INFO) << "hello world";
         EXPECT_EQ(levelINFO, tail(1));

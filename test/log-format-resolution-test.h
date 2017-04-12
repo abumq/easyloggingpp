@@ -33,7 +33,7 @@ TEST(LogFormatResolutionTest, DefaultFormat) {
 
     LogFormat defaultFormat4(Level::Verbose, ELPP_LITERAL("%logger %level-%vlevel %datetime %thread"));
     EXPECT_EQ(ELPP_LITERAL("%logger %level-%vlevel %datetime %thread"), defaultFormat4.userFormat());
-    EXPECT_EQ(ELPP_LITERAL("%logger VER-%vlevel %datetime %thread"), defaultFormat4.format());
+    EXPECT_EQ(ELPP_LITERAL("%logger VERBOSE-%vlevel %datetime %thread"), defaultFormat4.format());
     EXPECT_EQ("%Y-%M-%d %H:%m:%s,%g", defaultFormat4.dateTimeFormat());
 }
 

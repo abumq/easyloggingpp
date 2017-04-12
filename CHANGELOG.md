@@ -1,5 +1,18 @@
 # Change Log
 
+## [9.94.2] - 12-04-2017
+### Added
+ - CMake option to create static lib (thanks to @romariorios)
+ - Ability to use UTC time using `ELPP_UTC_DATETIME` (thanks to @romariorios)
+ - CMake module updated to support static lib
+
+### Changes
+ - Renamed long format specifiers to full names with padding for readbility
+
+### Fixes
+ - Fixed Android NDK build (thanks to @MoroccanMalinois)
+ - Fix `ELPP_DISABLE_LOGS` not working in VS (thanks to @goloap) #365
+
 ## [9.94.1] - 25-02-2017
 ### Fixed
  - Fixes for `/W4` level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))

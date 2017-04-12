@@ -50,13 +50,13 @@ TEST(WriteAllTest, VERBOSE) {
     for (int i = 1; i <= 6; ++i)
         VLOG_EVERY_N(2, 2) << "every n=" << i;
 
-    s = BUILD_STR(getDate() << " VER-2 every n=2\n"
-               << getDate() << " VER-2 every n=4\n"
-               << getDate() << " VER-2 every n=6\n");
+    s = BUILD_STR(getDate() << " VERBOSE-2 every n=2\n"
+               << getDate() << " VERBOSE-2 every n=4\n"
+               << getDate() << " VERBOSE-2 every n=6\n");
     EXPECT_EQ(s, tail(3));
 
     VLOG_IF(true, 3) << "Test conditional verbose log";
-    s = BUILD_STR(getDate() << " VER-3 Test conditional verbose log\n");
+    s = BUILD_STR(getDate() << " VERBOSE-3 Test conditional verbose log\n");
     EXPECT_EQ(s, tail(1));
 
     VLOG_IF(false, 3) << "SHOULD NOT LOG";
@@ -64,7 +64,7 @@ TEST(WriteAllTest, VERBOSE) {
     EXPECT_EQ(s, tail(1));
 
     VLOG(3) << "Log normally (verbose)";
-    s = BUILD_STR(getDate() << " VER-3 Log normally (verbose)\n");
+    s = BUILD_STR(getDate() << " VERBOSE-3 Log normally (verbose)\n");
     EXPECT_EQ(s, tail(1));
 
     // Reset it back to old
