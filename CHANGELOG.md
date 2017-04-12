@@ -9,6 +9,10 @@
 ### Changes
  - Renamed long format specifiers to full names with padding for readbility
 
+### Fixes
+ - Fixed Android NDK build (thanks to @MoroccanMalinois)
+ - Fix `ELPP_DISABLE_LOGS` not working in VS (thanks to @goloap) #365
+
 ## [9.94.1] - 25-02-2017
 ### Fixed
  - Fixes for `/W4` level warnings generated in MSVC compile (Thanks to [Falconne](https://github.com/Falconne))
