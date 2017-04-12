@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.1
+//  Easylogging++ v9.94.2
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -713,7 +713,8 @@ static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG"
 static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARNING");
 static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
 static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
-static const base::type::char_t* kVerboseLevelLogValue  =   ELPP_LITERAL("VERBOSE"); // will become VERBOSE-x where x = verbose level
+static const base::type::char_t* kVerboseLevelLogValue  =
+  ELPP_LITERAL("VERBOSE"); // will become VERBOSE-x where x = verbose level
 static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
 static const base::type::char_t* kInfoLevelShortLogValue     =   ELPP_LITERAL("I");
 static const base::type::char_t* kDebugLevelShortLogValue    =   ELPP_LITERAL("D");

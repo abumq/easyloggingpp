@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.94.1
+//  Easylogging++ v9.94.2
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -863,8 +863,10 @@ void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::st
 #endif  // defined(ELPP_UNICODE)
 
 std::string& Str::toUpper(std::string& str) {
-  std::transform(str.begin(), str.end(), str.begin(), 
-        [](char c) { return static_cast<char>(::toupper(c)); });
+  std::transform(str.begin(), str.end(), str.begin(),
+  [](char c) {
+    return static_cast<char>(::toupper(c));
+  });
   return str;
 }
 
@@ -2970,11 +2972,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.94.1");
+  return std::string("9.94.2");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("25-02-2017 0813hrs");
+  return std::string("12-04-2017 1621hrs");
 }
 
 } // namespace el
