@@ -1,5 +1,9 @@
 # Change Log
 
+## [] - 
+### Added
+ - Support for AIX
+ 
 ## [9.94.2] - 12-04-2017
 ### Added
  - CMake option to create static lib (thanks to @romariorios)
