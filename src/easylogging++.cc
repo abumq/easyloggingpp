@@ -1936,9 +1936,11 @@ bool VRegistry::allowed(base::type::VerboseLevel vlevel, const char* file) {
   if (m_modules.empty() || file == nullptr) {
     return vlevel <= m_level;
   } else {
+    char baseFilename[base::consts::kSourceFilenameMaxLength] = "";
+    base::utils::File::buildBaseFilename(file, baseFilename);
     std::map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
     for (; it != m_modules.end(); ++it) {
-      if (base::utils::Str::wildCardMatch(file, it->first.c_str())) {
+      if (base::utils::Str::wildCardMatch(baseFilename, it->first.c_str())) {
         return vlevel <= it->second;
       }
     }
