@@ -131,7 +131,7 @@ Easylogging++ is feature-rich containing many features that both typical and adv
  * [Custom log patterns](#logging-format-specifiers)
  * [Conditional and occasional logging](#conditional-logging)
  * [Performance tracking](#performance-tracking)
- * [Verbose logging](#verbose-logging]
+ * [Verbose logging](#verbose-logging)
  * [Crash handling](#crash-handling)
  * [Helper CHECK macros](#check-macros)
  * [STL logging](#stl-logging)
