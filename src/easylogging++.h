@@ -905,7 +905,7 @@ namespace utils {
 template <typename T>
 static
 typename std::enable_if<std::is_pointer<T*>::value, void>::type
-safeDelete(T*& pointer) {
+safeDelete(T* pointer) {
   if (pointer == nullptr)
     return;
   delete pointer;
@@ -1467,8 +1467,8 @@ class Registry : public AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>> {
   void unregister(const T_Key& uniqKey) {
     T_Ptr* existing = get(uniqKey);
     if (existing != nullptr) {
-      base::utils::safeDelete(existing);
       this->list().erase(uniqKey);
+      base::utils::safeDelete(existing);
     }
   }
 
