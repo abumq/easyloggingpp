@@ -1467,8 +1467,8 @@ class Registry : public AbstractRegistry<T_Ptr, std::map<T_Key, T_Ptr*>> {
   void unregister(const T_Key& uniqKey) {
     T_Ptr* existing = get(uniqKey);
     if (existing != nullptr) {
-      base::utils::safeDelete(existing);
       this->list().erase(uniqKey);
+      base::utils::safeDelete(existing);
     }
   }
 
