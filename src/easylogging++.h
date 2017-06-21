@@ -189,7 +189,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define ELPP_INTERNAL_INFO(lvl, msg)
 #endif  // (defined(ELPP_DEBUG_INFO))
 #if (defined(ELPP_FEATURE_ALL)) || (defined(ELPP_FEATURE_CRASH_LOG))
-#  if (ELPP_COMPILER_GCC && !ELPP_MINGW && !ELPP_OS_ANDROID)
+#  if (__has_include(<execinfo.h>) && ELPP_COMPILER_GCC && !ELPP_MINGW && !ELPP_OS_ANDROID)
 #    define ELPP_STACKTRACE 1
 #  else
 #      if ELPP_COMPILER_MSVC
