@@ -48,6 +48,10 @@ if (build_static_lib)
         require_cpp11()
         add_library(easyloggingpp STATIC src/easylogging++.cc)
 
+	if (MSVC)
+		target_compile_options(easyloggingpp PRIVATE "/MT$<$<CONFIG:Debug>:d>")
+	endif()
+
         install(TARGETS
             easyloggingpp
             ARCHIVE DESTINATION lib)
