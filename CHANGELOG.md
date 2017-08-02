@@ -1,5 +1,15 @@
 # Change Log
 
+## [9.95.0] - 02-08-2017
+### Added
+ - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
+ - Ignore `NDEBUG` or `_DEBUG` to determine whether debug logs should be enabled or not. Use `ELPP_DISABLE_DEBUG_LOGS`
+
+### Fixes
+ - Fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/muflihun/easyloggingpp/pull/542/files)
+ - Fix invalid usage of safeDelete which can cause an error with valgrind [Touyote](https://github.com/muflihun/easyloggingpp/pull/544/files)
+ - Add code to ensure no nullptr references [tepperly](https://github.com/muflihun/easyloggingpp/pull/512/files)
+
 ## [9.94.2] - 12-04-2017
 ### Added
  - CMake option to create static lib (thanks to @romariorios)
