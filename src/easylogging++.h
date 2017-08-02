@@ -2307,7 +2307,9 @@ class Logger : public base::threading::ThreadSafe, public Loggable {
   void flush(Level level, base::type::fstream_t* fs);
 
   inline bool isFlushNeeded(Level level) {
-    return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
+    std::map<Level,unsigned int>::iterator i = m_unflushedCount.find(level);
+    return (i != m_unflushedCount.end()) &&
+      (++(i->second) >= m_typedConfigurations->logFlushThreshold(level));
   }
 
   inline LogBuilder* logBuilder(void) const {
