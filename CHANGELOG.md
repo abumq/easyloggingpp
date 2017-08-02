@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.95.0] - 02-08-2017
 ### Added
  - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
  - Ignore `NDEBUG` or `_DEBUG` to determine whether debug logs should be enabled or not. Use `ELPP_DISABLE_DEBUG_LOGS`
