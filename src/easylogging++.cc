@@ -615,7 +615,7 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
     fs->flush();
     std::map<Level, unsigned int>::iterator iter = m_unflushedCount.find(level);
     if (iter != m_unflushedCount.end()) {
-      iter->second = nullptr;
+      iter->second = 0;
     }
   }
 }
