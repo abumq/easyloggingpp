@@ -7,6 +7,7 @@
 ### Fixes
  - Fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/muflihun/easyloggingpp/pull/542/files)
  - Fix invalid usage of safeDelete which can cause an error with valgrind [Touyote](https://github.com/muflihun/easyloggingpp/pull/544/files)
+ - Add code to ensure no nullptr references [tepperly](https://github.com/muflihun/easyloggingpp/pull/512/files)
 
 ## [9.94.2] - 12-04-2017
 ### Added
