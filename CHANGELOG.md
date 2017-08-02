@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+### Added
+ - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
+ - fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/muflihun/easyloggingpp/pull/542/files)
+
 ## [9.94.2] - 12-04-2017
 ### Added
  - CMake option to create static lib (thanks to @romariorios)

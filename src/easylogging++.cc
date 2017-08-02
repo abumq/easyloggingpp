@@ -1149,7 +1149,11 @@ struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* time
 #  if ELPP_COMPILER_MSVC
   ELPP_UNUSED(currTime);
   time_t t;
+#    if defined(_USE_32BIT_TIME_T)
+  _time32(&t);
+#    else
   _time64(&t);
+#    endif
   elpptime_s(timeInfo, &t);
   return timeInfo;
 #  else
