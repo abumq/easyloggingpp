@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
  - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
+ - Ignore `NDEBUG` or `_DEBUG` to determine whether debug logs should be enabled or not. Use `ELPP_DISABLE_DEBUG_LOGS`
 
 ### Fixes
  - Fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/muflihun/easyloggingpp/pull/542/files)
