@@ -436,7 +436,7 @@ int main(void) {
 
  [![top] Goto Top](#table-of-contents)
  
-###Logging Flags
+### Logging Flags
 Form some parts of logging you can set logging flags; here are flags supported:
 
 |     Flag                                               |                 Description                                                                                                                   |
