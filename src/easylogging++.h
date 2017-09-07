@@ -814,6 +814,8 @@ static const char* kConfigurationLoggerId                  =      "--";
 static const std::size_t kSourceFilenameMaxLength          =      100;
 static const std::size_t kSourceLineMaxLength              =      10;
 static const Level kPerformanceTrackerDefaultLevel         =      Level::Info;
+static const char* kEnvVariableRegex                       =      "\\$\\{(.*)\\}";
+
 const struct {
   double value;
   const base::type::char_t* unit;
@@ -2073,6 +2075,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
 
   void build(Configurations* configurations);
   unsigned long getULong(std::string confVal);
+  std::string substituteEnvironmentVariables(const std::string& filename);
   std::string resolveFilename(const std::string& filename);
   void insertFile(Level level, const std::string& fullFilename);
   bool unsafeValidateFileRolling(Level level, const PreRollOutCallback& preRollOutCallback);
