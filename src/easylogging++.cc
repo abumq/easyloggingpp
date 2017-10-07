@@ -2524,7 +2524,7 @@ void Writer::triggerDispatch(void) {
     std::stringstream reasonStream;
     reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
                  << " If you wish to disable 'abort on fatal log' please use "
-                 << "el::Helpers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
+                 << "el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
     base::utils::abort(1, reasonStream.str());
   }
   m_proceed = false;
