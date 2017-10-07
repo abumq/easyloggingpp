@@ -93,7 +93,7 @@
 #else
 #  define ELPP_OS_MAC 0
 #endif
-#if (defined(__FreeBSD__))
+#if (defined(__FreeBSD__) || defined(__FreeBSD_kernel__))
 #  define ELPP_OS_FREEBSD 1
 #else
 #  define ELPP_OS_FREEBSD 0

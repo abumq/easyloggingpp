@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixes
+- Build fix for kFreeBSD as suggested in issue 563
+
 ## [9.95.0] - 02-08-2017
 ### Added
  - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
