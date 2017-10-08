@@ -14,6 +14,7 @@
 //  http://muflihun.com
 //
 
+#include <regex>
 #include "easylogging++.h"
 
 #if defined(AUTO_INITIALIZE_EASYLOGGINGPP)
@@ -1658,8 +1659,25 @@ unsigned long TypedConfigurations::getULong(std::string confVal) {
   return atol(confVal.c_str());
 }
 
+std::string TypedConfigurations::substituteEnvironmentVariables(const std::string& filename) {
+  std::string resultingFilename;
+  std::smatch m;
+  std::regex e(base::consts::kEnvVariableRegex);
+  std::string tail = filename;
+
+  while (std::regex_search(tail, m, e)) {
+    std::string varValue = utils::OS::getEnvironmentVariable(m[1].str().c_str(), "");
+    resultingFilename.append(tail.begin(), std::next(tail.begin(), m.position()));
+    resultingFilename.append(varValue.begin(), varValue.end());
+    tail = m.suffix().str();
+  }
+  resultingFilename.append(tail.begin(), tail.end());
+
+  return resultingFilename;
+}
+
 std::string TypedConfigurations::resolveFilename(const std::string& filename) {
-  std::string resultingFilename = filename;
+  std::string resultingFilename = substituteEnvironmentVariables(filename);
   std::size_t dateIndex = std::string::npos;
   std::string dateTimeFormatSpecifierStr = std::string(base::consts::kDateTimeFormatSpecifierForFilename);
   if ((dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str())) != std::string::npos) {
