@@ -1348,6 +1348,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![android]     | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
 |![raspberrypi] | RaspberryPi 7.6        | Tested with 7.6.2-1.1 (gcc version 4.9.1 (Raspbian 4.9.1-1)) by contributor         |
 |![solaris]     | Solaris i86            | Tested by contributor                                                               |
+|![aix]     | AIX            | Support added by contributor                                                               |
 
 Easylogging++ has also been tested with following C++ libraries;
 
@@ -1417,6 +1418,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [tdm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/tdm.png?v=3
   [raspberrypi]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/raspberry-pi.png?v=3
   [solaris]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/solaris.png?v=3
+  [aix]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/aix.png?v=3
 
 
   [gcc]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/gcc.png?v=4
