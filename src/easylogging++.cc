@@ -14,7 +14,6 @@
 //  http://muflihun.com
 //
 
-#include <regex>
 #include "easylogging++.h"
 
 #if defined(AUTO_INITIALIZE_EASYLOGGINGPP)
@@ -1661,18 +1660,44 @@ unsigned long TypedConfigurations::getULong(std::string confVal) {
 
 std::string TypedConfigurations::substituteEnvironmentVariables(const std::string& filename) {
   std::string resultingFilename;
-  std::smatch m;
-  std::regex e(base::consts::kEnvVariableRegex);
-  std::string tail = filename;
+  std::string varSpecifierBeginStr(base::consts::kEnvVariableBegin);
+  std::string varSpecifierEndStr(base::consts::kEnvVariableEnd);
 
-  while (std::regex_search(tail, m, e)) {
-    std::string varValue = utils::OS::getEnvironmentVariable(m[1].str().c_str(), "");
-    resultingFilename.append(tail.begin(), std::next(tail.begin(), m.position()));
-    resultingFilename.append(varValue.begin(), varValue.end());
-    tail = m.suffix().str();
+  const size_t prefixLen = varSpecifierBeginStr.size();
+  const size_t suffixLen = varSpecifierEndStr.size();
+
+  if (filename.size() < prefixLen) return filename;
+  size_t envVarStart = 0;
+  size_t limit = filename.size() - prefixLen;
+  for (; envVarStart < limit; ++envVarStart) {
+    if (strncmp(filename.data() + envVarStart, varSpecifierBeginStr.data(), prefixLen)) {
+      resultingFilename.push_back(filename[envVarStart]);
+      continue;
+    }
+
+    size_t envVarEnd = envVarStart + prefixLen;
+    size_t endLimit = filename.size() + 1 - suffixLen;
+    for (; envVarEnd < endLimit && strncmp(filename.data() + envVarEnd,
+                                                  varSpecifierEndStr.data(), suffixLen); envVarEnd++);
+    if (envVarEnd == filename.size()) {
+      resultingFilename.append(filename.data() + envVarStart, filename.data() + envVarEnd);
+      break;
+    }
+
+    std::vector<char> buf(envVarEnd - envVarStart - prefixLen + 1, 0);
+    memcpy(buf.data(), filename.data() + envVarStart + prefixLen, envVarEnd - envVarStart - prefixLen);
+    std::string varValue = utils::OS::getEnvironmentVariable(buf.data(), "", nullptr);
+    resultingFilename.append(varValue);
+    envVarStart = envVarEnd + suffixLen - 1;
   }
-  resultingFilename.append(tail.begin(), tail.end());
+  if (envVarStart < filename.size()) {
+    resultingFilename.append(filename.data() + envVarStart, filename.data() + filename.size());
+  }
 
+  ELPP_ASSERT((!resultingFilename.empty()), "Empty filename value: [" << filename << "]");
+  if (resultingFilename.empty()) {
+     resultingFilename = "\"\""; // same behaviour as if empty string was passed
+  }
   return resultingFilename;
 }
 

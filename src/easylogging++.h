@@ -93,7 +93,7 @@
 #else
 #  define ELPP_OS_MAC 0
 #endif
-#if (defined(__FreeBSD__) || defined(__FreeBSD_kernel__))
+#if (defined(__FreeBSD__))
 #  define ELPP_OS_FREEBSD 1
 #else
 #  define ELPP_OS_FREEBSD 0
@@ -814,7 +814,8 @@ static const char* kConfigurationLoggerId                  =      "--";
 static const std::size_t kSourceFilenameMaxLength          =      100;
 static const std::size_t kSourceLineMaxLength              =      10;
 static const Level kPerformanceTrackerDefaultLevel         =      Level::Info;
-static const char* kEnvVariableRegex                       =      "\\$\\{(.*)\\}";
+static const char* kEnvVariableBegin = "${";
+static const char* kEnvVariableEnd = "}";
 
 const struct {
   double value;
