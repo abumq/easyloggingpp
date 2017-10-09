@@ -2,7 +2,7 @@
 
 You can use this sample to send your log messages to network as requested by many users. We are not able to add it to the library as this will require some stuffs to choose what network library to use.
 
-This sample uses `asio` in `boost_system`
+This sample uses `boost::asio`
 
 ## Run
 
@@ -13,17 +13,15 @@ mkdir bin
 sh compile.sh network-logger.sh
 ```
 
-Run a server (we are using netcat on mac for test purposes) on a different terminal
+Run a server (we are using netcat on mac for demo) on a new tab in your terminal
 
 ```
-nc -l 9090
+nc -k -l 9090
 ```
 
 Now run `./bin/network-logger`
 
-
 ## More
 
-You may need `ELPP_NO_LOG_TO_FILE` and `ELPP_NO_DEFAULT_LOG_FILE` depending on your needs.
-
 Please refer to [doc](https://github.com/muflihun/easyloggingpp#configuration-macros) for further details on macros
+
