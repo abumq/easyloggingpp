@@ -1326,7 +1326,7 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 
 | *****   |     Compiler/Platform     |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-|![gcc]   | GCC 4.7+                  | Stack trace logging. Very close to support GCC 4.6 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
+|![gcc]   | GCC 4.6.4+                  | Stack trace logging. Very close to support GCC 4.6.0 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
 |![llvm]  | Clang++ 3.1+              | Stack trace logging only with gcc compliant.                                                                                                             |
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.                       |
