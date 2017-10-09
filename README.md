@@ -1,25 +1,17 @@
-                                       ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
-
+<p align="center">
+  ﷽
+</p>
 
 ![banner]
 
 > **Manual For v9.95.0**
 
-[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`develop`)
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
-
-[![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
-
-[![Canon.io](https://img.shields.io/badge/conan.io-easyloggingpp%2F9.95.0-green.svg?logo=data:image/png;base64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAA1VBMVEUAAABhlctjlstkl8tlmMtlmMxlmcxmmcxnmsxpnMxpnM1qnc1sn85voM91oM11oc1xotB2oc56pNF6pNJ2ptJ8ptJ8ptN9ptN8p9N5qNJ9p9N9p9R8qtOBqdSAqtOAqtR%2BrNSCrNJ/rdWDrNWCsNWCsNaJs9eLs9iRvNuVvdyVv9yXwd2Zwt6axN6dxt%2Bfx%2BChyeGiyuGjyuCjyuGly%2BGlzOKmzOGozuKoz%2BKqz%2BOq0OOv1OWw1OWw1eWx1eWy1uay1%2Baz1%2Baz1%2Bez2Oe02Oe12ee22ujUGwH3AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfgBQkREyOxFIh/AAAAiklEQVQI12NgAAMbOwY4sLZ2NtQ1coVKWNvoc/Eq8XDr2wB5Ig62ekza9vaOqpK2TpoMzOxaFtwqZua2Bm4makIM7OzMAjoaCqYuxooSUqJALjs7o4yVpbowvzSUy87KqSwmxQfnsrPISyFzWeWAXCkpMaBVIC4bmCsOdgiUKwh3JojLgAQ4ZCE0AMm2D29tZwe6AAAAAElFTkSuQmCC)](http://www.conan.io/source/easyloggingpp/9.95.0/memsharded/testing)
-
-[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ)
-
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE)
+[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE) [![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
-[![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 ### Quick Links
 
@@ -33,7 +25,7 @@
 
 ### Table of Contents
 <pre>
-<a href="#introduction">Introduction</a>
+<a href="#overview">Overview</a>
     <a href="#why-yet-another-library">Why yet another library</a>
     <a href="#features-at-a-glance">Features at a glance</a>
 <a href="#getting-started">Getting Started</a>
@@ -64,7 +56,7 @@
     <a href="#network-logging">Network Logging</a>
     <a href="#verbose-logging">Verbose Logging</a>
         <a href="#basic-1">Basic</a>
-        <a href="#conditional-and-occasional">Conditional and Occasional</a>
+        <a href="#conditional-and-occasional-logging">Conditional and Occasional</a>
         <a href="#verbose-level">Verbose Level</a>
         <a href="#check-if-verbose-logging-is-on">Check If Verbose Logging Is On</a>
         <a href="#vmodule">VModule</a>
@@ -105,10 +97,12 @@
 <a href="#disclaimer">Disclaimer</a>
 </pre>
 
-# Introduction
-Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own sinks](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (referred to as `LogDispatchCallback`). Currently used by hundreds of open-source projects.
+# Overview
+Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
 This manual is for Easylogging++ v9.95.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+
+> You may also be interested in [Residue](https://github.com/muflihun/residue/) logging server.
 
  [![top] Goto Top](#table-of-contents)
  
