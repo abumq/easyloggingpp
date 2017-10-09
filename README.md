@@ -124,7 +124,7 @@ Why yet another library? Well, answer is pretty straight forward, use it as you 
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that both typical and advanced developer will require while writing a software;
  * [Highly configurable](#configuration)
- * [Extendable](#log-dispatch-callback)
+ * [Extendable](#extending-library)
  * Extremely fast
  * [Thread](#multi-threading) and type safe
  * [Cross-platform](#compatibility)
@@ -1170,6 +1170,10 @@ You may also have a look at wxWidgets sample
  [![top] Goto Top](#table-of-contents)
 
 ### Extending Library
+You can extend this library using various callback handlers and inheritable classes.
+
+A perfect example of using these features is the logging server built with this library. It's called [Residue](https://github.com/muflihun/residue/) that is feature rich. In fact, you may be interested in using that instead of this library for your medium to large sized projects.
+
 #### Logging Your Own Class
 
 You can log your own classes by extending `el::Loggable` class and implementing pure-virtual function `void log(std::ostream& os) const`. Following example shows a good way to extend a class.
