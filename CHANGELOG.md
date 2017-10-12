@@ -1,5 +1,14 @@
 # Change Log
 
+## [9.95.1] - 12-10-2017
+### Fixes
+ - Build fix for kFreeBSD as suggested in issue #563
+ - Fixed issue with deadlock on dispatch (see #571)
+ - Fixed printf like logging with thread safety (see #572)
+
+### Updates
+ - Added support for AIX (thanks to @apollo13)
+
 ## [9.95.0] - 02-08-2017
 ### Added
  - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)

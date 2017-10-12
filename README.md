@@ -1,25 +1,17 @@
-                                       ‫بسم الله الرَّحْمَنِ الرَّحِيمِ
-
+<p align="center">
+  ﷽
+</p>
 
 ![banner]
 
-> **Manual For v9.95.0**
+> **Manual For v9.95.1**
 
-[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`develop`)
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) (`master`)
-
-[![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
-
-[![Canon.io](https://img.shields.io/badge/conan.io-easyloggingpp%2F9.95.0-green.svg?logo=data:image/png;base64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAA1VBMVEUAAABhlctjlstkl8tlmMtlmMxlmcxmmcxnmsxpnMxpnM1qnc1sn85voM91oM11oc1xotB2oc56pNF6pNJ2ptJ8ptJ8ptN9ptN8p9N5qNJ9p9N9p9R8qtOBqdSAqtOAqtR%2BrNSCrNJ/rdWDrNWCsNWCsNaJs9eLs9iRvNuVvdyVv9yXwd2Zwt6axN6dxt%2Bfx%2BChyeGiyuGjyuCjyuGly%2BGlzOKmzOGozuKoz%2BKqz%2BOq0OOv1OWw1OWw1eWx1eWy1uay1%2Baz1%2Baz1%2Bez2Oe02Oe12ee22ujUGwH3AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfgBQkREyOxFIh/AAAAiklEQVQI12NgAAMbOwY4sLZ2NtQ1coVKWNvoc/Eq8XDr2wB5Ig62ekza9vaOqpK2TpoMzOxaFtwqZua2Bm4makIM7OzMAjoaCqYuxooSUqJALjs7o4yVpbowvzSUy87KqSwmxQfnsrPISyFzWeWAXCkpMaBVIC4bmCsOdgiUKwh3JojLgAQ4ZCE0AMm2D29tZwe6AAAAAElFTkSuQmCC)](http://www.conan.io/source/easyloggingpp/9.95.0/memsharded/testing)
-
-[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ)
-
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE)
+[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE) [![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
-[![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 ### Quick Links
 
@@ -33,7 +25,7 @@
 
 ### Table of Contents
 <pre>
-<a href="#introduction">Introduction</a>
+<a href="#overview">Overview</a>
     <a href="#why-yet-another-library">Why yet another library</a>
     <a href="#features-at-a-glance">Features at a glance</a>
 <a href="#getting-started">Getting Started</a>
@@ -64,7 +56,7 @@
     <a href="#network-logging">Network Logging</a>
     <a href="#verbose-logging">Verbose Logging</a>
         <a href="#basic-1">Basic</a>
-        <a href="#conditional-and-occasional">Conditional and Occasional</a>
+        <a href="#conditional-and-occasional-logging">Conditional and Occasional</a>
         <a href="#verbose-level">Verbose Level</a>
         <a href="#check-if-verbose-logging-is-on">Check If Verbose Logging Is On</a>
         <a href="#vmodule">VModule</a>
@@ -105,10 +97,12 @@
 <a href="#disclaimer">Disclaimer</a>
 </pre>
 
-# Introduction
-Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own sinks](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (referred to as `LogDispatchCallback`). Currently used by hundreds of open-source projects.
+# Overview
+Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
-This manual is for Easylogging++ v9.95.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.95.1. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+
+> You may also be interested in [Residue](https://github.com/muflihun/residue/) logging server.
 
  [![top] Goto Top](#table-of-contents)
  
@@ -124,7 +118,7 @@ Why yet another library? Well, answer is pretty straight forward, use it as you 
 ### Features at a glance
 Easylogging++ is feature-rich containing many features that both typical and advanced developer will require while writing a software;
  * [Highly configurable](#configuration)
- * [Extendable](#log-dispatch-callback)
+ * [Extendable](#extending-library)
  * Extremely fast
  * [Thread](#multi-threading) and type safe
  * [Cross-platform](#compatibility)
@@ -1170,6 +1164,10 @@ You may also have a look at wxWidgets sample
  [![top] Goto Top](#table-of-contents)
 
 ### Extending Library
+You can extend this library using various callback handlers and inheritable classes.
+
+A perfect example of using these features is the logging server built with this library. It's called [Residue](https://github.com/muflihun/residue/) that is feature rich. In fact, you may be interested in using that instead of this library for your medium to large sized projects.
+
 #### Logging Your Own Class
 
 You can log your own classes by extending `el::Loggable` class and implementing pure-virtual function `void log(std::ostream& os) const`. Following example shows a good way to extend a class.
@@ -1322,7 +1320,7 @@ Easylogging++ requires a decent C++0x complient compiler. Some compilers known t
 
 | *****   |     Compiler/Platform     |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-|![gcc]   | GCC 4.7+                  | Stack trace logging. Very close to support GCC 4.6 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
+|![gcc]   | GCC 4.6.4+                  | Stack trace logging. Very close to support GCC 4.6.0 if it had supported strong enum types casting to underlying type. It causes internal compiler error.  |
 |![llvm]  | Clang++ 3.1+              | Stack trace logging only with gcc compliant.                                                                                                             |
 |![intel] | Intel C++ 13.0+           | Workarounds to support: Use if instead of switch on strong enum type. No `final` keyword etc. Stack trace logging only with gcc compliant                |
 |![vcpp]  | Visual C++ 11.0+          | Tested with VS2012, VS2013; Use of argument templates instead of variadic templates. CRT warnings control. No stack trace logging.                       |
@@ -1348,6 +1346,7 @@ Operating systems that have been tested are shown in table below. Easylogging++ 
 |![android]     | Android                | Tested with C4droid (g++) on Galaxy Tab 2                                           |
 |![raspberrypi] | RaspberryPi 7.6        | Tested with 7.6.2-1.1 (gcc version 4.9.1 (Raspbian 4.9.1-1)) by contributor         |
 |![solaris]     | Solaris i86            | Tested by contributor                                                               |
+|![aix]     | IBM AIX            | Support added by contributor                                                               |
 
 Easylogging++ has also been tested with following C++ libraries;
 
@@ -1398,38 +1397,39 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
  
-  [banner]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/banner.png?v=4
-  [ubuntu]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/ubuntu.png?v=2
-  [mint]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/linux-mint.png?v=2
-  [freebsd]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/free-bsd.png?v=2
-  [sl]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/scientific-linux.png?v=2
-  [fedora]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/fedora.png?v=3
-  [mac]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/mac-osx.png?v=2
-  [winxp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windowsxp.png?v=2
-  [win7]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows7.png?v=2
-  [win8]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows8.png?v=2
-  [win10]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/windows10.png?v=2
-  [qt]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/qt.png?v=3
-  [boost]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/boost.png?v=3
-  [wxwidgets]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/wxwidgets.png?v=3
-  [devcpp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/devcpp.png?v=3
-  [gtkmm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/gtkmm.png?v=3
-  [tdm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/tdm.png?v=3
-  [raspberrypi]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/raspberry-pi.png?v=3
-  [solaris]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/solaris.png?v=3
+  [banner]: https://muflihun.github.io/easyloggingpp/images/banner.png?v=4
+  [ubuntu]: https://muflihun.github.io/easyloggingpp/images/icons/ubuntu.png?v=2
+  [mint]: https://muflihun.github.io/easyloggingpp/images/icons/linux-mint.png?v=2
+  [freebsd]: https://muflihun.github.io/easyloggingpp/images/icons/free-bsd.png?v=2
+  [sl]: https://muflihun.github.io/easyloggingpp/images/icons/scientific-linux.png?v=2
+  [fedora]: https://muflihun.github.io/easyloggingpp/images/icons/fedora.png?v=3
+  [mac]: https://muflihun.github.io/easyloggingpp/images/icons/mac-osx.png?v=2
+  [winxp]: https://muflihun.github.io/easyloggingpp/images/icons/windowsxp.png?v=2
+  [win7]: https://muflihun.github.io/easyloggingpp/images/icons/windows7.png?v=2
+  [win8]: https://muflihun.github.io/easyloggingpp/images/icons/windows8.png?v=2
+  [win10]: https://muflihun.github.io/easyloggingpp/images/icons/windows10.png?v=2
+  [qt]: https://muflihun.github.io/easyloggingpp/images/icons/qt.png?v=3
+  [boost]: https://muflihun.github.io/easyloggingpp/images/icons/boost.png?v=3
+  [wxwidgets]: https://muflihun.github.io/easyloggingpp/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://muflihun.github.io/easyloggingpp/images/icons/devcpp.png?v=3
+  [gtkmm]: https://muflihun.github.io/easyloggingpp/images/icons/gtkmm.png?v=3
+  [tdm]: https://muflihun.github.io/easyloggingpp/images/icons/tdm.png?v=3
+  [raspberrypi]: https://muflihun.github.io/easyloggingpp/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://muflihun.github.io/easyloggingpp/images/icons/solaris.png?v=3
+  [aix]: https://muflihun.github.io/easyloggingpp/images/icons/aix.png?v=4
 
 
-  [gcc]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/gcc.png?v=4
-  [mingw]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/mingw.png?v=2
-  [cygwin]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/cygwin.png?v=2
-  [vcpp]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/vcpp.png?v=2
-  [llvm]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/llvm.png?v=2
-  [intel]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/intel.png?v=2
-  [android]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/icons/android.png?v=2
-  [manual]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/help.png?v=3
-  [download]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/download.png?v=2
-  [samples]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/sample.png?v=2
-  [notes]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/notes.png?v=4
-  [top]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/up.png?v=4
-  [www]: https://raw.githubusercontent.com/muflihun/easyloggingpp.muflihun.com/master/images/logo-www.png?v=6
+  [gcc]: https://muflihun.github.io/easyloggingpp/images/icons/gcc.png?v=4
+  [mingw]: https://muflihun.github.io/easyloggingpp/images/icons/mingw.png?v=2
+  [cygwin]: https://muflihun.github.io/easyloggingpp/images/icons/cygwin.png?v=2
+  [vcpp]: https://muflihun.github.io/easyloggingpp/images/icons/vcpp.png?v=2
+  [llvm]: https://muflihun.github.io/easyloggingpp/images/icons/llvm.png?v=2
+  [intel]: https://muflihun.github.io/easyloggingpp/images/icons/intel.png?v=2
+  [android]: https://muflihun.github.io/easyloggingpp/images/icons/android.png?v=2
+  [manual]: https://muflihun.github.io/easyloggingpp/images/help.png?v=3
+  [download]: https://muflihun.github.io/easyloggingpp/images/download.png?v=2
+  [samples]: https://muflihun.github.io/easyloggingpp/images/sample.png?v=2
+  [notes]: https://muflihun.github.io/easyloggingpp/images/notes.png?v=4
+  [top]: https://muflihun.github.io/easyloggingpp/images/up.png?v=4
+  [www]: https://muflihun.github.io/easyloggingpp/images/logo-www.png?v=6
   

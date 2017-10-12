@@ -16,9 +16,12 @@ int main(int argc, char** argv) {
 
     el::Logger* defaultLogger = el::Loggers::getLogger("default");
 
+    LOG(INFO) << "Blah";
+
     std::vector<int> i;
     i.push_back(1);
     i.push_back(2);
+    defaultLogger->info("simple %v", "msg");
     defaultLogger->warn("My first ultimate log message %v %v %v", 123, 222, i);
 
     // Escaping
@@ -26,6 +29,7 @@ int main(int argc, char** argv) {
 
     defaultLogger->verbose(1, "test verbose");
     defaultLogger->verbose(1, "test verbose with args %v", 2);
+
 
     return 0;
 }

@@ -18,7 +18,7 @@ else
   COMPILER=$2
 fi
 
-CXX_STD='-std=c++0x -pthread'
+CXX_STD='-std=c++11'
 
 if [ "$FILE" = "" ]; then
   echo "Please provide filename to compile"
@@ -27,7 +27,7 @@ fi
 
 echo "Compiling... [$FILE]"
 
-COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors -Wundef -Wunused"
+COMPILE_LINE="$COMPILER $FILE easylogging++.cc -o bin/$FILE.bin $macro $CXX_STD -pthread -Wall -Wextra -pedantic -pedantic-errors -Werror -Wfatal-errors -Wundef -Wunused"
 
 echo "    $COMPILE_LINE"
 

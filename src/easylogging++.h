@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.0
+//  Easylogging++ v9.95.1
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -3325,6 +3325,7 @@ void Logger::log_(Level level, int vlevel, const T& log) {
                    base::DispatchAction::NormalLog, vlevel).construct(this, false) << log;
     } else {
       stream().str(ELPP_LITERAL(""));
+      releaseLock();
     }
   } else {
     base::Writer(level, "FILE", 0, "FUNCTION").construct(this, false) << log;
@@ -3332,23 +3333,23 @@ void Logger::log_(Level level, int vlevel, const T& log) {
 }
 template <typename T, typename... Args>
 inline void Logger::log(Level level, const char* s, const T& value, const Args&... args) {
-  base::threading::ScopedLock scopedLock(lock());
+  acquireLock(); // released in Writer!
   log_(level, 0, s, value, args...);
 }
 template <typename T>
 inline void Logger::log(Level level, const T& log) {
-  base::threading::ScopedLock scopedLock(lock());
+  acquireLock(); // released in Writer!
   log_(level, 0, log);
 }
 #  if ELPP_VERBOSE_LOG
 template <typename T, typename... Args>
 inline void Logger::verbose(int vlevel, const char* s, const T& value, const Args&... args) {
-  base::threading::ScopedLock scopedLock(lock());
+  acquireLock(); // released in Writer!
   log_(el::Level::Verbose, vlevel, s, value, args...);
 }
 template <typename T>
 inline void Logger::verbose(int vlevel, const T& log) {
-  base::threading::ScopedLock scopedLock(lock());
+  acquireLock(); // released in Writer!
   log_(el::Level::Verbose, vlevel, log);
 }
 #  else
