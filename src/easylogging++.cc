@@ -2368,7 +2368,6 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
     tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
@@ -2444,12 +2443,13 @@ void Writer::initializeLogger(const std::string& loggerId, bool lookup, bool nee
     m_logger = ELPP->registeredLoggers()->get(loggerId, ELPP->hasFlag(LoggingFlag::CreateLoggerAutomatically));
   }
   if (m_logger == nullptr) {
-    ELPP->acquireLock();
-    if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
-      // Somehow default logger has been unregistered. Not good! Register again
-      ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
+    {
+        base::threading::ScopedLock scopedLock(ELPP->lock());
+        if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
+            // Somehow default logger has been unregistered. Not good! Register again
+            ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
+        }
     }
-    ELPP->releaseLock();  // Need to unlock it for next writer
     Writer(Level::Debug, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
         << "Logger [" << loggerId << "] is not registered yet!";
     m_proceed = false;

@@ -2,10 +2,11 @@
 
 ## [Unreleased]
 ### Fixes
-- Build fix for kFreeBSD as suggested in issue 563
+ - Build fix for kFreeBSD as suggested in issue #563
+ - Fixed issue with deadlock on dispatch (see #571)
 
 ### Updates
-- Added support for AIX (thanks to @apollo13)
+ - Added support for AIX (thanks to @apollo13)
 
 ## [9.95.0] - 02-08-2017
 ### Added
