@@ -4,6 +4,7 @@
 ### Fixes
  - Build fix for kFreeBSD as suggested in issue #563
  - Fixed issue with deadlock on dispatch (see #571)
+ - Fixed printf like logging with thread safety (see #572)
 
 ### Updates
  - Added support for AIX (thanks to @apollo13)
