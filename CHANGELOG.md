@@ -1,6 +1,6 @@
 # Change Log
 
-## [9.95.1] - 12-10-2017
+## [9.95.2] - 12-06-2017
 ### Fixes
  - Build fix for kFreeBSD as suggested in issue #563
  - Fixed issue with deadlock on dispatch (see #571)
