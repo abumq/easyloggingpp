@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.0
+//  Easylogging++ v9.95.1
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
