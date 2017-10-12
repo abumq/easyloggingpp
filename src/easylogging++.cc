@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.1
+//  Easylogging++ v9.95.2
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -2444,11 +2444,11 @@ void Writer::initializeLogger(const std::string& loggerId, bool lookup, bool nee
   }
   if (m_logger == nullptr) {
     {
-        base::threading::ScopedLock scopedLock(ELPP->lock());
-        if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
-            // Somehow default logger has been unregistered. Not good! Register again
-            ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
-        }
+      base::threading::ScopedLock scopedLock(ELPP->lock());
+      if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
+        // Somehow default logger has been unregistered. Not good! Register again
+        ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
+      }
     }
     Writer(Level::Debug, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
         << "Logger [" << loggerId << "] is not registered yet!";
@@ -2984,11 +2984,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.95.1");
+  return std::string("9.95.2");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("12-10-2017 1504hrs");
+  return std::string("12-10-2017 1526hrs");
 }
 
 } // namespace el
