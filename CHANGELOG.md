@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.95.3] - 13-10-2017
 ### Fixes
 - Multithreading issue fixed raised from last release at log builder
 
