@@ -4,7 +4,7 @@ If you are looking for manual for this version, please refer to https://github.c
 
 ---
 
-# Message
+# The Message
 Easylogging++ and other products by Muflihun Labs are primarily focused on *dawah*. We have a message to give to everyone out there.
 
 The message is simple and easy to understand:
