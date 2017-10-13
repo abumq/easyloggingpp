@@ -1363,11 +1363,11 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-Copyright (c) 2017 muflihun.com
+Copyright (c) 2017 Muflihun Labs
 
 https://github.com/muflihun/easyloggingpp
-https://labs.muflihun.com
 https://muflihun.com
+https://muflihun.github.io
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
