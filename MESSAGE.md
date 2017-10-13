@@ -9,9 +9,11 @@ Allah ﷻ is The Creator, The Sustainer, The Controller of everything. Therefore
 
  > Worship Allah and avoid Taghut [Qur'aan, Surah An-Nahl 16:36]
 
-We are your fellow human beings who worship no one but Him ﷻ and the only way to salvation is to accept the **Only** religion accepted by Allah ﷻ. Lest you be resurrected on the Day of Judgement and be thrown in to the Hellfire. Because, Allah ﷻ can forgive any sin but He ﷻ has clearly said that He ﷻ will **not** forgive the graviest sin, the sin of shirk. i.e, associating anyone with Allah ﷻ in His Lordship or His Names and Attributes or His worship.
+We are your fellow human beings who worship no one but Him ﷻ and the only way to salvation is to accept the **Only** religion accepted by Allah ﷻ. Lest you be resurrected on the Day of Judgement and be thrown in to the Hellfire. Because, Allah ﷻ can forgive any sin but He ﷻ has clearly said that He ﷻ will **not** forgive the graviest sin, the sin of *shirk*. i.e, associating anyone with Allah ﷻ in His Lordship or His Names and Attributes or His worship.
 
-All we say, do not listen to that what media feeds you, and do not believe in what media has fed you. Do your own research, if you are seeker of the truth and work towards it **with true sincerity**, then Allah ﷻ will guide you and show you the right path. You will then realise that Islaam is the only religion that tells you the purpose of your creation.
+ > Indeed, Allah does not forgive association with Him, but He forgives what is less than that for whom He wills. And he who associates others with Allah has certainly gone far astray. [Qur'aan, Surah An-Nisaa 4:116]
+
+Do not listen to that which media feeds you, and do not believe in what media has fed you. Do your own research, if you are a seeker of truth and work towards it **with true sincerity**, then Allah ﷻ will guide you and show you the right path. You will then realise that Islaam is the only religion that is most sensible, and it can not be from anyone but the True God, Allah ﷻ.
 
 Islaam is the **ONLY** religion accepted by Allah. 
 
