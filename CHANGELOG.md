@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.95.3] - 13-10-2017
+### Fixes
+- Multithreading issue fixed raised from last release at log builder
+
 ## [9.95.2] - 12-06-2017
 ### Fixes
  - Build fix for kFreeBSD as suggested in issue #563

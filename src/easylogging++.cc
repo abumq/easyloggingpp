@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.2
+//  Easylogging++ v9.95.3
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2017 muflihun.com
@@ -2348,6 +2348,8 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, logMessage->message());
   }
 #if !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
+  el::base::threading::ScopedLock lock_(ELPP->lock());
+  ELPP_UNUSED(lock_);
   for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
        it != ELPP->customFormatSpecifiers()->end(); ++it) {
     std::string fs(it->formatSpecifier());
@@ -2984,11 +2986,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.95.2");
+  return std::string("9.95.3");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("12-10-2017 1526hrs");
+  return std::string("13-10-2017 1134hrs");
 }
 
 } // namespace el
