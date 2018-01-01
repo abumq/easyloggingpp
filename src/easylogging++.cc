@@ -997,8 +997,9 @@ const std::string OS::getBashOutput(const char* command) {
   char hBuff[4096];
   if (fgets(hBuff, sizeof(hBuff), proc) != nullptr) {
     pclose(proc);
-    if (hBuff[strlen(hBuff) - 1] == '\n') {
-      hBuff[strlen(hBuff) - 1] = '\0';
+    const std::size_t buffLen = strlen(hBuff);
+    if (buffLen > 0 && hBuff[buffLen - 1] == '\n') {
+      hBuff[buffLen - 1] = '\0';
     }
     return std::string(hBuff);
   } else {
