@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+### Fixes
+- Fix documentation (see PR#597)
+- Fix buffer underflow in getBashOutput (see PR#596)
+
 ## [9.95.3] - 13-10-2017
 ### Fixes
 - Multithreading issue fixed raised from last release at log builder
