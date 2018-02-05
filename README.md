@@ -1019,7 +1019,7 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_GT(a, b)`                            | Greater than e.g, `CHECK_GT(2, 1) << "How 2 is not greater than 1?";`                                                           |
 | `CHECK_LE(a, b)`                            | Less than or equal e.g, `CHECK_LE(1, 1) << "1 is not equal or less than 1";`                                                    |
 | `CHECK_GE(a, b)`                            | Greater than or equal e.g, `CHECK_GE(1, 1) << "1 is not equal or greater than 1";`                                              |
-| `CHECK_NOTNULL(pointer)`                    | Ensures pointer is not null - if OK returns pointer e.g, `explicit MyClass(Obj* obj) : m_obj(CHECK_NOT_NULL(obj)) {}`           |
+| `CHECK_NOTNULL(pointer)`                    | Ensures pointer is not null. This function does not return anything           |
 | `CHECK_STREQ(str1, str2)`                   | C-string equality (case-sensitive) e.g, `CHECK_STREQ(argv[1], "0") << "First arg cannot be 0";`                                 |
 | `CHECK_STRNE(str1, str2)`                   | C-string inequality (case-sensitive) e.g, `CHECK_STRNE(username1, username2) << "Usernames cannot be same";`                    |
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
