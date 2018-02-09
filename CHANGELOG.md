@@ -7,6 +7,7 @@
 
 ### Updates
 - Added new function `Helpers::reserveCustomFormatSpecifier` (see #606)
+- Made `DateTime::buildTimeInfo` public for use
 
 ## [9.95.3] - 13-10-2017
 ### Fixes

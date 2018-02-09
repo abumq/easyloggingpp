@@ -1262,8 +1262,8 @@ class DateTime : base::StaticClass {
       base::TimestampUnit timestampUnit);
 
 
- private:
   static struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo);
+ private:
   static char* parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
                            std::size_t msec, const base::SubsecondPrecision* ssPrec);
 };
