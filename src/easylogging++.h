@@ -3795,6 +3795,11 @@ class Helpers : base::StaticClass {
   static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
     return ELPP->commandLineArgs();
   }
+  /// @brief Reserve space for custom format specifiers for performance
+  /// @see std::vector::reserve
+  static inline void reserveCustomFormatSpecifiers(std::size_t size) {
+    ELPP->m_customFormatSpecifiers.reserve(size);
+  }
   /// @brief Installs user defined format specifier and handler
   static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {
     ELPP->installCustomFormatSpecifier(customFormatSpecifier);
