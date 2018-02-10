@@ -4,7 +4,7 @@
 
 ![banner]
 
-> **Manual For v9.95.3**
+> **Manual For v9.95.4**
 
 [![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](https://travis-ci.org/muflihun/easyloggingpp) [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
@@ -100,7 +100,7 @@
 # Overview
 Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
-This manual is for Easylogging++ v9.95.3. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.95.4. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
 > You may also be interested in [Residue](https://github.com/muflihun/residue/) logging server.
 
@@ -476,7 +476,11 @@ Following table will explain all command line arguments that you may use to defi
 ### Configuration Macros
 Some of logging options can be set by macros, this is a thoughtful decision, for example if we have `ELPP_THREAD_SAFE` defined, all the thread-safe functionalities are enabled otherwise disabled (making sure over-head of thread-safety goes with it). To make it easy to remember and prevent possible conflicts, all the macros start with `ELPP_`
 
-NOTE: All the macros either need to be defined before `#include "easylogging++"` - but this gets hard and unreadable if project is getting bigger so we recommend you define all these macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREAD_SAFE ...`
+**NOTE:** All the macros can be defined in one of the following ways:
+
+ 1. Define macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREAD_SAFE ...` (**recommended way**)
+
+ 2. Define macros inside `"easylogging++.h"` ([defining macros in other files won't work](https://github.com/muflihun/easyloggingpp/issues/590#issuecomment-346753951))
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1015,7 +1019,7 @@ Easylogging++ supports CHECK macros, with these macros you can quickly check whe
 | `CHECK_GT(a, b)`                            | Greater than e.g, `CHECK_GT(2, 1) << "How 2 is not greater than 1?";`                                                           |
 | `CHECK_LE(a, b)`                            | Less than or equal e.g, `CHECK_LE(1, 1) << "1 is not equal or less than 1";`                                                    |
 | `CHECK_GE(a, b)`                            | Greater than or equal e.g, `CHECK_GE(1, 1) << "1 is not equal or greater than 1";`                                              |
-| `CHECK_NOTNULL(pointer)`                    | Ensures pointer is not null - if OK returns pointer e.g, `explicit MyClass(Obj* obj) : m_obj(CHECK_NOT_NULL(obj)) {}`           |
+| `CHECK_NOTNULL(pointer)`                    | Ensures pointer is not null. This function does not return anything           |
 | `CHECK_STREQ(str1, str2)`                   | C-string equality (case-sensitive) e.g, `CHECK_STREQ(argv[1], "0") << "First arg cannot be 0";`                                 |
 | `CHECK_STRNE(str1, str2)`                   | C-string inequality (case-sensitive) e.g, `CHECK_STRNE(username1, username2) << "Usernames cannot be same";`                    |
 | `CHECK_STRCASEEQ(str1, str2)`               | C-string inequality (*case-insensitive*) e.g, `CHECK_CASESTREQ(argv[1], "Z") << "First arg cannot be 'z' or 'Z'";`              |
@@ -1363,7 +1367,7 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-Copyright (c) 2017 Muflihun Labs
+Copyright (c) 2012-2018 Muflihun Labs
 
 https://github.com/muflihun/easyloggingpp
 https://muflihun.com

@@ -1,10 +1,10 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.3
+//  Easylogging++ v9.95.4
 //  Single-header only, cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2017 muflihun.com
+//  Copyright (c) 2012-2018 Muflihun Labs
 //
 //  This library is released under the MIT Licence.
 //  http://labs.muflihun.com/easyloggingpp/licence.php
@@ -1262,8 +1262,8 @@ class DateTime : base::StaticClass {
       base::TimestampUnit timestampUnit);
 
 
- private:
   static struct ::tm* buildTimeInfo(struct timeval* currTime, struct ::tm* timeInfo);
+ private:
   static char* parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
                            std::size_t msec, const base::SubsecondPrecision* ssPrec);
 };
@@ -3794,6 +3794,11 @@ class Helpers : base::StaticClass {
   /// @brief Returns command line arguments (pointer) provided to easylogging++
   static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
     return ELPP->commandLineArgs();
+  }
+  /// @brief Reserve space for custom format specifiers for performance
+  /// @see std::vector::reserve
+  static inline void reserveCustomFormatSpecifiers(std::size_t size) {
+    ELPP->m_customFormatSpecifiers.reserve(size);
   }
   /// @brief Installs user defined format specifier and handler
   static inline void installCustomFormatSpecifier(const CustomFormatSpecifier& customFormatSpecifier) {

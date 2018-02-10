@@ -1,10 +1,10 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.3
+//  Easylogging++ v9.95.4
 //  Cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2017 muflihun.com
+//  Copyright (c) 2012-2018 Muflihun Labs
 //
 //  This library is released under the MIT Licence.
 //  http://labs.muflihun.com/easyloggingpp/licence.php
@@ -997,8 +997,9 @@ const std::string OS::getBashOutput(const char* command) {
   char hBuff[4096];
   if (fgets(hBuff, sizeof(hBuff), proc) != nullptr) {
     pclose(proc);
-    if (hBuff[strlen(hBuff) - 1] == '\n') {
-      hBuff[strlen(hBuff) - 1] = '\0';
+    const std::size_t buffLen = strlen(hBuff);
+    if (buffLen > 0 && hBuff[buffLen - 1] == '\n') {
+      hBuff[buffLen - 1] = '\0';
     }
     return std::string(hBuff);
   } else {
@@ -2427,6 +2428,7 @@ Writer& Writer::construct(int count, const char* loggerIds, ...) {
     va_list loggersList;
     va_start(loggersList, loggerIds);
     const char* id = loggerIds;
+    m_loggerIds.reserve(count);
     for (int i = 0; i < count; ++i) {
       m_loggerIds.push_back(std::string(id));
       id = va_arg(loggersList, const char*);
@@ -2986,11 +2988,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.95.3");
+  return std::string("9.95.4");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("13-10-2017 1134hrs");
+  return std::string("10-02-2018 1109hrs");
 }
 
 } // namespace el

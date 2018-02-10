@@ -1,5 +1,14 @@
 # Change Log
 
+## [9.95.4] - 10-02-2018
+### Fixes
+- Fix documentation (see PR#597)
+- Fix buffer underflow in getBashOutput (see PR#596)
+
+### Updates
+- Added new function `Helpers::reserveCustomFormatSpecifier` (see #606)
+- Made `DateTime::buildTimeInfo` public for use
+
 ## [9.95.3] - 13-10-2017
 ### Fixes
 - Multithreading issue fixed raised from last release at log builder
