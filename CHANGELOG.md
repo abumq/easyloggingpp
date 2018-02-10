@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.95.4] - 10-02-2018
 ### Fixes
 - Fix documentation (see PR#597)
 - Fix buffer underflow in getBashOutput (see PR#596)
