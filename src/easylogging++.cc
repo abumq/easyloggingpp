@@ -1622,10 +1622,12 @@ void TypedConfigurations::build(Configurations* configurations) {
     } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
       setValue(Level::Global, getBool(conf->value()), &m_performanceTrackingMap);
     } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
-      setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_maxLogFileSizeMap);
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
-      withFileSizeLimit.push_back(conf);
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
+      auto v = getULong(conf->value());
+      setValue(conf->level(), static_cast<std::size_t>(v), &m_maxLogFileSizeMap);
+      if (v != 0)
+      {
+          withFileSizeLimit.push_back(conf);
+      }
     } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
       setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
     }
