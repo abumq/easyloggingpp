@@ -10,6 +10,9 @@
 - Reformatted both files with `astyle`
 - License text updated
 
+### Added
+- Install a pkg-config `.pc` file (@acowley)
+
 ## [9.95.4] - 10-02-2018
 ### Fixes
 - Fix documentation (see PR#597)

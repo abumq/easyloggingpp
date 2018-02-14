@@ -31,6 +31,7 @@ set(ELPP_PATCH_VERSION "4")
 set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
+set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -39,6 +40,11 @@ install(FILES
     src/easylogging++.cc
     DESTINATION "${ELPP_INCLUDE_INSTALL_DIR}"
     COMPONENT dev)
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/easyloggingpp.pc.cmakein
+    ${CMAKE_CURRENT_BINARY_DIR}/easyloggingpp.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/easyloggingpp.pc DESTINATION "${ELPP_PKGCONFIG_INSTALL_DIR}")
 
 if (build_static_lib)
         if (lib_utc_datetime)

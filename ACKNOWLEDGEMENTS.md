@@ -10,3 +10,4 @@ If we have missed your name please feel free to add it with contribution link.
 | @miguelmartin75                      | Issue #16 |
 | @moneromooo-monero                   | [A lot of contributions](https://github.com/muflihun/easyloggingpp/pulls?q=is%3Apr+author%3Amoneromooo-monero)|
 | @MonsieurNicolas                     | [PR #593](https://github.com/muflihun/easyloggingpp/pull/593) |
+| @acowley                             | [PR #593](https://github.com/muflihun/easyloggingpp/pull/577) |
