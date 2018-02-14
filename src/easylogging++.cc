@@ -1840,8 +1840,10 @@ bool RegisteredLoggers::remove(const std::string& id) {
   if (id == base::consts::kDefaultLoggerId) {
     return false;
   }
+  // get has internal lock
   Logger* logger = base::utils::Registry<Logger, std::string>::get(id);
   if (logger != nullptr) {
+    // unregister has internal lock
     unregister(logger);
   }
   return true;
@@ -2046,7 +2048,7 @@ Storage::~Storage(void) {
 }
 
 bool Storage::hasCustomFormatSpecifier(const char* formatSpecifier) {
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   return std::find(m_customFormatSpecifiers.begin(), m_customFormatSpecifiers.end(),
                    formatSpecifier) != m_customFormatSpecifiers.end();
 }
@@ -2055,12 +2057,12 @@ void Storage::installCustomFormatSpecifier(const CustomFormatSpecifier& customFo
   if (hasCustomFormatSpecifier(customFormatSpecifier.formatSpecifier())) {
     return;
   }
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   m_customFormatSpecifiers.push_back(customFormatSpecifier);
 }
 
 bool Storage::uninstallCustomFormatSpecifier(const char* formatSpecifier) {
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   std::vector<CustomFormatSpecifier>::iterator it = std::find(m_customFormatSpecifiers.begin(),
       m_customFormatSpecifiers.end(), formatSpecifier);
   if (it != m_customFormatSpecifiers.end() && strcmp(formatSpecifier, it->formatSpecifier()) == 0) {
@@ -2349,7 +2351,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, logMessage->message());
   }
 #if !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-  el::base::threading::ScopedLock lock_(ELPP->lock());
+  el::base::threading::ScopedLock lock_(ELPP->customFormatSpecifiersLock());
   ELPP_UNUSED(lock_);
   for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
        it != ELPP->customFormatSpecifiers()->end(); ++it) {
@@ -2448,7 +2450,6 @@ void Writer::initializeLogger(const std::string& loggerId, bool lookup, bool nee
   }
   if (m_logger == nullptr) {
     {
-      base::threading::ScopedLock scopedLock(ELPP->lock());
       if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
         // Somehow default logger has been unregistered. Not good! Register again
         ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
@@ -2824,7 +2825,6 @@ void Helpers::logCrashReason(int sig, bool stackTraceIfAvailable, Level level, c
 // Loggers
 
 Logger* Loggers::getLogger(const std::string& identity, bool registerIfNotAvailable) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
 }
 
@@ -2833,12 +2833,10 @@ void Loggers::setDefaultLogBuilder(el::LogBuilderPtr& logBuilderPtr) {
 }
 
 bool Loggers::unregisterLogger(const std::string& identity) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->remove(identity);
 }
 
 bool Loggers::hasLogger(const std::string& identity) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->has(identity);
 }
 
