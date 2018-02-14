@@ -1,5 +1,19 @@
 # Change Log
 
+## [9.96.0] - 14-02-2018
+### Fixes
+- Potential deadlocks in extreme edge case #609
+- Respect `MaxLogFileSize` setting even when `ELPP_NO_DEFAULT_LOG_FILE` is set (@MonsieurNicolas)
+- Disable log file **initially** when using `ELPP_NO_LOG_TO_FILE`, to be consistent with documentation (@rggjan)
+
+### Updates
+- `el::Storage` no longer contains locks as it should be
+- Reformatted both files with `astyle`
+- License text updated
+
+### Added
+- Install a pkg-config `.pc` file (@acowley)
+
 ## [9.95.4] - 10-02-2018
 ### Fixes
 - Fix documentation (see PR#597)

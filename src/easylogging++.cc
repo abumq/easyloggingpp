@@ -1,13 +1,14 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.95.4
+//  Easylogging++ v9.96.0
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
+//  Copyright (c) 2012-2018 @abumusamq
 //
 //  This library is released under the MIT Licence.
-//  http://labs.muflihun.com/easyloggingpp/licence.php
+//  https://github.com/muflihun/easyloggingpp/blob/master/LICENSE
 //
 //  https://github.com/muflihun/easyloggingpp
 //  https://muflihun.github.io/easyloggingpp
@@ -1622,10 +1623,11 @@ void TypedConfigurations::build(Configurations* configurations) {
     } else if (conf->configurationType() == ConfigurationType::PerformanceTracking) {
       setValue(Level::Global, getBool(conf->value()), &m_performanceTrackingMap);
     } else if (conf->configurationType() == ConfigurationType::MaxLogFileSize) {
-      setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_maxLogFileSizeMap);
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
-      withFileSizeLimit.push_back(conf);
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
+      auto v = getULong(conf->value());
+      setValue(conf->level(), static_cast<std::size_t>(v), &m_maxLogFileSizeMap);
+      if (v != 0) {
+        withFileSizeLimit.push_back(conf);
+      }
     } else if (conf->configurationType() == ConfigurationType::LogFlushThreshold) {
       setValue(conf->level(), static_cast<std::size_t>(getULong(conf->value())), &m_logFlushThresholdMap);
     }
@@ -1699,12 +1701,6 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
 }
 
 void TypedConfigurations::insertFile(Level level, const std::string& fullFilename) {
-#if defined(ELPP_NO_LOG_TO_FILE)
-  setValue(level, false, &m_toFileMap);
-  ELPP_UNUSED(fullFilename);
-  m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
-  return;
-#endif
   std::string resolvedFilename = resolveFilename(fullFilename);
   if (resolvedFilename.empty()) {
     std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
@@ -1840,8 +1836,10 @@ bool RegisteredLoggers::remove(const std::string& id) {
   if (id == base::consts::kDefaultLoggerId) {
     return false;
   }
+  // get has internal lock
   Logger* logger = base::utils::Registry<Logger, std::string>::get(id);
   if (logger != nullptr) {
+    // unregister has internal lock
     unregister(logger);
   }
   return true;
@@ -2046,7 +2044,7 @@ Storage::~Storage(void) {
 }
 
 bool Storage::hasCustomFormatSpecifier(const char* formatSpecifier) {
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   return std::find(m_customFormatSpecifiers.begin(), m_customFormatSpecifiers.end(),
                    formatSpecifier) != m_customFormatSpecifiers.end();
 }
@@ -2055,12 +2053,12 @@ void Storage::installCustomFormatSpecifier(const CustomFormatSpecifier& customFo
   if (hasCustomFormatSpecifier(customFormatSpecifier.formatSpecifier())) {
     return;
   }
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   m_customFormatSpecifiers.push_back(customFormatSpecifier);
 }
 
 bool Storage::uninstallCustomFormatSpecifier(const char* formatSpecifier) {
-  base::threading::ScopedLock scopedLock(lock());
+  base::threading::ScopedLock scopedLock(customFormatSpecifiersLock());
   std::vector<CustomFormatSpecifier>::iterator it = std::find(m_customFormatSpecifiers.begin(),
       m_customFormatSpecifiers.end(), formatSpecifier);
   if (it != m_customFormatSpecifiers.end() && strcmp(formatSpecifier, it->formatSpecifier()) == 0) {
@@ -2349,7 +2347,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kMessageFormatSpecifier, logMessage->message());
   }
 #if !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-  el::base::threading::ScopedLock lock_(ELPP->lock());
+  el::base::threading::ScopedLock lock_(ELPP->customFormatSpecifiersLock());
   ELPP_UNUSED(lock_);
   for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
        it != ELPP->customFormatSpecifiers()->end(); ++it) {
@@ -2448,7 +2446,6 @@ void Writer::initializeLogger(const std::string& loggerId, bool lookup, bool nee
   }
   if (m_logger == nullptr) {
     {
-      base::threading::ScopedLock scopedLock(ELPP->lock());
       if (!ELPP->registeredLoggers()->has(std::string(base::consts::kDefaultLoggerId))) {
         // Somehow default logger has been unregistered. Not good! Register again
         ELPP->registeredLoggers()->get(std::string(base::consts::kDefaultLoggerId));
@@ -2824,7 +2821,6 @@ void Helpers::logCrashReason(int sig, bool stackTraceIfAvailable, Level level, c
 // Loggers
 
 Logger* Loggers::getLogger(const std::string& identity, bool registerIfNotAvailable) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->get(identity, registerIfNotAvailable);
 }
 
@@ -2833,12 +2829,10 @@ void Loggers::setDefaultLogBuilder(el::LogBuilderPtr& logBuilderPtr) {
 }
 
 bool Loggers::unregisterLogger(const std::string& identity) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->remove(identity);
 }
 
 bool Loggers::hasLogger(const std::string& identity) {
-  base::threading::ScopedLock scopedLock(ELPP->lock());
   return ELPP->registeredLoggers()->has(identity);
 }
 
@@ -2988,11 +2982,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.95.4");
+  return std::string("9.96.0");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("10-02-2018 1109hrs");
+  return std::string("14-02-2018 1629hrs");
 }
 
 } // namespace el
