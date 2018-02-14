@@ -1701,12 +1701,6 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
 }
 
 void TypedConfigurations::insertFile(Level level, const std::string& fullFilename) {
-#if defined(ELPP_NO_LOG_TO_FILE)
-    setValue(level, false, &m_toFileMap);
-    ELPP_UNUSED(fullFilename);
-    m_fileStreamMap.insert(std::make_pair(level, base::FileStreamPtr(nullptr)));
-    return;
-#endif
     std::string resolvedFilename = resolveFilename(fullFilename);
     if (resolvedFilename.empty()) {
         std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["

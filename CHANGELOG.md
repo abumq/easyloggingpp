@@ -4,6 +4,7 @@
 ### Fixes
 - Potential deadlocks in extreme edge case #609
 - Respect `MaxLogFileSize` setting even when `ELPP_NO_DEFAULT_LOG_FILE` is set (@MonsieurNicolas)
+- Disable log file **initially** when using `ELPP_NO_LOG_TO_FILE`, to be consistent with documentation (@rggjan)
 
 ### Updates
 - `el::Storage` no longer contains locks as it should be
