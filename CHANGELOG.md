@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.96.0] - 14-02-2018
 ### Fixes
 - Potential deadlocks in extreme edge case #609
 - Respect `MaxLogFileSize` setting even when `ELPP_NO_DEFAULT_LOG_FILE` is set (@MonsieurNicolas)
