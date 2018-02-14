@@ -5,14 +5,16 @@
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
+//  Copyright (c) 2012-2018 @abumusamq
 //
 //  This library is released under the MIT Licence.
-//  http://labs.muflihun.com/easyloggingpp/licence.php
+//  https://github.com/muflihun/easyloggingpp/blob/master/LICENSE
 //
 //  https://github.com/muflihun/easyloggingpp
 //  https://muflihun.github.io/easyloggingpp
 //  http://muflihun.com
 //
+
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
 // Compilers and C++0x/C++11 Evaluation
