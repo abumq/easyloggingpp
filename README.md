@@ -98,7 +98,7 @@
 </pre>
 
 # Overview
-Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
+Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
 This manual is for Easylogging++ v9.96.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
@@ -1273,7 +1273,7 @@ You can use this feature to send it to custom destinations e.g, log stash or TCP
 You can also look at [send-to-network](/samples/send-to-network) sample for practical usage of this.
 
 ```c++
-/samples/send-to-network/network-logger.cpp
+// samples/send-to-network/network-logger.cpp
 
 #include "easylogging++.h"
 
