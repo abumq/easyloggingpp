@@ -98,7 +98,7 @@
 </pre>
 
 # Overview
-Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](https://github.com/muflihun/easyloggingpp/tree/master/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
+Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
 This manual is for Easylogging++ v9.96.0. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
@@ -1267,6 +1267,80 @@ If you have not set flag `LoggingFlag::StrictLogFileSizeCheck` for some reason, 
 
 ### Log Dispatch Callback
 If you wish to capture log message right after it is dispatched, you can do so by having a class that extends `el::LogDispatchCallback` and implement the pure-virtual functions, then install it at anytime using `el::Helpers::installLogDispatchCallback<T>(const std::string&)`. If you wish to uninstall a pre-installed handler with same ID, you can do so by using `el::Helpers::uninstallLogDispatchCallback<T>(const std::string&)`
+
+You can use this feature to send it to custom destinations e.g, log stash or TCP client etc.
+
+You can also look at [send-to-network](/samples/send-to-network) sample for practical usage of this.
+
+```c++
+// samples/send-to-network/network-logger.cpp
+
+#include "easylogging++.h"
+
+#include <boost/asio.hpp>
+
+INITIALIZE_EASYLOGGINGPP
+
+
+class Client
+{
+    boost::asio::io_service* io_service;
+    boost::asio::ip::tcp::socket socket;
+
+public:
+    Client(boost::asio::io_service* svc, const std::string& host, const std::string& port) 
+        : io_service(svc), socket(*io_service) 
+    {
+        boost::asio::ip::tcp::resolver resolver(*io_service);
+        boost::asio::ip::tcp::resolver::iterator endpoint = resolver.resolve(boost::asio::ip::tcp::resolver::query(host, port));
+        boost::asio::connect(this->socket, endpoint);
+    };
+
+    void send(std::string const& message) {
+        socket.send(boost::asio::buffer(message));
+    }
+};
+
+class NetworkDispatcher : public el::LogDispatchCallback
+{
+public:
+    void updateServer(const std::string& host, int port) {
+        m_client = std::unique_ptr<Client>(new Client(&m_svc, host, std::to_string(port)));
+    }
+protected:
+  void handle(const el::LogDispatchData* data) noexcept override {
+      m_data = data;
+      // Dispatch using default log builder of logger
+      dispatch(m_data->logMessage()->logger()->logBuilder()->build(m_data->logMessage(),
+                 m_data->dispatchAction() == el::base::DispatchAction::NormalLog));
+  }
+private:
+  const el::LogDispatchData* m_data;
+  boost::asio::io_service m_svc;
+  std::unique_ptr<Client> m_client;
+  
+  void dispatch(el::base::type::string_t&& logLine) noexcept
+  {
+      m_client->send(logLine);
+  }
+};
+
+
+int main() {
+    el::Helpers::installLogDispatchCallback<NetworkDispatcher>("NetworkDispatcher");
+    // you can uninstall default one by
+    // el::Helpers::uninstallLogDispatchCallback<el::base::DefaultLogDispatchCallback>("DefaultLogDispatchCallback");
+    // Set server params
+    NetworkDispatcher* dispatcher = el::Helpers::logDispatchCallback<NetworkDispatcher>("NetworkDispatcher");
+    dispatcher->setEnabled(true);
+    dispatcher->updateServer("127.0.0.1", 9090);
+      
+    // Start logging and normal program...
+    LOG(INFO) << "First network log";
+        
+    // You can even use a different logger, say "network" and send using a different log pattern
+}
+```
 
  > DO NOT LOG ANYTHING IN THIS HANDLER OR YOU WILL END UP IN INFINITE-LOOP
 

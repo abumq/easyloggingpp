@@ -62,6 +62,8 @@ private:
 
 int main() {
     el::Helpers::installLogDispatchCallback<NetworkDispatcher>("NetworkDispatcher");
+    // you can uninstall default one by
+    // el::Helpers::uninstallLogDispatchCallback<el::base::DefaultLogDispatchCallback>("DefaultLogDispatchCallback");
     // Set server params
     NetworkDispatcher* dispatcher = el::Helpers::logDispatchCallback<NetworkDispatcher>("NetworkDispatcher");
     dispatcher->setEnabled(true);
