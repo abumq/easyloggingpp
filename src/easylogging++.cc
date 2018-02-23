@@ -2119,8 +2119,10 @@ namespace base {
 // DefaultLogDispatchCallback
 
 void DefaultLogDispatchCallback::handle(const LogDispatchData* data) {
+#if defined(ELPP_THREAD_SAFE)
   LogDispatchCallback::handle(data);
   base::threading::ScopedLock scopedLock(fileHandle(data));
+#endif
   m_data = data;
   dispatch(m_data->logMessage()->logger()->logBuilder()->build(m_data->logMessage(),
            m_data->dispatchAction() == base::DispatchAction::NormalLog));
