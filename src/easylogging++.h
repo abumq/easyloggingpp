@@ -2197,9 +2197,6 @@ class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCoun
 enum class DispatchAction : base::type::EnumType {
   None = 1, NormalLog = 2, SysLog = 4
 };
-struct FileLock {
-    base::threading::Mutex mutex;
-};
 }  // namespace base
 template <typename T>
 class Callback : protected base::threading::ThreadSafe {
@@ -2244,7 +2241,7 @@ class LogDispatchCallback : public Callback<LogDispatchData> {
   base::threading::Mutex& fileHandle(const LogDispatchData* data);
  private:
   friend class base::LogDispatcher;
-  std::unordered_map<std::string, base::FileLock> m_fileLocks;
+  std::unordered_map<std::string, std::unique_ptr<base::threading::Mutex>> m_fileLocks;
   base::threading::Mutex m_fileLocksMapLock;
 };
 class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
