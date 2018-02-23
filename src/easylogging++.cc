@@ -2105,7 +2105,7 @@ void LogDispatchCallback::handle(const LogDispatchData* data) {
     std::string filename = data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level());
     auto lock = m_fileLocks.find(filename);
     if (lock == m_fileLocks.end()) {
-        m_fileLocks.emplace(std::make_pair(filename, new base::threading::Mutex));
+        m_fileLocks.emplace(std::make_pair(filename, base::FileLock()));
     }
 #endif
 }
