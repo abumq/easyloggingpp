@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.0
+//  Easylogging++ v9.96.1
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -380,6 +380,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <functional>
 #include <algorithm>
@@ -417,9 +418,6 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  if defined(ELPP_LOG_STD_ARRAY)
 #      include <array>
 #  endif  // defined(ELPP_LOG_STD_ARRAY)
-#  if defined(ELPP_LOG_UNORDERED_MAP)
-#      include <unordered_map>
-#  endif  // defined(ELPP_LOG_UNORDERED_MAP)
 #  if defined(ELPP_LOG_UNORDERED_SET)
 #      include <unordered_set>
 #  endif  // defined(ELPP_UNORDERED_SET)
@@ -2238,8 +2236,13 @@ class LogDispatchData {
   }
 };
 class LogDispatchCallback : public Callback<LogDispatchData> {
+ protected: 
+  virtual void handle(const LogDispatchData* data);
+  base::threading::Mutex& fileHandle(const LogDispatchData* data);
  private:
   friend class base::LogDispatcher;
+  std::unordered_map<std::string, std::unique_ptr<base::threading::Mutex>> m_fileLocks;
+  base::threading::Mutex m_fileLocksMapLock;
 };
 class PerformanceTrackingCallback : public Callback<PerformanceTrackingData> {
  private:

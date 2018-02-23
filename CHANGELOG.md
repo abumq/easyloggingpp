@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.96.1] - 23-02-2018
+### Fixes
+- Two loggers writing to same file is undefined behaviour #613
+
 ## [9.96.0] - 14-02-2018
 ### Fixes
 - Potential deadlocks in extreme edge case #609

@@ -27,7 +27,7 @@ option(lib_utc_datetime "Build library with UTC date/time logging" OFF)
 
 set(ELPP_MAJOR_VERSION "9")
 set(ELPP_MINOR_VERSION "96")
-set(ELPP_PATCH_VERSION "0")
+set(ELPP_PATCH_VERSION "1")
 set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
