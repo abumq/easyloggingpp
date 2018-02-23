@@ -6,4 +6,4 @@ release.info
 bin/*
 logs/*
 experiments/*
-CMakeLists.txt.user
+CMakeLists.txt.user*

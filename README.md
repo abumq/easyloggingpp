@@ -93,6 +93,7 @@
     <a href="#submitting-patches">Submitting Patches</a>
     <a href="#reporting-a-bug">Reporting a Bug</a>
 <a href="#compatibility">Compatibility</a>
+    <a href="#build-matrix">Build Matrix</a>
 <a href="#licence">Licence</a>
 <a href="#disclaimer">Disclaimer</a>
 </pre>
@@ -1436,6 +1437,23 @@ Easylogging++ has also been tested with following C++ libraries;
 |![gtkmm]     | gtkmm                  | Tested with gtkmm 2.4                                                               |
 
  [![top] Goto Top](#table-of-contents)
+ 
+ ## Build Matrix
+ 
+ | Branch | Platform | Build Status |
+ | -------- |:------------:|:------------:|
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/develop/1)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/develop/2)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/develop/3)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/develop/4)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/develop/5)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/master/1)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/master/2)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/master/3)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/master/4)](https://travis-ci.org/muflihun/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/muflihun/easyloggingpp/branches/master/5)](https://travis-ci.org/muflihun/easyloggingpp) |
+ 
+  [![top] Goto Top](#table-of-contents)
  
 # Licence
 ```

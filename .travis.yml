@@ -1,8 +1,55 @@
 language: cpp
-compiler:
-  - gcc
-os: linux
-dist: trusty
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    compiler: clang
+  - os: linux
+    dist: trusty
+    compiler: gcc
+    env:
+      - COMPILER=g++-4.8
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: [g++-4.8, valgrind]
+  - os: linux
+    dist: trusty
+    compiler: gcc
+    env:
+      - COMPILER=g++-4.9
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: [g++-4.9, valgrind]
+  - os: linux
+    dist: trusty
+    compiler: gcc
+    env:
+      - COMPILER=g++-5
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: [g++-5, valgrind]
+  - os: linux
+    dist: trusty
+    compiler: gcc
+    env:
+      - COMPILER=g++-6
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: [g++-6, valgrind]
+  - os: linux
+    dist: trusty
+    compiler: gcc
+    env:
+      - COMPILER=g++-7
+    addons:
+      apt:
+        sources: ['ubuntu-toolchain-r-test']
+        packages: [g++-7, valgrind]
+
 before_install:
  - sudo apt-get -qq update
  - sudo apt-get install -y libgtest-dev valgrind cmake
