@@ -6,6 +6,9 @@ matrix:
     compiler: clang
     before_install:
     - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
+    - sudo apt-get -qq update
+    - sudo apt-get install -y libgtest-dev valgrind cmake
+    - sudo apt-get install --only-upgrade cmake
     - g++ -v
 
   - os: linux
