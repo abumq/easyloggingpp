@@ -1953,7 +1953,8 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
 
 namespace base {
 typedef std::shared_ptr<base::type::fstream_t> FileStreamPtr;
-typedef std::map<std::string, FileStreamPtr> LogStreamsReferenceMap;
+typedef std::weak_ptr<base::type::fstream_t> WeakFileStreamPtr;
+typedef std::map<std::string, WeakFileStreamPtr> LogStreamsReferenceMap;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
