@@ -614,7 +614,7 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
   }
   if (fs != nullptr) {
     fs->flush();
-    std::map<Level, unsigned int>::iterator iter = m_unflushedCount.find(level);
+    std::unordered_map<Level, unsigned int>::iterator iter = m_unflushedCount.find(level);
     if (iter != m_unflushedCount.end()) {
       iter->second = 0;
     }
@@ -1274,7 +1274,7 @@ bool CommandLineArgs::hasParamWithValue(const char* paramKey) const {
 }
 
 const char* CommandLineArgs::getParamValue(const char* paramKey) const {
-  std::map<std::string, std::string>::const_iterator iter = m_paramsWithValue.find(std::string(paramKey));
+  std::unordered_map<std::string, std::string>::const_iterator iter = m_paramsWithValue.find(std::string(paramKey));
   return iter != m_paramsWithValue.end() ? iter->second.c_str() : "";
 }
 
@@ -1947,7 +1947,7 @@ bool VRegistry::allowed(base::type::VerboseLevel vlevel, const char* file) {
   } else {
     char baseFilename[base::consts::kSourceFilenameMaxLength] = "";
     base::utils::File::buildBaseFilename(file, baseFilename);
-    std::map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
+    std::unordered_map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
     for (; it != m_modules.end(); ++it) {
       if (base::utils::Str::wildCardMatch(baseFilename, it->first.c_str())) {
         return vlevel <= it->second;
@@ -2393,9 +2393,9 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
-  base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
+  base::TypedConfigurations* tc = m_logMessage->logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-    tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
+    tc->validateFileRolling(m_logMessage->level(), ELPP->preRollOutCallback());
   }
   LogDispatchCallback* callback = nullptr;
   LogDispatchData data;
@@ -2403,7 +2403,7 @@ void LogDispatcher::dispatch(void) {
        : ELPP->m_logDispatchCallbacks) {
     callback = h.second.get();
     if (callback != nullptr && callback->enabled()) {
-      data.setLogMessage(&m_logMessage);
+      data.setLogMessage(m_logMessage);
       data.setDispatchAction(m_dispatchAction);
       callback->handle(&data);
     }
@@ -2535,8 +2535,13 @@ void Writer::processDispatch() {
 
 void Writer::triggerDispatch(void) {
   if (m_proceed) {
-    base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                        m_logger), m_dispatchAction).dispatch();
+      if (m_msg == nullptr) {
+          LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
+                                        m_logger);
+          base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
+      } else {
+          base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
+      }
   }
   if (m_logger != nullptr) {
     m_logger->stream().str(ELPP_LITERAL(""));
