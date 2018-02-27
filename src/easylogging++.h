@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.1
+//  Easylogging++ v9.96.2
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -588,10 +588,10 @@ enum class Level : base::type::EnumType {
 } // namespace el
 namespace std {
 template<> struct hash<el::Level> {
-public:
-    std::size_t operator()(const el::Level& l) const {
-        return hash<el::base::type::EnumType>{}(static_cast<el::base::type::EnumType>(l));
-    }
+ public:
+  std::size_t operator()(const el::Level& l) const {
+    return hash<el::base::type::EnumType> {}(static_cast<el::base::type::EnumType>(l));
+  }
 };
 }
 namespace el {
@@ -2064,7 +2064,8 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   }
 
   template <typename Conf_T>
-  void setValue(Level level, const Conf_T& value, std::unordered_map<Level, Conf_T>* confMap, bool includeGlobalLevel = true) {
+  void setValue(Level level, const Conf_T& value, std::unordered_map<Level, Conf_T>* confMap,
+                bool includeGlobalLevel = true) {
     // If map is empty and we are allowed to add into generic level (Level::Global), do it!
     if (confMap->empty() && includeGlobalLevel) {
       confMap->insert(std::make_pair(Level::Global, value));
@@ -2246,7 +2247,7 @@ class LogDispatchData {
 
 };
 class LogDispatchCallback : public Callback<LogDispatchData> {
- protected: 
+ protected:
   virtual void handle(const LogDispatchData* data);
   base::threading::Mutex& fileHandle(const LogDispatchData* data);
  private:
@@ -3260,7 +3261,7 @@ class Writer : base::NoCopy {
   Writer(Level level, const char* file, base::type::LineNumber line,
          const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
          base::type::VerboseLevel verboseLevel = 0) :
-     m_msg(nullptr), m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
+    m_msg(nullptr), m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
     m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
   }
 
