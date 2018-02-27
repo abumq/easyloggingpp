@@ -2393,9 +2393,9 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
-  base::TypedConfigurations* tc = m_logMessage.logger()->m_typedConfigurations;
+  base::TypedConfigurations* tc = m_logMessage->logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
-    tc->validateFileRolling(m_logMessage.level(), ELPP->preRollOutCallback());
+    tc->validateFileRolling(m_logMessage->level(), ELPP->preRollOutCallback());
   }
   LogDispatchCallback* callback = nullptr;
   LogDispatchData data;
@@ -2403,7 +2403,7 @@ void LogDispatcher::dispatch(void) {
        : ELPP->m_logDispatchCallbacks) {
     callback = h.second.get();
     if (callback != nullptr && callback->enabled()) {
-      data.setLogMessage(&m_logMessage);
+      data.setLogMessage(m_logMessage);
       data.setDispatchAction(m_dispatchAction);
       callback->handle(&data);
     }
@@ -2535,8 +2535,13 @@ void Writer::processDispatch() {
 
 void Writer::triggerDispatch(void) {
   if (m_proceed) {
-    base::LogDispatcher(m_proceed, LogMessage(m_level, m_file, m_line, m_func, m_verboseLevel,
-                        m_logger), m_dispatchAction).dispatch();
+      if (m_msg == nullptr) {
+          LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
+                                        m_logger);
+          base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
+      } else {
+          base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
+      }
   }
   if (m_logger != nullptr) {
     m_logger->stream().str(ELPP_LITERAL(""));

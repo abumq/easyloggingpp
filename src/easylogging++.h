@@ -2223,17 +2223,17 @@ class LogDispatchData {
   inline base::DispatchAction dispatchAction(void) const {
     return m_dispatchAction;
   }
- private:
-  LogMessage* m_logMessage;
-  base::DispatchAction m_dispatchAction;
-  friend class base::LogDispatcher;
-
   inline void setLogMessage(LogMessage* logMessage) {
     m_logMessage = logMessage;
   }
   inline void setDispatchAction(base::DispatchAction dispatchAction) {
     m_dispatchAction = dispatchAction;
   }
+ private:
+  LogMessage* m_logMessage;
+  base::DispatchAction m_dispatchAction;
+  friend class base::LogDispatcher;
+
 };
 class LogDispatchCallback : public Callback<LogDispatchData> {
  protected: 
@@ -2827,9 +2827,9 @@ class DefaultLogBuilder : public LogBuilder {
 /// @brief Dispatches log messages
 class LogDispatcher : base::NoCopy {
  public:
-  LogDispatcher(bool proceed, LogMessage&& logMessage, base::DispatchAction dispatchAction) :
+  LogDispatcher(bool proceed, LogMessage* logMessage, base::DispatchAction dispatchAction) :
     m_proceed(proceed),
-    m_logMessage(std::move(logMessage)),
+    m_logMessage(logMessage),
     m_dispatchAction(std::move(dispatchAction)) {
   }
 
@@ -2837,7 +2837,7 @@ class LogDispatcher : base::NoCopy {
 
  private:
   bool m_proceed;
-  LogMessage m_logMessage;
+  LogMessage* m_logMessage;
   base::DispatchAction m_dispatchAction;
 };
 #if defined(ELPP_STL_LOGGING)
@@ -3250,8 +3250,12 @@ class Writer : base::NoCopy {
   Writer(Level level, const char* file, base::type::LineNumber line,
          const char* func, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog,
          base::type::VerboseLevel verboseLevel = 0) :
-    m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
+     m_msg(nullptr), m_level(level), m_file(file), m_line(line), m_func(func), m_verboseLevel(verboseLevel),
     m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
+  }
+
+  Writer(LogMessage* msg, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog) :
+    m_msg(msg), m_line(0), m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
   }
 
   virtual ~Writer(void) {
@@ -3284,6 +3288,7 @@ class Writer : base::NoCopy {
   Writer& construct(Logger* logger, bool needLock = true);
   Writer& construct(int count, const char* loggerIds, ...);
  protected:
+  LogMessage* m_msg;
   Level m_level;
   const char* m_file;
   const base::type::LineNumber m_line;

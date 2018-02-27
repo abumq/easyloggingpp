@@ -1,5 +1,10 @@
 # Change Log
 
+## [9.96.2] - 27-02-2018
+### Updates
+- Dispatcher now passes in pointer to log message instead of creating on the fly
+- Introduced new constructor for `Writer` for advanced usage (see muflihun/residue)
+
 ## [9.96.1] - 23-02-2018
 ### Fixes
 - Two loggers writing to same file is undefined behaviour #613
