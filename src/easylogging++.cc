@@ -614,7 +614,7 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
   }
   if (fs != nullptr) {
     fs->flush();
-    std::map<Level, unsigned int>::iterator iter = m_unflushedCount.find(level);
+    std::unordered_map<Level, unsigned int>::iterator iter = m_unflushedCount.find(level);
     if (iter != m_unflushedCount.end()) {
       iter->second = 0;
     }
@@ -1274,7 +1274,7 @@ bool CommandLineArgs::hasParamWithValue(const char* paramKey) const {
 }
 
 const char* CommandLineArgs::getParamValue(const char* paramKey) const {
-  std::map<std::string, std::string>::const_iterator iter = m_paramsWithValue.find(std::string(paramKey));
+  std::unordered_map<std::string, std::string>::const_iterator iter = m_paramsWithValue.find(std::string(paramKey));
   return iter != m_paramsWithValue.end() ? iter->second.c_str() : "";
 }
 
@@ -1947,7 +1947,7 @@ bool VRegistry::allowed(base::type::VerboseLevel vlevel, const char* file) {
   } else {
     char baseFilename[base::consts::kSourceFilenameMaxLength] = "";
     base::utils::File::buildBaseFilename(file, baseFilename);
-    std::map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
+    std::unordered_map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
     for (; it != m_modules.end(); ++it) {
       if (base::utils::Str::wildCardMatch(baseFilename, it->first.c_str())) {
         return vlevel <= it->second;

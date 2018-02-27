@@ -4,6 +4,7 @@
 ### Updates
 - Dispatcher now passes in pointer to log message instead of creating on the fly
 - Introduced new constructor for `Writer` for advanced usage (see muflihun/residue)
+- Use `std::unordered_map` for memory management instead of `std::map` issue #611
 
 ## [9.96.1] - 23-02-2018
 ### Fixes
