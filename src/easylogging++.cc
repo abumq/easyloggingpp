@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.1
+//  Easylogging++ v9.96.2
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -2101,18 +2101,18 @@ void Storage::setApplicationArguments(int argc, char** argv) {
 // LogDispatchCallback
 void LogDispatchCallback::handle(const LogDispatchData* data) {
 #if defined(ELPP_THREAD_SAFE)
-    base::threading::ScopedLock scopedLock(m_fileLocksMapLock);
-    std::string filename = data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level());
-    auto lock = m_fileLocks.find(filename);
-    if (lock == m_fileLocks.end()) {
-        m_fileLocks.emplace(std::make_pair(filename, std::unique_ptr<base::threading::Mutex>(new base::threading::Mutex)));
-    }
+  base::threading::ScopedLock scopedLock(m_fileLocksMapLock);
+  std::string filename = data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level());
+  auto lock = m_fileLocks.find(filename);
+  if (lock == m_fileLocks.end()) {
+    m_fileLocks.emplace(std::make_pair(filename, std::unique_ptr<base::threading::Mutex>(new base::threading::Mutex)));
+  }
 #endif
 }
 
 base::threading::Mutex& LogDispatchCallback::fileHandle(const LogDispatchData* data) {
-    auto it = m_fileLocks.find(data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level()));
-    return *(it->second.get());
+  auto it = m_fileLocks.find(data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level()));
+  return *(it->second.get());
 }
 
 namespace base {
@@ -2535,13 +2535,13 @@ void Writer::processDispatch() {
 
 void Writer::triggerDispatch(void) {
   if (m_proceed) {
-      if (m_msg == nullptr) {
-          LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
-                                        m_logger);
-          base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
-      } else {
-          base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
-      }
+    if (m_msg == nullptr) {
+      LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
+                     m_logger);
+      base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
+    } else {
+      base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
+    }
   }
   if (m_logger != nullptr) {
     m_logger->stream().str(ELPP_LITERAL(""));
@@ -3011,11 +3011,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.96.1");
+  return std::string("9.96.2");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("23-02-2018 1708hrs");
+  return std::string("27-02-2018 1135hrs");
 }
 
 } // namespace el
