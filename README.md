@@ -921,7 +921,7 @@ In order to install this handler, use `void Helpers::installPerformanceTrackingC
 ### Log File Rotating
 Easylogging++ has ability to roll out (or throw away / rotate) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
-If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck`.
+Rollout checking happens when Easylogging++ flushes the log file, or, if you have added the flag `el::LoggingFlags::StrictLogFileSizeCheck`, at each log output.
 
 This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
