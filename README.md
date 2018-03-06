@@ -762,7 +762,7 @@ Although this is a rare situation but if you wish to get list of all the logger 
 ### Sharing Logging Repository
 For advance logging, you can share your logging repositories to shared or static libraries, or even from library to application. This is rare case but a very good example is as follows;
 
-Let's say we have an application that uses easylogging++ and has it's own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
+Let's say we have an application that uses easylogging++ and has its own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
 
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `SHARE_EASYLOGGINGPP(access-function-to-repository)`
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
@@ -923,7 +923,7 @@ Easylogging++ has ability to roll out (or throw away / rotate) log files if they
 
 If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck`. This ensures the file size is checked on each message logging. Easylogging++ also checks whether log-rollout should happen when it flushes the log file. This is less accurate but should perform better.
 
-This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
+This feature has its own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
 There is a [sample](/samples/STL/logrotate.cpp) available that you can use as basis.
