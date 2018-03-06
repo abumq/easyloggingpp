@@ -618,6 +618,7 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
     if (iter != m_unflushedCount.end()) {
       iter->second = 0;
     }
+    Helpers::validateFileRolling(this, level);
   }
 }
 
