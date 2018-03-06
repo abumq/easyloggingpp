@@ -677,10 +677,9 @@ std::size_t File::getSizeOfFile(base::type::fstream_t* fs) {
   if (fs == nullptr) {
     return 0;
   }
-  std::streampos currPos = fs->tellg();
-  fs->seekg(0, fs->end);
+  // File stream is truncated or appended to, so the current offset
+  // is the size of file.
   std::size_t size = static_cast<std::size_t>(fs->tellg());
-  fs->seekg(currPos);
   return size;
 }
 
