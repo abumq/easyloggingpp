@@ -2680,8 +2680,7 @@ StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const std::strin
 }
 
 std::ostream& operator<<(std::ostream& ss, const StackTrace::StackTraceEntry& si) {
-  ss << "[" << si.m_index << "] " << si.m_location << (si.m_demangled.empty() ? "" : ":") << si.m_demangled << " "
-    << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr;
+    ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr << (si.m_demangled.empty() ? "" : ":") << si.m_demangled;
   return ss;
 }
 
