@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixes
+- Demangling in GCC fixed
+
 ## [9.96.2] - 27-02-2018
 ### Updates
 - Dispatcher now passes in pointer to log message instead of creating on the fly

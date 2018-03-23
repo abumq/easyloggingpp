@@ -3637,8 +3637,8 @@ class StackTrace : base::NoCopy {
   static const unsigned int kStackStart = 2;  // We want to skip c'tor and StackTrace::generateNew()
   class StackTraceEntry {
    public:
-    StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex, const char* addr);
-    StackTraceEntry(std::size_t index, char* loc) :
+    StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang, const std::string& hex, const std::string& addr);
+    StackTraceEntry(std::size_t index, const std::string& loc) :
       m_index(index),
       m_location(loc) {
     }
