@@ -6,9 +6,15 @@
 
 > **Manual For v9.96.3**
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](#build-matrix) [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](#build-matrix) [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](#build-matrix)
+[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](#build-matrix)
+[![Build status](https://ci.appveyor.com/api/projects/status/sfcgrehu8ypkrun3?svg=true)](https://ci.appveyor.com/project/abumusamq/easyloggingpp-node)
 
-[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/rwDXGcnP1IoCKXrJ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE) [![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+[![Node Binding Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+[![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE)
+[![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/MuflihunDotCom/25)
 
