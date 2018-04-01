@@ -4,7 +4,7 @@
 
 ![banner]
 
-> **Manual For v9.96.2**
+> **Manual For v9.96.3**
 
 [![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](#build-matrix) [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](#build-matrix) [![Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
 
@@ -101,7 +101,7 @@
 # Overview
 Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
-This manual is for Easylogging++ v9.96.2. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.96.3. For other versions please refer to corresponding [release](https://github.com/muflihun/easyloggingpp/releases) on github.
 
 > You may also be interested in [Residue](https://github.com/muflihun/residue/) logging server.
 
@@ -502,7 +502,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/muflihun/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
 | `ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-DELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `ELPP_NO_LOG_TO_FILE`                 | Disable logging to file initially|
-| `ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. But be sure to configure your logger with propery log filename or you will end up getting heaps of errors when trying to log to file (and `TO_FILE` is configured to `true`)                                                                                                              |
+| `ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. This will log to null device for unix and windows. In other platforms you may get error and you will need to use `ELPP_DEFAULT_LOG_FILE`. (PR for other platform's null devices are most welcomed) |
 | `ELPP_FRESH_LOG_FILE`              | Never appends log file whenever log file is created (Use with care as it may cause some unexpected result for some users)                                                  |
 | `ELPP_DEBUG_ERRORS`                    | If you wish to find out internal errors raised by Easylogging++ that can be because of configuration or something else, you can enable them by defining this macro. You will get your errors on standard output i.e, terminal or command prompt.                                                                                                                                             |
 | `ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS` | Forcefully disables custom format specifiers                                                                                                       |
@@ -762,7 +762,7 @@ Although this is a rare situation but if you wish to get list of all the logger 
 ### Sharing Logging Repository
 For advance logging, you can share your logging repositories to shared or static libraries, or even from library to application. This is rare case but a very good example is as follows;
 
-Let's say we have an application that uses easylogging++ and has it's own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
+Let's say we have an application that uses easylogging++ and has its own configuration, now you are importing library that uses easylogging++ and wants to access logging repository of main application. You can do this using two ways;
 
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `SHARE_EASYLOGGINGPP(access-function-to-repository)`
  * Instead of using `INITIALIZE_EASYLOGGINGPP` you use `INITIALIZE_NULL_EASYLOGGINGPP` and then `el::Helpers::setStorage(el::base::type::StoragePointer)`
@@ -921,9 +921,9 @@ In order to install this handler, use `void Helpers::installPerformanceTrackingC
 ### Log File Rotating
 Easylogging++ has ability to roll out (or throw away / rotate) log files if they reach certain limit. You can configure this by setting `Max_Log_File_Size`. See Configuration section above.
 
-If you are having failure in log-rollout, you may have failed to add flag i.e, `el::LoggingFlags::StrictLogFileSizeCheck`.
+Rollout checking happens when Easylogging++ flushes the log file, or, if you have added the flag `el::LoggingFlags::StrictLogFileSizeCheck`, at each log output.
 
-This feature has it's own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
+This feature has its own section in this reference manual because you can do stuffs with the file being thrown away. This is useful, for example if you wish to back this file up etc.
 This can be done by using `el::Helpers::installPreRollOutCallback(const PreRollOutCallback& handler)` where `PreRollOutCallback` is typedef of type `std::function<void(const char*, std::size_t)>`. Please note following if you are using this feature
 
 There is a [sample](/samples/STL/logrotate.cpp) available that you can use as basis.

@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.2
+//  Easylogging++ v9.96.3
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -23,8 +23,95 @@ INITIALIZE_EASYLOGGINGPP
 
 namespace el {
 
-// el::base::utils
+// el::base
 namespace base {
+// el::base::consts
+namespace consts {
+
+// Level log values - These are values that are replaced in place of %level format specifier
+// Extra spaces after format specifiers are only for readability purposes in log files
+static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO");
+static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
+static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARNING");
+static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
+static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
+static const base::type::char_t* kVerboseLevelLogValue  =
+  ELPP_LITERAL("VERBOSE"); // will become VERBOSE-x where x = verbose level
+static const base::type::char_t* kTraceLevelLogValue    =   ELPP_LITERAL("TRACE");
+static const base::type::char_t* kInfoLevelShortLogValue     =   ELPP_LITERAL("I");
+static const base::type::char_t* kDebugLevelShortLogValue    =   ELPP_LITERAL("D");
+static const base::type::char_t* kWarningLevelShortLogValue  =   ELPP_LITERAL("W");
+static const base::type::char_t* kErrorLevelShortLogValue    =   ELPP_LITERAL("E");
+static const base::type::char_t* kFatalLevelShortLogValue    =   ELPP_LITERAL("F");
+static const base::type::char_t* kVerboseLevelShortLogValue  =   ELPP_LITERAL("V");
+static const base::type::char_t* kTraceLevelShortLogValue    =   ELPP_LITERAL("T");
+// Format specifiers - These are used to define log format
+static const base::type::char_t* kAppNameFormatSpecifier          =      ELPP_LITERAL("%app");
+static const base::type::char_t* kLoggerIdFormatSpecifier         =      ELPP_LITERAL("%logger");
+static const base::type::char_t* kThreadIdFormatSpecifier         =      ELPP_LITERAL("%thread");
+static const base::type::char_t* kSeverityLevelFormatSpecifier    =      ELPP_LITERAL("%level");
+static const base::type::char_t* kSeverityLevelShortFormatSpecifier    =      ELPP_LITERAL("%levshort");
+static const base::type::char_t* kDateTimeFormatSpecifier         =      ELPP_LITERAL("%datetime");
+static const base::type::char_t* kLogFileFormatSpecifier          =      ELPP_LITERAL("%file");
+static const base::type::char_t* kLogFileBaseFormatSpecifier      =      ELPP_LITERAL("%fbase");
+static const base::type::char_t* kLogLineFormatSpecifier          =      ELPP_LITERAL("%line");
+static const base::type::char_t* kLogLocationFormatSpecifier      =      ELPP_LITERAL("%loc");
+static const base::type::char_t* kLogFunctionFormatSpecifier      =      ELPP_LITERAL("%func");
+static const base::type::char_t* kCurrentUserFormatSpecifier      =      ELPP_LITERAL("%user");
+static const base::type::char_t* kCurrentHostFormatSpecifier      =      ELPP_LITERAL("%host");
+static const base::type::char_t* kMessageFormatSpecifier          =      ELPP_LITERAL("%msg");
+static const base::type::char_t* kVerboseLevelFormatSpecifier     =      ELPP_LITERAL("%vlevel");
+static const char* kDateTimeFormatSpecifierForFilename            =      "%datetime";
+// Date/time
+static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
+                                                             "September", "October", "November", "December"
+                                                           };
+static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+static const char* kDefaultDateTimeFormat           =      "%Y-%M-%d %H:%m:%s,%g";
+static const char* kDefaultDateTimeFormatInFilename =      "%Y-%M-%d_%H-%m";
+static const int kYearBase                          =      1900;
+static const char* kAm                              =      "AM";
+static const char* kPm                              =      "PM";
+// Miscellaneous constants
+
+static const char* kNullPointer                            =      "nullptr";
+#if ELPP_VARIADIC_TEMPLATES_SUPPORTED
+#endif  // ELPP_VARIADIC_TEMPLATES_SUPPORTED
+static const base::type::VerboseLevel kMaxVerboseLevel     =      9;
+static const char* kUnknownUser                            =      "user";
+static const char* kUnknownHost                            =      "unknown-host";
+
+
+//---------------- DEFAULT LOG FILE -----------------------
+
+#if defined(ELPP_NO_DEFAULT_LOG_FILE)
+#  if ELPP_OS_UNIX
+static const char* kDefaultLogFile                         =      "/dev/null";
+#  elif ELPP_OS_WINDOWS
+static const char* kDefaultLogFile                         =      "nul";
+#  endif  // ELPP_OS_UNIX
+#elif defined(ELPP_DEFAULT_LOG_FILE)
+static const char* kDefaultLogFile                         =      ELPP_DEFAULT_LOG_FILE;
+#else
+static const char* kDefaultLogFile                         =      "myeasylog.log";
+#endif // defined(ELPP_NO_DEFAULT_LOG_FILE)
+
+
+#if !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
+static const char* kDefaultLogFileParam                    =      "--default-log-file";
+#endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
+#if defined(ELPP_LOGGING_FLAGS_FROM_ARG)
+static const char* kLoggingFlagsParam                      =      "--logging-flags";
+#endif  // defined(ELPP_LOGGING_FLAGS_FROM_ARG)
+static const char* kValidLoggerIdSymbols                   =
+  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+static const char* kConfigurationComment                   =      "##";
+static const char* kConfigurationLevel                     =      "*";
+static const char* kConfigurationLoggerId                  =      "--";
+}
+// el::base::utils
 namespace utils {
 
 /// @brief Aborts application due with user-defined status
@@ -277,11 +364,7 @@ void Configurations::set(Configuration* conf) {
 
 void Configurations::setToDefault(void) {
   setGlobally(ConfigurationType::Enabled, std::string("true"), true);
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
   setGlobally(ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile), true);
-#else
-  ELPP_UNUSED(base::consts::kDefaultLogFile);
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
 #if defined(ELPP_NO_LOG_TO_FILE)
   setGlobally(ConfigurationType::ToFile, std::string("false"), true);
 #else
@@ -310,9 +393,7 @@ void Configurations::setRemainingToDefault(void) {
 #else
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Enabled, std::string("true"));
 #endif // defined(ELPP_NO_LOG_TO_FILE)
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::SubsecondPrecision, std::string("3"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
@@ -570,7 +651,6 @@ void Logger::configure(const Configurations& configurations) {
   if (m_typedConfigurations != nullptr) {
     Configurations* c = const_cast<Configurations*>(m_typedConfigurations->configurations());
     if (c->hasConfiguration(Level::Global, ConfigurationType::Filename)) {
-      // This check is definitely needed for cases like ELPP_NO_DEFAULT_LOG_FILE
       flush();
     }
   }
@@ -618,6 +698,7 @@ void Logger::flush(Level level, base::type::fstream_t* fs) {
     if (iter != m_unflushedCount.end()) {
       iter->second = 0;
     }
+    Helpers::validateFileRolling(this, level);
   }
 }
 
@@ -676,10 +757,9 @@ std::size_t File::getSizeOfFile(base::type::fstream_t* fs) {
   if (fs == nullptr) {
     return 0;
   }
-  std::streampos currPos = fs->tellg();
-  fs->seekg(0, fs->end);
+  // Since the file stream is appended to or truncated, the current
+  // offset is the file size.
   std::size_t size = static_cast<std::size_t>(fs->tellg());
-  fs->seekg(currPos);
   return size;
 }
 
@@ -2670,18 +2750,17 @@ namespace debug {
 
 // StackTrace
 
-StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const char* loc, const char* demang, const char* hex,
-    const char* addr) {
-  m_index = index;
-  m_location = std::string(loc);
-  m_demangled = std::string(demang);
-  m_hex = std::string(hex);
-  m_addr = std::string(addr);
+StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang, const std::string& hex,
+  const std::string& addr) :
+    m_index(index),
+    m_location(loc),
+    m_demangled(demang),
+    m_hex(hex),
+    m_addr(addr) {
 }
 
 std::ostream& operator<<(std::ostream& ss, const StackTrace::StackTraceEntry& si) {
-  ss << "[" << si.m_index << "] " << si.m_location << (si.m_demangled.empty() ? "" : ":") << si.m_demangled
-     << (si.m_hex.empty() ? "" : "+") << si.m_hex << si.m_addr;
+    ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr << (si.m_demangled.empty() ? "" : ":") << si.m_demangled;
   return ss;
 }
 
@@ -2701,44 +2780,40 @@ void StackTrace::generateNew(void) {
   char** strings = backtrace_symbols(stack, size);
   if (size > kStackStart) {  // Skip StackTrace c'tor and generateNew
     for (std::size_t i = kStackStart; i < size; ++i) {
-      char* mangName = nullptr;
-      char* hex = nullptr;
-      char* addr = nullptr;
-      for (char* c = strings[i]; *c; ++c) {
-        switch (*c) {
-        case '(':
-          mangName = c;
-          break;
-        case '+':
-          hex = c;
-          break;
-        case ')':
-          addr = c;
-          break;
-        default:
-          break;
+        std::string mangName;
+        std::string location;
+        std::string hex;
+        std::string addr;
+
+        // entry: 2   crash.cpp.bin                       0x0000000101552be5 _ZN2el4base5debug10StackTraceC1Ev + 21
+        const std::string line(strings[i]);
+        auto p = line.find("_");
+        if (p != std::string::npos) {
+            mangName = line.substr(p);
+            mangName = mangName.substr(0, mangName.find(" +"));
         }
-      }
+        p = line.find("0x");
+        if (p != std::string::npos) {
+            addr = line.substr(p);
+            addr = addr.substr(0, addr.find("_"));
+        }
       // Perform demangling if parsed properly
-      if (mangName != nullptr && hex != nullptr && addr != nullptr && mangName < hex) {
-        *mangName++ = '\0';
-        *hex++ = '\0';
-        *addr++ = '\0';
+      if (!mangName.empty()) {
         int status = 0;
-        char* demangName = abi::__cxa_demangle(mangName, 0, 0, &status);
+        char* demangName = abi::__cxa_demangle(mangName.data(), 0, 0, &status);
         // if demangling is successful, output the demangled function name
         if (status == 0) {
           // Success (see http://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a01696.html)
-          StackTraceEntry entry(i - 1, strings[i], demangName, hex, addr);
+          StackTraceEntry entry(i - 1, location, demangName, hex, addr);
           m_stack.push_back(entry);
         } else {
           // Not successful - we will use mangled name
-          StackTraceEntry entry(i - 1, strings[i], mangName, hex, addr);
+          StackTraceEntry entry(i - 1, location, mangName, hex, addr);
           m_stack.push_back(entry);
         }
         free(demangName);
       } else {
-        StackTraceEntry entry(i - 1, strings[i]);
+        StackTraceEntry entry(i - 1, line);
         m_stack.push_back(entry);
       }
     }
@@ -3011,11 +3086,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.96.2");
+  return std::string("9.96.3");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("27-02-2018 1135hrs");
+  return std::string("01-04-2018 1128hrs");
 }
 
 } // namespace el
