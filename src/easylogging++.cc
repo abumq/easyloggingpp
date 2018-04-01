@@ -277,11 +277,7 @@ void Configurations::set(Configuration* conf) {
 
 void Configurations::setToDefault(void) {
   setGlobally(ConfigurationType::Enabled, std::string("true"), true);
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
   setGlobally(ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile), true);
-#else
-  ELPP_UNUSED(base::consts::kDefaultLogFile);
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
 #if defined(ELPP_NO_LOG_TO_FILE)
   setGlobally(ConfigurationType::ToFile, std::string("false"), true);
 #else
@@ -310,9 +306,7 @@ void Configurations::setRemainingToDefault(void) {
 #else
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Enabled, std::string("true"));
 #endif // defined(ELPP_NO_LOG_TO_FILE)
-#if !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::Filename, std::string(base::consts::kDefaultLogFile));
-#endif  // !defined(ELPP_NO_DEFAULT_LOG_FILE)
   unsafeSetIfNotExist(Level::Global, ConfigurationType::ToStandardOutput, std::string("true"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::SubsecondPrecision, std::string("3"));
   unsafeSetIfNotExist(Level::Global, ConfigurationType::PerformanceTracking, std::string("true"));
@@ -570,7 +564,6 @@ void Logger::configure(const Configurations& configurations) {
   if (m_typedConfigurations != nullptr) {
     Configurations* c = const_cast<Configurations*>(m_typedConfigurations->configurations());
     if (c->hasConfiguration(Level::Global, ConfigurationType::Filename)) {
-      // This check is definitely needed for cases like ELPP_NO_DEFAULT_LOG_FILE
       flush();
     }
   }

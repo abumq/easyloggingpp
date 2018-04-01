@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixes
 - Demangling in GCC fixed
+- `ELPP_NO_DEFAULT_LOG_FILE` now logs to null device on major platforms (windows and unix)
 
 ## [9.96.2] - 27-02-2018
 ### Updates

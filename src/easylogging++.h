@@ -797,19 +797,23 @@ static const unsigned int kDefaultSubsecondPrecision       =      3;
 static const base::type::VerboseLevel kMaxVerboseLevel     =      9;
 static const char* kUnknownUser                            =      "user";
 static const char* kUnknownHost                            =      "unknown-host";
-#if defined(ELPP_DEFAULT_LOG_FILE)
+
+
+//---------------- DEFAULT LOG FILE -----------------------
+
+#if defined(ELPP_NO_DEFAULT_LOG_FILE)
+#  if ELPP_OS_UNIX
+static const char* kDefaultLogFile                         =      "/dev/null";
+#  elif ELPP_OS_WINDOWS
+static const char* kDefaultLogFile                         =      "nul";
+#  endif  // ELPP_OS_UNIX
+#elif defined(ELPP_DEFAULT_LOG_FILE)
 static const char* kDefaultLogFile                         =      ELPP_DEFAULT_LOG_FILE;
 #else
-#  if ELPP_OS_UNIX
-#      if ELPP_OS_ANDROID
-static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
-#      else
-static const char* kDefaultLogFile                         =      "logs/myeasylog.log";
-#      endif  // ELPP_OS_ANDROID
-#  elif ELPP_OS_WINDOWS
-static const char* kDefaultLogFile                         =      "logs\\myeasylog.log";
-#  endif  // ELPP_OS_UNIX
-#endif  // defined(ELPP_DEFAULT_LOG_FILE)
+static const char* kDefaultLogFile                         =      "myeasylog.log";
+#endif // defined(ELPP_NO_DEFAULT_LOG_FILE)
+
+
 #if !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
 static const char* kDefaultLogFileParam                    =      "--default-log-file";
 #endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
