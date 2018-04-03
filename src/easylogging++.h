@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.3
+//  Easylogging++ v9.96.4
 //  Single-header only, cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -3558,7 +3558,8 @@ class StackTrace : base::NoCopy {
   static const unsigned int kStackStart = 2;  // We want to skip c'tor and StackTrace::generateNew()
   class StackTraceEntry {
    public:
-    StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang, const std::string& hex, const std::string& addr);
+    StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang, const std::string& hex,
+                    const std::string& addr);
     StackTraceEntry(std::size_t index, const std::string& loc) :
       m_index(index),
       m_location(loc) {
