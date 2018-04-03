@@ -2473,6 +2473,12 @@ void LogDispatcher::dispatch(void) {
   if (!m_proceed) {
     return;
   }
+#ifndef ELPP_NO_GLOBAL_LOCK
+  // see https://github.com/muflihun/easyloggingpp/issues/580
+  // global lock is turned off by default unless
+  // ELPP_NO_GLOBAL_LOCK is defined
+  base::threading::ScopedLock scopedLock(ELPP->lock());
+#endif
   base::TypedConfigurations* tc = m_logMessage->logger()->m_typedConfigurations;
   if (ELPP->hasFlag(LoggingFlag::StrictLogFileSizeCheck)) {
     tc->validateFileRolling(m_logMessage->level(), ELPP->preRollOutCallback());

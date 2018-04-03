@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.96.4] - 03-04-2018
+### Fixes
+- Fixes seg fault with global lock (issue #580)
+
 ## [9.96.3] - 01-04-2018
 ### Fixes
 - Demangling in GCC fixed

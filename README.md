@@ -520,6 +520,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_NO_CHECK_MACROS`             | Do not define the *CHECK* macros                                                                                                                  |
 | `ELPP_NO_DEBUG_MACROS`             | Do not define the *DEBUG* macros                                                                                                                  |
 | `ELPP_UTC_DATETIME`                | Uses UTC time instead of local time (essentially uses `gmtime` instead of `localtime` and family functions)
+| `ELPP_NO_GLOBAL_LOCK`  | Do not lock the whole storage on dispatch. This should be used with care. See [issue #580](https://github.com/muflihun/easyloggingpp/issues/580)|
 
  [![top] Goto Top](#table-of-contents)
  
