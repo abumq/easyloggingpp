@@ -1,7 +1,7 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.3
+//  Easylogging++ v9.96.4
 //  Cross-platform logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Muflihun Labs
@@ -2756,17 +2756,19 @@ namespace debug {
 
 // StackTrace
 
-StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang, const std::string& hex,
-  const std::string& addr) :
-    m_index(index),
-    m_location(loc),
-    m_demangled(demang),
-    m_hex(hex),
-    m_addr(addr) {
+StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const std::string& loc, const std::string& demang,
+    const std::string& hex,
+    const std::string& addr) :
+  m_index(index),
+  m_location(loc),
+  m_demangled(demang),
+  m_hex(hex),
+  m_addr(addr) {
 }
 
 std::ostream& operator<<(std::ostream& ss, const StackTrace::StackTraceEntry& si) {
-    ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr << (si.m_demangled.empty() ? "" : ":") << si.m_demangled;
+  ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr <<
+     (si.m_demangled.empty() ? "" : ":") << si.m_demangled;
   return ss;
 }
 
@@ -2786,23 +2788,23 @@ void StackTrace::generateNew(void) {
   char** strings = backtrace_symbols(stack, size);
   if (size > kStackStart) {  // Skip StackTrace c'tor and generateNew
     for (std::size_t i = kStackStart; i < size; ++i) {
-        std::string mangName;
-        std::string location;
-        std::string hex;
-        std::string addr;
+      std::string mangName;
+      std::string location;
+      std::string hex;
+      std::string addr;
 
-        // entry: 2   crash.cpp.bin                       0x0000000101552be5 _ZN2el4base5debug10StackTraceC1Ev + 21
-        const std::string line(strings[i]);
-        auto p = line.find("_");
-        if (p != std::string::npos) {
-            mangName = line.substr(p);
-            mangName = mangName.substr(0, mangName.find(" +"));
-        }
-        p = line.find("0x");
-        if (p != std::string::npos) {
-            addr = line.substr(p);
-            addr = addr.substr(0, addr.find("_"));
-        }
+      // entry: 2   crash.cpp.bin                       0x0000000101552be5 _ZN2el4base5debug10StackTraceC1Ev + 21
+      const std::string line(strings[i]);
+      auto p = line.find("_");
+      if (p != std::string::npos) {
+        mangName = line.substr(p);
+        mangName = mangName.substr(0, mangName.find(" +"));
+      }
+      p = line.find("0x");
+      if (p != std::string::npos) {
+        addr = line.substr(p);
+        addr = addr.substr(0, addr.find("_"));
+      }
       // Perform demangling if parsed properly
       if (!mangName.empty()) {
         int status = 0;
@@ -3092,11 +3094,11 @@ void Loggers::clearVModules(void) {
 // VersionInfo
 
 const std::string VersionInfo::version(void) {
-  return std::string("9.96.3");
+  return std::string("9.96.4");
 }
 /// @brief Release date of current version
 const std::string VersionInfo::releaseDate(void) {
-  return std::string("01-04-2018 1128hrs");
+  return std::string("03-04-2018 1019hrs");
 }
 
 } // namespace el
