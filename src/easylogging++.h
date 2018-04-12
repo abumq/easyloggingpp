@@ -3933,6 +3933,7 @@ class VersionInfo : base::StaticClass {
 /// @brief Gets hit counter position for file/line, -1 if not registered yet
 #define ELPP_COUNTER_POS (ELPP_COUNTER == nullptr ? -1 : ELPP_COUNTER->hitCounts())
 // Undef levels to support LOG(LEVEL)
+#ifndef ELPP_COMPILER_MSVC
 #undef INFO
 #undef WARNING
 #undef DEBUG
@@ -3940,6 +3941,7 @@ class VersionInfo : base::StaticClass {
 #undef FATAL
 #undef TRACE
 #undef VERBOSE
+#endif // ELPP_COMPILER_MSVC
 // Undef existing
 #undef CINFO
 #undef CWARNING
@@ -4243,13 +4245,48 @@ CVERBOSE_N_TIMES(el::base::Writer, n, vlevel, el::base::DispatchAction::NormalLo
 #else
 #  define ELPP_CURR_FILE_LOGGER_ID el::base::consts::kDefaultLoggerId
 #endif
-#undef ELPP_TRACE
-#define ELPP_TRACE CLOG(TRACE, ELPP_CURR_FILE_LOGGER_ID)
+#ifdef ELPP_COMPILER_MSVC
+#	undef LOG_INFO
+#	define LOG_INFO CLOG(INFO, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_WARNING
+#	define LOG_WARNING CLOG(WARNING, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_DEBUG
+#	define LOG_DEBUG CLOG(DEBUG, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_ERROR
+#	define LOG_ERROR CLOG(ERROR, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_FATAL
+#	define LOG_FATAL CLOG(FATAL, ELPP_CURR_FILE_LOGGER_ID)
+#	undef  LOG_TRACE
+#	define LOG_TRACE CLOG(TRACE, ELPP_CURR_FILE_LOGGER_ID)
+#else
+#	undef ELPP_TRACE
+#	define ELPP_TRACE CLOG(TRACE, ELPP_CURR_FILE_LOGGER_ID)
+#endif // ELPP_COMPILER_MSVC
 // Normal logs
-#define LOG(LEVEL) CLOG(LEVEL, ELPP_CURR_FILE_LOGGER_ID)
+#ifef ELPP_COMPILER_MSVC
+#	define LOG(LEVEL) LOG_##LEVEL
+#else
+#	define LOG(LEVEL) CLOG(LEVEL, ELPP_CURR_FILE_LOGGER_ID)
+#endif // ELPP_COMPILER_MSVC
 #define VLOG(vlevel) CVLOG(vlevel, ELPP_CURR_FILE_LOGGER_ID)
 // Conditional logs
-#define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, ELPP_CURR_FILE_LOGGER_ID)
+#ifdef ELPP_COMPILER_MSVC
+#	undef LOG_INFO_IF
+#	define LOG_INFO_IF(condition) CLOG_IF(condition,INFO, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_WARNING_IF
+#	define LOG_WARNING_IF(condition) CLOG_IF(condition,WARNING, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_DEBUG_IF
+#	define LOG_DEBUG_IF(condition) CLOG_IF(condition,DEBUG, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_ERROR_IF
+#	define LOG_ERROR_IF(condition) CLOG_IF(condition,ERROR, ELPP_CURR_FILE_LOGGER_ID)
+#	undef LOG_FATAL_IF
+#	define LOG_FATAL_IF(condition) CLOG_IF(condition,FATAL, ELPP_CURR_FILE_LOGGER_ID)
+#	undef  LOG_TRACE_IF
+#	define LOG_TRACE_IF(condition) CLOG_IF(condition,TRACE, ELPP_CURR_FILE_LOGGER_ID)
+#	define LOG_IF(condition, LEVEL)  LOG_##LEVEL##_IF(condition)
+#else
+#	define LOG_IF(condition, LEVEL) CLOG_IF(condition, LEVEL, ELPP_CURR_FILE_LOGGER_ID)
+#endif // ELPP_COMPILER_MSVC
 #define VLOG_IF(condition, vlevel) CVLOG_IF(condition, vlevel, ELPP_CURR_FILE_LOGGER_ID)
 // Hit counts based logs
 #define LOG_EVERY_N(n, LEVEL) CLOG_EVERY_N(n, LEVEL, ELPP_CURR_FILE_LOGGER_ID)
