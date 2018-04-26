@@ -101,9 +101,17 @@ TEST(TypedConfigurationsTest, NonExistentFileCreation) {
     c.set(Level::Error, ConfigurationType::Filename, "/tmp/logs/el.gtest.log");
     TypedConfigurations tConf(&c, ELPP->registeredLoggers()->logStreamsReference());
     EXPECT_TRUE(tConf.toFile(Level::Global));
-    EXPECT_FALSE(tConf.toFile(Level::Info));
-    EXPECT_TRUE(tConf.toFile(Level::Error));
+
+#if ELPP_OS_EMSCRIPTEN == 1
+    // On Emscripten, all files can be created; we actually expect success here
+    EXPECT_TRUE(tConf.toFile(Level::Info));
+    EXPECT_NE(nullptr, tConf.fileStream(Level::Info));  // not nullptr (emulated fs)
+#else
     EXPECT_EQ(nullptr, tConf.fileStream(Level::Info));  // nullptr
+    EXPECT_FALSE(tConf.toFile(Level::Info));
+#endif
+
+    EXPECT_TRUE(tConf.toFile(Level::Error));
     EXPECT_NE(nullptr, tConf.fileStream(Level::Error)); // Not null
 }
 

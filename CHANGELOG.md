@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.96.5] - 26-04-2018
+### Updates
+- Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
+
 ## [9.96.4] - 03-04-2018
 ### Fixes
 - Fixes seg fault with global lock (issue #580)

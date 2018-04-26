@@ -4,7 +4,7 @@
 
 ![banner]
 
-> **Manual For v9.96.4**
+> **Manual For v9.96.5**
 
 [![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](#build-matrix)
 [![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](#build-matrix)
