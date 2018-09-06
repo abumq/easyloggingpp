@@ -717,7 +717,9 @@ enum class LoggingFlag : base::type::EnumType {
   /// @brief Adds spaces b/w logs that separated by left-shift operator
   AutoSpacing = 8192,
   /// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
-  FixedTimeFormat = 16384
+  FixedTimeFormat = 16384,
+  // @brief Ignore SIGINT or crash
+  IgnoreSigInt = 32768,
 };
 namespace base {
 /// @brief Namespace containing constants used internally.
@@ -3187,7 +3189,8 @@ class Writer : base::NoCopy {
   }
 
   Writer(LogMessage* msg, base::DispatchAction dispatchAction = base::DispatchAction::NormalLog) :
-    m_msg(msg), m_line(0), m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
+    m_msg(msg), m_level(msg != nullptr ? msg->level() : Level::Unknown),
+    m_line(0), m_logger(nullptr), m_proceed(false), m_dispatchAction(dispatchAction) {
   }
 
   virtual ~Writer(void) {

@@ -1,5 +1,10 @@
 # Change Log
 
+## [9.96.5] - 07-09-2018
+### Fixes
+- Check for level enabled when using custom log message (Advanced) (issue #666)
+- Ignore interruption signal crash log
+
 ## [9.96.4] - 03-04-2018
 ### Fixes
 - Fixes seg fault with global lock (issue #580)
