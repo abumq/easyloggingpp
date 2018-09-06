@@ -717,7 +717,9 @@ enum class LoggingFlag : base::type::EnumType {
   /// @brief Adds spaces b/w logs that separated by left-shift operator
   AutoSpacing = 8192,
   /// @brief Preserves time format and does not convert it to sec, hour etc (performance tracking only)
-  FixedTimeFormat = 16384
+  FixedTimeFormat = 16384,
+  // @brief Ignore SIGINT or crash
+  IgnoreSigInt = 32768,
 };
 namespace base {
 /// @brief Namespace containing constants used internally.

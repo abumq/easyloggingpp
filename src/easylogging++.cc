@@ -2855,6 +2855,9 @@ static std::string crashReason(int sig) {
 }
 /// @brief Logs reason of crash from sig
 static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, const char* logger) {
+  if (sig == SIGINT && ELPP->hasFlag(el::LoggingFlag::IgnoreSigInt)) {
+    return;
+  }
   std::stringstream ss;
   ss << "CRASH HANDLED; ";
   ss << crashReason(sig);
