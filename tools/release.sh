@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Bash script that helps with releasing new versions of EasyLogging++
-# Revision: 1.4
-# @author mkhan3189
+# Bash script that helps with releasing new versions of Easylogging++
+# Revision: 1.5
+# author @abumusamq
 #
 # Usage:
 #        ./release.sh [repo-root] [homepage-repo-root] [curr-version] [new-version] [do-not-ask]
@@ -46,7 +46,6 @@ if [ "$confirm" = "y" ]; then
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.h
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/src/easylogging++.cc
   sed -i '' -e "s/Easylogging++ v$CURR_VERSION*/Easylogging++ v$NEW_VERSION/g" $1/README.md
-  sed -i '' -e "s/v$CURR_VERSION/v$NEW_VERSION/g" $1/Message.md
   sed -i '' -e "s/return std::string(\"$CURR_VERSION\");/return std\:\:string(\"$NEW_VERSION\");/g" $1/src/easylogging++.cc
   sed -i '' -e "s/return std::string(\"$CURR_RELEASE_DATE\");/return std\:\:string(\"$NEW_RELEASE_DATE\");/g" $1/src/easylogging++.cc
   sed -i '' -e "s/\[Unreleased\]/\[$NEW_VERSION\] - $NEW_RELEASE_DATE_SIMPLE/g" $1/CHANGELOG.md
@@ -70,8 +69,8 @@ if [ "$confirm" = "y" ]; then
   cp $1/src/easylogging++.h .
   cp $1/src/easylogging++.cc .
   cp $1/CHANGELOG.md CHANGELOG.txt
+  cp $1/README.md README.txt
   cp $1/LICENSE LICENSE.txt
-  cp $1/MESSAGE.md README.txt
   zip easyloggingpp_v$NEW_VERSION.zip easylogging++.h easylogging++.cc LICENSE.txt CHANGELOG.txt README.txt
   tar -pczf easyloggingpp_v$NEW_VERSION.tar.gz easylogging++.h easylogging++.cc LICENSE.txt CHANGELOG.txt README.txt
   mv easyloggingpp_v$NEW_VERSION.zip $2/
