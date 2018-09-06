@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.96.5] - 07-09-2018
 ### Fixes
 - Check for level enabled when using custom log message (Advanced) (issue #666)
 - Ignore interruption signal crash log
