@@ -931,7 +931,7 @@ void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::st
   std::size_t foundAt = base::type::string_t::npos;
   while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos) {
     if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatSpecifierChar) {
-      str.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+      str.erase(foundAt - 1, 1);
       ++foundAt;
     } else {
       str.replace(foundAt, replaceWhat.length(), replaceWith);
@@ -1500,7 +1500,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
         if (hasFlag(flag)) {
           // If we already have flag we remove the escape chars so that '%%' is turned to '%'
           // even after specifier resolution - this is because we only replaceFirst specifier
-          formatCopy.erase(foundAt > 0 ? foundAt - 1 : 0, 1);
+          formatCopy.erase(foundAt - 1, 1);
           ++foundAt;
         }
       } else {
