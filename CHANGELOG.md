@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [9.96.6] - 24-11-2018
 - Storage constructor (indirectly) attempts to access elStorage before it's initialized (issue #660) (@Barteks2x)
 - Fixed unused variable warning while build without performance logging feature (@wrgcpp)
 - Updated license
