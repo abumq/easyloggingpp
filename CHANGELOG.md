@@ -1,8 +1,15 @@
 # Change Log
 
-## [9.96.5] - 26-04-2018
-### Updates
+## [9.96.6] - 24-11-2018
+- Storage constructor (indirectly) attempts to access elStorage before it's initialized (issue #660) (@Barteks2x)
+- Fixed unused variable warning while build without performance logging feature (@wrgcpp)
 - Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
+- Updated license
+
+## [9.96.5] - 07-09-2018
+### Fixes
+- Check for level enabled when using custom log message (Advanced) (issue #666)
+- Ignore interruption signal crash log
 
 ## [9.96.4] - 03-04-2018
 ### Fixes

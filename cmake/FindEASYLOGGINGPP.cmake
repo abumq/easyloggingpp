@@ -6,9 +6,10 @@
 # If ${EASYLOGGINGPP_USE_STATIC_LIBS} is ON then static libs are searched.
 # In these cases ${EASYLOGGINGPP_LIBRARY} is also defined
 #
-# (c) 2017 Muflihun Labs
+# (c) 2017-2018 Zuhd Web Services
 #
-# https://github.com/muflihun/easyloggingpp
+# https://github.com/zuhd-org/easyloggingpp
+# https://zuhd.org
 # https://muflihun.com
 #
 
