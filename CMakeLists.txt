@@ -75,6 +75,10 @@ if (test)
 
     enable_testing()
 
+    if (EMSCRIPTEN)
+        set(CMAKE_EXE_LINKER_FLAGS "-O2 -s TOTAL_MEMORY=134217728")
+    endif()
+
     add_executable(easyloggingpp-unit-tests
         src/easylogging++.cc
         test/main.cc
