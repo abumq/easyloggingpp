@@ -12,3 +12,4 @@ If we have missed your name please feel free to add it with contribution link.
 | [@MonsieurNicolas](https://github.com/MonsieurNicolas)                     | [PR #593](https://github.com/muflihun/easyloggingpp/pull/593) |
 | [@acowley](https://github.com/acowley)                             | [PR #593](https://github.com/muflihun/easyloggingpp/pull/577) |
 | [@rggjan](https://github.com/rggjan)                              | [PR 561](https://github.com/muflihun/easyloggingpp/pull/561) |
+| [@sgtcodfish](https://github.com/sgtcodfish) | Support for emscripten |
