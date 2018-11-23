@@ -6,15 +6,15 @@
 
 > **Manual For v9.96.7**
 
-[![Build Status (Master)](https://img.shields.io/travis/muflihun/easyloggingpp/master.svg)](#build-matrix)
-[![Build Status (Develop)](https://img.shields.io/travis/muflihun/easyloggingpp/develop.svg)](#build-matrix)
+[![Build Status (Master)](https://img.shields.io/travis/zuhd-org/easyloggingpp/master.svg)](#build-matrix)
+[![Build Status (Develop)](https://img.shields.io/travis/zuhd-org/easyloggingpp/develop.svg)](#build-matrix)
 [![Build status](https://ci.appveyor.com/api/projects/status/sfcgrehu8ypkrun3?svg=true)](https://ci.appveyor.com/project/abumusamq/easyloggingpp-node)
 
-[![Node Binding Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+[![Node Binding Version](https://img.shields.io/github/release/muflihun/easyloggingpp.svg)](https://github.com/zuhd-org/easyloggingpp-node/releases/latest)
 [![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/muflihun/easyloggingpp/blob/master/LICENCE)
-[![Downloads](https://img.shields.io/github/downloads/muflihun/easyloggingpp/total.svg)](https://github.com/muflihun/easyloggingpp/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/zuhd-org/easyloggingpp/total.svg)](https://github.com/zuhd-org/easyloggingpp/releases/latest)
 
 [![Donate](https://muflihun.github.io/donate.png?v2)](https://www.paypal.me/zuhd/25)
 
