@@ -735,21 +735,21 @@ static const unsigned int kMaxLogPerContainer              =      100;
 static const unsigned int kDefaultSubsecondPrecision       =      3;
 
 #ifdef ELPP_DEFAULT_LOGGER
-static const char* kDefaultLoggerId                        =      ELPP_DEFAULT_LOGGER;
+static const char* const kDefaultLoggerId                  =      ELPP_DEFAULT_LOGGER;
 #else
-static const char* kDefaultLoggerId                        =      "default";
+static const char* const kDefaultLoggerId                  =      "default";
 #endif
 
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 #ifdef ELPP_DEFAULT_PERFORMANCE_LOGGER
-static const char* kPerformanceLoggerId                    =      ELPP_DEFAULT_PERFORMANCE_LOGGER;
+static const char* const kPerformanceLoggerId              =      ELPP_DEFAULT_PERFORMANCE_LOGGER;
 #else
-static const char* kPerformanceLoggerId                    =      "performance";
+static const char* const kPerformanceLoggerId              =      "performance";
 #endif // ELPP_DEFAULT_PERFORMANCE_LOGGER
 #endif
 
 #if defined(ELPP_SYSLOG)
-static const char* kSysLogLoggerId                         =      "syslog";
+static const char* const kSysLogLoggerId                   =      "syslog";
 #endif  // defined(ELPP_SYSLOG)
 
 #if ELPP_OS_WINDOWS
