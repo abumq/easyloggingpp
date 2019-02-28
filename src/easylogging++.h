@@ -740,6 +740,10 @@ static const char* kDefaultLoggerId                        =      ELPP_DEFAULT_L
 static const char* kDefaultLoggerId                        =      "default";
 #endif
 
+#if !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
+static const char* kDefaultLogFileParam                    =      "--default-log-file";
+#endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
+
 #if defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
 #ifdef ELPP_DEFAULT_PERFORMANCE_LOGGER
 static const char* kPerformanceLoggerId                    =      ELPP_DEFAULT_PERFORMANCE_LOGGER;
