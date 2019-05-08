@@ -2184,16 +2184,18 @@ void Storage::setApplicationArguments(int argc, char** argv) {
 } // namespace base
 
 // LogDispatchCallback
-void LogDispatchCallback::handle(const LogDispatchData* data) {
 #if defined(ELPP_THREAD_SAFE)
+void LogDispatchCallback::handle(const LogDispatchData* data) {
   base::threading::ScopedLock scopedLock(m_fileLocksMapLock);
   std::string filename = data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level());
   auto lock = m_fileLocks.find(filename);
   if (lock == m_fileLocks.end()) {
     m_fileLocks.emplace(std::make_pair(filename, std::unique_ptr<base::threading::Mutex>(new base::threading::Mutex)));
   }
-#endif
 }
+#else
+void LogDispatchCallback::handle(const LogDispatchData* /*data*/) {}
+#endif
 
 base::threading::Mutex& LogDispatchCallback::fileHandle(const LogDispatchData* data) {
   auto it = m_fileLocks.find(data->logMessage()->logger()->typedConfigurations()->filename(data->logMessage()->level()));
