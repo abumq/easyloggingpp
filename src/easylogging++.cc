@@ -2480,7 +2480,7 @@ void LogDispatcher::dispatch(void) {
   }
 #ifndef ELPP_NO_GLOBAL_LOCK
   // see https://github.com/muflihun/easyloggingpp/issues/580
-  // global lock is turned off by default unless
+  // global lock is turned on by default unless
   // ELPP_NO_GLOBAL_LOCK is defined
   base::threading::ScopedLock scopedLock(ELPP->lock());
 #endif
