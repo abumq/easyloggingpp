@@ -29,9 +29,9 @@ namespace consts {
 
 // Level log values - These are values that are replaced in place of %level format specifier
 // Extra spaces after format specifiers are only for readability purposes in log files
-static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL("INFO");
+static const base::type::char_t* kInfoLevelLogValue     =   ELPP_LITERAL(" INFO");
 static const base::type::char_t* kDebugLevelLogValue    =   ELPP_LITERAL("DEBUG");
-static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL("WARNING");
+static const base::type::char_t* kWarningLevelLogValue  =   ELPP_LITERAL(" WARN");
 static const base::type::char_t* kErrorLevelLogValue    =   ELPP_LITERAL("ERROR");
 static const base::type::char_t* kFatalLevelLogValue    =   ELPP_LITERAL("FATAL");
 static const base::type::char_t* kVerboseLevelLogValue  =
@@ -61,6 +61,7 @@ static const base::type::char_t* kCurrentHostFormatSpecifier      =      ELPP_LI
 static const base::type::char_t* kMessageFormatSpecifier          =      ELPP_LITERAL("%msg");
 static const base::type::char_t* kVerboseLevelFormatSpecifier     =      ELPP_LITERAL("%vlevel");
 static const char* kDateTimeFormatSpecifierForFilename            =      "%datetime";
+static const char* kFileBaseFormatSpecifierForFilename            =      "%fbase";
 // Date/time
 static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
@@ -1743,7 +1744,10 @@ unsigned long TypedConfigurations::getULong(std::string confVal) {
 std::string TypedConfigurations::resolveFilename(const std::string& filename) {
   std::string resultingFilename = filename;
   std::size_t dateIndex = std::string::npos;
+  std::size_t fBaseIndex = std::string::npos;
   std::string dateTimeFormatSpecifierStr = std::string(base::consts::kDateTimeFormatSpecifierForFilename);
+  std::string fileBaseFormatSpecifierStr = std::string(base::consts::kFileBaseFormatSpecifierForFilename);
+
   if ((dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str())) != std::string::npos) {
     while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatSpecifierChar) {
       dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str(), dateIndex + 1);
@@ -1775,6 +1779,15 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
       base::utils::Str::replaceAll(now, '/', '-'); // Replace path element since we are dealing with filename
       base::utils::Str::replaceAll(resultingFilename, dateTimeFormatSpecifierStr, now);
     }
+  }
+
+  if((fBaseIndex = resultingFilename.find(fileBaseFormatSpecifierStr.c_str())) != std::string::npos ){
+    std::string fbase;
+    char *fullPathCharArray = new char[1024];
+    fullPathCharArray = getenv("_");
+    std::string fullPath(std::move(fullPathCharArray));
+    fbase = fullPath.substr( fullPath.find_last_of(base::consts::kFilePathSeperator)+1, fullPath.size()-1 );
+    base::utils::Str::replaceAll(resultingFilename, fileBaseFormatSpecifierStr, fbase);
   }
   return resultingFilename;
 }
