@@ -26,7 +26,7 @@
 ## [9.96.2] - 27-02-2018
 ### Updates
 - Dispatcher now passes in pointer to log message instead of creating on the fly
-- Introduced new constructor for `Writer` for advanced usage (see muflihun/residue)
+- Introduced new constructor for `Writer` for advanced usage (see amrayn/residue)
 - Use `std::unordered_map` for memory management instead of `std::map` issue #611
 
 ## [9.96.1] - 23-02-2018
@@ -71,13 +71,13 @@
 
 ## [9.95.0] - 02-08-2017
 ### Added
- - Added NetBSD as unix [coypoop](https://github.com/muflihun/easyloggingpp/pull/548/commits)
+ - Added NetBSD as unix [coypoop](https://github.com/amrayn/easyloggingpp/pull/548/commits)
  - Ignore `NDEBUG` or `_DEBUG` to determine whether debug logs should be enabled or not. Use `ELPP_DISABLE_DEBUG_LOGS`
 
 ### Fixes
- - Fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/muflihun/easyloggingpp/pull/542/files)
- - Fix invalid usage of safeDelete which can cause an error with valgrind [Touyote](https://github.com/muflihun/easyloggingpp/pull/544/files)
- - Add code to ensure no nullptr references [tepperly](https://github.com/muflihun/easyloggingpp/pull/512/files)
+ - Fix compile when `_USE_32_BIT_TIME_T` defined [gggin](https://github.com/amrayn/easyloggingpp/pull/542/files)
+ - Fix invalid usage of safeDelete which can cause an error with valgrind [Touyote](https://github.com/amrayn/easyloggingpp/pull/544/files)
+ - Add code to ensure no nullptr references [tepperly](https://github.com/amrayn/easyloggingpp/pull/512/files)
 
 ## [9.94.2] - 12-04-2017
 ### Added
@@ -111,4 +111,4 @@
  - Custom format specifier now has to return `std::string` instead
  - Merged `thread_name` with `thread` if thread name is available it's used otherwise ID is displayed
 
-For older versions please refer to [https://github.com/muflihun/easyloggingpp/tree/master/doc](https://github.com/muflihun/easyloggingpp/tree/master/doc)
+For older versions please refer to [https://github.com/amrayn/easyloggingpp/tree/master/doc](https://github.com/amrayn/easyloggingpp/tree/master/doc)

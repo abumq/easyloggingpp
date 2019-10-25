@@ -4,13 +4,13 @@
 //  Easylogging++ v9.96.7
 //  Cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2012-2018 Zuhd Web Services
+//  Copyright (c) 2012-2018 Amrayn Web Services
 //  Copyright (c) 2012-2018 @abumusamq
 //
 //  This library is released under the MIT Licence.
-//  https://github.com/zuhd-org/easyloggingpp/blob/master/LICENSE
+//  https://github.com/amrayn/easyloggingpp/blob/master/LICENSE
 //
-//  https://zuhd.org
+//  https://amrayn.com
 //  http://muflihun.com
 //
 
@@ -2479,7 +2479,7 @@ void LogDispatcher::dispatch(void) {
     return;
   }
 #ifndef ELPP_NO_GLOBAL_LOCK
-  // see https://github.com/muflihun/easyloggingpp/issues/580
+  // see https://github.com/amrayn/easyloggingpp/issues/580
   // global lock is turned off by default unless
   // ELPP_NO_GLOBAL_LOCK is defined
   base::threading::ScopedLock scopedLock(ELPP->lock());
