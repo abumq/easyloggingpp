@@ -2786,7 +2786,7 @@ std::ostream& operator<<(std::ostream& os, const StackTrace& st) {
 }
 
 void StackTrace::generateNew(void) {
-#if ELPP_STACKTRACE
+#ifdef HAVE_EXECINFO
   m_stack.clear();
   void* stack[kMaxStack];
   unsigned int size = backtrace(stack, kMaxStack);
