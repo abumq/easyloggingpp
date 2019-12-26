@@ -362,7 +362,9 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #endif  // defined(ELPP_UNICODE)
 #if ELPP_STACKTRACE
 #   include <cxxabi.h>
+#if ENABLE_EXECINFO
 #   include <execinfo.h>
+#endif // ENABLE_EXECINFO
 #endif  // ELPP_STACKTRACE
 #if ELPP_OS_ANDROID
 #   include <sys/system_properties.h>

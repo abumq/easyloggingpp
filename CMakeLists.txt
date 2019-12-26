@@ -24,6 +24,7 @@ endmacro()
 option(test "Build all tests" OFF)
 option(build_static_lib "Build easyloggingpp as a static library" OFF)
 option(lib_utc_datetime "Build library with UTC date/time logging" OFF)
+option(ENABLE_EXECINFO "Enable libexecinfo" OFF)
 
 set(ELPP_MAJOR_VERSION "9")
 set(ELPP_MINOR_VERSION "96")
@@ -95,4 +96,7 @@ if (test)
     target_link_libraries(easyloggingpp-unit-tests gtest gtest_main)
 
     add_test(NAME easyloggingppUnitTests COMMAND easyloggingpp-unit-tests -v)
+endif()
+if (ENABLE_EXECINFO)
+	SET_CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -DENABLE_EXECINFO"
 endif()
