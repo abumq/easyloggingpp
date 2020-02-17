@@ -23,5 +23,5 @@ Now run `./bin/network-logger`
 
 ## More
 
-Please refer to [doc](https://github.com/muflihun/easyloggingpp#configuration-macros) for further details on macros
+Please refer to [doc](https://github.com/amrayn/easyloggingpp#configuration-macros) for further details on macros
 
