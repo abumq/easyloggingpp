@@ -729,7 +729,15 @@ namespace utils {
 // File
 
 base::type::fstream_t* File::newFileStream(const std::string& filename) {
-  base::type::fstream_t *fs = new base::type::fstream_t(filename.c_str(),
+  // assume utf-8 encoded std::string
+#if ELPP_OS_WINDOWS
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> utf16conv;
+  std::wstring wfilename = utf16conv.from_bytes(filename);
+  base::type::fstream_t *fs = new base::type::fstream_t( wfilename,
+#else
+  base::type::fstream_t *fs = new base::type::fstream_t( filename.c_str(),
+#endif // defined(ELPP_UNICODE)
+
       base::type::fstream_t::out
 #if !defined(ELPP_FRESH_LOG_FILE)
       | base::type::fstream_t::app
@@ -771,7 +779,12 @@ bool File::pathExists(const char* path, bool considerFile) {
   struct stat st;
   return (stat(path, &st) == 0);
 #elif ELPP_OS_WINDOWS
+#  if defined(ELPP_UNICODE)
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> utf16conv;
+  DWORD fileType = GetFileAttributesW(utf16conv.from_bytes(path).c_str());
+#  else
   DWORD fileType = GetFileAttributesA(path);
+#  endif  // defined(ELPP_UNICODE)
   if (fileType == INVALID_FILE_ATTRIBUTES) {
     return false;
   }
@@ -808,7 +821,12 @@ bool File::createPath(const std::string& path) {
     status = mkdir(builtPath.c_str(), ELPP_LOG_PERMS);
     currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, 0);
 #elif ELPP_OS_WINDOWS
+#  if defined(ELPP_UNICODE)
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> utf16conv;
+    status = _wmkdir(utf16conv.from_bytes(builtPath).c_str());
+#  else
     status = _mkdir(builtPath.c_str());
+#  endif  // defined(ELPP_UNICODE)
     currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, &nextTok_);
 #endif  // ELPP_OS_UNIX
   }
