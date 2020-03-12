@@ -3632,6 +3632,7 @@ class SysLogInitializer {
  public:
   SysLogInitializer(const char* processIdent, int options = 0, int facility = 0) {
 #if defined(ELPP_SYSLOG)
+    (void)base::consts::kSysLogLoggerId;
     openlog(processIdent, options, facility);
 #else
     ELPP_UNUSED(processIdent);
