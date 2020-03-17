@@ -2,6 +2,8 @@ QT += core
 
 CONFIG += c++11
 
+INCLUDEPATH += $$PWD/src
+
 DEFINES += ELPP_QT_LOGGING \
            ELPP_STL_LOGGING \
            ELPP_STRICT_SIZE_CHECK ELPP_UNICODE \
