@@ -78,6 +78,8 @@ if (test)
     if (EMSCRIPTEN)
         set(CMAKE_EXE_LINKER_FLAGS "-O2 -s TOTAL_MEMORY=134217728")
     endif()
+        set(CMAKE_CXX_FLAGS "-O0 -g -lpthread -I /home/user/src/bitmonero/tests/gtest/include")
+        set(CMAKE_EXE_LINKER_FLAGS "-O0 -g -lpthread -L /home/user/src/bitmonero/build/debug/tests/gtest")
 
     add_executable(easyloggingpp-unit-tests
         src/easylogging++.cc
