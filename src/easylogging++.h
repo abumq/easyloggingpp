@@ -786,7 +786,7 @@ const struct {
   },
   {
     SIGFPE, "SIGFPE", "Erroneous arithmetic operation",
-    "Arithemetic operation issue such as division by zero or operation resulting in overflow."
+    "Arithmetic operation issue such as division by zero or operation resulting in overflow."
   },
   {
     SIGILL, "SIGILL", "Illegal instruction",
