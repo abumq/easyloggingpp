@@ -1381,7 +1381,7 @@ class Registry : public AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*
     this->reinitDeepCopy(sr);
   }
 
-  /// @brief Assignment operator that unregisters all the existing registeries and deeply copies each of repo element
+  /// @brief Assignment operator that unregisters all the existing registries and deeply copies each of repo element
   /// @see unregisterAll()
   /// @see deepCopy(const AbstractRegistry&)
   Registry& operator=(const Registry& sr) {
@@ -1462,7 +1462,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
     this->reinitDeepCopy(sr);
   }
 
-  /// @brief Assignment operator that unregisters all the existing registeries and deeply copies each of repo element
+  /// @brief Assignment operator that unregisters all the existing registries and deeply copies each of repo element
   /// @see unregisterAll()
   /// @see deepCopy(const AbstractRegistry&)
   RegistryWithPred& operator=(const RegistryWithPred& sr) {
