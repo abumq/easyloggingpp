@@ -640,7 +640,7 @@ enum class ConfigurationType : base::type::EnumType {
   ToStandardOutput = 4,
   /// @brief Determines format of logging corresponding level and logger.
   Format = 8,
-  /// @brief Determines log file (full path) to write logs to for correponding level and logger
+  /// @brief Determines log file (full path) to write logs to for corresponding level and logger
   Filename = 16,
   /// @brief Specifies precision of the subsecond part. It should be within range (1-6).
   SubsecondPrecision = 32,
