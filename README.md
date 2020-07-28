@@ -1404,7 +1404,7 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 # Compatibility
 
-Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
+Easylogging++ requires a decent C++0x compliant compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
 
 | *****   |     Compiler/Platform     |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
