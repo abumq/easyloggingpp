@@ -700,7 +700,7 @@ enum class LoggingFlag : base::type::EnumType {
   LogDetailedCrashReason = 4,
   /// @brief Allows to disable application abortion when logged using FATAL level
   DisableApplicationAbortOnFatalLog = 8,
-  /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
+  /// @brief Flushes log with every log-entry (performance sensitive) - Disabled by default
   ImmediateFlush = 16,
   /// @brief Enables strict file rolling
   StrictLogFileSizeCheck = 32,

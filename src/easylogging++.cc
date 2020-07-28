@@ -1691,7 +1691,7 @@ void TypedConfigurations::build(Configurations* configurations) {
       // We do not yet configure filename but we will configure in another
       // loop. This is because if file cannot be created, we will force ToFile
       // to be false. Because configuring logger is not necessarily performance
-      // sensative operation, we can live with another loop; (by the way this loop
+      // sensitive operation, we can live with another loop; (by the way this loop
       // is not very heavy either)
     } else if (conf->configurationType() == ConfigurationType::Format) {
       setValue(conf->level(), base::LogFormat(conf->level(),
