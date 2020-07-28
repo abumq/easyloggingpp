@@ -19,7 +19,7 @@ class ListWithSearch : public QWidget
 
 public:
     static int kSearchBarHeight;
-    enum kBehaviour { kCaseInsensative, kCaseSensative };
+    enum kBehaviour { kCaseInsensitive, kCaseSensative };
 
     explicit ListWithSearch(int searchBehaviour_ = kCaseSensative, QWidget *parent = 0);
     virtual ~ListWithSearch();
