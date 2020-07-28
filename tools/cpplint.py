@@ -4076,7 +4076,7 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
   #   inside declarators: reference parameter
   # We will exclude the first two cases by checking that we are not inside a
   # function body, including one that was just introduced by a trailing '{'.
-  # TODO(unknwon): Doesn't account for preprocessor directives.
+  # TODO(unknown): Doesn't account for preprocessor directives.
   # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
   check_params = False
   if not nesting_state.stack:
