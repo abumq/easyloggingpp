@@ -580,7 +580,7 @@ enum class Level : base::type::EnumType {
   Fatal = 8,
   /// @brief Information representing errors in application but application will keep running
   Error = 16,
-  /// @brief Useful when application has potentially harmful situtaions
+  /// @brief Useful when application has potentially harmful situations
   Warning = 32,
   /// @brief Information that can be highly useful and vary with verbose logging level.
   Verbose = 64,
