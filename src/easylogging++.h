@@ -1128,7 +1128,7 @@ class Str : base::StaticClass {
   static char* addToBuff(const char* str, char* buf, const char* bufLim);
   static char* clearBuff(char buff[], std::size_t lim);
 
-  /// @brief Converst wchar* to char*
+  /// @brief Converts wchar* to char*
   ///        NOTE: Need to free return value after use!
   static char* wcharPtrToCharPtr(const wchar_t* line);
 };

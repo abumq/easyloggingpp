@@ -1013,7 +1013,7 @@ char* Str::clearBuff(char buff[], std::size_t lim) {
   return buff;
 }
 
-/// @brief Converst wchar* to char*
+/// @brief Converts wchar* to char*
 ///        NOTE: Need to free return value after use!
 char* Str::wcharPtrToCharPtr(const wchar_t* line) {
   std::size_t len_ = wcslen(line) + 1;
