@@ -671,7 +671,7 @@ class ConfigurationTypeHelper : base::StaticClass {
   static base::type::EnumType castToInt(ConfigurationType configurationType) {
     return static_cast<base::type::EnumType>(configurationType);
   }
-  /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
+  /// @brief Casts int(ushort) to configuration type, useful for iterating through enum.
   static ConfigurationType castFromInt(base::type::EnumType c) {
     return static_cast<ConfigurationType>(c);
   }
@@ -2207,7 +2207,7 @@ class LogBuilder : base::NoCopy {
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
-/// @detail This class does not write logs itself instead its used by writer to read configuations from.
+/// @detail This class does not write logs itself instead its used by writer to read configurations from.
 class Logger : public base::threading::ThreadSafe, public Loggable {
  public:
   Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference);
