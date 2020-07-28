@@ -1169,7 +1169,7 @@ class OS : base::StaticClass {
 
   /// @brief Gets current host name or computer name.
   ///
-  /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
+  /// @detail For android systems this is device name with its manufacturer and model separated by hyphen
   static std::string currentHost(void);
   /// @brief Whether or not terminal supports colors
   static bool termSupportsColor(void);
@@ -1179,7 +1179,7 @@ class DateTime : base::StaticClass {
  public:
   /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current microsecond.
   ///
-  /// @detail For unix system it uses gettimeofday(timeval*, timezone*) and for Windows, a seperate implementation is provided
+  /// @detail For unix system it uses gettimeofday(timeval*, timezone*) and for Windows, a separate implementation is provided
   /// @param [in,out] tv Pointer that gets updated
   static void gettimeofday(struct timeval* tv);
 
@@ -1225,7 +1225,7 @@ class CommandLineArgs {
   }
   /// @brief Sets arguments and parses them
   void setArgs(int argc, char** argv);
-  /// @brief Returns true if arguments contain paramKey with a value (seperated by '=')
+  /// @brief Returns true if arguments contain paramKey with a value (separated by '=')
   bool hasParamWithValue(const char* paramKey) const;
   /// @brief Returns value of arguments
   /// @see hasParamWithValue(const char*)
