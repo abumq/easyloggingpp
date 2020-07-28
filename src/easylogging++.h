@@ -753,9 +753,9 @@ static const char* kSysLogLoggerId                         =      "syslog";
 #endif  // defined(ELPP_SYSLOG)
 
 #if ELPP_OS_WINDOWS
-static const char* kFilePathSeperator                      =      "\\";
+static const char* kFilePathSeparator                      =      "\\";
 #else
-static const char* kFilePathSeperator                      =      "/";
+static const char* kFilePathSeparator                      =      "/";
 #endif  // ELPP_OS_WINDOWS
 
 static const std::size_t kSourceFilenameMaxLength          =      100;
@@ -1052,14 +1052,14 @@ class File : base::StaticClass {
   static bool createPath(const std::string& path);
   /// @brief Extracts path of filename with leading slash
   static std::string extractPathFromFilename(const std::string& fullPath,
-      const char* seperator = base::consts::kFilePathSeperator);
+      const char* separator = base::consts::kFilePathSeparator);
   /// @brief builds stripped filename and puts it in buff
   static void buildStrippedFilename(const char* filename, char buff[],
                                     std::size_t limit = base::consts::kSourceFilenameMaxLength);
   /// @brief builds base filename and puts it in buff
   static void buildBaseFilename(const std::string& fullPath, char buff[],
                                 std::size_t limit = base::consts::kSourceFilenameMaxLength,
-                                const char* seperator = base::consts::kFilePathSeperator);
+                                const char* separator = base::consts::kFilePathSeparator);
 };
 /// @brief String utilities helper class used internally. You should not use it.
 class Str : base::StaticClass {
@@ -2859,7 +2859,7 @@ class IterableStack : public IterableContainer<T, Container>, public std::stack<
 // Log message builder
 class MessageBuilder {
  public:
-  MessageBuilder(void) : m_logger(nullptr), m_containerLogSeperator(ELPP_LITERAL("")) {}
+  MessageBuilder(void) : m_logger(nullptr), m_containerLogSeparator(ELPP_LITERAL("")) {}
   void initialize(Logger* logger);
 
 #  define ELPP_SIMPLE_LOG(LOG_TYPE)\
@@ -3047,7 +3047,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
       m_logger->stream() << ELPP_LITERAL(", ");
       operator << (static_cast<V>(map_.value(*begin)));
       m_logger->stream() << ELPP_LITERAL(")");
-      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin != end) {
       m_logger->stream() << ELPP_LITERAL("...");
@@ -3073,7 +3073,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
       m_logger->stream() << ELPP_LITERAL(", ");
       operator << (static_cast<V>(hash_.value(*begin)));
       m_logger->stream() << ELPP_LITERAL(")");
-      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin != end) {
       m_logger->stream() << ELPP_LITERAL("...");
@@ -3146,14 +3146,14 @@ ELPP_LITERAL("(") << elem->first << ELPP_LITERAL(", ") << elem->second << ELPP_L
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
  private:
   Logger* m_logger;
-  const base::type::char_t* m_containerLogSeperator;
+  const base::type::char_t* m_containerLogSeparator;
 
   template<class Iterator>
   MessageBuilder& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
     m_logger->stream() << ELPP_LITERAL("[");
     for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
       operator << (*begin_);
-      m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin_ != end_) {
       m_logger->stream() << ELPP_LITERAL("...");

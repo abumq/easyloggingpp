@@ -794,22 +794,22 @@ bool File::createPath(const std::string& path) {
   if (path[0] == '/') {
     builtPath = "/";
   }
-  currPath = STRTOK(currPath, base::consts::kFilePathSeperator, 0);
+  currPath = STRTOK(currPath, base::consts::kFilePathSeparator, 0);
 #elif ELPP_OS_WINDOWS
   // Use secure functions API
   char* nextTok_ = nullptr;
-  currPath = STRTOK(currPath, base::consts::kFilePathSeperator, &nextTok_);
+  currPath = STRTOK(currPath, base::consts::kFilePathSeparator, &nextTok_);
   ELPP_UNUSED(nextTok_);
 #endif  // ELPP_OS_UNIX
   while (currPath != nullptr) {
     builtPath.append(currPath);
-    builtPath.append(base::consts::kFilePathSeperator);
+    builtPath.append(base::consts::kFilePathSeparator);
 #if ELPP_OS_UNIX
     status = mkdir(builtPath.c_str(), ELPP_LOG_PERMS);
-    currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, 0);
+    currPath = STRTOK(nullptr, base::consts::kFilePathSeparator, 0);
 #elif ELPP_OS_WINDOWS
     status = _mkdir(builtPath.c_str());
-    currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, &nextTok_);
+    currPath = STRTOK(nullptr, base::consts::kFilePathSeparator, &nextTok_);
 #endif  // ELPP_OS_UNIX
   }
   if (status == -1) {
@@ -1785,7 +1785,7 @@ void TypedConfigurations::insertFile(Level level, const std::string& fullFilenam
     std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
               << LevelHelper::convertToString(level) << "]";
   }
-  std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeperator);
+  std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeparator);
   if (filePath.size() < resolvedFilename.size()) {
     base::utils::File::createPath(filePath);
   }
@@ -2505,7 +2505,7 @@ void LogDispatcher::dispatch(void) {
 
 void MessageBuilder::initialize(Logger* logger) {
   m_logger = logger;
-  m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ?
+  m_containerLogSeparator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ?
                             ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
 }
 
