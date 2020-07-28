@@ -3104,7 +3104,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
   ///         have begin() and end() methods that return respective iterators
   /// @param ContainerType Type of container e.g, MyList from WX_DECLARE_LIST(int, MyList); in wxwidgets
   /// @param SizeMethod Method used to get size of container.
-  /// @param ElementInstance Instance of element to be fed out. Insance name is "elem". See WXELPP_ENABLED macro
+  /// @param ElementInstance Instance of element to be fed out. Instance name is "elem". See WXELPP_ENABLED macro
   ///        for an example usage
 #define MAKE_CONTAINERELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
 el::base::type::ostream_t& operator<<(el::base::type::ostream_t& ss, const ContainerType& container) {\
