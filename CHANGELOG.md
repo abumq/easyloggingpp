@@ -1,7 +1,7 @@
 # Change Log
 
 ## [9.96.7] - 24-11-2018
-- Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
+- Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into JavaScript or WebAssembly and run in the browser while logging to the browser's JavaScript console.
 
 ## [9.96.6] - 24-11-2018
 - Storage constructor (indirectly) attempts to access elStorage before it's initialized (issue #660) (@Barteks2x)
