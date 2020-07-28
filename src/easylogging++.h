@@ -1509,7 +1509,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
     this->list().push_back(ptr);
   }
 
-/// @brief Gets pointer from repository with speicifed arguments. Arguments are passed to predicate
+/// @brief Gets pointer from repository with specified arguments. Arguments are passed to predicate
 /// in order to validate pointer.
   template <typename T, typename T2>
   T_Ptr* get(const T& arg1, const T2 arg2) {
