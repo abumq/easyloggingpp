@@ -3835,7 +3835,7 @@ class Loggers : base::StaticClass {
   /// @brief Configures loggers using command line arg. Ensure you have already set command line args,
   /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger.
   ///         If true is returned that does not mean it has been configured successfully, it only means that it
-  ///         has attempeted to configure logger using configuration file provided in argument
+  ///         has attempted to configure logger using configuration file provided in argument
   static bool configureFromArg(const char* argKey);
   /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
   static void flushAll(void);
