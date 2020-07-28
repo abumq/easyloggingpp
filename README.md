@@ -1371,7 +1371,7 @@ Asynchronous logging is in experimental stages and they are not widely promoted.
 Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
 * Compiler should support `std::this_thread::sleep_for`. This restriction may (or may not) be removed in future (stable) version of asynchronous logging.
-* You should not rely on asynchronous logging in production, this is because feature is in experiemental stages.
+* You should not rely on asynchronous logging in production, this is because feature is in experimental stages.
 
  [![top] Goto Top](#table-of-contents)
 
