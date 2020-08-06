@@ -98,9 +98,6 @@ static const char* kDefaultLogFile                         =      "myeasylog.log
 #endif // defined(ELPP_NO_DEFAULT_LOG_FILE)
 
 
-#if !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
-static const char* kDefaultLogFileParam                    =      "--default-log-file";
-#endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
 #if defined(ELPP_LOGGING_FLAGS_FROM_ARG)
 static const char* kLoggingFlagsParam                      =      "--logging-flags";
 #endif  // defined(ELPP_LOGGING_FLAGS_FROM_ARG)

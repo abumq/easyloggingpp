@@ -480,6 +480,13 @@ Following table will explain all command line arguments that you may use to defi
 | `--logging-flags=3`        | Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
 | `--default-log-file=FILE`  |Sets default log file for existing and future loggers. You may want to consider defining `ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                           |
 
+You can check whether or not the user specified a file name via `--default-log-file=..` using the following check
+```[c]
+if (el::Helpers::commandLineArgs() != NULL 
+  && el::Helpers::commandLineArgs()->hasParamWithValue(el::base::consts::kDefaultLogFileParam))
+{ ... }
+```
+
  [![top] Goto Top](#table-of-contents)
 
 ### Configuration Macros

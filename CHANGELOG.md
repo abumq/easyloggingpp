@@ -1,5 +1,8 @@
 # Change Log
 
+### Changes
+ - Move definition of kDefaultLogFileParam to public (header). This allows to check whether a log file name was specified via the commandline interface.
+
 ## [9.96.7] - 24-11-2018
 - Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
 
