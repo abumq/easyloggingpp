@@ -1,5 +1,8 @@
 # Change Log
 
+## [9.96.8] - 02-09-2020
+- Adds support for easyloggingpp to log WARNING, ERROR, and FATAL to standard error. this befaviour can be reverted to old behaviour by defining `#define ELPP_CUSTOM_CERR std::cout`. this provides the the ability for CHECK macros and application abortion messages to be written to standard error instead of standard output. this is required in order for DEATH_TEST macro's in google test to match against easyloggingpp output, for example, `ASSERT_DEATH({CHECK_EQ(1, 2) << "error: value_a is not equal to value_b"; }, ".*value_a is not equal to value_b");`
+
 ## [9.96.7] - 24-11-2018
 - Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
 
