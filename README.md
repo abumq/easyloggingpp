@@ -518,6 +518,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_DISABLE_LOG_FILE_FROM_ARG`        | Forcefully disables ability to set default log file from command-line arguments                                                                    |
 | `ELPP_WINSOCK2`        | On windows system force to use `winsock2.h` instead of `winsock.h` when `WIN32_LEAN_AND_MEAN` is defined                                                                    |
 | `ELPP_CUSTOM_COUT` (advanced)     | Resolves to a value e.g, `#define ELPP_CUSTOM_COUT qDebug()` or `#define ELPP_CUSTOM_COUT std::cerr`. This will use the value for standard output (instead of using `std::cout`|
+| `ELPP_CUSTOM_CERR` (advanced)     | Resolves to a value e.g, `#define ELPP_CUSTOM_CERR qDebug()` or `#define ELPP_CUSTOM_CERR std::cout`. This will use the value for standard output (instead of using `std::cerr`|
 | `ELPP_CUSTOM_COUT_LINE` (advanced) | Used with `ELPP_CUSTOM_COUT` to define how to write a log line with custom cout. e.g, `#define ELPP_CUSTOM_COUT_LINE(msg) QString::fromStdString(msg).trimmed()` |
 | `ELPP_NO_CHECK_MACROS`             | Do not define the *CHECK* macros                                                                                                                  |
 | `ELPP_NO_DEBUG_MACROS`             | Do not define the *DEBUG* macros                                                                                                                  |
