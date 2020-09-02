@@ -503,6 +503,7 @@ namespace type {
 #undef ELPP_LITERAL
 #undef ELPP_STRLEN
 #undef ELPP_COUT
+#undef ELPP_CERR
 #if defined(ELPP_UNICODE)
 #  define ELPP_LITERAL(txt) L##txt
 #  define ELPP_STRLEN wcslen
@@ -511,6 +512,11 @@ namespace type {
 #  else
 #    define ELPP_COUT std::wcout
 #  endif  // defined ELPP_CUSTOM_COUT
+#  if defined ELPP_CUSTOM_CERR
+#    define ELPP_CERR ELPP_CUSTOM_CERR
+#  else
+#    define ELPP_CERR std::wcerr
+#  endif  // defined ELPP_CUSTOM_CERR
 typedef wchar_t char_t;
 typedef std::wstring string_t;
 typedef std::wstringstream stringstream_t;
@@ -524,6 +530,11 @@ typedef std::wostream ostream_t;
 #  else
 #    define ELPP_COUT std::cout
 #  endif  // defined ELPP_CUSTOM_COUT
+#  if defined ELPP_CUSTOM_CERR
+#    define ELPP_CERR ELPP_CUSTOM_CERR
+#  else
+#    define ELPP_CERR std::cerr
+#  endif  // defined ELPP_CUSTOM_CERR
 typedef char char_t;
 typedef std::string string_t;
 typedef std::stringstream stringstream_t;

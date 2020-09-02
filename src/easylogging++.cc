@@ -2240,7 +2240,8 @@ void DefaultLogDispatchCallback::dispatch(base::type::string_t&& logLine) {
     if (m_data->logMessage()->logger()->m_typedConfigurations->toStandardOutput(m_data->logMessage()->level())) {
       if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
         m_data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, m_data->logMessage()->level());
-      ELPP_COUT << ELPP_COUT_LINE(logLine);
+      if (m_data->logMessage()->level() == Level::Warning || m_data->logMessage()->level() == Level::Error || m_data->logMessage()->level() == Level::Fatal) ELPP_CERR << ELPP_COUT_LINE(logLine);
+      else ELPP_COUT << ELPP_COUT_LINE(logLine);
     }
   }
 #if defined(ELPP_SYSLOG)
@@ -2281,10 +2282,11 @@ void AsyncLogDispatchCallback::handle(const LogDispatchData* data) {
       && data->logMessage()->logger()->typedConfigurations()->toStandardOutput(data->logMessage()->level())) {
     if (ELPP->hasFlag(LoggingFlag::ColoredTerminalOutput))
       data->logMessage()->logger()->logBuilder()->convertToColoredOutput(&logLine, data->logMessage()->level());
-    ELPP_COUT << ELPP_COUT_LINE(logLine);
+    if (data->logMessage()->level() == Level::Warning || data->logMessage()->level() == Level::Error || data->logMessage()->level() == Level::Fatal) ELPP_CERR << ELPP_COUT_LINE(logLine);
+    else ELPP_COUT << ELPP_COUT_LINE(logLine);
   }
   // Save resources and only queue if we want to write to file otherwise just ignore handler
-  if (data->logMessage()->logger()->typedConfigurations()->toFile(data->logMessage()->level())) {
+  if (data->logMessage()->logger()->typedConfigurations()->toFile(level)) {
     ELPP->asyncLogQueue()->push(AsyncLogItem(*(data->logMessage()), *data, logLine));
   }
 }
