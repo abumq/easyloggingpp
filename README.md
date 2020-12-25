@@ -423,7 +423,7 @@ Please note, date/time is limited to `30` characters at most.
 You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
 
 ```C++
-const char* getIp(void) {
+const char* getIp(const el::LogMessage*) {
     return "192.168.1.1";
 }
 
