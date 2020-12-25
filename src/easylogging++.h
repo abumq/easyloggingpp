@@ -360,10 +360,10 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #      include <codecvt>
 #  endif // ELPP_OS_WINDOWS
 #endif  // defined(ELPP_UNICODE)
-#if ELPP_STACKTRACE
+#ifdef HAVE_EXECINFO
 #   include <cxxabi.h>
 #   include <execinfo.h>
-#endif  // ELPP_STACKTRACE
+#endif // ENABLE_EXECINFO
 #if ELPP_OS_ANDROID
 #   include <sys/system_properties.h>
 #endif  // ELPP_OS_ANDROID
