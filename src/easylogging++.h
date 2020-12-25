@@ -1893,6 +1893,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
 namespace base {
 typedef std::shared_ptr<base::type::fstream_t> FileStreamPtr;
 typedef std::unordered_map<std::string, FileStreamPtr> LogStreamsReferenceMap;
+typedef std::shared_ptr<base::LogStreamsReferenceMap> LogStreamsReferenceMapPtr;
 /// @brief Configurations with data types.
 ///
 /// @detail el::Configurations have string based values. This is whats used internally in order to read correct configurations.
@@ -1904,7 +1905,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   /// @brief Constructor to initialize (construct) the object off el::Configurations
   /// @param configurations Configurations pointer/reference to base this typed configurations off.
   /// @param logStreamsReference Use ELPP->registeredLoggers()->logStreamsReference()
-  TypedConfigurations(Configurations* configurations, base::LogStreamsReferenceMap* logStreamsReference);
+  TypedConfigurations(Configurations* configurations, LogStreamsReferenceMapPtr logStreamsReference);
 
   TypedConfigurations(const TypedConfigurations& other);
 
@@ -1939,7 +1940,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
   std::unordered_map<Level, base::FileStreamPtr> m_fileStreamMap;
   std::unordered_map<Level, std::size_t> m_maxLogFileSizeMap;
   std::unordered_map<Level, std::size_t> m_logFlushThresholdMap;
-  base::LogStreamsReferenceMap* m_logStreamsReference;
+  LogStreamsReferenceMapPtr m_logStreamsReference = nullptr;
 
   friend class el::Helpers;
   friend class el::base::MessageBuilder;
@@ -2210,8 +2211,8 @@ typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @detail This class does not write logs itself instead its used by writer to read configurations from.
 class Logger : public base::threading::ThreadSafe, public Loggable {
  public:
-  Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference);
-  Logger(const std::string& id, const Configurations& configurations, base::LogStreamsReferenceMap* logStreamsReference);
+  Logger(const std::string& id, base::LogStreamsReferenceMapPtr logStreamsReference);
+  Logger(const std::string& id, const Configurations& configurations, base::LogStreamsReferenceMapPtr logStreamsReference);
   Logger(const Logger& logger);
   Logger& operator=(const Logger& logger);
 
@@ -2301,7 +2302,7 @@ inline void FUNCTION_NAME(const T&);
   bool m_isConfigured;
   Configurations m_configurations;
   std::unordered_map<Level, unsigned int> m_unflushedCount;
-  base::LogStreamsReferenceMap* m_logStreamsReference;
+  base::LogStreamsReferenceMapPtr m_logStreamsReference = nullptr;
   LogBuilderPtr m_logBuilder;
 
   friend class el::LogMessage;
@@ -2388,8 +2389,8 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
     base::utils::Registry<Logger, std::string>::unregister(logger->id());
   }
 
-  inline base::LogStreamsReferenceMap* logStreamsReference(void) {
-    return &m_logStreamsReference;
+  inline LogStreamsReferenceMapPtr logStreamsReference(void) {
+    return m_logStreamsReference;
   }
 
   inline void flushAll(void) {
@@ -2405,7 +2406,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
  private:
   LogBuilderPtr m_defaultLogBuilder;
   Configurations m_defaultConfigurations;
-  base::LogStreamsReferenceMap m_logStreamsReference;
+  base::LogStreamsReferenceMapPtr m_logStreamsReference = nullptr;
   std::unordered_map<std::string, base::type::LoggerRegistrationCallbackPtr> m_loggerRegistrationCallbacks;
   friend class el::base::Storage;
 
@@ -3825,7 +3826,7 @@ class Loggers : base::StaticClass {
   /// @brief Returns current default
   static const Configurations* defaultConfigurations(void);
   /// @brief Returns log stream reference pointer if needed by user
-  static const base::LogStreamsReferenceMap* logStreamsReference(void);
+  static const base::LogStreamsReferenceMapPtr logStreamsReference(void);
   /// @brief Default typed configuration based on existing defaultConf
   static base::TypedConfigurations defaultTypedConfigurations(void);
   /// @brief Populates all logger IDs in current repository.
