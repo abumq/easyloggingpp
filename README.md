@@ -195,6 +195,17 @@ Following options are supported by Easylogging++ cmake and you can turn these op
 
 With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/amrayn/easyloggingpp/releases/tag/9.89) and lower.
 
+Alternatively, you can download and install easyloggingpp using the [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+    ./vcpkg integrate install
+    ./vcpkg install easyloggingpp
+
+The easyloggingpp port in vcpkg is kept up to date by Microsoft team members and community contributors.
+If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+
  [![top] Goto Top](#table-of-contents)
 
 ### Setting Application Arguments
