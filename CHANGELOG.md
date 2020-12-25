@@ -1,5 +1,18 @@
 # Change Log
 
+## [9.97.0] - 25-12-2020
+### Features
+ * Support for QNX OS
+ * Add library via vcpkg
+ * `ENABLE_EXECINFO` option in CMake to enable/disable stack trace
+
+### Bug Fixes
+ * Fix attempt to access the released memory
+ * Fix `April` month name
+ * Refer to unknown user as `unknown-user` instead of `user`
+ * Handle low memory situation
+ * Fix many compiler warnings
+
 ## [9.96.7] - 24-11-2018
 - Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into JavaScript or WebAssembly and run in the browser while logging to the browser's JavaScript console.
 
