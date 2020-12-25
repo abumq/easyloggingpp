@@ -46,6 +46,12 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/easyloggingpp.pc.cmakein
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/easyloggingpp.pc DESTINATION "${ELPP_PKGCONFIG_INSTALL_DIR}")
 
+include(CheckIncludeFileCXX)
+check_include_file_cxx("execinfo.h" HAVE_EXECINFO)
+if (HAVE_EXECINFO)
+	add_definitions(-DHAVE_EXECINFO)
+endif()
+
 if (build_static_lib)
         if (lib_utc_datetime)
                 add_definitions(-DELPP_UTC_DATETIME)

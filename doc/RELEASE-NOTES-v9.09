@@ -18,7 +18,7 @@ Easylogging++ v9.09 RELEASE NOTES
 =       REFACTORING      =
 ==========================
 
- - Seperated writer from dispatcher + log class
+ - Separated writer from dispatcher + log class
 
 ==========================
 =         NOTES          =

@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Fast Dictionary Sample - Easylogging++");
-    list = new ListWithSearch(ListWithSearch::kCaseInsensative, this);
+    list = new ListWithSearch(ListWithSearch::kCaseInsensitive, this);
     this->setGeometry(0, 0, 800, 600);
     initializeDictionary("words.txt");
     list->setFocus();

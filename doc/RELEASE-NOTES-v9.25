@@ -14,7 +14,7 @@ Easylogging++ v9.25 RELEASE NOTES
 ==========================
 
  - Default log file using command line args (issue #122)
- - Introduced `LoggingFlag::ImmediateFlush` for performance imporvement (issue #127)
+ - Introduced `LoggingFlag::ImmediateFlush` for performance improvement (issue #127)
  - Introduced `ConfigurationType::LogFlushThreshold` to manually specify log flush threshold (issue #126)
  - Introduced `Logger::flush` family and `Loggers::flushAll` family of function to manually flush log files (issue #128)
  - Introduced command line arg to enable/disable logging flag using `--logging-flags` param (issue #129)
