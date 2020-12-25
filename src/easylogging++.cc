@@ -79,7 +79,7 @@ static const char* kNullPointer                            =      "nullptr";
 #if ELPP_VARIADIC_TEMPLATES_SUPPORTED
 #endif  // ELPP_VARIADIC_TEMPLATES_SUPPORTED
 static const base::type::VerboseLevel kMaxVerboseLevel     =      9;
-static const char* kUnknownUser                            =      "user";
+static const char* kUnknownUser                            =      "unknown-user";
 static const char* kUnknownHost                            =      "unknown-host";
 
 
