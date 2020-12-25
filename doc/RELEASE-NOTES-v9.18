@@ -6,14 +6,14 @@ Easylogging++ v9.18 RELEASE NOTES
 =           FIXES        =
 ==========================
 
- - Completely dithced away QA logging even macros unusable
+ - Completely ditched away QA logging even macros unusable
  - Fixed some of verbose logging macro expansions
 
 ==========================
 =       NEW FEATURES     =
 ==========================
 
- - Only allow aplha-numeric (+ some symbols) for logger names (issue #105)
+ - Only allow alpha-numeric (+ some symbols) for logger names (issue #105)
  - Case insensitive app args (issue #106)
  - Helper to reconfigure specific level for all loggers (issue #107)
  - DCHECK macros for debug mode checks (issue #108)

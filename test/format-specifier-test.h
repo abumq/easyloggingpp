@@ -22,7 +22,7 @@ TEST(FormatSpecifierTest, TestLevShortSpecifier) {
     el::Helpers::setArgs(2, param);
 
 
-    // Regression origional %level still correct
+    // Regression original %level still correct
     Configurations c;
     c.setGlobally(el::ConfigurationType::Format, "%level %msg");
     c.set(el::Level::Verbose, el::ConfigurationType::Format, "%level-%vlevel %msg");

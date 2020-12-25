@@ -12,7 +12,7 @@ Easylogging++ v9.17 RELEASE NOTES
 =     IMPROVEMENTS          =
 =============================
 
- - Assertion failure and does not process when configuratoin file does not exist
+ - Assertion failure and does not process when configuration file does not exist
 
 ==========================
 =         NOTES          =
