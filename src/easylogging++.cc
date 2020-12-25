@@ -2625,30 +2625,35 @@ void Writer::processDispatch() {
 }
 
 void Writer::triggerDispatch(void) {
-  if (m_proceed) {
-    if (m_msg == nullptr) {
-      LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
-                     m_logger);
-      base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
-    } else {
-      base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
-    }
-  }
-  if (m_logger != nullptr) {
-    m_logger->stream().str(ELPP_LITERAL(""));
-    m_logger->releaseLock();
-  }
-  if (m_proceed && m_level == Level::Fatal
-      && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
-    base::Writer(Level::Warning, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
-        << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
-    std::stringstream reasonStream;
-    reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
-                 << " If you wish to disable 'abort on fatal log' please use "
-                 << "el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
-    base::utils::abort(1, reasonStream.str());
-  }
-  m_proceed = false;
+  try {
+	  if (m_proceed) {
+	    if (m_msg == nullptr) {
+	      LogMessage msg(m_level, m_file, m_line, m_func, m_verboseLevel,
+	                     m_logger);
+	      base::LogDispatcher(m_proceed, &msg, m_dispatchAction).dispatch();
+	    } else {
+	      base::LogDispatcher(m_proceed, m_msg, m_dispatchAction).dispatch();
+	    }
+	  }
+	  if (m_logger != nullptr) {
+	    m_logger->stream().str(ELPP_LITERAL(""));
+	    m_logger->releaseLock();
+	  }
+	  if (m_proceed && m_level == Level::Fatal
+	      && !ELPP->hasFlag(LoggingFlag::DisableApplicationAbortOnFatalLog)) {
+	    base::Writer(Level::Warning, m_file, m_line, m_func).construct(1, base::consts::kDefaultLoggerId)
+	        << "Aborting application. Reason: Fatal log at [" << m_file << ":" << m_line << "]";
+	    std::stringstream reasonStream;
+	    reasonStream << "Fatal log at [" << m_file << ":" << m_line << "]"
+	                 << " If you wish to disable 'abort on fatal log' please use "
+	                 << "el::Loggers::addFlag(el::LoggingFlag::DisableApplicationAbortOnFatalLog)";
+	    base::utils::abort(1, reasonStream.str());
+	  }
+	  m_proceed = false;
+	  }
+	catch(std::exception & ex){
+		// Extremely low memory situation; don't let exception be unhandled.
+	}
 }
 
 // PErrorWriter
