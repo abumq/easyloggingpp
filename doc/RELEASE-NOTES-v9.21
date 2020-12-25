@@ -16,7 +16,7 @@ Easylogging++ v9.21 RELEASE NOTES
  - Configuring same logger twice loses some information (issue #116)
 
 ==========================
-=     NEW FEATRUES       =
+=     NEW FEATURES       =
 ==========================
 
  - Added base configurations pointer to `parseFromText` same as `parseFromFile`

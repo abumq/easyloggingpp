@@ -64,7 +64,7 @@ static const char* kDateTimeFormatSpecifierForFilename            =      "%datet
 // Date/time
 static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 static const char* kDaysAbbrev[7]                   =      { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-static const char* kMonths[12]                      =      { "January", "February", "March", "Apri", "May", "June", "July", "August",
+static const char* kMonths[12]                      =      { "January", "February", "March", "April", "May", "June", "July", "August",
                                                              "September", "October", "November", "December"
                                                            };
 static const char* kMonthsAbbrev[12]                =      { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -292,7 +292,7 @@ Configurations::Configurations(const std::string& configurationFile, bool useDef
 }
 
 bool Configurations::parseFromFile(const std::string& configurationFile, Configurations* base) {
-  // We initial assertion with true because if we have assertion diabled, we want to pass this
+  // We initial assertion with true because if we have assertion disabled, we want to pass this
   // check and if assertion is enabled we will have values re-assigned any way.
   bool assertionPassed = true;
   ELPP_ASSERT((assertionPassed = base::utils::File::pathExists(configurationFile.c_str(), true)) == true,
@@ -794,22 +794,22 @@ bool File::createPath(const std::string& path) {
   if (path[0] == '/') {
     builtPath = "/";
   }
-  currPath = STRTOK(currPath, base::consts::kFilePathSeperator, 0);
+  currPath = STRTOK(currPath, base::consts::kFilePathSeparator, 0);
 #elif ELPP_OS_WINDOWS
   // Use secure functions API
   char* nextTok_ = nullptr;
-  currPath = STRTOK(currPath, base::consts::kFilePathSeperator, &nextTok_);
+  currPath = STRTOK(currPath, base::consts::kFilePathSeparator, &nextTok_);
   ELPP_UNUSED(nextTok_);
 #endif  // ELPP_OS_UNIX
   while (currPath != nullptr) {
     builtPath.append(currPath);
-    builtPath.append(base::consts::kFilePathSeperator);
+    builtPath.append(base::consts::kFilePathSeparator);
 #if ELPP_OS_UNIX
     status = mkdir(builtPath.c_str(), ELPP_LOG_PERMS);
-    currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, 0);
+    currPath = STRTOK(nullptr, base::consts::kFilePathSeparator, 0);
 #elif ELPP_OS_WINDOWS
     status = _mkdir(builtPath.c_str());
-    currPath = STRTOK(nullptr, base::consts::kFilePathSeperator, &nextTok_);
+    currPath = STRTOK(nullptr, base::consts::kFilePathSeparator, &nextTok_);
 #endif  // ELPP_OS_UNIX
   }
   if (status == -1) {
@@ -1013,7 +1013,7 @@ char* Str::clearBuff(char buff[], std::size_t lim) {
   return buff;
 }
 
-/// @brief Converst wchar* to char*
+/// @brief Converts wchar* to char*
 ///        NOTE: Need to free return value after use!
 char* Str::wcharPtrToCharPtr(const wchar_t* line) {
   std::size_t len_ = wcslen(line) + 1;
@@ -1691,7 +1691,7 @@ void TypedConfigurations::build(Configurations* configurations) {
       // We do not yet configure filename but we will configure in another
       // loop. This is because if file cannot be created, we will force ToFile
       // to be false. Because configuring logger is not necessarily performance
-      // sensative operation, we can live with another loop; (by the way this loop
+      // sensitive operation, we can live with another loop; (by the way this loop
       // is not very heavy either)
     } else if (conf->configurationType() == ConfigurationType::Format) {
       setValue(conf->level(), base::LogFormat(conf->level(),
@@ -1785,7 +1785,7 @@ void TypedConfigurations::insertFile(Level level, const std::string& fullFilenam
     std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
               << LevelHelper::convertToString(level) << "]";
   }
-  std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeperator);
+  std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeparator);
   if (filePath.size() < resolvedFilename.size()) {
     base::utils::File::createPath(filePath);
   }
@@ -2505,7 +2505,7 @@ void LogDispatcher::dispatch(void) {
 
 void MessageBuilder::initialize(Logger* logger) {
   m_logger = logger;
-  m_containerLogSeperator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ?
+  m_containerLogSeparator = ELPP->hasFlag(LoggingFlag::NewLineForContainer) ?
                             ELPP_LITERAL("\n    ") : ELPP_LITERAL(", ");
 }
 
@@ -2677,7 +2677,7 @@ PerformanceTracker::PerformanceTracker(const std::string& blockName,
   m_level(level), m_hasChecked(false), m_lastCheckpointId(std::string()), m_enabled(false) {
 #if !defined(ELPP_DISABLE_PERFORMANCE_TRACKING) && ELPP_LOGGING_ENABLED
   // We store it locally so that if user happen to change configuration by the end of scope
-  // or before calling checkpoint, we still depend on state of configuraton at time of construction
+  // or before calling checkpoint, we still depend on state of configuration at time of construction
   el::Logger* loggerPtr = ELPP->registeredLoggers()->get(loggerId, false);
   m_enabled = loggerPtr != nullptr && loggerPtr->m_typedConfigurations->performanceTracking(m_level);
   if (m_enabled) {

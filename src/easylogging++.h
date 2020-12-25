@@ -580,7 +580,7 @@ enum class Level : base::type::EnumType {
   Fatal = 8,
   /// @brief Information representing errors in application but application will keep running
   Error = 16,
-  /// @brief Useful when application has potentially harmful situtaions
+  /// @brief Useful when application has potentially harmful situations
   Warning = 32,
   /// @brief Information that can be highly useful and vary with verbose logging level.
   Verbose = 64,
@@ -640,7 +640,7 @@ enum class ConfigurationType : base::type::EnumType {
   ToStandardOutput = 4,
   /// @brief Determines format of logging corresponding level and logger.
   Format = 8,
-  /// @brief Determines log file (full path) to write logs to for correponding level and logger
+  /// @brief Determines log file (full path) to write logs to for corresponding level and logger
   Filename = 16,
   /// @brief Specifies precision of the subsecond part. It should be within range (1-6).
   SubsecondPrecision = 32,
@@ -671,7 +671,7 @@ class ConfigurationTypeHelper : base::StaticClass {
   static base::type::EnumType castToInt(ConfigurationType configurationType) {
     return static_cast<base::type::EnumType>(configurationType);
   }
-  /// @brief Casts int(ushort) to configurationt type, useful for iterating through enum.
+  /// @brief Casts int(ushort) to configuration type, useful for iterating through enum.
   static ConfigurationType castFromInt(base::type::EnumType c) {
     return static_cast<ConfigurationType>(c);
   }
@@ -700,7 +700,7 @@ enum class LoggingFlag : base::type::EnumType {
   LogDetailedCrashReason = 4,
   /// @brief Allows to disable application abortion when logged using FATAL level
   DisableApplicationAbortOnFatalLog = 8,
-  /// @brief Flushes log with every log-entry (performance sensative) - Disabled by default
+  /// @brief Flushes log with every log-entry (performance sensitive) - Disabled by default
   ImmediateFlush = 16,
   /// @brief Enables strict file rolling
   StrictLogFileSizeCheck = 32,
@@ -753,9 +753,9 @@ static const char* kSysLogLoggerId                         =      "syslog";
 #endif  // defined(ELPP_SYSLOG)
 
 #if ELPP_OS_WINDOWS
-static const char* kFilePathSeperator                      =      "\\";
+static const char* kFilePathSeparator                      =      "\\";
 #else
-static const char* kFilePathSeperator                      =      "/";
+static const char* kFilePathSeparator                      =      "/";
 #endif  // ELPP_OS_WINDOWS
 
 static const std::size_t kSourceFilenameMaxLength          =      100;
@@ -786,7 +786,7 @@ const struct {
   },
   {
     SIGFPE, "SIGFPE", "Erroneous arithmetic operation",
-    "Arithemetic operation issue such as division by zero or operation resulting in overflow."
+    "Arithmetic operation issue such as division by zero or operation resulting in overflow."
   },
   {
     SIGILL, "SIGILL", "Illegal instruction",
@@ -1052,14 +1052,14 @@ class File : base::StaticClass {
   static bool createPath(const std::string& path);
   /// @brief Extracts path of filename with leading slash
   static std::string extractPathFromFilename(const std::string& fullPath,
-      const char* seperator = base::consts::kFilePathSeperator);
+      const char* separator = base::consts::kFilePathSeparator);
   /// @brief builds stripped filename and puts it in buff
   static void buildStrippedFilename(const char* filename, char buff[],
                                     std::size_t limit = base::consts::kSourceFilenameMaxLength);
   /// @brief builds base filename and puts it in buff
   static void buildBaseFilename(const std::string& fullPath, char buff[],
                                 std::size_t limit = base::consts::kSourceFilenameMaxLength,
-                                const char* seperator = base::consts::kFilePathSeperator);
+                                const char* separator = base::consts::kFilePathSeparator);
 };
 /// @brief String utilities helper class used internally. You should not use it.
 class Str : base::StaticClass {
@@ -1128,7 +1128,7 @@ class Str : base::StaticClass {
   static char* addToBuff(const char* str, char* buf, const char* bufLim);
   static char* clearBuff(char buff[], std::size_t lim);
 
-  /// @brief Converst wchar* to char*
+  /// @brief Converts wchar* to char*
   ///        NOTE: Need to free return value after use!
   static char* wcharPtrToCharPtr(const wchar_t* line);
 };
@@ -1169,7 +1169,7 @@ class OS : base::StaticClass {
 
   /// @brief Gets current host name or computer name.
   ///
-  /// @detail For android systems this is device name with its manufacturer and model seperated by hyphen
+  /// @detail For android systems this is device name with its manufacturer and model separated by hyphen
   static std::string currentHost(void);
   /// @brief Whether or not terminal supports colors
   static bool termSupportsColor(void);
@@ -1179,7 +1179,7 @@ class DateTime : base::StaticClass {
  public:
   /// @brief Cross platform gettimeofday for Windows and unix platform. This can be used to determine current microsecond.
   ///
-  /// @detail For unix system it uses gettimeofday(timeval*, timezone*) and for Windows, a seperate implementation is provided
+  /// @detail For unix system it uses gettimeofday(timeval*, timezone*) and for Windows, a separate implementation is provided
   /// @param [in,out] tv Pointer that gets updated
   static void gettimeofday(struct timeval* tv);
 
@@ -1225,7 +1225,7 @@ class CommandLineArgs {
   }
   /// @brief Sets arguments and parses them
   void setArgs(int argc, char** argv);
-  /// @brief Returns true if arguments contain paramKey with a value (seperated by '=')
+  /// @brief Returns true if arguments contain paramKey with a value (separated by '=')
   bool hasParamWithValue(const char* paramKey) const;
   /// @brief Returns value of arguments
   /// @see hasParamWithValue(const char*)
@@ -1381,7 +1381,7 @@ class Registry : public AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*
     this->reinitDeepCopy(sr);
   }
 
-  /// @brief Assignment operator that unregisters all the existing registeries and deeply copies each of repo element
+  /// @brief Assignment operator that unregisters all the existing registries and deeply copies each of repo element
   /// @see unregisterAll()
   /// @see deepCopy(const AbstractRegistry&)
   Registry& operator=(const Registry& sr) {
@@ -1462,7 +1462,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
     this->reinitDeepCopy(sr);
   }
 
-  /// @brief Assignment operator that unregisters all the existing registeries and deeply copies each of repo element
+  /// @brief Assignment operator that unregisters all the existing registries and deeply copies each of repo element
   /// @see unregisterAll()
   /// @see deepCopy(const AbstractRegistry&)
   RegistryWithPred& operator=(const RegistryWithPred& sr) {
@@ -1509,7 +1509,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
     this->list().push_back(ptr);
   }
 
-/// @brief Gets pointer from repository with speicifed arguments. Arguments are passed to predicate
+/// @brief Gets pointer from repository with specified arguments. Arguments are passed to predicate
 /// in order to validate pointer.
   template <typename T, typename T2>
   T_Ptr* get(const T& arg1, const T2 arg2) {
@@ -2207,7 +2207,7 @@ class LogBuilder : base::NoCopy {
 typedef std::shared_ptr<LogBuilder> LogBuilderPtr;
 /// @brief Represents a logger holding ID and configurations we need to write logs
 ///
-/// @detail This class does not write logs itself instead its used by writer to read configuations from.
+/// @detail This class does not write logs itself instead its used by writer to read configurations from.
 class Logger : public base::threading::ThreadSafe, public Loggable {
  public:
   Logger(const std::string& id, base::LogStreamsReferenceMap* logStreamsReference);
@@ -2859,7 +2859,7 @@ class IterableStack : public IterableContainer<T, Container>, public std::stack<
 // Log message builder
 class MessageBuilder {
  public:
-  MessageBuilder(void) : m_logger(nullptr), m_containerLogSeperator(ELPP_LITERAL("")) {}
+  MessageBuilder(void) : m_logger(nullptr), m_containerLogSeparator(ELPP_LITERAL("")) {}
   void initialize(Logger* logger);
 
 #  define ELPP_SIMPLE_LOG(LOG_TYPE)\
@@ -3047,7 +3047,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
       m_logger->stream() << ELPP_LITERAL(", ");
       operator << (static_cast<V>(map_.value(*begin)));
       m_logger->stream() << ELPP_LITERAL(")");
-      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin != end) {
       m_logger->stream() << ELPP_LITERAL("...");
@@ -3073,7 +3073,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
       m_logger->stream() << ELPP_LITERAL(", ");
       operator << (static_cast<V>(hash_.value(*begin)));
       m_logger->stream() << ELPP_LITERAL(")");
-      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((index_ < keys.size() -1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin != end) {
       m_logger->stream() << ELPP_LITERAL("...");
@@ -3104,7 +3104,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
   ///         have begin() and end() methods that return respective iterators
   /// @param ContainerType Type of container e.g, MyList from WX_DECLARE_LIST(int, MyList); in wxwidgets
   /// @param SizeMethod Method used to get size of container.
-  /// @param ElementInstance Instance of element to be fed out. Insance name is "elem". See WXELPP_ENABLED macro
+  /// @param ElementInstance Instance of element to be fed out. Instance name is "elem". See WXELPP_ENABLED macro
   ///        for an example usage
 #define MAKE_CONTAINERELPP_FRIENDLY(ContainerType, SizeMethod, ElementInstance) \
 el::base::type::ostream_t& operator<<(el::base::type::ostream_t& ss, const ContainerType& container) {\
@@ -3146,14 +3146,14 @@ ELPP_LITERAL("(") << elem->first << ELPP_LITERAL(", ") << elem->second << ELPP_L
 #undef ELPP_ITERATOR_CONTAINER_LOG_FIVE_ARG
  private:
   Logger* m_logger;
-  const base::type::char_t* m_containerLogSeperator;
+  const base::type::char_t* m_containerLogSeparator;
 
   template<class Iterator>
   MessageBuilder& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
     m_logger->stream() << ELPP_LITERAL("[");
     for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
       operator << (*begin_);
-      m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
+      m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeparator : ELPP_LITERAL(""));
     }
     if (begin_ != end_) {
       m_logger->stream() << ELPP_LITERAL("...");
@@ -3835,7 +3835,7 @@ class Loggers : base::StaticClass {
   /// @brief Configures loggers using command line arg. Ensure you have already set command line args,
   /// @return False if invalid argument or argument with no value provided, true if attempted to configure logger.
   ///         If true is returned that does not mean it has been configured successfully, it only means that it
-  ///         has attempeted to configure logger using configuration file provided in argument
+  ///         has attempted to configure logger using configuration file provided in argument
   static bool configureFromArg(const char* argKey);
   /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
   static void flushAll(void);
