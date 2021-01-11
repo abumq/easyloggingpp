@@ -61,6 +61,10 @@ if (build_static_lib)
         add_library(easyloggingpp STATIC src/easylogging++.cc)
         set_property(TARGET easyloggingpp PROPERTY POSITION_INDEPENDENT_CODE ON)
 
+	if (MSVC)
+		target_compile_options(easyloggingpp PRIVATE "/MT$<$<CONFIG:Debug>:d>")
+	endif()
+
         install(TARGETS
             easyloggingpp
             ARCHIVE DESTINATION lib)
