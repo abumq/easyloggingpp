@@ -60,6 +60,7 @@ static const base::type::char_t* kCurrentUserFormatSpecifier      =      ELPP_LI
 static const base::type::char_t* kCurrentHostFormatSpecifier      =      ELPP_LITERAL("%host");
 static const base::type::char_t* kMessageFormatSpecifier          =      ELPP_LITERAL("%msg");
 static const base::type::char_t* kVerboseLevelFormatSpecifier     =      ELPP_LITERAL("%vlevel");
+static const base::type::char_t* kNoNewLineFormatSpecifier        =      ELPP_LITERAL("%nnl");
 static const char* kDateTimeFormatSpecifierForFilename            =      "%datetime";
 // Date/time
 static const char* kDays[7]                         =      { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -1521,6 +1522,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   conditionalAddFlag(base::consts::kCurrentHostFormatSpecifier, base::FormatFlags::Host);
   conditionalAddFlag(base::consts::kMessageFormatSpecifier, base::FormatFlags::LogMessage);
   conditionalAddFlag(base::consts::kVerboseLevelFormatSpecifier, base::FormatFlags::VerboseLevel);
+  conditionalAddFlag(base::consts::kNoNewLineFormatSpecifier, base::FormatFlags::NoNewLine);
   // For date/time we need to extract user's date format first
   std::size_t dateIndex = std::string::npos;
   if ((dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
@@ -2468,7 +2470,13 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
     base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()(logMessage));
   }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-  if (appendNewLine) logLine += ELPP_LITERAL("\n");
+  if (appendNewLine) {
+    if (!logFormat->hasFlag(base::FormatFlags::NoNewLine)) {
+      logLine += ELPP_LITERAL("\n");
+    } else {
+      base::utils::Str::replaceAll(logLine, base::consts::kNoNewLineFormatSpecifier, "");
+    }
+  }
   return logLine;
 }
 

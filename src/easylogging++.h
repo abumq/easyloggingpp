@@ -832,7 +832,8 @@ enum class FormatFlags : base::type::EnumType {
   ThreadId = 1 << 12,
   Level = 1 << 13,
   FileBase = 1 << 14,
-  LevelShort = 1 << 15
+  LevelShort = 1 << 15,
+  NoNewLine = 1 << 16
 };
 /// @brief A subsecond precision class containing actual width and offset of the subsecond part
 class SubsecondPrecision {
