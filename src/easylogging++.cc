@@ -1740,8 +1740,51 @@ unsigned long TypedConfigurations::getULong(std::string confVal) {
   return atol(confVal.c_str());
 }
 
+std::string TypedConfigurations::substituteEnvironmentVariables(const std::string& filename) {
+  std::string resultingFilename;
+  std::string varSpecifierBeginStr(base::consts::kEnvVariableBegin);
+  std::string varSpecifierEndStr(base::consts::kEnvVariableEnd);
+
+  const size_t prefixLen = varSpecifierBeginStr.size();
+  const size_t suffixLen = varSpecifierEndStr.size();
+
+  if (filename.size() < prefixLen) return filename;
+  size_t envVarStart = 0;
+  size_t limit = filename.size() - prefixLen;
+  for (; envVarStart < limit; ++envVarStart) {
+    if (strncmp(filename.data() + envVarStart, varSpecifierBeginStr.data(), prefixLen)) {
+      resultingFilename.push_back(filename[envVarStart]);
+      continue;
+    }
+
+    size_t envVarEnd = envVarStart + prefixLen;
+    size_t endLimit = filename.size() + 1 - suffixLen;
+    for (; envVarEnd < endLimit && strncmp(filename.data() + envVarEnd,
+                                                  varSpecifierEndStr.data(), suffixLen); envVarEnd++);
+    if (envVarEnd == filename.size()) {
+      resultingFilename.append(filename.data() + envVarStart, filename.data() + envVarEnd);
+      break;
+    }
+
+    std::vector<char> buf(envVarEnd - envVarStart - prefixLen + 1, 0);
+    memcpy(buf.data(), filename.data() + envVarStart + prefixLen, envVarEnd - envVarStart - prefixLen);
+    std::string varValue = utils::OS::getEnvironmentVariable(buf.data(), "", nullptr);
+    resultingFilename.append(varValue);
+    envVarStart = envVarEnd + suffixLen - 1;
+  }
+  if (envVarStart < filename.size()) {
+    resultingFilename.append(filename.data() + envVarStart, filename.data() + filename.size());
+  }
+
+  ELPP_ASSERT((!resultingFilename.empty()), "Empty filename value: [" << filename << "]");
+  if (resultingFilename.empty()) {
+     resultingFilename = "\"\""; // same behaviour as if empty string was passed
+  }
+  return resultingFilename;
+}
+
 std::string TypedConfigurations::resolveFilename(const std::string& filename) {
-  std::string resultingFilename = filename;
+  std::string resultingFilename = substituteEnvironmentVariables(filename);
   std::size_t dateIndex = std::string::npos;
   std::string dateTimeFormatSpecifierStr = std::string(base::consts::kDateTimeFormatSpecifierForFilename);
   if ((dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str())) != std::string::npos) {
