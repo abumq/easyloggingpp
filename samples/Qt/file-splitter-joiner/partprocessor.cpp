@@ -220,6 +220,6 @@ void PartProcessor::run(void) {
         status = merge();
     }
     if (status == -1) {
-        LOG(ERROR) << "Error occured while " << (processType == kSplit ? "splitting" : "merging");
+        LOG(ERROR) << "Error occurred while " << (processType == kSplit ? "splitting" : "merging");
     }
 }

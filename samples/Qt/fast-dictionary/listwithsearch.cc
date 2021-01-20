@@ -89,7 +89,7 @@ void ListWithSearch::performSearch(void)
     } else {
         LOG(INFO) << "Performing search... [" << txtSearchCriteria->text().toStdString() << "]";
         for (int i = items.count() - 1; i >= 0; --i) {
-            if (items.at(i)->text().startsWith(txtSearchCriteria->text(), searchBehaviour_ == kCaseSensative ?
+            if (items.at(i)->text().startsWith(txtSearchCriteria->text(), searchBehaviour_ == kCaseSensitive ?
                                                Qt::CaseSensitive : Qt::CaseInsensitive)) {
                 list->insertItem(i, items.at(i));
             }
