@@ -20,6 +20,8 @@
 INITIALIZE_EASYLOGGINGPP
 #endif
 
+el::base::threading::Mutex el::base::threading::ThreadSafe::m_mutex;
+
 namespace el {
 
 // el::base

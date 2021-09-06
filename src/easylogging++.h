@@ -1012,7 +1012,7 @@ class ThreadSafe {
   ThreadSafe(void) {}
   virtual ~ThreadSafe(void) {}
  private:
-  base::threading::Mutex m_mutex;
+  static base::threading::Mutex m_mutex;
 };
 
 #if ELPP_THREADING_ENABLED
