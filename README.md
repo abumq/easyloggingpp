@@ -192,6 +192,7 @@ Following options are supported by Easylogging++ cmake and you can turn these op
 
  * `lib_utc_datetime` - Defines `ELPP_UTC_DATETIME`
  * `build_static_lib` - Builds static library for Easylogging++
+ * `build_shared_lib` - Builds shared library for Easylogging++
 
 With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/amrayn/easyloggingpp/releases/tag/9.89) and lower.
 

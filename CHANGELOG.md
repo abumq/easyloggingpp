@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Features
+ * Add a build_shared_library CMake option
 ### Bug Fixes
  * Fix library installation path on Linux distributions that use lib64
 
