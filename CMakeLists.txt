@@ -30,8 +30,10 @@ set(ELPP_MINOR_VERSION "96")
 set(ELPP_PATCH_VERSION "7")
 set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
-set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
+include(GNUInstallDirs)
+
+set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE PATH "The directory the headers are installed in")
+set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -63,7 +65,7 @@ if (build_static_lib)
 
         install(TARGETS
             easyloggingpp
-            ARCHIVE DESTINATION lib)
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 export(PACKAGE ${PROJECT_NAME})

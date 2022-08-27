@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Bug Fixes
+ * Fix library installation path on Linux distributions that use lib64
+
 ## [9.97.0] - 25-12-2020
 ### Features
  * Support for QNX OS
