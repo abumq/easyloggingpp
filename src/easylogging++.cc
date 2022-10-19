@@ -2041,13 +2041,17 @@ bool VRegistry::allowed(base::type::VerboseLevel vlevel, const char* file) {
 }
 
 void VRegistry::setFromArgs(const base::utils::CommandLineArgs* commandLineArgs) {
-  if (commandLineArgs->hasParam("-v") || commandLineArgs->hasParam("--verbose") ||
-      commandLineArgs->hasParam("-V") || commandLineArgs->hasParam("--VERBOSE")) {
-    setLevel(base::consts::kMaxVerboseLevel);
+  if (commandLineArgs->hasParamWithValue("--verbose")) {
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--verbose"))));
+  } else if (commandLineArgs->hasParamWithValue("--VERBOSE")) {
+    setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--VERBOSE"))));
   } else if (commandLineArgs->hasParamWithValue("--v")) {
     setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--v"))));
   } else if (commandLineArgs->hasParamWithValue("--V")) {
     setLevel(static_cast<base::type::VerboseLevel>(atoi(commandLineArgs->getParamValue("--V"))));
+  } else if (commandLineArgs->hasParam("-v") || commandLineArgs->hasParam("--verbose") ||
+      commandLineArgs->hasParam("-V") || commandLineArgs->hasParam("--VERBOSE")) {
+    setLevel(base::consts::kMaxVerboseLevel);
   } else if ((commandLineArgs->hasParamWithValue("-vmodule")) && vModulesEnabled()) {
     setModules(commandLineArgs->getParamValue("-vmodule"));
   } else if (commandLineArgs->hasParamWithValue("-VMODULE") && vModulesEnabled()) {

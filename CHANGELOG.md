@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.97.1] - 19-10-2022
+### Bug Fixes
+ * Support for long option verbosity with argument (--verbose=5)
+
 ## [9.97.0] - 25-12-2020
 ### Features
  * Support for QNX OS

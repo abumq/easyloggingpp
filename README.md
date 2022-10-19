@@ -485,8 +485,9 @@ Following table will explain all command line arguments that you may use to defi
 |        Argument            |                                      Description                                        |
 |----------------------------|-----------------------------------------------------------------------------------------|
 | `-v`                       | Activates maximum verbosity                                                             |
-| `--v=2`                    | Activates verbosity upto verbose level 2 (valid range: 0-9)                             |
 | `--verbose`                | Activates maximum verbosity                                                             |
+| `--v=2`                    | Activates verbosity upto verbose level 2 (valid range: 0-9)                             |
+| `--verbose=5`              | Activates verbosity upto verbose level 5 (valid range: 0-9)                             |
 | `-vmodule=MODULE_NAME`     | Activates verbosity for files starting with main to level 1, the rest of the files depend on logging flag `AllowVerboseIfModuleNotSpecified` Please see Logging Flags section above. Two modules can be separated by comma. Please note vmodules are last in order of precedence of checking arguments for verbose logging, e.g, if we have -v in application arguments before vmodules, vmodules will be ignored.                                                                                                               |
 | `--logging-flags=3`        | Sets logging flag. In example `i.e, 3`, it sets logging flag to `NewLineForContainer` and `AllowVerboseIfModuleNotSpecified`. See logging flags section above for further details and values. See macros section to disable this function.                                                                   |
 | `--default-log-file=FILE`  |Sets default log file for existing and future loggers. You may want to consider defining `ELPP_NO_DEFAULT_LOG_FILE` to prevent creation of default empty log file during pre-processing. See macros section to disable this function.                                                                           |
@@ -989,7 +990,7 @@ Here is a good example of your own handler
 INITIALIZE_EASYLOGGINGPP
 
 void myCrashHandler(int sig) {
-    LOG(ERROR) << "Woops! Crashed!";     
+    LOG(ERROR) << "Woops! Crashed!";
     // FOLLOWING LINE IS ABSOLUTELY NEEDED AT THE END IN ORDER TO ABORT APPLICATION
     el::Helpers::crashAbort(sig);
 }
