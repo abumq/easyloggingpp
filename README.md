@@ -4,7 +4,7 @@
 
 ![banner]
 
-> **Manual For v9.96.7**
+> **Manual For v9.97.0**
 
 [![Build Status (Master)](https://img.shields.io/travis/amrayn/easyloggingpp/master.svg)](#build-matrix)
 [![Build Status (Develop)](https://img.shields.io/travis/amrayn/easyloggingpp/develop.svg)](#build-matrix)
@@ -175,7 +175,7 @@ Now compile using
 g++ main.cc easylogging++.cc -o prog -std=c++11
 ```
 
-That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is definiting several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
+That simple! Please note that `INITIALIZE_EASYLOGGINGPP` should be used once and once-only otherwise you will end up getting compilation errors. This is the definition of several `extern` variables. This means it can be defined only once per application. Best place to put this initialization statement is in file where `int main(int, char**)` function is defined, right after last include statement.
 
 ### Install (Optional)
 If you want to install this header system-wide, you can do so via:
@@ -194,6 +194,17 @@ Following options are supported by Easylogging++ cmake and you can turn these op
  * `build_static_lib` - Builds static library for Easylogging++
 
 With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/amrayn/easyloggingpp/releases/tag/9.89) and lower.
+
+Alternatively, you can download and install easyloggingpp using the [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh
+    ./vcpkg integrate install
+    ./vcpkg install easyloggingpp
+
+The easyloggingpp port in vcpkg is kept up to date by Microsoft team members and community contributors.
+If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -424,7 +435,7 @@ Please note, date/time is limited to `30` characters at most.
 You can also specify your own format specifiers. In order to do that you can use `el::Helpers::installCustomFormatSpecifier`. A perfect example is `%ip_addr` for TCP server application;
 
 ```C++
-const char* getIp(void) {
+const char* getIp(const el::LogMessage*) {
     return "192.168.1.1";
 }
 
@@ -447,7 +458,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `AllowVerboseIfModuleNotSpecified (2)`                 | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
 | `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/amrayn/easyloggingpp/issues/90))                                                                                                                                                                                |
 | `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/amrayn/easyloggingpp/issues/119))                                                                                                                                                                               |
-| `ImmediateFlush (16)`                                  | Flushes log with every log-entry (performance sensative) - Disabled by default                                                                |
+| `ImmediateFlush (16)`                                  | Flushes log with every log-entry (performance sensitive) - Disabled by default                                                                |
 | `StrictLogFileSizeCheck (32)`                          | Makes sure log file size is checked with every log                                                                                            |
 | `ColoredTerminalOutput (64)`                           | Terminal output will be colorful if supported by terminal.                                                                                            |
 | `MultiLoggerSupport (128)`                             | Enables support for using multiple loggers to log single message. (E.g, `CLOG(INFO, "default", "network") << This will be logged using default and network loggers;`) |
@@ -457,7 +468,7 @@ Form some parts of logging you can set logging flags; here are flags supported:
 | `HierarchicalLogging (2048)`                          | Enables hierarchical logging. This is not applicable to verbose logging.|
 | `CreateLoggerAutomatically (4096)`                          | Creates logger automatically when not available. |
 | `AutoSpacing (8192)`                          | Automatically adds spaces. E.g, `LOG(INFO) << "DODGE" << "THIS!";` will output "DODGE THIS!"|
-| `FixedTimeFormat (16384)`                          | Applicable to performace tracking only - this prevents formatting time. E.g, `1001 ms` will be logged as is, instead of formatting it as `1.01 sec`|
+| `FixedTimeFormat (16384)`                          | Applicable to performance tracking only - this prevents formatting time. E.g, `1001 ms` will be logged as is, instead of formatting it as `1.01 sec`|
 | `IgnoreSigInt (32768)`                          | When application crashes ignore Interruption signal |
 
 You can set/unset these flags by using static `el::Loggers::addFlag` and `el::Loggers::removeFlag`. You can check to see if certain flag is available by using `el::Loggers::hasFlag`, all these functions take strongly-typed enum `el::LoggingFlag`
@@ -1372,7 +1383,7 @@ Asynchronous logging is in experimental stages and they are not widely promoted.
 Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
 * Compiler should support `std::this_thread::sleep_for`. This restriction may (or may not) be removed in future (stable) version of asynchronous logging.
-* You should not rely on asynchronous logging in production, this is because feature is in experiemental stages.
+* You should not rely on asynchronous logging in production, this is because feature is in experimental stages.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1405,7 +1416,7 @@ Try to provide as much information as possible. Any bug with no clear informatio
 
 # Compatibility
 
-Easylogging++ requires a decent C++0x complient compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
+Easylogging++ requires a decent C++0x compliant compiler. Some compilers known to work with v9.0+ are shown in table below, for older versions please refer to readme on corresponding release at github
 
 | *****   |     Compiler/Platform     |      Notes                                                                                                                                               |
 |---------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|

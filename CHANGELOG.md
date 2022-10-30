@@ -1,10 +1,23 @@
 # Change Log
 
-## [9.96.8] - 02-09-2020
+## [9.97.1] - 30-10-2022
 - Adds support for easyloggingpp to log WARNING, ERROR, and FATAL to standard error. this befaviour can be reverted to old behaviour by defining `#define ELPP_CUSTOM_CERR std::cout`. this provides the the ability for CHECK macros and application abortion messages to be written to standard error instead of standard output. this is required in order for DEATH_TEST macro's in google test to match against easyloggingpp output, for example, `ASSERT_DEATH({CHECK_EQ(1, 2) << "error: value_a is not equal to value_b"; }, ".*value_a is not equal to value_b");`
 
+## [9.97.0] - 25-12-2020
+### Features
+ * Support for QNX OS
+ * Add library via vcpkg
+ * `ENABLE_EXECINFO` option in CMake to enable/disable stack trace
+
+### Bug Fixes
+ * Fix attempt to access the released memory
+ * Fix `April` month name
+ * Refer to unknown user as `unknown-user` instead of `user`
+ * Handle low memory situation
+ * Fix many compiler warnings
+
 ## [9.96.7] - 24-11-2018
-- Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into Javascript or WebAssembly and run in the browser while logging to the browser's Javascript console.
+- Adds support for compiling easyloggingpp using Emscripten. This allows the library to be compiled into JavaScript or WebAssembly and run in the browser while logging to the browser's JavaScript console.
 
 ## [9.96.6] - 24-11-2018
 - Storage constructor (indirectly) attempts to access elStorage before it's initialized (issue #660) (@Barteks2x)

@@ -113,7 +113,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
       ignored.
 
       Examples:
-        Assuing that src/.git exists, the header guard CPP variables for
+        Assuming that src/.git exists, the header guard CPP variables for
         src/chrome/browser/ui/browser.h are:
 
         No flag => CHROME_BROWSER_UI_BROWSER_H_
@@ -196,7 +196,7 @@ _ERROR_CATEGORIES = [
   'whitespace/todo'
   ]
 
-# The default state of the category filter. This is overrided by the --filter=
+# The default state of the category filter. This is overridden by the --filter=
 # flag. By default all errors are on, so only add here categories that should be
 # off by default (i.e., categories that must be enabled by the --filter= flags).
 # All entries here should start with a '-' or '+', as in the --filter= flag.
@@ -4076,7 +4076,7 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
   #   inside declarators: reference parameter
   # We will exclude the first two cases by checking that we are not inside a
   # function body, including one that was just introduced by a trailing '{'.
-  # TODO(unknwon): Doesn't account for preprocessor directives.
+  # TODO(unknown): Doesn't account for preprocessor directives.
   # TODO(unknown): Doesn't account for 'catch(Exception& e)' [rare].
   check_params = False
   if not nesting_state.stack:
