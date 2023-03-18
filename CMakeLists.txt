@@ -33,8 +33,6 @@ set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATC
 set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
 set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 install(FILES
     src/easylogging++.h
     src/easylogging++.cc
@@ -60,6 +58,12 @@ if (build_static_lib)
         require_cpp11()
         add_library(easyloggingpp STATIC src/easylogging++.cc)
         set_property(TARGET easyloggingpp PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+        target_include_directories(easyloggingpp
+            PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+            $<INSTALL_INTERFACE:lib>
+            )
 
         install(TARGETS
             easyloggingpp
