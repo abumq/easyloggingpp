@@ -1535,7 +1535,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [download]: https://amrayn.github.io/easyloggingpp/images/download.png?v=2
   [samples]: https://amrayn.github.io/easyloggingpp/images/sample.png?v=2
   [notes]: https://amrayn.github.io/easyloggingpp/images/notes.png?v=4
-  [top]: https://github.com/amrayn/easyloggingpp/raw/master/tools/uparrow.png?v3
+  [top]: https://github.com/amrayn/easyloggingpp/raw/master/tools/uparrow2.png?v3
   [www]: https://amrayn.github.io/easyloggingpp/images/logo-www.png?v=6
 
- [banner]: https://github.com/amrayn/easyloggingpp/raw/master/doc/easyloggingpp_523x357.png?v3
+ [banner]: https://github.com/amrayn/easyloggingpp/raw/master/tools/easyloggingpp.png?v3
