@@ -4,29 +4,20 @@
 
 ![banner]
 
-> **Manual For v9.97.0**
-
-[![Build Status (Master)](https://img.shields.io/travis/amrayn/easyloggingpp/master.svg)](#build-matrix)
-[![Build Status (Develop)](https://img.shields.io/travis/amrayn/easyloggingpp/develop.svg)](#build-matrix)
-[![Build status](https://ci.appveyor.com/api/projects/status/sfcgrehu8ypkrun3?svg=true)](https://ci.appveyor.com/project/abumusamq/easyloggingpp-node)
+> **Documentation for v9.97.0**
 
 [![Node Binding Version](https://img.shields.io/github/release/amrayn/easyloggingpp.svg)](https://github.com/amrayn/easyloggingpp-node/releases/latest)
 [![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
-
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/amrayn/easyloggingpp/blob/master/LICENCE)
 [![Downloads](https://img.shields.io/github/downloads/amrayn/easyloggingpp/total.svg)](https://github.com/amrayn/easyloggingpp/releases/latest)
 
-[![Donate](https://amrayn.github.io/donate.png?v2)](https://amrayn.com/donate)
-
-#### Looking for maintainers!!
-
 ### Quick Links
 
-  [![download] Latest Release](https://github.com/amrayn/easyloggingpp/releases/latest)
+  → [Latest Release](https://github.com/amrayn/easyloggingpp/releases/latest)
 
-  [![notes] Changelog](/CHANGELOG.md)
+  → [Changelog](/CHANGELOG.md)
 
-  [![samples] Samples](/samples)
+  → [Samples](/samples)
 
 ---
 
@@ -1479,12 +1470,10 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-Copyright (c) 2012-2018 Amrayn Web Services
-Copyright (c) 2012-2018 @abumusamq
+Copyright (c) 2012-2023 Amrayn.com
 
 https://github.com/amrayn/
 https://amrayn.com
-https://muflihun.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -1514,7 +1503,6 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
 
-  [banner]: https://amrayn.github.io/easyloggingpp/images/banner.png?v=4
   [ubuntu]: https://amrayn.github.io/easyloggingpp/images/icons/ubuntu.png?v=2
   [mint]: https://amrayn.github.io/easyloggingpp/images/icons/linux-mint.png?v=2
   [freebsd]: https://amrayn.github.io/easyloggingpp/images/icons/free-bsd.png?v=2
@@ -1547,5 +1535,7 @@ Icons used in this manual (in compatibility section) are solely for information 
   [download]: https://amrayn.github.io/easyloggingpp/images/download.png?v=2
   [samples]: https://amrayn.github.io/easyloggingpp/images/sample.png?v=2
   [notes]: https://amrayn.github.io/easyloggingpp/images/notes.png?v=4
-  [top]: https://amrayn.github.io/easyloggingpp/images/up.png?v=4
+  [top]: https://github.com/amrayn/easyloggingpp/raw/master/tools/uparrow.png?v3
   [www]: https://amrayn.github.io/easyloggingpp/images/logo-www.png?v=6
+
+ [banner]: https://github.com/amrayn/easyloggingpp/raw/master/doc/easyloggingpp_523x357.png?v3
