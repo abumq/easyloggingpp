@@ -1470,7 +1470,7 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-Copyright (c) 2012-2023 Amrayn.com
+Copyright (c) 2012-present Amrayn.com
 
 https://github.com/amrayn/
 https://amrayn.com
