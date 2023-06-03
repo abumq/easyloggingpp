@@ -1,5 +1,10 @@
 # Change Log
 
+## [9.97.1] - 11-05-2023
+
+### Features
+ * CMake support for flags ELPP_FORCE_USE_STD_THREAD, ELPP_NO_DEFAULT_LOG_FILE and ELPP_THREAD_SAFE
+
 ## [9.97.0] - 25-12-2020
 ### Features
  * Support for QNX OS
