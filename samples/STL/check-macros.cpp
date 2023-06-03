@@ -5,7 +5,7 @@
  // We add logging flag `DisableApplicationAbortOnFatalLog` that prevents application abort because CHECK macros always log FATAL
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

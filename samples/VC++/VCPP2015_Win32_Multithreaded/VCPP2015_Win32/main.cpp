@@ -4,7 +4,7 @@
 * Base code taken from: http://msdn.microsoft.com/en-us/library/12a04hfd(v=vs.80).aspx
 *
 * Revision: 1.2
-* @author mkhan3189
+* @author abumq (Majid Q.)
 */
 
 #define ELPP_STL_LOGGING

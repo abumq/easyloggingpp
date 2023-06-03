@@ -4,7 +4,7 @@
  // Custom format specifier to demonstrate usage of el::Helpers::installCustomFormatSpecifier
  //
  // Revision 1.2
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

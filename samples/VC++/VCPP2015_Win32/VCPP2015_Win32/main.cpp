@@ -6,7 +6,7 @@
 * Otherwise we will get linker error
 *
 * Revision: 1.1
-* @author mkhan3189
+* @author abumq (Majid Q.)
 */
 #include "easylogging++.h"
 

@@ -3,7 +3,7 @@
  // Very basic sample
  //
  // Revision 1.2
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

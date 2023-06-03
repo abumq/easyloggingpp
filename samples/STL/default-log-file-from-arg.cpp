@@ -3,7 +3,7 @@
  // Default log file using '--default-log-file' arg
  //
  // Revision 1.0
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

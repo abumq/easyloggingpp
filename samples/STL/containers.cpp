@@ -4,7 +4,7 @@
  // Logs different STL containers, some containing STL templates and other containing our own class Vehicle
  //
  // Revision 1.2
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

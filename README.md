@@ -6,14 +6,14 @@
 
 > **Documentation for v9.97.0**
 
-[![Node Binding Version](https://img.shields.io/github/release/amrayn/easyloggingpp.svg)](https://github.com/amrayn/easyloggingpp-node/releases/latest)
+[![Node Binding Version](https://img.shields.io/github/release/abumq/easyloggingpp.svg)](https://github.com/abumq/easyloggingpp-node/releases/latest)
 [![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/amrayn/easyloggingpp/blob/master/LICENCE)
-[![Downloads](https://img.shields.io/github/downloads/amrayn/easyloggingpp/total.svg)](https://github.com/amrayn/easyloggingpp/releases/latest)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/abumq/easyloggingpp/blob/master/LICENCE)
+[![Downloads](https://img.shields.io/github/downloads/abumq/easyloggingpp/total.svg)](https://github.com/abumq/easyloggingpp/releases/latest)
 
 ### Quick Links
 
-  → [Latest Release](https://github.com/amrayn/easyloggingpp/releases/latest)
+  → [Latest Release](https://github.com/abumq/easyloggingpp/releases/latest)
 
   → [Changelog](/CHANGELOG.md)
 
@@ -99,14 +99,14 @@
 # Overview
 Easylogging++ is single header efficient logging library for C++ applications. It is extremely powerful, highly extendable and configurable to user's requirements. It provides ability to [write your own _sinks_](/samples/send-to-network) (via featured referred as `LogDispatchCallback`). This library is currently used by [hundreds of open-source projects on github](https://github.com/search?q=%22easylogging%2B%2B.h%22&type=Code&utf8=%E2%9C%93) and other open-source source control management sites.
 
-This manual is for Easylogging++ v9.96.7. For other versions please refer to corresponding [release](https://github.com/amrayn/easyloggingpp/releases) on github.
+This manual is for Easylogging++ v9.96.7. For other versions please refer to corresponding [release](https://github.com/abumq/easyloggingpp/releases) on github.
 
-> You may also be interested in [Residue](https://github.com/amrayn/residue/) logging server.
+> You may also be interested in [Residue](https://github.com/abumq/residue/) logging server.
 
  [![top] Goto Top](#table-of-contents)
 
 ### Why yet another library
-If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and only requires to link to single source file. (Originally it was header-only and was changed to use source file in [issue #445](https://github.com/amrayn/easyloggingpp/issues/445). You can still use header-only in [v9.89](https://github.com/amrayn/easyloggingpp/releases/tag/9.89)).
+If you are working on a small utility or large project in C++, this library can be handy. Its based on single header and only requires to link to single source file. (Originally it was header-only and was changed to use source file in [issue #445](https://github.com/abumq/easyloggingpp/issues/445). You can still use header-only in [v9.89](https://github.com/abumq/easyloggingpp/releases/tag/9.89)).
 
 This library has been designed with various thoughts in mind (i.e, portability, performance, usability, features and easy to setup).
 
@@ -137,9 +137,9 @@ Easylogging++ is feature-rich containing many features that both typical and adv
 
 # Getting Started
 ### Download
-Download latest version from [Latest Release](https://github.com/amrayn/easyloggingpp/releases/latest)
+Download latest version from [Latest Release](https://github.com/abumq/easyloggingpp/releases/latest)
 
-For other releases, please visit [releases page](https://github.com/amrayn/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/amrayn/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
+For other releases, please visit [releases page](https://github.com/abumq/easyloggingpp/releases). If you application does not support C++11, please consider using [v8.91](https://github.com/abumq/easyloggingpp/tree/v8.91). This is stable version for C++98 and C++03, just lack some features.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -184,7 +184,7 @@ Following options are supported by Easylogging++ cmake and you can turn these op
  * `lib_utc_datetime` - Defines `ELPP_UTC_DATETIME`
  * `build_static_lib` - Builds static library for Easylogging++
 
-With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/amrayn/easyloggingpp/releases/tag/9.89) and lower.
+With that said, you will still need `easylogging++.cc` file in order to compile. For header only, please check [v9.89](https://github.com/abumq/easyloggingpp/releases/tag/9.89) and lower.
 
 Alternatively, you can download and install easyloggingpp using the [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
 
@@ -447,8 +447,8 @@ Form some parts of logging you can set logging flags; here are flags supported:
 |--------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | `NewLineForContainer (1)`                              | Makes sure we have new line for each container log entry                                                                                      |
 | `AllowVerboseIfModuleNotSpecified (2)`                 | Makes sure if -vmodule is used and does not specifies a module, then verbose logging is allowed via that module. Say param was -vmodule=main*=3 and a verbose log is being written from a file called something.cpp then if this flag is enabled, log will be written otherwise it will be disallowed. Note: having this defeats purpose of -vmodule                                 |
-| `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/amrayn/easyloggingpp/issues/90))                                                                                                                                                                                |
-| `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/amrayn/easyloggingpp/issues/119))                                                                                                                                                                               |
+| `LogDetailedCrashReason (4)`                           | When handling crashes by default, detailed crash reason will be logged as well (Disabled by default) ([issue #90](https://github.com/abumq/easyloggingpp/issues/90))                                                                                                                                                                                |
+| `DisableApplicationAbortOnFatalLog (8)`                | Allows to disable application abortion when logged using FATAL level. Note that this does not apply to default crash handlers as application should be aborted after crash signal is handled. (Not added by default) ([issue #119](https://github.com/abumq/easyloggingpp/issues/119))                                                                                                                                                                               |
 | `ImmediateFlush (16)`                                  | Flushes log with every log-entry (performance sensitive) - Disabled by default                                                                |
 | `StrictLogFileSizeCheck (32)`                          | Makes sure log file size is checked with every log                                                                                            |
 | `ColoredTerminalOutput (64)`                           | Terminal output will be colorful if supported by terminal.                                                                                            |
@@ -491,7 +491,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 
  1. Define macros using `-D` option of compiler, for example in case of `g++` you will do `g++ source.cpp ... -DELPP_SYSLOG -DELPP_THREAD_SAFE ...` (**recommended way**)
 
- 2. Define macros inside `"easylogging++.h"` ([defining macros in other files won't work](https://github.com/amrayn/easyloggingpp/issues/590#issuecomment-346753951))
+ 2. Define macros inside `"easylogging++.h"` ([defining macros in other files won't work](https://github.com/abumq/easyloggingpp/issues/590#issuecomment-346753951))
 
 |   Macro Name                             |                 Description                                                                                                                        |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -509,7 +509,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_DISABLE_FATAL_LOGS`               | Disables fatal logs - (preprocessing)                                                                                                              |
 | `ELPP_DISABLE_VERBOSE_LOGS`             | Disables verbose logs - (preprocessing)                                                                                                            |
 | `ELPP_DISABLE_TRACE_LOGS`               | Disables trace logs - (preprocessing)                                                                                                              |
-| `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/amrayn/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
+| `ELPP_FORCE_ENV_VAR_FROM_BASH`          | If environment variable could not be found, force using alternative bash command to find value, e.g, `whoami` for username. (DO NOT USE THIS MACRO WITH `LD_PRELOAD` FOR LIBRARIES THAT ARE ALREADY USING Easylogging++ OR YOU WILL END UP IN STACK OVERFLOW FOR PROCESSES (`popen`) (see [issue #87](https://github.com/abumq/easyloggingpp/issues/87) for details))                                                                                                                                                                                       |
 | `ELPP_DEFAULT_LOG_FILE`                 | Full filename where you want initial files to be created. You need to embed value of this macro with quotes, e.g, `-DELPP_DEFAULT_LOG_FILE='"logs/el.gtest.log"'` Note the double quotes inside single quotes, double quotes are the values for `const char*` and single quotes specifies value of macro                                                                                 |
 | `ELPP_NO_LOG_TO_FILE`                 | Disable logging to file initially|
 | `ELPP_NO_DEFAULT_LOG_FILE`              | If you dont want to initialize library with default log file, define this macro. This will log to null device for unix and windows. In other platforms you may get error and you will need to use `ELPP_DEFAULT_LOG_FILE`. (PR for other platform's null devices are most welcomed) |
@@ -524,7 +524,7 @@ Some of logging options can be set by macros, this is a thoughtful decision, for
 | `ELPP_NO_CHECK_MACROS`             | Do not define the *CHECK* macros                                                                                                                  |
 | `ELPP_NO_DEBUG_MACROS`             | Do not define the *DEBUG* macros                                                                                                                  |
 | `ELPP_UTC_DATETIME`                | Uses UTC time instead of local time (essentially uses `gmtime` instead of `localtime` and family functions)
-| `ELPP_NO_GLOBAL_LOCK`  | Do not lock the whole storage on dispatch. This should be used with care. See [issue #580](https://github.com/amrayn/easyloggingpp/issues/580)|
+| `ELPP_NO_GLOBAL_LOCK`  | Do not lock the whole storage on dispatch. This should be used with care. See [issue #580](https://github.com/abumq/easyloggingpp/issues/580)|
 
  [![top] Goto Top](#table-of-contents)
 
@@ -901,7 +901,7 @@ Notes:
 
 4. `TIMED_BLOCK` macro resolves to a single-looped for-loop, so be careful where you define `TIMED_BLOCK`, if for-loop is allowed in the line where you use it, you should have no errors.
 
- > You may be interested in [python script to parse performance logs](https://github.com/amrayn/easyloggingpp/issues/206)
+ > You may be interested in [python script to parse performance logs](https://github.com/abumq/easyloggingpp/issues/206)
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1182,7 +1182,7 @@ You may also have a look at wxWidgets sample
 ### Extending Library
 You can extend this library using various callback handlers and inheritable classes.
 
-A perfect example of using these features is the logging server built with this library. It's called [Residue](https://github.com/amrayn/residue/) that is feature rich. In fact, you may be interested in using that instead of this library for your medium to large sized projects.
+A perfect example of using these features is the logging server built with this library. It's called [Residue](https://github.com/abumq/residue/) that is feature rich. In fact, you may be interested in using that instead of this library for your medium to large sized projects.
 
 #### Logging Your Own Class
 
@@ -1359,7 +1359,7 @@ int main() {
  [![top] Goto Top](#table-of-contents)
 
 ### Logger Registration Callback
-If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/amrayn/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
+If you wish to capture event of logger registration (and potentially want to reconfigure this logger without changing default configuration) you can use `el::LoggerRegistrationCallback`. The syntax is similar to [other callbacks](#log-dispatch-callback). You can use [this sample](https://github.com/abumq/easyloggingpp/blob/master/samples/STL/new-logger-registration-callback.cpp) as basis.
 
  > DO NOT LOG ANYTHING IN THIS HANDLER
 
@@ -1368,7 +1368,7 @@ If you wish to capture event of logger registration (and potentially want to rec
 ### Asynchronous Logging
 Prerequisite: Define macro `ELPP_EXPERIMENTAL_ASYNC`
 
-Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/amrayn/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
+Asynchronous logging is in experimental stages and they are not widely promoted. You may enable and test this feature by defining macro `ELPP_EXPERIMENTAL_ASYNC` and if you find some issue with the feature please report in [this issue](https://github.com/abumq/easyloggingpp/issues/202). Reporting issues always help for constant improvements.
 
 Please note:
 * Asynchronous will only work with few compilers (it purely uses `std::thread`)
@@ -1383,7 +1383,7 @@ There are static helper classes available to make it easy to do stuffs;
  * `el::Helpers`
  * `el::Loggers`
 
-You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/amrayn/easyloggingpp/issues/210) for instance.
+You can do various cool stuffs using functions in these classes, see [this issue](https://github.com/abumq/easyloggingpp/issues/210) for instance.
 
  [![top] Goto Top](#table-of-contents)
 
@@ -1394,7 +1394,7 @@ You can submit patches to `develop` branch and we will try and merge them. Since
  [![top] Goto Top](#table-of-contents)
 
 ### Reporting a Bug
-If you have found a bug and wish to report it, feel free to do so at [github issue tracker](https://github.com/amrayn/easyloggingpp/issues?state=open). I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
+If you have found a bug and wish to report it, feel free to do so at [github issue tracker](https://github.com/abumq/easyloggingpp/issues?state=open). I will try to look at it as soon as possible. Some information should be provided to make it easy to reproduce;
 * Platform (OS, Compiler)
 * Log file location
 * Macros defined (on compilation) OR simple compilation
@@ -1453,16 +1453,16 @@ Easylogging++ has also been tested with following C++ libraries;
 
  | Branch | Platform | Build Status |
  | -------- |:------------:|:------------:|
- | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/develop/1)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/develop/2)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/develop/3)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/develop/4)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/develop/5)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/master/1)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/master/2)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/master/3)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/master/4)](https://travis-ci.org/amrayn/easyloggingpp) |
- | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/amrayn/easyloggingpp/branches/master/5)](https://travis-ci.org/amrayn/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/develop/1)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/develop/2)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/develop/3)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/develop/4)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `develop` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/develop/5)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `clang++` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/master/1)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-4.9` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/master/2)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-5` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/master/3)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-6` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/master/4)](https://travis-ci.org/abumq/easyloggingpp) |
+ | `master` | GNU/Linux 4.4 / Ubuntu 4.8.4 64-bit / `g++-7` | [![Build Status](https://travis-matrix-badges.herokuapp.com/repos/abumq/easyloggingpp/branches/master/5)](https://travis-ci.org/abumq/easyloggingpp) |
 
   [![top] Goto Top](#table-of-contents)
 
@@ -1470,10 +1470,7 @@ Easylogging++ has also been tested with following C++ libraries;
 ```
 The MIT License (MIT)
 
-Copyright (c) 2012-present Amrayn.com
-
-https://github.com/amrayn/
-https://amrayn.com
+Copyright (c) 2012-present @abumq (Majid Q.)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -1503,39 +1500,39 @@ Icons used in this manual (in compatibility section) are solely for information 
 
  [![top] Goto Top](#table-of-contents)
 
-  [ubuntu]: https://amrayn.github.io/easyloggingpp/images/icons/ubuntu.png?v=2
-  [mint]: https://amrayn.github.io/easyloggingpp/images/icons/linux-mint.png?v=2
-  [freebsd]: https://amrayn.github.io/easyloggingpp/images/icons/free-bsd.png?v=2
-  [sl]: https://amrayn.github.io/easyloggingpp/images/icons/scientific-linux.png?v=2
-  [fedora]: https://amrayn.github.io/easyloggingpp/images/icons/fedora.png?v=3
-  [mac]: https://amrayn.github.io/easyloggingpp/images/icons/mac-osx.png?v=2
-  [winxp]: https://amrayn.github.io/easyloggingpp/images/icons/windowsxp.png?v=2
-  [win7]: https://amrayn.github.io/easyloggingpp/images/icons/windows7.png?v=2
-  [win8]: https://amrayn.github.io/easyloggingpp/images/icons/windows8.png?v=2
-  [win10]: https://amrayn.github.io/easyloggingpp/images/icons/windows10.png?v=2
-  [qt]: https://amrayn.github.io/easyloggingpp/images/icons/qt.png?v=3
-  [boost]: https://amrayn.github.io/easyloggingpp/images/icons/boost.png?v=3
-  [wxwidgets]: https://amrayn.github.io/easyloggingpp/images/icons/wxwidgets.png?v=3
-  [devcpp]: https://amrayn.github.io/easyloggingpp/images/icons/devcpp.png?v=3
-  [gtkmm]: https://amrayn.github.io/easyloggingpp/images/icons/gtkmm.png?v=3
-  [tdm]: https://amrayn.github.io/easyloggingpp/images/icons/tdm.png?v=3
-  [raspberrypi]: https://amrayn.github.io/easyloggingpp/images/icons/raspberry-pi.png?v=3
-  [solaris]: https://amrayn.github.io/easyloggingpp/images/icons/solaris.png?v=3
-  [aix]: https://amrayn.github.io/easyloggingpp/images/icons/aix.png?v=4
+  [ubuntu]: https://abumq.github.io/easyloggingpp/images/icons/ubuntu.png?v=2
+  [mint]: https://abumq.github.io/easyloggingpp/images/icons/linux-mint.png?v=2
+  [freebsd]: https://abumq.github.io/easyloggingpp/images/icons/free-bsd.png?v=2
+  [sl]: https://abumq.github.io/easyloggingpp/images/icons/scientific-linux.png?v=2
+  [fedora]: https://abumq.github.io/easyloggingpp/images/icons/fedora.png?v=3
+  [mac]: https://abumq.github.io/easyloggingpp/images/icons/mac-osx.png?v=2
+  [winxp]: https://abumq.github.io/easyloggingpp/images/icons/windowsxp.png?v=2
+  [win7]: https://abumq.github.io/easyloggingpp/images/icons/windows7.png?v=2
+  [win8]: https://abumq.github.io/easyloggingpp/images/icons/windows8.png?v=2
+  [win10]: https://abumq.github.io/easyloggingpp/images/icons/windows10.png?v=2
+  [qt]: https://abumq.github.io/easyloggingpp/images/icons/qt.png?v=3
+  [boost]: https://abumq.github.io/easyloggingpp/images/icons/boost.png?v=3
+  [wxwidgets]: https://abumq.github.io/easyloggingpp/images/icons/wxwidgets.png?v=3
+  [devcpp]: https://abumq.github.io/easyloggingpp/images/icons/devcpp.png?v=3
+  [gtkmm]: https://abumq.github.io/easyloggingpp/images/icons/gtkmm.png?v=3
+  [tdm]: https://abumq.github.io/easyloggingpp/images/icons/tdm.png?v=3
+  [raspberrypi]: https://abumq.github.io/easyloggingpp/images/icons/raspberry-pi.png?v=3
+  [solaris]: https://abumq.github.io/easyloggingpp/images/icons/solaris.png?v=3
+  [aix]: https://abumq.github.io/easyloggingpp/images/icons/aix.png?v=4
 
 
-  [gcc]: https://amrayn.github.io/easyloggingpp/images/icons/gcc.png?v=4
-  [mingw]: https://amrayn.github.io/easyloggingpp/images/icons/mingw.png?v=2
-  [cygwin]: https://amrayn.github.io/easyloggingpp/images/icons/cygwin.png?v=2
-  [vcpp]: https://amrayn.github.io/easyloggingpp/images/icons/vcpp.png?v=2
-  [llvm]: https://amrayn.github.io/easyloggingpp/images/icons/llvm.png?v=2
-  [intel]: https://amrayn.github.io/easyloggingpp/images/icons/intel.png?v=2
-  [android]: https://amrayn.github.io/easyloggingpp/images/icons/android.png?v=2
-  [manual]: https://amrayn.github.io/easyloggingpp/images/help.png?v=3
-  [download]: https://amrayn.github.io/easyloggingpp/images/download.png?v=2
-  [samples]: https://amrayn.github.io/easyloggingpp/images/sample.png?v=2
-  [notes]: https://amrayn.github.io/easyloggingpp/images/notes.png?v=4
-  [top]: https://github.com/amrayn/easyloggingpp/raw/master/tools/uparrow2.png?v3
-  [www]: https://amrayn.github.io/easyloggingpp/images/logo-www.png?v=6
+  [gcc]: https://abumq.github.io/easyloggingpp/images/icons/gcc.png?v=4
+  [mingw]: https://abumq.github.io/easyloggingpp/images/icons/mingw.png?v=2
+  [cygwin]: https://abumq.github.io/easyloggingpp/images/icons/cygwin.png?v=2
+  [vcpp]: https://abumq.github.io/easyloggingpp/images/icons/vcpp.png?v=2
+  [llvm]: https://abumq.github.io/easyloggingpp/images/icons/llvm.png?v=2
+  [intel]: https://abumq.github.io/easyloggingpp/images/icons/intel.png?v=2
+  [android]: https://abumq.github.io/easyloggingpp/images/icons/android.png?v=2
+  [manual]: https://abumq.github.io/easyloggingpp/images/help.png?v=3
+  [download]: https://abumq.github.io/easyloggingpp/images/download.png?v=2
+  [samples]: https://abumq.github.io/easyloggingpp/images/sample.png?v=2
+  [notes]: https://abumq.github.io/easyloggingpp/images/notes.png?v=4
+  [top]: https://github.com/abumq/easyloggingpp/raw/master/tools/uparrow2.png?v3
+  [www]: https://abumq.github.io/easyloggingpp/images/logo-www.png?v=6
 
- [banner]: https://github.com/amrayn/easyloggingpp/raw/master/tools/easyloggingpp.png?v3
+ [banner]: https://github.com/abumq/easyloggingpp/raw/master/tools/easyloggingpp.png?v3

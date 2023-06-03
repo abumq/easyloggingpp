@@ -3,7 +3,7 @@
  // Demonstration of STL array (std::array) logging, this requires ELPP_LOG_STD_ARRAY macro (recommended to define it in Makefile)
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #define ELPP_LOG_STD_ARRAY

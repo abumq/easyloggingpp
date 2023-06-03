@@ -6,7 +6,7 @@
  *    qmake qt-sample.pro && make
  *
  * Revision: 1.1
- * @author mkhan3189
+ * @author abumq (Majid Q.)
  */
 
 #include "mythread.h"

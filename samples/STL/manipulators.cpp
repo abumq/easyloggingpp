@@ -4,7 +4,7 @@
  // Demonstration of manipulators usages and how they behave
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

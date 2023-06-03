@@ -7,7 +7,7 @@
 //     [icpc | g++ | clang++] ./pthread.cpp -o bin/./pthread.cpp.bin -DELPP_THREAD_SAFE -std=c++0x -pthread -Wall -Wextra
 // 
 // Revision: 1.1
-// @author mkhan3189
+// @author abumq (Majid Q.)
 //
 
 #include <pthread.h>

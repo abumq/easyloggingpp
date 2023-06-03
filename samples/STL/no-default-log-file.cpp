@@ -4,7 +4,7 @@
  // Very basic sample to configure using configuration and not default log file
  //
  // Revision 1.0
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #define ELPP_NO_DEFAULT_LOG_FILE

@@ -6,7 +6,7 @@
 // Compile: g++ -std=c++11 -Wall -Werror thread-names.cpp -lpthread -o thread-names -DELPP_THREAD_SAFE
 //
 // Revision 1.0
-// @author mkhan3189
+// @author abumq (Majid Q.)
 //
 
 #include <thread>

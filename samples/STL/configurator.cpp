@@ -4,7 +4,7 @@
  // Very basic sample to configure using el::Configuration and configuration file
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

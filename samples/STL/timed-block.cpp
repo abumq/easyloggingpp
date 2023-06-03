@@ -3,7 +3,7 @@
  // TIMED_BLOCK sample
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

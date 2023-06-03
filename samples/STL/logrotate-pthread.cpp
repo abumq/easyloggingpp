@@ -7,7 +7,7 @@
 // Compile: g++ -std=c++11 -Wall -Werror logrotate.cpp -lpthread -o logrotate -DELPP_THREAD_SAFE
 //
 // Revision 1.1
-// @author mkhan3189
+// @author abumq (Majid Q.)
 //
 
 #define ELPP_NO_DEFAULT_LOG_FILE

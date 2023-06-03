@@ -1,5 +1,5 @@
 // Easylogging++ sample for libsigc++
-// @author mkhan3189
+// @author abumq (Majid Q.)
 // @rev 1.0
 
 #include <unistd.h>

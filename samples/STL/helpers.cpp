@@ -4,7 +4,7 @@
  // Helpers sample - this sample contains methods with explanation in comments on how to use them
  //
  // Revision 1.2
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

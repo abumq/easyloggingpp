@@ -4,7 +4,7 @@
  // Very basic sample to configure using global configuration (el::Loggers::configureFromGlobal)
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

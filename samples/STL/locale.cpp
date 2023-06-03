@@ -4,7 +4,7 @@
  // Demonstration on how locale gives output
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 #ifndef ELPP_UNICODE
 #   define ELPP_UNICODE

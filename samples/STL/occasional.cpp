@@ -3,7 +3,7 @@
  // Sample to demonstrate using occasional and other hit count based logging
  //
  // Revision 1.2
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

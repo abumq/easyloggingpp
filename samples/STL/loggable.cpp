@@ -4,7 +4,7 @@
  // Usage sample of el::Loggable to make class log-friendly
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

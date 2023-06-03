@@ -4,7 +4,7 @@
  // Log using PLOG and family. PLOG is same as perror() with c++-styled stream
  //
  // Revision 1.1
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

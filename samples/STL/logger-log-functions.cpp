@@ -3,7 +3,7 @@
  // Very basic sample for Logger::info etc
  //
  // Revision 1.0
- // @author mkhan3189
+ // @author abumq (Majid Q.)
  //
 
 #include "easylogging++.h"

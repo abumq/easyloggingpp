@@ -4,14 +4,10 @@
 //  Easylogging++ v9.96.7
 //  Cross-platform logging library for C++ applications
 //
-//  Copyright (c) 2012-2018 Amrayn Web Services
-//  Copyright (c) 2012-2018 @abumusamq
+//  Copyright (c) 2012-present @abumq (Majid Q.)
 //
 //  This library is released under the MIT Licence.
 //  https://github.com/amrayn/easyloggingpp/blob/master/LICENSE
-//
-//  https://amrayn.com
-//  http://muflihun.com
 //
 
 #include "easylogging++.h"
