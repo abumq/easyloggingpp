@@ -23,6 +23,7 @@ endmacro()
 
 option(test "Build all tests" OFF)
 option(build_static_lib "Build easyloggingpp as a static library" OFF)
+option(build_shared_lib "Build easyloggingpp as a shared library" OFF)
 option(lib_utc_datetime "Build library with UTC date/time logging" OFF)
 
 set(ELPP_MAJOR_VERSION "9")
@@ -30,8 +31,10 @@ set(ELPP_MINOR_VERSION "96")
 set(ELPP_PATCH_VERSION "7")
 set(ELPP_VERSION_STRING "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
 
-set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
+include(GNUInstallDirs)
+
+set(ELPP_INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE PATH "The directory the headers are installed in")
+set(ELPP_PKGCONFIG_INSTALL_DIR "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -52,18 +55,36 @@ if (HAVE_EXECINFO)
 	add_definitions(-DHAVE_EXECINFO)
 endif()
 
-if (build_static_lib)
+if (build_shared_lib OR build_shared_lib)
         if (lib_utc_datetime)
                 add_definitions(-DELPP_UTC_DATETIME)
         endif()
 
         require_cpp11()
-        add_library(easyloggingpp STATIC src/easylogging++.cc)
-        set_property(TARGET easyloggingpp PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
+
+if (build_static_lib)
+        add_library(easyloggingpp_static STATIC src/easylogging++.cc)
+        set_target_properties(easyloggingpp_static PROPERTIES
+            OUTPUT_NAME easyloggingpp
+            POSITION_INDEPENDENT_CODE ON)
+        set_property(TARGET easyloggingpp_static PROPERTY POSITION_INDEPENDENT_CODE ON)
 
         install(TARGETS
-            easyloggingpp
-            ARCHIVE DESTINATION lib)
+            easyloggingpp_static
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+if (build_shared_lib)
+        add_library(easyloggingpp_shared SHARED src/easylogging++.cc)
+        set_target_properties(easyloggingpp_shared PROPERTIES
+            OUTPUT_NAME easyloggingpp
+            POSITION_INDEPENDENT_CODE ON
+            SOVERSION "${ELPP_MAJOR_VERSION}"
+            VERSION "${ELPP_MAJOR_VERSION}.${ELPP_MINOR_VERSION}.${ELPP_PATCH_VERSION}")
+
+        install(TARGETS
+            easyloggingpp_shared
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 export(PACKAGE ${PROJECT_NAME})

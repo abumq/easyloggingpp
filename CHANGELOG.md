@@ -1,5 +1,11 @@
 # Change Log
 
+## [Unreleased]
+### Features
+ * Add a build_shared_library CMake option
+### Bug Fixes
+ * Fix library installation path on Linux distributions that use lib64
+
 ## [9.97.0] - 25-12-2020
 ### Features
  * Support for QNX OS
