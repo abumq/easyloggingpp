@@ -7,7 +7,7 @@
 //  Copyright (c) 2012-present @abumq (Majid Q.)
 //
 //  This library is released under the MIT Licence.
-//  https://github.com/amrayn/easyloggingpp/blob/master/LICENSE
+//  https://github.com/abumq/easyloggingpp/blob/master/LICENSE
 //
 
 #ifndef EASYLOGGINGPP_H
