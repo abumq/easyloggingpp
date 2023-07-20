@@ -2,7 +2,7 @@
 
 # Bash script that helps with releasing new versions of Easylogging++
 # Revision: 1.5
-# author @abumusamq
+# author @abumq
 #
 # Usage:
 #        ./release.sh [repo-root] [homepage-repo-root] [curr-version] [new-version] [do-not-ask]

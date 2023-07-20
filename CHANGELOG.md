@@ -1,5 +1,9 @@
 # Change Log
 
+## [9.97.1] - 20-07-2023
+### Chore
+ * Rebuilt with latest gtest
+
 ## [9.97.0] - 25-12-2020
 ### Features
  * Support for QNX OS
