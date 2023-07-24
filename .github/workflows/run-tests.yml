@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Install GTest
@@ -30,7 +30,6 @@ jobs:
         cmake -Dtest=ON ..
         ls -l
         make
-    - name: Run CMake
+    - name: Run Tests
       run: |
-        pwd && ls -l
         ./build/easyloggingpp-unit-tests
