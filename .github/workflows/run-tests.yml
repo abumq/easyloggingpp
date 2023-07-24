@@ -28,7 +28,6 @@ jobs:
         mkdir build
         cd build
         cmake -Dtest=ON ..
-    - name: make
-      run: make
-    - name: Run tests
-      run: ./easyloggingpp-unit-tests
+        ls -l
+        make
+        ./easyloggingpp-unit-tests
