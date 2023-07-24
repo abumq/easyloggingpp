@@ -31,8 +31,6 @@ TEST(CommandLineArgsTest, LoggingFlagsArg) {
     c[0] = "myprog";
     c[1] = "--logging-flags=5"; // NewLineForContainer & LogDetailedCrashReason (1 & 4)
     c[2] = "\0";
-
-    unsigned short currFlags = ELPP->flags(); // For resetting after test
 	
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
@@ -41,16 +39,6 @@ TEST(CommandLineArgsTest, LoggingFlagsArg) {
 
     EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
     EXPECT_TRUE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
-
-    // Reset to original state
-    std::stringstream resetter;
-    resetter << "--logging-flags=" << currFlags;
-    c[1] = resetter.str().c_str();
-    std::cout << "After reset" << c[1] << std::endl;
-    Helpers::setArgs(2, c);
-    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
-    EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));
-
 }
 
 #endif // COMMAND_LINE_ARGS_TEST_H

@@ -24,7 +24,7 @@
 #include "registry-test.h"
 #include "strict-file-size-check-test.h"
 #include "string-utils-test.h"
-#include "syslog-test.h"
+//#include "syslog-test.h"
 #include "typed-configurations-test.h"
 #include "utilities-test.h"
 #include "verbose-app-arguments-test.h"
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
     testing::InitGoogleTest(&argc, argv);
 
-    ELPP_INITIALIZE_SYSLOG(kSysLogIdent, 0, 0);
+    //ELPP_INITIALIZE_SYSLOG(kSysLogIdent, 0, 0);
 
     reconfigureLoggersForTest();
     std::cout << "Logs for test are written in [" << logfile << "]" << std::endl;

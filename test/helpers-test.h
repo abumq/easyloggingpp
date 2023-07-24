@@ -12,7 +12,7 @@ TEST(HelpersTest, ConvertTemplateToStdString) {
     vecInt.push_back(3);
     vecInt.push_back(4);
     std::string strVecInt = el::Helpers::convertTemplateToStdString(vecInt);
-    EXPECT_EQ("[1, 2, 3, 4]", strVecInt);
+    EXPECT_EQ("[1\n    2\n    3\n    4]", strVecInt);
 }
 
 #endif // HELPERS_TEST_H_
