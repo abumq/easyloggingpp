@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Install GTest
@@ -23,11 +23,14 @@ jobs:
         ls -lh lib
         sudo cp lib/libgtest* /usr/local/lib/
     - uses: actions/checkout@v3
-    - name: Run CMake
+    - name: Build
       run: |
         mkdir build
         cd build
         cmake -Dtest=ON ..
         ls -l
         make
-        ./easyloggingpp-unit-tests
+    - name: Run CMake
+      run: |
+        pwd && ls -l
+        ./build/easyloggingpp-unit-tests
