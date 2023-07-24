@@ -6,6 +6,7 @@
 
 > **Documentation for v9.97.1**
 
+[![Tests](https://github.com/abumq/easyloggingpp/actions/workflows/run-tests.yml/badge.svg)](https://github.com/abumq/easyloggingpp/actions/workflows/run-tests.yml)
 [![Node Binding Version](https://img.shields.io/github/release/abumq/easyloggingpp.svg)](https://github.com/abumq/easyloggingpp-node/releases/latest)
 [![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/abumq/easyloggingpp/blob/master/LICENCE)
