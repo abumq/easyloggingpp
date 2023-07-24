@@ -46,6 +46,7 @@ TEST(CommandLineArgsTest, LoggingFlagsArg) {
     std::stringstream resetter;
     resetter << "--logging-flags=" << currFlags;
     c[1] = resetter.str().c_str();
+    std::cout << "After reset" << c[1] << std::endl;
     Helpers::setArgs(2, c);
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::NewLineForContainer));
     EXPECT_FALSE(Loggers::hasFlag(LoggingFlag::LogDetailedCrashReason));

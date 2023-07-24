@@ -94,6 +94,12 @@ if (test)
         ELPP_LOGGING_FLAGS_FROM_ARG
         ELPP_NO_DEFAULT_LOG_FILE
         ELPP_FRESH_LOG_FILE
+        ELPP_STOP_ON_FIRST_ASSERTION
+        ELPP_STL_LOGGING
+        ELPP_FORCE_ENV_VAR_FROM_BASH
+        ELPP_ENABLE_THREADING
+        ELPP_FEATURE_CRASH_LOG
+        ELPP_SYSLOG
     )
 
     # Standard linking to gtest stuff.

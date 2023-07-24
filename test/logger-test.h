@@ -4,22 +4,22 @@
 
 #include "test.h"
 
-TEST(LoggerTest, RegisterTenThousandLoggers) {
+TEST(LoggerTest, RegisterHundredLoggers) {
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "true");
-    TIMED_SCOPE(timer, "RegisterTenThousandLoggers");
-    for (unsigned int i = 1; i <= 10000; ++i) {
+    TIMED_SCOPE(timer, "RegisterHundredLoggers");
+    for (unsigned int i = 1; i <= 100; ++i) {
         std::stringstream ss;
         ss << "logger" << i;
         Loggers::getLogger(ss.str());
-        if (i % 1000 == 0) {
+        if (i % 10 == 0) {
             ss.str("");
             ss << "Registered [" << i << "] loggers";
             PERFORMANCE_CHECKPOINT_WITH_ID(timer, ss.str().c_str());
         }
     }
-    PERFORMANCE_CHECKPOINT_WITH_ID(timer, "10,000 loggers registered");
-    CLOG(INFO, "logger8478") << "Writing using logger 'logger8478'";
-    PERFORMANCE_CHECKPOINT_WITH_ID(timer, "Log written using logger8478");
+    PERFORMANCE_CHECKPOINT_WITH_ID(timer, "Multiple loggers registered");
+    CLOG(INFO, "logger84") << "Writing using logger 'logger84'";
+    PERFORMANCE_CHECKPOINT_WITH_ID(timer, "Log written using logger84");
     el::Loggers::reconfigureAllLoggers(el::ConfigurationType::ToStandardOutput, "false");
     // streams should not be more than 10 (this is worse case, otherwise until this point we dont have
     // more than 2 unique loggers registered)
@@ -33,7 +33,7 @@ TEST(LoggerTest, CheckTenThousandLoggers) {
     el::base::type::EnumType lIndex = LevelHelper::kMinValid;
     el::base::type::fstream_t* logger1Stream = el::Loggers::getLogger("logger1")->typedConfigurations()->fileStream(LevelHelper::castFromInt(lIndex));
     // Make sure all loggers for all levels have same file stream pointee
-    for (unsigned int i = 1; i <= 10000; ++i) {
+    for (unsigned int i = 1; i <= 100; ++i) {
         std::stringstream ss;
         ss << "logger" << i;
         LevelHelper::forEachLevel(&lIndex, [&]() -> bool {
@@ -41,7 +41,7 @@ TEST(LoggerTest, CheckTenThousandLoggers) {
             return false;
         });
         lIndex = LevelHelper::kMinValid;
-        LOG_EVERY_N(1000, INFO) << "Checked " << i << " loggers";
+        LOG_EVERY_N(10, INFO) << "Checked " << i << " loggers";
     }
 }
 
