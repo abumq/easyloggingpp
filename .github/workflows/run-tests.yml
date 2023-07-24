@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install GTest
+      run: |
+        sudo apt-get install libgtest-dev
+        cd /usr/src/googletest/googletest
+        sudo mkdir build
+        cd build
+        sudo cmake ..
+        sudo make
+        ls -lh lib
+        sudo cp lib/libgtest* /usr/local/lib/
+    - uses: actions/checkout@v3
+    - name: Run CMake
+      run: |
+        mkdir build
+        cd build
+        cmake -Dtest=ON ..
+    - name: make
+      run: make
+    - name: Run tests
+      run: ./easyloggingpp-unit-tests
