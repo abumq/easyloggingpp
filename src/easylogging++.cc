@@ -1139,6 +1139,18 @@ std::string OS::currentHost(void) {
 }
 
 bool OS::termSupportsColor(void) {
+#if ELPP_OS_WINDOWS && defined(ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+  HANDLE stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (stdoutHandle != INVALID_HANDLE_VALUE && stdoutHandle != NULL) {
+    DWORD mode;
+    if (GetConsoleMode(stdoutHandle, &mode)) {
+      if ((mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0
+          && (mode & ENABLE_PROCESSED_OUTPUT) != 0) {
+        return true;
+      }
+    }
+  }
+#endif
   std::string term = getEnvironmentVariable("TERM", "");
   return term == "xterm" || term == "xterm-color" || term == "xterm-256color"
          || term == "screen" || term == "linux" || term == "cygwin"
