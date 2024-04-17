@@ -1117,11 +1117,11 @@ Easylogging++ has complete logging support for Qt core library. When enabled, th
 
 Following Qt classes and containers are supported by Easylogging++ v9.0+
 
-|     *         |          *                |       *            |         *          |         *          |         *          |
-|---------------|---------------------------|--------------------|--------------------|--------------------|--------------------|
-| `QString`     |  `QByteArray`             |  `QLatin`          |    `QList`         |    `QVector`       |    `QQueue`        |
-| `QSet`        |  `QPair`                  |  `QMap`            |    `QMultiMap`     |    `QHash`         |    `QMultiHash`    |
-| `QLinkedList` |  `QStack`                 |  `QChar`           |    `q[u]int[64]`   |                    |                    |
+| *             | *            | *        | *             | *         | *            |
+| ------------- | ------------ | -------- | ------------- | --------- | ------------ |
+| `QString`     | `QByteArray` | `QLatin` | `QList`       | `QVector` | `QQueue`     |
+| `QSet`        | `QPair`      | `QMap`   | `QMultiMap`   | `QHash`   | `QMultiHash` |
+| `QLinkedList` | `QStack`     | `QChar`  | `q[u]int[64]` | `QRect`   |              |
 
 Similar to STL logging, Qt containers are also limit to log 100 entries per log, you can change this behaviour by changing base::consts::kMaxLogPerContainer from header but this is not recommended as this was done for performance purposes.
 
