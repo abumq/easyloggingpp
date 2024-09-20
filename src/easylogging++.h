@@ -2758,6 +2758,7 @@ class AsyncDispatchWorker : public base::IWorker, public base::threading::Thread
   std::condition_variable cv;
   bool m_continueRunning;
   base::threading::Mutex m_continueRunningLock;
+  std::thread m_thread;
 };
 #endif  // ELPP_ASYNC_LOGGING
 }  // namespace base
