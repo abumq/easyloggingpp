@@ -2297,6 +2297,9 @@ AsyncDispatchWorker::~AsyncDispatchWorker() {
   setContinueRunning(false);
   ELPP_INTERNAL_INFO(6, "Stopping dispatch worker - Cleaning log queue");
   clean();
+  if (this->m_thread.joinable()) {
+    this->m_thread.join();
+  }
   ELPP_INTERNAL_INFO(6, "Log queue cleaned");
 }
 
@@ -2321,8 +2324,7 @@ void AsyncDispatchWorker::emptyQueue(void) {
 void AsyncDispatchWorker::start(void) {
   base::threading::msleep(5000); // 5s (why?)
   setContinueRunning(true);
-  std::thread t1(&AsyncDispatchWorker::run, this);
-  t1.join();
+  this->m_thread = std::thread(&AsyncDispatchWorker::run, this);
 }
 
 void AsyncDispatchWorker::handle(AsyncLogItem* logItem) {
