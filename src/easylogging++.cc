@@ -1845,7 +1845,7 @@ bool RegisteredHitCounters::validateEveryN(const char* filename, base::type::Lin
 }
 
 /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
-/// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+/// @return True if validation resulted in triggering hit. Meaning logs should be written every time true is returned
 bool RegisteredHitCounters::validateAfterN(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
   base::threading::ScopedLock scopedLock(lock());
   base::HitCounter* counter = get(filename, lineNumber);
@@ -1862,7 +1862,7 @@ bool RegisteredHitCounters::validateAfterN(const char* filename, base::type::Lin
 }
 
 /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
-/// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+/// @return True if validation resulted in triggering hit. Meaning logs should be written every time true is returned
 bool RegisteredHitCounters::validateNTimes(const char* filename, base::type::LineNumber lineNumber, std::size_t n) {
   base::threading::ScopedLock scopedLock(lock());
   base::HitCounter* counter = get(filename, lineNumber);
