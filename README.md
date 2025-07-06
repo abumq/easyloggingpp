@@ -4,7 +4,7 @@
 
 ![banner]
 
-# NOTICE
+# ARCHIVE NOTICE
 
 > ⚠️ This project is **archived** and no longer actively maintained.
 
