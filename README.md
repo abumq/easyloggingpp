@@ -4,9 +4,50 @@
 
 ![banner]
 
+# NOTICE
+
+> ⚠️ This project is **archived** and no longer actively maintained.
+
+Easylogging++ has been a labor of love from **2012 to 2018**, and it’s been incredible to see the community embrace it. From embedded systems to desktop applications, this little library made its way into countless projects—many thanks to **you**, the developers, contributors, and users who helped shape it over the years.
+
+## Thank You
+
+To everyone who:
+- Contributed pull requests
+- Reported issues
+- Wrote benchmarks (like [Issue #73 on KjellKod/g3log](https://github.com/KjellKod/g3log/issues/73))
+- Shared feedback and real-world use cases
+
+Your involvement gave this project purpose and direction.
+
+![Benchmark Screenshot](https://github.com/abumq/easyloggingpp/blob/master/doc/benchmark.png)
+
+> *Above: Benchmark comparisons shared by the community, showing Easylogging++ holding its own among the best.*
+
+## Now Archived: Consider `spdlog` for New Projects
+
+While Easylogging++ is still a **fully-featured**, **single-header** C++ logging library, I recommend using [**spdlog**](https://github.com/gabime/spdlog) or other actively maintained logging libraries for new projects. These libraries continue to evolve and offer better integration, performance, and community support.
+
+## No Longer Maintained
+
+Due to other commitments and active projects, I will **not be making changes** or **accepting pull requests** going forward.
+
+However, Easylogging++ remains under the permissive **MIT License**. You are welcome—and encouraged—to **fork**, customize, or evolve the library as you see fit. This was the **exact reason** I chose MIT: to empower developers like you with maximum freedom.
+
+## Grateful and Humble
+
+It’s been a wonderful ride, and I’m truly humbled by the response this project received. If you’ve used Easylogging++ or learned something from it—**thank you**.
+
+Feel free to **follow my GitHub** to stay in the loop with the **other projects** I’m working on.
+
+Stay curious, keep building.  
+— *Majid Q. ([@abumq](https://github.com/abumq))*
+
+
+---
+
 > **Documentation for v9.97.1**
 
-[![Tests](https://github.com/abumq/easyloggingpp/actions/workflows/run-tests.yml/badge.svg)](https://github.com/abumq/easyloggingpp/actions/workflows/run-tests.yml)
 [![Node Binding Version](https://img.shields.io/github/release/abumq/easyloggingpp.svg)](https://github.com/abumq/easyloggingpp-node/releases/latest)
 [![Version](https://img.shields.io/npm/v/easyloggingpp.svg)](https://www.npmjs.com/package/easyloggingpp)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/abumq/easyloggingpp/blob/master/LICENCE)
