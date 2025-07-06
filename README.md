@@ -15,14 +15,10 @@ Easylogging++ has been a labor of love from **2012 to 2018**, and it’s been in
 To everyone who:
 - Contributed pull requests
 - Reported issues
-- Wrote benchmarks (like [Issue #73 on KjellKod/g3log](https://github.com/KjellKod/g3log/issues/73))
+- Wrote benchmarks—some comparing limited setups (e.g., without enabling asynchronous logging or multithreading, like [Issue #73 on KjellKod/g3log](https://github.com/KjellKod/g3log/issues/73)) and others using full feature sets
 - Shared feedback and real-world use cases
 
 Your involvement gave this project purpose and direction.
-
-![Benchmark Screenshot](https://github.com/abumq/easyloggingpp/blob/master/doc/benchmark.png)
-
-> *Above: Benchmark comparisons shared by the community, showing Easylogging++ holding its own among the best.*
 
 ## Now Archived: Consider `spdlog` for New Projects
 
