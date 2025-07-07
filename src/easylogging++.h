@@ -1375,7 +1375,7 @@ class Registry : public AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*
   Registry(void) {}
 
   /// @brief Copy constructor that is useful for base classes. Try to avoid this constructor, use move constructor.
-  Registry(const Registry& sr) : AbstractRegistry<T_Ptr, std::vector<T_Ptr*>>() {
+  Registry(const Registry& sr) : AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*>>() {
     if (this == &sr) {
       return;
     }
