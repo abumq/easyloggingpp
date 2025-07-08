@@ -430,6 +430,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #if defined(ELPP_QT_LOGGING)
 // For logging Qt based classes & templates
 #   include <QString>
+#   include <QRect>
 #   include <QByteArray>
 #   include <QVector>
 #   include <QList>
@@ -2987,8 +2988,22 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
 #  if defined(ELPP_UNICODE)
     m_logger->stream() << msg.toStdWString();
 #  else
-    m_logger->stream() << msg.toStdString();
+    m_logger->stream() << msg.toLocal8Bit().toStdString();
 #  endif  // defined(ELPP_UNICODE)
+    return *this;
+  }
+  inline MessageBuilder& operator<<(const QRect& rect) {
+    const int& left = rect.left();
+    const int& top = rect.top();
+    const int& width = rect.width();
+    const int& height = rect.height();
+#  if defined(ELPP_UNICODE)
+    #define int2wstr(name) QString::number(name).toStdWString()
+    m_logger->stream() << L"QRect(" << int2wstr(left) << L"," << int2wstr(top) << L" " << int2wstr(width) << L"x" << int2wstr(height) << L")";
+#  else
+    #define int2str(name) QString::number(name).toLocal8Bit().toStdString()
+    m_logger->stream() << "QRect(" << int2str(left) << "," << int2str(top) << " " << int2str(width) << "x" << int2str(height) << ")";
+#  endif
     return *this;
   }
   inline MessageBuilder& operator<<(const QByteArray& msg) {
