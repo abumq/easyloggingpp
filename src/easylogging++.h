@@ -457,6 +457,38 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 // For logging wxWidgets based classes & templates
 #   include <wx/vector.h>
 #endif  // defined(ELPP_WXWIDGETS_LOGGING)
+#if defined(ELPP_STRICT_PERMISSIONS)
+// Need to check for Boost first because Mojave *has* std::filesystem,
+// but won't let you use it.
+#ifdef __APPLE__
+#include <Availability.h>
+#endif
+
+#if defined(__APPLE__) && __MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_15
+#if __has_include(<boost/filesystem.hpp>)
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#else
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+#else
+// For non-Apple systems, prefer std::filesystem
+// Otherwise, older versions of boost cause failures.
+#if __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+namespace fs = std::experimental;
+#elif __has_include(<boost/filesystem>)
+#include <boost/filesystem>
+namespace fs = boost::filesystem
+#else
+#pragma message "No filesystem library found."
+#endif
+#endif
+#endif
 #if defined(ELPP_UTC_DATETIME)
 #   define elpptime_r gmtime_r
 #   define elpptime_s gmtime_s

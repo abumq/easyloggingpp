@@ -741,6 +741,13 @@ base::type::fstream_t* File::newFileStream(const std::string& filename) {
 #endif  // defined(ELPP_UNICODE)
   if (fs->is_open()) {
     fs->flush();
+#if defined(ELPP_STRICT_PERMISSIONS)
+    if (filename != "/dev/null" && filename != "nul") {
+      fs::permissions(filename,
+                  fs::perms::owner_read | fs::perms::owner_write | fs::perms::group_read,
+                  fs::perm_options::replace);
+    }
+#endif
   } else {
     base::utils::safeDelete(fs);
     ELPP_INTERNAL_ERROR("Bad file [" << filename << "]", true);
