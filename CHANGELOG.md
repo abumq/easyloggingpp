@@ -40,6 +40,9 @@
 - `ELPP_NO_DEFAULT_LOG_FILE` now logs to null device on major platforms (windows and unix)
 - Fixes unused warnings for constants
 
+### Updates
+- File rolling is now validated when flushing happens
+
 ## [9.96.2] - 27-02-2018
 ### Updates
 - Dispatcher now passes in pointer to log message instead of creating on the fly
