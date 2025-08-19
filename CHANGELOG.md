@@ -103,7 +103,7 @@
  - CMake module updated to support static lib
 
 ### Changes
- - Renamed long format specifiers to full names with padding for readbility
+ - Renamed long format specifiers to full names with padding for readability
 
 ### Fixes
  - Fixed Android NDK build (thanks to @MoroccanMalinois)
