@@ -2118,15 +2118,15 @@ class HitCounter {
 class RegisteredHitCounters : public base::utils::RegistryWithPred<base::HitCounter, base::HitCounter::Predicate> {
  public:
   /// @brief Validates counter for every N, i.e, registers new if does not exist otherwise updates original one
-  /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+  /// @return True if validation resulted in triggering hit. Meaning logs should be written every time true is returned
   bool validateEveryN(const char* filename, base::type::LineNumber lineNumber, std::size_t n);
 
   /// @brief Validates counter for hits >= N, i.e, registers new if does not exist otherwise updates original one
-  /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+  /// @return True if validation resulted in triggering hit. Meaning logs should be written every time true is returned
   bool validateAfterN(const char* filename, base::type::LineNumber lineNumber, std::size_t n);
 
   /// @brief Validates counter for hits are <= n, i.e, registers new if does not exist otherwise updates original one
-  /// @return True if validation resulted in triggering hit. Meaning logs should be written everytime true is returned
+  /// @return True if validation resulted in triggering hit. Meaning logs should be written every time true is returned
   bool validateNTimes(const char* filename, base::type::LineNumber lineNumber, std::size_t n);
 
   /// @brief Gets hit counter registered at specified position
